@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>troid — what the numbers actually say</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid brand tokens — see BRAND.md. Identical block on every page. */
+:root{--bg:#08090a;--surface:#0f1113;--surface2:#151719;--line:#1e2124;--ink:#e8e9ea;
+  --dim:#7a7f85;--signal:#4dd8ac;--warn:#e0a33c;--bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fbfbfa;--surface:#fff;
+  --surface2:#f4f4f2;--line:#e6e6e3;--ink:#0d0e0f;--dim:#6e7379;--signal:#158b68;--warn:#96661a;--bad:#a83f32}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 70px}
+/* header */
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding:22px 0 18px;margin-bottom:36px}
+.mark{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.04em;display:flex;
+  align-items:center;gap:9px;color:var(--ink);text-decoration:none;border:0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
+/* type */
+h1{font-size:clamp(26px,4.6vw,38px);line-height:1.1;letter-spacing:-.03em;font-weight:700;margin:0 0 10px}
+.lede{color:var(--dim);font-size:16.5px;margin:0 0 6px;max-width:56ch}
+.meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
+h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
+h3{font-size:16px;margin:0 0 6px;font-weight:600}
+h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--dim);margin:34px 0 12px;font-weight:500}
+p{margin:0 0 11px}p:last-child{margin-bottom:0}
+ul,ol{margin:0 0 11px;padding-left:20px}li{margin-bottom:6px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding:1px 5px;border-radius:2px}
+/* panels */
+.q,section,.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:20px 22px;margin-bottom:12px}
+.src{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  padding-top:9px;margin-top:12px}
+.stat,.flag{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.flag{color:var(--bad)}.stat{color:var(--signal)}
+.verdict{border-left:2px solid var(--signal)}
+.big{font-size:18px;line-height:1.45;margin-bottom:12px}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;
+  border-radius:2px;background:var(--surface2);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;
+  vertical-align:middle}
+.tag.bad{color:var(--bad)}.tag.warn{color:var(--warn)}.tag.good{color:var(--signal)}
+/* tables */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}
+th{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}.num{text-align:right}
+.pick td{color:var(--signal);font-weight:500}
+/* audit findings */
+.finding{border-top:1px solid var(--line);padding:15px 0}
+.finding:first-of-type{border-top:none;padding-top:0}.finding:last-child{padding-bottom:0}
+.fh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px}
+/* cells */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+/* disclaimer */
+.disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
+  border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
+.disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
+.disc h4:first-child{margin-top:0}
+.foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="bar">
+  <a class="mark" href="/"><span class="dot"></span>troid</a>
+  <nav><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+</div>
+
+<h1>What the numbers actually say</h1>
+<p class="lede">Base rates, rule mechanics and our own conflicts — the things a landing page leaves out.</p>
+<p class="meta">Last updated 15 September 2026</p>
+
+
+
+<h3 class="sec">Base rates</h3>
+
+<div class="q">
+<h2>What percentage of people actually pass?</h2>
+<p>The largest independent dataset covers more than 300,000 accounts from roughly 100,000
+traders across 10 firms. About <span class="stat">14%</span> passed a challenge and
+reached a funded account. Only about <span class="stat">7%</span> of everyone who bought
+a challenge ever got paid.</p>
+<p>Most firms self-report pass rates in the 5–10% range.</p>
+<p class="src">Source: FPFX Technology aggregate data; individual firm disclosures.</p>
+</div>
+
+<div class="q">
+<h2>What does it really cost to get funded?</h2>
+<p>The average trader needs about three attempts, spending over
+<span class="stat">$1,600</span> in fees for a $100,000 challenge.</p>
+<p>Put the two numbers together: for most participants the expected value of a challenge
+fee is <span class="flag">negative</span>. That is not a controversial claim, it is what
+the pass-rate data implies arithmetically.</p>
+</div>
+
+<div class="q">
+<h2>Why do people fail?</h2>
+<p>Roughly <span class="stat">70%</span> of failures are loss-limit breaches — daily loss
+or maximum drawdown. Most happen in the first week. Very few people fail by reaching the
+end of the evaluation period and missing the profit target.</p>
+<p>One firm's own summary puts it plainly: almost all failures trace back to
+<strong>size</strong>, not to strategy selection. People do not blow accounts because
+their entries are bad. They blow them because one position was too large on a day that
+went wrong.</p>
+</div>
+
+<div class="q">
+<h2>Then what are you actually offering?</h2>
+<p>A free, open risk tool and the research behind it. It sizes positions against both of
+Bitfunded's loss ceilings at once, net of fees, and tells you which one is actually
+binding. It does not generate signals and it will never place a trade.</p>
+<p>We built it because the failure data points at sizing, not entries. Whether you use
+our tool, someone else's, or a spreadsheet, the arithmetic is the part worth getting
+right.</p>
+</div>
+
+<h3 class="sec">Things worth knowing about the rules</h3>
+
+<div class="q">
+<h2>What is my daily loss limit really?</h2>
+<p>On a $100,000 1-Step account it is 4% — $4,000 — measured against your balance at the
+start of the trading day, and it counts <em>floating</em> losses on open positions, not
+just closed ones.</p>
+<p>But it often is not the constraint that matters. The 6% maximum loss is static at
+$94,000. Below roughly <span class="stat">$98,000</span> of equity, the distance to that
+static floor is smaller than your daily allowance, so the max loss becomes the real
+ceiling and the "4% daily" number is fiction.</p>
+<p>On a fresh account that crossover is about $2,000 away — half of one bad day. Size
+against the smaller of the two, always.</p>
+</div>
+
+<div class="q">
+<h2>When does my trading day reset?</h2>
+<p>00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
+morning and afternoon sessions draw on separate daily budgets.</p>
+<p>The trap: a floating loss that survives the reset counts in full against the new day,
+because the previous day's profit does not carry over. A position comfortably inside the
+limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+themselves.</p>
+</div>
+
+<div class="q">
+<h2>How much should I risk per trade?</h2>
+<p>We are not going to give you a number, because the right one depends on your system.
+What we can show you is what the arithmetic does to the wrong one.</p>
+<p>We simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
+most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
+trader blew the account <span class="stat">68%</span> of the time within twelve months. At
+2%, <span class="stat">98%</span>. Capping each trade at a fraction of the
+<em>remaining</em> budget rather than a fixed slice of the balance took all of those to
+0%.</p>
+<p>A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
+whether you survive long enough to use it.</p>
+</div>
+
+<div class="q">
+<h2>Do fees matter?</h2>
+<p>More than most people model. Bitfunded charges 0.04% of position size on entry and
+again on exit, calculated on notional — which at 5× leverage is five times your margin.</p>
+<p>Because notional scales inversely with stop distance, tight stops are punished hardest.
+A stop 3.9% away costs about 2% of your risk budget in fees. A 0.3% scalp stop costs
+<span class="stat">21%</span>. On a $500 risk that is $105 gone before price moves.</p>
+</div>
+
+<h3 class="sec">About troid</h3>
+
+<div class="q">
+<h2>How do you make money?</h2>
+<p>Two ways, and only one exists yet.</p>
+<p>We're a Bitfunded affiliate. When someone buys a challenge through our link, Bitfunded
+pays us a commission. It's paid on the purchase, not on your result — we'd be paid if you
+failed. That's worth knowing, and worth weighing everything on this site against.</p>
+<p>troid itself is free and stays free. If it earned a place in your process and you decide
+a challenge is right for you, using our link is how the work gets funded. If you'd rather
+not, bitfunded.com is the same price. That's your call, and we won't push it.</p>
+<p>The second way, later, is a paid tier for people who want more than the calculator — the
+MCP server, journal analysis, multi-account tracking. That revenue doesn't depend on
+anyone buying a challenge, which is deliberate.</p>
+</div>
+
+<div class="q">
+<h2>Why should I trust any of this?</h2>
+<p>Don't, on our say-so. Everything above is checkable: the pass-rate data is published,
+Bitfunded's rules are in their own documentation, and our backtest code is open — you can
+run it and get our numbers, including the unflattering ones.</p>
+<p>We publish our own results monthly, losses included. If a month of ours is bad, it
+will be on the page.</p>
+</div>
+
+<div class="q">
+<h2>Should I buy a challenge?</h2>
+<p>Most people who ask us that should not — not yet. If you cannot state your edge, your
+average win-to-loss ratio, and the maximum consecutive losses your sizing survives, a
+challenge will find that out for $799 faster and less pleasantly than a spreadsheet will
+for free.</p>
+<p>If you can state those things, a challenge is a reasonable way to trade size you do
+not have. Just go in knowing the base rates on this page.</p>
+<p>If you do, <a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">this is our link</a>.
+It's how troid is funded, and it costs you nothing extra. Direct is the same price if you'd
+prefer.</p>
+</div>
+
+<h3 class="sec">Disclaimer</h3>
+<div class="disc">
+<h4>Not financial advice</h4>
+<p>Everything on this site is general information and education. It is not financial,
+investment, trading, tax, or legal advice, and it does not account for your circumstances,
+objectives, or risk tolerance. We are not licensed financial advisors, brokers, or
+registered investment professionals. Consult a qualified professional before making
+financial decisions.</p>
+
+<h4>Affiliate relationship</h4>
+<p>We participate in Bitfunded's affiliate programme and receive a commission on
+challenge purchases made through our links. This compensation is paid on purchase and is not contingent on your
+performance. We have a financial interest in you clicking that link. We are not employed
+by, endorsed by, or speaking on behalf of Bitfunded.</p>
+
+<h4>Simulated trading</h4>
+<p>Bitfunded challenges and funded accounts are simulated trading environments. You are
+not trading your own capital and you do not have a position in any real market. Payouts
+are performance-based rewards determined by the firm under its own terms, which can
+change. Read the firm's terms yourself.</p>
+
+<h4>Backtest and hypothetical results</h4>
+<p>Backtested and simulated results are hypothetical, carry no risk of real loss, and are
+produced with hindsight knowledge of the period tested. They routinely differ from live
+results. Our published backtests cover a limited period on a single instrument and have
+not been validated out of sample. Past performance, real or simulated, does not indicate
+future results.</p>
+
+<h4>Prop firm evaluations</h4>
+<p>Challenge fees are generally non-refundable if you fail. Breaching a firm rule can
+void accrued profits, terminate the account, or trigger a payout penalty — not merely
+end the evaluation. Firms change their terms, and our rule summaries can lag those
+changes.</p>
+<p>Nothing we publish is a substitute for reading the firm's own Terms of Use. Where our
+summary and the contract disagree, <strong>the contract governs</strong> — we have
+already found one case where a firm's own challenge page displays a figure that
+contradicts its Terms.</p>
+<p>Two rules deserve specific attention because they are commonly missed. Bitfunded's
+Terms prohibit using third-party or marketed strategies to pass an evaluation, so buying
+a strategy, bot, or signal service and running it on a challenge may place you in breach
+regardless of how it performs. And traders are limited to one active account per
+challenge level absent written consent, which caps multi-account plans well below what
+most people assume.</p>
+<p>Our tools compute arithmetic against rules as we understand them at the time of
+writing. They cannot detect a rule we have not modelled, a term that changed after
+publication, or a firm-specific interpretation. Verify anything material with the firm
+directly — Bitfunded provides support tickets for rule clarification.</p>
+<p>We are not affiliated with, employed by, endorsed by, or authorised to speak for any
+prop firm.</p>
+
+<h4>Risk</h4>
+<p>Trading leveraged cryptocurrency carries substantial risk. Most participants in prop
+firm evaluations do not receive a payout. Challenge fees are generally non-refundable.
+Never risk money you cannot afford to lose.</p>
+
+<h4>Software</h4>
+<p>Our tools are provided as-is, without warranty of any kind. They perform arithmetic on
+numbers you supply. They do not place, modify, or close trades, and they never handle
+account credentials. You are responsible for verifying any output before acting on it.</p>
+
+<h4>Jurisdiction</h4>
+<p>Availability and legality of prop firm services vary by country. It is your
+responsibility to confirm you are eligible to participate where you live.</p>
+</div>
+
+</div>
+</body>
+</html>

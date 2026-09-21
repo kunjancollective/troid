@@ -1,0 +1,56 @@
+{
+  "source": "manual",
+  "_source_note": "manual | csv | api",
+  "account": {
+    "firm": "Bitfunded",
+    "phase": "Stage 1 (Expert, 1 Step)",
+    "currency": "USDT",
+    "initial_balance": 100000,
+    "current_balance": 100000,
+    "current_equity": 100000,
+    "day_start_balance": 100000,
+    "high_water_mark": 100000,
+    "as_of": "2026-09-14T00:00:00Z"
+  },
+  "rules": {
+    "max_daily_loss_pct": 4,
+    "max_daily_loss_basis": "initial_balance",
+    "daily_loss_includes_unrealized": true,
+    "_daily_note": "Bitfunded: realized loss of the day + floating loss of open positions vs a fixed daily% x initial. Auto-fails on FLOATING.",
+    "daily_reset_utc_hour": 16,
+    "_reset_note": "00:00 UTC+8 = 16:00 UTC = 12:00 noon in New York (EDT). Reset lands MIDDAY local, not overnight. May take until 00:10 UTC+8 to apply.",
+    "max_total_drawdown_pct": 6,
+    "drawdown_type": "static",
+    "_dd_note": "Confirmed static: measured against account quota, not a high-water mark. Profit permanently widens the buffer.",
+    "trailing_stops_at_initial": false,
+    "profit_target_pct": 10,
+    "profit_target_realized_only": true,
+    "min_trading_days": 5,
+    "_min_days_note": "CONFLICT: challenge page shows 0 (confirmed again on the $100k Expert tier), FAQ says at least 5. Confirm with support.",
+    "max_leverage": 5,
+    "require_tp_and_sl": true,
+    "fee_pct_per_side": 0.04,
+    "_fee_note": "0.04% of notional at entry AND exit = 0.08% round trip.",
+    "margin_mode": "cross",
+    "_margin_note": "Cross 5x: the whole account backs every position. Exchange liquidation is unreachable at any size Bitfunded permits; the firm's 4%/6% floors are the effective liquidation model. Isolated would cut a runaway position at ~20% for its own margin; cross does not.",
+    "_basis_note": "Bitfunded FAQ: daily limit is a FIXED amount from the INITIAL balance, resetting daily. Today's net P&L offsets it. Earlier versions of this config said day_start_balance - that was an unverified assumption."
+  },
+  "risk": {
+    "default_risk_pct_of_balance": 0.5,
+    "max_risk_pct_of_daily_budget": 35,
+    "max_concurrent_positions": 2,
+    "default_stop_atr_multiple": 1.5,
+    "default_atr_interval": "4h",
+    "min_rr": 1.5,
+    "warn_fee_share_of_risk_pct": 15
+  },
+  "watchlist": [
+    "BINANCE:BTCUSDT",
+    "BINANCE:ETHUSDT",
+    "BINANCE:SOLUSDT"
+  ],
+  "journal": {
+    "csv_path": "trades.csv",
+    "timezone": "America/New_York"
+  }
+}

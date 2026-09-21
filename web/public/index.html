@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>troid</title>
+<meta name="description" content="Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #08090a · surface #0f1113 · line #1e2124 · ink #e8e9ea · dim #7a7f85
+   signal #4dd8ac — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no gradients, no emoji. */
+:root{
+  --bg:#08090a; --surface:#0f1113; --surface2:#151719; --line:#1e2124;
+  --ink:#e8e9ea; --dim:#7a7f85; --signal:#4dd8ac; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#fbfbfa; --surface:#fff; --surface2:#f4f4f2; --line:#e6e6e3;
+  --ink:#0d0e0f; --dim:#6e7379; --signal:#158b68; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:flex;align-items:center;gap:9px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="bar">
+    <div class="mark"><span class="dot"></span>troid</div>
+    <nav><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+      <a href="https://github.com/kunjancollective/troid">source</a></nav>
+  </div>
+  <div class="discl">Free · never places orders · Bitfunded affiliate — purchases through
+    our link fund the work</div>
+</div></header>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>Prop-firm risk, computed.</h1>
+  <p class="lede">Most funded accounts fail on position size, not entries. troid computes
+  both of your loss ceilings, reports which one actually binds, and sizes the trade net
+  of fees.</p>
+</div>
+
+<div class="panel">
+  <p class="eyebrow">Size a trade</p>
+  <div class="grid g4">
+    <div><label>Challenge</label><select id="profile">
+      <option value="1step">1-Step</option><option value="2step_s1">2-Step · S1</option>
+      <option value="2step_s2">2-Step · S2</option><option value="express">Express</option>
+      <option value="instant">Instant</option><option value="trader">Funded</option>
+    </select></div>
+    <div><label>Quota</label><input id="quota" type="number" value="100000"></div>
+    <div><label>Equity</label><input id="equity" type="number" value="100000"></div>
+    <div><label>Day start</label><input id="daystart" type="number" value="100000"></div>
+  </div>
+  <div class="grid g4">
+    <div><label>Side</label><select id="side"><option value="1">long</option>
+      <option value="-1">short</option></select></div>
+    <div><label>Entry</label><input id="entry" type="number" step="any" value="77872"></div>
+    <div><label>Stop</label><input id="stop" type="number" step="any" value="74814"></div>
+    <div><label>Target R</label><input id="targetR" type="number" step="any" value="2"></div>
+  </div>
+  <div class="grid g3">
+    <div><label>Risk %</label><input id="riskPct" type="number" step="any" value="0.5"></div>
+    <div><label>Budget cap %</label><input id="capPct" type="number" step="any" value="35"></div>
+    <div><label>Leverage</label><input id="lev" type="number" step="any" value="5"></div>
+  </div>
+  <div class="grid g3">
+    <div><label>Margin mode</label><select id="mode"><option value="cross">cross</option>
+      <option value="isolated">isolated</option></select></div>
+  </div>
+  <div id="result"></div>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n">~70%</div>
+    <p>of prop-firm failures are loss-limit breaches, most inside the first week. Firms
+    report failures trace to size, not strategy selection.</p></div>
+  <div class="stat"><div class="n">68%</div>
+    <p>of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
+    with no cap on remaining budget. Under a cap, zero.</p></div>
+  <div class="stat"><div class="n">$98,000</div>
+    <p>On a $100k 1-Step, below this equity the 6% static floor binds instead of the 4%
+    daily. That is $2,000 from the start — half of one bad day.</p></div>
+</div>
+
+<div class="panel">
+  <h2>What troid does</h2>
+  <p>Computes both loss ceilings and reports the binding one. Sizes positions net of the
+  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  margin concentration limit, the five-day minimum. Works across every challenge type and
+  every asset the firm lists.</p>
+  <h2 style="margin-top:20px">What it doesn't</h2>
+  <p>Generate signals. Place orders. Touch your credentials. Sell you a strategy.</p>
+  <p><a href="/TROID.md">TROID.md</a> is the whole desk as one file — paste it into any
+  assistant as a system prompt. The <a href="https://github.com/kunjancollective/troid/tree/main/mcp">MCP
+  server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.</p>
+  <p style="margin-bottom:0">Every figure here is arithmetic you can check.
+  <code>verify_claims.py</code> in the repo re-derives each published number from first
+  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
+  A measured number is never stated as fact.</p>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+  <a href="/faq">faq</a> · <a href="/dashboard">research</a> ·
+  <a href="https://github.com/kunjancollective/troid">source</a><br><br>
+  Not financial advice. Simulated trading. Challenge fees are generally non-refundable.
+  Bitfunded affiliate, not an employee or representative. If troid earned its place,
+  <a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">our link</a>
+  is how it stays free. Same price direct.
+</div></footer>
+
+<script>
+var P={"1step":{d:4,m:6},"2step_s1":{d:5,m:10},"2step_s2":{d:5,m:8},"express":{d:3,m:3},"instant":{d:3,m:6},"trader":{d:4,m:6}};
+var FEE=0.0004,MMR=0.005;
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function $(x){return "$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function render(){
+  var p=P[document.getElementById("profile").value];
+  var quota=n("quota"),eq=n("equity"),ds=n("daystart");
+  var side=parseFloat(document.getElementById("side").value);
+  var entry=n("entry"),stop=n("stop"),tR=n("targetR");
+  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev");
+  var mode=document.getElementById("mode").value;
+  var dLim=quota*p.d/100,dFloor=ds-dLim,dB=eq-dFloor,ddFloor=quota*(1-p.m/100),ddB=eq-ddFloor;
+  var bind=dB<=ddB?"daily loss limit":"max drawdown",eff=Math.min(dB,ddB);
+  var d=Math.abs(entry-stop),blocks=[],notes=[];
+  if(side>0&&stop>=entry)blocks.push("stop at or above entry on a long");
+  if(side<0&&stop<=entry)blocks.push("stop at or below entry on a short");
+  if(d<=0)blocks.push("stop distance is zero");
+  if(eff<=0)blocks.push("no budget left \u2014 "+bind+" already breached");
+  var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
+  var reduced=risk<intended-1e-9,h="";
+  if(blocks.length){
+    h='<div class="verdict vBLOCK"><span class="vtag">BLOCK</span>'+
+      '<span class="vtxt">'+bind+'</span></div><div class="notes">'+
+      blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>';
+    document.getElementById("result").innerHTML=h;return;
+  }
+  var fu=entry*FEE*2,qty=risk/(d+fu),notional=qty*entry,margin=notional/lev;
+  var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*d;
+  var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
+  if(fshare>15)notes.push("fees are "+fshare.toFixed(0)+"% of risk \u2014 stop tight enough that costs dominate");
+  if(reduced)notes.push("cut from "+$(intended)+" to "+$(risk)+" \u2014 "+bind+" budget caps it");
+  notes.push(left+" more losses at this size before "+bind+" trips");
+  // circuit breakers: adverse move at which each thing stops you
+  var sp=d/entry*100,dp=dB/notional*100,fp=ddB/notional*100,liq;
+  if(mode==="isolated")liq=(1-(1-1/lev)/(1-MMR))*100;
+  else liq=notional<eq/MMR?(1-(1-eq/notional)/(1-MMR))*100:Infinity;
+  var ord=[["your stop",sp],["daily limit",dp],["max-loss floor",fp],["exchange liq ("+mode+")",Math.max(liq,0)]]
+    .sort(function(a,b){return a[1]-b[1]});
+  if(ord[0][0]!=="your stop")notes.push("DANGER \u2014 "+ord[0][0]+" binds at "+ord[0][1].toFixed(2)+"% adverse, inside your stop");
+  else if(mode==="cross")notes.push("cross: nothing cuts a runaway before the firm's floor \u2014 your stop is the only breaker in front of it");
+  else notes.push("isolated: exchange liquidates at "+liq.toFixed(1)+"% for the position's own margin, before the floor");
+  var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"\u2014")}).join("  \u2192  ");
+  var v=reduced?"REDUCE":"OK";
+  h='<div class="verdict v'+v+'"><span class="vtag">'+v+'</span>'+
+    '<span class="vtxt">binding \u00b7 '+bind+' \u00b7 '+$(eff)+' of room</span></div>'+
+    '<div class="read">'+
+    '<div class="cell"><div class="k">size</div><div class="v">'+qty.toFixed(6)+
+      '</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">margin</div><div class="v">'+$(margin)+
+      '</div><div class="s">'+lev+'x</div></div>'+
+    '<div class="cell"><div class="k">risk</div><div class="v">'+$(risk)+
+      '</div><div class="s">incl '+$(fees)+' fees</div></div>'+
+    '<div class="cell"><div class="k">fees</div><div class="v">'+fshare.toFixed(1)+
+      '%</div><div class="s">of risk</div></div>'+
+    '<div class="cell"><div class="k">stop</div><div class="v">'+(d/entry*100).toFixed(2)+
+      '%</div><div class="s">tgt '+target.toFixed(2)+'</div></div>'+
+    '<div class="cell"><div class="k">budget used</div><div class="v">'+consumes.toFixed(0)+
+      '%</div><div class="s">floor '+$(ddFloor)+'</div></div></div>'+
+    '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">breakers</span> '+brk+'</div>'+
+    notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>';
+  document.getElementById("result").innerHTML=h;
+}
+["profile","quota","equity","daystart","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
+ .forEach(function(i){document.getElementById(i).addEventListener("input",render)});
+render();
+</script>
+</body>
+</html>

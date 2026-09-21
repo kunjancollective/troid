@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prop Desk — Strategy Review</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid brand tokens — see BRAND.md. Identical block on every page. */
+:root{--bg:#08090a;--surface:#0f1113;--surface2:#151719;--line:#1e2124;--ink:#e8e9ea;
+  --dim:#7a7f85;--signal:#4dd8ac;--warn:#e0a33c;--bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fbfbfa;--surface:#fff;
+  --surface2:#f4f4f2;--line:#e6e6e3;--ink:#0d0e0f;--dim:#6e7379;--signal:#158b68;--warn:#96661a;--bad:#a83f32}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 70px}
+/* header */
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding:22px 0 18px;margin-bottom:36px}
+.mark{font-family:var(--mono);font-size:19px;font-weight:600;letter-spacing:-.04em;display:flex;
+  align-items:center;gap:9px;color:var(--ink);text-decoration:none;border:0}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
+/* type */
+h1{font-size:clamp(26px,4.6vw,38px);line-height:1.1;letter-spacing:-.03em;font-weight:700;margin:0 0 10px}
+.lede{color:var(--dim);font-size:16.5px;margin:0 0 6px;max-width:56ch}
+.meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
+h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
+h3{font-size:16px;margin:0 0 6px;font-weight:600}
+h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--dim);margin:34px 0 12px;font-weight:500}
+p{margin:0 0 11px}p:last-child{margin-bottom:0}
+ul,ol{margin:0 0 11px;padding-left:20px}li{margin-bottom:6px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding:1px 5px;border-radius:2px}
+/* panels */
+.q,section,.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:20px 22px;margin-bottom:12px}
+.src{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  padding-top:9px;margin-top:12px}
+.stat,.flag{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.flag{color:var(--bad)}.stat{color:var(--signal)}
+.verdict{border-left:2px solid var(--signal)}
+.big{font-size:18px;line-height:1.45;margin-bottom:12px}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;
+  border-radius:2px;background:var(--surface2);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;
+  vertical-align:middle}
+.tag.bad{color:var(--bad)}.tag.warn{color:var(--warn)}.tag.good{color:var(--signal)}
+/* tables */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}
+th{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}.num{text-align:right}
+.pick td{color:var(--signal);font-weight:500}
+/* audit findings */
+.finding{border-top:1px solid var(--line);padding:15px 0}
+.finding:first-of-type{border-top:none;padding-top:0}.finding:last-child{padding-bottom:0}
+.fh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px}
+/* cells */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+/* disclaimer */
+.disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
+  border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
+.disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
+.disc h4:first-child{margin-top:0}
+.foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="bar">
+  <a class="mark" href="/"><span class="dot"></span>troid</a>
+  <nav><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+</div>
+
+<h1>Prop Desk — Strategy Review</h1>
+<p class="meta">Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 15 Sep 2026</p>
+
+<section class="verdict">
+  <h2>Smartest option</h2>
+  <p class="big"><strong>Five-tranche strength ladder + regime filter + desk cap</strong> — but
+  do <em>not</em> buy a challenge yet. Run the walk-forward first.</p>
+  <p>It's the best structure found: the lowest drawdown of anything tested
+  (<strong>&minus;$1,805</strong> against &minus;$6,943 for single entry), zero zombie
+  accounts, and a median challenge run ending at $99,060 instead of bleeding to the
+  floor. It is also still <strong>&minus;0.00R</strong>. That is a well-built vehicle
+  with no engine in it.</p>
+  <p><strong>Why wait:</strong> a $999 challenge buys one noisy binary outcome. The
+  walk-forward buys ~5 years of out-of-sample evidence for the price of one Claude Code
+  session. At a 14% industry base rate, passing once barely updates whether you have an
+  edge — plenty of edgeless traders pass.</p>
+</section>
+
+<section>
+  <h2>Cross-reference — things that don't add up</h2>
+
+  <div class="finding">
+    <div class="fh"><h3>1. "5x scale-in for a larger position" does the opposite</h3>
+      <span class="tag bad">design assumption inverted</span></div>
+    <p>At the same $500 risk, a 5-tranche <em>strength</em> ladder holds
+    <strong>34% less</strong> quantity than a single entry (0.109 BTC vs 0.167 BTC;
+    $8,524 vs $13,000 notional). Because the stop stays anchored at T1's structure,
+    each later tranche sits further from the stop and therefore gets less size.</p>
+    <p>The ladder's benefit is <strong>conditionality, not size</strong>: losers fill
+    1.63 tranches, winners fill 4.17. You're small when wrong and large when right. If
+    what you actually want is a bigger position, that comes from raising risk per trade,
+    and the ruin math says don't.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>2. The income model assumed 4.3&times; the trade frequency</h3>
+      <span class="tag bad">changes the conclusion</span></div>
+    <p><code>income_math.py</code> ran at 30 trades/month. The strategy produces
+    <strong>7.1/month</strong> (53 trades in 7.5 months). Every encouraging number in the
+    $5k/month analysis — the 4-months-to-target row, $614 at the real 9/mo frequency (was $1,862 at an assumed 30/mo)/account — assumed a frequency
+    this strategy does not reach.</p>
+    <p>Corrected: at 7.1 trades/month and 0.5% risk, $6,250/month gross needs
+    <strong>+1.77R per trade</strong>. Not credible at any skill level. Either the
+    timeframe drops below 4h to raise frequency, or the income target needs more accounts
+    than the scaling table implied.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>3. RESULTS.md is stale on every row</h3>
+      <span class="tag warn">documentation</span></div>
+    <p>All four published configs are off after the entry-bar reorder: A n=90&rarr;89
+    (&minus;0.10&rarr;&minus;0.11R), B 71&rarr;70 (&minus;0.00&rarr;&minus;0.01R),
+    C 72&rarr;71 (&minus;0.01&rarr;&minus;0.03R), D 39&rarr;38
+    (&minus;0.21&rarr;&minus;0.18R). Small deltas, but the file also predates the merged
+    reset block, the day-start basis, the zombie outcome, ladder direction, LADDER_N and
+    the reverse.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>4. The skill still describes the rollover trap as a general hazard</h3>
+      <span class="tag warn">skill text</span></div>
+    <p><code>bitfunded.md</code> presents it as broadly dangerous. Measured: it needs
+    <em>both</em> uncapped risk &ge;4% per position <em>and</em> a policy that holds
+    losers through the reset. Under desk sizing plus swing_safe it is dead twice over —
+    by cap and by policy. Largest floating loss actually carried into a reset was $3,422
+    against the $4,000 line, at 4% naive risk.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>5. Your reverse-after-TP3 is untested, not refuted</h3>
+      <span class="tag warn">insufficient n</span></div>
+    <p>It fired 4 times in 8 months, because only ~8% of trades reach TP3 at 3R. n=4 is
+    noise. To evaluate the exhaustion thesis the trigger has to move to TP2 or the
+    stop-out.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>6. None of it is in the repo</h3>
+      <span class="tag bad">unshipped</span></div>
+    <p>The reorder, merged reset block, day-start basis, zombie outcome, ladder
+    direction, 5-tranche support, reverse, <code>income_math.py</code> and
+    <code>scaling_math.py</code> exist only in a sandbox scratch copy.
+    <code>kunjancollective/prop-desk</code> has none of it.</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>7. Two known small defects, both flagged and unfixed</h3>
+      <span class="tag">minor</span></div>
+    <p><code>income_math.py</code>'s <code>withdraw=False</code> arm reports $0 by
+    construction — it counts only withdrawals as income, so the "bank profits to grow the
+    buffer" comparison can't be sized. And <code>risk.py</code> accepts
+    <code>--json</code> only before the subcommand.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Where each variant stands — corrected numbers</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>Configuration</th><th class="num">n</th><th class="num">exp R</th>
+      <th class="num">PF</th><th class="num">max DD</th><th class="num">fills W/L</th></tr>
+    <tr><td>v1 pullback, no filter</td><td class="num">89</td><td class="num">&minus;0.11</td>
+      <td class="num">0.80</td><td class="num">&minus;$14,421</td><td class="num">—</td></tr>
+    <tr><td>+ regime filter</td><td class="num">70</td><td class="num">&minus;0.01</td>
+      <td class="num">0.97</td><td class="num">&minus;$10,994</td><td class="num">—</td></tr>
+    <tr><td>+ breakout, single entry</td><td class="num">71</td><td class="num">&minus;0.03</td>
+      <td class="num">0.94</td><td class="num">&minus;$6,943</td><td class="num">—</td></tr>
+    <tr><td>3-tranche weakness ladder</td><td class="num">38</td><td class="num">&minus;0.18</td>
+      <td class="num">0.53</td><td class="num">&minus;$5,646</td><td class="num">1.40 / 2.61</td></tr>
+    <tr><td>5-tranche weakness ladder</td><td class="num">26</td><td class="num">&minus;0.19</td>
+      <td class="num">0.22</td><td class="num">&minus;$2,807</td><td class="num">1.83 / 2.75</td></tr>
+    <tr><td>3-tranche strength ladder</td><td class="num">48</td><td class="num">&minus;0.01</td>
+      <td class="num">0.96</td><td class="num">&minus;$2,938</td><td class="num">2.94 / 1.52</td></tr>
+    <tr class="pick"><td>5-tranche strength ladder</td><td class="num">53</td>
+      <td class="num">&minus;0.00</td><td class="num">0.97</td><td class="num">&minus;$1,805</td>
+      <td class="num">4.17 / 1.63</td></tr>
+  </table>
+  </div>
+  <p style="margin-top:12px;color:var(--dim);font-size:13.5px">Ladder direction is the
+  single largest structural effect found: same signals, same stops, only the side the
+  tranches sit on. Weakness at 5 tranches is the worst profit factor in the project
+  (0.22); strength at 5 is the best drawdown (&minus;$1,805).</p>
+</section>
+
+<section>
+  <h2>Risk model — verified, independent of strategy</h2>
+  <div class="grid">
+    <div class="cell"><div class="k">Daily budget</div><div class="v">$4,000</div>
+      <div class="n">4% of day-start balance</div></div>
+    <div class="cell"><div class="k">Static floor</div><div class="v">$94,000</div>
+      <div class="n">6% of quota, fixed</div></div>
+    <div class="cell"><div class="k">Ceiling crossover</div><div class="v">$98,000</div>
+      <div class="n">below this, max loss binds</div></div>
+    <div class="cell"><div class="k">Risk / trade</div><div class="v">$500</div>
+      <div class="n">capped at 35% of budget</div></div>
+    <div class="cell"><div class="k">Fees</div><div class="v">0.08%</div>
+      <div class="n">round trip, on notional</div></div>
+    <div class="cell"><div class="k">Reset</div><div class="v">16:00 UTC</div>
+      <div class="n">noon in New York</div></div>
+  </div>
+  <p style="margin-top:14px">The budget cap is not conservatism — it is the only thing
+  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
+  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
+  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.</p>
+</section>
+
+<section>
+  <h2>What would change the verdict</h2>
+  <ol>
+    <li><strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
+      parameter neighbourhood — fit 2021–2024, hold out 2025–now. This is the gate on
+      everything else.</li>
+    <li><strong>Frequency reaches ~30 trades/month</strong>, which on this structure means
+      dropping below the 4h timeframe. Without it the income target needs roughly four
+      times the accounts the scaling model suggested.</li>
+    <li><strong>Reverse moves to TP2 or stop-out</strong> so the exhaustion thesis gets a
+      real sample instead of n=4.</li>
+    <li><strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
+      withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
+      four correlated accounts running one strategy aren't four independent bets anyway.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Order of work</h2>
+  <ol>
+    <li>Push the scratch copy to <code>prop-desk</code> and apply the six verified patches
+      as the merged reset block.</li>
+    <li>Rewrite <code>RESULTS.md</code> with corrected numbers; revise
+      <code>bitfunded.md</code>'s rollover section to the measured condition.</li>
+    <li>Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.</li>
+    <li>Only then: challenge purchase, or not.</li>
+  </ol>
+</section>
+
+<p class="foot">All figures from 1,500 4h bars, Jan 8 – Sep 14 2026 — one asset,
+one regime. Nothing here is validated out-of-sample.</p>
+
+</div>
+</body>
+</html>

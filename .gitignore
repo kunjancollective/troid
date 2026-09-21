@@ -1,0 +1,21 @@
+# real account state - never commit
+**/config.json
+!**/bitfunded_config.json
+**/creds*.json
+*.env
+
+# business planning: revenue projections, funnel assumptions, affiliate economics.
+# Delete this line if the repo is private and you want them tracked.
+business/
+
+# forward-test outputs are the PUBLIC LOG and are tracked on purpose:
+#   backtest/journal.csv  backtest/state.json
+
+# run outputs and bulk data
+backtest/results/
+backtest/data/*
+!backtest/data/btc_4h.csv
+
+__pycache__/
+*.pyc
+.DS_Store

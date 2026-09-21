@@ -1,0 +1,254 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid — ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #08090a · surface #0f1113 · line #1e2124 · ink #e8e9ea · dim #7a7f85
+   signal #4dd8ac — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no gradients, no emoji. */
+:root{
+  --bg:#08090a; --surface:#0f1113; --surface2:#151719; --line:#1e2124;
+  --ink:#e8e9ea; --dim:#7a7f85; --signal:#4dd8ac; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#fbfbfa; --surface:#fff; --surface2:#f4f4f2; --line:#e6e6e3;
+  --ink:#0d0e0f; --dim:#6e7379; --signal:#158b68; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:flex;align-items:center;gap:9px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>.k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+.v{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.02em}
+.cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}
+.c{background:var(--surface);padding:12px}
+.warnbox{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}</style>
+</head><body><div class="wrap">
+<div class="bar">
+  <a class="mark" href="/"><span class="dot"></span>troid</a>
+  <nav><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+</div>
+<h1>troid-shadow-1</h1>
+<p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
+<p class="meta">as of 2026-09-15 00:00 UTC · BINANCE:BTCUSDT 4h · 1step rules · cross 5x</p>
+
+<div class="warnbox">This strategy measures +0.038R per trade over 71 trades — a standard error of ~0.045R, a
+confidence interval that contains zero, and a result below what chance produces across the
+~30 configurations searched. It is published so you can watch it, not because it works.
+0 of these trades were logged live; the rest were backfilled on 2026-09-18.</div>
+
+<div class="panel"><p class="eyebrow">Equity</p><svg viewBox="0 0 760 180" preserveAspectRatio="none" style="width:100%;height:180px;display:block">
+  <line x1="8" y1="167.8" x2="752" y2="167.8" stroke="var(--line)" stroke-width="1" stroke-dasharray="3 4"/>
+  <path d="M8.0,167.8 L18.5,169.6 L29.0,170.9 L39.4,172.0 L49.9,167.8 L60.4,163.3 L70.9,166.9 L81.4,167.7 L91.8,127.2 L102.3,122.0 L112.8,117.0 L123.3,118.6 L133.7,125.3 L144.2,89.2 L154.7,92.4 L165.2,95.5 L175.7,101.7 L186.1,57.9 L196.6,59.3 L207.1,67.7 L217.6,74.0 L228.1,76.5 L238.5,72.0 L249.0,74.6 L259.5,76.5 L270.0,74.3 L280.5,82.8 L290.9,48.0 L301.4,60.4 L311.9,68.8 L322.4,71.8 L332.8,66.8 L343.3,73.5 L353.8,74.2 L364.3,25.7 L374.8,42.5 L385.2,55.7 L395.7,61.1 L406.2,69.4 L416.7,77.7 L427.2,86.0 L437.6,82.9 L448.1,87.1 L458.6,83.0 L469.1,42.8 L479.5,51.1 L490.0,56.2 L500.5,64.6 L511.0,73.0 L521.5,76.2 L531.9,84.5 L542.4,85.2 L552.9,81.8 L563.4,65.5 L573.9,66.6 L584.3,85.2 L594.8,82.5 L605.3,84.3 L615.8,83.5 L626.3,44.4 L636.7,61.3 L647.2,12.3 L657.7,17.2 L668.2,13.1 L678.6,8.0 L689.1,24.8 L699.6,28.4 L710.1,29.8 L720.6,38.2 L731.0,46.2 L741.5,63.1 L752.0,58.4" fill="none" stroke="var(--signal)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+</svg>
+<div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px">
+  <span>$99,948</span><span>start $100,000 · dashed</span><span>$101,967</span></div></div>
+
+<div class="cells">
+<div class="c"><div class="k">balance</div><div class="v">$101,346</div></div>
+<div class="c"><div class="k">net</div><div class="v" style="color:var(--signal)">+1,346</div></div>
+<div class="c"><div class="k">trades</div><div class="v">71</div></div>
+<div class="c"><div class="k">win</div><div class="v">34%</div></div>
+<div class="c"><div class="k">exp</div><div class="v">+0.038R</div></div>
+<div class="c"><div class="k">pf</div><div class="v">1.37</div></div>
+<div class="c"><div class="k">max dd</div><div class="v">$-759</div></div>
+<div class="c"><div class="k">to floor</div><div class="v">$7,346</div></div>
+</div>
+
+<div class="cells">
+<div class="c"><div class="k">this week</div><div class="v">1 trades · +0.11R</div></div>
+<div class="c"><div class="k">this month</div><div class="v">10 trades · -1.12R</div></div>
+<div class="c"><div class="k">status</div><div class="v">running</div></div>
+</div>
+
+<div class="panel"><p class="eyebrow">Last 40 trades</p><div class="scroll"><table>
+<tr><th>closed</th><th>kind</th><th>side</th><th class="num">fills</th><th class="num">bars</th><th>exit</th><th class="num">pnl</th><th class="num">R</th></tr>
+<tr><td>2026-09-14</td><td>reverse</td><td>long</td>
+<td class="num">5</td><td class="num">4</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+57.63</td>
+<td class="num">+0.11</td></tr><tr><td>2026-09-14</td><td>pullback</td><td>short</td>
+<td class="num">2</td><td class="num">0</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-207.32</td>
+<td class="num">-0.41</td></tr><tr><td>2026-09-08</td><td>reverse</td><td>short</td>
+<td class="num">4</td><td class="num">6</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-98.92</td>
+<td class="num">-0.20</td></tr><tr><td>2026-09-07</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">3</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-103.24</td>
+<td class="num">-0.20</td></tr><tr><td>2026-09-06</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">6</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-17.15</td>
+<td class="num">-0.03</td></tr><tr><td>2026-08-31</td><td>reverse</td><td>short</td>
+<td class="num">1</td><td class="num">4</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-44.62</td>
+<td class="num">-0.09</td></tr><tr><td>2026-08-30</td><td>pullback</td><td>long</td>
+<td class="num">2</td><td class="num">1</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-206.89</td>
+<td class="num">-0.41</td></tr><tr><td>2026-08-30</td><td>reverse</td><td>short</td>
+<td class="num">5</td><td class="num">13</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+62.69</td>
+<td class="num">+0.12</td></tr><tr><td>2026-08-28</td><td>pullback</td><td>long</td>
+<td class="num">4</td><td class="num">7</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+50.47</td>
+<td class="num">+0.10</td></tr><tr><td>2026-08-26</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">3</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-60.33</td>
+<td class="num">-0.12</td></tr><tr><td>2026-08-19</td><td>reverse</td><td>long</td>
+<td class="num">5</td><td class="num">13</td><td>tp3</td>
+<td class="num" style="color:var(--signal)">+602.92</td>
+<td class="num">+1.19</td></tr><tr><td>2026-08-17</td><td>pullback</td><td>short</td>
+<td class="num">2</td><td class="num">1</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-208.27</td>
+<td class="num">-0.41</td></tr><tr><td>2026-08-13</td><td>reverse</td><td>short</td>
+<td class="num">5</td><td class="num">21</td><td>tp3</td>
+<td class="num" style="color:var(--signal)">+482.07</td>
+<td class="num">+0.95</td></tr><tr><td>2026-08-10</td><td>pullback</td><td>long</td>
+<td class="num">3</td><td class="num">3</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+10.07</td>
+<td class="num">+0.02</td></tr><tr><td>2026-08-08</td><td>reverse</td><td>short</td>
+<td class="num">1</td><td class="num">5</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-23.13</td>
+<td class="num">-0.05</td></tr><tr><td>2026-08-07</td><td>pullback</td><td>long</td>
+<td class="num">3</td><td class="num">12</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+33.76</td>
+<td class="num">+0.07</td></tr><tr><td>2026-08-03</td><td>pullback</td><td>short</td>
+<td class="num">3</td><td class="num">3</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-228.50</td>
+<td class="num">-0.45</td></tr><tr><td>2026-08-02</td><td>pullback</td><td>short</td>
+<td class="num">1</td><td class="num">1</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-14.09</td>
+<td class="num">-0.03</td></tr><tr><td>2026-07-29</td><td>reverse</td><td>short</td>
+<td class="num">5</td><td class="num">11</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+201.33</td>
+<td class="num">+0.40</td></tr><tr><td>2026-07-27</td><td>pullback</td><td>long</td>
+<td class="num">5</td><td class="num">4</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+40.85</td>
+<td class="num">+0.08</td></tr><tr><td>2026-07-25</td><td>reverse</td><td>short</td>
+<td class="num">1</td><td class="num">6</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-7.88</td>
+<td class="num">-0.02</td></tr><tr><td>2026-07-24</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">1</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.72</td>
+<td class="num">-0.20</td></tr><tr><td>2026-07-17</td><td>reverse</td><td>short</td>
+<td class="num">3</td><td class="num">3</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-39.16</td>
+<td class="num">-0.08</td></tr><tr><td>2026-07-17</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">2</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.76</td>
+<td class="num">-0.20</td></tr><tr><td>2026-07-13</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">2</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-103.54</td>
+<td class="num">-0.20</td></tr><tr><td>2026-07-09</td><td>reverse</td><td>short</td>
+<td class="num">2</td><td class="num">7</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-63.17</td>
+<td class="num">-0.12</td></tr><tr><td>2026-07-08</td><td>pullback</td><td>long</td>
+<td class="num">1</td><td class="num">4</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.60</td>
+<td class="num">-0.20</td></tr><tr><td>2026-07-03</td><td>reverse</td><td>long</td>
+<td class="num">5</td><td class="num">15</td><td>tp3</td>
+<td class="num" style="color:var(--signal)">+495.71</td>
+<td class="num">+0.98</td></tr><tr><td>2026-07-01</td><td>pullback</td><td>short</td>
+<td class="num">5</td><td class="num">6</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+49.65</td>
+<td class="num">+0.10</td></tr><tr><td>2026-06-29</td><td>reverse</td><td>long</td>
+<td class="num">2</td><td class="num">3</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-51.65</td>
+<td class="num">-0.10</td></tr><tr><td>2026-06-29</td><td>pullback</td><td>short</td>
+<td class="num">2</td><td class="num">7</td><td>stop</td>
+<td class="num" style="color:var(--signal)">+38.77</td>
+<td class="num">+0.08</td></tr><tr><td>2026-06-23</td><td>reverse</td><td>long</td>
+<td class="num">1</td><td class="num">3</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.05</td>
+<td class="num">-0.20</td></tr><tr><td>2026-06-22</td><td>pullback</td><td>short</td>
+<td class="num">1</td><td class="num">3</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.44</td>
+<td class="num">-0.20</td></tr><tr><td>2026-06-14</td><td>pullback</td><td>short</td>
+<td class="num">1</td><td class="num">0</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-102.83</td>
+<td class="num">-0.20</td></tr><tr><td>2026-06-11</td><td>pullback</td><td>short</td>
+<td class="num">1</td><td class="num">4</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-66.58</td>
+<td class="num">-0.13</td></tr><tr><td>2026-06-09</td><td>reverse</td><td>long</td>
+<td class="num">2</td><td class="num">10</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-162.41</td>
+<td class="num">-0.32</td></tr><tr><td>2026-06-07</td><td>pullback</td><td>short</td>
+<td class="num">2</td><td class="num">1</td><td>stop</td>
+<td class="num" style="color:var(--bad)">-205.72</td>
+<td class="num">-0.40</td></tr><tr><td>2026-06-02</td><td>pullback</td><td>short</td>
+<td class="num">5</td><td class="num">38</td><td>tp3</td>
+<td class="num" style="color:var(--signal)">+596.27</td>
+<td class="num">+1.18</td></tr><tr><td>2026-05-26</td><td>pullback</td><td>short</td>
+<td class="num">2</td><td class="num">3</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-8.38</td>
+<td class="num">-0.02</td></tr><tr><td>2026-05-25</td><td>pullback</td><td>short</td>
+<td class="num">1</td><td class="num">6</td><td>reset_flat_loser</td>
+<td class="num" style="color:var(--bad)">-82.07</td>
+<td class="num">-0.16</td></tr></table></div></div>
+
+<p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
+ledger entry, not a claim. Read it that way. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a></p>
+</div></body></html>

@@ -1,0 +1,156 @@
+{
+  "_criterion": "Trustpilot volume and rating, verifiable payout record, no denied-payout history, US-available. Reviewed quarterly. Bitfunded is the base firm and does not rotate.",
+  "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
+  "_disclosure": "troid is an affiliate of every firm listed. Commission structures differ. We compute; you choose.",
+  "_last_review": "2026-09-21",
+  "_rule": "A firm goes on the comparison only when every field below is verified from the firm's own primary documents (ToU + help centre, checked against each other) and the verified_from URLs are recorded. A null field means not yet verified, and the firm stays off the page.",
+  "bitfunded": {
+    "name": "Bitfunded",
+    "verified": true,
+    "verified_on": "2026-09-18",
+    "verified_from": [
+      "https://www.bitfunded.com/terms-of-use/",
+      "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+      "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+      "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
+      "https://www.bitfunded.com/faq/"
+    ],
+    "us_available": true,
+    "products": {
+      "1step": {
+        "daily_pct": 4,
+        "max_pct": 6,
+        "target_pct": 10,
+        "min_days": 5,
+        "fee_usd": 999
+      },
+      "2step_s1": {
+        "daily_pct": 5,
+        "max_pct": 10,
+        "target_pct": 8,
+        "min_days": 5,
+        "fee_usd": 799
+      },
+      "2step_s2": {
+        "daily_pct": 5,
+        "max_pct": 8,
+        "target_pct": 5,
+        "min_days": 5
+      },
+      "express": {
+        "daily_pct": 3,
+        "max_pct": 3,
+        "target_pct": 3,
+        "min_days": 5,
+        "fee_usd_5k": 39
+      },
+      "instant": {
+        "daily_pct": 3,
+        "max_pct": 6,
+        "target_pct": 0,
+        "min_days": 0,
+        "fee_usd_5k": 249,
+        "split": "60%"
+      }
+    },
+    "drawdown_type": "static",
+    "daily_basis": "initial_balance",
+    "floating_counts": true,
+    "reset_utc": "16:00",
+    "fee_per_side_pct": 0.04,
+    "max_leverage": 5,
+    "margin_modes": [
+      "cross",
+      "isolated"
+    ],
+    "hold_cap_days": {
+      "major": 10,
+      "minor": 7,
+      "tradfi": 5
+    },
+    "max_open_positions": 5,
+    "concentration_penalty_ladder": [
+      [
+        65,
+        50
+      ],
+      [
+        75,
+        60
+      ],
+      [
+        90,
+        65
+      ],
+      [
+        96,
+        70
+      ]
+    ],
+    "consistency_rule": null,
+    "mandatory_sl": "expected; absence can be classed excessive risk",
+    "min_closed_trades_per_stage": 2,
+    "refund": "100% at first profit split",
+    "split": "80% to 90%",
+    "payouts_per_30d": 3,
+    "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
+    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs.",
+    "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
+    "affiliate_rate_repeat": "3%"
+  },
+  "brightfunded": {
+    "name": "BrightFunded",
+    "verified": false,
+    "verified_on": null,
+    "verified_from": [],
+    "us_available": null,
+    "_why_candidate": "1:5 leverage cap matches Bitfunded, so margin and liquidation math is directly comparable. 4h median payouts, 5 min trading days per phase, no consistency rule (per third-party sources; unverified).",
+    "products": null,
+    "drawdown_type": null,
+    "daily_basis": null,
+    "floating_counts": null,
+    "reset_utc": null,
+    "fee_per_side_pct": null,
+    "max_leverage": 5,
+    "margin_modes": null,
+    "hold_cap_days": null,
+    "max_open_positions": null,
+    "concentration_penalty_ladder": null,
+    "consistency_rule": null,
+    "mandatory_sl": null,
+    "min_closed_trades_per_stage": null,
+    "refund": null,
+    "split": null,
+    "payouts_per_30d": null,
+    "affiliate_url": null
+  },
+  "breakout": {
+    "name": "Breakout",
+    "verified": false,
+    "verified_on": null,
+    "verified_from": [],
+    "us_available": null,
+    "_why_candidate": "Kraken-owned. 862+ Trustpilot reviews at 4.8-4.9, zero denied payouts, no consistency rule, no single-trade cap (per third-party sources; unverified). Named for US traders.",
+    "products": null,
+    "drawdown_type": null,
+    "daily_basis": null,
+    "floating_counts": null,
+    "reset_utc": null,
+    "fee_per_side_pct": null,
+    "max_leverage": null,
+    "margin_modes": null,
+    "hold_cap_days": null,
+    "max_open_positions": null,
+    "concentration_penalty_ladder": null,
+    "consistency_rule": null,
+    "mandatory_sl": null,
+    "min_closed_trades_per_stage": null,
+    "refund": null,
+    "split": null,
+    "payouts_per_30d": null,
+    "affiliate_url": null
+  },
+  "_excluded": {
+    "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule - structurally different risk model, not comparable beside 5x firms. Sources name it for non-US traders."
+  }
+}
