@@ -70,10 +70,15 @@ config and bars, so the journal is the diff and nothing in it can be backdated.
 
 Daily loop for Claude Code:
 ```
-python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv   # refresh bars; start = T0 of btc_4h.csv
+python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/fresh_4h.csv   # live feed from T0 of btc_4h.csv
+python stitch_bars.py data/btc_4h.csv data/fresh_4h.csv data/live_4h.csv  # frozen history + live tail
 python forward.py live_4h.csv                                 # replay, journal, summarise
 python gen_ledger.py                                          # render web/public/ledger.html
 ```
+`.github/workflows/shadow.yml` runs exactly this at 16:20 UTC daily and commits the diff.
+The history is frozen on purpose: `btc_4h.csv` is the sample the journal was built on, and
+the live feed (api.binance.us, since api.binance.com refuses GitHub's runners) differs from
+it on every bar. Only bars after the frozen end come from the live feed.
 The stdout summary is the raw material for the daily worked-example post. The journal is
 the public log. There is NO Bitfunded free trial (confirmed 2026-09-21): the shadow IS the
 forward test until a challenge is bought, and then `state.json` is what the real account is

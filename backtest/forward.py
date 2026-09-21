@@ -5,12 +5,14 @@ Deterministic by design: every run replays from the anchor date on the current b
 file, so the result is a pure function of (config, bars). New bars extend it; the
 journal records the diff. Nothing here places an order.
 
-  python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv   # start = T0 of btc_4h.csv
-  python forward.py live_4h.csv                                            # replays + appends journal
+  python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/fresh_4h.csv    # live feed
+  python stitch_bars.py data/btc_4h.csv data/fresh_4h.csv data/live_4h.csv   # frozen + tail
+  python forward.py live_4h.csv                                              # replay + journal
 
-The fetch must start at the same bar as the frozen history (engine.T0), otherwise the
-indicator warm-up differs and the replay is a different sample. The journal is keyed on
-exit time, not bar index, so a misaligned file cannot re-append trades it already holds.
+The bar file is the frozen sample the journal was built on, extended with live bars after
+its last bar (see stitch_bars.py). Replaying history on a different feed is a different
+sample, not more of the same one. The journal is keyed on exit time, not bar index, so a
+misaligned file cannot re-append trades it already holds.
 
 Outputs:
   journal.csv   every closed trade, appended once, never rewritten

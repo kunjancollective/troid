@@ -33,13 +33,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Start at the first bar of the frozen history (engine.T0 = 2026-01-08 04:00 UTC),
-      # so indicator warm-up and bar indices match the sample the journal was built on.
-      # Starting earlier is a different sample, not more of the same one.
-      - name: Pull fresh bars
+      # Fetch from the first bar of the frozen history (engine.T0 = 2026-01-08 04:00 UTC),
+      # then extend the FROZEN file with only the bars after its last bar. The frozen bars
+      # are the sample the journal was built on. api.binance.com answers 451 on GitHub's
+      # runners and api.binance.us differs from it on every bar, so replaying the whole
+      # history on the live feed would journal a different past as if it were new.
+      - name: Pull fresh bars and extend the frozen history
         working-directory: backtest
         run: |
-          python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv
+          python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/fresh_4h.csv
+          head -1 data/fresh_4h.csv
+          python stitch_bars.py data/btc_4h.csv data/fresh_4h.csv data/live_4h.csv
           head -1 data/live_4h.csv
           tail -1 data/live_4h.csv
 
