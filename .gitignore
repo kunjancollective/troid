@@ -16,6 +16,8 @@ backtest/results/
 backtest/data/*
 !backtest/data/btc_4h.csv
 !backtest/data/live_4h.csv
+!backtest/data/BTCUSDT_4h.csv
+!backtest/data/ETHUSDT_4h.csv
 
 __pycache__/
 *.pyc
