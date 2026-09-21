@@ -85,7 +85,7 @@ def main():
             w.writerow([dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
                         bar_time(t["bar"]).isoformat(timespec="seconds"), t["bar"], t["kind"],
                         "long" if t["side"] > 0 else "short", t["fills"], t["tps_hit"],
-                        t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 3),
+                        t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 4),
                         filled_bars(t)])
 
     # ---- state

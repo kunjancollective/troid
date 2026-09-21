@@ -86,7 +86,7 @@ year. At 2%, 98%. Under a proportional cap, 0%.
 ## On our own strategy
 
 We backtested a 4h BTCUSDT system across ~30 configurations under Bitfunded's exact
-rules. Best result: +0.034R per trade, n=78, standard error 0.046R, 95% CI
+rules. Best result: +0.033R per trade, n=78, standard error 0.046R, 95% CI
 [−0.056R, +0.123R] — contains zero. Under a *true zero edge*, the best of 30
 configurations would be expected around +0.119R by chance. Ours is under a third of that.
 

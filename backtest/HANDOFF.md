@@ -108,7 +108,7 @@ the model supports it but nothing has been backtested under it yet.
 
 ## Sequencing — read before starting
 
-The strategy that exists (`troid-shadow-1`) is noise: +0.034R, CI contains zero. It goes
+The strategy that exists (`troid-shadow-1`) is noise: +0.033R, CI contains zero. It goes
 through the walk-forward anyway, as the BASELINE, because it's cheap and it calibrates
 what "noise" looks like out-of-sample on this pipeline.
 
