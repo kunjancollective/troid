@@ -52,6 +52,7 @@ jobs:
         run: |
           python forward.py live_4h.csv
           python gen_ledger.py
+          python gen_compare.py
           python gen_results.py > RESULTS.md
 
       # verify_claims.py prints a RESULT line and always exits 0, so gate on the text.
@@ -67,7 +68,7 @@ jobs:
           git config user.name "troid-shadow"
           git config user.email "shadow@troid.ai"
           git add backtest/journal.csv backtest/state.json backtest/RESULTS.md \
-                  web/public/ledger.html backtest/data/live_4h.csv
+                  web/public/ledger.html web/public/compare.html backtest/data/live_4h.csv
           if git diff --cached --quiet; then
             echo "no change today"
           else

@@ -19,7 +19,7 @@ BRAND = (HERE.parent/"web"/"public"/"index.html").read_text()
 STYLE = BRAND[BRAND.index("<link rel=\"preconnect\""):BRAND.index("</style>")+8]
 HEADER = '''<div class="bar">
   <a class="mark" href="/"><span class="dot"></span>troid</a>
-  <nav><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>'''
 
