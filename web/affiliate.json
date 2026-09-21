@@ -6,5 +6,18 @@
     "rate_repeat": "3%",
     "disclosure_required_adjacent": true,
     "rel": "sponsored noopener"
+  },
+  "brightfunded": {
+    "url": "https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA",
+    "rel": "sponsored noopener",
+    "live_on_page": false,
+    "gate": "trading rules verified from primary documents"
+  },
+  "crypto_fund_trader": {
+    "url": "https://cryptofundtrader.com?_by=kunjan-4560ae",
+    "rate_first_purchase": "unconfirmed",
+    "rel": "sponsored noopener",
+    "live_on_page": false,
+    "gate": "trading rules verified from primary documents; affiliate terms read"
   }
 }

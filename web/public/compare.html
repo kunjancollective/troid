@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid — compare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #08090a · surface #0f1113 · line #1e2124 · ink #e8e9ea · dim #7a7f85
+   signal #4dd8ac — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no gradients, no emoji. */
+:root{
+  --bg:#08090a; --surface:#0f1113; --surface2:#151719; --line:#1e2124;
+  --ink:#e8e9ea; --dim:#7a7f85; --signal:#4dd8ac; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg:#fbfbfa; --surface:#fff; --surface2:#f4f4f2; --line:#e6e6e3;
+  --ink:#0d0e0f; --dim:#6e7379; --signal:#158b68; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:flex;align-items:center;gap:9px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}
+@media(max-width:760px){.cols{grid-template-columns:1fr}}
+.col{background:var(--surface);display:flex;flex-direction:column}
+.colhead{padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.rows{flex:1}
+.r{display:flex;justify-content:space-between;gap:10px;padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.r .l{color:var(--dim);flex-shrink:0}.r .v{font-variant-numeric:tabular-nums;text-align:right}
+.r.sec{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}
+.pend{color:var(--dim);font-style:italic}
+.colfoot{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}
+.inputs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(max-width:640px){.inputs{grid-template-columns:1fr 1fr}}
+.s{font-family:var(--mono);font-size:10.5px;color:var(--dim)}
+</style></head><body><div class="wrap">
+<div class="bar">
+  <a class="mark" href="/"><span class="dot"></span>troid</a>
+  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a>
+    <a href="/dashboard">research</a><a href="https://github.com/kunjancollective/troid">source</a></nav>
+</div>
+<h1>Three firms, your numbers.</h1>
+<p class="lede">Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
+is verified from the firm's own documents or says <em>pending</em>. Nothing is scored.</p>
+<p class="meta">alphabetical · one reference firm + two by external ranking · reviewed 2026-09-21</p>
+<div class="panel"><p class="eyebrow">Your sizing</p><div class="inputs">
+  <div><label>Quota</label><input id="quota" type="number" value="100000"></div>
+  <div><label>Risk % per trade</label><input id="risk" type="number" step="any" value="0.5"></div>
+  <div><label>Stop % of price</label><input id="stop" type="number" step="any" value="1.66"></div>
+  <div><label>Leverage you use</label><input id="lev" type="number" step="any" value="5"></div>
+</div></div>
+<div class="cols"><div class="col" id="col-bitfunded">
+  <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">Bitfunded</div>
+    <div class="s" style="margin-top:3px">1-Step</div>
+    <div style="margin-top:7px"><span class="tag good">18 of 18 verified</span></div></div>
+  <div class="rows" id="rows-bitfunded"></div><div class="colfoot" id="foot-bitfunded"></div></div><div class="col" id="col-brightfunded">
+  <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">BrightFunded</div>
+    <div class="s" style="margin-top:3px">1-Step</div>
+    <div style="margin-top:7px"><span class="tag warn">12 of 18 verified</span></div></div>
+  <div class="rows" id="rows-brightfunded"></div><div class="colfoot" id="foot-brightfunded"></div></div><div class="col" id="col-crypto_fund_trader">
+  <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">Crypto Fund Trader</div>
+    <div class="s" style="margin-top:3px">1-Phase (Advanced, $100k)</div>
+    <div style="margin-top:7px"><span class="tag warn">17 of 18 verified</span></div></div>
+  <div class="rows" id="rows-crypto_fund_trader"></div><div class="colfoot" id="foot-crypto_fund_trader"></div></div></div>
+<p class="s" style="margin:16px 0 0;line-height:1.7">Bitfunded is the reference firm, not the top-ranked one. It is the firm every rule was verified against from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where the shadow runs. That verification is troid&#x27;s product; Bitfunded is the only firm where it is complete. Another firm verified to the same depth earns the same standing. Bitfunded is not listed on propfirmmatch&#x27;s crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.</p>
+<p class="s" style="margin:10px 0 0;line-height:1.7">Every firm whose rules are verified from its own primary documents appears, alphabetical, no cap. A firm is added when verification completes, never before. Bitfunded is the reference firm because it was verified first and most completely. Selection of which firms to verify next follows verified-review volume on propfirmmatch.com/crypto — an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought — with their own stated limitation: higher volume does not automatically mean better.</p>
+<p class="s" style="margin:10px 0 0;line-height:1.7">A firm&#x27;s link shows when an affiliate agreement exists AND daily, max, target and price are verified from the firm&#x27;s own documents. Other cells show &#x27;pending&#x27; individually. US availability is always shown as its own row.</p>
+<p class="foot">troid is an affiliate of every firm listed. Where a code is shown, it&#x27;s cheaper through us; where it isn&#x27;t, it&#x27;s the same price. Commission structures differ. We compute; you choose. Not financial advice. Simulated trading. Verify every rule with the firm before purchase.</p>
+</div>
+<script>
+var F={"bitfunded":{"name": "Bitfunded", "p": {"key": "1step", "label": "1-Step", "daily_pct": 4, "max_pct": 6, "target_pct": 10, "min_days": 5, "price": "$999", "daily_basis": "initial balance", "drawdown_type": "static", "reset_utc": "16:00", "fee_per_side_pct": 0.04, "max_leverage": 5, "hold_cap": "10d / 7d / 5d", "max_open": 5, "refund": "100% at first profit split", "split": "80% \u2192 90%", "us_available": "yes", "consistency_rule": "none", "news_rule": "none stated", "profit_cap": "none"}, "verified_n": 18, "total": 18, "open": [], "url": "https://www.bitfunded.com/client/register?regid=3022050068", "code": null, "promo": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed."},"brightfunded":{"name": "BrightFunded", "p": {"key": "1step", "label": "1-Step", "daily_pct": 3, "max_pct": 6, "target_pct": 10, "min_days": 5, "price": "\u20ac497 (\u20ac347.90 promo)", "daily_basis": null, "drawdown_type": null, "reset_utc": null, "fee_per_side_pct": null, "max_leverage": null, "hold_cap": "none stated", "max_open": null, "refund": "paid add-on only", "split": "up to 90%", "us_available": "MT5 barred to US; crypto platform for US unconfirmed", "consistency_rule": "none", "news_rule": "5-min restriction", "profit_cap": "none stated"}, "verified_n": 12, "total": 18, "open": ["static or trailing? (help centre or support)", "reset hour and daily basis", "crypto commission structure", "crypto leverage from trading-instruments page", "US residents: can they trade crypto, on what platform?", "2-Step Bright and Classic numbers"], "url": "https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA", "code": "YQfyv0bgQtOZMHTXOSAoAA", "promo": null},"crypto_fund_trader":{"name": "Crypto Fund Trader", "p": {"key": "1phase", "label": "1-Phase (Advanced, $100k)", "daily_pct": 4, "max_pct": 6, "target_pct": 10, "min_days": null, "price": "$619", "daily_basis": "day-start balance", "drawdown_type": "trailing \u2192 static at initial after +6%", "reset_utc": "00:05", "fee_per_side_pct": 0.0325, "max_leverage": 100, "hold_cap": "none stated", "max_open": "discretionary", "refund": "none", "split": "up to 90% (add-on); base unconfirmed", "us_available": "yes, Match-Trader only", "consistency_rule": "none (40% on Break)", "news_rule": "none on 1-Phase", "profit_cap": "$10k / day and / trade"}, "verified_n": 17, "total": 18, "open": ["Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.", "Base profit split without the add-on (FAQ)", "Maximum capital allocation (FAQ, referenced at 7.1 xii)", "Margin mode(s) offered", "Affiliate program terms from FirstPromoter: rate, cookie, ad restrictions, and whether they contain a non-disparagement clause mirroring 7.1(ix)"], "url": "https://cryptofundtrader.com?_by=kunjan-4560ae", "code": "platinum5", "promo": null}};var ORDER=["bitfunded", "brightfunded", "crypto_fund_trader"];
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function $(x){return "$"+x.toLocaleString(undefined,{maximumFractionDigits:0})}
+var P='<span class="pend">pending</span>';
+function v(x,fmt){return (x===null||x===undefined)?P:(fmt?fmt(x):String(x))}
+function row(l,val){return '<div class="r"><span class="l">'+l+'</span><span class="v">'+val+'</span></div>'}
+function sec(t){return '<div class="r sec">'+t+'</div>'}
+function render(){
+  var Q=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
+  ORDER.forEach(function(k){
+    var f=F[k],p=f.p,h="";
+    var d=p.daily_pct!=null?p.daily_pct/100:null,m=p.max_pct!=null?p.max_pct/100:null;
+    var isStatic=p.drawdown_type!=null&&String(p.drawdown_type).indexOf("static")===0;
+    var known=d!=null&&m!=null, derivable=known&&p.drawdown_type!=null;
+    h+=sec("rules");
+    h+=row("daily loss",v(p.daily_pct,function(x){return x+"% · "+$(Q*x/100)}));
+    h+=row("daily basis",v(p.daily_basis));
+    h+=row("reset (UTC)",v(p.reset_utc));
+    h+=row("max loss",v(p.max_pct,function(x){return x+"% · "+$(Q*x/100)}));
+    h+=row("drawdown type",v(p.drawdown_type));
+    h+=row("target",v(p.target_pct,function(x){return x+"%"}));
+    h+=row("min days",v(p.min_days));
+    h+=row("leverage cap",v(p.max_leverage,function(x){return x+"×"}));
+    h+=row("hold cap",v(p.hold_cap));
+    h+=row("open positions",v(p.max_open));
+    h+=row("consistency rule",v(p.consistency_rule));
+    h+=row("news rule",v(p.news_rule));
+    h+=row("profit cap",v(p.profit_cap));
+    h+=sec("at your sizing");
+    var risk=rp*Q;
+    h+=row("risk per trade",$(risk)+" ("+(rp*100).toFixed(2)+"%)");
+    if(derivable&&isStatic){
+      var room=Q*(m-d),cross=Q*(1-m+d);
+      h+=row("room before max loss binds",$(room)+" ("+((m-d)*100).toFixed(1)+"%)");
+      h+=row("ceilings swap at",$(cross));
+      h+=row("losses survivable",room>0&&risk>0?Math.floor(room/risk)+" at "+(rp*100).toFixed(2)+"%":"—");
+    }else if(derivable){
+      h+=row("room before max loss binds",'<span class="pend">trailing — moves with your high-water mark</span>');
+      h+=row("ceilings swap at",'<span class="pend">not fixed under trailing</span>');
+      h+=row("losses survivable",known?Math.floor(Q*m/risk)+" from a fresh start, fewer after any profit":P);
+    }else{
+      h+=row("room before max loss binds",P);h+=row("ceilings swap at",P);h+=row("losses survivable",P);
+    }
+    if(p.fee_per_side_pct!=null){var fee=p.fee_per_side_pct/100,drag=s>0?2*fee/(s+2*fee)*100:0;
+      h+=row("fee drag at "+(s*100).toFixed(2)+"% stop",drag.toFixed(1)+"% of risk ("+p.fee_per_side_pct+"%/side)");}
+    else h+=row("fee drag",P);
+    if(p.max_leverage!=null){var L=Math.min(lev,p.max_leverage);h+=row("isolated liq. distance","~"+((1-(1-1/L))*100).toFixed(0)+"% at "+L+"×");}
+    else h+=row("isolated liq. distance",P);
+    h+=sec("cost & access");
+    h+=row("challenge fee",v(p.price));h+=row("refund",v(p.refund));h+=row("profit split",v(p.split));
+    h+=row("US residents",v(p.us_available));
+    var foot="";
+    if(f.url){foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · our link';
+      if(f.code)foot+='<br>discount code <b>'+f.code+'</b> — cheaper through this link';
+      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';}
+    else foot='<span class="pend">Link appears once daily, max, target and price are verified from '+f.name+"'s documents.</span>";
+    if(f.open&&f.open.length)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">open: '+f.open.length+' question'+(f.open.length>1?'s':'')+' — '+f.open[0].split('.')[0]+(f.open.length>1?' …':'')+'</div>';
+    document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;
+  });
+}
+["quota","risk","stop","lev"].forEach(function(i){document.getElementById(i).addEventListener("input",render)});
+render();
+</script></body></html>

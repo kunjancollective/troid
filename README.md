@@ -39,6 +39,7 @@ we make no claim about it — see below.
 | `.claude/skills/prop-trading-desk/` | The desk. Sizing against both loss ceilings, journal analysis, market briefs. Auto-loads in Claude Code. |
 | `backtest/` | Engines modelling Bitfunded's rules exactly — floating-loss auto-fail, 16:00 UTC reset with rollover, 0.04%/side fees, static floor, 10-day hold cap, 5-day minimum. |
 | `backtest/verify_claims.py` | The accuracy ledger. |
+| `METHODOLOGY.md` | How numbers get onto a page, the four tiers, firm selection, and every correction since launch. Versioned. |
 | `backtest/STRATEGY.md` | The strategy, pinned. `strategy_config.json` is the only place it's configured. |
 | `backtest/forward.py` | The shadow: replays the strategy forward, journals trades with timestamps. Places nothing. |
 | `backtest/profile_optimizer.py` | Optimal risk per challenge type. |

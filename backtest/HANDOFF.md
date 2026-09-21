@@ -68,11 +68,13 @@ it from the anchor on the current bar file and appends any newly closed trades t
 `journal.csv` with a logged-at timestamp. Deterministic: the result is a pure function of
 config and bars, so the journal is the diff and nothing in it can be backdated.
 
-Daily loop for Claude Code:
+Daily loop — now automated in `.github/workflows/shadow.yml` at 16:20 UTC. Runs itself on
+a public repo. The manual version, for testing or for a machine without Actions:
 ```
 python fetch_binance.py BTCUSDT 2026-01-01 data/live_4h.csv    # refresh bars
 python forward.py live_4h.csv                                 # replay, journal, summarise
 python gen_ledger.py                                          # render web/public/ledger.html
+python gen_compare.py                                         # render web/public/compare.html from firms.json
 ```
 The stdout summary is the raw material for the daily worked-example post. The journal is
 the public log. There is NO Bitfunded free trial (confirmed 2026-09-21): the shadow IS the
@@ -83,10 +85,10 @@ wrong somewhere, and that is the most valuable thing this can find.
 Do not change `strategy_config.json` during the forward test. A changed config is a new
 strategy with a new journal; the old one keeps its name and its record.
 
-## Firm verification — BrightFunded and Breakout
+## Firm verification — BrightFunded and Crypto Fund Trader
 
 `firms.json` at the repo root is the schema. Bitfunded is filled and verified. The other
-two are stubs: every rule field is `null` and `verified` is `false`, and they stay off
+two are stubs (Breakout is on a watch list in `firms.json`; it rotates in if it passes either slot on the stated criterion): every rule field is `null` and `verified` is `false`, and they stay off
 the comparison page until every field is filled from the firm's OWN documents — Terms of
 Use AND help centre, read against each other, URLs recorded in `verified_from`.
 
