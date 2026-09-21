@@ -1,0 +1,72 @@
+name: shadow — daily forward test
+
+# Runs after the 16:00 UTC bar closes (Bitfunded's reset), pulls fresh 4h bars,
+# replays troid-shadow-1 from its anchor, appends any newly closed trades to the
+# journal, re-renders the ledger, and commits. Deterministic: same config + same
+# bars = same result, so the only diff each day is what actually closed.
+#
+# Places nothing. Touches no account. The journal's logged_utc column is the proof
+# that nothing here is backdated.
+
+on:
+  schedule:
+    - cron: "20 16 * * *"       # 16:20 UTC daily
+  workflow_dispatch:            # manual run from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: shadow
+  cancel-in-progress: false
+
+jobs:
+  shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Start at the first bar of the frozen history (engine.T0 = 2026-01-08 04:00 UTC),
+      # so indicator warm-up and bar indices match the sample the journal was built on.
+      # Starting earlier is a different sample, not more of the same one.
+      - name: Pull fresh bars
+        working-directory: backtest
+        run: |
+          python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv
+          head -1 data/live_4h.csv
+          tail -1 data/live_4h.csv
+
+      - name: Run the shadow and render the ledger
+        working-directory: backtest
+        run: |
+          python forward.py live_4h.csv
+          python gen_ledger.py
+          python gen_results.py > RESULTS.md
+
+      # verify_claims.py prints a RESULT line and always exits 0, so gate on the text.
+      - name: Verify nothing drifted
+        working-directory: backtest
+        run: |
+          python verify_claims.py > "$RUNNER_TEMP/verify.txt"
+          grep 'RESULT:' "$RUNNER_TEMP/verify.txt"
+          grep -q 'RESULT: 0 failed' "$RUNNER_TEMP/verify.txt"
+
+      - name: Commit the day's diff
+        run: |
+          git config user.name "troid-shadow"
+          git config user.email "shadow@troid.ai"
+          git add backtest/journal.csv backtest/state.json backtest/RESULTS.md \
+                  web/public/ledger.html backtest/data/live_4h.csv
+          if git diff --cached --quiet; then
+            echo "no change today"
+          else
+            git commit -m "shadow: $(date -u +%Y-%m-%d) — $(python3 -c "import json;s=json.load(open('backtest/state.json'));print(f\"{s['trades_new_this_run']} new, balance {s['balance']:,.0f}, {s['outcome']}\")")"
+            git push
+          fi

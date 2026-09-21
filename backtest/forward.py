@@ -5,8 +5,12 @@ Deterministic by design: every run replays from the anchor date on the current b
 file, so the result is a pure function of (config, bars). New bars extend it; the
 journal records the diff. Nothing here places an order.
 
-  python fetch_binance.py BTCUSDT 2026-01-01 data/live_4h.csv   # Claude Code, has egress
-  python forward.py                                              # replays + appends journal
+  python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv   # start = T0 of btc_4h.csv
+  python forward.py live_4h.csv                                            # replays + appends journal
+
+The fetch must start at the same bar as the frozen history (engine.T0), otherwise the
+indicator warm-up differs and the replay is a different sample. The journal is keyed on
+exit time, not bar index, so a misaligned file cannot re-append trades it already holds.
 
 Outputs:
   journal.csv   every closed trade, appended once, never rewritten
@@ -50,12 +54,16 @@ def main():
     r = V.run(bars, sigs, warm, challenge=True, risk_pct=CFG["risk_pct"], atr=atr)
 
     # ---- journal: append only trades not already logged
+    # Keyed on (exit_utc, side, kind): bar indices depend on where the bar file starts,
+    # exit times do not, so a file that starts earlier cannot duplicate the journal.
     seen = set()
     if JOURNAL.exists():
         with JOURNAL.open() as fh:
             for row in csv.DictReader(fh):
-                seen.add((int(row["exit_bar"]), row["side"], row["kind"]))
-    new = [t for t in r.trades if (t["bar"], "long" if t["side"] > 0 else "short", t["kind"]) not in seen]
+                seen.add((row["exit_utc"], row["side"], row["kind"]))
+    new = [t for t in r.trades
+           if (bar_time(t["bar"]).isoformat(timespec="seconds"),
+               "long" if t["side"] > 0 else "short", t["kind"]) not in seen]
     write_header = not JOURNAL.exists()
     with JOURNAL.open("a", newline="") as fh:
         w = csv.writer(fh)

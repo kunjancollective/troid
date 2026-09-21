@@ -70,7 +70,7 @@ config and bars, so the journal is the diff and nothing in it can be backdated.
 
 Daily loop for Claude Code:
 ```
-python fetch_binance.py BTCUSDT 2026-01-01 data/live_4h.csv    # refresh bars
+python fetch_binance.py BTCUSDT 2026-01-08T04:00:00 data/live_4h.csv   # refresh bars; start = T0 of btc_4h.csv
 python forward.py live_4h.csv                                 # replay, journal, summarise
 python gen_ledger.py                                          # render web/public/ledger.html
 ```
