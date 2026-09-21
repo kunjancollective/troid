@@ -57,7 +57,7 @@ Two bars (31 Aug 04:00 and 08:00 UTC) are forward-filled feed gaps; the one trad
 through them is flagged in the journal, not excluded.
 
 ```
-n = 78   exp +0.033R   PF 1.29   win 32%   max DD $1,058 on $100k   10.1 trades/month
+n = 78   exp +0.034R   PF 1.29   win 32%   max DD $1,058 on $100k   10.1 trades/month
 SE 0.046R   t = 0.73   95% CI [−0.056R, +0.123R]   contains zero
 ```
 
@@ -93,8 +93,15 @@ time-series holdout; survive three months of the public shadow forward test (the
 ends the claim. All three passing earns the right to say "+X R, out of sample."
 
 The time-series holdout has been run (`WALKFORWARD.md`): this configuration was chosen on
-2026, and on the 504 BTC trades from 2021–2025 it never saw it measures +0.008R, 95% CI
-[−0.023R, +0.040R]; ETH, 498 trades, +0.008R. No single year clears +0.04R. That is the
-baseline calibration of "noise" on this pipeline, and shadow-2 has to beat it out of sample.
+2026, and on the 504 BTC trades from 2021–2025 it never saw it measures +0.008R, SE 0.016R,
+95% CI [−0.023R, +0.040R]; ETH, 498 trades, +0.008R. No single year clears +0.04R.
 
-Until then the number is +0.033R, and the number is noise.
+**In-sample-to-holdout shrinkage: 75%.** +0.034R on the 78 trades the parameters were
+chosen against became +0.008R on the 504 they never saw. That is the multiple-comparisons
+effect, predicted above from the best-of-30 arithmetic and now measured on our own ledger
+(`verify_claims.py` re-derives it). At 8.5 trades a month and $500 risk, +0.008R is about
+$35 a month on a $100,000 account. The interval at n = 78 was wide enough to hope; at
+n = 504 it is tight enough to know. That is the baseline calibration of "noise" on this
+pipeline, and shadow-2 has to beat it out of sample.
+
+Until then the number is +0.034R, and the number is noise.

@@ -152,6 +152,19 @@ MONTHS = (BARS-WARM)*4/24/30.44; TPM = n/MONTHS
 check("MEASURED", "trades per month on the frozen sample", TPM, 10.1, 5e-2)
 print(f"  [DERIVED ] at {TPM:.1f} trades/mo and 0.5% risk, $6,250/mo gross needs {6250/(0.005*Q)/TPM:+.2f}R per trade")
 
+# The holdout, and the shrinkage from it. walkforward.py wrote results/walkforward_BTCUSDT.json
+# from the same config on 2021-2026; the config was chosen on 2026, so 2021-2025 is holdout.
+import json
+wf = json.load(open(pathlib.Path(__file__).parent / "results" / "walkforward_BTCUSDT.json"))
+h = wf["holdout"]
+check("MEASURED", "holdout trades, BTC 2021-2025 (walkforward_BTCUSDT.json)", h["n"], 504, 0)
+check("MEASURED", "holdout mean R per trade", h["exp"], 0.0084, 5e-4, "R")
+check("DERIVED", "holdout standard error", h["sd"]/math.sqrt(h["n"]), 0.0161, 5e-4, "R")
+check("DERIVED", "in-sample -> holdout shrinkage", (1 - h["exp"]/mean)*100, 75.0, 0.5, "%")
+check("DERIVED", "holdout expectancy in dollars per month at $500 risk", h["exp"]*500*h["n"]/h["months"], 35.0, 0.05)
+print(f"             -> +{mean:.3f}R on the {n} trades the parameters were chosen against became "
+      f"+{h['exp']:.3f}R on the {h['n']} they never saw. Multiple comparisons, measured.")
+
 # Weekly reporting resolution
 print()
 for per, k in [("week", TPM/4.33), ("month", TPM), ("year", TPM*12)]:

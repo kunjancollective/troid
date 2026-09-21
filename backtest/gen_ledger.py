@@ -52,6 +52,8 @@ def main():
     se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
     noise30 = se*math.sqrt(2*math.log(30))          # expected best of ~30 configs under a true zero edge
     flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
+    wf_path = HERE/"results"/"walkforward_BTCUSDT.json"          # the holdout, if it has been run
+    hold = json.loads(wf_path.read_text())["holdout"] if wf_path.exists() else None
     gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
     gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
     pf = gw/gl if gl else 0
@@ -85,7 +87,8 @@ def main():
 
 <div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~{se:.3f}R, a
 confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero, and a result {"below" if exp < noise30 else "above"} what chance produces across the
-~30 configurations searched (~{noise30:+.3f}R). It is published so you can watch it, not because it works.
+~30 configurations searched (~{noise30:+.3f}R).{
+f' Out of sample, on the {hold["n"]} trades from 2021–2025 the parameters never saw: {hold["exp"]:+.3f}R, SE {hold["se"]:.3f}R. No edge, confirmed.' if hold else ''} It is published so you can watch a null result run forward, not because it works.
 {len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.{
 f" {flagged} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded." if flagged else ""}</div>
 
