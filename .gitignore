@@ -13,6 +13,8 @@ business/
 
 # run outputs and bulk data
 backtest/results/
+!backtest/results/
+!backtest/results/walkforward_*.json
 backtest/data/*
 !backtest/data/btc_4h.csv
 !backtest/data/live_4h.csv

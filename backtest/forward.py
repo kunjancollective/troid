@@ -15,7 +15,8 @@ sample, not more of the same one. The journal is keyed on exit time, not bar ind
 misaligned file cannot re-append trades it already holds.
 
 Outputs:
-  journal.csv   every closed trade, appended once, never rewritten
+  journal.csv   every closed trade, appended once, never rewritten; filled_bars counts
+                the forward-filled (flat, gap-substitute) bars the trade held through
   state.json    open position, budgets, binding ceiling, last bar processed
   stdout        a daily summary suitable for the worked-example post
 """
@@ -55,6 +56,14 @@ def main():
     warm = max(E.EMA_TREND + E.TREND_SLOPE_BARS, V.RANGE_BARS) + 1
     r = V.run(bars, sigs, warm, challenge=True, risk_pct=CFG["risk_pct"], atr=atr)
 
+    # ---- forward-filled bars: fetch_binance.py fills a feed gap with a flat bar at the
+    # previous close (o == h == l == c). A real 4h bar never has zero range, so flat is the
+    # fill signature. A trade that held through one is flagged, never excluded.
+    flat = [i for i, b in enumerate(bars) if b[0] == b[1] == b[2] == b[3]]
+
+    def filled_bars(t):
+        return sum(1 for i in flat if t["bar"] - t["bars"] <= i <= t["bar"])
+
     # ---- journal: append only trades not already logged
     # Keyed on (exit_utc, side, kind): bar indices depend on where the bar file starts,
     # exit times do not, so a file that starts earlier cannot duplicate the journal.
@@ -71,12 +80,13 @@ def main():
         w = csv.writer(fh)
         if write_header:
             w.writerow(["logged_utc", "exit_utc", "exit_bar", "kind", "side", "fills",
-                        "tps_hit", "bars_held", "reason", "pnl", "r"])
+                        "tps_hit", "bars_held", "reason", "pnl", "r", "filled_bars"])
         for t in new:
             w.writerow([dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
                         bar_time(t["bar"]).isoformat(timespec="seconds"), t["bar"], t["kind"],
                         "long" if t["side"] > 0 else "short", t["fills"], t["tps_hit"],
-                        t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 3)])
+                        t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 3),
+                        filled_bars(t)])
 
     # ---- state
     last = len(bars) - 1
@@ -86,7 +96,9 @@ def main():
              "trades_total": len(r.trades), "trades_new_this_run": len(new),
              "trading_days": len(r.trading_days),
              "distance_to_floor": round(r.balance - floor_total, 2),
-             "max_drawdown": round(r.trough_dd, 2)}
+             "max_drawdown": round(r.trough_dd, 2),
+             "forward_filled_bars": len(flat),
+             "trades_touching_filled_bars": sum(1 for t in r.trades if filled_bars(t))}
     STATE.write_text(json.dumps(state, indent=2))
 
     # ---- summary for the daily post
@@ -96,7 +108,8 @@ def main():
     if st:
         print(f"  {st['n']} trades   exp {st['exp_r']:+.3f}R   PF {st['profit_factor']:.2f}   "
               f"win {st['win_rate']:.0f}%   maxDD ${r.trough_dd:,.0f}")
-    print(f"  {len(new)} new trade(s) journaled")
+    print(f"  {len(new)} new trade(s) journaled"
+          + (f", {sum(1 for t in new if filled_bars(t))} through a forward-filled bar" if any(filled_bars(t) for t in new) else ""))
     for t in new[-3:]:
         print(f"    {bar_time(t['bar']):%Y-%m-%d %H:%M}  {t['kind']:<9} "
               f"{'long ' if t['side']>0 else 'short'}  {t['reason']:<18} {t['r']:+.2f}R")

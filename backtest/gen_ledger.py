@@ -7,7 +7,7 @@ Every closed trade, the equity curve, the current state. Losers included, nothin
 edited. The page carries the strategy's own verdict on itself: inside noise.
 """
 from __future__ import annotations
-import csv, json, html, datetime as dt
+import csv, json, html, math, statistics, datetime as dt
 from pathlib import Path
 
 HERE = Path(__file__).parent
@@ -49,6 +49,9 @@ def main():
     net = sum(float(r["pnl"]) for r in rows)
     rs = [float(r["r"]) for r in rows]
     exp = sum(rs)/n if n else 0
+    se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
+    noise30 = se*math.sqrt(2*math.log(30))          # expected best of ~30 configs under a true zero edge
+    flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
     gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
     gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
     pf = gw/gl if gl else 0
@@ -58,10 +61,11 @@ def main():
         cut = now - dt.timedelta(days=days)
         return [r for r in rows if dt.datetime.fromisoformat(r["exit_utc"]) >= cut]
     wk, mo = since(7), since(30)
-    live = [r for r in rows if r["logged_utc"][:10] != rows[0]["logged_utc"][:10]] if rows else []
+    # the backfill was written in one run, so every backfilled row carries the same timestamp
+    live = [r for r in rows if r["logged_utc"] != rows[0]["logged_utc"]] if rows else []
 
     trades_html = "".join(f'''<tr><td>{r["exit_utc"][:10]}</td><td>{r["kind"]}</td><td>{r["side"]}</td>
-<td class="num">{r["fills"]}</td><td class="num">{r["bars_held"]}</td><td>{r["reason"]}</td>
+<td class="num">{r["fills"]}</td><td class="num">{r["bars_held"]}</td><td>{r["reason"]}{' <span title="held through a forward-filled bar">⚑</span>' if int(r.get("filled_bars") or 0) else ''}</td>
 <td class="num" style="color:{'var(--signal)' if float(r['pnl'])>0 else 'var(--bad)'}">{float(r["pnl"]):+,.2f}</td>
 <td class="num">{float(r["r"]):+.2f}</td></tr>''' for r in reversed(rows[-40:]))
 
@@ -79,10 +83,11 @@ def main():
 <p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
 <p class="meta">as of {st.get("as_of_bar_utc","—")[:16].replace("T"," ")} UTC · {cfg["instrument"]} {cfg["timeframe"]} · {cfg["profile"]} rules · cross 5x</p>
 
-<div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~0.045R, a
-confidence interval that contains zero, and a result below what chance produces across the
-~30 configurations searched. It is published so you can watch it, not because it works.
-{len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.</div>
+<div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~{se:.3f}R, a
+confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero, and a result {"below" if exp < noise30 else "above"} what chance produces across the
+~30 configurations searched (~{noise30:+.3f}R). It is published so you can watch it, not because it works.
+{len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.{
+f" {flagged} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded." if flagged else ""}</div>
 
 <div class="panel"><p class="eyebrow">Equity</p>{equity_svg(rows)}</div>
 
@@ -108,7 +113,7 @@ confidence interval that contains zero, and a result below what chance produces 
 {trades_html}</table></div></div>
 
 <p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
-ledger entry, not a claim. Read it that way. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a></p>
+ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a></p>
 </div></body></html>'''
     OUT.write_text(page)
     print(f"ledger.html: {n} trades, net {net:+,.0f}, {len(live)} logged live -> {OUT}")

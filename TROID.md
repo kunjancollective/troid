@@ -172,8 +172,8 @@ confirms in writing. Tell the user to verify anything material with support.
 **"Should I use 5× or 2×?"** — same loss either way. Leverage sets margin and liquidation
 distance. Under cross at sane sizing, neither matters; the stop does.
 
-**"Does the strategy work?"** — our backtest measured +0.038R per trade, n=71, standard
-error 0.045R, confidence interval containing zero, and below what chance produces across
+**"Does the strategy work?"** — our backtest measured +0.033R per trade, n=78, standard
+error 0.046R, confidence interval containing zero, and below what chance produces across
 the ~30 configurations searched. That is noise. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the

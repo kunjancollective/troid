@@ -2,10 +2,12 @@
   "strategy": "troid-shadow-1",
   "as_of_bar_utc": "2026-09-21T12:00:00+00:00",
   "outcome": "running",
-  "balance": 101753.36,
-  "trades_total": 73,
-  "trades_new_this_run": 2,
-  "trading_days": 64,
-  "distance_to_floor": 7753.36,
-  "max_drawdown": -759.26
+  "balance": 101298.6,
+  "trades_total": 78,
+  "trades_new_this_run": 0,
+  "trading_days": 69,
+  "distance_to_floor": 7298.6,
+  "max_drawdown": -1057.94,
+  "forward_filled_bars": 2,
+  "trades_touching_filled_bars": 1
 }

@@ -102,7 +102,7 @@ for split, pub in [(0.80, 6250.0), (0.90, 5555.5556)]:
 check("DERIVED", "monthly target as % of a $100k account", 6250/Q*100, 6.25, 1e-9, "%")
 check("DERIVED", "target vs total 6% buffer", 6250/(Q*MAXLOSS), 1.0417, 1e-3, "x")
 # R needed = target / (risk_dollars * trades)
-for tpm, rp, pub in [(7,0.005,1.7857),(9.2,0.005,1.3587),(30,0.005,0.4167),(30,0.02,0.1042)]:
+for tpm, rp, pub in [(7,0.005,1.7857),(30,0.005,0.4167),(30,0.02,0.1042)]:
     check("DERIVED", f"R/trade needed at {tpm} trades/mo, {rp*100:.1f}% risk",
           6250/(rp*Q)/tpm, pub, 1e-3, "R")
 # Seven-account ceiling
@@ -114,25 +114,48 @@ print()
 print("="*76)
 print("  5. STATISTICS OF OUR OWN BACKTEST - the limits of what we may claim")
 print("="*76)
-# Reproduce the significance test from the reported summary statistics.
-n, mean, sd = 71, 0.038, 0.378
+# Re-derived from the PUBLIC JOURNAL, not from the engine. Only the frozen sample counts:
+# rows that closed on or before the last bar of data/btc_4h.csv. Rows the daily shadow
+# appends after that are the live tail and are excluded, so this measures the published
+# sample and fails if journal.csv or the published figures drift from each other.
+import csv, pathlib
+FROZEN_END = "2026-09-21T12:00:00+00:00"                     # last bar of data/btc_4h.csv
+PUB_N, PUB_MEAN, PUB_SD = 78, 0.0335, 0.4029                # STRATEGY.md "What it measured"
+PUB_PF, PUB_WIN = 1.29, 32.0
+BARS, WARM = 1539, 127                                     # sample length, indicator warm-up
+rows = [r for r in csv.DictReader(open(pathlib.Path(__file__).with_name("journal.csv")))
+        if r["exit_utc"] <= FROZEN_END]
+rs = [float(r["r"]) for r in rows]; pnl = [float(r["pnl"]) for r in rows]
+n, mean, sd = len(rs), statistics.mean(rs), statistics.stdev(rs)
+gw, gl = sum(x for x in pnl if x > 0), -sum(x for x in pnl if x < 0)
+check("MEASURED", "trades in the frozen sample (journal.csv)", n, PUB_N, 0)
+check("MEASURED", "mean R per trade", mean, PUB_MEAN, 5e-4, "R")
+check("MEASURED", "sd of R per trade", sd, PUB_SD, 5e-4, "R")
+check("MEASURED", "profit factor", gw/gl, PUB_PF, 5e-3)
+check("MEASURED", "win rate", 100*sum(1 for x in pnl if x > 0)/n, PUB_WIN, 0.5, "%")
+flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
+print(f"  [MEASURED] {flagged} of {n} trades held through a forward-filled bar (flagged in the journal, not excluded)")
 se = sd/math.sqrt(n)
-print(f"  [MEASURED] n={n}, mean {mean:+.3f}R, sd {sd:.3f}R")
-check("DERIVED", "standard error of the mean", se, 0.0449, 1e-3, "R")
-check("DERIVED", "t statistic", mean/se, 0.8470, 1e-2)
+check("DERIVED", "standard error of the mean", se, 0.0456, 1e-3, "R")
+check("DERIVED", "t statistic", mean/se, 0.7351, 1e-2)
 lo, hi = mean-1.96*se, mean+1.96*se
 print(f"  [DERIVED ] 95% CI [{lo:+.3f}R, {hi:+.3f}R] -> contains zero: {lo < 0 < hi}")
 # Expected maximum of k independent draws from N(0, se) ~ se*sqrt(2 ln k)
 for k in (10, 30, 52):
     print(f"  [DERIVED ] best of {k:>2} configs under a TRUE zero edge: "
           f"~+{se*math.sqrt(2*math.log(k)):.3f}R by chance alone")
-print(f"             -> our best ({mean:+.3f}R) is BELOW the best-of-30 noise threshold.")
+print(f"             -> our best ({mean:+.3f}R) is {'BELOW' if mean < se*math.sqrt(2*math.log(30)) else 'ABOVE'} the best-of-30 noise threshold.")
 print(f"             -> claimable: nothing. This is a hypothesis for out-of-sample testing.")
+
+# Frequency, and what the income target would need at it
+MONTHS = (BARS-WARM)*4/24/30.44; TPM = n/MONTHS
+check("MEASURED", "trades per month on the frozen sample", TPM, 10.1, 5e-2)
+print(f"  [DERIVED ] at {TPM:.1f} trades/mo and 0.5% risk, $6,250/mo gross needs {6250/(0.005*Q)/TPM:+.2f}R per trade")
 
 # Weekly reporting resolution
 print()
-for per, tpm in [("week", 9.2/4.33), ("month", 9.2), ("year", 110)]:
-    k = max(tpm,1)
+for per, k in [("week", TPM/4.33), ("month", TPM), ("year", TPM*12)]:
+    k = max(k, 1)
     print(f"  [DERIVED ] a {per:<6} of trades (n={k:>5.1f}) has SE {sd/math.sqrt(k):>5.3f}R"
           f"  -> {'meaningless' if sd/math.sqrt(k) > 0.15 else 'marginal'}")
 

@@ -1,7 +1,7 @@
 # HANDOFF — Bitfunded 4h BTC strategy test
 
 You're picking up a backtest that was built and validated on 8 months of BTCUSDT 4h data
-(Jan 8 – Sep 14 2026, 1500 bars) inside a sandbox with no market-data egress. Your job is
+(Jan 8 – Sep 21 2026, 1,539 bars, api.binance.us) inside a sandbox with no market-data egress. Your job is
 to run it on years of data, extend it along three specific lines, and report honestly.
 
 The account is a Bitfunded Expert $100,000 Stage 1 (1 Step) challenge. Its rules are the whole point
@@ -27,7 +27,8 @@ engine_v2.py        v2: regime switch (pullback in trend / breakout in compressi
                     3-tranche ladder, 3 take-profits, ablation flags REGIME / BREAKOUT / LADDER
 analyze.py          regime bucketing + small robustness grid (v1)
 fetch_binance.py    pulls t,o,h,l,c 4h bars from Binance public API, forward-fills gaps
-btc_4h.csv          the 8-month sample (o,h,l,c; T0 = 1767844800, step 14400)
+btc_4h.csv          the 8-month sample, FROZEN (t,o,h,l,c from api.binance.us; T0 = 1767844800, step 14400)
+stitch_bars.py      extends the frozen sample with live bars after its last bar; never re-fetch history
 bitfunded_config.json  firm rules + the desk's risk model parameters
 RESULTS.md          what's been established so far and why
 ```
@@ -53,7 +54,7 @@ regime filter and strength ladder don't survive the cross-section, they were fit
 BTC's 2026 and the time-series test is moot.
 
 **Guard against the scale trap.** 120 assets x 30 configurations is 3,600 tests. At the
-measured SE of 0.045R, the best of 3,600 under a TRUE zero edge would be about +0.18R by
+measured SE of 0.046R, the best of 3,600 under a TRUE zero edge would be about +0.18R by
 chance. Report the full distribution across assets, never the best cell. A strategy that
 works on 4 of 120 assets has been selected, not discovered.
 
@@ -76,9 +77,11 @@ python forward.py live_4h.csv                                 # replay, journal,
 python gen_ledger.py                                          # render web/public/ledger.html
 ```
 `.github/workflows/shadow.yml` runs exactly this at 16:20 UTC daily and commits the diff.
-The history is frozen on purpose: `btc_4h.csv` is the sample the journal was built on, and
-the live feed (api.binance.us, since api.binance.com refuses GitHub's runners) differs from
-it on every bar. Only bars after the frozen end come from the live feed.
+The history is frozen on purpose: `btc_4h.csv` is the sample the journal was built on, from
+api.binance.us (api.binance.com refuses GitHub's runners with a 451). Exchange feeds differ
+on every bar, and re-fetching history on a different feed rewrote the past once. Only bars
+after the frozen end come from the live feed, and `journal.csv` flags any trade that held
+through a forward-filled bar (`filled_bars`).
 The stdout summary is the raw material for the daily worked-example post. The journal is
 the public log. There is NO Bitfunded free trial (confirmed 2026-09-21): the shadow IS the
 forward test until a challenge is bought, and then `state.json` is what the real account is
@@ -105,7 +108,7 @@ the model supports it but nothing has been backtested under it yet.
 
 ## Sequencing — read before starting
 
-The strategy that exists (`troid-shadow-1`) is noise: +0.038R, CI contains zero. It goes
+The strategy that exists (`troid-shadow-1`) is noise: +0.033R, CI contains zero. It goes
 through the walk-forward anyway, as the BASELINE, because it's cheap and it calibrates
 what "noise" looks like out-of-sample on this pipeline.
 
@@ -120,6 +123,12 @@ Run shadow-2 through the same cross-section and walk-forward. Report both side b
 If neither survives, say so; that is the finding.
 
 ## Do these, in order
+
+**Status 2026-09-21.** Step 1 done (`.github/workflows/data.yml`, api.binance.us,
+12,538 bars each, 4 gaps forward-filled). Step 3 done for the baseline only:
+`WALKFORWARD.md`, shadow-1 on 2021–2025 is +0.008R on BTC and ETH, CI contains zero.
+Steps 2, 4, 5, 6, 7 and the cross-section are open. The feed is api.binance.us
+throughout; the fetch falls back to it because api.binance.com answers 451 on runners.
 
 ### 1. Expand the data
 ```
@@ -142,8 +151,8 @@ neighbourhood, say so; that's a finding.
 
 ### 4. Ladder direction (this is the one the 8-month test flagged)
 The current ladder scales in on *weakness*: T2/T3 sit 0.5 and 1.0 ATR below T1 for longs.
-On the sample, winners averaged 1.40 tranches filled and losers 2.50 — the ladder loads up
-on the trades going against you and stays light on the ones that work. PF 0.50.
+On the sample, winners averaged 1.53 tranches filled and losers 2.62 — the ladder loads up
+on the trades going against you and stays light on the ones that work. PF 0.47.
 Implement and compare:
 - `ladder=weakness` (current)
 - `ladder=strength`: T2 at T1 + 0.5 ATR, T3 at T1 + 1.0 ATR (add only as it proves out),

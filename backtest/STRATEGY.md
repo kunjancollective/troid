@@ -28,7 +28,7 @@ direction of the trade* and fill only as it proves out. Stop anchored beyond T1'
 structure, 0.5 ATR buffer, skipped if wider than 2.5 ATR. Each tranche carries 1/5 of
 the risk budget at the shared stop. Unfilled tranches cancel after 6 bars or at TP1.
 
-Measured effect: winners fill 4.42 tranches, losers 1.55 (with reverse-on-stop; 4.17 / 1.63 without). Same risk, ~34% less total
+Measured effect: winners fill 4.48 tranches, losers 1.64 (with reverse-on-stop; 4.26 / 1.66 without). Same risk, ~34% less total
 quantity than a single entry — the benefit is conditionality, not size.
 
 **Three take-profits** at 1R, 2R, 3R measured from T1. TP1 closes a third of what's
@@ -51,24 +51,27 @@ Pass requires ≥5 trading days (ToU 9(a)). Leverage capped at 5×.
 
 ## What it measured
 
-BTCUSDT 4h, 8 Jan – 14 Sep 2026, 1,500 bars, one regime.
+BTCUSDT 4h from api.binance.us, 8 Jan – 21 Sep 2026, 1,539 bars, one regime. One feed end
+to end: the daily shadow extends this same file from this same feed (`stitch_bars.py`).
+Two bars (31 Aug 04:00 and 08:00 UTC) are forward-filled feed gaps; the one trade that held
+through them is flagged in the journal, not excluded.
 
 ```
-n = 71   exp +0.038R   PF 1.37   win 34%   max DD $759 on $100k   9.2 trades/month
-SE 0.045R   t = 0.85   95% CI [−0.050R, +0.126R]   contains zero
+n = 78   exp +0.033R   PF 1.29   win 32%   max DD $1,058 on $100k   10.1 trades/month
+SE 0.046R   t = 0.73   95% CI [−0.056R, +0.123R]   contains zero
 ```
 
 ~30 configurations were searched on this sample. Under a true zero edge the best of 30
 would be expected near +0.12R by chance. This result is below that threshold.
 
-**70 rolling challenge starts: 0 pass, 0 fail, 0 zombie.** Median ending balance
-$99,060. The cap holds the account flat; nothing in the entry logic moves it.
+**72 rolling challenge starts: 0 pass, 0 fail, 0 zombie.** Median ending balance
+$100,409. The cap holds the account flat; nothing in the entry logic moves it.
 
 ## What holds regardless
 
 Four findings are structural and survived every configuration:
 
-1. Ladder direction is the largest effect found — strength beats weakness by 0.17R.
+1. Ladder direction is the largest effect found — strength beats weakness by 0.31R at five tranches.
 2. Intraday holding is self-defeating on 4h bars; half of trades get clock-flattened.
 3. The regime filter is the only improvement with a mechanism behind it.
 4. Under the cap, ruin is unreachable and the failure mode is a stalled account.
@@ -85,9 +88,13 @@ calendar. Verify data availability before building on any of them.
 
 ## What would make it real
 
-In order: survive 10 assets (5 crypto, 5 TradFi) in the cross-section; survive a
-2021–2024 fit / 2025–now holdout in the time series; survive three months of the public
-shadow forward test (there is no Bitfunded free trial; the shadow is the forward test). Any one failing
+In order: survive 10 assets (5 crypto, 5 TradFi) in the cross-section; survive the
+time-series holdout; survive three months of the public shadow forward test (there is no Bitfunded free trial; the shadow is the forward test). Any one failing
 ends the claim. All three passing earns the right to say "+X R, out of sample."
 
-Until then the number is +0.038R, and the number is noise.
+The time-series holdout has been run (`WALKFORWARD.md`): this configuration was chosen on
+2026, and on the 504 BTC trades from 2021–2025 it never saw it measures +0.008R, 95% CI
+[−0.023R, +0.040R]; ETH, 498 trades, +0.008R. No single year clears +0.04R. That is the
+baseline calibration of "noise" on this pipeline, and shadow-2 has to beat it out of sample.
+
+Until then the number is +0.033R, and the number is noise.
