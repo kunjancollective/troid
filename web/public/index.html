@@ -118,14 +118,15 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <div class="panel">
   <p class="eyebrow">Size a trade</p>
   <div class="grid g4">
-    <div><label>Challenge</label><select id="profile">
-      <option value="1step">1-Step</option><option value="2step_s1">2-Step · S1</option>
-      <option value="2step_s2">2-Step · S2</option><option value="express">Express</option>
-      <option value="instant">Instant</option><option value="trader">Funded</option>
-    </select></div>
+    <div><label>Firm</label><select id="firm"></select></div>
+    <div><label>Challenge</label><select id="profile"></select></div>
     <div><label>Quota</label><input id="quota" type="number" value="100000"></div>
     <div><label>Equity</label><input id="equity" type="number" value="100000"></div>
+  </div>
+  <div class="grid g4">
     <div><label>Day start</label><input id="daystart" type="number" value="100000"></div>
+    <div id="hiWrap" style="display:none"><label>High at rollover</label><input id="hirollover" type="number" placeholder="= day start"></div>
+    <div id="hwmWrap" style="display:none"><label>High-water mark</label><input id="hwm" type="number" placeholder="= max(equity, quota)"></div>
   </div>
   <div class="grid g4">
     <div><label>Side</label><select id="side"><option value="1">long</option>
@@ -222,72 +223,104 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <!-- disclaimers:end -->
 </div></footer>
 
+<!-- profiles:start -->
+<script>var FIRMS={"bitfunded":{"name":"Bitfunded","products":{"1step":{"label":"1-Step","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"2step_s1":{"label":"2-Step \u00b7 S1","d":5,"m":10,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"2step_s2":{"label":"2-Step \u00b7 S2","d":5,"m":8,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"express":{"label":"Express","d":3,"m":3,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"instant":{"label":"Instant","d":3,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"trader":{"label":"Funded","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5}}},"brightfunded":{"name":"BrightFunded","products":{"1step":{"label":"1-Step","d":3,"m":6,"basis":"max_balance_equity","dd":"trailing","locks":6,"hwm":"equity","fee":null,"lev":null}}},"crypto_fund_trader":{"name":"Crypto Fund Trader","products":{"1phase":{"label":"1-Phase (Advanced)","d":4,"m":6,"basis":"day_start","dd":"trailing","locks":6,"hwm":"balance","fee":0.0325,"lev":100},"2phase":{"label":"2-Phase","d":5,"m":10,"basis":"day_start","dd":"static","locks":6,"hwm":"balance","fee":0.0325,"lev":100},"instant":{"label":"Instant","d":4,"m":6,"basis":"day_start","dd":null,"locks":6,"hwm":"balance","fee":0.0325,"lev":100}}}};</script>
+<!-- profiles:end -->
 <script>
-var P={"1step":{d:4,m:6},"2step_s1":{d:5,m:10},"2step_s2":{d:5,m:8},"express":{d:3,m:3},"instant":{d:3,m:6},"trader":{d:4,m:6}};
-var FEE=0.0004,MMR=0.005;
+/* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
+   a null there is a pending rule and is shown as pending here. Nothing is guessed. */
+var MMR=0.005;
 function n(id){return parseFloat(document.getElementById(id).value)||0}
+function el(id){return document.getElementById(id)}
 function $(x){return "$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+var PEND='<span style="color:var(--dim);font-style:italic">pending</span>';
+function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
+function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
+function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none"}
 function render(){
-  var p=P[document.getElementById("profile").value];
-  var quota=n("quota"),eq=n("equity"),ds=n("daystart");
-  var side=parseFloat(document.getElementById("side").value);
-  var entry=n("entry"),stop=n("stop"),tR=n("targetR");
-  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev");
-  var mode=document.getElementById("mode").value;
-  var dLim=quota*p.d/100,dFloor=ds-dLim,dB=eq-dFloor,ddFloor=quota*(1-p.m/100),ddB=eq-ddFloor;
-  var bind=dB<=ddB?"daily loss limit":"max drawdown",eff=Math.min(dB,ddB);
-  var d=Math.abs(entry-stop),blocks=[],notes=[];
+  var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
+  var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
+  var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
+  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value;
+  var dpct=p.d/100,mpct=p.m/100,notes=[],pend=[];
+  // daily floor, by the firm's basis
+  var dFloor=null;
+  if(p.basis==="initial")dFloor=ds-quota*dpct;                      // fixed amount from the initial balance
+  else if(p.basis==="day_start")dFloor=ds*(1-dpct);                  // percentage of the day-start balance
+  else if(p.basis==="max_balance_equity")dFloor=hi-quota*dpct;       // fixed amount below the high at rollover
+  else pend.push("daily basis");
+  // max-loss floor, by the firm's drawdown type
+  var ddFloor=null,locked=false;
+  if(p.dd==="static")ddFloor=quota*(1-mpct);
+  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);}
+  else pend.push("drawdown type");
+  var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
+  if(dB==null&&ddB==null){
+    h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · daily basis and drawdown type not yet verified from the firm’s documents</span></div>'+
+      '<div class="notes"><div>troid sizes against verified rules only. The compare page shows what is pending for this firm.</div></div>';
+    el("result").innerHTML=h;return;
+  }
+  var bind,eff;
+  if(dB==null){bind="max drawdown";eff=ddB;notes.push("daily basis pending for this firm — sized against the drawdown ceiling only");}
+  else if(ddB==null){bind="daily loss limit";eff=dB;notes.push("drawdown type pending for this firm — sized against the daily ceiling only");}
+  else{bind=dB<=ddB?"daily loss limit":"max drawdown";eff=Math.min(dB,ddB);}
+  if(p.dd==="trailing")notes.push(locked?"trailing floor locked at the initial balance ("+$(quota)+") after +"+p.locks+"%":
+    "trailing floor "+$(ddFloor)+" = high-water mark × (1 − "+(mpct*100)+"%)"+(p.hwm==="equity"?" — trails on equity intraday: an unrealised high raises the floor":""));
+  if(p.basis==="max_balance_equity")notes.push("daily floor = high at rollover − "+(dpct*100)+"% of the original size");
+  var dist=Math.abs(entry-stop),blocks=[];
   if(side>0&&stop>=entry)blocks.push("stop at or above entry on a long");
   if(side<0&&stop<=entry)blocks.push("stop at or below entry on a short");
-  if(d<=0)blocks.push("stop distance is zero");
-  if(eff<=0)blocks.push("no budget left \u2014 "+bind+" already breached");
+  if(dist<=0)blocks.push("stop distance is zero");
+  if(eff<=0)blocks.push("no budget left — "+bind+" already breached");
   var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
-  var reduced=risk<intended-1e-9,h="";
+  var reduced=risk<intended-1e-9;
   if(blocks.length){
-    h='<div class="verdict vBLOCK"><span class="vtag">BLOCK</span>'+
-      '<span class="vtxt">'+bind+'</span></div><div class="notes">'+
+    h='<div class="verdict vBLOCK"><span class="vtag">BLOCK</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
       blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>';
-    document.getElementById("result").innerHTML=h;return;
+    el("result").innerHTML=h;return;
   }
-  var fu=entry*FEE*2,qty=risk/(d+fu),notional=qty*entry,margin=notional/lev;
-  var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*d;
+  var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
+  if(!feeKnown){pend.push("fee");notes.push("fee per side pending for this firm — size shown before fees");}
+  var levCap=p.lev,levUsed=lev;
+  if(levCap!=null&&lev>levCap){levUsed=levCap;notes.push("leverage capped at "+levCap+"× by the firm");}
+  if(levCap==null)pend.push("leverage cap");
+  var fu=entry*fee*2,qty=risk/(dist+fu),notional=qty*entry,margin=notional/levUsed;
+  var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*dist;
   var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
-  if(fshare>15)notes.push("fees are "+fshare.toFixed(0)+"% of risk \u2014 stop tight enough that costs dominate");
-  if(reduced)notes.push("cut from "+$(intended)+" to "+$(risk)+" \u2014 "+bind+" budget caps it");
+  if(feeKnown&&fshare>15)notes.push("fees are "+fshare.toFixed(0)+"% of risk — stop tight enough that costs dominate");
+  if(reduced)notes.push("cut from "+$(intended)+" to "+$(risk)+" — "+bind+" budget caps it");
   notes.push(left+" more losses at this size before "+bind+" trips");
   // circuit breakers: adverse move at which each thing stops you
-  var sp=d/entry*100,dp=dB/notional*100,fp=ddB/notional*100,liq;
-  if(mode==="isolated")liq=(1-(1-1/lev)/(1-MMR))*100;
+  var sp=dist/entry*100,liq;
+  if(mode==="isolated")liq=(1-(1-1/levUsed)/(1-MMR))*100;
   else liq=notional<eq/MMR?(1-(1-eq/notional)/(1-MMR))*100:Infinity;
-  var ord=[["your stop",sp],["daily limit",dp],["max-loss floor",fp],["exchange liq ("+mode+")",Math.max(liq,0)]]
-    .sort(function(a,b){return a[1]-b[1]});
-  if(ord[0][0]!=="your stop")notes.push("DANGER \u2014 "+ord[0][0]+" binds at "+ord[0][1].toFixed(2)+"% adverse, inside your stop");
-  else if(mode==="cross")notes.push("cross: nothing cuts a runaway before the firm's floor \u2014 your stop is the only breaker in front of it");
-  else notes.push("isolated: exchange liquidates at "+liq.toFixed(1)+"% for the position's own margin, before the floor");
-  var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"\u2014")}).join("  \u2192  ");
+  var ord=[["your stop",sp]];
+  if(dB!=null)ord.push(["daily limit",dB/notional*100]);
+  if(ddB!=null)ord.push([p.dd==="trailing"&&!locked?"trailing floor":"max-loss floor",ddB/notional*100]);
+  ord.push(["exchange liq ("+mode+")",Math.max(liq,0)]);
+  ord.sort(function(a,b){return a[1]-b[1]});
+  if(ord[0][0]!=="your stop")notes.push("DANGER — "+ord[0][0]+" binds at "+ord[0][1].toFixed(2)+"% adverse, inside your stop");
+  else if(mode==="cross")notes.push("cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it");
+  else notes.push("isolated: exchange liquidates at "+liq.toFixed(1)+"% for the position’s own margin, before the floor");
+  var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"—")}).join("  →  ");
   var v=reduced?"REDUCE":"OK";
   h='<div class="verdict v'+v+'"><span class="vtag">'+v+'</span>'+
-    '<span class="vtxt">binding \u00b7 '+bind+' \u00b7 '+$(eff)+' of room</span></div>'+
+    '<span class="vtxt">'+f.name+" · "+p.label+" · binding · "+bind+" · "+$(eff)+' of room</span></div>'+
     '<div class="read">'+
-    '<div class="cell"><div class="k">size</div><div class="v">'+qty.toFixed(6)+
-      '</div><div class="s">'+$(notional)+'</div></div>'+
-    '<div class="cell"><div class="k">margin</div><div class="v">'+$(margin)+
-      '</div><div class="s">'+lev+'x</div></div>'+
-    '<div class="cell"><div class="k">risk</div><div class="v">'+$(risk)+
-      '</div><div class="s">incl '+$(fees)+' fees</div></div>'+
-    '<div class="cell"><div class="k">fees</div><div class="v">'+fshare.toFixed(1)+
-      '%</div><div class="s">of risk</div></div>'+
-    '<div class="cell"><div class="k">stop</div><div class="v">'+(d/entry*100).toFixed(2)+
-      '%</div><div class="s">tgt '+target.toFixed(2)+'</div></div>'+
-    '<div class="cell"><div class="k">budget used</div><div class="v">'+consumes.toFixed(0)+
-      '%</div><div class="s">floor '+$(ddFloor)+'</div></div></div>'+
+    '<div class="cell"><div class="k">size</div><div class="v">'+qty.toFixed(6)+'</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">margin</div><div class="v">'+$(margin)+'</div><div class="s">'+levUsed+'x'+(levCap==null?" · cap "+PEND:"")+'</div></div>'+
+    '<div class="cell"><div class="k">risk</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?"incl "+$(fees)+" fees":"fees "+PEND)+'</div></div>'+
+    '<div class="cell"><div class="k">fees</div><div class="v">'+(feeKnown?fshare.toFixed(1)+"%":PEND)+'</div><div class="s">'+(feeKnown?"of risk":"per-side fee pending")+'</div></div>'+
+    '<div class="cell"><div class="k">stop</div><div class="v">'+(dist/entry*100).toFixed(2)+'%</div><div class="s">tgt '+target.toFixed(2)+'</div></div>'+
+    '<div class="cell"><div class="k">budget used</div><div class="v">'+consumes.toFixed(0)+'%</div><div class="s">'+(ddFloor==null?"floor "+PEND:"floor "+$(ddFloor))+'</div></div></div>'+
     '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">breakers</span> '+brk+'</div>'+
     notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>';
-  document.getElementById("result").innerHTML=h;
+  el("result").innerHTML=h;
 }
-["profile","quota","equity","daystart","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
- .forEach(function(i){document.getElementById(i).addEventListener("input",render)});
-render();
+el("firm").addEventListener("change",fillProfiles);el("profile").addEventListener("change",function(){toggleInputs();render()});
+["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
+ .forEach(function(i){el(i).addEventListener("input",render)});
+fillFirms();
 </script>
 </body>
 </html>

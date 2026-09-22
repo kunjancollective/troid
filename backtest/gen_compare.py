@@ -87,6 +87,29 @@ def firms_panel_html():
             + "\n".join(panel_cell(k, FIRMS[k]) for k in ORDER) + "\n  </div>")
 
 
+def profiles_js():
+    """The calculator's data: every listed firm's products with basis, drawdown, lock, hwm, fee, leverage. null = pending."""
+    out = {}
+    for k in ORDER:
+        f = FIRMS[k]; c = f.get("calc") or {}; prods = f.get("products") or {}
+        products = {}
+        for pk, pc in (c.get("products") or {}).items():
+            src = prods.get(pk) or {}
+            dp = pc.get("daily_pct", src.get("daily_pct")); mp = pc.get("max_pct", src.get("max_pct"))
+            if dp is None or mp is None:
+                continue                                   # a product without both limits is not offered
+            products[pk] = {"label": pc.get("label", pk), "d": dp, "m": mp,
+                            "basis": pc.get("daily_basis", c.get("daily_basis")),
+                            "dd": pc["drawdown"] if "drawdown" in pc else c.get("drawdown"),
+                            "locks": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
+                            "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
+                            "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
+                            "lev": pc.get("max_leverage", c.get("max_leverage"))}
+        if products:
+            out[k] = {"name": f["name"], "products": products}
+    return "<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";</script>"
+
+
 def rewrite_region(path, tag, inner):
     """Replace everything between <!-- tag:start --> and <!-- tag:end --> in a static page. Returns True if it changed."""
     start, end = f"<!-- {tag}:start -->", f"<!-- {tag}:end -->"
@@ -220,6 +243,7 @@ OUT.write_text(page)
 cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) for k in ORDER}
 links=[k for k in ORDER if link_live(FIRMS[k])]
 changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
+                                  ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
                                   ("index.html disclaimers", rewrite_region(INDEX, "disclaimers", "  " + required_html(inline=True) if required_sentences() else "")),
                                   ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html()))) if hit]
 print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "

@@ -148,7 +148,7 @@ stop distance 3.927%   rr 2.00
 entry 77872, stop_pct 0.3, target_r 2.
 ```
 verdict OK           binding: max drawdown
-daily_budget 3840.00   dd_budget 2000.00
+daily_budget 4000.00   dd_budget 2000.00
 intended 480.00   cap 700.00   risk 480.00
 qty 1.6221   notional 126315.79   margin 25263.16
 fees 101.05 (21.1% of risk)  -> fee warning shown

@@ -149,7 +149,38 @@
     "link_live": true,
     "required_disclaimer": null,
     "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
-    "panel_note": "Every rule verified from Terms + help centre. Where the shadow runs."
+    "panel_note": "Every rule verified from Terms + help centre. Where the shadow runs.",
+    "calc": {
+      "daily_basis": "initial",
+      "drawdown": "static",
+      "locks_at_initial_after_pct": null,
+      "hwm_basis": null,
+      "fee_per_side_pct": 0.04,
+      "max_leverage": 5,
+      "products": {
+        "1step": {
+          "label": "1-Step"
+        },
+        "2step_s1": {
+          "label": "2-Step \u00b7 S1"
+        },
+        "2step_s2": {
+          "label": "2-Step \u00b7 S2"
+        },
+        "express": {
+          "label": "Express"
+        },
+        "instant": {
+          "label": "Instant"
+        },
+        "trader": {
+          "label": "Funded",
+          "daily_pct": 4,
+          "max_pct": 6,
+          "_note": "funded-stage limits as the desk profile carries them (references/bitfunded.md)"
+        }
+      }
+    }
   },
   "brightfunded": {
     "name": "BrightFunded",
@@ -290,7 +321,25 @@
       ]
     },
     "_trailing_trap": "Help-centre Scenario 3, verbatim structure: balance 100k, open trade +4k floating -> limit rises to 98k; trade reverses and closes at -3.5k -> balance 96.5k is below 98k -> breached. An unrealised win can end the account. Model gap: troid's engine tracks the HWM on balance; BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.",
-    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%)."
+    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%).",
+    "calc": {
+      "daily_basis": "max_balance_equity",
+      "drawdown": "trailing",
+      "locks_at_initial_after_pct": 6,
+      "hwm_basis": "equity",
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "products": {
+        "1step": {
+          "label": "1-Step"
+        }
+      },
+      "_pending": [
+        "fee_per_side_pct (trading-instruments page)",
+        "max_leverage (same page)",
+        "2-Step Bright and Classic (pages not yet read)"
+      ]
+    }
   },
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
@@ -506,7 +555,30 @@
     "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
     "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
     "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input.",
-    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs"
+    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
+    "calc": {
+      "daily_basis": "day_start",
+      "drawdown": "trailing",
+      "locks_at_initial_after_pct": 6,
+      "hwm_basis": "balance",
+      "fee_per_side_pct": 0.0325,
+      "max_leverage": 100,
+      "products": {
+        "1phase": {
+          "label": "1-Phase (Advanced)"
+        },
+        "2phase": {
+          "label": "2-Phase",
+          "drawdown": "static"
+        },
+        "instant": {
+          "label": "Instant",
+          "drawdown": null,
+          "_note": "drawdown type not stated for Instant; pending"
+        }
+      },
+      "_leverage_note": "1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). The calculator uses the Advanced cap."
+    }
   },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",
@@ -523,5 +595,6 @@
     "reddit": "https://www.reddit.com/user/tradingdroid/",
     "email": "hello@troid.ai"
   },
-  "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run."
+  "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
+  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for the calculator and the assistant: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and the calculator says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one."
 }

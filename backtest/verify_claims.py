@@ -41,6 +41,19 @@ for nm,d,m,pub in [("2-Step S1",0.05,0.10,95000.0),("2-Step S2",0.05,0.08,97000.
     check("DERIVED", f"{nm} crossover", Q*(1-m+d), pub)
 print("             -> Express: crossover IS the starting balance. Both ceilings bind from $1 lost.")
 
+# Three daily bases are now on the compare page. On a fresh day (E = day start = high):
+#   initial (Bitfunded):      daily floor = D - dQ        -> crossover E = Q(1 - m + d)     (above)
+#   day_start (CFT):          daily floor = D(1 - d)      -> E d = E - F  ->  E = F / (1 - d)
+#   max_balance_equity (BF):  daily floor = H - dQ        -> with H = E, same crossover as initial
+# Trailing drawdown: budget at a fresh high-water mark = HWM m; once locked at initial, budget = E - Q.
+print()
+check("DERIVED", "day-start basis crossover, 4%/6% static floor (CFT 2-Phase shape)", Q*(1-0.06)/(1-0.04), 97916.6667, 1e-4)
+check("DERIVED", "max-balance/equity basis, fresh day, 3% (BF 1-Step) daily budget", Q*0.03, 3000.0)
+check("DERIVED", "trailing 6% budget at a fresh $100,000 high-water mark", 100000*0.06, 6000.0)
+check("DERIVED", "trailing 6% budget at a $104,000 high-water mark, equity at the high", 104000 - 104000*(1-0.06), 6240.0)
+check("DERIVED", "budget once the floor locks at initial (+6% reached), equity $106,000", 106000 - Q, 6000.0)
+print("             -> $97,917 is the day-start-basis number. It was wrong for Bitfunded and right for a day-start firm.")
+
 # Fee share of risk. Sizing solves risk = qty*(stop_dist + entry*fee*2), so
 #   fees/risk = (entry*2f) / (stop_dist + entry*2f) = 2f / (s + 2f), s = stop as a fraction
 print()

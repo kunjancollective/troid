@@ -25,12 +25,19 @@ that script's reference cases and reproduces them to 4 decimal places, including
 where equity sits below the crossover and the max-drawdown ceiling binds instead of the
 daily. **If you change the arithmetic in one, change it in the other and re-check.**
 
+The firm and challenge selects are filled from `firms.json` by `backtest/gen_compare.py`,
+which writes the `FIRMS` object into the `<!-- profiles:start/end -->` region. The port
+covers three daily bases (`initial`, `day_start`, `max_balance_equity`) and two drawdown
+types (`static`, `trailing` with a lock at initial). A null in `firms.json` renders as
+"pending"; the calculator never fills a rule from memory. `verify_claims.py` carries the
+three crossover formulas as DERIVED checks.
+
 Reference case 2 — quota 100000, equity 96000, day-start 96000, short, entry 77872,
 0.3% stop:
 
 ```
 binding      max drawdown        (not the daily, despite the daily budget being larger)
-daily budget 3,840   dd budget   2,000
+daily budget 4,000   dd budget   2,000
 risk         480     qty         1.6221      notional  126,315.79
 margin       25,263.16           fees        101.05  (21.05% of risk)
 consumes     24%     losses left 4
