@@ -15,6 +15,10 @@ JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_conf
 RUNS = HERE/"runs.csv"
 OUT = HERE.parent/"web"/"public"/"ledger.html"
 QUOTA = 100_000.0
+# the bar file the journal was replayed on: the frozen sample plus the live tail when present
+BARS = HERE/"data"/("live_4h.csv" if (HERE/"data"/"live_4h.csv").exists() else "btc_4h.csv")
+CHARTS_N = 20                      # closed trades drawn, newest first
+LWC = "https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"
 
 BRAND = (HERE.parent/"web"/"public"/"index.html").read_text()
 STYLE = BRAND[BRAND.index("<link rel=\"icon\""):BRAND.index("</style>")+8]
@@ -72,6 +76,91 @@ def runs_table():
             f'<tr><th>run (UTC)</th><th>bar</th><th class="num">balance</th><th class="num">closed</th><th>position</th></tr>{body}</table></div></div>')
 
 
+def load_bars():
+    """t,o,h,l,c rows; comment lines skipped. Returns (times, bars) with times in unix seconds."""
+    if not BARS.exists(): return [], []
+    rows = [r for r in csv.reader(BARS.open()) if r and not r[0].startswith("#")]
+    if len(rows[0]) != 5: return [], []
+    return [int(float(r[0])) for r in rows], [tuple(round(float(x), 2) for x in r[1:5]) for r in rows]
+
+
+EXIT_LABEL = {"tp1": "TP1", "tp2": "TP2", "tp3": "TP3", "stop": "stop", "max_hold_10d": "max hold",
+              "reset_flat": "reset flatten", "reset_flat_loser": "reset flatten"}
+
+
+def when(iso):
+    d = dt.datetime.fromisoformat(iso)
+    return f"{d.month}/{d.day} {d:%H:%M}"
+
+
+def trade_charts(rows):
+    """One candlestick panel per closed trade, last CHARTS_N, newest first: bars from 10 before
+    entry to 5 after exit, entry / stop / TPs / exit marked. The caption is the risk-why only:
+    no thesis, no reason the price moved. Open positions are not drawn — they are not closed."""
+    times, bars = load_bars()
+    if not times or not rows or "entry_utc" not in rows[0]: return ""
+    at = {t: i for i, t in enumerate(times)}
+    bal = QUOTA; bal_at = []                    # balance when each trade was entered (one position at a time)
+    for r in rows: bal_at.append(bal); bal += float(r["pnl"])
+    items, caps = [], []
+    for k in range(len(rows) - 1, max(-1, len(rows) - 1 - CHARTS_N), -1):
+        r = rows[k]
+        if not r.get("entry_utc"): continue
+        ei = at.get(int(dt.datetime.fromisoformat(r["entry_utc"]).timestamp()))
+        xi = at.get(int(dt.datetime.fromisoformat(r["exit_utc"]).timestamp()))
+        if ei is None or xi is None: continue
+        lo, hi = max(0, ei - 10), min(len(bars), xi + 6)
+        side = 1 if r["side"] == "long" else -1
+        entry, stop, exit_px = float(r["entry_price"]), float(r["stop_price"]), float(r["exit_price"])
+        risk, room = float(r["risk_usd"]), float(r["room_at_entry"])
+        tps = json.loads(r["tp_prices"])
+        items.append(dict(id=f"tc{k}", side=side, entry=entry, stop=stop, tps=tps, exit=exit_px,
+                          entry_t=times[ei], exit_t=times[xi], exit_label=EXIT_LABEL.get(r["reason"], r["reason"]),
+                          bars=[dict(time=times[i], open=bars[i][0], high=bars[i][1], low=bars[i][2], close=bars[i][3])
+                                for i in range(lo, hi)]))
+        binding = {"daily": "daily limit", "floor": "max-loss floor"}.get(r["binding_at_entry"], r["binding_at_entry"])
+        flag = ' <span title="held through a forward-filled bar">⚑</span>' if int(r.get("filled_bars") or 0) else ""
+        cap = (f'{r["side"].capitalize()} · {r["kind"]} · {when(r["entry_utc"])} → {when(r["exit_utc"])} UTC · '
+               f'entry {entry:,.0f} · stop {stop:,.0f} ({abs(entry - stop) / entry * 100:.2f}%) · '
+               f'sized ${risk:,.0f} = {risk / bal_at[k] * 100:.1f}% · {binding} binding, ${room:,.0f} room · '
+               f'{r["fills"]} of {r["tranches"]} tranches · exit {EXIT_LABEL.get(r["reason"], r["reason"])} '
+               f'after {r["bars_held"]} bars · {float(r["r"]):+.2f}R · fees {float(r["fee_share_pct"]):.1f}% of risk')
+        caps.append(f'<div class="tc"><div class="tchart" id="tc{k}"></div><p class="tcap">{html.escape(cap)}{flag}</p></div>')
+    if not items: return ""
+    return (f'<div class="panel"><p class="eyebrow">Last {len(items)} closed trades · drawn</p>'
+            f'<p class="hs" style="margin:-8px 0 14px">Bars from 10 before entry to 5 after exit. Entry, initial stop and take-profits '
+            f'as the engine set them; the stop moves to average entry after TP1 and is not redrawn. Open position: not drawn.</p>'
+            + "".join(caps) + "</div>"
+            + f'<script src="{LWC}"></script>\n<script>var TRADES=' + json.dumps(items, separators=(",", ":")) + ";\n"
+            + CHART_JS + "</script>")
+
+
+CHART_JS = r"""(function(){
+  var cs=getComputedStyle(document.documentElement),T={};
+  ["bg","surface","line","ink","dim","signal","bad"].forEach(function(k){T[k]=cs.getPropertyValue("--"+k).trim()});
+  var mono=cs.getPropertyValue("--mono").trim()||"monospace";
+  if(!window.LightweightCharts){document.querySelectorAll(".tchart").forEach(function(e){e.innerHTML='<p class="hs" style="padding:12px">chart library did not load (cdn.jsdelivr.net) — the caption is the record</p>'});return}
+  var L=LightweightCharts;
+  TRADES.forEach(function(t){
+    var el=document.getElementById(t.id); if(!el)return;
+    var chart=L.createChart(el,{autoSize:true,height:300,
+      layout:{background:{type:"solid",color:T.surface},textColor:T.dim,fontFamily:mono,fontSize:10},
+      grid:{vertLines:{color:T.line},horzLines:{color:T.line}},
+      rightPriceScale:{borderColor:T.line},timeScale:{borderColor:T.line,timeVisible:true,secondsVisible:false},
+      crosshair:{mode:L.CrosshairMode.Normal},handleScroll:false,handleScale:false});
+    var s=chart.addCandlestickSeries({upColor:"transparent",downColor:T.dim,borderUpColor:T.ink,borderDownColor:T.dim,
+      wickUpColor:T.ink,wickDownColor:T.dim,priceLineVisible:false,lastValueVisible:false});
+    s.setData(t.bars);
+    s.createPriceLine({price:t.entry,color:T.signal,lineWidth:1,lineStyle:L.LineStyle.Dotted,axisLabelVisible:true,title:"entry"});
+    s.createPriceLine({price:t.stop,color:T.bad,lineWidth:1,lineStyle:L.LineStyle.Solid,axisLabelVisible:true,title:"stop"});
+    t.tps.forEach(function(p,i){s.createPriceLine({price:p,color:T.dim,lineWidth:1,lineStyle:L.LineStyle.Dashed,axisLabelVisible:false,title:"TP"+(i+1)})});
+    s.setMarkers([{time:t.entry_t,position:t.side>0?"belowBar":"aboveBar",color:T.signal,shape:t.side>0?"arrowUp":"arrowDown",text:"entry"},
+                  {time:t.exit_t,position:t.side>0?"aboveBar":"belowBar",color:T.ink,shape:"circle",text:t.exit_label}]);
+    chart.timeScale().fitContent();
+  });
+})();"""
+
+
 def main():
     rows = list(csv.DictReader(JOURNAL.open())) if JOURNAL.exists() else []
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
@@ -110,7 +199,13 @@ def main():
 .cells{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}}
 .c{{background:var(--surface);padding:12px}}
 .hs{{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}}
-.warnbox{{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}}</style>
+.warnbox{{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}}
+.meta{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}}table{{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}}th{{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}}td{{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}}tr:last-child td{{border-bottom:none}}.num{{text-align:right}}.foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}}
+.scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
+.tc{{margin-bottom:18px}}.tchart{{height:300px;border:1px solid var(--line);border-radius:3px;overflow:hidden}}
+.tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
 </head><body><div class="wrap">
 {HEADER}
 <h1>{html.escape(cfg["name"])}</h1>
@@ -148,6 +243,8 @@ f" {flagged} held through a forward-filled bar (a flat bar substituted for a fee
 <div class="panel"><p class="eyebrow">Last {min(n,40)} trades</p><div class="scroll"><table>
 <tr><th>closed</th><th>kind</th><th>side</th><th class="num">fills</th><th class="num">bars</th><th>exit</th><th class="num">pnl</th><th class="num">R</th></tr>
 {trades_html}</table></div></div>
+
+{trade_charts(rows)}
 
 <p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
 ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>

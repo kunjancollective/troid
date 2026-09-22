@@ -16,8 +16,10 @@ misaligned file cannot re-append trades it already holds.
 
 Outputs:
   journal.csv   every closed trade, appended once, never rewritten; filled_bars counts
+                the forward-filled (flat, gap-substitute) bars the trade held through.
+                When the schema widens, existing rows gain the new columns from the same
+                deterministic replay and keep their logged_utc: a widening, not a data change.
   runs.csv      one row per shadow run (TROID_RUN=shadow), for the ledger's runs table
-                the forward-filled (flat, gap-substitute) bars the trade held through
   state.json    open position, budgets, binding ceiling, last bar processed
   stdout        a daily summary suitable for the worked-example post
 """
@@ -32,6 +34,11 @@ BARS = Path(__file__).parent / "data" / (sys.argv[1] if len(sys.argv) > 1 else "
 JOURNAL = Path(__file__).parent / "journal.csv"
 RUNS = Path(__file__).parent / "runs.csv"
 STATE = Path(__file__).parent / "state.json"
+JOURNAL_COLS = ["logged_utc", "exit_utc", "exit_bar", "kind", "side", "fills", "tps_hit", "bars_held",
+                "reason", "pnl", "r", "filled_bars",
+                # added 2026-09-22 for the visual ledger; every row is from the same replay
+                "entry_utc", "entry_price", "avg_entry", "stop_price", "tp_prices", "exit_price",
+                "risk_usd", "binding_at_entry", "room_at_entry", "fee_share_pct", "tranches"]
 
 
 def apply_config():
@@ -72,26 +79,52 @@ def main():
     # ---- journal: append only trades not already logged
     # Keyed on (exit_utc, side, kind): bar indices depend on where the bar file starts,
     # exit times do not, so a file that starts earlier cannot duplicate the journal.
-    seen = set()
+    def key(t):
+        return (bar_time(t["bar"]).isoformat(timespec="seconds"), "long" if t["side"] > 0 else "short", t["kind"])
+
+    def row(t, logged):
+        return [logged, bar_time(t["bar"]).isoformat(timespec="seconds"), t["bar"], t["kind"],
+                "long" if t["side"] > 0 else "short", t["fills"], t["tps_hit"],
+                t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 4), filled_bars(t),
+                bar_time(t["entry_bar"]).isoformat(timespec="seconds"), round(t["entry_price"], 2),
+                round(t["avg_entry"], 2), round(t["stop_price"], 2),
+                json.dumps([round(x, 2) for x in t["tp_prices"]]), round(t["exit_price"], 2),
+                round(t["risk_usd"], 2), t["binding_at_entry"], round(t["room_at_entry"], 2),
+                round(t["fee_share_pct"], 2), t["tranches"]]
+
+    seen, old_rows, header = {}, [], None
     if JOURNAL.exists():
         with JOURNAL.open() as fh:
-            for row in csv.DictReader(fh):
-                seen.add((row["exit_utc"], row["side"], row["kind"]))
-    new = [t for t in closed
-           if (bar_time(t["bar"]).isoformat(timespec="seconds"),
-               "long" if t["side"] > 0 else "short", t["kind"]) not in seen]
-    write_header = not JOURNAL.exists()
-    with JOURNAL.open("a", newline="") as fh:
-        w = csv.writer(fh)
-        if write_header:
-            w.writerow(["logged_utc", "exit_utc", "exit_bar", "kind", "side", "fills",
-                        "tps_hit", "bars_held", "reason", "pnl", "r", "filled_bars"])
-        for t in new:
-            w.writerow([dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"),
-                        bar_time(t["bar"]).isoformat(timespec="seconds"), t["bar"], t["kind"],
-                        "long" if t["side"] > 0 else "short", t["fills"], t["tps_hit"],
-                        t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 4),
-                        filled_bars(t)])
+            rd = csv.DictReader(fh); header = rd.fieldnames
+            for r_ in rd:
+                old_rows.append(r_); seen[(r_["exit_utc"], r_["side"], r_["kind"])] = r_["logged_utc"]
+    now = dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds")
+    new = [t for t in closed if key(t) not in seen]
+    if header is not None and header != JOURNAL_COLS:
+        # Schema widening: rewrite every row from the same replay, keeping its logged_utc.
+        # Refuse if a logged row is missing from the replay or any old column would change.
+        by_key = {key(t): t for t in closed}
+        for r_ in old_rows:
+            k = (r_["exit_utc"], r_["side"], r_["kind"])
+            if k not in by_key:
+                sys.exit(f"journal migration: logged trade {k} not in the replay; refusing to rewrite")
+            fresh = dict(zip(JOURNAL_COLS, map(str, row(by_key[k], r_["logged_utc"]))))
+            drift = {c: (r_[c], fresh[c]) for c in header if r_[c] != fresh[c]}
+            if drift:
+                sys.exit(f"journal migration: {k} would change {drift}; refusing to rewrite")
+        with JOURNAL.open("w", newline="") as fh:
+            w = csv.writer(fh); w.writerow(JOURNAL_COLS)
+            for t in closed:
+                w.writerow(row(t, seen.get(key(t), now)))
+        print(f"  journal: schema widened to {len(JOURNAL_COLS)} columns, {len(old_rows)} rows kept their logged_utc")
+    else:
+        write_header = header is None
+        with JOURNAL.open("a", newline="") as fh:
+            w = csv.writer(fh)
+            if write_header:
+                w.writerow(JOURNAL_COLS)
+            for t in new:
+                w.writerow(row(t, now))
 
     # ---- state (the heartbeat). Position: when it opened and how many tranches, nothing else.
     # No direction, no entry price, no stop: the page does not broadcast a signal. That is the line.

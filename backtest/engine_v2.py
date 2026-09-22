@@ -136,6 +136,9 @@ class Pos:
     side: int; kind: str; tranches: list; stop: float; tps: list; tp_done: int = 0
     bar: int = 0; risk: float = 0.0; r_dist: float = 0.0; realized: float = 0.0
     is_reverse: bool = False; extreme: float = 0.0
+    # for the journal: the initial stop (before the breakeven move), T1's price, fees paid,
+    # and which ceiling bound the sizing at entry with the room it had
+    stop0: float = 0.0; t1: float = 0.0; fees: float = 0.0; binding: str = ""; room: float = 0.0
     def held(self): return sum(t.qty for t in self.tranches if t.filled)
     def avg(self):
         q = self.held()
@@ -167,7 +170,9 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
     def book(p, px, qty, i, reason):
         """Close qty at px; when the position is fully out, log one trade record."""
         nonlocal bal, realized_today
-        pnl = (px - p.avg()) * qty * p.side - qty * px * E.FEE
+        avg = p.avg()
+        pnl = (px - avg) * qty * p.side - qty * px * E.FEE
+        p.fees += qty * px * E.FEE
         bal += pnl; realized_today += pnl; p.realized += pnl
         # remove qty proportionally from filled tranches (avg entry unchanged)
         held = p.held(); frac = qty / held
@@ -177,7 +182,13 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
             for t in p.tranches: t.qty = 0.0
             r.trades.append(dict(side=p.side, kind=p.kind, pnl=p.realized, r=p.realized / p.risk,
                                  bars=i - p.bar, reason=reason, bar=i,
-                                 tps_hit=p.tp_done, fills=sum(1 for t in p.tranches if t.filled)))
+                                 tps_hit=p.tp_done, fills=sum(1 for t in p.tranches if t.filled),
+                                 # journal fields (schema widened 2026-09-22; the numbers above are unchanged)
+                                 entry_bar=p.bar, entry_price=p.t1, avg_entry=avg, stop_price=p.stop0,
+                                 tp_prices=list(p.tps), exit_price=px, risk_usd=p.risk,
+                                 binding_at_entry=p.binding, room_at_entry=p.room,
+                                 fees_usd=p.fees, fee_share_pct=p.fees / p.risk * 100,
+                                 tranches=len(p.tranches)))
             return None
         return p
 
@@ -244,7 +255,9 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
                     r_dist = (t1.price - sg["stop"]) * s
                     tps = [t1.price + s * m * r_dist for m in (TPS if LADDER else (E.TARGET_R,))]
                     pos = Pos(s, sg["kind"], trs, sg["stop"], tps, bar=i, risk=risk, r_dist=r_dist, realized=-fee,
-                              is_reverse=(sg["kind"] == "reverse"), extreme=(h[i] if s > 0 else l[i]))
+                              is_reverse=(sg["kind"] == "reverse"), extreme=(h[i] if s > 0 else l[i]),
+                              stop0=sg["stop"], t1=t1.price, fees=fee,
+                              binding=("daily" if daily_budget <= bal - floor_total else "floor"), room=eff)
                     r.trading_days.add((t - E.RESET_SEC) // 86400)
 
 
@@ -257,7 +270,7 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
                     if not tr.filled and ((h[i] >= tr.price) if tr.fill_above else (l[i] <= tr.price)):
                         tr.filled = True
                         fee = tr.qty * tr.price * E.FEE
-                        bal -= fee; realized_today -= fee; p.realized -= fee
+                        bal -= fee; realized_today -= fee; p.realized -= fee; p.fees += fee
             else:
                 for tr in p.tranches:
                     if not tr.filled: tr.qty = 0.0

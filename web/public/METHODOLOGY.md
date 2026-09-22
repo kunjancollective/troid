@@ -46,6 +46,7 @@ agreement exists and its daily, max, target and price are verified from its own 
 | 2026-09-21 | Journal stored R to three decimals; the mean sat on a rounding boundary and two artifacts disagreed at the second decimal. | Four decimals stored. Accuracy ledger now re-derives n, mean, SE and shrinkage from the journal and fails on drift. |
 | 2026-09-21 | A summary described a standard error as a confidence interval. | Corrected. ±0.016R is the SE; the 95% interval is ±0.031R. |
 | 2026-09-21 | The public FAQ still described the daily limit as measured against the day-start balance, said results were published monthly, and its disclaimer said the backtest had not been validated out of sample after it had. | All three sentences corrected the day the walk-forward was published. |
+| 2026-09-22 | The journal recorded each closed trade's outcome but not its geometry: no entry, stop, take-profit or exit price, no risk in dollars, no binding ceiling. A trade could not be drawn or its sizing checked from the public file alone. | Schema widened by eleven columns (entry and average price, initial stop, take-profits, exit price, risk, binding ceiling and room at entry, fee share, tranche count). Every row re-derived from the same deterministic replay; the twelve original columns are byte-identical and every row keeps its original `logged_utc`. A widening, not a data change. The migration refuses to run if any original value would move. |
 
 ## Version
 
