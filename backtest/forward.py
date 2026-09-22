@@ -16,12 +16,13 @@ misaligned file cannot re-append trades it already holds.
 
 Outputs:
   journal.csv   every closed trade, appended once, never rewritten; filled_bars counts
+  runs.csv      one row per shadow run (TROID_RUN=shadow), for the ledger's runs table
                 the forward-filled (flat, gap-substitute) bars the trade held through
   state.json    open position, budgets, binding ceiling, last bar processed
   stdout        a daily summary suitable for the worked-example post
 """
 from __future__ import annotations
-import csv, json, sys, datetime as dt
+import csv, json, os, sys, datetime as dt
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import engine as E, engine_v2 as V
@@ -29,6 +30,7 @@ import engine as E, engine_v2 as V
 CFG = json.load(open(Path(__file__).parent / "strategy_config.json"))
 BARS = Path(__file__).parent / "data" / (sys.argv[1] if len(sys.argv) > 1 else "btc_4h.csv")
 JOURNAL = Path(__file__).parent / "journal.csv"
+RUNS = Path(__file__).parent / "runs.csv"
 STATE = Path(__file__).parent / "state.json"
 
 
@@ -55,6 +57,9 @@ def main():
     sigs = V.build_signals(bars, e20, e120, atr)
     warm = max(E.EMA_TREND + E.TREND_SLOPE_BARS, V.RANGE_BARS) + 1
     r = V.run(bars, sigs, warm, challenge=True, risk_pct=CFG["risk_pct"], atr=atr)
+    # A position still open at the last bar is marked to the close with reason "eod". It is
+    # not a closed trade: it stays out of the journal and shows as the heartbeat's position.
+    closed = [t for t in r.trades if t["reason"] != "eod"]
 
     # ---- forward-filled bars: fetch_binance.py fills a feed gap with a flat bar at the
     # previous close (o == h == l == c). A real 4h bar never has zero range, so flat is the
@@ -72,7 +77,7 @@ def main():
         with JOURNAL.open() as fh:
             for row in csv.DictReader(fh):
                 seen.add((row["exit_utc"], row["side"], row["kind"]))
-    new = [t for t in r.trades
+    new = [t for t in closed
            if (bar_time(t["bar"]).isoformat(timespec="seconds"),
                "long" if t["side"] > 0 else "short", t["kind"]) not in seen]
     write_header = not JOURNAL.exists()
@@ -88,23 +93,45 @@ def main():
                         t["bars"], t["reason"], round(t["pnl"], 2), round(t["r"], 4),
                         filled_bars(t)])
 
-    # ---- state
+    # ---- state (the heartbeat). Position: when it opened and how many tranches, nothing else.
+    # No direction, no entry price, no stop: the page does not broadcast a signal. That is the line.
     last = len(bars) - 1
     floor_total = E.INITIAL * (1 - E.MAXLOSS_PCT)
+    balance = r.realized_balance
+    daily_room = E.INITIAL * E.DAILY_PCT + r.realized_today
+    floor_room = balance - floor_total
+    op = r.open_position
+    position = ({"open_since_utc": bar_time(op["entry_bar"]).isoformat(), "tranches_filled": op["fills"],
+                 "tranches": op["tranches"]} if op else None)
     state = {"strategy": CFG["name"], "as_of_bar_utc": bar_time(last).isoformat(),
-             "outcome": r.outcome, "balance": round(r.balance, 2),
-             "trades_total": len(r.trades), "trades_new_this_run": len(new),
+             "last_close": round(bars[last][3], 2),
+             "outcome": r.outcome, "balance": round(balance, 2),
+             "trades_total": len(closed), "trades_new_this_run": len(new),
              "trading_days": len(r.trading_days),
-             "distance_to_floor": round(r.balance - floor_total, 2),
+             "distance_to_floor": round(floor_room, 2),
+             "daily_room": round(daily_room, 2),
+             "binding": "daily" if daily_room <= floor_room else "floor",
+             "position": position,
              "max_drawdown": round(r.trough_dd, 2),
              "forward_filled_bars": len(flat),
-             "trades_touching_filled_bars": sum(1 for t in r.trades if filled_bars(t))}
+             "trades_touching_filled_bars": sum(1 for t in closed if filled_bars(t))}
     STATE.write_text(json.dumps(state, indent=2))
 
+    # ---- runs.csv: one row per shadow run (the workflow sets TROID_RUN=shadow; local runs do not)
+    if os.environ.get("TROID_RUN") == "shadow":
+        write_header = not RUNS.exists()
+        with RUNS.open("a", newline="") as fh:
+            w = csv.writer(fh)
+            if write_header:
+                w.writerow(["run_utc", "as_of_bar_utc", "last_close", "balance", "trades_new", "position"])
+            w.writerow([dt.datetime.now(dt.timezone.utc).isoformat(timespec="seconds"), state["as_of_bar_utc"],
+                        state["last_close"], state["balance"], len(new), "open" if position else "flat"])
+
     # ---- summary for the daily post
-    st = E.trade_stats(r.trades) if r.trades else {}
-    print(f"troid-shadow-1  ·  as of {state['as_of_bar_utc']}  ·  {state['outcome'].upper()}")
-    print(f"  balance ${r.balance:,.2f}   floor ${floor_total:,.0f}   room ${state['distance_to_floor']:,.0f}")
+    st = E.trade_stats(closed) if closed else {}
+    print(f"troid-shadow-1  ·  as of {state['as_of_bar_utc']}  ·  close {state['last_close']:,.2f}  ·  {state['outcome'].upper()}")
+    print(f"  balance ${balance:,.2f}   floor ${floor_total:,.0f}   room ${floor_room:,.0f}   daily ${daily_room:,.0f}   binding {state['binding']}")
+    print(f"  position: " + (f"open since {position['open_since_utc']} · {position['tranches_filled']} of {position['tranches']} tranches" if position else "flat"))
     if st:
         print(f"  {st['n']} trades   exp {st['exp_r']:+.3f}R   PF {st['profit_factor']:.2f}   "
               f"win {st['win_rate']:.0f}%   maxDD ${r.trough_dd:,.0f}")

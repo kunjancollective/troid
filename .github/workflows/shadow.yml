@@ -1,6 +1,7 @@
 name: shadow — daily forward test
 
-# Runs after the 16:00 UTC bar closes (Bitfunded's reset), pulls fresh 4h bars,
+# Runs 20 minutes after every 4h bar closes (six times a day; 16:20 UTC is the
+# reset run), pulls fresh 4h bars,
 # replays troid-shadow-1 from its anchor, appends any newly closed trades to the
 # journal, re-renders the ledger, and commits. Deterministic: same config + same
 # bars = same result, so the only diff each day is what actually closed.
@@ -10,7 +11,7 @@ name: shadow — daily forward test
 
 on:
   schedule:
-    - cron: "20 16 * * *"       # 16:20 UTC daily
+    - cron: "20 0,4,8,12,16,20 * * *"   # 20 min after every 4h bar closes; 16:20 is the reset run
   workflow_dispatch:            # manual run from the Actions tab
 
 permissions:
@@ -49,6 +50,8 @@ jobs:
 
       - name: Run the shadow and render the ledger
         working-directory: backtest
+        env:
+          TROID_RUN: shadow          # forward.py appends a runs.csv row only on shadow runs
         run: |
           python forward.py live_4h.csv
           python gen_ledger.py
@@ -67,7 +70,7 @@ jobs:
         run: |
           git config user.name "troid-shadow"
           git config user.email "shadow@troid.ai"
-          git add backtest/journal.csv backtest/state.json backtest/RESULTS.md \
+          git add backtest/journal.csv backtest/state.json backtest/runs.csv backtest/RESULTS.md \
                   web/public/ledger.html web/public/compare.html web/public/index.html \
                   web/public/faq.html backtest/data/live_4h.csv
           if git diff --cached --quiet; then

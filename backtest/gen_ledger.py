@@ -12,6 +12,7 @@ from pathlib import Path
 
 HERE = Path(__file__).parent
 JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_config.json"
+RUNS = HERE/"runs.csv"
 OUT = HERE.parent/"web"/"public"/"ledger.html"
 QUOTA = 100_000.0
 
@@ -39,6 +40,36 @@ def equity_svg(rows, w=760, h=180):
 </svg>
 <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px">
   <span>${lo:,.0f}</span><span>start ${QUOTA:,.0f} · dashed</span><span>${hi:,.0f}</span></div>'''
+
+
+def heartbeat(st):
+    """Last bar, balance, room, binding, position. No direction, no price, no stop."""
+    if not st: return ""
+    bar = st.get("as_of_bar_utc", "")[:16].replace("T", " ")
+    pos = st.get("position")
+    ptxt = (f"open since {pos['open_since_utc'][:16].replace('T', ' ')} UTC · {pos['tranches_filled']} of {pos['tranches']} tranche(s)"
+            if pos else "flat")
+    binding = {"daily": "daily limit", "floor": "max-loss floor"}.get(st.get("binding", ""), "—")
+    return f'''<div class="cells">
+<div class="c"><div class="k">last bar</div><div class="v">{bar}</div><div class="hs">UTC · close {st.get("last_close", 0):,.0f}</div></div>
+<div class="c"><div class="k">balance</div><div class="v">${st.get("balance", QUOTA):,.0f}</div><div class="hs">realized</div></div>
+<div class="c"><div class="k">room</div><div class="v">${min(st.get("daily_room", 0), st.get("distance_to_floor", 0)):,.0f}</div><div class="hs">binding · {binding}</div></div>
+<div class="c"><div class="k">to floor</div><div class="v">${st.get("distance_to_floor", 0):,.0f}</div><div class="hs">daily ${st.get("daily_room", 0):,.0f}</div></div>
+<div class="c" style="grid-column:span 2"><div class="k">position</div><div class="v" style="font-size:14px;margin-top:4px">{ptxt}</div><div class="hs">no direction, price or stop is published</div></div>
+</div>'''
+
+
+def runs_table():
+    """One row per shadow run in the last 7 days, from runs.csv."""
+    if not RUNS.exists(): return '<p class="hs" style="margin:0 0 14px">runs: none recorded yet</p>'
+    now = dt.datetime.now(dt.timezone.utc)
+    rows = [r for r in csv.DictReader(RUNS.open()) if dt.datetime.fromisoformat(r["run_utc"]) >= now - dt.timedelta(days=7)]
+    if not rows: return '<p class="hs" style="margin:0 0 14px">runs: none in the last 7 days</p>'
+    body = "".join(f'<tr><td>{r["run_utc"][:16].replace("T", " ")}</td><td>{r["as_of_bar_utc"][:16].replace("T", " ")}</td>'
+                   f'<td class="num">{float(r["balance"]):,.0f}</td><td class="num">{r["trades_new"]}</td><td>{r["position"]}</td></tr>'
+                   for r in reversed(rows[-42:]))
+    return (f'<div class="panel"><p class="eyebrow">Runs · last 7 days · {len(rows)}</p><div class="scroll"><table>'
+            f'<tr><th>run (UTC)</th><th>bar</th><th class="num">balance</th><th class="num">closed</th><th>position</th></tr>{body}</table></div></div>')
 
 
 def main():
@@ -78,13 +109,16 @@ def main():
 .v{{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.02em}}
 .cells{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}}
 .c{{background:var(--surface);padding:12px}}
+.hs{{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}}
 .warnbox{{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}}</style>
 </head><body><div class="wrap">
 {HEADER}
 <h1>{html.escape(cfg["name"])}</h1>
 <p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
-<p class="meta">as of {st.get("as_of_bar_utc","—")[:16].replace("T"," ")} UTC · {cfg["instrument"]} {cfg["timeframe"]} · {cfg["profile"]} rules · cross 5x</p>
+<p class="meta">as of {st.get("as_of_bar_utc","—")[:16].replace("T"," ")} UTC · {cfg["instrument"]} {cfg["timeframe"]} · {cfg["profile"]} rules · cross 5x · replayed every 4h, 20 min after the bar</p>
 
+{heartbeat(st)}
+{runs_table()}
 <div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~{se:.3f}R, a
 confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero, and a result {"below" if exp < noise30 else "above"} what chance produces across the
 ~30 configurations searched (~{noise30:+.3f}R).{

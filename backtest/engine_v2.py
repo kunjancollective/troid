@@ -149,6 +149,9 @@ class Result:
     balance: float = E.INITIAL; peak: float = E.INITIAL; trough_dd: float = 0.0
     trades: list = field(default_factory=list); trading_days: set = field(default_factory=set)
     rollover_breach: bool = False
+    # state at the last bar, captured BEFORE any open position is marked to the last close
+    realized_balance: float = E.INITIAL; realized_today: float = 0.0; day_start: float = E.INITIAL
+    open_position: dict | None = None
 
 
 def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr=None):
@@ -315,7 +318,11 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
                 r.outcome, r.end_bar, r.balance = "pass", i, bal; return r
         r.peak = max(r.peak, bal); r.trough_dd = min(r.trough_dd, bal - r.peak)
 
-    if pos: pos = book(pos, c[n - 1], pos.held(), n - 1, "eod")
+    r.realized_balance, r.realized_today, r.day_start = bal, realized_today, day_start
+    if pos:
+        r.open_position = dict(entry_bar=pos.bar, fills=sum(1 for t in pos.tranches if t.filled),
+                               tranches=len(pos.tranches), kind=pos.kind, side=pos.side)
+        pos = book(pos, c[n - 1], pos.held(), n - 1, "eod")   # marked to the last close; reason "eod"
     r.balance = bal
     if r.outcome == "running":
         r.end_bar = n - 1

@@ -92,6 +92,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .v{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.02em}
 .cells{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}
 .c{background:var(--surface);padding:12px}
+.hs{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
 .warnbox{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}</style>
 </head><body><div class="wrap">
 <div class="bar">
@@ -101,8 +102,16 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </div>
 <h1>troid-shadow-1</h1>
 <p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
-<p class="meta">as of 2026-09-21 12:00 UTC · BINANCE:BTCUSDT 4h · 1step rules · cross 5x</p>
+<p class="meta">as of 2026-09-21 12:00 UTC · BINANCE:BTCUSDT 4h · 1step rules · cross 5x · replayed every 4h, 20 min after the bar</p>
 
+<div class="cells">
+<div class="c"><div class="k">last bar</div><div class="v">2026-09-21 12:00</div><div class="hs">UTC · close 85,919</div></div>
+<div class="c"><div class="k">balance</div><div class="v">$101,299</div><div class="hs">realized</div></div>
+<div class="c"><div class="k">room</div><div class="v">$4,000</div><div class="hs">binding · daily limit</div></div>
+<div class="c"><div class="k">to floor</div><div class="v">$7,299</div><div class="hs">daily $4,000</div></div>
+<div class="c" style="grid-column:span 2"><div class="k">position</div><div class="v" style="font-size:14px;margin-top:4px">flat</div><div class="hs">no direction, price or stop is published</div></div>
+</div>
+<p class="hs" style="margin:0 0 14px">runs: none recorded yet</p>
 <div class="warnbox">This strategy measures +0.033R per trade over 78 trades — a standard error of ~0.046R, a
 confidence interval that contains zero, and a result below what chance produces across the
 ~30 configurations searched (~+0.119R). Out of sample, on the 504 trades from 2021–2025 the parameters never saw: +0.008R, SE 0.016R. No edge, confirmed. It is published so you can watch a null result run forward, not because it works.
