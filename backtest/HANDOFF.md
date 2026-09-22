@@ -126,6 +126,23 @@ If neither survives, say so; that is the finding.
 
 ## Do these, in order
 
+**Engine gaps recorded 2026-09-22** (from the calculator's three-basis port; none is
+modelled in `engine_v2.py`, which is Bitfunded-only: fixed daily amount from the initial
+balance, static floor, 16:00 UTC reset):
+
+- `hwm_basis: equity` — BrightFunded's trailing floor moves on floating equity intraday
+  (help centre scenario 3: a +$4k unrealised high lifts the floor to $98k; the trade
+  closes at −$3.5k and the account is breached). The engine tracks the high-water mark
+  on balance only. Needed before any BrightFunded backtest; the calculator shows a note.
+- `daily_basis: max_balance_equity` — BrightFunded's daily floor is max(balance, equity)
+  at rollover minus 3% of the original size. The engine has one basis. The calculator
+  takes a "high at rollover" input instead.
+- Reset windows that shift with DST — BrightFunded rolls over at 23:30–23:59 CET, which
+  is 21:30 UTC in summer and 22:30 UTC in winter. The engine's reset is a fixed UTC
+  second. CFT is 00:00 UTC per its docs; Bitfunded 16:00 UTC.
+- `daily_basis: day_start` (CFT) is a one-line engine change but is not wired: the
+  engine reads Bitfunded's constants from `engine.py`, not from `firms.json`.
+
 **Status 2026-09-21.** Step 1 done (`.github/workflows/data.yml`, api.binance.us,
 12,538 bars each, 4 gaps forward-filled). Step 3 done for the baseline only:
 `WALKFORWARD.md`, shadow-1 on 2021–2025 is +0.008R on BTC and ETH, CI contains zero.
