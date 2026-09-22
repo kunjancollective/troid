@@ -274,10 +274,21 @@
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
     "rule_changes": [],
     "external_payout_evidence": "https://propfirmmatch.com/prop-firms/brightfunded/payouts",
-    "link_live": false,
-    "_link_live_note": "Set true only after BrightFunded confirms the site is approved material.",
+    "link_live": true,
+    "_link_live_note": "true since 2026-09-22: comparison permitted, confirmed with the firm on 2026-09-21 (record kept privately); promotion policy read (promotion_policy).",
     "required_disclaimer": null,
-    "panel_note": "Rules go on this page only after they're read from BrightFunded's own documents."
+    "panel_note": "Rules go on this page only after they're read from BrightFunded's own documents.",
+    "promotion_policy": {
+      "url": "https://help.brightfunded.com/en/articles/9662070-affiliate-promotion-policy",
+      "dated": "2026-03-17",
+      "prohibited": "all paid advertising: PPC, Google Ads, social ads, retargeting, YouTube ads, native advertising / sponsored content",
+      "encouraged": "organic, authentic; direct engagement with trading communities; word of mouth; genuine content",
+      "approval_process": "none described. troid asked BrightFunded to confirm that a comparison page is approved material.",
+      "related_to_read": [
+        "How to Request Your BrightFunded Affiliate Payout (answers currency/method)",
+        "What's New in the BrightFunded Affiliate Program"
+      ]
+    }
   },
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
@@ -380,10 +391,25 @@
     "affiliate_url": "https://cryptofundtrader.com?_by=kunjan-4560ae",
     "affiliate_agreement": {
       "platform": "FirstPromoter",
-      "signed": null,
-      "rate": "UNCONFIRMED - read from the dashboard",
-      "paid_advertising": "UNCONFIRMED - check program terms",
-      "_action": "Download the program terms from FirstPromoter. Confirm rate, cookie duration, ad restrictions, indemnities, jurisdiction.",
+      "terms_url": "https://cryptofundtrader.com/affiliate-terms/ (modified 2026-02-03)",
+      "read": "2026-09-21",
+      "rate_tiers": {
+        "platinum": "10%",
+        "diamond": "12%",
+        "champion": "15%"
+      },
+      "rate_current": "10% (Platinum - the platinum5 code)",
+      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4)",
+      "cookie_days": 60,
+      "payout_currency": "USDT or BTC (cl.14)",
+      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18)",
+      "paid_advertising": "no PPC / keyword ads on the brand name (cl.8)",
+      "coupon_sites_extensions": "prohibited (cl.7, 11)",
+      "negative_marketing": "cl.6 prohibits 'negative words to get attention then promote our services'. troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.20), not indemnity.",
+      "required_disclaimer": "cl.10, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
+      "exclusivity": "none",
+      "indemnity": "none",
+      "non_disparagement": "none in the affiliate terms (the trader T&C 7.1ix clause does not appear here)",
       "customer_code": "platinum5",
       "customer_code_note": "Discount for the reader through this link. The code is the attribution."
     },
@@ -454,9 +480,9 @@
       "exec": "Bybit route is Direct API integration; others simulated"
     },
     "affiliate_payout": {
-      "schedule": "UNCONFIRMED - FirstPromoter",
-      "currency": "USD likely - sales denominated in USD (T&C 5.3); not confirmed",
-      "method": "UNCONFIRMED - FirstPromoter payout settings"
+      "schedule": "monthly (Platinum), on request by email",
+      "currency": "USDT or BTC",
+      "method": "crypto wallet"
     },
     "_to_verify": {
       "min_days": "cryptofundtrader.com/faq (T&C silent for 1-Phase; the 7-day add-on implies a funded-stage minimum)",
@@ -473,11 +499,12 @@
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
     "rule_changes": [],
     "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts",
-    "link_live": false,
-    "_link_live_note": "Set true only after the FirstPromoter program terms are read (rate, cookie, ad restrictions, non-disparagement) and clause 10's wording is in required_disclaimer.",
-    "required_disclaimer": null,
+    "link_live": true,
+    "_link_live_note": "true since 2026-09-22: affiliate terms read in full 2026-09-21 (affiliate_agreement), clause-10 wording in required_disclaimer with its source recorded.",
+    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
     "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
-    "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input."
+    "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input.",
+    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs"
   },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",
