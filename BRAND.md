@@ -63,8 +63,14 @@ set in a proportional face looks like marketing; set in mono it looks like an in
 
 ## Mark
 
-Wordmark `troid` in Plex Mono 600, -.04em, preceded by a 7px signal dot with an 18%
-halo. The dot is a status light: the droid is on.
+Wordmark `troid` in Plex Mono 600, -.04em, with the o replaced by a signal dot carrying an
+18% halo: `tr●id`. The dot is a status light: the droid is on. The mark on its own is the
+dot above its floor, the loss ceiling.
+
+Source files live in brand/. The wordmark's dot is nudged 5% of a cell right of
+geometric centre; do not "correct" it. The site header carries the same nudge in CSS
+(`.dot` has a larger left margin than right). Web assets: favicon.ico,
+apple-touch-icon.png, og-image.png in web/public/.
 
 ## Implementation rule
 
@@ -73,5 +79,5 @@ No page defines its own tokens. A new page starts by copying that block, then wr
 only the selectors it needs beneath it. If the block changes, it changes on every page
 in the same commit.
 
-The header is the same `.bar` markup on every page: status dot, wordmark linking home,
-three mono nav links. Nothing else goes in it.
+The header is the same `.bar` markup on every page: the `tr●id` wordmark linking home,
+the mono nav links. Nothing else goes in it.
