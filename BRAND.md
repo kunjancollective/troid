@@ -32,18 +32,22 @@ brand is gone. Accuracy is the identity; the click follows from trust or not at 
 ## Tokens
 
 ```
-bg       #08090a   near-black, never pure
-surface  #0f1113   panels
-surface2 #151719   inputs, insets
-line     #1e2124   hairlines only, never heavy
-ink      #e8e9ea   off-white
-dim      #7a7f85   secondary
-signal   #4dd8ac   THE accent. state only, never decoration
+bg       #070b12   near-black navy, never pure black
+surface  #0d1420   panels
+surface2 #131c2b   inputs, insets
+line     #1c2839   hairlines only, never heavy
+ink      #e6edf5   off-white
+dim      #7d8aa0   secondary
+signal   #4da3ff   THE accent. state only, never decoration. The dot in the mark.
 warn     #e0a33c   REDUCE
 bad      #e05f4f   BLOCK
 ```
 
-Light mode inverts with signal darkened to `#158b68` for contrast.
+Light mode: bg `#f7f9fc`, surface `#fff`, surface2 `#eef2f7`, line `#dde4ee`, ink `#0b1220`,
+dim `#5f6f86`, signal darkened to `#1f6fd1` for contrast.
+
+These are the kit's colours (`brand/README.md`). The mark, the favicon, the OG image and
+the site header are one object in shape and colour, or the brand is not one object.
 
 ## Type
 
@@ -55,7 +59,10 @@ set in a proportional face looks like marketing; set in mono it looks like an in
 
 ## Rules
 
-- 4px radius. No shadows. No gradients. No emoji. No exclamation marks.
+- 4px radius. No shadows. No emoji. No exclamation marks.
+- One gradient only: the page background, `linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,
+  var(--bg) 70%) fixed`, top of the viewport to 70% of it. Every panel, button and input
+  on it is flat. Light mode has no gradient; the stops are navy.
 - The signal colour marks state (OK, a key figure, a link). Never decoration.
 - Hairline borders at 1px `--line`. Grids separated by 1px gaps over a line-coloured
   background, so panels read as an instrument cluster rather than cards.

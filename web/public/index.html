@@ -16,21 +16,21 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* troid design tokens
-   bg #08090a · surface #0f1113 · line #1e2124 · ink #e8e9ea · dim #7a7f85
-   signal #4dd8ac — state only, never decoration
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
    Inter for prose. IBM Plex Mono for every number and label.
-   4px radius. No shadows, no gradients, no emoji. */
+   4px radius. No shadows, no emoji. One gradient: the page background. */
 :root{
-  --bg:#08090a; --surface:#0f1113; --surface2:#151719; --line:#1e2124;
-  --ink:#e8e9ea; --dim:#7a7f85; --signal:#4dd8ac; --warn:#e0a33c; --bad:#e05f4f;
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){
-  --bg:#fbfbfa; --surface:#fff; --surface2:#f4f4f2; --line:#e6e6e3;
-  --ink:#0d0e0f; --dim:#6e7379; --signal:#158b68; --warn:#96661a; --bad:#a83f32;}}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .wrap{max-width:900px;margin:0 auto;padding:0 20px}
 header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
