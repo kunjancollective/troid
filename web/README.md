@@ -22,6 +22,31 @@ cd web && vercel --prod
 Then connect `troid.ai` to the project in the Vercel dashboard. Nameservers must finish
 propagating first — the domain page shows "Pending" until they do.
 
+## Assistant (`/chat`, `api/troid.js`)
+
+A Vercel serverless function that calls the Anthropic Messages API with a fixed system
+prompt — `public/TROID.md`, `context/firms.json` (a copy `backtest/gen_compare.py` keeps
+current; not served), `public/METHODOLOGY.md` — and four arithmetic tools ported from
+`mcp/server.py` and the calculator: `size_trade`, `check_budget`, `check_compliance`,
+`explain_rule`. Arithmetic goes through the tools, never the model.
+
+Behind a feature flag until the disclaimer on `chat.html` has had its legal review:
+
+| env | meaning |
+|---|---|
+| `TROID_ASSISTANT` | `on` enables it. Anything else: the page says it is switched off and the function answers 503, spending nothing. |
+| `ANTHROPIC_API_KEY` | the key. Never in the repo. |
+| `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
+| `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
+
+Twenty messages an hour per address, in memory. Logs one line per call with a count and
+nothing else. No memory across sessions, no account, no credentials. The page keeps the
+conversation only while it is open. `GET /api/troid` reports the flag, the models and the
+size of each context file, so a deploy can be checked without a key.
+
+Local check without spending anything: `node web/test_assistant.js` runs the tool port
+against the calculator's reference case and a scripted fake of the API.
+
 ## Accuracy
 
 `public/index.html` carries a JavaScript port of `scripts/risk.py`. It is verified against

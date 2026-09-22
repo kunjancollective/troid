@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>troid — chat</title>
+<meta name="description" content="Ask the desk. Verified rules, exact arithmetic, every number with its tier. Not financial advice.">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:image" content="https://troid.ai/og-image.png">
+<meta property="og:title" content="troid — prop-firm risk, computed">
+<meta property="og:description" content="Size against both loss ceilings, net of fees. Free. Never places orders.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink);text-decoration:none;border:0}
+.dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+.chat{display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:60vh;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
+.msg{max-width:88%;padding:10px 13px;border-radius:4px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
+.msg.u{align-self:flex-end;background:var(--surface2);border:1px solid var(--line)}
+.msg.a{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-left:2px solid var(--signal);font-family:var(--mono);font-size:12.5px}
+.msg.s{align-self:stretch;font-family:var(--mono);font-size:11px;color:var(--dim);background:none;border:0;padding:2px 0}
+.row{display:flex;gap:10px;align-items:flex-end}
+textarea{width:100%;min-height:64px;resize:vertical;background:var(--surface2);border:1px solid var(--line);color:var(--ink);border-radius:3px;padding:9px;font-size:14px;font-family:var(--sans)}
+textarea:focus{outline:none;border-color:var(--signal)}
+button{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.06em;background:var(--signal);color:#fff;border:0;border-radius:3px;padding:11px 18px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+.box{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:14px}
+.off{border-left-color:var(--bad)}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="bar">
+    <a class="mark" href="/">tr<span class="dot"></span>id</a>
+    <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a><a href="/dashboard">research</a>
+      <a href="https://github.com/kunjancollective/troid">source</a></nav>
+  </div>
+  <div class="discl">Free · never places orders · independent affiliate of the firms on the
+    <a href="/compare">compare page</a></div>
+</div></header>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>Ask the desk.</h1>
+  <p class="lede">The assistant answers from troid's verified rule set and its own arithmetic
+  tools. It prices the trade you bring. It does not generate one.</p>
+</div>
+
+<div class="panel">
+  <p class="eyebrow">Assistant</p>
+  <div id="status" class="box">checking whether the assistant is switched on…</div>
+  <div id="chat" class="chat" aria-live="polite"></div>
+  <div class="row">
+    <textarea id="q" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
+    <button id="send" disabled>send</button>
+  </div>
+  <p class="notes" style="margin-top:10px"><span>Not financial advice. Verify with the firm before acting.</span></p>
+</div>
+
+<div class="panel">
+  <h2>What it is</h2>
+  <p>A chat over <a href="/TROID.md">TROID.md</a>, the verified rules on the
+  <a href="/compare">compare page</a> and the <a href="/METHODOLOGY.md">methodology</a>. Sizing,
+  budgets and compliance checks run through tools that do the arithmetic; the model reports
+  what they return. Every number carries its tier. A pending rule stays pending.</p>
+  <h2 style="margin-top:20px">What it isn't</h2>
+  <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
+  Nothing you type is stored; the page keeps the conversation only while it is open. The
+  service logs a count of messages and nothing else. Twenty messages an hour per address.</p>
+  <p style="margin-bottom:0" id="discl">Not financial advice. troid is an independent affiliate of the firms on the
+  compare page and earns a commission on challenge purchases made through its links. The
+  assistant can be wrong; the firm's own documents govern. Verify with the firm before acting.</p>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+  <a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>
+  Not financial advice. Simulated trading. Challenge fees are generally non-refundable.
+</div></footer>
+
+<script>
+/* The conversation lives in this array and nowhere else. No storage, no account. */
+var hist=[],busy=false;
+function el(id){return document.getElementById(id)}
+function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
+function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
+fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
+  if(s.enabled)setOn(true,"on · "+(s.context&&s.context.firms?s.context.firms.length+" verified firms":"")+" · "+s.limit_per_hour+" messages an hour · no memory between visits");
+  else setOn(false,"The assistant is built and switched off. It goes live once its disclaimer has had a legal review. Until then the calculator on the front page does the arithmetic.");
+}).catch(function(){setOn(false,"The assistant could not be reached.")});
+function send(){
+  var t=el("q").value.trim();if(!t||busy)return;
+  busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
+  var w=add("s","…");
+  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist})})
+  .then(function(r){return r.json().then(function(j){return[r.status,j]})})
+  .then(function(x){var st=x[0],j=x[1];w.remove();
+    if(st===200){hist.push({role:"assistant",content:j.reply});add("a",j.reply);add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note)}
+    else{hist.pop();add("s",j.error||("error "+st));if(st===503)setOn(false,j.error||"switched off")}
+  }).catch(function(){w.remove();hist.pop();add("s","The assistant could not be reached.")})
+  .then(function(){busy=false;if(!el("q").disabled)el("send").disabled=false});
+}
+el("send").addEventListener("click",send);
+el("q").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+</script>
+</body>
+</html>

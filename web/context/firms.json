@@ -1,0 +1,600 @@
+{
+  "_criterion": "Every firm whose rules are verified from its own primary documents appears, alphabetical, no cap. A firm is added when verification completes, never before. Bitfunded is the reference firm because it was verified first and most completely. Selection of which firms to verify next follows verified-review volume on propfirmmatch.com/crypto \u2014 an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought \u2014 with their own stated limitation: higher volume does not automatically mean better.",
+  "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
+  "_disclosure": "troid is an affiliate of every firm listed. Where a code is shown, it's cheaper through us; where it isn't, it's the same price. Commission structures differ. We compute; you choose.",
+  "_last_review": "2026-09-21",
+  "_rule": "A firm goes on the comparison only when every field below is verified from the firm's own primary documents (ToU + help centre, checked against each other) and the verified_from URLs are recorded. A null field means not yet verified, and the firm stays off the page.",
+  "bitfunded": {
+    "name": "Bitfunded",
+    "verified": true,
+    "verified_on": "2026-09-18",
+    "verified_from": [
+      "https://www.bitfunded.com/terms-of-use/",
+      "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+      "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+      "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
+      "https://www.bitfunded.com/faq/"
+    ],
+    "us_available": true,
+    "products": {
+      "1step": {
+        "daily_pct": 4,
+        "max_pct": 6,
+        "target_pct": 10,
+        "min_days": 5,
+        "fee_usd": 999
+      },
+      "2step_s1": {
+        "daily_pct": 5,
+        "max_pct": 10,
+        "target_pct": 8,
+        "min_days": 5,
+        "fee_usd": 799
+      },
+      "2step_s2": {
+        "daily_pct": 5,
+        "max_pct": 8,
+        "target_pct": 5,
+        "min_days": 5
+      },
+      "express": {
+        "daily_pct": 3,
+        "max_pct": 3,
+        "target_pct": 3,
+        "min_days": 5,
+        "fee_usd_5k": 39
+      },
+      "instant": {
+        "daily_pct": 3,
+        "max_pct": 6,
+        "target_pct": 0,
+        "min_days": 0,
+        "fee_usd_5k": 249,
+        "split": "60%"
+      }
+    },
+    "drawdown_type": "static",
+    "daily_basis": "initial_balance",
+    "floating_counts": true,
+    "reset_utc": "16:00",
+    "fee_per_side_pct": 0.04,
+    "max_leverage": 5,
+    "margin_modes": [
+      "cross",
+      "isolated"
+    ],
+    "hold_cap_days": {
+      "major": 10,
+      "minor": 7,
+      "tradfi": 5
+    },
+    "max_open_positions": 5,
+    "concentration_penalty_ladder": [
+      [
+        65,
+        50
+      ],
+      [
+        75,
+        60
+      ],
+      [
+        90,
+        65
+      ],
+      [
+        96,
+        70
+      ]
+    ],
+    "consistency_rule": null,
+    "mandatory_sl": "expected; absence can be classed excessive risk",
+    "min_closed_trades_per_stage": 2,
+    "refund": "100% at first profit split",
+    "split": "80% to 90%",
+    "payouts_per_30d": 3,
+    "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
+    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs.",
+    "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
+    "affiliate_rate_repeat": "3%",
+    "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
+    "compare_product": {
+      "key": "1step",
+      "label": "1-Step",
+      "daily_pct": 4,
+      "max_pct": 6,
+      "target_pct": 10,
+      "min_days": 5,
+      "price": "$999",
+      "daily_basis": "initial balance",
+      "drawdown_type": "static",
+      "reset_utc": "16:00",
+      "fee_per_side_pct": 0.04,
+      "max_leverage": 5,
+      "hold_cap": "10d / 7d / 5d",
+      "max_open": 5,
+      "refund": "100% at first profit split",
+      "split": "80% \u2192 90%",
+      "us_available": "yes",
+      "consistency_rule": "none",
+      "news_rule": "none stated",
+      "profit_cap": "none"
+    },
+    "affiliate_payout": {
+      "schedule": "on request via portal 'Payment Request'; AP Policy: approved within ~3-5 business days",
+      "currency": "UNCONFIRMED - check the Payment Request page; crypto-native firm, USDT likely",
+      "method": "UNCONFIRMED - portal"
+    },
+    "integration_type": "simulated",
+    "execution_type": "simulated (data from unnamed partner exchanges)",
+    "restricted_countries": "per ToU (list not extracted)",
+    "payment_methods": null,
+    "trader_payout_methods": null,
+    "rule_changes": [
+      {
+        "date": "2026-09-21",
+        "found": "Help centre (Restricted Trading Practices) says 5 open positions and tiered hold caps; ToU 14(d)(xi)/(x) say 10 and flat 10 days. Help centre newer; stricter applied."
+      },
+      {
+        "date": "2026-09-21",
+        "found": "FAQ states daily limit from INITIAL balance; earlier troid config assumed day-start. FAQ applied; crossover corrected $97,917 \u2192 $98,000."
+      },
+      {
+        "date": "2026-09-21",
+        "found": "Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied."
+      }
+    ],
+    "external_payout_evidence": null,
+    "reference": true,
+    "link_live": true,
+    "required_disclaimer": null,
+    "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
+    "panel_note": "Every rule verified from Terms + help centre. Where the shadow runs.",
+    "calc": {
+      "daily_basis": "initial",
+      "drawdown": "static",
+      "locks_at_initial_after_pct": null,
+      "hwm_basis": null,
+      "fee_per_side_pct": 0.04,
+      "max_leverage": 5,
+      "products": {
+        "1step": {
+          "label": "1-Step"
+        },
+        "2step_s1": {
+          "label": "2-Step \u00b7 S1"
+        },
+        "2step_s2": {
+          "label": "2-Step \u00b7 S2"
+        },
+        "express": {
+          "label": "Express"
+        },
+        "instant": {
+          "label": "Instant"
+        },
+        "trader": {
+          "label": "Funded",
+          "daily_pct": 4,
+          "max_pct": 6,
+          "_note": "funded-stage limits as the desk profile carries them (references/bitfunded.md)"
+        }
+      }
+    }
+  },
+  "brightfunded": {
+    "name": "BrightFunded",
+    "verified": false,
+    "verified_on": null,
+    "verified_from": [
+      "BrightFunded affiliate agreement, signed 2026-09-21 (its terms are kept privately; not a source for any trading rule)",
+      "https://brightfunded.com/terms-and-conditions (framework; delegates numbers to Product Specifications)",
+      "https://brightfunded.com/1-step (product numbers, 2026-09-21)",
+      "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work (2026-05-20)",
+      "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step (2026-05-20)"
+    ],
+    "us_available": null,
+    "_why_candidate": "#1 by verified-review volume on propfirmmatch (128 at 4.5). 1:5 leverage cap matches Bitfunded. 4h median payouts, 5 min days per phase, no consistency rule (third-party; unverified).",
+    "products": {
+      "1step": {
+        "daily_pct": 3,
+        "max_pct": 6,
+        "target_pct": 10,
+        "min_days": 5,
+        "fee_eur_100k": 497,
+        "fee_eur_100k_promo": 347.9,
+        "split": "up to 90%",
+        "news_rule": "5-minute restriction",
+        "eval_reward": "15% of evaluation profit added to the funded account after 10% growth"
+      },
+      "2step_bright": null,
+      "2step_classic": null,
+      "_note": "2-Step pages not yet read"
+    },
+    "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
+    "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
+    "floating_counts": true,
+    "reset_utc": "23:30\u201323:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window",
+    "fee_per_side_pct": null,
+    "max_leverage": null,
+    "margin_modes": null,
+    "hold_cap_days": null,
+    "max_open_positions": null,
+    "concentration_penalty_ladder": null,
+    "consistency_rule": "none (stated on product page)",
+    "mandatory_sl": null,
+    "min_closed_trades_per_stage": null,
+    "refund": "NOT standard. 100% fee refund is a paid add-on only (T&C 7.7b; product page add-ons list).",
+    "split": "up to 90% (add-on for 90%; base per third-party 80%)",
+    "payouts_per_30d": null,
+    "affiliate_url": "https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA",
+    "affiliate_agreement": {
+      "signed": "2026-09-21",
+      "customer_code": "YQfyv0bgQtOZMHTXOSAoAA",
+      "customer_code_note": "10% off for the reader through this link. The code is the attribution."
+    },
+    "_link_note": "Recorded 2026-09-21. Goes on the page only when verified=true.",
+    "_daily_note": "Page says 'reset daily'. Basis (initial vs day-start) and reset hour not stated on the product page or in the T&C. Help centre needed.",
+    "_dd_note": "T&C 6.6(c): 'may be static or trailing depending on the Product.' Product page does not say which. BLOCKING - every derived room/crossover figure depends on it.",
+    "_fee_note": "CFD commission structure (per-lot on FX, per third-party), not %-of-notional. troid's fee-drag formula assumes %-of-notional. Crypto commission unverified. Model needs a per-lot mode before this column can compute fee drag.",
+    "_lev_note": "1:5 crypto per third-party (propfirmshub). Not yet read from brightfunded.com/trading-instruments.",
+    "_hold_note": "No cap stated. T&C requires >=1 trade per 30 days. Third-party says overnight/weekend/crypto holding allowed.",
+    "_conc_note": "No numeric ladder. T&C 5.4(g) forbids 'overleveraging, overexposure, one-sided bets'; 5.7 forbids inconsistent position sizing; 5.8 penalties include leverage cut to 1:5 and daily limit reduction. Discretionary.",
+    "copy_trading": "own accounts only (T&C 5.6)",
+    "max_capital_per_customer": "USD 400,000 (T&C 6.14)",
+    "currency": "EUR pricing",
+    "governing_law": "UAE law; competent court in Dubai (T&C 17.4-17.5) - courts, not arbitration",
+    "entities": {
+      "parent": "Bright Global FZCO, Dubai",
+      "cfd": "BrightFunded Ltd, Saint Lucia",
+      "futures": "BrightFunded LLC, Wyoming/Austin TX",
+      "transact": "Bright Transact Ltd, Cyprus"
+    },
+    "_us_note": "BLOCKING. T&C s.2: 'services related to MetaTrader 5 (MT5) ... are not intended for residents or citizens of the United States.' CFD services are offered by the Saint Lucia entity; futures by the Wyoming LLC. If crypto runs on MT5 as a CFD, a US resident may be excluded from the crypto product entirely. Must be confirmed with BrightFunded support before this firm goes on a page aimed at a US audience.",
+    "_comparability_note": "BrightFunded is a multi-asset CFD firm (FX 1:100, metals 1:40, indices 1:20, crypto 1:5 per third-party) whose T&C is written around Forex. Bitfunded is a crypto-native perp firm. The 1:5 crypto cap matches Bitfunded's, but the fee model (per-lot vs %-of-notional), the platform (MT5), and the pricing currency (EUR) do not. Comparable on daily/max/target; not yet comparable on fees or execution.",
+    "_open_questions": [
+      "crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments",
+      "crypto leverage 1:5 - same page",
+      "max open positions - help centre",
+      "US residents on DxTrade/cTrader - help centre or support"
+    ],
+    "compare_product": {
+      "key": "1step",
+      "label": "1-Step",
+      "daily_pct": 3,
+      "max_pct": 6,
+      "target_pct": 10,
+      "min_days": 5,
+      "price": "\u20ac497 (\u20ac347.90 promo)",
+      "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
+      "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
+      "reset_utc": "23:30\u201323:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window",
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "hold_cap": "none stated",
+      "max_open": null,
+      "refund": "paid add-on only",
+      "split": "up to 90%",
+      "us_available": "MT5 barred to US; crypto platform for US unconfirmed",
+      "consistency_rule": "none",
+      "news_rule": "5-min restriction",
+      "profit_cap": "none stated"
+    },
+    "_leads_third_party": {
+      "source": "propfirmmatch.com/crypto/prop-firms/brightfunded, 2026-09-21",
+      "crypto_commission": "0.012% per side (0.024% round turn) - %-of-notional, NOT per-lot. Verify at brightfunded.com/trading-instruments. If true, troid's fee-drag formula applies and it's the lowest of the three.",
+      "platforms": "BrightFunded Platform (DxTrade), cTrader, MT5. Two non-MT5 platforms exist - likely resolves US crypto access. Verify with help centre / support.",
+      "crypto_leverage": "1:5 on 1-Step and 2-Step. Verify at trading-instruments.",
+      "restricted_countries": "Cuba, Iran, North Korea, Pakistan, Syria, Vietnam. US not listed.",
+      "trader_payout_methods": "bank transfer, crypto",
+      "data_feed": "simulated; Binance, Bybit, Coinbase, Kraken listed as exchanges"
+    },
+    "_to_verify": {
+      "daily_basis": "help.brightfunded.com - 'Your Daily Loss Limit, Explained' (linked from the 1-step page)",
+      "drawdown_type": "help centre or support; T&C says product-dependent",
+      "reset_utc": "help centre, same article",
+      "fee_per_side_pct": "brightfunded.com/trading-instruments (lead: 0.012%/side)",
+      "max_leverage": "brightfunded.com/trading-instruments (lead: 1:5)",
+      "max_open": "help centre",
+      "us_available": "help centre or support: can a US resident trade crypto on DxTrade or cTrader?"
+    },
+    "integration_type": "simulated (per propfirmmatch; verify)",
+    "execution_type": "simulated",
+    "restricted_countries": "Cuba, Iran, North Korea, Syria, Vietnam (T&C) + Pakistan (propfirmmatch); MT5 additionally barred to US and UAE",
+    "payment_methods": null,
+    "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
+    "rule_changes": [],
+    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/brightfunded/payouts",
+    "link_live": true,
+    "_link_live_note": "true since 2026-09-22: comparison permitted, confirmed with the firm on 2026-09-21 (record kept privately); promotion policy read (promotion_policy).",
+    "required_disclaimer": null,
+    "panel_note": "Rules go on this page only after they're read from BrightFunded's own documents.",
+    "promotion_policy": {
+      "url": "https://help.brightfunded.com/en/articles/9662070-affiliate-promotion-policy",
+      "dated": "2026-03-17",
+      "prohibited": "all paid advertising: PPC, Google Ads, social ads, retargeting, YouTube ads, native advertising / sponsored content",
+      "encouraged": "organic, authentic; direct engagement with trading communities; word of mouth; genuine content",
+      "approval_process": "none described. troid asked BrightFunded to confirm that a comparison page is approved material.",
+      "related_to_read": [
+        "How to Request Your BrightFunded Affiliate Payout (answers currency/method)",
+        "What's New in the BrightFunded Affiliate Program"
+      ]
+    },
+    "_trailing_trap": "Help-centre Scenario 3, verbatim structure: balance 100k, open trade +4k floating -> limit rises to 98k; trade reverses and closes at -3.5k -> balance 96.5k is below 98k -> breached. An unrealised win can end the account. Model gap: troid's engine tracks the HWM on balance; BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.",
+    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%).",
+    "calc": {
+      "daily_basis": "max_balance_equity",
+      "drawdown": "trailing",
+      "locks_at_initial_after_pct": 6,
+      "hwm_basis": "equity",
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "products": {
+        "1step": {
+          "label": "1-Step"
+        }
+      },
+      "_pending": [
+        "fee_per_side_pct (trading-instruments page)",
+        "max_leverage (same page)",
+        "2-Step Bright and Classic (pages not yet read)"
+      ]
+    }
+  },
+  "_excluded": {
+    "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+  },
+  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm every rule was verified against from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where the shadow runs. That verification is troid's product; Bitfunded is the only firm where it is complete. Another firm verified to the same depth earns the same standing.",
+  "_external_ranking_snapshot": {
+    "source": "propfirmmatch.com/crypto/prop-firm-reviews",
+    "date": "2026-09-21",
+    "top": [
+      {
+        "firm": "BrightFunded",
+        "reviews": 128,
+        "rating": 4.5
+      },
+      {
+        "firm": "Crypto Fund Trader",
+        "reviews": 109,
+        "rating": 4.1
+      }
+    ],
+    "note": "Breakout rates 4.6 with fewer reviews on this platform; 862+ on Trustpilot. Bitfunded not in the visible table."
+  },
+  "crypto_fund_trader": {
+    "name": "Crypto Fund Trader",
+    "verified": false,
+    "verified_on": null,
+    "verified_from": [
+      "https://cryptofundtrader.com/terms-and-conditions/ (modified 2026-03-30; contains the numbers, unlike BrightFunded's)"
+    ],
+    "us_available": "YES via Match-Trader only. MT5 not available to US residents (7.3, 7.1xvi). Bybit route requires the user's own Bybit account, which Bybit does not offer to US residents.",
+    "_why_candidate": "#2 by verified-review volume on propfirmmatch (109 at 4.1). Runs up to 100x leverage and a per-trade profit cap per third-party sources \u2014 structurally different from a 5x firm, which the circuit-breaker model handles as a leverage input.",
+    "products": {
+      "1phase": {
+        "daily_pct": 4,
+        "daily_basis": "balance at 00:05 UTC",
+        "max_pct": 6,
+        "drawdown_type": "trailing from max demo balance until +6% profit, then static at opening balance",
+        "target_pct": 10,
+        "min_days": null,
+        "fee_usd_100k": 619,
+        "account_class": "Advanced at $50k+ (crypto 1:100); Student at <=$25k (crypto 1:5)"
+      },
+      "2phase": {
+        "daily_pct": 5,
+        "daily_basis": "balance at 00:05 UTC",
+        "max_pct": 10,
+        "drawdown_type": "static from initial",
+        "targets_pct": [
+          8,
+          5
+        ],
+        "fee_usd_100k": 660
+      },
+      "3phase": {
+        "targets_pct": [
+          5,
+          5,
+          5
+        ],
+        "fee_usd_100k": 399,
+        "_note": "drawdown rules not separately stated; presumed 2-phase"
+      },
+      "instant": {
+        "daily_pct": 4,
+        "max_pct": 6,
+        "target_pct": 10,
+        "min_days": 0,
+        "sizes": "$2.5k-$10k only",
+        "fee_usd_10k": 475
+      },
+      "ascend": {
+        "_note": "2-phase rules; fixed scholarship instead of funded stage ($4,200 at $100k); 2-min news window with 2% max theoretical loss",
+        "fee_usd_100k": 780
+      },
+      "break": {
+        "daily_pct": "4% ($25k/$50k) or 3% ($100k), trailing from max balance, locks at initial after 4%/3% profit",
+        "target_pct": "5% ($25k) / 6% ($50k,$100k)",
+        "fee_usd_100k": 200,
+        "activation_fee_usd_100k": 328,
+        "consistency_rule": "40% single-day cap on total profits, checked at payout (final stage)",
+        "max_final_stage_accounts": 5
+      }
+    },
+    "drawdown_type": "product-dependent: 1-phase trailing-then-static (trailing_stops_at_initial); 2-phase static",
+    "daily_basis": "day-start balance at 00:05 UTC (T&C 8.i, 8.ii) - NOT initial. Differs from Bitfunded.",
+    "floating_counts": true,
+    "reset_utc": "00:05",
+    "fee_per_side_pct": 0.0325,
+    "max_leverage": "crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k); up to 1:100 on Bybit",
+    "margin_modes": null,
+    "hold_cap_days": null,
+    "max_open_positions": null,
+    "concentration_penalty_ladder": null,
+    "consistency_rule": "none on 1/2-phase; 40% on Break final stage",
+    "mandatory_sl": null,
+    "min_closed_trades_per_stage": null,
+    "refund": "None if the evaluation is not completed (5.1). No free trials (3.2.3).",
+    "split": "up to 90% with the +20% add-on; base not stated in T&C (FAQ needed)",
+    "payouts_per_30d": null,
+    "affiliate_url": "https://cryptofundtrader.com?_by=kunjan-4560ae",
+    "affiliate_agreement": {
+      "platform": "FirstPromoter",
+      "terms_url": "https://cryptofundtrader.com/affiliate-terms/ (modified 2026-02-03)",
+      "read": "2026-09-21",
+      "rate_tiers": {
+        "platinum": "10%",
+        "diamond": "12%",
+        "champion": "15%"
+      },
+      "rate_current": "10% (Platinum - the platinum5 code)",
+      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4)",
+      "cookie_days": 60,
+      "payout_currency": "USDT or BTC (cl.14)",
+      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18)",
+      "paid_advertising": "no PPC / keyword ads on the brand name (cl.8)",
+      "coupon_sites_extensions": "prohibited (cl.7, 11)",
+      "negative_marketing": "cl.6 prohibits 'negative words to get attention then promote our services'. troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.20), not indemnity.",
+      "required_disclaimer": "cl.10, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
+      "exclusivity": "none",
+      "indemnity": "none",
+      "non_disparagement": "none in the affiliate terms (the trader T&C 7.1ix clause does not appear here)",
+      "customer_code": "platinum5",
+      "customer_code_note": "Discount for the reader through this link. The code is the attribution."
+    },
+    "_link_note": "Recorded 2026-09-21. Goes on the page only when verified=true.",
+    "entity": {
+      "contracting": "SWISS RLCRATES AG, Bahnhofstrasse 21, 6300 Zug, Switzerland (CHE-162.567.204)",
+      "mt5_provider": "RLCRATES S.L. (Spain)",
+      "note": "Not authorised or licensed in Switzerland. Payouts are framed as 'educational scholarships'; challenges as 'training'."
+    },
+    "platforms": {
+      "match_trader": "no country restrictions",
+      "mt5": "not for US residents",
+      "bybit": "user's own account via API; Bybit's own jurisdiction rules apply"
+    },
+    "_fee_note": "0.0325%/side crypto on Match-Trader & MT5 (T&C 5.8). Bybit route uses Bybit's native fees. Same model as Bitfunded's 0.04%; troid's fee-drag formula applies directly.",
+    "_hold_note": "No hold cap stated in the T&C.",
+    "_pos_note": "Not fixed; T&C s.6 says the firm may impose 'maximum position size or number of simultaneous positions' at its discretion with prior notice.",
+    "profit_cap": "$10,000 per day AND per trade (7.1 xiii). Excess is deducted; trades closed in parts or in similar time count as one. On a $100k account that caps a day at 10%.",
+    "addons": {
+      "daily_dd_to_6pct": "+15% of price",
+      "max_dd_to_12pct": "+25%",
+      "split_to_90pct": "+20%",
+      "weekly_payout": "+20%"
+    },
+    "copy_trading": "Prohibited with third parties everywhere. 7.1(vii) also prohibits executing trade ideas 'inspired by' third parties, social networks, research reports. Ascend: no copy trading even between own accounts. Break: own-account copy allowed in evaluation only.",
+    "prohibited_notable": {
+      "hedging_or_reverse_trading": "7.1(xiv). 'Reverse trading' is not defined. If it covers stop-and-reverse, troid-shadow-1's reverse-on-stop mechanism would be prohibited here. ASK SUPPORT.",
+      "non_disparagement": "7.1(ix): trader agrees not to publicly dispute, challenge or criticize CFT in any public medium. A gag clause. Relevant to any CFT trader who repeats troid's rule analysis.",
+      "marketed_strategies": "7.1(iv)(3), same as Bitfunded 14(d)(v).",
+      "same_household_device_ip": "7.1(viii). VPN use is at the user's own risk of IP collision.",
+      "interview": "s.6: the firm may require a live video/voice/screen-share interview at any time as a condition of continuing or receiving a payout."
+    },
+    "payout_discretion": "T&C 14.2: the firm 'may, under certain circumstances, not pay the paid scholarship despite the trader's achievement, waiving any subsequent claim' - sole remedy is refund of fees. Unusually explicit.",
+    "governing_law": "Swiss law; courts of Zug, exclusive (12, 16.1)",
+    "_comparability_note": "MORE comparable to Bitfunded than BrightFunded is: crypto-first, same %-of-notional fee model, numbers in the T&C, clear US path via Match-Trader. Structural differences the model handles: day-start daily basis (not initial), 00:05 UTC reset (not 16:00), 1-phase trailing-then-static, crypto 1:100 on $100k. Differences the model does NOT yet express: the $10k/day/trade profit cap, the gag clause, discretionary payout (14.2).",
+    "_open_questions": [
+      "Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.",
+      "Base profit split without the add-on (FAQ)",
+      "Maximum capital allocation (FAQ, referenced at 7.1 xii)",
+      "Margin mode(s) offered",
+      "Affiliate program terms from FirstPromoter: rate, cookie, ad restrictions, and whether they contain a non-disparagement clause mirroring 7.1(ix)"
+    ],
+    "compare_product": {
+      "key": "1phase",
+      "label": "1-Phase (Advanced, $100k)",
+      "daily_pct": 4,
+      "max_pct": 6,
+      "target_pct": 10,
+      "min_days": null,
+      "price": "$619",
+      "daily_basis": "day-start balance",
+      "drawdown_type": "trailing \u2192 static at initial after +6%",
+      "reset_utc": "00:05",
+      "fee_per_side_pct": 0.0325,
+      "max_leverage": 100,
+      "hold_cap": "none stated",
+      "max_open": "discretionary",
+      "refund": "none",
+      "split": "up to 90% (add-on); base unconfirmed",
+      "us_available": "yes, Match-Trader only",
+      "consistency_rule": "none (40% on Break)",
+      "news_rule": "none on 1-Phase",
+      "profit_cap": "$10k / day and / trade"
+    },
+    "_leads_third_party": {
+      "source": "propfirmmatch.com/crypto/prop-firms/crypto-fund-trader, 2026-09-21",
+      "note": "Corroborates the T&C on every field it covers: 0.0325%/side crypto on Match-Trader/MT5, Bybit native fees, crypto 1:100 on 1/2-step and 1:5 on Instant. No restricted countries listed. Trader payouts bank/crypto.",
+      "exec": "Bybit route is Direct API integration; others simulated"
+    },
+    "affiliate_payout": {
+      "schedule": "monthly (Platinum), on request by email",
+      "currency": "USDT or BTC",
+      "method": "crypto wallet"
+    },
+    "_to_verify": {
+      "min_days": "cryptofundtrader.com/faq (T&C silent for 1-Phase; the 7-day add-on implies a funded-stage minimum)",
+      "reverse_trading_definition": "support@cryptofundtrader.com - does 7.1(xiv) cover stop-and-reverse?",
+      "base_split": "FAQ",
+      "max_allocation": "FAQ (referenced at 7.1 xii)",
+      "margin_modes": "FAQ or platform",
+      "affiliate_terms": "FirstPromoter dashboard - rate, cookie, ad restrictions, any non-disparagement clause"
+    },
+    "integration_type": "Bybit route: direct API to user's own account; Match-Trader/MT5: simulated",
+    "execution_type": "Bybit: real order book via API; others simulated",
+    "restricted_countries": "none listed; MT5 barred to US; Bybit route subject to Bybit's own restrictions",
+    "payment_methods": null,
+    "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
+    "rule_changes": [],
+    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts",
+    "link_live": true,
+    "_link_live_note": "true since 2026-09-22: affiliate terms read in full 2026-09-21 (affiliate_agreement), clause-10 wording in required_disclaimer with its source recorded.",
+    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
+    "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
+    "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input.",
+    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
+    "calc": {
+      "daily_basis": "day_start",
+      "drawdown": "trailing",
+      "locks_at_initial_after_pct": 6,
+      "hwm_basis": "balance",
+      "fee_per_side_pct": 0.0325,
+      "max_leverage": 100,
+      "products": {
+        "1phase": {
+          "label": "1-Phase (Advanced)"
+        },
+        "2phase": {
+          "label": "2-Phase",
+          "drawdown": "static"
+        },
+        "instant": {
+          "label": "Instant",
+          "drawdown": null,
+          "_note": "drawdown type not stated for Instant; pending"
+        }
+      },
+      "_leverage_note": "1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). The calculator uses the Advanced cap."
+    }
+  },
+  "_watch": {
+    "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",
+    "bem_funding": "5.0 rating, 30 reviews, Dubai, 2 years.",
+    "e8_perpetuals": "US-based, <10 reviews, 1 year. US-based is relevant to this audience.",
+    "tradeify_247": "US-based, <10 reviews, <1 year."
+  },
+  "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not ours. The two are complementary: they compare firms; we compare outcomes.",
+  "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
+  "_link_rule": "A firm's link shows when link_live is true in its entry AND daily, max, target and price are verified from the firm's own documents. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
+  "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
+  "_troid_social": {
+    "x": "https://x.com/tradingdroid",
+    "reddit": "https://www.reddit.com/user/tradingdroid/",
+    "email": "hello@troid.ai"
+  },
+  "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
+  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for the calculator and the assistant: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and the calculator says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one."
+}

@@ -22,7 +22,7 @@ BRAND = (HERE.parent / "web" / "public" / "index.html").read_text()
 STYLE = BRAND[BRAND.index('<link rel="icon"'):BRAND.index("</style>") + 8]
 HEADER = '''<div class="bar">
   <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a>
+  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a>
     <a href="/dashboard">research</a><a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>'''
 ORDER = sorted(k for k in FIRMS if isinstance(FIRMS[k], dict) and "compare_product" in FIRMS[k])
@@ -246,5 +246,11 @@ changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "fi
                                   ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
                                   ("index.html disclaimers", rewrite_region(INDEX, "disclaimers", "  " + required_html(inline=True) if required_sentences() else "")),
                                   ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html()))) if hit]
+# Context bundle for the assistant function (web/api/troid.js): a copy of firms.json outside
+# public/, packaged into the function by vercel.json includeFiles. Not served as a page.
+CONTEXT = HERE.parent / "web" / "context" / "firms.json"
+CONTEXT.parent.mkdir(exist_ok=True)
+if not CONTEXT.exists() or CONTEXT.read_bytes() != (HERE.parent / "firms.json").read_bytes():
+    CONTEXT.write_bytes((HERE.parent / "firms.json").read_bytes()); changed.append("context/firms.json")
 print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "
       f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")

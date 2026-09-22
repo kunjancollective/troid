@@ -24,7 +24,7 @@ BRAND = (HERE.parent/"web"/"public"/"index.html").read_text()
 STYLE = BRAND[BRAND.index("<link rel=\"icon\""):BRAND.index("</style>")+8]
 HEADER = '''<div class="bar">
   <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/dashboard">research</a>
+  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a><a href="/dashboard">research</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>'''
 
