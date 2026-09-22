@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Render web/public/compare.html from firms.json. Three columns, alphabetical, PER-CELL verification.
+"""Render web/public/compare.html from firms.json, and rewrite the marked regions of index.html and faq.html.
+
+Three columns, alphabetical, PER-CELL verification. Everything firm-specific on the site comes from
+firms.json: the firms panel on the landing page (<!-- firms:start/end -->) and every listed firm's
+required_disclaimer in the FAQ disclaimer and both footers (<!-- disclaimers:start/end -->). The
+generic text around those regions never names a firm.
 
 Every cell shows its value if verified from the firm's own documents, 'pending' if not.
 Derived cells compute only when their inputs exist. The same rule applies to every firm.
@@ -25,10 +30,75 @@ FIELDS = ["daily_pct","max_pct","target_pct","min_days","price","daily_basis","d
           "fee_per_side_pct","max_leverage","hold_cap","max_open","refund","split","us_available",
           "consistency_rule","news_rule","profit_cap"]
 
+INDEX = HERE.parent / "web" / "public" / "index.html"
+FAQ = HERE.parent / "web" / "public" / "faq.html"
+RANK = {e["firm"]: (i + 1, e) for i, e in enumerate((FIRMS.get("_external_ranking_snapshot") or {}).get("top", []))}
+
+
+def link_live(f):
+    """The contract: a human set link_live, AND daily, max, target and price are verified from the firm's documents."""
+    p = f["compare_product"]
+    return (bool(f.get("link_live")) and bool(f.get("affiliate_url"))
+            and all(p.get(x) is not None for x in ("daily_pct", "max_pct", "target_pct", "price")))
+
+
+def required_sentences():
+    """Every listed firm's required disclaimer, verbatim, while the firm is listed."""
+    return [(FIRMS[k]["name"], FIRMS[k]["required_disclaimer"].strip())
+            for k in ORDER if (FIRMS[k].get("required_disclaimer") or "").strip()]
+
+
+def required_html(inline=False):
+    items = required_sentences()
+    if inline:
+        return " ".join(html.escape(t) for _, t in items)
+    return "\n".join(f"<p>{html.escape(t)}</p>" for _, t in items)
+
+
+def panel_cell(k, f):
+    p = f["compare_product"]; name = html.escape(f["name"])
+    rank = RANK.get(f["name"])
+    role = "reference" if f.get("reference") else (f"#{rank[0]} by reviews" if rank else "")
+    head = f"{name} · {role}" if role else name
+    if f.get("verified"):
+        summary = f.get("panel_summary") or (f"{p['label']} {p['daily_pct']}% / {p['max_pct']}%"
+                                             + (f" {p['drawdown_type']}" if p.get("drawdown_type") else ""))
+        v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(summary)}</div>'
+    else:
+        v = '<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">verification pending</div>'
+    notes = []
+    if rank: notes.append(f"{rank[1]['reviews']} verified reviews at {rank[1]['rating']} on propfirmmatch.")
+    if f.get("panel_note"): notes.append(f["panel_note"])
+    note = f'\n      <div class="s">{html.escape(" ".join(notes))}</div>' if notes else ""
+    link = ""
+    if link_live(f):
+        code = (f.get("affiliate_agreement") or {}).get("customer_code")
+        link = (f'\n      <div class="s" style="margin-top:8px"><a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">'
+                f'{name} challenges</a> · our link' + (f" · code {html.escape(code)}" if code else "")
+                + (" · their promos apply here" if f.get("_promo_note") else "") + "</div>")
+    return f'    <div class="cell">\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
+
+
+def firms_panel_html():
+    return ('  <div class="read" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">\n'
+            + "\n".join(panel_cell(k, FIRMS[k]) for k in ORDER) + "\n  </div>")
+
+
+def rewrite_region(path, tag, inner):
+    """Replace everything between <!-- tag:start --> and <!-- tag:end --> in a static page. Returns True if it changed."""
+    start, end = f"<!-- {tag}:start -->", f"<!-- {tag}:end -->"
+    s = path.read_text(); i = s.index(start) + len(start); j = s.index(end)
+    body = ("\n" + inner.strip("\n") + "\n") if inner.strip() else "\n"
+    new = s[:i] + body + s[j:]
+    if new != s:
+        path.write_text(new); return True
+    return False
+
+
 def js(k, f):
     p = f["compare_product"]
     ag = f.get("affiliate_agreement") or {}
-    link_ok = bool(f.get("affiliate_url")) and all(p.get(x) is not None for x in ("daily_pct","max_pct","target_pct","price"))
+    link_ok = link_live(f)
     return json.dumps({"name": f["name"], "p": p,
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open": f.get("_open_questions", []),
@@ -77,7 +147,7 @@ is verified from the firm's own documents or says <em>pending</em>. Nothing is s
 <p class="s" style="margin:16px 0 0;line-height:1.7">{html.escape(FIRMS.get("_reference_firm",""))} {html.escape(FIRMS.get("_bitfunded_directory_note",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_criterion",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_link_rule",""))}</p>
-<p class="foot">{html.escape(FIRMS.get("_disclosure",""))} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
+<p class="foot">{" ".join(x for x in (html.escape(FIRMS.get("_disclosure","")), required_html(inline=True)) if x)} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
 </div>
 <script>
 var F={{{",".join(f'"{k}":{js(k, FIRMS[k])}' for k in ORDER)}}};var ORDER={json.dumps(ORDER)};
@@ -145,5 +215,9 @@ render();
 </script></body></html>'''
 OUT.write_text(page)
 cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) for k in ORDER}
-links=[k for k in ORDER if FIRMS[k].get("affiliate_url") and all(FIRMS[k]["compare_product"].get(x) is not None for x in ("daily_pct","max_pct","target_pct","price"))]
-print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links}")
+links=[k for k in ORDER if link_live(FIRMS[k])]
+changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
+                                  ("index.html disclaimers", rewrite_region(INDEX, "disclaimers", "  " + required_html(inline=True) if required_sentences() else "")),
+                                  ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html()))) if hit]
+print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "
+      f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")

@@ -68,7 +68,8 @@ jobs:
           git config user.name "troid-shadow"
           git config user.email "shadow@troid.ai"
           git add backtest/journal.csv backtest/state.json backtest/RESULTS.md \
-                  web/public/ledger.html web/public/compare.html backtest/data/live_4h.csv
+                  web/public/ledger.html web/public/compare.html web/public/index.html \
+                  web/public/faq.html backtest/data/live_4h.csv
           if git diff --cached --quiet; then
             echo "no change today"
           else

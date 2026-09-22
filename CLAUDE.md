@@ -36,7 +36,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
-- `web/`, `business/`, `prompts/` — published pages, planning, build briefs.
+- `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything
+  firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
+  the compare page, the firms panel and required disclaimers in the marked regions of
+  `index.html` and `faq.html`. Generic text never names a firm. Edit `firms.json`, not the HTML.
 - `BRAND.md` — voice and visual tokens. troid never hypes; that is the brand.
 
 ## A correction that is now policy

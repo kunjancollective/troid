@@ -144,7 +144,12 @@
         "found": "Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied."
       }
     ],
-    "external_payout_evidence": null
+    "external_payout_evidence": null,
+    "reference": true,
+    "link_live": true,
+    "required_disclaimer": null,
+    "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
+    "panel_note": "Every rule verified from Terms + help centre. Where the shadow runs."
   },
   "brightfunded": {
     "name": "BrightFunded",
@@ -268,7 +273,11 @@
     "payment_methods": null,
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
     "rule_changes": [],
-    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/brightfunded/payouts"
+    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/brightfunded/payouts",
+    "link_live": false,
+    "_link_live_note": "Set true only after BrightFunded confirms the site is approved material.",
+    "required_disclaimer": null,
+    "panel_note": "Rules go on this page only after they're read from BrightFunded's own documents."
   },
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
@@ -463,7 +472,12 @@
     "payment_methods": null,
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
     "rule_changes": [],
-    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts"
+    "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts",
+    "link_live": false,
+    "_link_live_note": "Set true only after the FirstPromoter program terms are read (rate, cookie, ad restrictions, non-disparagement) and clause 10's wording is in required_disclaimer.",
+    "required_disclaimer": null,
+    "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
+    "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input."
   },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",
@@ -473,11 +487,12 @@
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not ours. The two are complementary: they compare firms; we compare outcomes.",
   "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
-  "_link_rule": "A firm's link shows when an affiliate agreement exists AND daily, max, target and price are verified from the firm's own documents. Other cells show 'pending' individually. US availability is always shown as its own row.",
+  "_link_rule": "A firm's link shows when link_live is true in its entry AND daily, max, target and price are verified from the firm's own documents. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
   "_troid_social": {
     "x": "https://x.com/tradingdroid",
     "reddit": "https://www.reddit.com/user/tradingdroid/",
     "email": "hello@troid.ai"
-  }
+  },
+  "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run."
 }
