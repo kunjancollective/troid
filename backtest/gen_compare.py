@@ -103,7 +103,7 @@ def js(k, f):
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open": f.get("_open_questions", []),
         "url": f.get("affiliate_url") if link_ok else None,
-        "code": ag.get("customer_code"), "promo": f.get("_promo_note")})
+        "code": ag.get("customer_code") if link_ok else None, "promo": f.get("_promo_note") if link_ok else None})
 
 def column(k, f):
     p = f["compare_product"]; n = sum(1 for x in FIELDS if p.get(x) is not None)
@@ -205,7 +205,7 @@ function render(){{
     if(f.url){{foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · our link';
       if(f.code)foot+='<br>discount code <b>'+f.code+'</b> — cheaper through this link';
       if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';}}
-    else foot='<span class="pend">Link appears once daily, max, target and price are verified from '+f.name+"'s documents.</span>";
+    else foot='<span class="pend">Link appears when '+f.name+"'s affiliate agreement allows it and daily, max, target and price are verified from "+f.name+"'s documents.</span>";
     if(f.open&&f.open.length)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">open: '+f.open.length+' question'+(f.open.length>1?'s':'')+' — '+f.open[0].split('.')[0]+(f.open.length>1?' …':'')+'</div>';
     document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;
   }});
