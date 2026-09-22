@@ -1,0 +1,2 @@
+# Only gen_tearsheet.py needs anything beyond the standard library.
+quantstats>=0.0.81
