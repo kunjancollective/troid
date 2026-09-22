@@ -64,6 +64,9 @@ def panel_cell(k, f):
         summary = f.get("panel_summary") or (f"{p['label']} {p['daily_pct']}% / {p['max_pct']}%"
                                              + (f" {p['drawdown_type']}" if p.get("drawdown_type") else ""))
         v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(summary)}</div>'
+    elif link_live(f):
+        n = sum(1 for x in FIELDS if p.get(x) is not None)
+        v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{n} of {len(FIELDS)} rules verified</div>'
     else:
         v = '<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">verification pending</div>'
     notes = []

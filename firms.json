@@ -158,7 +158,9 @@
     "verified_from": [
       "BrightFunded affiliate agreement, signed 2026-09-21 (its terms are kept privately; not a source for any trading rule)",
       "https://brightfunded.com/terms-and-conditions (framework; delegates numbers to Product Specifications)",
-      "https://brightfunded.com/1-step (product numbers, 2026-09-21)"
+      "https://brightfunded.com/1-step (product numbers, 2026-09-21)",
+      "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work (2026-05-20)",
+      "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step (2026-05-20)"
     ],
     "us_available": null,
     "_why_candidate": "#1 by verified-review volume on propfirmmatch (128 at 4.5). 1:5 leverage cap matches Bitfunded. 4h median payouts, 5 min days per phase, no consistency rule (third-party; unverified).",
@@ -178,10 +180,10 @@
       "2step_classic": null,
       "_note": "2-Step pages not yet read"
     },
-    "drawdown_type": null,
-    "daily_basis": null,
+    "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
+    "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
     "floating_counts": true,
-    "reset_utc": null,
+    "reset_utc": "23:30\u201323:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window",
     "fee_per_side_pct": null,
     "max_leverage": null,
     "margin_modes": null,
@@ -220,12 +222,10 @@
     "_us_note": "BLOCKING. T&C s.2: 'services related to MetaTrader 5 (MT5) ... are not intended for residents or citizens of the United States.' CFD services are offered by the Saint Lucia entity; futures by the Wyoming LLC. If crypto runs on MT5 as a CFD, a US resident may be excluded from the crypto product entirely. Must be confirmed with BrightFunded support before this firm goes on a page aimed at a US audience.",
     "_comparability_note": "BrightFunded is a multi-asset CFD firm (FX 1:100, metals 1:40, indices 1:20, crypto 1:5 per third-party) whose T&C is written around Forex. Bitfunded is a crypto-native perp firm. The 1:5 crypto cap matches Bitfunded's, but the fee model (per-lot vs %-of-notional), the platform (MT5), and the pricing currency (EUR) do not. Comparable on daily/max/target; not yet comparable on fees or execution.",
     "_open_questions": [
-      "static or trailing? (help centre or support)",
-      "reset hour and daily basis",
-      "crypto commission structure",
-      "crypto leverage from trading-instruments page",
-      "US residents: can they trade crypto, on what platform?",
-      "2-Step Bright and Classic numbers"
+      "crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments",
+      "crypto leverage 1:5 - same page",
+      "max open positions - help centre",
+      "US residents on DxTrade/cTrader - help centre or support"
     ],
     "compare_product": {
       "key": "1step",
@@ -235,9 +235,9 @@
       "target_pct": 10,
       "min_days": 5,
       "price": "\u20ac497 (\u20ac347.90 promo)",
-      "daily_basis": null,
-      "drawdown_type": null,
-      "reset_utc": null,
+      "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
+      "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
+      "reset_utc": "23:30\u201323:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window",
       "fee_per_side_pct": null,
       "max_leverage": null,
       "hold_cap": "none stated",
@@ -288,7 +288,9 @@
         "How to Request Your BrightFunded Affiliate Payout (answers currency/method)",
         "What's New in the BrightFunded Affiliate Program"
       ]
-    }
+    },
+    "_trailing_trap": "Help-centre Scenario 3, verbatim structure: balance 100k, open trade +4k floating -> limit rises to 98k; trade reverses and closes at -3.5k -> balance 96.5k is below 98k -> breached. An unrealised win can end the account. Model gap: troid's engine tracks the HWM on balance; BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.",
+    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%)."
   },
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
