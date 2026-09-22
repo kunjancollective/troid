@@ -474,5 +474,10 @@
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not ours. The two are complementary: they compare firms; we compare outcomes.",
   "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
   "_link_rule": "A firm's link shows when an affiliate agreement exists AND daily, max, target and price are verified from the firm's own documents. Other cells show 'pending' individually. US availability is always shown as its own row.",
-  "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing."
+  "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
+  "_troid_social": {
+    "x": "https://x.com/tradingdroid",
+    "reddit": "https://www.reddit.com/user/tradingdroid/",
+    "email": "hello@troid.ai"
+  }
 }

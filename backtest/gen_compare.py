@@ -77,7 +77,7 @@ is verified from the firm's own documents or says <em>pending</em>. Nothing is s
 <p class="s" style="margin:16px 0 0;line-height:1.7">{html.escape(FIRMS.get("_reference_firm",""))} {html.escape(FIRMS.get("_bitfunded_directory_note",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_criterion",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_link_rule",""))}</p>
-<p class="foot">{html.escape(FIRMS.get("_disclosure",""))} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.</p>
+<p class="foot">{html.escape(FIRMS.get("_disclosure",""))} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
 </div>
 <script>
 var F={{{",".join(f'"{k}":{js(k, FIRMS[k])}' for k in ORDER)}}};var ORDER={json.dumps(ORDER)};
