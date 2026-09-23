@@ -3,7 +3,7 @@
    then the handler end to end against a scripted fake of the Messages API. Spends nothing. */
 const assert = require("assert");
 process.env.TROID_ASSISTANT = "on"; process.env.ANTHROPIC_API_KEY = "test-key";
-process.env.ANTHROPIC_API_URL = "http://fake.invalid/v1/messages";
+process.env.ANTHROPIC_BASE_URL = "http://127.0.0.1:18765";   // the local fake below
 const handler = require("./api/troid.js");
 const T = handler.tools;
 let n = 0;
@@ -52,38 +52,110 @@ ok("compliance: other firm pending", T.check_compliance({ firm: "brightfunded" }
 ok("explain_rule crossover", /98,000/.test(T.explain_rule({ topic: "crossover" }).explanation));
 ok("explain_rule unknown", /unknown topic/.test(T.explain_rule({ topic: "moon" }).error));
 
-// --- handler end to end with a scripted fake of the API
+
+// --- section 4: provenance in tool output, leverage bands, reset text
+r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003 });
+ok("sources: every rule used is listed", r.sources.map((x) => x.rule).join("|") === "daily 4%|daily basis (initial)|max 6%|drawdown type (static)|fee 0.04% per side|leverage cap 5×", r.sources);
+ok("sources: Criteria read 2026-09-18, FAQ read 2026-09-21", r.sources[0].read_on[0] === "2026-09-18" && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
+ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
+r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
+ok("2-Step S1: limits, fee and leverage say not yet recorded", ["daily 5%", "max 10%", "fee 0.04% per side", "leverage cap 5×"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
+r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 10000, equity: 10000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
+ok("CFT 1-Phase at $10k: Student band 5×, cited to the Student class", r.leverage_used === 5 && /Student up to \$25k/.test(r.sources.find((x) => /leverage/.test(x.rule)).document_section), r);
+r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 30000, equity: 30000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
+ok("CFT 1-Phase at $30k: cap pending, held to 100×", r.leverage_used === 100 && r.pending.includes("max_leverage") && r.notes.some((x) => /held to 100×/.test(x)), r);
+ok("reset rule: CFT at 00:05 UTC", /Crypto Fund Trader resets at 00:05 UTC/.test(T.explain_rule({ topic: "reset" }).explanation));
+
+// --- handler end to end: the real SDK against a local fake of the Messages API
+const http = require("http");
 const calls = [];
-global.fetch = async (url, opts) => {
-  const body = JSON.parse(opts.body); calls.push(body);
-  if (calls.length === 1) ok("request carries system blocks with cache_control and 4 tools", body.system.length === 3 && body.system[2].cache_control.type === "ephemeral" && body.tools.length === 4);
-  const last = body.messages[body.messages.length - 1];
-  const hasResult = Array.isArray(last.content) && last.content[0].type === "tool_result";
-  let out;
-  if (hasResult) out = { stop_reason: "end_turn", content: [{ type: "text", text: "Risk $480.00 (DERIVED). Not financial advice. Verify with the firm before acting." }] };
-  else out = { stop_reason: "tool_use", content: [{ type: "tool_use", id: "tu_1", name: "size_trade", input: { firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.616 } }] };
-  return { ok: true, json: async () => out };
-};
-function fakeRes() { const r = { headers: {}, body: "", setHeader(k, v) { this.headers[k] = v; }, end(b) { this.body = b; } }; return r; }
-(async () => {
-  let res = fakeRes();
-  await handler({ method: "GET", headers: {} }, res);
-  let j = JSON.parse(res.body);
-  ok("GET reports flag, models, context sizes, 3 firms", j.enabled === true && j.context.firms.length === 3 && j.context.troid_md > 1000 && j.tools.length === 4, j);
-  res = fakeRes();
-  await handler({ method: "POST", headers: { "x-forwarded-for": "203.0.113.9" }, body: { messages: [{ role: "user", content: "size it" }] } }, res);
-  j = JSON.parse(res.body);
-  ok("POST: Haiku wanted a tool, rerun on Sonnet, one tool call, reply", res.statusCode === 200 && j.model === "claude-sonnet-5" && j.tool_calls === 1 && /480/.test(j.reply), j);
-  ok("three upstream calls: haiku, sonnet, sonnet with tool_result", calls.length === 3 && calls[0].model === "claude-haiku-4-5-20251001" && calls[1].model === "claude-sonnet-5" && calls[2].messages.length === 3, calls.map((c) => c.model));
-  res = fakeRes();
-  await handler({ method: "POST", headers: {}, body: { messages: [{ role: "assistant", content: "x" }] } }, res);
-  ok("POST: bad shape → 400", res.statusCode === 400);
-  for (let i = 0; i < 25; i++) { res = fakeRes(); await handler({ method: "POST", headers: { "x-forwarded-for": "198.51.100.7" }, body: { messages: [{ role: "user", content: "hi" }] } }, res); }
-  ok("rate limit: 21st message in an hour → 429", res.statusCode === 429, res.statusCode);
-  process.env.TROID_ASSISTANT = "off";
-  delete require.cache[require.resolve("./api/troid.js")];
-  const off = require("./api/troid.js"); res = fakeRes(); const before = calls.length;
-  await off({ method: "POST", headers: {}, body: { messages: [{ role: "user", content: "hi" }] } }, res);
-  ok("flag off → 503, no upstream call", res.statusCode === 503 && calls.length === before, res.statusCode);
+let script = null;            // (body) => { status, json }
+const fake = http.createServer((req, res) => {
+  let raw = ""; req.on("data", (c) => (raw += c)); req.on("end", () => {
+    const body = JSON.parse(raw); calls.push(body);
+    const out = script(body);
+    res.writeHead(out.status || 200, { "content-type": "application/json", "request-id": "req_test" });
+    res.end(JSON.stringify(out.json));
+  });
+});
+const msg = (stop_reason, content, extra) => ({ status: 200, json: Object.assign({ id: "msg_" + calls.length, type: "message", role: "assistant", model: "m",
+  content, stop_reason, stop_sequence: null, usage: { input_tokens: 10, output_tokens: 10 } }, extra || {}) });
+function fakeRes() { return { headers: {}, body: "", setHeader(k, v) { this.headers[k] = v; }, end(b) { this.body = b; } }; }
+async function post(messages, extra, ip) {
+  const res = fakeRes();
+  await handler({ method: "POST", headers: { "x-forwarded-for": ip || "203.0.113." + calls.length }, body: Object.assign({ messages }, extra || {}) }, res);
+  return { status: res.statusCode, j: JSON.parse(res.body) };
+}
+const F = handler.fixed;
+fake.listen(18765, async () => {
+  try {
+    let res = fakeRes();
+    await handler({ method: "GET", headers: {} }, res);
+    let j = JSON.parse(res.body);
+    ok("GET: flag, models, context incl. support.md, disclosure", j.enabled === true && j.models.lookup === "claude-haiku-4-5" && j.models.tools === "claude-sonnet-5"
+       && j.context.support_md > 500 && j.context.firms.length === 3 && j.disclosure === F.DISCLOSURE, j);
+
+    // 1. a lookup: Haiku answers; the service prepends the disclosure on the first message
+    script = () => msg("end_turn", [{ type: "text", text: "troid's desk sizes against both ceilings (DERIVED)." }]);
+    calls.length = 0;
+    let r = await post([{ role: "user", content: "what is the crossover?" }]);
+    ok("lookup: one Haiku call, disclosure first", r.status === 200 && calls.length === 1 && calls[0].model === "claude-haiku-4-5" && r.j.reply.startsWith(F.DISCLOSURE), r.j);
+    ok("request: support.md in the system prompt, cache breakpoint on the last block, 4 tools", calls[0].system.length === 4 && /support\.md/.test(calls[0].system[1].text)
+       && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].tools.length === 4 && calls[0].max_tokens === 4096, calls[0].system.map((b) => b.text.slice(0, 40)));
+    ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "doesn't recommend", F.END_SESSION, "opening disclosure"].every((k) => calls[0].system[0].text.includes(k)));
+    r = await post([{ role: "user", content: "what is the crossover?" }], { disclosed: true });
+    ok("page already showed the disclosure: not repeated", !r.j.reply.includes(F.DISCLOSURE), r.j.reply);
+    r = await post([{ role: "user", content: "a" }, { role: "assistant", content: "b" }, { role: "user", content: "c" }]);
+    ok("later turns: no disclosure", !r.j.reply.includes(F.DISCLOSURE), r.j.reply);
+
+    // 2. a tool turn: Haiku wants a tool, rerun on Sonnet, tool result carries sources
+    script = (b) => {
+      const last = b.messages[b.messages.length - 1];
+      if (Array.isArray(last.content) && last.content[0].type === "tool_result") return msg("end_turn", [{ type: "text", text: "Risk $480.00 (DERIVED)." }]);
+      return msg("tool_use", [{ type: "thinking", thinking: "", signature: "sig" }, { type: "tool_use", id: "tu_1", name: "size_trade",
+        input: { firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.616 } }]);
+    };
+    calls.length = 0;
+    r = await post([{ role: "user", content: "size it" }], { disclosed: true });
+    const toolResult = JSON.parse(calls[2].messages[2].content[0].content);
+    ok("tool turn: haiku, sonnet, sonnet with the tool result", calls.map((c) => c.model).join(",") === "claude-haiku-4-5,claude-sonnet-5,claude-sonnet-5" && r.j.tool_calls === 1 && calls[1].max_tokens === 8192, calls.map((c) => c.model));
+    ok("tool turn: assistant content passed back unchanged, thinking block included", calls[2].messages[1].content[0].type === "thinking" && calls[2].messages[1].content[0].signature === "sig");
+    ok("tool result carries sources and the risk", toolResult.risk === 480 && toolResult.sources.length === 6, toolResult);
+
+    // 3. refusal: a fixed reply, never partial content
+    script = () => msg("refusal", [{ type: "text", text: "partial" }], { stop_details: { type: "refusal", category: null, explanation: null } });
+    r = await post([{ role: "user", content: "x" }], { disclosed: true });
+    ok("refusal: the fixed reply", r.j.reply === F.REFUSAL_REPLY, r.j);
+
+    // 4. abuse: the sentinel ends the session; the service writes the words
+    script = () => msg("end_turn", [{ type: "text", text: F.END_SESSION }]);
+    r = await post([{ role: "user", content: "abuse" }, { role: "assistant", content: "warning" }, { role: "user", content: "abuse again" }]);
+    ok("abuse: ended, fixed reply, no disclosure, sentinel never shown", r.j.ended === true && r.j.reply === F.ENDED_REPLY && !r.j.reply.includes(F.END_SESSION), r.j);
+
+    // 5. max_tokens: the cut is said out loud
+    script = () => msg("max_tokens", [{ type: "text", text: "long answer" }]);
+    r = await post([{ role: "user", content: "x" }], { disclosed: true });
+    ok("max_tokens: the answer says it was cut", /length limit/.test(r.j.reply), r.j.reply);
+
+    // 6. upstream 429: a typed SDK error becomes "busy"
+    script = () => ({ status: 429, json: { type: "error", error: { type: "rate_limit_error", message: "slow down" } } });
+    r = await post([{ role: "user", content: "x" }], { disclosed: true });
+    ok("429 upstream: 503 busy, via Anthropic.RateLimitError", r.status === 503 && /busy/.test(r.j.error), r);
+
+    // 7. shape, rate limit, flag
+    res = fakeRes();
+    await handler({ method: "POST", headers: {}, body: { messages: [{ role: "assistant", content: "x" }] } }, res);
+    ok("POST: bad shape → 400", res.statusCode === 400);
+    script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
+    let last;
+    for (let i = 0; i < 21; i++) last = await post([{ role: "user", content: "hi" }], { disclosed: true }, "198.51.100.7");
+    ok("rate limit: 21st message in an hour → 429", last.status === 429, last.status);
+    process.env.TROID_ASSISTANT = "off";
+    delete require.cache[require.resolve("./api/troid.js")];
+    const off = require("./api/troid.js"); res = fakeRes(); const before = calls.length;
+    await off({ method: "POST", headers: {}, body: { messages: [{ role: "user", content: "hi" }] } }, res);
+    ok("flag off → 503, no upstream call", res.statusCode === 503 && calls.length === before, res.statusCode);
+  } catch (e) { ok("no exception in the handler tests", false, String(e && e.stack)); }
+  fake.close();
   console.log(`RESULT: ${process.exitCode ? "FAILED" : "0 failed"} (${n} checks)`);
-})();
+});

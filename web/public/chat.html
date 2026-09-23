@@ -163,12 +163,14 @@ button:disabled{opacity:.45;cursor:default}
 </div></footer>
 
 <script>
-/* The conversation lives in this array and nowhere else. No storage, no account. */
-var hist=[],busy=false;
+/* The conversation lives in this array and nowhere else. No storage, no account. The opening disclosure
+   comes from the service (GET /api/troid), is shown before anything else, and is not part of hist. */
+var hist=[],busy=false,ended=false;
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
+  if(s.enabled&&s.disclosure)add("a",s.disclosure);
   if(s.enabled)setOn(true,"on · "+(s.context&&s.context.firms?s.context.firms.length+" verified firms":"")+" · "+s.limit_per_hour+" messages an hour · no memory between visits");
   else setOn(false,"ask troid is built and switched off. It goes live once its disclaimer has had a legal review. Until then troid's desk on the front page does the arithmetic.");
 }).catch(function(){setOn(false,"ask troid could not be reached.")});
@@ -176,13 +178,14 @@ function send(){
   var t=el("q").value.trim();if(!t||busy)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
   var w=add("s","…");
-  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist})})
+  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:true})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
   .then(function(x){var st=x[0],j=x[1];w.remove();
-    if(st===200){hist.push({role:"assistant",content:j.reply});add("a",j.reply);add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note)}
+    if(st===200&&j.ended){add("a",j.reply);ended=true;setOn(false,"This session has ended. Reloading the page starts a new one.")}
+    else if(st===200){hist.push({role:"assistant",content:j.reply});add("a",j.reply);add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note)}
     else{hist.pop();add("s",j.error||("error "+st));if(st===503)setOn(false,j.error||"switched off")}
   }).catch(function(){w.remove();hist.pop();add("s","ask troid could not be reached.")})
-  .then(function(){busy=false;if(!el("q").disabled)el("send").disabled=false});
+  .then(function(){busy=false;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }
 el("send").addEventListener("click",send);
 el("q").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});

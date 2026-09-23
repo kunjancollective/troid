@@ -24,3 +24,6 @@ backtest/data/*
 __pycache__/
 *.pyc
 .DS_Store
+
+# the ask troid function's dependency, installed by Vercel at deploy
+node_modules/

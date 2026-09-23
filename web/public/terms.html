@@ -227,12 +227,12 @@ this version, and the date above will change when they do.</div>
 <ul>
 <li>ask troid keeps no memory between sessions. The page holds the conversation only while it is open.</li>
 <li>To produce each answer, troid sends the conversation so far to the company that provides the AI model. That company handles it under its own terms and may keep it for a limited period. troid does not store it.</li>
-<li>For each message, troid's log records one line: that the message was answered or failed and, if answered, how many tool calls it used and which model answered. The log does not record the text of your messages or your IP address.</li>
+<li>For each message, troid's log records one line: that the message was answered or failed and, if answered, how many tool calls it used, which model answered, and whether the answer was a refusal or ended the session. The log does not record the text of your messages or your IP address.</li>
 <li>ask troid allows 20 messages an hour from each IP address. To enforce that limit, troid holds the address in the server's working memory only. It is not written to troid's log.</li>
 <li>troid's hosting provider keeps its own request logs, which can include your IP address.</li>
 </ul>
 <p>Do not enter personal information, account numbers, passwords, API keys or any other credential. ask troid does not need them and is instructed never to ask for a credential.</p>
-<p>If ask troid is used abusively, troid may stop answering.</p>
+<p>The first message of every session says that ask troid is an automated assistant, not a person and not financial advice. If ask troid is used abusively, it gives one warning; if the abuse continues, the session ends. Reloading the page starts a new one.</p>
 <p>troid switches ask troid on only after these terms have had legal review, and may switch it off at any time. The ask troid page shows whether it is on. If troid changes how ask troid handles your messages, troid will update this section before the change takes effect.</p>
 </section>
 

@@ -1,0 +1,8 @@
+{
+  "name": "troid-web",
+  "private": true,
+  "description": "troid.ai: static pages plus the ask troid function. The only dependency is the Anthropic SDK, for api/troid.js.",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0"
+  }
+}

@@ -23,7 +23,7 @@
   "functions": {
     "api/troid.js": {
       "includeFiles": "{context,public}/*.{json,md}",
-      "maxDuration": 30
+      "maxDuration": 60
     }
   }
 }
