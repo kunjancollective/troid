@@ -20,7 +20,9 @@ Every published figure carries one of four tiers, and a reader can find which:
 2. Where the two disagree, the stricter figure governs until the firm confirms in writing.
 3. Record the source URL beside the field. A config file is not a source.
 4. Third-party directories and reviews may point at where to look. They never fill a cell.
-5. A cell without a source shows *pending*. The same rule applies to every firm.
+5. A rule with no value shows *pending*. A value with no recorded source says "source not yet recorded" until
+   one is recorded. Every computed number shows the document, section and read date of each rule it used. The
+   same rule applies to every firm.
 
 ## How a strategy number gets onto a page
 
@@ -33,8 +35,8 @@ page said so the same day.
 
 One reference firm, chosen for verification depth, not rank. Two rotating slots by an
 external, public, checkable ranking, reviewed quarterly. Alphabetical on the page. No
-score, no badge, no recommendation. The link for each appears when its affiliate
-agreement exists and its daily, max, target and price are verified from its own documents.
+score or badge of troid's own, no recommendation. The link for each appears when its affiliate
+agreement exists and its daily, max, target and price cells are filled; each shows its source, or says it has none.
 
 ## Corrections
 
@@ -49,7 +51,16 @@ agreement exists and its daily, max, target and price are verified from its own 
 | 2026-09-22 | The journal recorded each closed trade's outcome but not its geometry: no entry, stop, take-profit or exit price, no risk in dollars, no binding ceiling. A trade could not be drawn or its sizing checked from the public file alone. | Schema widened by eleven columns (entry and average price, initial stop, take-profits, exit price, risk, binding ceiling and room at entry, fee share, tranche count). Every row re-derived from the same deterministic replay; the twelve original columns are byte-identical and every row keeps its original `logged_utc`. A widening, not a data change. The migration refuses to run if any original value would move. |
 | 2026-09-22 | Shadow commits reached the repo but not the site. Vercel's Hobby plan rejected the workflow's commit identity (`shadow@troid.ai`, not a member of the Vercel team): all five shadow commits between 03:58 and 23:00 UTC were blocked. Two were carried to the site minutes later by commits made in the owner's name; the ledger on the site lagged the repo from 09:21 UTC on 22 Sep to 00:40 UTC on 23 Sep, about 15 hours. | Fixed by the repo going public: Vercel deploys a public repo's commits from any author. The first shadow commit after the change (23 Sep, 00:40 UTC) deployed, and the live ledger was byte-identical to the repo with its last bar matching the run. |
 | 2026-09-23 | troid's desk capped Crypto Fund Trader's Instant accounts at 100× leverage, the Advanced-account cap. Instant accounts are $2.5k–$10k, inside the Student band, and the firm's recorded terms give Student accounts 1:5. Found while tracing every rule to its source. | Instant capped at 5×; the test that asserted 100× now asserts 5× for Instant and 100× for 1-Phase. Every computed number now shows the firm document, section and read date it came from, and says "source not yet recorded" where the repo has none. |
+| 2026-09-23 | troid's compare showed Crypto Fund Trader's refund as "none" and US access as "yes, Match-Trader only". The T&C clause cited (5.1) covers only a failed evaluation, and the recorded clauses (7.3, 7.1(xvi)) cover only the MT5 bar; the Match-Trader wording echoed a third-party directory. | Narrowed to what the clauses cover: "none if the evaluation is not completed"; "MT5 barred to US residents; Match-Trader access not yet sourced". |
+| 2026-09-23 | The landing page and troid's compare said Bitfunded was verified completely — "the only firm where it is complete". Tracing every rule to a source showed seven Bitfunded compare cells, and its 2-Step, Express and Funded limits, with no recorded source. | Now: verified first and most completely, with each rule's source and read date shown and "source not yet recorded" where there is none. |
+| 2026-09-23 | Exchange liquidation on cross margin was reported as unreachable once notional exceeded equity ÷ maintenance margin — in troid's desk, the MCP server, ask troid's tools and risk.py. Past that size the position is below maintenance at entry. | All four copies report 0% (below maintenance at entry). No reference case changed. |
+| 2026-09-23 | The landing firms panel said Crypto Fund Trader offers "up to 100× leverage per third-party sources"; the calculator credited the same 100× to the firm's Terms and Conditions. | One source: 100× on Advanced accounts ($50k+) and 5× on Student and Instant, per the T&C. |
+| 2026-09-23 | ask troid's rule explanation said Crypto Fund Trader resets at 00:00 UTC; troid's own engine-gaps note said the same. The T&C (8.i–8.ii) say 00:05 UTC. ask troid is switched off, so no reader saw it. | Both corrected to 00:05 UTC. |
 
 ## Version
 
 **v1.0 — 2026-09-21.** First public version. Material changes to method are logged here with a date.
+
+---
+
+troid is a free informational tool, not financial or investment advice. It does not place trades or generate signals. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Terms: https://troid.ai/terms

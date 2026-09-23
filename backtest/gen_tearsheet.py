@@ -66,7 +66,7 @@ def main():
             f'<p style="margin:0 0 4px;color:#5f6f86">{len(rows)} closed trades on {cfg["instrument"]} {cfg["timeframe"]}, '
             f'{s.index[0]:%Y-%m-%d} to {s.index[-1]:%Y-%m-%d}. Daily P&amp;L on the ${QUOTA:,.0f} quota, days without an exit count as zero, '
             f'365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.</p>'
-            + site_text.hypo_html() + '</div>')
+            + site_text.hypo_html(no_edge=site_text.NO_EDGE_SHORT) + '</div>')
     i = page.lower().index("<body")
     j = page.index(">", i) + 1
     page = page[:j] + "\n" + head + page[j:]
@@ -79,7 +79,7 @@ def main():
     page = page.replace(' onload="save()"', "", 1)
     page = page.replace("</head>", "<style>#troid-head a{color:#1f6fd1}@media (max-width:760px){body{margin:12px}#left,#right{width:100%;float:none;margin:0}"
                         "#left svg,#right svg{max-width:100%;height:auto}table{width:100%}}</style>\n</head>", 1)
-    foot = ('<div id="troid-foot" style="max-width:960px;margin:30px auto 40px;padding:14px 20px 0;border-top:1px solid #dde4ee;'
+    foot = ('<div id="troid-foot" style="clear:both;max-width:960px;margin:30px auto 40px;padding:14px 20px 0;border-top:1px solid #dde4ee;'
             'font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.8;color:#5f6f86">'
             + site_text.footer_html() + '</div>')
     page = page.replace('</body>', foot + '\n</body>', 1)

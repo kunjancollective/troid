@@ -213,8 +213,7 @@ Every formula above is DERIVED from the firm's published rules and reproduces in
 `verify_claims.py` in the troid repository. Every rule is SOURCED with its section.
 Nothing in this file is MEASURED except the strategy result, which is labelled as noise.
 
-troid is free. It never places orders and never handles credentials. troid is an
-independent affiliate of the firms it compares; purchases through its affiliate links fund
-the work. Not financial advice.
+troid is a free informational tool, not financial or investment advice. It does not place trades or generate signals. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.
+Terms: https://troid.ai/terms
 
 troid.ai · github.com/kunjancollective/troid

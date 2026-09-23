@@ -206,6 +206,31 @@ for claim, src in [
 
 print()
 print("="*76)
+print("  7. SITE TEXT - the verbatim disclosures, everywhere they are published")
+print("="*76)
+# The 4.41 text and the footer line live once, in site_text.py. Every copy must match it byte for byte,
+# and the terms page's out-of-sample figures must match the walk-forward output. Drift fails here.
+import html as _html, json as _json, pathlib as _pl, sys as _sys
+_ROOT = _pl.Path(__file__).resolve().parent.parent
+_sys.path.insert(0, str(_ROOT / "backtest"))
+import site_text as _T
+def _read(rel): return (_ROOT / rel).read_text()
+for rel in ("README.md", "backtest/STRATEGY.md", "backtest/WALKFORWARD.md"):
+    check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _read(rel)), 1.0)
+for rel in ("web/public/terms.html", "web/public/ledger.html", "web/public/tearsheet.html", "web/public/dashboard.html"):
+    check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _html.unescape(_read(rel))), 1.0)
+for page in sorted((_ROOT / "web" / "public").glob("*.html")):
+    check("DERIVED", f"footer line on {page.name}", float(_T.FOOTER_TEXT in _html.unescape(page.read_text())), 1.0)
+for rel in ("METHODOLOGY.md", "web/public/METHODOLOGY.md", "TROID.md", "web/public/TROID.md"):
+    check("DERIVED", f"footer line in {rel}", float(_T.FOOTER_TEXT in _read(rel)), 1.0)
+_terms = _html.unescape(_read("web/public/terms.html"))
+for sym in ("BTCUSDT", "ETHUSDT"):
+    _h = _json.loads(_read(f"backtest/results/walkforward_{sym}.json"))["holdout"]
+    check("MEASURED", f"terms section 6 quotes the {sym} holdout n ({_h['n']} trades)", float(f"({_h['n']} trades)" in _terms), 1.0)
+    check("MEASURED", f"terms section 6 quotes the {sym} holdout mean ({_h['exp']:+.3f}R)", float(f"{_h['exp']:+.3f}R" in _terms), 1.0)
+
+print()
+print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))
 print("="*76)
 print("""

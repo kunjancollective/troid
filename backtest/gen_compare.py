@@ -2,9 +2,9 @@
 """Render web/public/compare.html from firms.json, and rewrite the marked regions of index.html and faq.html.
 
 Three columns, alphabetical, PER-CELL verification. Everything firm-specific on the site comes from
-firms.json: the firms panel on the landing page (<!-- firms:start/end -->) and every listed firm's
-required_disclaimer in the FAQ disclaimer and both footers (<!-- disclaimers:start/end -->). The
-generic text around those regions never names a firm.
+firms.json: the firms panel on the landing page (<!-- firms:start/end -->), the calculator's data
+(<!-- profiles -->), and the shared footer (<!-- footer -->, from site_text.py) on every static page, which
+carries every listed firm's required_disclaimer. The generic text around those regions never names a firm.
 
 Every cell shows its value if verified from the firm's own documents, 'pending' if not.
 Derived cells compute only when their inputs exist. The same rule applies to every firm.
@@ -203,6 +203,7 @@ page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 .inputs{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}}
 @media(max-width:640px){{.inputs{{grid-template-columns:1fr 1fr}}}}
 .s{{font-family:var(--mono);font-size:10.5px;color:var(--dim)}}
+.foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);margin-top:36px;padding-top:20px;line-height:1.8}}
 </style></head><body><div class="wrap">
 {HEADER}
 <p class="eyebrow" style="margin-top:28px;text-transform:none">troid's compare</p>
@@ -329,7 +330,6 @@ cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) 
 links=[k for k in ORDER if link_live(FIRMS[k])]
 changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
                                   ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
-                                  ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html())),
                                   ("dashboard.html hypo", rewrite_region(PUB / "dashboard.html", "hypo", site_text.hypo_html())),
                                   *((f"{pg} footer", rewrite_region(PUB / pg, "footer", site_text.footer_html()))
                                     for pg in ("index.html", "faq.html", "dashboard.html", "chat.html", "terms.html")

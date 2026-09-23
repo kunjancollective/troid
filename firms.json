@@ -1,9 +1,9 @@
 {
-  "_criterion": "Every firm whose rules are verified from its own primary documents appears, alphabetical, no cap. A firm is added when verification completes, never before. Bitfunded is the reference firm because it was verified first and most completely. Selection of which firms to verify next follows verified-review volume on propfirmmatch.com/crypto \u2014 an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought \u2014 with their own stated limitation: higher volume does not automatically mean better.",
+  "_criterion": "One reference firm \u2014 Bitfunded, verified first and most completely \u2014 and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
   "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
-  "_disclosure": "troid is an independent affiliate of the firms it compares. Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
+  "_disclosure": "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
   "_last_review": "2026-09-21",
-  "_rule": "A firm goes on the comparison only when every field below is verified from the firm's own primary documents (ToU + help centre, checked against each other) and the verified_from URLs are recorded. A null field means not yet verified, and the firm stays off the page.",
+  "_rule": "Every rule field carries its provenance (document, section, read date) or the site says its source is not yet recorded. A null field is pending. A firm's verified flag is true only when its rules are traced to its own primary documents (Terms + help centre, checked against each other); today only Bitfunded is marked so, and some of its cells still lack a recorded source.",
   "bitfunded": {
     "name": "Bitfunded",
     "verified": true,
@@ -1083,7 +1083,7 @@
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
   "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
-  "_link_rule": "A firm's link shows when link_live is true in its entry AND daily, max, target and price are verified from the firm's own documents. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
+  "_link_rule": "A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells are filled. Each of those cells shows its source and read date, or says its source is not yet recorded. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
   "_troid_social": {
     "x": "https://x.com/tradingdroid",

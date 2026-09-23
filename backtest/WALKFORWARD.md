@@ -4,7 +4,7 @@
 
 > **Hypothetical performance.** These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.
 >
-> troid's own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 2021–2025 the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.
+> troid's own strategy shows no statistical edge. The holdout rows below are the measurement — MEASURED, inside noise.
 
 Data: `data/BTCUSDT_4h.csv` — BTCUSDT 4h from https://api.binance.us, t,o,h,l,c, gaps forward-filled: 4. Forward-filled bars in the file: 4.
 
@@ -36,7 +36,7 @@ Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameter
 
 > **Hypothetical performance.** These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.
 >
-> troid's own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 2021–2025 the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.
+> troid's own strategy shows no statistical edge. The holdout rows below are the measurement — MEASURED, inside noise.
 
 Data: `data/ETHUSDT_4h.csv` — ETHUSDT 4h from https://api.binance.us, t,o,h,l,c, gaps forward-filled: 4. Forward-filled bars in the file: 4.
 

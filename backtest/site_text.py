@@ -26,7 +26,7 @@ FOOTER_TEXT = ("troid is a free informational tool, not financial or investment 
                "through its links; this does not affect the calculations or comparisons.")
 
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
-         ("/dashboard", "troid's research"), ("/chat", "ask troid"), ("/faq", "faq"), ("/terms", "terms"),
+         ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
          ("https://www.reddit.com/user/tradingdroid/", "reddit")]
 
@@ -37,9 +37,12 @@ def holdout():
     return json.loads(p.read_text())["holdout"] if p.exists() else None
 
 
+NO_EDGE_SHORT = "troid's own strategy shows no statistical edge."
+
+
 def no_edge_sentence():
     h = holdout()
-    tail = (f" Out of sample, on {h['n']} BTC trades from 2021–2025 the parameters never saw, it measures "
+    tail = (f" Out of sample, on {h['n']} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures "
             f"{h['exp']:+.3f}R per trade, standard error {h['se']:.3f}R — a MEASURED figure, inside noise, and not a fact "
             f"about the future.") if h else ""
     return "troid's own strategy shows no statistical edge." + tail
@@ -67,7 +70,7 @@ def hypo_html(no_edge=None):
             'padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;'
             'line-height:1.65;color:var(--dim,#5f6f86)">'
             '<div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div>'
-            f'<p style="margin:0 0 8px">{html.escape(HYPO)}</p><p style="margin:0">{ne}</p></div>')
+            f'<p style="margin:0 0 8px;font:inherit">{html.escape(HYPO)}</p><p style="margin:0;font:inherit">{ne}</p></div>')
 
 
 def hypo_md(no_edge=None):

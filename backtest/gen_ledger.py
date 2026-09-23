@@ -220,8 +220,7 @@ def main():
 {runs_table()}
 <div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~{se:.3f}R, a
 confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero, and a result {"below" if exp < noise30 else "above"} what chance produces across the
-~30 configurations searched (~{noise30:+.3f}R).{
-f' Out of sample, on the {hold["n"]} trades from 2021–2025 the parameters never saw: {hold["exp"]:+.3f}R, SE {hold["se"]:.3f}R. No edge, confirmed.' if hold else ''} It is published so you can watch a null result run forward, not because it works. The <a href="/tearsheet">full tearsheet</a> shows what noise looks like when all of it is shown.
+~30 configurations searched (~{noise30:+.3f}R). It is published so you can watch a null result run forward, not because it works. The <a href="/tearsheet">full tearsheet</a> shows what noise looks like when all of it is shown.
 {len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.{
 f" {flagged} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded." if flagged else ""}</div>
 {site_text.hypo_html()}
