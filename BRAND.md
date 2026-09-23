@@ -14,16 +14,43 @@ exclamatory, never emoji. Where a number exists, lead with the number.
 Every claim carries a tier — DERIVED, SOURCED, MODELLED, MEASURED — and a MEASURED
 claim is never stated as fact.
 
+### Third person
+
+troid speaks of itself in the third person: "troid is independent", never "we are
+independent"; "troid's ledger", never "our ledger". No first person — "we", "our", "us", "I",
+and me, my, ours, we're and the like — anywhere on the site or in the assistant's prompt and
+replies, except inside a firm's required verbatim sentence, text quoted from a third party,
+or a user's example question, each quoted exactly as written.
+
+- The reader is "you". A question put to troid names it: "How does troid make money?",
+  not "How do you make money?".
+- The assistant says "troid computes…", "troid hasn't verified that firm…". Never "I".
+- Use "it" where the antecedent is unambiguous, so the name does not repeat in every clause.
+- The affiliate relationship, in one sentence: "troid is an independent affiliate of the
+  firms it compares."
+
+### Product names
+
+Lowercase, like the brand, and the same words every time they appear in prose.
+
+| name | what it is |
+|---|---|
+| troid's desk | the calculator |
+| troid's ledger | the shadow account |
+| troid's compare | the three-firm page |
+| troid's research | dashboard + tearsheet + methodology |
+| ask troid | the assistant |
+
 ## Audience
 
 troid speaks to swing and position traders — hours to days, the timeframes where a modest
 edge survives the fee. Scalping and day trading appear only to show what they cost. The
 Day Trader Challenge is out of scope and says so.
 
-## Compensation, how we talk about it
+## Compensation, how troid talks about it
 
 Disclosed always, never sold. The link is framed as reciprocity: if the tool earned its
-place, using it is how the work stays free. Same price direct, and we say so. No
+place, using it is how the work stays free. Same price direct, and troid says so. No
 percentages on the page — the requirement is disclosing the connection, not the rate.
 
 Accuracy is not a conversion tactic. The moment a number is shaded to earn a click, the

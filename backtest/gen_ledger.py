@@ -24,7 +24,7 @@ BRAND = (HERE.parent/"web"/"public"/"index.html").read_text()
 STYLE = BRAND[BRAND.index("<link rel=\"icon\""):BRAND.index("</style>")+8]
 HEADER = '''<div class="bar">
   <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a><a href="/dashboard">research</a>
+  <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>'''
 
@@ -192,7 +192,7 @@ def main():
 <td class="num">{float(r["r"]):+.2f}</td></tr>''' for r in reversed(rows[-40:]))
 
     page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid — ledger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid's ledger</title>
 {STYLE}
 <style>.k{{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}}
 .v{{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.02em}}
@@ -208,6 +208,7 @@ def main():
 .tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
 </head><body><div class="wrap">
 {HEADER}
+<p class="eyebrow" style="margin-top:28px;text-transform:none">troid's ledger</p>
 <h1>{html.escape(cfg["name"])}</h1>
 <p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
 <p class="meta">as of {st.get("as_of_bar_utc","—")[:16].replace("T"," ")} UTC · {cfg["instrument"]} {cfg["timeframe"]} · {cfg["profile"]} rules · cross 5x · replayed every 4h, 20 min after the bar</p>
@@ -247,7 +248,7 @@ f" {flagged} held through a forward-filled bar (a flat bar substituted for a fee
 {trade_charts(rows)}
 
 <p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
-ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/tearsheet">tearsheet</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
+ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/">troid's desk</a> · <a href="/compare">troid's compare</a> · <a href="/ledger">troid's ledger</a> · <a href="/dashboard">troid's research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
 </div></body></html>'''
     OUT.write_text(page)
     print(f"ledger.html: {n} trades, net {net:+,.0f}, {len(live)} logged live -> {OUT}")

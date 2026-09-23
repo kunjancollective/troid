@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>troid</title>
+<title>troid's desk — prop-firm risk, computed</title>
 <meta name="description" content="Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -40,7 +40,7 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
 .dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
   margin:0 .06em 0 .12em;vertical-align:-.02em;
   box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
-nav{display:flex;gap:20px;font-family:var(--mono);font-size:12px}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
 .discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
@@ -99,11 +99,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <header><div class="wrap">
   <div class="bar">
     <a class="mark" href="/">tr<span class="dot"></span>id</a>
-    <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a><a href="/dashboard">research</a>
-      <a href="https://github.com/kunjancollective/troid">source</a></nav>
+    <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
   </div>
-  <div class="discl">Free · never places orders · independent affiliate of the firms on the
-    <a href="/compare">compare page</a></div>
+  <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
+    <a href="/compare">compares</a></div>
 </div></header>
 
 <div class="wrap">
@@ -116,7 +116,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </div>
 
 <div class="panel">
-  <p class="eyebrow">Size a trade</p>
+  <p class="eyebrow"><span style="text-transform:none">troid's desk</span> · size a trade</p>
   <div class="grid g4">
     <div><label>Firm</label><select id="firm"></select></div>
     <div><label>Challenge</label><select id="profile"></select></div>
@@ -155,29 +155,29 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
     <div class="cell">
       <div class="k">Bitfunded · reference</div>
       <div class="v" style="font-size:14px;margin:4px 0">1-Step 4% / 6% static · 2-Step 5% / 10%</div>
-      <div class="s">Every rule verified from Terms + help centre. Where the shadow runs.</div>
-      <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · our link · their promos apply here</div>
+      <div class="s">Every rule verified from Terms + help centre. Where troid&#x27;s ledger runs.</div>
+      <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link · their promos apply here</div>
     </div>
     <div class="cell">
       <div class="k">BrightFunded · #1 by reviews</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules verified</div>
       <div class="s">128 verified reviews at 4.5 on propfirmmatch. Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
-      <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · our link · code YQfyv0bgQtOZMHTXOSAoAA</div>
+      <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
     </div>
     <div class="cell">
       <div class="k">Crypto Fund Trader · #2 by reviews</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules verified</div>
       <div class="s">109 verified reviews at 4.1 on propfirmmatch. Up to 100× leverage per third-party sources — the breaker model takes that as an input.</div>
-      <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · our link · code platinum5</div>
+      <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
     </div>
   </div>
 <!-- firms:end -->
   <p style="margin:12px 0 0;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.6">
-    Bitfunded is the reference firm because it's the one we verified completely, not because it ranks highest.
-    Every firm goes on when its rules are verified from its own documents, and not before. Which firm we verify
-    next follows propfirmmatch's review ranking; the page has no cap. We're an affiliate of each
-    firm listed; where a code is shown it's cheaper through us, where it isn't it's the same price. We compute,
-    you choose.
+    Bitfunded is the reference firm because it's the one troid verified completely, not because it ranks highest.
+    Every firm goes on when its rules are verified from its own documents, and not before. Which firm gets verified
+    next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
+    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    troid computes, you choose.
   </p>
 </div>
 
@@ -201,7 +201,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   every asset the firm lists.</p>
   <h2 style="margin-top:20px">What it doesn't</h2>
   <p>Generate signals. Place orders. Touch your credentials. Sell you a strategy.</p>
-  <p><a href="/TROID.md">TROID.md</a> is the whole desk as one file — paste it into any
+  <p><a href="/TROID.md">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
   assistant as a system prompt. The <a href="https://github.com/kunjancollective/troid/tree/main/mcp">MCP
   server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.</p>
   <p style="margin-bottom:0">Every figure here is arithmetic you can check.
@@ -213,9 +213,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </div>
 
 <footer><div class="wrap">
-  <a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>
+  <a href="/">troid's desk</a> · <a href="/compare">troid's compare</a> · <a href="/ledger">troid's ledger</a> · <a href="/dashboard">troid's research</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>
   Not financial advice. Simulated trading. Challenge fees are generally non-refundable.
-  troid is an independent affiliate of the firms on the <a href="/compare">compare page</a> and earns a
+  troid is an independent affiliate of the firms it <a href="/compare">compares</a>. It earns a
   commission on challenge purchases made through its links or codes. If troid earned its place, those
   links are how it stays free.
 <!-- disclaimers:start -->
@@ -257,7 +257,7 @@ function render(){
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){
     h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · daily basis and drawdown type not yet verified from the firm’s documents</span></div>'+
-      '<div class="notes"><div>troid sizes against verified rules only. The compare page shows what is pending for this firm.</div></div>';
+      '<div class="notes"><div>troid sizes against verified rules only. troid’s compare shows what is pending for this firm.</div></div>';
     el("result").innerHTML=h;return;
   }
   var bind,eff;

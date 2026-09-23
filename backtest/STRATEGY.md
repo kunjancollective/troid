@@ -98,7 +98,7 @@ The time-series holdout has been run (`WALKFORWARD.md`): this configuration was 
 
 **In-sample-to-holdout shrinkage: 75%.** +0.033R on the 78 trades the parameters were
 chosen against became +0.008R on the 504 they never saw. That is the multiple-comparisons
-effect, predicted above from the best-of-30 arithmetic and now measured on our own ledger
+effect, predicted above from the best-of-30 arithmetic and now measured on troid's own data
 (`verify_claims.py` re-derives it). At 8.5 trades a month and $500 risk, +0.008R is about
 $35 a month on a $100,000 account. The interval at n = 78 was wide enough to hope; at
 n = 504 it is tight enough to know. That is the baseline calibration of "noise" on this

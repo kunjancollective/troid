@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Accuracy ledger: re-derive every claim from first principles, independently of
-the code that produced it, and classify what we're entitled to say about each.
+the code that produced it, and classify what troid is entitled to say about each.
 
 Confidence tiers used throughout:
   DERIVED  - follows algebraically from the firm's published rules. Certain.
   SOURCED  - from Bitfunded docs or published industry data. Cite it.
-  MEASURED - from our backtest on one asset, one regime. Hypothesis only.
+  MEASURED - from troid's backtest on one asset, one regime. Hypothesis only.
   MODELLED - Monte Carlo under assumptions. Conditional on those assumptions.
 
 Anything MEASURED must not be stated as fact in user-facing material.
@@ -125,7 +125,7 @@ check("DERIVED", "aggregate monthly return needed on $355k", 6250/sum(caps)*100,
 
 print()
 print("="*76)
-print("  5. STATISTICS OF OUR OWN BACKTEST - the limits of what we may claim")
+print("  5. BACKTEST STATISTICS - the limits of what troid may claim")
 print("="*76)
 # Re-derived from the PUBLIC JOURNAL, not from the engine. Only the frozen sample counts:
 # rows that closed on or before the last bar of data/btc_4h.csv. Rows the daily shadow
@@ -157,7 +157,7 @@ print(f"  [DERIVED ] 95% CI [{lo:+.3f}R, {hi:+.3f}R] -> contains zero: {lo < 0 <
 for k in (10, 30, 52):
     print(f"  [DERIVED ] best of {k:>2} configs under a TRUE zero edge: "
           f"~+{se*math.sqrt(2*math.log(k)):.3f}R by chance alone")
-print(f"             -> our best ({mean:+.3f}R) is {'BELOW' if mean < se*math.sqrt(2*math.log(30)) else 'ABOVE'} the best-of-30 noise threshold.")
+print(f"             -> troid's best ({mean:+.3f}R) is {'BELOW' if mean < se*math.sqrt(2*math.log(30)) else 'ABOVE'} the best-of-30 noise threshold.")
 print(f"             -> claimable: nothing. This is a hypothesis for out-of-sample testing.")
 
 # Frequency, and what the income target would need at it
@@ -214,8 +214,8 @@ PUBLISHING RULES THIS IMPLIES
   DERIVED  -> state as fact, show the algebra. A reader can check it in a spreadsheet.
   SOURCED  -> state with the citation and the section number. Link it.
   MODELLED -> state the assumptions in the same sentence as the number.
-  MEASURED -> do NOT state as fact. "On one 8-month sample we saw X, which is inside
-              noise" is honest. "Our strategy returns X" is not.
+  MEASURED -> do NOT state as fact. "On one 8-month sample troid measured X, which is
+              inside noise" is honest. "troid's strategy returns X" is not.
 
   And per ToU 14(d)(v), entry logic cannot be marketed at all. Everything above that is
   safe to publish is on the risk side, which is also everything above that is DERIVED.

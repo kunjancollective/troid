@@ -22,8 +22,8 @@ BRAND = (HERE.parent / "web" / "public" / "index.html").read_text()
 STYLE = BRAND[BRAND.index('<link rel="icon"'):BRAND.index("</style>") + 8]
 HEADER = '''<div class="bar">
   <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/compare">compare</a><a href="/faq">faq</a><a href="/ledger">ledger</a><a href="/chat">chat</a>
-    <a href="/dashboard">research</a><a href="https://github.com/kunjancollective/troid">source</a></nav>
+  <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>'''
 ORDER = sorted(k for k in FIRMS if isinstance(FIRMS[k], dict) and "compare_product" in FIRMS[k])
 FIELDS = ["daily_pct","max_pct","target_pct","min_days","price","daily_basis","drawdown_type","reset_utc",
@@ -77,7 +77,7 @@ def panel_cell(k, f):
     if link_live(f):
         code = (f.get("affiliate_agreement") or {}).get("customer_code")
         link = (f'\n      <div class="s" style="margin-top:8px"><a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">'
-                f'{name} challenges</a> · our link' + (f" · code {html.escape(code)}" if code else "")
+                f'{name} challenges</a> · affiliate link' + (f" · code {html.escape(code)}" if code else "")
                 + (" · their promos apply here" if f.get("_promo_note") else "") + "</div>")
     return f'    <div class="cell">\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
 
@@ -141,7 +141,7 @@ def column(k, f):
   <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"></div></div>'''
 
 page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid — compare</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid's compare</title>
 {STYLE}
 <style>
 .cols{{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}}
@@ -159,6 +159,7 @@ page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 .s{{font-family:var(--mono);font-size:10.5px;color:var(--dim)}}
 </style></head><body><div class="wrap">
 {HEADER}
+<p class="eyebrow" style="margin-top:28px;text-transform:none">troid's compare</p>
 <h1>Three firms, your numbers.</h1>
 <p class="lede">Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 is verified from the firm's own documents or says <em>pending</em>. Nothing is scored.</p>
@@ -173,7 +174,7 @@ is verified from the firm's own documents or says <em>pending</em>. Nothing is s
 <p class="s" style="margin:16px 0 0;line-height:1.7">{html.escape(FIRMS.get("_reference_firm",""))} {html.escape(FIRMS.get("_bitfunded_directory_note",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_criterion",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_link_rule",""))}</p>
-<p class="foot">{" ".join(x for x in (html.escape(FIRMS.get("_disclosure","")), required_html(inline=True)) if x)} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/faq">faq</a> · <a href="/ledger">ledger</a> · <a href="/dashboard">research</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
+<p class="foot">{" ".join(x for x in (html.escape(FIRMS.get("_disclosure","")), required_html(inline=True)) if x)} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/">troid's desk</a> · <a href="/compare">troid's compare</a> · <a href="/ledger">troid's ledger</a> · <a href="/dashboard">troid's research</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
 </div>
 <script>
 var F={{{",".join(f'"{k}":{js(k, FIRMS[k])}' for k in ORDER)}}};var ORDER={json.dumps(ORDER)};
@@ -228,7 +229,7 @@ function render(){{
     h+=row("challenge fee",v(p.price));h+=row("refund",v(p.refund));h+=row("profit split",v(p.split));
     h+=row("US residents",v(p.us_available));
     var foot="";
-    if(f.url){{foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · our link';
+    if(f.url){{foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · affiliate link';
       if(f.code)foot+='<br>discount code <b>'+f.code+'</b> — cheaper through this link';
       if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';}}
     else foot='<span class="pend">Link appears when '+f.name+"'s affiliate agreement allows it and daily, max, target and price are verified from "+f.name+"'s documents.</span>";

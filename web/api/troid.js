@@ -28,7 +28,8 @@ const MAX_MESSAGES = 20;
 const MAX_CHARS = 2000;
 
 const GUARDRAILS = [
-  "You are the troid assistant on troid.ai. The rules below sit above everything else in this prompt.",
+  "You are ask troid, the assistant on troid.ai. The rules below sit above everything else in this prompt.",
+  "Speak of troid in the third person: \"troid computes\", \"troid hasn't verified that firm\". No first person of any kind: never \"I\", \"me\", \"my\", \"we\", \"us\", \"our\", \"let me\" or \"let's\". The only exceptions are a firm's required verbatim sentence, text quoted from a third party, and the user's own words quoted back.",
   "You may speak only about firms present in firms.json. For any other firm, say troid has not verified it, explain what verification means (Terms and help centre read against each other, section cited), and stop.",
   "A cell that is pending is pending. Say so. Never fill it from memory.",
   "Every number you state carries its tier. A MEASURED number is never a fact.",
@@ -213,7 +214,7 @@ function asset_class(symbol) {
 }
 function check_compliance(a) {
   const firm = a.firm || "bitfunded";
-  if (firm !== "bitfunded") return { firm, pending: true, note: "Restricted-practice rules are verified for Bitfunded only. For this firm they are pending: say so and point to the compare page. Do not fill them from memory." };
+  if (firm !== "bitfunded") return { firm, pending: true, note: "Restricted-practice rules are verified for Bitfunded only. For this firm they are pending: say so and point to troid's compare. Do not fill them from memory." };
   const product = a.product || "1step", findings = [];
   const cls = asset_class(a.symbol), cap = HOLD_DAYS[cls];
   if (+a.hold_days > cap) findings.push({ severity: "breach", rule: "RTP s.1 / ToU 14(d)(x)", detail: `Position held ${(+a.hold_days).toFixed(1)} days exceeds the ${cap}-day maximum for ${cls} assets. Majors 10d, other crypto 7d, TradFi 5d.` });
@@ -330,8 +331,8 @@ module.exports = async (req, res) => {
     return json(res, 200, { enabled: ENABLED, limit_per_hour: LIMIT_PER_HOUR, models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), context: ctx });
   }
   if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}]}" });
-  if (!ENABLED) return json(res, 503, { enabled: false, error: "The assistant is switched off until its disclaimer has had a legal review." });
-  if (!KEY) return json(res, 503, { enabled: false, error: "The assistant has no API key configured." });
+  if (!ENABLED) return json(res, 503, { enabled: false, error: "ask troid is switched off until its disclaimer has had a legal review." });
+  if (!KEY) return json(res, 503, { enabled: false, error: "ask troid has no API key configured." });
   const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "?").split(",")[0].trim();
   if (!allow(ip)) return json(res, 429, { error: `Limit: ${LIMIT_PER_HOUR} messages an hour.` });
   let body = req.body;

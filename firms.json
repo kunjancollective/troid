@@ -1,7 +1,7 @@
 {
   "_criterion": "Every firm whose rules are verified from its own primary documents appears, alphabetical, no cap. A firm is added when verification completes, never before. Bitfunded is the reference firm because it was verified first and most completely. Selection of which firms to verify next follows verified-review volume on propfirmmatch.com/crypto \u2014 an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought \u2014 with their own stated limitation: higher volume does not automatically mean better.",
   "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
-  "_disclosure": "troid is an affiliate of every firm listed. Where a code is shown, it's cheaper through us; where it isn't, it's the same price. Commission structures differ. We compute; you choose.",
+  "_disclosure": "troid is an independent affiliate of the firms it compares. Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
   "_last_review": "2026-09-21",
   "_rule": "A firm goes on the comparison only when every field below is verified from the firm's own primary documents (ToU + help centre, checked against each other) and the verified_from URLs are recorded. A null field means not yet verified, and the firm stays off the page.",
   "bitfunded": {
@@ -149,7 +149,7 @@
     "link_live": true,
     "required_disclaimer": null,
     "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
-    "panel_note": "Every rule verified from Terms + help centre. Where the shadow runs.",
+    "panel_note": "Every rule verified from Terms + help centre. Where troid's ledger runs.",
     "calc": {
       "daily_basis": "initial",
       "drawdown": "static",
@@ -344,7 +344,7 @@
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
   },
-  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm every rule was verified against from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where the shadow runs. That verification is troid's product; Bitfunded is the only firm where it is complete. Another firm verified to the same depth earns the same standing.",
+  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm every rule was verified against from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product; Bitfunded is the only firm where it is complete. Another firm verified to the same depth earns the same standing.",
   "_external_ranking_snapshot": {
     "source": "propfirmmatch.com/crypto/prop-firm-reviews",
     "date": "2026-09-21",
@@ -577,7 +577,7 @@
           "_note": "drawdown type not stated for Instant; pending"
         }
       },
-      "_leverage_note": "1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). The calculator uses the Advanced cap."
+      "_leverage_note": "1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). troid's desk uses the Advanced cap."
     }
   },
   "_watch": {
@@ -586,7 +586,7 @@
     "e8_perpetuals": "US-based, <10 reviews, 1 year. US-based is relevant to this audience.",
     "tradeify_247": "US-based, <10 reviews, <1 year."
   },
-  "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not ours. The two are complementary: they compare firms; we compare outcomes.",
+  "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
   "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
   "_link_rule": "A firm's link shows when link_live is true in its entry AND daily, max, target and price are verified from the firm's own documents. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
@@ -596,5 +596,5 @@
     "email": "hello@troid.ai"
   },
   "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
-  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for the calculator and the assistant: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and the calculator says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one."
+  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one."
 }

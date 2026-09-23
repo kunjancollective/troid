@@ -47,7 +47,7 @@ def main():
     s, rows = returns_series()
     cfg = json.loads(CFG.read_text())
     if s is None or len(rows) < 2:
-        OUT.write_text("<!DOCTYPE html><html><head><meta charset='utf-8'><title>troid — tearsheet</title></head>"
+        OUT.write_text("<!DOCTYPE html><html><head><meta charset='utf-8'><title>troid\'s research — tearsheet</title></head>"
                        "<body><p>No closed trades yet.</p></body></html>")
         print("tearsheet.html: no trades"); return
     tmp = OUT.with_suffix(".tmp.html")
@@ -56,7 +56,9 @@ def main():
     page = tmp.read_text(); tmp.unlink()
     head = (f'<div id="troid-head" style="max-width:960px;margin:0 auto;padding:18px 20px 0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.6">'
             f'<div style="margin-bottom:10px"><a href="/" style="text-decoration:none;color:inherit;font-weight:600;font-size:18px;letter-spacing:-.04em">troid</a>'
-            f' &nbsp;·&nbsp; <a href="/ledger">ledger</a> &nbsp;·&nbsp; <a href="/dashboard">research</a> &nbsp;·&nbsp; <a href="/faq">faq</a></div>'
+            f' &nbsp;·&nbsp; <a href="/">troid\'s desk</a> &nbsp;·&nbsp; <a href="/compare">troid\'s compare</a> &nbsp;·&nbsp; <a href="/ledger">troid\'s ledger</a>'
+            f' &nbsp;·&nbsp; <a href="/dashboard">troid\'s research</a> &nbsp;·&nbsp; <a href="/chat">ask troid</a> &nbsp;·&nbsp; <a href="/faq">faq</a></div>'
+            f'<p style="margin:0 0 8px;font-size:11px;color:#5f6f86;letter-spacing:.12em">troid\'s research · tearsheet</p>'
             f'<p style="border-left:2px solid #e0a33c;padding:10px 14px;margin:0 0 6px;background:#f4f6f9">{html.escape(HEADER)}</p>'
             f'<p style="margin:0 0 4px;color:#5f6f86">{len(rows)} closed trades on {cfg["instrument"]} {cfg["timeframe"]}, '
             f'{s.index[0]:%Y-%m-%d} to {s.index[-1]:%Y-%m-%d}. Daily P&amp;L on the ${QUOTA:,.0f} quota, days without an exit count as zero, '
@@ -64,8 +66,8 @@ def main():
     i = page.lower().index("<body")
     j = page.index(">", i) + 1
     page = page[:j] + "\n" + head + page[j:]
-    # our title and icon; the page is public, so no robots exclusion; no third-party favicon fetch
-    page = re.sub(r"<title>.*?</title>", "<title>troid — tearsheet</title>", page, count=1, flags=re.S)
+    # troid's title and icon; the page is public, so no robots exclusion; no third-party favicon fetch
+    page = re.sub(r"<title>.*?</title>", "<title>troid's research — tearsheet</title>", page, count=1, flags=re.S)
     page = re.sub(r'\s*<meta name="robots"[^>]*>', "", page, count=1)
     page = re.sub(r'<link rel="shortcut icon"[^>]*>', '<link rel="icon" href="/favicon.ico">', page, count=1)
     # the template calls save() on load but this build ships no such function; drop the call, and
