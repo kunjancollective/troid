@@ -3,8 +3,9 @@
 Mark: a signal dot above two floors, the two loss ceilings: the daily limit above the max
 loss. The dot stays above them; that is the product. On the site the dot is a status light:
 it ripples while troid's ledger is live and holds still when its data stops (BRAND.md, Mark).
-The social avatars and banners below (mark-*.png, banner-*.png, wordmark-*.png, lockup and
-preview) still carry the one-floor mark and the plain wordmark until they are redrawn.
+Every file here carries the two floors: mark-*.png is the same drawing as mark-2ceilings-*.png
+(kept under both names so existing links still work); in the wordmark, lockup, preview and
+banners the wordmark's dot sits above its two floors at 60% ink, as in the site header.
 
 Wordmark: troid in IBM Plex Mono SemiBold with the o replaced by the dot, above its two
 floors. The dot is

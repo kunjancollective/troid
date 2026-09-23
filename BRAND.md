@@ -111,8 +111,7 @@ ring in the signal colour, just outside the halo, shows live instead; in forced 
 with a ring for live.
 
 The mark on its own is the dot above its two floors (`brand/mark-2ceilings-*`): the favicon,
-the touch icon and the share image use it. The social avatars and banners in brand/ still
-carry the one-floor mark and the plain wordmark until they are redrawn.
+the touch icon, the share image, the social avatars and the banners use it.
 
 Source files live in brand/. The wordmark's dot is nudged 5% of a cell right of
 geometric centre; do not "correct" it. The site header carries the same nudge in CSS
