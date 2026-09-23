@@ -148,13 +148,13 @@ def switcher(T, page, live):
 
 def mark(T):
     """The tr●id wordmark, the same on every page. "tr" and "id" link home; the dot is troid's status light and
-    links to troid's ledger. It holds still until /live.js reads /status.json and finds a shadow run inside the
-    window that file states, then it ripples. Pinned left to right on a translated page (.mark is inline-flex, so a
+    links to troid's ledger. It holds still until /live.js reads /status.json and finds both the last shadow run and
+    the last bar inside the windows that file states, then it ripples. Its label is neutral until then. Pinned left to right on a translated page (.mark is inline-flex, so a
     right-to-left page would otherwise read id·tr)."""
     ltr = "" if T.code == "en" else ' dir="ltr"'
     return (f'<span class="mark"{ltr} translate="no"><a href="{T.H}" aria-label="{T.attr("common.mark.home")}">tr</a>'
             f'<a class="dot" href="{T.L}/ledger" aria-label="{T.attr("common.mark.ledger")}" title="{T.attr("common.mark.ledger")}"'
-            f' data-live="{T.attr("common.mark.live")}" data-still="{T.attr("common.mark.still")}"></a>'
+            f' data-live="{T.attr("common.mark.live")}" data-still="{T.attr("common.mark.still")}" data-unknown="{T.attr("common.mark.unknown")}"></a>'
             f'<a href="{T.H}" tabindex="-1" aria-hidden="true">id</a></span><script src="/live.js" defer></script>')
 
 

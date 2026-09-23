@@ -157,6 +157,8 @@ def main():
                     for u in (u_old, u_new):
                         ctx = b.new_context(viewport={"width": w, "height": 900}, device_scale_factor=1)
                         ctx.route("**/*", lambda r: r.abort() if not r.request.url.startswith("http://127.0.0.1") else r.continue_())
+                        # the wordmark's status light depends on the time of day; both sides get no status, so a still dot
+                        ctx.route("**/status.json", lambda r: r.fulfill(status=404, body=""))
                         pg = ctx.new_page()
                         pe = []
                         pg.on("pageerror", lambda e, pe=pe: pe.append(str(e)))

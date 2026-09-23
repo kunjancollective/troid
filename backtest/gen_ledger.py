@@ -334,10 +334,15 @@ def render_ledger(T, live):
 </div></body></html>'''
 
 
-# The shadow loop runs every 4 hours (.github/workflows/shadow.yml, 20 minutes after each bar closes). The status light
-# counts the ledger live while the last run is under two missed runs and an hour old: GitHub's scheduler often starts
-# a run late, and one missed run is late data, not a stopped loop.
-CADENCE_MIN, STALE_AFTER_MIN = 240, 2 * 240 + 60
+# The shadow loop runs every 4 hours (.github/workflows/shadow.yml, 20 minutes after each 4-hour bar closes). GitHub
+# starts scheduled runs late and sometimes skips one: in the first nine runs the widest gap was 531 minutes and a run
+# started up to 238 minutes after its bar closed. So the status light counts the ledger live while the last run is
+# under three cadences and an hour old (780 minutes: one skipped run and a late next one), and the last bar it
+# processed closed under 1,020 minutes ago (the same, plus a cadence of lag). A feed that stops delivering new bars
+# stills the dot even while the runs go on.
+CADENCE_MIN, BAR_MIN = 240, 240
+STALE_AFTER_MIN = 3 * CADENCE_MIN + 60
+BAR_STALE_AFTER_MIN = STALE_AFTER_MIN + CADENCE_MIN
 
 
 def write_status(out=None):
@@ -345,10 +350,12 @@ def write_status(out=None):
     (web/public/live.js). Built from runs.csv and state.json only, so it changes only when a run does."""
     runs = list(csv.DictReader(RUNS.open())) if RUNS.exists() else []
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
-    status = {"what": "troid's ledger: when the shadow loop last ran. The wordmark's dot ripples while the last run is "
-                      "under stale_after_minutes old, and holds still otherwise.",
+    status = {"what": "troid's ledger: when the shadow loop last ran and the last bar it processed. The wordmark's dot "
+                      "ripples while the run is under stale_after_minutes old and the bar closed under "
+                      "bar_stale_after_minutes ago, and holds still otherwise.",
               "last_run_utc": runs[-1]["run_utc"] if runs else None, "as_of_bar_utc": st.get("as_of_bar_utc"),
-              "cadence_minutes": CADENCE_MIN, "stale_after_minutes": STALE_AFTER_MIN, "ledger": "/ledger"}
+              "bar_minutes": BAR_MIN, "cadence_minutes": CADENCE_MIN, "stale_after_minutes": STALE_AFTER_MIN,
+              "bar_stale_after_minutes": BAR_STALE_AFTER_MIN, "ledger": "/ledger"}
     path = (Path(out) if out else site_build.PUB) / "status.json"
     path.write_text(json.dumps(status, indent=1) + "\n")
     return path

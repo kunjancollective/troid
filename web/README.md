@@ -18,7 +18,7 @@ Lightweight Charts on the ledger (cdn.jsdelivr.net, version pinned).
 
 | `public/{lang}/…` | `/zh`, `/zh/compare`, … | The same pages in a language whose reviewer has signed off (`i18n/{lang}.json` `_status: live`). None yet. |
 | `public/i18n.js`, `public/i18n.css` | — | Translated pages only: Intl numbers (USD, never converted), local time beside UTC, the country selector, share |
-| `public/live.js`, `public/status.json` | `/status.json` | The status light: the dot in every page's wordmark ripples while the last shadow run is under `stale_after_minutes` old (two missed 4-hour runs and an hour) and holds still otherwise; it links to troid's ledger. `status.json` is written by `backtest/gen_ledger.py` on every shadow run |
+| `public/live.js`, `public/status.json` | `/status.json` | The status light: the dot in every page's wordmark ripples while the last shadow run and the last bar are inside the windows it states (13 hours for the run, 17 for the bar) and holds still otherwise; it links to troid's ledger. `status.json` is written by `backtest/gen_ledger.py` on every shadow run |
 
 `cleanUrls` in `vercel.json` serves `/faq` from `faq.html`, and a rewrite serves `/zh` from `zh/index.html`.
 Languages: `i18n/README.md`.

@@ -102,11 +102,13 @@ Wordmark `troid` in Plex Mono 600, -.04em, with the o replaced by a signal dot c
 above the max loss; the dot stays above them, and that is the product. On the site the floors
 are ink at 60%, so the letters keep their weight.
 
-The dot is a status light. It ripples while troid's ledger is live (the last shadow run is
-inside the window `web/public/status.json` states: two missed 4-hour runs and an hour) and
-holds still when it is not, so a still dot says the live data has stopped. It links to
-troid's ledger. The ripple is the site's one motion; under `prefers-reduced-motion` it stops
-and a second faint ring shows live instead.
+The dot is a status light. It ripples while troid's ledger is live (the last shadow run and
+the last bar it processed are inside the windows `web/public/status.json` states: 13 hours
+for the run, one skipped 4-hour run and a late next one; 17 hours for the bar) and holds still
+when they are not, so a still dot says the live data has stopped. It links to troid's ledger.
+The ripple is the site's one motion. Under `prefers-reduced-motion` it stops and a thin solid
+ring in the signal colour, just outside the halo, shows live instead; in forced colours the dot is drawn in LinkText
+with a ring for live.
 
 The mark on its own is the dot above its two floors (`brand/mark-2ceilings-*`): the favicon,
 the touch icon and the share image use it. The social avatars and banners in brand/ still
