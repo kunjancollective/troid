@@ -98,10 +98,11 @@ def runtime(T):
 
 
 def head_extra(T, page, live):
-    """hreflang alternates, the language's og tags and font. Empty for English while it is the only
-    published language, so the English pages stay exactly as they were."""
+    """The page's canonical URL on troid.ai (and og:url), then hreflang alternates, the language's og tags and
+    font. The alternates, og locale, font and i18n.css appear on English only once a second language is live."""
     lang = T.lang
-    parts = []
+    url = BASE_URL + page_url(T.code, page)
+    parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
     if len(live) > 1:
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
@@ -231,6 +232,32 @@ def render_static(codes, out=None, preview=False):
     return written
 
 
+def write_seo(out=None):
+    """robots.txt (allow all, with the sitemap line) and sitemap.xml: every published page in every live language,
+    with its hreflang alternates once a second language is live. Written with each build."""
+    base = Path(out) if out else PUB
+    live = targets()
+    urls = []
+    for code in live:
+        for page in PAGES:
+            if not out_path(code, page, out).exists() and not (code == "en" and page == "tearsheet"):
+                continue
+            alts = ""
+            if len(live) > 1:
+                alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}"/>' for c in live)
+                alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}"/>'
+            urls.append(f"  <url>\n    <loc>{BASE_URL}{page_url(code, page)}</loc>{alts}\n  </url>")
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
+               'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
+    robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
+    written = []
+    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots)):
+        f = base / name
+        if not f.exists() or f.read_text() != text:
+            f.write_text(text); written.append(name)
+    return written
+
+
 def prune(out=None):
     """Remove the directory of any language that is not live, so an unpublished language is not served."""
     base = Path(out) if out else PUB
@@ -273,6 +300,7 @@ def main():
     else:
         w = render_static(targets(only=only))
         gone = prune()
+        w += write_seo()
         if gone:
             print(f"removed unpublished language directories: {gone}")
     print(f"site_build: {len(w)} page(s) written" + (f": {w}" if w and len(w) < 12 else ""))

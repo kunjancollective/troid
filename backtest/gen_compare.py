@@ -344,6 +344,7 @@ def main():
                                         if (PUB / f"{pg}.html").exists() and pg not in templated)) if hit]
     changed += site_build.render_static(site_build.targets())
     changed += [f"removed {c}/" for c in site_build.prune()]
+    changed += site_build.write_seo()
     # Context bundle for the assistant function (web/api/troid.js): a copy of firms.json outside
     # public/, packaged into the function by vercel.json includeFiles. Not served as a page.
     CONTEXT = HERE.parent / "web" / "context" / "firms.json"

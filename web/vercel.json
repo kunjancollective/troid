@@ -31,5 +31,18 @@
       "source": "/:lang(zh|hi|es|ar|fr|bn|pt|ru|id)",
       "destination": "/:lang/index.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "troid-one.vercel.app"
+        }
+      ],
+      "destination": "https://troid.ai/:path*",
+      "permanent": true
+    }
   ]
 }
