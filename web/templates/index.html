@@ -1,0 +1,355 @@
+{% include "partials/_head.html" %}<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink);text-decoration:none;border:0}
+.dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding:4px 8px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:right}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+{{ head_extra }}</head>
+<body>
+
+{% include "partials/_header.html" %}
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>{{ t("index.hero.h1") }}</h1>
+  <p class="lede">{{ t("index.hero.lede") }}</p>
+</div>
+
+<div class="panel">
+  <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
+  <div class="grid g4">
+    <div><label>{{ t("index.calc.firm") }}</label><select id="firm"></select></div>
+    <div><label>{{ t("index.calc.challenge") }}</label><select id="profile"></select></div>
+    <div><label>{{ t("index.calc.quota") }}</label><input id="quota" type="number" value="100000"></div>
+    <div><label>{{ t("index.calc.equity") }}</label><input id="equity" type="number" value="100000"></div>
+  </div>
+  <div class="grid g4">
+    <div><label>{{ t("index.calc.daystart") }}</label><input id="daystart" type="number" value="100000"></div>
+    <div id="hiWrap" style="display:none"><label>{{ t("index.calc.hirollover") }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
+    <div id="hwmWrap" style="display:none"><label>{{ t("index.calc.hwm") }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
+  </div>
+  <div class="grid g4">
+    <div><label>{{ t("index.calc.side") }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
+      <option value="-1">{{ t("index.js.short") }}</option></select></div>
+    <div><label>{{ t("index.calc.entry") }}</label><input id="entry" type="number" step="any" value="77872"></div>
+    <div><label>{{ t("index.calc.stop") }}</label><input id="stop" type="number" step="any" value="74814"></div>
+    <div><label>{{ t("index.calc.target_r") }}</label><input id="targetR" type="number" step="any" value="2"></div>
+  </div>
+  <div class="grid g3">
+    <div><label>{{ t("index.calc.risk_pct") }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
+    <div><label>{{ t("index.calc.cap_pct") }}</label><input id="capPct" type="number" step="any" value="35"></div>
+    <div><label>{{ t("index.calc.leverage") }}</label><input id="lev" type="number" step="any" value="5"></div>
+  </div>
+  <div class="grid g3">
+    <div><label>{{ t("index.calc.mode") }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
+      <option value="isolated">{{ t("index.js.isolated") }}</option></select></div>
+  </div>
+  <div id="result"></div>
+</div>
+
+
+<div class="panel" id="firms">
+  <p class="eyebrow">{{ t("index.firms.eyebrow") }}</p>
+<!-- firms:start -->
+{{ firms_panel }}
+<!-- firms:end -->
+  <p style="margin:12px 0 0;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.6">
+    {{ t("index.firms.why", firm=reference_firm) }}
+  </p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n">{{ t("index.stats.failures.n") }}</div>
+    <p>{{ t("index.stats.failures.p") }}</p></div>
+  <div class="stat"><div class="n">{{ t("index.stats.blowup.n") }}</div>
+    <p>{{ t("index.stats.blowup.p") }}</p></div>
+<!-- crossover:start -->
+{{ crossover }}
+<!-- crossover:end -->
+</div>
+
+<div class="panel">
+  <h2>{{ t("index.does.h2") }}</h2>
+  <p>{{ t("index.does.p") }}</p>
+  <h2 style="margin-top:20px">{{ t("index.doesnt.h2") }}</h2>
+  <p>{{ t("index.doesnt.p") }}</p>
+  <p>{{ t("index.doesnt.tools") }}</p>
+  <p style="margin-bottom:0">{{ t("index.doesnt.verify") }}</p>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+<!-- footer:start -->
+{{ footer }}
+<!-- footer:end -->
+</div></footer>
+
+<!-- profiles:start -->
+{{ profiles_js }}
+<!-- profiles:end -->
+<script>
+/* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
+   a null there is a pending rule and is shown as pending here. Nothing is guessed.
+   Every word this script shows comes from T (web/i18n, keys index.js.*); F fills a string's {placeholders}. */
+var T={{ t.js("index.js.") }};
+function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
+var MMR=0.005;
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function el(id){return document.getElementById(id)}
+function $(x){return (x<0?"−$":"$")+Math.abs(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+var PEND='<span style="color:var(--dim);font-style:italic">'+T.pending+'</span>';
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function n4(x){return x.toLocaleString(undefined,{maximumFractionDigits:6})}
+function pc(x){return x.toFixed(2)+"%"}
+function list(a){return a.length?a.reduce(function(x,y){return F(T.list_comma,{a:x,b:y})}):""}
+function andj(a){return a.length<2?a.join(""):F(T.list_and,{a:list(a.slice(0,-1)),b:a[a.length-1]})}
+/* The provenance block under every result: firm, product, the date troid read each rule it used, each rule's section,
+   and the formula. p.pv comes from firms.json provenance via gen_compare.py; a rule without a recorded source says so.
+   PROV_TAIL is the same sentence troid's compare uses, generated alongside FIRMS. Each sentence is one string. */
+function provBlock(f,p,used,formula,assumed){
+  var by={},order=[],dates=[],missing=[];
+  used.forEach(function(u){var c=p.pv&&p.pv[u[0]];
+    if(!c){missing.push(u[1]);return}
+    if(!by[c.c]){by[c.c]={labs:[],o:c.o||[]};order.push(c.c)}by[c.c].labs.push(u[1]);
+    (c.o||[]).forEach(function(d){if(dates.indexOf(d)<0)dates.push(d)})});
+  dates.sort();
+  var o={firm:esc(f.name),product:esc(p.label),rules:list(missing)},s=[];
+  if(order.length){
+    o.dates=andj(dates);
+    o.sources=order.map(function(c){var r={rules:list(by[c].labs),source:esc(c),dates:andj(by[c].o)};
+      return F(dates.length>1&&by[c].o.length?T.prov_src_read:T.prov_src,r)}).join(" · ");
+    s.push(F(T.prov_published,o));
+    if(missing.length)s.push(F(T.prov_missing,o));
+  }
+  else s.push(F(missing.length?T.prov_unsourced:T.prov_computed,o));
+  if(assumed)s.push(assumed);
+  s.push(PROV_TAIL);
+  return '<div class="prov">'+s.join(" ")+' <code>'+formula+'</code></div>';
+}
+function working(steps,open){
+  return '<details class="work"'+(open?" open":"")+'><summary>'+T.show_working+'</summary><div class="wt"><table>'+steps.map(function(x){
+    return '<tr><td>'+x[0]+'</td><td><code>'+x[1]+'</code></td><td class="num">'+x[2]+'</td></tr>'}).join("")+'</table></div></details>';
+}
+/* A firm whose cap depends on account size (lev_bands in firms.json): the band for this quota, or null when no band covers it. */
+function levCapFor(p,quota){
+  if(!p.levb)return p.lev==null?null:{lev:p.lev,pv:null};
+  for(var i=0;i<p.levb.length;i++){var b=p.levb[i];
+    if((b.max_quota==null||quota<=b.max_quota)&&(b.min_quota==null||quota>=b.min_quota))return {lev:b.lev,pv:b.pv}}
+  return null;
+}
+function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
+function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
+function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none"}
+function render(){
+  var wOpen=!!document.querySelector("#result details.work[open]");
+  var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
+  var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
+  var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
+  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value,modeT=mode==="isolated"?T.isolated:T.cross;
+  var dpct=p.d/100,mpct=p.m/100,notes=[],pend=[];
+  var steps=[[T.st_inputs,T.f_inputs_account,$(quota)+" · "+$(eq)+" · "+$(ds)],
+             [T.st_inputs,T.f_inputs_trade,(side>0?T.long:T.short)+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
+             [T.st_inputs,T.f_inputs_risk,n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+modeT]];
+  // daily floor, by the firm's basis
+  var dFloor=null,fd="",fdd="";
+  if(p.basis==="initial"){dFloor=ds-quota*dpct;fd=F(T.f_daily_initial,{d:p.d});}                    // fixed amount from the initial balance
+  else if(p.basis==="day_start"){dFloor=ds*(1-dpct);fd=F(T.f_daily_day_start,{d:p.d});}             // percentage of the day-start balance
+  else if(p.basis==="max_balance_equity"){dFloor=hi-quota*dpct;fd=F(T.f_daily_rollover,{d:p.d});
+    steps.push([T.st_hi,T.f_hi,$(hi)]);}                                                               // fixed amount below the high at rollover
+  else pend.push("daily basis");
+  // max-loss floor, by the firm's drawdown type
+  var ddFloor=null,locked=false;
+  if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd=F(T.f_dd_static,{m:p.m});}
+  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);
+    fdd=locked?F(T.f_dd_locked,{locks:p.locks}):F(T.f_dd_trailing,{m:p.m});
+    steps.push([T.st_hwm,T.f_hwm,$(hwm)]);}
+  else pend.push("drawdown type");
+  if(dFloor!=null){steps.push([T.daily_floor,fd,$(dFloor)]);steps.push([T.st_daily_budget,T.f_daily_budget,$(eq-dFloor)]);}
+  if(ddFloor!=null){steps.push([T.dd_floor,fdd,$(ddFloor)]);steps.push([T.st_dd_budget,T.f_dd_budget,$(eq-ddFloor)]);}
+  var formula=(dFloor!=null&&ddFloor!=null)?F(T.f_room_both,{fd:fd,fdd:fdd}):
+    (dFloor!=null?F(T.f_room_daily,{fd:fd}):F(T.f_room_dd,{fdd:fdd}));
+  // the rules this result actually used: only rules that have a value (a pending rule is pending, not unsourced)
+  var used=[];
+  if(dFloor!=null){used.push(["d",F(T.u_daily,{d:p.d})]);used.push(["basis",T.u_basis]);}
+  if(ddFloor!=null){used.push(["m",F(T.u_max,{m:p.m})]);used.push(["dd",T.u_dd]);
+    if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks",F(T.u_locks,{locks:p.locks})]);if(p.hwm!=null)used.push(["hwm",T.u_hwm]);}}
+  var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
+  if(dB==null&&ddB==null){
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_pending+'</span><span class="vtxt">'+F(T.pending_txt,{firm:f.name,product:p.label})+'</span></div>'+
+      '<div class="notes"><div>'+T.pending_note+'</div></div>';
+    el("result").innerHTML=h;return;
+  }
+  var bind,eff,one=(dB==null||ddB==null);
+  if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
+  else if(ddB==null){bind=T.bind_daily;eff=dB;notes.push(T.n_dd_pending);}
+  else{bind=dB<=ddB?T.bind_daily:T.bind_dd;eff=Math.min(dB,ddB);}
+  var bindStep=[T.st_binding,one?T.f_binding_one:T.f_binding,bind+" · "+$(eff)];
+  if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
+    F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
+  if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
+  var dist=Math.abs(entry-stop),blocks=[];
+  if(side>0&&stop>=entry)blocks.push(T.b_long);
+  if(side<0&&stop<=entry)blocks.push(T.b_short);
+  if(dist<=0)blocks.push(T.b_zero);
+  if(eff<=0)blocks.push(F(T.b_breached,{bind:bind}));
+  var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
+  var reduced=risk<intended-1e-9;
+  if(blocks.length){
+    steps.push(bindStep);
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_block+'</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
+      blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
+    el("result").innerHTML=h;return;
+  }
+  var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
+  if(feeKnown)used.push(["fee",F(T.u_fee,{fee:p.fee})]);
+  else{pend.push("fee");notes.push(T.n_fee_pending);}
+  var band=levCapFor(p,quota),levCap=band?band.lev:null,levUsed=lev,held=null;
+  if(levCap!=null){used.push(["lev",F(p.levb?T.u_lev_band:T.u_lev,{lev:levCap,quota:$(quota)})]);
+    if(band.pv)p.pv.lev=band.pv;
+    if(lev>levCap){levUsed=levCap;notes.push(F(T.n_lev_capped,{lev:levCap}));}}
+  else{pend.push("leverage cap");
+    if(p.levb){var top=Math.max.apply(null,p.levb.map(function(b){return b.lev}));
+      notes.push(F(T.n_lev_class,{quota:$(quota)}));
+      if(lev>top){levUsed=top;held=top;notes.push(F(T.n_lev_held,{lev:top}));}}}
+  var fu=entry*fee*2,qty=risk/(dist+fu),notional=qty*entry,margin=notional/levUsed;
+  var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*dist;
+  var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
+  steps.push(bindStep);
+  steps.push([T.st_intended,F(T.f_intended,{pct:n("riskPct")}),$(intended)]);
+  steps.push([T.st_cap,F(T.f_cap,{pct:n("capPct")}),$(cap)]);
+  steps.push([T.risk,T.f_risk,$(risk)]);
+  steps.push([T.st_dist,T.f_dist,n4(dist)+" ("+pc(dist/entry*100)+")"]);
+  if(feeKnown)steps.push([T.st_fpu,F(T.f_fpu,{fee:p.fee}),n4(fu)]);
+  else steps.push([T.st_fpu,T.f_fpu_pending,"0"]);
+  steps.push([T.st_qty,feeKnown?T.f_qty:T.f_qty_nofee,n4(qty)]);
+  steps.push([T.st_notional,T.f_notional,$(notional)]);
+  steps.push([T.st_lev_used,levCap==null?(held==null?T.f_lev_pending:F(T.f_lev_pending_held,{lev:held})):F(T.f_lev_used,{lev:lev,cap:levCap}),levUsed+"×"]);
+  steps.push([T.margin,T.f_margin,$(margin)]);
+  if(feeKnown)steps.push([T.fees,T.f_fees,F(T.v_fees,{fees:$(fees),share:pc(fshare)})]);
+  steps.push([T.budget_used,T.f_used,consumes.toFixed(1)+"%"]);
+  steps.push([T.st_left,T.f_left,String(left)]);
+  steps.push([T.st_target,F(side>0?T.f_target_long:T.f_target_short,{r:tR}),target.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})]);
+  if(feeKnown&&fshare>15)notes.push(F(T.n_fees_high,{pct:fshare.toFixed(0)}));
+  if(reduced)notes.push(F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
+  notes.push(F(T.n_left,{n:left,bind:bind}));
+  // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
+  var sp=dist/entry*100,liq,fl;
+  if(mode==="isolated"){liq=(1-(1-1/levUsed)/(1-MMR))*100;fl=F(T.f_liq_isolated,{mmr:MMR*100});}
+  else{liq=notional>0?(1-(1-eq/notional)/(1-MMR))*100:Infinity;fl=F(T.f_liq_cross,{mmr:MMR*100});}
+  var ord=[[T.br_stop,sp,"stop"]];                                   // [label, adverse %, which]
+  if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
+  if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
+    steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,pc(ddB/notional*100)]);}
+  var liqName=F(T.br_liq,{mode:modeT});
+  ord.push([liqName,Math.max(liq,0),"liq"]);
+  steps.push([liqName,fl,liq<=0?T.v_liq_below:pc(liq)]);
+  ord.sort(function(a,b){return a[1]-b[1]});
+  if(ord[0][2]!=="stop")notes.push(F(T.n_danger,{what:ord[0][0],pct:ord[0][1].toFixed(2)}));
+  else if(mode==="cross")notes.push(T.n_cross);
+  else notes.push(F(T.n_isolated,{pct:liq.toFixed(1)}));
+  var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"—")}).join("  →  ");
+  var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
+  var v=reduced?"REDUCE":"OK";
+  h='<div class="verdict v'+v+'"><span class="vtag">'+(reduced?T.v_reduce:T.v_ok)+'</span>'+
+    '<span class="vtxt">'+F(T.v_txt,{firm:f.name,product:p.label,bind:bind,room:$(eff)})+'</span></div>'+
+    '<div class="read">'+
+    '<div class="cell"><div class="k">'+T.size+'</div><div class="v">'+qty.toFixed(6)+'</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.margin+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.risk+'</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?F(T.s_incl_fees,{fees:$(fees)}):F(T.s_fees_pending,{pending:PEND}))+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.fees+'</div><div class="v">'+(feeKnown?fshare.toFixed(1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.stop+'</div><div class="v">'+(dist/entry*100).toFixed(2)+'%</div><div class="s">'+F(T.s_tgt,{price:target.toFixed(2)})+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.budget_used+'</div><div class="v">'+consumes.toFixed(0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
+    '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">'+T.breakers+'</span> '+brk+'</div>'+
+    notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
+    provBlock(f,p,used,formula+"; "+sizeF,F(T.prov_mmr,{mmr:MMR*100}))+working(steps,wOpen);
+  el("result").innerHTML=h;
+}
+el("firm").addEventListener("change",fillProfiles);el("profile").addEventListener("change",function(){toggleInputs();render()});
+["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
+ .forEach(function(i){el(i).addEventListener("input",render)});
+fillFirms();
+</script>
+</body>
+</html>
