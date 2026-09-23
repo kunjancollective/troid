@@ -183,7 +183,7 @@ function size_trade(a) {
   const sp = dist / entry * 100;
   let liq;
   if (mode === "isolated") liq = (1 - (1 - 1 / levUsed) / (1 - MMR)) * 100;
-  else liq = notional < eq / MMR ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity;
+  else liq = notional > 0 ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity;   // <= 0: already below maintenance
   const ord = [["your stop", sp]];
   if (b.daily_budget != null) ord.push(["daily limit", b.daily_budget / notional * 100]);
   if (b.dd_budget != null) ord.push([p.dd === "trailing" && !b.trailing_locked ? "trailing floor" : "max-loss floor", b.dd_budget / notional * 100]);

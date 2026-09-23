@@ -133,7 +133,8 @@ def profiles_js():
                             "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
                             "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
                             "lev": pc.get("max_leverage", c.get("max_leverage")),
-                            "levb": None if "max_leverage" in pc else c.get("lev_bands"),
+                            "levb": None if "max_leverage" in pc else [dict({k: v for k, v in b.items() if k != "cite"}, pv=cite(f, b["cite"]))
+                                                                        for b in (c.get("lev_bands") or [])] or None,
                             "pv": {"d": cite(f, "daily_pct", pk, fallback=False), "m": cite(f, "max_pct", pk, fallback=False),
                                    "basis": cite(f, "daily_basis", pk, fallback="daily_basis" not in pc),
                                    "dd": cite(f, "drawdown", pk, fallback="drawdown" not in pc),
@@ -164,7 +165,9 @@ def js(k, f):
     link_ok = link_live(f)
     c = f.get("calc") or {}; pc = (c.get("products") or {}).get(p.get("key")) or {}
     return json.dumps({"name": f["name"], "p": p, "label": p["label"], "basis": pc.get("daily_basis", c.get("daily_basis")),
-        "prov": {x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
+        "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
+                     **{b["cite"]: cite(f, b["cite"]) for b in (c.get("lev_bands") or []) if "max_leverage" not in pc}),
+        "levb": None if "max_leverage" in pc else c.get("lev_bands"),
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open": f.get("_open_questions", []),
         "url": f.get("affiliate_url") if link_ok else None,
@@ -202,7 +205,7 @@ page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <p class="eyebrow" style="margin-top:28px;text-transform:none">troid's compare</p>
 <h1>Three firms, your numbers.</h1>
 <p class="lede">Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
-is verified from the firm's own documents or says <em>pending</em>. Nothing is scored.</p>
+shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.</p>
 <p class="meta">alphabetical · one reference firm + two by external ranking · reviewed {html.escape(FIRMS.get("_last_review",""))}</p>
 <div class="panel"><p class="eyebrow">Your sizing</p><div class="inputs">
   <div><label>Quota</label><input id="quota" type="number" value="100000"></div>
@@ -231,7 +234,7 @@ var PROV_TAIL={json.dumps(PROV_TAIL)};
 function andj(a){{return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}}
 function pv(f,keys,formula){{
   var by={{}},order=[],dates=[],miss=[];
-  keys.forEach(function(x){{var c=f.prov[x];if(f.p[x]===null||f.p[x]===undefined)return;
+  keys.forEach(function(x){{var c=f.prov[x];if((x in f.p)&&(f.p[x]===null||f.p[x]===undefined))return;
     if(!c){{miss.push(LAB[x]||x);return}}
     if(!by[c.c]){{by[c.c]={{labs:[],o:c.o}};order.push(c.c)}}by[c.c].labs.push(LAB[x]||x);
     c.o.forEach(function(d){{if(dates.indexOf(d)<0)dates.push(d)}})}});
@@ -298,7 +301,9 @@ function render(){{
     if(p.fee_per_side_pct!=null){{var fee=p.fee_per_side_pct/100,drag=s>0?2*fee/(s+2*fee)*100:0;
       h+=row("fee drag at "+(s*100).toFixed(2)+"% stop",drag.toFixed(1)+"% of risk ("+p.fee_per_side_pct+"%/side)",pv(f,["fee_per_side_pct"],"fee share = 2 × fee ÷ (stop % + 2 × fee)"));}}
     else h+=row("fee drag",P);
-    if(p.max_leverage!=null){{var L=Math.min(lev,p.max_leverage);h+=row("isolated liq. distance","~"+((1-(1-1/L))*100).toFixed(0)+"% at "+L+"×",pv(f,["max_leverage"],"distance ≈ 1 ÷ min(your leverage, cap "+p.max_leverage+"×)"));}}
+    var cap=p.max_leverage,ck="max_leverage";
+    if(f.levb){{cap=null;f.levb.forEach(function(b){{if((b.max_quota==null||Q<=b.max_quota)&&(b.min_quota==null||Q>=b.min_quota)){{cap=b.lev;ck=b.cite}}}})}}
+    if(cap!=null){{var L=Math.min(lev,cap);h+=row("isolated liq. distance","~"+((1-(1-1/L))*100).toFixed(0)+"% at "+L+"×",pv(f,[ck],"distance ≈ 1 ÷ min(your leverage, cap "+cap+"× for a "+$(Q)+" account)"));}}
     else h+=row("isolated liq. distance",P);
     h+=sec("cost & access");
     h+=rr(f,"challenge fee","price");h+=rr(f,"refund","refund");h+=rr(f,"profit split","split");

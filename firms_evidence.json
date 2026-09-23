@@ -159,7 +159,7 @@
    "src": [
     "blog"
    ],
-   "evidence": "config.example.json profiles.instant._note 'Confirmed from Bitfunded blog 2026-08-28: 3% daily, 6% static, no target, 60% split' — the product's own record names the blog for 'static'. Same profile-level caveat as the Instant daily/max mapping."
+   "evidence": "config.example.json profiles.instant._note: 'Confirmed Bitfunded blog 2026-08-28. No target, no min days, static, 60% profit share.' The product's own record names the blog for 'static'. Same profile-level caveat as the Instant daily/max mapping."
   },
   {
    "field": "fee_per_side_pct / max_leverage",
@@ -366,7 +366,7 @@
     "help_daily_loss",
     "help_1step"
    ],
-   "evidence": "CALC. calc.products.1step has only a label, so gen_compare.py profiles_js() line 98 (dp = pc.get('daily_pct', src.get('daily_pct'))) falls back to products['1step'].daily_pct = 3. The primary source, listed first, is 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The help-centre corroboration and the scope are as for the compare daily_pct: df7396d '3% of the original size ... from a help-centre article', and _daily_rollover_note 'per-plan table (1-Step 3%...)', with 'flat 5% balance-based' for accounts bought before 2025-09-22 11:00 CET. Which help article holds the table is not recorded."
+   "evidence": "CALC. calc.products.1step has only a label, so gen_compare.py profiles_js() (dp = pc.get('daily_pct', src.get('daily_pct'))) falls back to products['1step'].daily_pct = 3. The primary source, listed first, is 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The help-centre corroboration and the scope are as for the compare daily_pct: df7396d '3% of the original size ... from a help-centre article', and _daily_rollover_note 'per-plan table (1-Step 3%...)', with 'flat 5% balance-based' for accounts bought before 2025-09-22 11:00 CET. Which help article holds the table is not recorded."
   },
   {
    "field": "max_pct",
@@ -374,7 +374,7 @@
    "src": [
     "product_1step"
    ],
-   "evidence": "CALC. calc.products.1step has no max_pct, so gen_compare.py line 98 (mp = pc.get('max_pct', src.get('max_pct'))) falls back to products['1step'].max_pct = 6. Source: 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'."
+   "evidence": "CALC. calc.products.1step has no max_pct, so gen_compare.py profiles_js() (mp = pc.get('max_pct', src.get('max_pct'))) falls back to products['1step'].max_pct = 6. Source: 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'."
   },
   {
    "field": "daily_basis",
@@ -464,7 +464,7 @@
    "src": [
     "tc"
    ],
-   "evidence": "firms.json crypto_fund_trader.daily_basis reads 'day-start balance at 00:05 UTC (T&C 8.i, 8.ii)'. The same file has reset_utc '00:05' and products.1phase.daily_basis 'balance at 00:05 UTC', so the cite supports compare_product.reset_utc '00:05'. DISPUTED inside the repo; flag it in the cell until the T&C is re-read. backtest/HANDOFF.md:142 says 'CFT is 00:00 UTC per its docs' (added in 3c707fa, 2026-09-22). web/api/troid.js:239, the ask troid context, says 'CFT at 00:00 UTC'. Neither 00:00 statement names a document or clause, so the clause-cited 00:05 stands, but it is contested. Skeptic 1's correction applied: entry kept with both conflicting statements recorded."
+   "evidence": "firms.json crypto_fund_trader.daily_basis reads 'day-start balance at 00:05 UTC (T&C 8.i, 8.ii)'. The same file has reset_utc '00:05' and products.1phase.daily_basis 'balance at 00:05 UTC', so the cite supports compare_product.reset_utc '00:05'. DISPUTED inside the repo; flag it in the cell until the T&C is re-read. backtest/HANDOFF.md:142 says 'CFT is 00:00 UTC per its docs' (added in 3c707fa, 2026-09-22). web/api/troid.js:239, the ask troid context, says 'CFT at 00:00 UTC'. Neither 00:00 statement names a document or clause, so the clause-cited 00:05 stands, but it is contested. Skeptic 1's correction applied: entry kept with both conflicting statements recorded. [Updated 2026-09-23 after the review round: the 00:00 in backtest/HANDOFF.md was troid's own unsourced note and now reads 00:05 (T&C 8.i–8.ii); web/api/troid.js is corrected in the same series. The dispute noted above no longer exists in the repo.]"
   },
   {
    "field": "fee_per_side_pct",
@@ -480,7 +480,7 @@
    "src": [
     "tc"
    ],
-   "evidence": "COMPARE CELL ONLY: compare_product.max_leverage 100 for '1-Phase (Advanced, $100k)'. This entry does NOT cover calc.products.instant; see the calc entries for 1phase and 2phase, and max_leverage/instant in unmapped. Document-level; no clause cited. firms.json max_leverage reads 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The link to the T&C is _leads_third_party.note, 'Corroborates the T&C on every field it covers: ... crypto 1:100 on 1/2-step and 1:5 on Instant', together with _comparability_note 'crypto 1:100 on $100k'. WORDING CONFLICT to fix in the page text: panel_note (added in c3457b6, 2026-09-22) says 'Up to 100× leverage per third-party sources', and _why_candidate (the nomination note) says 'per third-party sources'. Kept per both skeptics, qualified as Advanced ($50k+)."
+   "evidence": "COMPARE CELL ONLY: compare_product.max_leverage 100 for '1-Phase (Advanced, $100k)'. This entry does NOT cover calc.products.instant; see the calc entries for 1phase and 2phase, and max_leverage/instant in unmapped. Document-level; no clause cited. firms.json max_leverage reads 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The link to the T&C is _leads_third_party.note, 'Corroborates the T&C on every field it covers: ... crypto 1:100 on 1/2-step and 1:5 on Instant', together with _comparability_note 'crypto 1:100 on $100k'. WORDING CONFLICT to fix in the page text: panel_note (added in c3457b6, 2026-09-22) says 'Up to 100× leverage per third-party sources', and _why_candidate (the nomination note) says 'per third-party sources'. Kept per both skeptics, qualified as Advanced ($50k+). [Updated 2026-09-23 after the review round: the Instant entry is now mapped (see max_leverage/instant) and panel_note and _why_candidate now cite the T&C, so the wording conflict noted above is resolved.]"
   },
   {
    "field": "hold_cap",
@@ -504,7 +504,7 @@
    "src": [
     "tc"
    ],
-   "evidence": "PARTIAL: this covers only 'no refund if the evaluation is not completed'. firms.json refund reads 'None if the evaluation is not completed (5.1). No free trials (3.2.3).' 3.2.3 is recorded as a free-trials clause, not a refund rule, so it is dropped from the section (skeptic 1's correction applied). The compare cell 'none' claims more than 5.1 as recorded. Nothing records the T&C on a refund after passing or at first payout, and payout_discretion records one refund case ('T&C 14.2 ... sole remedy is refund of fees'). The uncovered part is under refund in unmapped. The cell should be narrowed to 5.1's scope."
+   "evidence": "PARTIAL: this covers only 'no refund if the evaluation is not completed'. firms.json refund reads 'None if the evaluation is not completed (5.1). No free trials (3.2.3).' 3.2.3 is recorded as a free-trials clause, not a refund rule, so it is dropped from the section (skeptic 1's correction applied). The compare cell 'none' claims more than 5.1 as recorded. Nothing records the T&C on a refund after passing or at first payout, and payout_discretion records one refund case ('T&C 14.2 ... sole remedy is refund of fees'). The uncovered part is under refund in unmapped. The cell should be narrowed to 5.1's scope. [Updated 2026-09-23 after the review round: compare_product narrowed to what the clause covers: refund 'none if the evaluation is not completed'; us_available 'MT5 barred to US residents; Match-Trader access not yet sourced'.]"
   },
   {
    "field": "us_available",
@@ -512,7 +512,7 @@
    "src": [
     "tc"
    ],
-   "evidence": "PARTIAL: this covers only the MT5 exclusion. firms.json us_available reads 'YES via Match-Trader only. MT5 not available to US residents (7.3, 7.1xvi).' The clause numbers follow the MT5 sentence only, and platforms.mt5 reads 'not for US residents'. The affirmative 'yes via Match-Trader' half, which is the main claim of compare_product.us_available 'yes, Match-Trader only', has no cite; it is under us_available in unmapped. Both skeptics' corrections applied: the section is scoped to the MT5 bar."
+   "evidence": "PARTIAL: this covers only the MT5 exclusion. firms.json us_available reads 'YES via Match-Trader only. MT5 not available to US residents (7.3, 7.1xvi).' The clause numbers follow the MT5 sentence only, and platforms.mt5 reads 'not for US residents'. The affirmative 'yes via Match-Trader' half, which is the main claim of compare_product.us_available 'yes, Match-Trader only', has no cite; it is under us_available in unmapped. Both skeptics' corrections applied: the section is scoped to the MT5 bar. [Updated 2026-09-23 after the review round: compare_product narrowed to what the clause covers: refund 'none if the evaluation is not completed'; us_available 'MT5 barred to US residents; Match-Trader access not yet sourced'.]"
   },
   {
    "field": "profit_cap",
@@ -576,7 +576,7 @@
    "src": [
     "tc"
    ],
-   "evidence": "calc.max_leverage 100 is a firm-level key and reaches 1phase through profiles_js ('lev': pc.get('max_leverage', c.get('max_leverage'))). calc.products.1phase is labelled '1-Phase (Advanced)'. calc._leverage_note reads '1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). troid's desk uses the Advanced cap.' products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The T&C link is _leads_third_party.note, 'Corroborates the T&C ... crypto 1:100 on 1/2-step'. Document-level; no clause cited. Valid only for Advanced accounts ($50k+). The calculator applies 100 at any quota, while the recorded cap at $25k or less is 1:5. The same panel_note/_why_candidate wording conflict applies. Split out from '*' per both skeptics."
+   "evidence": "calc.max_leverage 100 is a firm-level key and reaches 1phase through profiles_js ('lev': pc.get('max_leverage', c.get('max_leverage'))). calc.products.1phase is labelled '1-Phase (Advanced)'. calc._leverage_note reads '1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). troid's desk uses the Advanced cap.' products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The T&C link is _leads_third_party.note, 'Corroborates the T&C ... crypto 1:100 on 1/2-step'. Document-level; no clause cited. Valid only for Advanced accounts ($50k+). The calculator applies 100 at any quota, while the recorded cap at $25k or less is 1:5. The same panel_note/_why_candidate wording conflict applies. Split out from '*' per both skeptics. [Updated 2026-09-23 after the review round: calc now carries lev_bands — Student <= $25k 1:5, Advanced $50k+ 1:100, pending between — and troid's desk applies the band for the quota entered; the 'applies 100 at any quota' remark above describes the earlier state.]"
   },
   {
    "field": "max_leverage",
@@ -593,6 +593,14 @@
     "tc"
    ],
    "evidence": "firms.json crypto_fund_trader.max_leverage: 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'; products.instant.sizes: '$2.5k-$10k only' (every Instant size is inside the Student band); the 2phase mapping's note that leverage is set by account size, not by product. Third-party corroboration only: _leads_third_party.note '1:5 on Instant'. calc corrected from 100 to 5 on 2026-09-23."
+  },
+  {
+   "field": "max_leverage_student / max_leverage_advanced",
+   "product": "1phase, 2phase (by quota)",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader.max_leverage: 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. One recorded statement, two account classes; the desk cites whichever class the quota falls in."
   }
  ],
  "crypto_fund_trader_unmapped": [

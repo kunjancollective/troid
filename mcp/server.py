@@ -104,7 +104,7 @@ def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget,
     if mode == "isolated":
         liq = (1 - (1 - 1 / leverage) / (1 - MMR)) * 100
     else:
-        liq = (1 - (1 - equity / notional) / (1 - MMR)) * 100 if notional < equity / MMR else 1e9
+        liq = (1 - (1 - equity / notional) / (1 - MMR)) * 100 if notional > 0 else 1e9   # <= 0: already below maintenance
     order = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
                     ("max loss floor", floor_pct), (f"exchange liquidation ({mode})", max(liq, 0))],
                    key=lambda e: e[1])

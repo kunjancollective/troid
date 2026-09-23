@@ -334,7 +334,7 @@
             "src": [
               "blog"
             ],
-            "section": "Bitfunded blog \u2014 How to choose the right prop trading challenge"
+            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           }
         }
       },
@@ -626,7 +626,7 @@
             "help_daily_loss",
             "help_1step"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark"
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
         },
         "locks_at_initial_after_pct": {
           "src": [
@@ -640,7 +640,7 @@
             "help_daily_loss",
             "help_1step"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3"
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
         }
       },
       "products": {
@@ -666,7 +666,7 @@
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
   },
-  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm every rule was verified against from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product; Bitfunded is the only firm where it is complete. Another firm verified to the same depth earns the same standing.",
+  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",
   "_external_ranking_snapshot": {
     "source": "propfirmmatch.com/crypto/prop-firm-reviews",
     "date": "2026-09-21",
@@ -887,10 +887,10 @@
       "max_leverage": 100,
       "products": {
         "1phase": {
-          "label": "1-Phase (Advanced)"
+          "label": "1-Phase"
         },
         "2phase": {
-          "label": "2-Phase (Advanced)",
+          "label": "2-Phase",
           "drawdown": "static"
         },
         "instant": {
@@ -904,11 +904,13 @@
       "lev_bands": [
         {
           "max_quota": 25000,
-          "lev": 5
+          "lev": 5,
+          "cite": "max_leverage_student"
         },
         {
           "min_quota": 50000,
-          "lev": 100
+          "lev": 100,
+          "cite": "max_leverage_advanced"
         }
       ],
       "_lev_bands_note": "Leverage follows account class, not product: Student (<= $25k) 1:5, Advanced ($50k+) 1:100. Between $25k and $50k no class is recorded, so the cap is pending there. Instant is $2.5k-$10k only, so its cap is 1:5 at every size it sells."
@@ -995,6 +997,18 @@
             "tc"
           ],
           "section": "Crypto Fund Trader T&C 7.1(xiii)"
+        },
+        "max_leverage_student": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Student up to $25k"
+        },
+        "max_leverage_advanced": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
         }
       },
       "products": {

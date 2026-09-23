@@ -114,7 +114,7 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
     if mode == "isolated":
         liq_pct = (1 - (1 - 1 / leverage) / (1 - mmr)) * 100
     else:
-        liq_pct = (1 - (1 - equity / notional) / (1 - mmr)) * 100 if notional < equity / mmr else float("inf")
+        liq_pct = (1 - (1 - equity / notional) / (1 - mmr)) * 100 if notional > 0 else float("inf")   # <= 0: already below maintenance
     liq_pct = max(liq_pct, 0.0)
     events = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
                      ("max loss floor", floor_pct),
