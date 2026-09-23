@@ -181,13 +181,15 @@ button:disabled{opacity:.45;cursor:default}
    128-bit ID made here when the session starts and covered by every signature (terms section 10). The
    opening disclosure comes from the service (GET /api/troid), is shown before anything else, and is not part
    of hist. Each reply carries a signature over the conversation so far, which the next message sends back,
-   and the session's delete token, which "delete this conversation" sends. */
-var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
+   and the session's delete token, which "delete this conversation" sends (and a retried first message, since
+   the service lets a first message join a stored session only with its token). A delete asked for while an
+   answer is on its way waits for it, so the answer cannot be kept again after the delete. */
+var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","delete_wait":"Deleting once the answer on its way arrives…","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
 function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
-var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10}),SESSION="",delTok=null,disc="",onMsg="";
+var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10}),SESSION="",delTok=null,disc="",onMsg="",pending=null,lost=false;
 function newSession(){var b=new Uint8Array(16);crypto.getRandomValues(b);
   SESSION=Array.prototype.map.call(b,function(x){return("0"+x.toString(16)).slice(-2)}).join("");
-  el("sid").textContent=SESSION;hist=[];sig=null;delTok=null}
+  el("sid").textContent=SESSION;hist=[];sig=null;delTok=null;lost=false}
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
@@ -202,10 +204,10 @@ fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json
 function send(){
   var t=el("q").value.trim();if(!t||busy||ended)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
-  var w=add("s",T.waiting);
-  fetch("/api/troid?lang="+LANG,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,session:SESSION,lang:LANG})})
+  var w=add("s",T.waiting),h={"content-type":"application/json"};if(delTok)h["x-troid-token"]=delTok;lost=true;
+  pending=fetch("/api/troid?lang="+LANG,{method:"POST",headers:h,body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,session:SESSION,lang:LANG})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
-  .then(function(x){var st=x[0],j=x[1];w.remove();if(j.delete_token&&j.session===SESSION)delTok=j.delete_token;
+  .then(function(x){var st=x[0],j=x[1];w.remove();lost=false;if(j.delete_token&&j.session===SESSION)delTok=j.delete_token;
     if(st===200&&j.ended){add("a",j.reply);stop(T.ended)}
     else if(st===200){hist.push({role:"assistant",content:j.reply});sig=j.sig||null;add("a",j.reply);
       add("s",(j.tool_calls?F(j.tool_calls>1?T.tool_call_n:T.tool_call_1,{n:j.tool_calls}):"")+j.model);
@@ -213,10 +215,11 @@ function send(){
     else{hist.pop();add("s",j.error||F(T.error,{status:st}));
       if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
   }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s",T.unreachable)})
-  .then(function(){busy=false;if(!ended&&!el("q").disabled)el("send").disabled=false});
+  .then(function(){busy=false;pending=null;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }
 function del(){
-  if(!delTok){add("s",T.delete_none);return}
+  if(pending){add("s",T.delete_wait);pending.then(del);return}
+  if(!delTok){add("s",lost?T.delete_failed:T.delete_none);return}
   fetch("/api/troid?session="+SESSION+"&lang="+LANG,{method:"DELETE",headers:{"x-troid-token":delTok}})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
   .then(function(x){if(x[0]!==200||!x[1].deleted){add("s",T.delete_failed);return}

@@ -2,6 +2,7 @@
 /* Offline checks for api/troid.js: the tool port against the calculator's reference case,
    then the handler end to end against a scripted fake of the Messages API. Spends nothing. */
 const assert = require("assert");
+const crypto = require("crypto");
 process.env.TROID_ASSISTANT = "on"; process.env.ANTHROPIC_API_KEY = "test-key"; process.env.TROID_TURN_KEY = "test-turn-key-0123456789abcdefghij";
 process.env.ANTHROPIC_BASE_URL = "http://127.0.0.1:18765";   // the local fake below
 process.env.KV_REST_API_URL = "http://127.0.0.1:18766"; process.env.KV_REST_API_TOKEN = "test-store-token";   // a local fake of Upstash
@@ -91,6 +92,29 @@ ok("check_budget: formula and working", r.formula === "room = min(equity − (da
 r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003, risk_pct: 0.7 });
 ok("size_trade: working carries every step with its value", ["intended risk", "cap", "risk", "stop distance", "fee per unit", "quantity", "notional", "leverage used", "margin", "fees", "budget used", "losses left", "target", "exchange liquidation (cross)"]
    .every((k) => r.working.some((w) => w.step === k && w.formula && w.value != null)) && /size = min\(equity × 0\.7%, room × 35%\)/.test(r.formula), r.working);
+// --- each rule cited with its own read dates; troid's defaults named as assumptions; the crossover as a day-start threshold
+r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.6, risk_pct: 0.5 });
+const cite = (rule) => (r.sources.find((x) => x.rule === rule) || {}).cite;
+ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Criteria to be Success, read 2026-09-18"
+   && cite("max 6%") === "max 6% — Bitfunded help centre — Criteria to be Success, read 2026-09-18" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Criteria to be Success, read 2026-09-18"
+   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23"
+   && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21", r.sources);
+ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r.assumptions.length === 5 && r.assumptions.some((x) => /^margin mode cross — troid's default.*no recorded source/.test(x))
+   && r.assumptions.some((x) => /^leverage 5× — troid's default/.test(x)) && r.assumptions.some((x) => /^budget cap 35% /.test(x)) && r.assumptions.some((x) => /^target 2R /.test(x))
+   && !r.assumptions.some((x) => /^risk /.test(x)) && /troid's assumption/.test(r.tier), r.assumptions);
+ok("size_trade: definitions for the terms it uses", ["R", "notional", "cross margin", "maintenance margin"].every((k) => r.definitions[k]), r.definitions);
+ok("size_trade: the live smoke figures", r.quantity === 1.622183 && r.notional === 126322.62 && r.fees === 101.06 && r.target === 77404.8, r);
+r = T.check_budget({ firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 });
+ok("check_budget: the crossover's working, as a day-start threshold", r.crossover_working.formula === "max-loss floor + quota × 4% = quota × (1 − 6% + 4%)"
+   && r.crossover_working.value === 98000 && /day-start balance/.test(r.crossover_working.meaning), r.crossover_working);
+ok("explain_rule crossover: the day-start balance decides, not equity alone", /day-start balance equals quota/.test(T.explain_rule({ topic: "crossover" }).explanation)
+   && !/fiction/.test(T.explain_rule({ topic: "crossover" }).explanation));
+ok("explain_rule cross/leverage: no unsourced claim that Bitfunded runs cross margin", !/Bitfunded runs cross|Bitfunded's mode/.test(T.explain_rule({ topic: "cross" }).explanation + T.explain_rule({ topic: "leverage" }).explanation));
+const PF = handler._promptFirms().bitfunded.provenance.sources;
+ok("prompt: each source lists the rules it is cited for; the 23 Sep reading of Criteria covers the fee and the reset only",
+   Object.values(PF).every((s) => Array.isArray(s.cited_for) && s.cited_for.length) && PF.criteria_0923.cited_for.every((x) => /fee_per_side_pct|reset_utc/.test(x))
+   && PF.criteria.cited_for.some((x) => /daily_pct/.test(x)), PF.criteria_0923);
+
 r = T.check_compliance({ firm: "bitfunded", product: "1step", symbol: "SOLUSDT", hold_days: 12, open_trades: 6, uses_third_party_strategy: true });
 ok("compliance: every finding names its document and read date", r.findings.every((f) => f.sources.length && f.sources.every((x) => /^2026-/.test(x.read_on) && x.document)), r.findings);
 ok("explain_rule: tier says it is written text, not firms.json", /not generated from firms\.json/.test(T.explain_rule({ topic: "fees" }).tier));
@@ -155,6 +179,7 @@ const kv = http.createServer((req, res) => {
       if (op === "RPUSH") { const e = KV.get(key) || { list: [], ttl: -1 }; e.list.push(a[0]); KV.set(key, e); return { result: e.list.length }; }
       if (op === "EXPIRE") { const e = KV.get(key); if (!e) return { result: 0 }; e.ttl = +a[0]; return { result: 1 }; }
       if (op === "DEL") return { result: KV.delete(key) ? 1 : 0 };
+      if (op === "EXISTS") return { result: KV.has(key) ? 1 : 0 };
       return { error: "unknown command" };
     }));
   });
@@ -175,7 +200,7 @@ const SESSION = "0123456789abcdef0123456789abcdef";
 async function call(h, messages, extra, opts) {
   opts = opts || {};
   const res = fakeRes(), body = Object.assign({ messages }, extra || {});
-  if (!("session" in body)) body.session = SESSION;
+  if (!("session" in body)) body.session = messages.length === 1 ? crypto.randomBytes(16).toString("hex") : SESSION;   // a first message starts its own session
   if (messages.length > 1 && !("sig" in body)) body.sig = h._sign(messages.slice(0, -1), body.session);   // what the page would send back
   const headers = Object.assign({ "content-type": "application/json", "x-real-ip": opts.ip || "203.0.113." + calls.length }, opts.headers || {});
   console.log = (x) => LOGS.push(x);
@@ -417,7 +442,16 @@ fake.listen(18765, async () => {
     KV.get(key).ttl = 5;                                                     // as if 30 days had nearly passed
     r = await call(h, [U("size it"), A(r.j.reply), U("and again")], { session: S2, disclosed: true });
     ok("store: every write sets the TTL again", r.status === 200 && KV.get(key).list.length === 2 && KV.get(key).ttl === 2592000
-       && KV_CALLS.every((c) => c.path === "/multi-exec" && c.cmds[1][0] === "EXPIRE" && c.cmds[1][2] === "2592000"), KV.get(key));
+       && KV_CALLS.every((c) => c.path === "/multi-exec") && KV_CALLS.filter((c) => c.cmds.some((x) => x[0] === "RPUSH")).length === 2
+       && KV_CALLS.filter((c) => c.cmds.some((x) => x[0] === "RPUSH")).every((c) => c.cmds[1][0] === "EXPIRE" && c.cmds[1][2] === "2592000"), KV.get(key));
+    before = calls.length;
+    r = await call(h, [U("start over under someone's session")], { session: S2 });
+    ok("a first message cannot join a stored session: 409 restart, no model call, nothing added, no token", r.status === 409 && r.j.restart === true && !r.j.delete_token
+       && calls.length === before && KV.get(key).list.length === 2, r);
+    r = await call(h, [U("retry of my own first message")], { session: S2 }, { headers: { "x-troid-token": h._deleteToken(SESSION) } });
+    ok("... nor with another session's token", r.status === 409 && KV.get(key).list.length === 2, r);
+    r = await call(h, [U("retry of my own first message")], { session: S2, disclosed: true }, { headers: { "x-troid-token": h._deleteToken(S2) } });
+    ok("... but the page that holds its token can (a retried first message)", r.status === 200 && KV.get(key).list.length === 3, r);
     r = await call(h, [U("a"), A("b"), U("c")], { session: SESSION, sig: h._sign([U("a"), A("b")], S2) });
     ok("the session is inside the signature: a turn signed for one session is refused in another", r.status === 400 && r.j.restart === true, r);
     r = await call(h, [U("hi")], { session: "not-a-session" });
@@ -434,10 +468,18 @@ fake.listen(18765, async () => {
     ok("delete with a malformed session → 400", d.status === 400, d);
     d = await del(h, S2, h._deleteToken(S2));
     ok("delete with the session's token → gone at once", d.status === 200 && d.j.deleted === true && d.j.existed === true && !KV.has(key), d);
-    kvDown = true; LOGS.length = 0;
+    kvDown = true; LOGS.length = 0; before = calls.length;
     r = await call(h, [U("hi")], { session: S2, disclosed: true });
-    ok("store down: the answer still comes back; the log line says the store failed", r.status === 200 && JSON.parse(LOGS[0]).store_error === 1, [r.status, LOGS]);
+    ok("store down: a first message is turned away (503) before the model, since its session can't be checked", r.status === 503 && calls.length === before && !LOGS.length, r);
+    r = await call(h, [U("hi"), A("there"), U("and?")], { session: S2, disclosed: true });
+    ok("store down: a later message still gets its answer; the log line says the store failed", r.status === 200 && JSON.parse(LOGS[0]).store_error === 1, [r.status, LOGS]);
     kvDown = false;
+    for (let i = 0; i < 20; i++) await call(h, [U("x")], { session: "bad" }, { ip: "192.0.2.77" });
+    r = await call(h, [U("x")], { session: "bad" }, { ip: "192.0.2.77" });
+    ok("the address has used its 20 messages this hour", r.status === 429, r);
+    KV.set(key, { list: ["{}"], ttl: 2592000 });
+    d = await del(h, S2, h._deleteToken(S2));
+    ok("deleting has its own limit: it still works after the hour's 20 messages", d.status === 200 && d.j.existed === true && !KV.has(key), d);
     script = () => ({ status: 529, json: { type: "error", error: { type: "overloaded_error", message: "x" } } });
     r = await call(h, [U("will this fail")], { session: S2, disclosed: true });
     stored = (KV.get(key) || { list: [] }).list.map((x) => JSON.parse(x));

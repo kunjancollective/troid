@@ -589,6 +589,7 @@
  "chat.js.deleted": "Deleted: troid no longer keeps this conversation. A new session has started.",
  "chat.js.delete_none": "Nothing is kept for this session yet.",
  "chat.js.delete_failed": "It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.",
+ "chat.js.delete_wait": "Deleting once the answer on its way arrives…",
  "ask.disclosure": "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",
  "ask.warning": "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.",
  "ask.ended": "This session has ended. ask troid answers questions about prop-firm rules and sizing.",

@@ -18,8 +18,8 @@
  * history, and gives the warning otherwise); a model safety refusal (stop_reason "refusal"), which gets a
  * fixed reply; and the history itself, which is signed turn by turn so a client cannot write troid's side
  * of the conversation. The "should I" refusal set is the model's, worded by support.md section 4. The
- * service holds no conversation state between messages, so a client that rewinds to an earlier signed
- * turn, or reloads, starts over; the rate limit is the brake on that.
+ * service never reads a conversation back (it keeps one, below, but answers only from what the page sends),
+ * so a client that rewinds to an earlier signed turn, or reloads, starts over; the rate limit is the brake on that.
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -31,7 +31,9 @@
  * the page's language, the message, the reply, each tool call with its inputs and result, the sources and
  * read dates cited, the model. Never an IP address, a user agent, a name or an account. The 30-day expiry
  * is set again on every write, so nothing needs deleting by hand. DELETE /api/troid?session=<id> with the
- * session's delete token (returned with every reply) removes it at once. No endpoint returns a transcript;
+ * session's delete token (returned with every reply) removes it at once; deletes have their own rate-limit
+ * bucket. A first message may start a session but not join one already stored unless it carries that
+ * session's token, so a session ID alone never yields the token. No endpoint returns a transcript;
  * the owner reads them in the Upstash console.
  *
  * Logging: also one line per message sent to the AI model — tool calls, the model called, whether the
@@ -114,14 +116,14 @@ const GUARDRAILS = [
   "You are ask troid, the assistant on troid.ai. The rules below sit above everything else in this prompt.",
   "Speak of troid in the third person: \"troid computes\", \"troid doesn't cover that firm\". No first person of any kind: never \"I\", \"me\", \"my\", \"we\", \"us\", \"our\", \"let me\" or \"let's\". The only exceptions are a firm's required verbatim sentence, text quoted from a third party, and the user's own words quoted back.",
   "A cell that is pending is pending. Say so. Never fill it from memory.",
-  "Every number you state carries its tier. A MEASURED number is never a fact.",
+  "Every number you state carries its tier. Label a tool's figures with the tier its result gives (for example DERIVED), and any figure that rests on an entry under assumptions as troid's assumption, naming it. A MEASURED number is never a fact.",
   "Never recommend a firm. Never recommend a trade. Price the one the user brings.",
-  "Define a term the first time you use it.",
+  "Define a term the first time you use it; when a tool result lists definitions, use them.",
   "End every answer that contains a number with: Not financial advice. Verify with the firm before acting.",
   "Arithmetic goes through the tools, never through you. Report the formulas and intermediate values the tool returns under working; do not compute your own. If a tool reports a field as pending, report it as pending.",
   "You have no memory across sessions and no account. You cannot place, modify or close an order, and you never ask for a credential.",
   "The service shows the opening disclosure itself. Never write it, and never claim to be a person.",
-  "When you state a rule, give the document, section and read date the tool result lists under sources. If a rule's source is \"not yet recorded\", say so. Verified describes a firm, not each rule: for every firm, a verified one included, say which rules have a recorded source and which do not.",
+  "When you state a rule, give its source as the tool result's cite line for that rule, word for word: one rule, its own document and section, and only the read dates listed for that rule. Never merge rules under a shared list of dates, and never give a rule a date the tool did not list for it. Without a tool result, use the provenance block, where each source lists the rules it is cited for. If a rule's source is \"not yet recorded\", say so. Verified describes a firm, not each rule: for every firm, a verified one included, say which rules have a recorded source and which do not.",
   "Never give an affiliate link or a discount code; point to troid's compare, where each link is labelled. If you ever give a URL that is an affiliate link, write the words \"affiliate link\" immediately beside it.",
   "When a user says a number was wrong, or that they lost because of troid, follow support.md section 2 — all six steps, in order. Never say the loss wasn't troid's fault, and never say it was.",
   "When a user calls troid a scam, give support.md section 3 once in the session, then answer the question they actually have. Do not repeat it.",
@@ -198,11 +200,12 @@ function promptFirms(raw) {
     out[k] = noNotes(Object.fromEntries(PROMPT_FIELDS.filter((f) => f in v).map((f) => [f, v[f]])));
     const P = out[k].provenance;
     if (P) {                                                  // only the documents some rule cites
-      const cited = new Set();
-      const take = (e) => ((e && e.src) || []).forEach((i) => cited.add(i));
-      Object.values(P.fields || {}).forEach(take);
-      Object.values(P.products || {}).forEach((pr) => Object.values(pr).forEach(take));
-      out[k].provenance = { ...P, sources: Object.fromEntries(Object.entries(P.sources || {}).filter(([i]) => cited.has(i))) };
+      const cited = new Map();                              // source id -> the rules that cite it
+      const take = (rule, e) => ((e && e.src) || []).forEach((i) => cited.set(i, [...(cited.get(i) || []), rule]));
+      Object.entries(P.fields || {}).forEach(([f, e]) => take(f, e));
+      Object.entries(P.products || {}).forEach(([pk, pr]) => Object.entries(pr).forEach(([f, e]) => take(pk + "." + f, e)));
+      out[k].provenance = { ...P, sources: Object.fromEntries(Object.entries(P.sources || {}).filter(([i]) => cited.has(i))
+        .map(([i, s]) => [i, { ...s, cited_for: cited.get(i) }])) };
     }
   }
   return out;
@@ -282,6 +285,14 @@ function profile(firm, product) {
 
 // ---------------------------------------------------------------- tools (arithmetic identical to index.html)
 const MMR = 0.005;
+const DEFINITIONS = {
+  R: "the loss if the stop is hit, in dollars; a 2R target is twice that distance on the other side of entry",
+  notional: "quantity × entry: the position's size in dollars",
+  margin: "the part of the account posted to hold the position: notional ÷ leverage",
+  "cross margin": "the whole account backs every position, so a loss can draw on all of it",
+  "isolated margin": "each position is backed only by its own margin",
+  "maintenance margin": "the equity an exchange requires to keep a position open; below it the exchange liquidates",
+};
 function budgets(a) {
   const { f, p, error } = profile(a.firm, a.product);
   if (error) return { error };
@@ -318,9 +329,13 @@ function budgets(a) {
   if (p.dd === "trailing") notes.push(locked ? `trailing floor locked at the initial balance after +${p.locks}%`
     : `trailing floor = high-water mark × (1 − ${p.m}%)` + (p.hwm === "equity" ? " — trails on equity intraday: an unrealised high raises the floor" : ""));
   if (p.basis === "max_balance_equity") notes.push(`daily floor = high at rollover − ${p.d}% of the original size`);
-  let crossover = null;
+  let crossover = null, crossoverWork = null;
   if (ddFloor != null && p.basis != null) {
     crossover = p.basis === "day_start" ? ddFloor / (1 - dpct) : ddFloor + quota * dpct;
+    crossoverWork = { formula: p.basis === "day_start" ? `max-loss floor ÷ (1 − ${p.d}%)` : `max-loss floor + quota × ${p.d}%`
+                        + (p.dd === "static" && p.basis === "initial" ? ` = quota × (1 − ${p.m}% + ${p.d}%)` : ""),
+                      value: r2(crossover),
+                      meaning: "the day-start balance at which the two budgets are equal: a day that starts below it is bound by the max-loss floor, above it by the daily limit. Intraday, the binding ceiling is min(daily budget, drawdown budget) above, which depends on the day-start balance, not on equity alone" };
     if (p.dd === "trailing" && !locked) notes.push("crossover is at the current high-water mark; it moves with it");
   }
   const used = [];
@@ -330,7 +345,7 @@ function budgets(a) {
   return { firm: f.name, product: p.label, daily_basis: p.basis, drawdown_type: p.dd, hwm_basis: p.hwm,
            daily_floor: r2(dFloor), daily_budget: r2(dB), dd_floor: r2(ddFloor), dd_budget: r2(ddB),
            trailing_locked: p.dd === "trailing" ? locked : null, binding, effective_budget: r2(eff),
-           crossover_equity: r2(crossover), formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
+           crossover_equity: r2(crossover), crossover_working: crossoverWork, formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
 }
 const r2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
 const r4 = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
@@ -338,8 +353,10 @@ const r4 = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
 function sourcesFor(p, used) {
   return used.map(([k, rule]) => {
     const c = k === "lev_band" ? p._band_pv : p.pv[k];
-    return c ? { rule, document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls }
-             : { rule, source: "not yet recorded" };
+    if (!c) return { rule, source: "not yet recorded", cite: rule + " — source not yet recorded" };
+    const on = c.read_on.length ? c.read_on : null;
+    return { rule, document_section: c.section, read_on: on || "not recorded", urls: c.urls,
+             cite: rule + " — " + c.section + ", " + (on ? "read " + on.join(" and ") : "read date not recorded") };
   });
 }
 
@@ -361,7 +378,7 @@ function size_trade(a) {
   const rpIn = a.risk_pct != null ? +a.risk_pct : 0.5, cpIn = a.budget_cap_pct != null ? +a.budget_cap_pct : 35, rp = rpIn / 100, cp = cpIn / 100;
   const lev = a.leverage != null ? +a.leverage : 5, mode = a.margin_mode === "isolated" ? "isolated" : "cross";
   const { _p, _eq, _used, _quota, ...base } = b;
-  base.tier = "DERIVED from the firm's rules in firms.json; each rule's source is under sources";
+  base.tier = "DERIVED from the firm's rules in firms.json; each rule's source is under sources. A figure that rests on an entry under assumptions is troid's assumption, not the firm's rule";
   if (!b.binding) return { verdict: "PENDING", reasons: ["troid has no daily basis or drawdown type recorded for this product, so there is no budget to size against"], ...base };
   const dist = Math.abs(entry - stop), blocks = [];
   if (side > 0 && stop >= entry) blocks.push("stop at or above entry on a long");
@@ -419,6 +436,12 @@ function size_trade(a) {
   let liq, fl;   // MMR 0.5% is troid's assumption, not a firm rule
   if (mode === "isolated") { liq = (1 - (1 - 1 / levUsed) / (1 - MMR)) * 100; fl = `1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR ${MMR * 100}%)`; }
   else { liq = notional > 0 ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity; fl = `1 − (1 − equity ÷ notional) ÷ (1 − MMR ${MMR * 100}%)`; }   // <= 0: already below maintenance
+  const assumed = ["exchange liquidation uses a 0.5% maintenance margin — troid's assumption, no firm source"];
+  if (a.margin_mode == null) assumed.push("margin mode " + mode + " — troid's default, not an input you gave" + (p.pv.margin_modes ? "" : "; troid has no recorded source for this firm's margin modes"));
+  if (a.leverage == null) assumed.push("leverage " + lev + "× — troid's default, not an input you gave");
+  if (a.risk_pct == null) assumed.push("risk " + rpIn + "% of equity — troid's default, not an input you gave");
+  if (a.budget_cap_pct == null) assumed.push("budget cap " + cpIn + "% of the binding budget — troid's default, not an input you gave");
+  if (a.target_r == null) assumed.push("target " + tR + "R — troid's default, not an input you gave");
   const ord = [["your stop", sp]], fname = p.dd === "trailing" && !b.trailing_locked ? "trailing floor" : "max-loss floor";
   if (b.daily_budget != null) ord.push(["daily limit", b.daily_budget / notional * 100]);
   if (b.dd_budget != null) ord.push([fname, b.dd_budget / notional * 100]);
@@ -435,8 +458,7 @@ function size_trade(a) {
            fee_share_of_risk_pct: feeKnown ? r2(fshare) : null, stop_distance_pct: r2(sp), target: r2(target),
            consumes_pct_of_budget: r2(consumes), losses_remaining: left,
            circuit_breakers: ord.map(([e, v]) => ({ event: e, adverse_move_pct: isFinite(v) ? r2(v) : null })),
-           assumptions: ["exchange liquidation uses a 0.5% maintenance margin — troid's assumption, no firm source"],
-           ...base, working, notes };
+           assumptions: assumed, definitions: DEFINITIONS, ...base, working, notes };
 }
 
 // Bitfunded's restricted practices (RTP) and Terms. Modelled for Bitfunded only. Each finding names the
@@ -495,11 +517,11 @@ function check_compliance(a) {
 }
 
 const RULES = {
-  crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap at equity = quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below it the max loss binds and the advertised 4% daily is fiction. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover.",
+  crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. A day that starts below $98,000 is bound by the max-loss floor, and the 4% daily limit is not the constraint that day; above it, the daily limit binds. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover.",
   reset: "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in New York. Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over. A position inside the limit at 11:59 can breach at 12:01 without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
   fees: "Bitfunded: 0.04% per side on notional, 0.08% round trip. Notional scales inversely with stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%. Other firms' fees are in firms.json; a null is pending.",
-  leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin that distance is roughly entry × (1 − 1/leverage): ~20% at 5x. Under CROSS margin (Bitfunded's mode) the whole account backs the position, so exchange liquidation is unreachable at any size the firm allows — the firm's own floors fail you first.",
-  cross: "Bitfunded runs cross margin at 5x: every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
+  leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin that distance is roughly entry × (1 − 1/leverage): ~20% at 5x. Under CROSS margin the whole account backs the position, so at any size a 5× cap allows the firm's own floors are breached long before exchange liquidation. troid models cross margin by default; it has no recorded source for which margin modes Bitfunded offers.",
+  cross: "Under cross margin, troid's default model (troid has no recorded source for Bitfunded's margin modes; the 5× leverage cap is from the help centre, Criteria to be Success), every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
   drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's trails on balance.",
   ladder: "Scaling in does not increase position size at fixed risk — it decreases it. With the stop anchored to the first entry's structure, later tranches sit further from the stop and earn less quantity. Five strength tranches hold about 34% LESS than a single entry at the same risk. The benefit is conditionality: you fill more on trades that work than on trades that don't.",
   ruin: "Under a proportional cap (risk at most c of the REMAINING budget), budget after n losses is B(1−c)^n — it approaches zero without reaching it, so ruin by realized losses is unreachable and the real failure mode is a stalled account. Uncapped, a fixed fraction f of quota reaches the floor in floor(maxloss/f) losses: 12 at 0.5%, 6 at 1%, 3 at 2%. At a professional +0.35R edge, 1% uncapped blows up 68% of the time within a year (MODELLED); under a cap, zero.",
@@ -651,7 +673,7 @@ const textOf = (resp) => (resp.content || []).filter((b) => b.type === "text").m
 const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason === "max_tokens" && (resp.content || []).some((b) => b.type === "tool_use"));
 
 // troid's side of the history is signed: each reply carries an HMAC over the whole conversation up to and
-// including it, and the next message must bring it back. Stateless; nothing is stored. The HMAC input starts
+// including it, and the next message must bring it back. The signing itself keeps no state (the conversation store is separate). The HMAC input starts
 // with a hash of the guardrails, so a history signed under older guardrails no longer verifies.
 const VERSION = crypto.createHash("sha256").update(GUARDRAILS).digest("hex").slice(0, 16);
 // The session ID is inside the signature, so a conversation cannot move to another session mid-way.
@@ -735,7 +757,7 @@ module.exports = async (req, res) => {
     if (!storeOn() || Buffer.byteLength(TURN_KEY) < 32) return json(res, 503, { error: S(lang, "ask.err.not_configured") });
     const site = req.headers["sec-fetch-site"];
     if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
-    if (!allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
+    if (!allow("del:" + clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });   // its own bucket: deleting never uses up messages
     const session = String(querySession(req));
     if (!SESSION_RE.test(session)) return json(res, 400, { error: S(lang, "ask.err.session") });
     if (!tokenOk(session, req.headers["x-troid-token"])) return json(res, 403, { deleted: false, error: "Only the page that holds this conversation can delete it here. Otherwise write to hello@troid.ai with the session ID." });
@@ -760,6 +782,14 @@ module.exports = async (req, res) => {
   const session = String(body.session || "");
   if (!SESSION_RE.test(session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.session") });
   if (!signedOk(messages, body.sig, session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
+  // A first message may start a session, never join one: a session already in the store takes its own delete
+  // token, so knowing a session ID is not enough to add to that conversation or to be handed its token.
+  if (messages.length === 1) {
+    let taken;
+    try { [taken] = await store([["EXISTS", "conv:" + session]]); }
+    catch (e) { return json(res, 503, { enabled: true, error: S(lang, "ask.err.error") }); }
+    if (taken && !tokenOk(session, req.headers["x-troid-token"])) return json(res, 409, { restart: true, error: S(lang, "ask.err.session") });
+  }
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));
@@ -843,3 +873,4 @@ module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* stri
 module.exports._sign = (msgs, session) => sign(msgs, session);   // for tests
 module.exports._deleteToken = deleteToken;                         // for tests
 module.exports._clientKey = clientKey;
+module.exports._promptFirms = () => context().prompt_firms;   // for tests

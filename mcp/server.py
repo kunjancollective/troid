@@ -299,12 +299,14 @@ def explain_rule(topic: str) -> dict:
     """
     t = topic.lower().strip().replace(" ", "_")
     lib = {
-      "crossover": "A funded account has two loss ceilings. The daily limit is a percentage "
-        "of your day-start balance; the max loss is a fixed floor from your starting quota. "
-        "The daily limit is a FIXED amount from the initial balance (FAQ). They swap at "
-        "equity = quota*(1 - maxloss + daily). On a $100k 1-Step that is "
-        "$98,000 — only $2,000 below the start. Below it the max loss binds and the "
-        "advertised 4% daily is fiction. Size against the smaller of the two, always.",
+      "crossover": "A funded account has two loss ceilings. Under Bitfunded the daily limit "
+        "is a FIXED amount from the initial balance (FAQ); the max loss is a fixed floor from "
+        "your starting quota. They swap where the day-start balance equals "
+        "quota*(1 - maxloss + daily). On a $100k 1-Step that is $98,000 — only $2,000 below "
+        "the start. A day that starts below $98,000 is bound by the max-loss floor, and the "
+        "4% daily limit is not the constraint that day; above it, the daily limit binds. "
+        "Intraday, which ceiling binds depends on that day's starting balance, not on equity "
+        "alone. Size against the smaller of the two, always.",
       "reset": "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in "
         "New York. Not midnight. Because of the platform's settlement process the reset can "
         "take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be "
@@ -319,11 +321,13 @@ def explain_rule(topic: str) -> dict:
       "leverage": "Leverage does not determine your loss — the stop does. risk = "
         "|entry-stop| x quantity, and leverage appears nowhere in it. What leverage changes "
         "is margin posted and liquidation distance. Under ISOLATED margin that distance is "
-        "roughly entry x (1 - 1/leverage): ~20% at 5x. Under CROSS margin (Bitfunded's mode) "
-        "the whole account backs the position, so exchange liquidation is unreachable at any "
-        "size the firm allows — the firm's own 4%/6% floors fail you first. See 'cross'.",
-      "cross": "Bitfunded runs cross margin at 5x: every position is backed by the entire "
-        "account balance. Consequence one: exchange liquidation never binds — even at the 65% "
+        "roughly entry x (1 - 1/leverage): ~20% at 5x. Under CROSS margin the whole account "
+        "backs the position, so at any size a 5x cap allows the firm's own 4%/6% floors are "
+        "breached long before exchange liquidation. troid models cross margin by default; it "
+        "has no recorded source for which margin modes Bitfunded offers. See 'cross'.",
+      "cross": "Under cross margin, troid's default model (troid has no recorded source for "
+        "Bitfunded's margin modes; the 5x leverage cap is from the help centre, Criteria to be "
+        "Success), every position is backed by the entire account balance. Consequence one: exchange liquidation never binds — even at the 65% "
         "margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's "
         "floors ARE your liquidation model. Consequence two: nothing cuts a runaway position "
         "before the firm fails you. Under isolated, the exchange would liquidate at ~20% for "

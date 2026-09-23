@@ -711,6 +711,7 @@ chat.js.copied,copied,,,NEW: translate it in reviewer_edit |
 chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
 chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 faq.meta.title,troid — what the numbers actually say,troid — apa yang sebenarnya dikatakan angka,,"troid stays lowercase, in Latin letters"
 faq.hero.h1,What the numbers actually say,Apa yang sebenarnya dikatakan angka,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","Tingkat dasar, mekanisme aturan, dan konflik kepentingan troid sendiri — hal-hal yang tidak disebutkan landing page.",,"troid stays lowercase, in Latin letters"

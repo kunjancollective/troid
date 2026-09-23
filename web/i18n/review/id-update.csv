@@ -26,6 +26,7 @@ chat.js.copied,copied,,,NEW: translate it in reviewer_edit |
 chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
 chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.switched_off,ask troid is switched off at the moment.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
