@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
 """Render the shadow account as a public page. Runs after forward.py in the daily loop.
 
-  python gen_ledger.py   ->   ../web/public/ledger.html
+  python gen_ledger.py   ->   ../web/public/ledger.html, and ../web/public/{lang}/ledger.html for every
+                              published language (site_build.targets())
 
 Every closed trade, the equity curve, the current state. Losers included, nothing
 edited. The page carries the strategy's own verdict on itself: inside noise.
+
+The page's words are keyed in web/i18n (ledger.*; the shared product.*, common.*, hypo.* and footer keys);
+render_ledger(T, live) renders it in T's language. What the journal, state and config record stays data: the
+figures, the timestamps, the instrument, the strategy's name and the engine's exit-reason codes. Recorded
+values that the page shows as English words (side, entry kind, position, status, binding, exit label) have a
+keyed label each; a value without one is shown as recorded.
 """
 from __future__ import annotations
-import csv, json, html, math, statistics, datetime as dt
+import csv, json, html, math, re, statistics, datetime as dt
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
+import i18n
+import site_build
 import site_text
 JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_config.json"
 RUNS = HERE/"runs.csv"
@@ -25,14 +34,58 @@ LWC = "https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.3/dist/lightweight-ch
 
 BRAND = (HERE.parent/"web"/"public"/"index.html").read_text()
 STYLE = BRAND[BRAND.index("<link rel=\"icon\""):BRAND.index("</style>")+8]
-HEADER = '''<div class="bar">
-  <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
-    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+
+
+def _english(T):
+    """The English page, exactly as before. The pseudo-locale (i18n_pseudo.py) takes the translated path."""
+    return T.code == "en" and not getattr(T, "pseudo", False)
+
+
+def _style(T):
+    """index.html's icon, og and font links and its stylesheet. English: exactly as index.html has them; another
+    language gets its own og title, description and image."""
+    if _english(T):
+        return STYLE
+    og = site_build.og(T)
+    s = STYLE
+    for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
+        s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)
+    return s
+
+
+def header(T, live):
+    """The ledger's bar (it has no <header> block, so not partials/_header.html): links inside T's language,
+    the language switcher at the end of the nav. On a translated page the mark is pinned left to right: .mark is
+    inline-flex, so in a right-to-left page it would otherwise read id·tr."""
+    ltr = "" if _english(T) else ' dir="ltr"'
+    return f'''<div class="bar">
+  <a class="mark"{ltr} href="{T.H}">tr<span class="dot"></span>id</a>
+  <nav><a href="{T.H}">{T("product.desk")}</a><a href="{T.L}/compare">{T("product.compare")}</a><a href="{T.L}/ledger">{T("product.ledger")}</a><a href="{T.L}/dashboard">{T("product.research")}</a><a href="{T.L}/chat">{T("product.ask")}</a><a href="{T.L}/faq">{T("common.nav.faq")}</a>
+    <a href="https://github.com/kunjancollective/troid">{T("common.nav.source")}</a>{site_build.switcher(T, "ledger", live)}</nav>
 </div>'''
 
 
-def equity_svg(rows, w=760, h=180):
+def code(T, s):
+    """A name or code the page shows as recorded (the instrument, the strategy's name, an engine exit-reason code):
+    never translated. On a translated page it is isolated left to right and marked translate="no"."""
+    s = html.escape(str(s), quote=False)
+    return s if _english(T) else f'<bdi translate="no">{s}</bdi>'
+
+
+def word(T, section, value, markup=True):
+    """A recorded value the page shows as an English word (ledger.{section}.{value}: side, kind, pos, status,
+    binding, exit): its keyed label. A value with no key is shown as recorded, as data."""
+    k = f"ledger.{section}.{value}"
+    if k in T.en:
+        return T(k)
+    return code(T, value) if markup else str(value)
+
+
+def flag(T):
+    return f' <span title="{T.attr("ledger.flag.title")}">⚑</span>'
+
+
+def equity_svg(T, rows, w=760, h=180):
     if not rows: return ""
     eq, cur = [QUOTA], QUOTA
     for r in rows: cur += float(r["pnl"]); eq.append(cur)
@@ -46,37 +99,40 @@ def equity_svg(rows, w=760, h=180):
   <path d="{path}" fill="none" stroke="var(--signal)" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
 </svg>
 <div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--dim);margin-top:4px">
-  <span>${lo:,.0f}</span><span>start ${QUOTA:,.0f} · dashed</span><span>${hi:,.0f}</span></div>'''
+  <span>${lo:,.0f}</span><span>{T("ledger.equity.start", quota=f"${QUOTA:,.0f}")}</span><span>${hi:,.0f}</span></div>'''
 
 
-def heartbeat(st):
+def heartbeat(T, st):
     """Last bar, balance, room, binding, position. No direction, no price, no stop."""
     if not st: return ""
     bar = st.get("as_of_bar_utc", "")[:16].replace("T", " ")
     pos = st.get("position")
-    ptxt = (f"open since {pos['open_since_utc'][:16].replace('T', ' ')} UTC · {pos['tranches_filled']} of {pos['tranches']} tranche(s)"
-            if pos else "flat")
-    binding = {"daily": "daily limit", "floor": "max-loss floor"}.get(st.get("binding", ""), "—")
+    ptxt = (T("ledger.hb.open_since", since=pos['open_since_utc'][:16].replace('T', ' '),
+              filled=pos['tranches_filled'], total=pos['tranches'])
+            if pos else T("ledger.pos.flat"))
+    b = st.get("binding", "")
+    binding = T(f"ledger.binding.{b}") if b and f"ledger.binding.{b}" in T.en else "—"
     return f'''<div class="cells">
-<div class="c"><div class="k">last bar</div><div class="v">{bar}</div><div class="hs">UTC · close {st.get("last_close", 0):,.0f}</div></div>
-<div class="c"><div class="k">balance</div><div class="v">${st.get("balance", QUOTA):,.0f}</div><div class="hs">realized</div></div>
-<div class="c"><div class="k">room</div><div class="v">${min(st.get("daily_room", 0), st.get("distance_to_floor", 0)):,.0f}</div><div class="hs">binding · {binding}</div></div>
-<div class="c"><div class="k">to floor</div><div class="v">${st.get("distance_to_floor", 0):,.0f}</div><div class="hs">daily ${st.get("daily_room", 0):,.0f}</div></div>
-<div class="c" style="grid-column:span 2"><div class="k">position</div><div class="v" style="font-size:14px;margin-top:4px">{ptxt}</div><div class="hs">no direction, price or stop is published</div></div>
+<div class="c"><div class="k">{T("ledger.hb.last_bar")}</div><div class="v">{bar}</div><div class="hs">{T("ledger.hb.last_bar_note", close=f'{st.get("last_close", 0):,.0f}')}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.balance")}</div><div class="v">${st.get("balance", QUOTA):,.0f}</div><div class="hs">{T("ledger.hb.realized")}</div></div>
+<div class="c"><div class="k">{T("ledger.hb.room")}</div><div class="v">${min(st.get("daily_room", 0), st.get("distance_to_floor", 0)):,.0f}</div><div class="hs">{T("ledger.hb.binding", binding=binding)}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.to_floor")}</div><div class="v">${st.get("distance_to_floor", 0):,.0f}</div><div class="hs">{T("ledger.hb.daily", amount=f'${st.get("daily_room", 0):,.0f}')}</div></div>
+<div class="c" style="grid-column:span 2"><div class="k">{T("ledger.hb.position")}</div><div class="v" style="font-size:14px;margin-top:4px">{ptxt}</div><div class="hs">{T("ledger.hb.position_note")}</div></div>
 </div>'''
 
 
-def runs_table():
+def runs_table(T):
     """One row per shadow run in the last 7 days, from runs.csv."""
-    if not RUNS.exists(): return '<p class="hs" style="margin:0 0 14px">runs: none recorded yet</p>'
+    if not RUNS.exists(): return f'<p class="hs" style="margin:0 0 14px">{T("ledger.runs.none_yet")}</p>'
     now = dt.datetime.now(dt.timezone.utc)
     rows = [r for r in csv.DictReader(RUNS.open()) if dt.datetime.fromisoformat(r["run_utc"]) >= now - dt.timedelta(days=7)]
-    if not rows: return '<p class="hs" style="margin:0 0 14px">runs: none in the last 7 days</p>'
+    if not rows: return f'<p class="hs" style="margin:0 0 14px">{T("ledger.runs.none_7d")}</p>'
     body = "".join(f'<tr><td>{r["run_utc"][:16].replace("T", " ")}</td><td>{r["as_of_bar_utc"][:16].replace("T", " ")}</td>'
-                   f'<td class="num">{float(r["balance"]):,.0f}</td><td class="num">{r["trades_new"]}</td><td>{r["position"]}</td></tr>'
+                   f'<td class="num">{float(r["balance"]):,.0f}</td><td class="num">{r["trades_new"]}</td><td>{word(T, "pos", r["position"])}</td></tr>'
                    for r in reversed(rows[-42:]))
-    return (f'<div class="panel"><p class="eyebrow">Runs · last 7 days · {len(rows)}</p><div class="scroll"><table>'
-            f'<tr><th>run (UTC)</th><th>bar</th><th class="num">balance</th><th class="num">closed</th><th>position</th></tr>{body}</table></div></div>')
+    return (f'<div class="panel"><p class="eyebrow">{T("ledger.runs.eyebrow", n=len(rows))}</p><div class="scroll"><table>'
+            f'<tr><th>{T("ledger.runs.th.run")}</th><th>{T("ledger.runs.th.bar")}</th><th class="num">{T("ledger.runs.th.balance")}</th>'
+            f'<th class="num">{T("ledger.runs.th.closed")}</th><th>{T("ledger.runs.th.position")}</th></tr>{body}</table></div></div>')
 
 
 def load_bars():
@@ -87,16 +143,12 @@ def load_bars():
     return [int(float(r[0])) for r in rows], [tuple(round(float(x), 2) for x in r[1:5]) for r in rows]
 
 
-EXIT_LABEL = {"tp1": "TP1", "tp2": "TP2", "tp3": "TP3", "stop": "stop", "max_hold_10d": "max hold",
-              "reset_flat": "reset flatten", "reset_flat_loser": "reset flatten"}
-
-
 def when(iso):
     d = dt.datetime.fromisoformat(iso)
     return f"{d.month}/{d.day} {d:%H:%M}"
 
 
-def trade_charts(rows):
+def trade_charts(T, rows):
     """One candlestick panel per closed trade, last CHARTS_N, newest first: bars from 10 before
     entry to 5 after exit, entry / stop / TPs / exit marked. The caption is the risk-why only:
     no thesis, no reason the price moved. Open positions are not drawn — they are not closed."""
@@ -118,53 +170,58 @@ def trade_charts(rows):
         risk, room = float(r["risk_usd"]), float(r["room_at_entry"])
         tps = json.loads(r["tp_prices"])
         items.append(dict(id=f"tc{k}", side=side, entry=entry, stop=stop, tps=tps, exit=exit_px,
-                          entry_t=times[ei], exit_t=times[xi], exit_label=EXIT_LABEL.get(r["reason"], r["reason"]),
+                          entry_t=times[ei], exit_t=times[xi], exit_label=word(T, "exit", r["reason"], markup=False),
                           bars=[dict(time=times[i], open=bars[i][0], high=bars[i][1], low=bars[i][2], close=bars[i][3])
                                 for i in range(lo, hi)]))
-        binding = {"daily": "daily limit", "floor": "max-loss floor"}.get(r["binding_at_entry"], r["binding_at_entry"])
-        flag = ' <span title="held through a forward-filled bar">⚑</span>' if int(r.get("filled_bars") or 0) else ""
-        cap = (f'{r["side"].capitalize()} · {r["kind"]} · {when(r["entry_utc"])} → {when(r["exit_utc"])} UTC · '
-               f'entry {entry:,.0f} · stop {stop:,.0f} ({abs(entry - stop) / entry * 100:.2f}%) · '
-               f'sized ${risk:,.0f} = {risk / bal_at[k] * 100:.1f}% · {binding} binding, ${room:,.0f} room · '
-               f'{r["fills"]} of {r["tranches"]} tranches · exit {EXIT_LABEL.get(r["reason"], r["reason"])} '
-               f'after {r["bars_held"]} bars · {float(r["r"]):+.2f}R · fees {float(r["fee_share_pct"]):.1f}% of risk')
-        caps.append(f'<div class="tc"><div class="tchart" id="tc{k}"></div><p class="tcap">{html.escape(cap)}{flag}</p></div>')
+        sk = f"ledger.side_cap.{r['side']}"
+        cap = T("ledger.charts.caption",
+                side=T(sk) if sk in T.en else code(T, r["side"].capitalize()), kind=word(T, "kind", r["kind"]),
+                entry_time=when(r["entry_utc"]), exit_time=when(r["exit_utc"]),
+                entry=f"{entry:,.0f}", stop=f"{stop:,.0f}", stop_pct=f"{abs(entry - stop) / entry * 100:.2f}%",
+                risk=f"${risk:,.0f}", risk_pct=f"{risk / bal_at[k] * 100:.1f}%",
+                binding=word(T, "binding", r["binding_at_entry"]), room=f"${room:,.0f}",
+                fills=html.escape(r["fills"]), tranches=html.escape(r["tranches"]), exit=word(T, "exit", r["reason"]),
+                bars=html.escape(r["bars_held"]), r=f'{float(r["r"]):+.2f}R', fees=f'{float(r["fee_share_pct"]):.1f}%')
+        fl = flag(T) if int(r.get("filled_bars") or 0) else ""
+        caps.append(f'<div class="tc"><div class="tchart" id="tc{k}"></div><p class="tcap">{cap}{fl}</p></div>')
     if not items: return ""
-    return (f'<div class="panel"><p class="eyebrow">Last {len(items)} closed trades · drawn</p>'
-            f'<p class="hs" style="margin:-8px 0 14px">Bars from 10 before entry to 5 after exit. Entry, initial stop and take-profits '
-            f'as the engine set them; the stop moves to average entry after TP1 and is not redrawn. Open position: not drawn.</p>'
+    return (f'<div class="panel"><p class="eyebrow">{T("ledger.charts.eyebrow", n=len(items))}</p>'
+            f'<p class="hs" style="margin:-8px 0 14px">{T("ledger.charts.note")}</p>'
             + "".join(caps) + "</div>"
             + f'<script src="{LWC}"></script>\n<script>var TRADES=' + json.dumps(items, separators=(",", ":")) + ";\n"
-            + CHART_JS + "</script>")
+            + "var T=" + T.js("ledger.js.") + ";\n" + F_JS + "\n" + CHART_JS + "</script>")
 
+
+F_JS = r"function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}"
 
 CHART_JS = r"""(function(){
-  var cs=getComputedStyle(document.documentElement),T={};
-  ["bg","surface","line","ink","dim","signal","bad"].forEach(function(k){T[k]=cs.getPropertyValue("--"+k).trim()});
+  var cs=getComputedStyle(document.documentElement),C={};
+  ["bg","surface","line","ink","dim","signal","bad"].forEach(function(k){C[k]=cs.getPropertyValue("--"+k).trim()});
   var mono=cs.getPropertyValue("--mono").trim()||"monospace";
-  if(!window.LightweightCharts){document.querySelectorAll(".tchart").forEach(function(e){e.innerHTML='<p class="hs" style="padding:12px">chart library did not load (cdn.jsdelivr.net) — the caption is the record</p>'});return}
+  if(!window.LightweightCharts){document.querySelectorAll(".tchart").forEach(function(e){e.innerHTML='<p class="hs" style="padding:12px">'+T.nolib+'</p>'});return}
   var L=LightweightCharts;
   TRADES.forEach(function(t){
     var el=document.getElementById(t.id); if(!el)return;
     var chart=L.createChart(el,{autoSize:true,height:300,
-      layout:{background:{type:"solid",color:T.surface},textColor:T.dim,fontFamily:mono,fontSize:10},
-      grid:{vertLines:{color:T.line},horzLines:{color:T.line}},
-      rightPriceScale:{borderColor:T.line},timeScale:{borderColor:T.line,timeVisible:true,secondsVisible:false},
+      layout:{background:{type:"solid",color:C.surface},textColor:C.dim,fontFamily:mono,fontSize:10},
+      grid:{vertLines:{color:C.line},horzLines:{color:C.line}},
+      rightPriceScale:{borderColor:C.line},timeScale:{borderColor:C.line,timeVisible:true,secondsVisible:false},
       crosshair:{mode:L.CrosshairMode.Normal},handleScroll:false,handleScale:false});
-    var s=chart.addCandlestickSeries({upColor:"transparent",downColor:T.dim,borderUpColor:T.ink,borderDownColor:T.dim,
-      wickUpColor:T.ink,wickDownColor:T.dim,priceLineVisible:false,lastValueVisible:false});
+    var s=chart.addCandlestickSeries({upColor:"transparent",downColor:C.dim,borderUpColor:C.ink,borderDownColor:C.dim,
+      wickUpColor:C.ink,wickDownColor:C.dim,priceLineVisible:false,lastValueVisible:false});
     s.setData(t.bars);
-    s.createPriceLine({price:t.entry,color:T.signal,lineWidth:1,lineStyle:L.LineStyle.Dotted,axisLabelVisible:true,title:"entry"});
-    s.createPriceLine({price:t.stop,color:T.bad,lineWidth:1,lineStyle:L.LineStyle.Solid,axisLabelVisible:true,title:"stop"});
-    t.tps.forEach(function(p,i){s.createPriceLine({price:p,color:T.dim,lineWidth:1,lineStyle:L.LineStyle.Dashed,axisLabelVisible:false,title:"TP"+(i+1)})});
-    s.setMarkers([{time:t.entry_t,position:t.side>0?"belowBar":"aboveBar",color:T.signal,shape:t.side>0?"arrowUp":"arrowDown",text:"entry"},
-                  {time:t.exit_t,position:t.side>0?"aboveBar":"belowBar",color:T.ink,shape:"circle",text:t.exit_label}]);
+    s.createPriceLine({price:t.entry,color:C.signal,lineWidth:1,lineStyle:L.LineStyle.Dotted,axisLabelVisible:true,title:T.entry});
+    s.createPriceLine({price:t.stop,color:C.bad,lineWidth:1,lineStyle:L.LineStyle.Solid,axisLabelVisible:true,title:T.stop});
+    t.tps.forEach(function(p,i){s.createPriceLine({price:p,color:C.dim,lineWidth:1,lineStyle:L.LineStyle.Dashed,axisLabelVisible:false,title:F(T.tp,{n:i+1})})});
+    s.setMarkers([{time:t.entry_t,position:t.side>0?"belowBar":"aboveBar",color:C.signal,shape:t.side>0?"arrowUp":"arrowDown",text:T.entry},
+                  {time:t.exit_t,position:t.side>0?"aboveBar":"belowBar",color:C.ink,shape:"circle",text:t.exit_label}]);
     chart.timeScale().fitContent();
   });
 })();"""
 
 
-def main():
+def ledger_data():
+    """What the page shows, from the journal, the state, the runs and the config."""
     rows = list(csv.DictReader(JOURNAL.open())) if JOURNAL.exists() else []
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
     cfg = json.loads(CFG.read_text())
@@ -175,28 +232,48 @@ def main():
     se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
     noise30 = se*math.sqrt(2*math.log(30))          # expected best of ~30 configs under a true zero edge
     flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
-    wf_path = HERE/"results"/"walkforward_BTCUSDT.json"          # the holdout, if it has been run
-    hold = json.loads(wf_path.read_text())["holdout"] if wf_path.exists() else None
     gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
     gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
     pf = gw/gl if gl else 0
     # this week / this month, by exit date
     now = dt.datetime.now(dt.timezone.utc)
-    def since(days): 
+    def since(days):
         cut = now - dt.timedelta(days=days)
         return [r for r in rows if dt.datetime.fromisoformat(r["exit_utc"]) >= cut]
     wk, mo = since(7), since(30)
     # the backfill was written in one run, so every backfilled row carries the same timestamp
-    live = [r for r in rows if r["logged_utc"] != rows[0]["logged_utc"]] if rows else []
+    logged_live = [r for r in rows if r["logged_utc"] != rows[0]["logged_utc"]] if rows else []
+    return dict(rows=rows, st=st, cfg=cfg, n=n, wins=wins, net=net, exp=exp, se=se, noise30=noise30,
+                flagged=flagged, pf=pf, wk=wk, mo=mo, logged_live=logged_live)
 
-    trades_html = "".join(f'''<tr><td>{r["exit_utc"][:10]}</td><td>{r["kind"]}</td><td>{r["side"]}</td>
-<td class="num">{r["fills"]}</td><td class="num">{r["bars_held"]}</td><td>{r["reason"]}{' <span title="held through a forward-filled bar">⚑</span>' if int(r.get("filled_bars") or 0) else ''}</td>
+
+def render_ledger(T, live):
+    """troid's ledger in T's language, as HTML (site_build.GENERATED). T is an i18n.Strings, live the published
+    language codes. English renders exactly as the page always has."""
+    d = ledger_data()
+    rows, st, cfg, n, exp, se, noise30 = d["rows"], d["st"], d["cfg"], d["n"], d["exp"], d["se"], d["noise30"]
+    net, wk, mo = d["net"], d["wk"], d["mo"]
+
+    trades_html = "".join(f'''<tr><td>{r["exit_utc"][:10]}</td><td>{word(T, "kind", r["kind"])}</td><td>{word(T, "side", r["side"])}</td>
+<td class="num">{r["fills"]}</td><td class="num">{r["bars_held"]}</td><td>{code(T, r["reason"])}{flag(T) if int(r.get("filled_bars") or 0) else ''}</td>
 <td class="num" style="color:{'var(--signal)' if float(r['pnl'])>0 else 'var(--bad)'}">{float(r["pnl"]):+,.2f}</td>
 <td class="num">{float(r["r"]):+.2f}</td></tr>''' for r in reversed(rows[-40:]))
 
-    page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1"><title>troid's ledger</title>
-{STYLE}
+    # one sentence per outcome of the two tests, so each translates whole
+    ci = "contains" if abs(exp) < 1.96*se else "excludes"
+    chance = "below" if exp < noise30 else "above"
+    warn = (T(f"ledger.warn.measure_{ci}_{chance}", exp=f"{exp:+.3f}R", n=n, se=f"{se:.3f}R", noise=f"{noise30:+.3f}R")
+            + " " + T("ledger.warn.published") + "\n"
+            + T("ledger.warn.logged", live=len(d["logged_live"]), date=rows[0]["logged_utc"][:10] if rows else "—")
+            + (" " + T("ledger.warn.flagged", n=d["flagged"]) if d["flagged"] else ""))
+    status = word(T, "status", st["outcome"]) if st.get("outcome") else "—"
+    wk_r, mo_r = f'{sum(float(r["r"]) for r in wk):+.2f}R', f'{sum(float(r["r"]) for r in mo):+.2f}R'
+    asof = T("ledger.hero.asof", asof=st.get("as_of_bar_utc", "—")[:16].replace("T", " "),
+             market=code(T, f'{cfg["instrument"]} {cfg["timeframe"]}'), profile=code(T, cfg["profile"]))
+
+    return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("ledger.meta.title")}</title>
+{_style(T)}
 <style>.k{{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}}
 .v{{font-family:var(--mono);font-size:19px;font-weight:500;letter-spacing:-.02em}}
 .cells{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}}
@@ -209,52 +286,57 @@ def main():
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
 .tc{{margin-bottom:18px}}.tchart{{height:300px;border:1px solid var(--line);border-radius:3px;overflow:hidden}}
 .tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
-</head><body><div class="wrap">
-{HEADER}
-<p class="eyebrow" style="margin-top:28px;text-transform:none">troid's ledger</p>
-<h1>{html.escape(cfg["name"])}</h1>
-<p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>
-<p class="meta">as of {st.get("as_of_bar_utc","—")[:16].replace("T"," ")} UTC · {cfg["instrument"]} {cfg["timeframe"]} · {cfg["profile"]} rules · cross 5x · replayed every 4h, 20 min after the bar</p>
+{site_build.head_extra(T, "ledger", live)}</head><body><div class="wrap">
+{header(T, live)}
+<p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</p>
+<h1>{code(T, cfg["name"])}</h1>
+<p class="lede">{T("ledger.hero.lede")}</p>
+<p class="meta">{asof}</p>
 
-{heartbeat(st)}
-{runs_table()}
-<div class="warnbox">This strategy measures {exp:+.3f}R per trade over {n} trades — a standard error of ~{se:.3f}R, a
-confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero, and a result {"below" if exp < noise30 else "above"} what chance produces across the
-~30 configurations searched (~{noise30:+.3f}R). It is published so you can watch a null result run forward, not because it works. The <a href="/tearsheet">full tearsheet</a> shows what noise looks like when all of it is shown.
-{len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.{
-f" {flagged} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded." if flagged else ""}</div>
-{site_text.hypo_html()}
+{heartbeat(T, st)}
+{runs_table(T)}
+<div class="warnbox">{warn}</div>
+{site_text.hypo_html(T=T)}
 
-<div class="panel"><p class="eyebrow">Equity</p>{equity_svg(rows)}</div>
+<div class="panel"><p class="eyebrow">{T("ledger.equity.eyebrow")}</p>{equity_svg(T, rows)}</div>
 
 <div class="cells">
-<div class="c"><div class="k">balance</div><div class="v">${st.get("balance",QUOTA):,.0f}</div></div>
-<div class="c"><div class="k">net</div><div class="v" style="color:{'var(--signal)' if net>=0 else 'var(--bad)'}">{net:+,.0f}</div></div>
-<div class="c"><div class="k">trades</div><div class="v">{n}</div></div>
-<div class="c"><div class="k">win</div><div class="v">{(wins/n*100 if n else 0):.0f}%</div></div>
-<div class="c"><div class="k">exp</div><div class="v">{exp:+.3f}R</div></div>
-<div class="c"><div class="k">pf</div><div class="v">{pf:.2f}</div></div>
-<div class="c"><div class="k">max dd</div><div class="v">${st.get("max_drawdown",0):,.0f}</div></div>
-<div class="c"><div class="k">to floor</div><div class="v">${st.get("distance_to_floor",0):,.0f}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.balance")}</div><div class="v">${st.get("balance",QUOTA):,.0f}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.net")}</div><div class="v" style="color:{'var(--signal)' if net>=0 else 'var(--bad)'}">{net:+,.0f}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.trades")}</div><div class="v">{n}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.win")}</div><div class="v">{(d["wins"]/n*100 if n else 0):.0f}%</div></div>
+<div class="c"><div class="k">{T("ledger.cell.exp")}</div><div class="v">{exp:+.3f}R</div></div>
+<div class="c"><div class="k">{T("ledger.cell.pf")}</div><div class="v">{d["pf"]:.2f}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.max_dd")}</div><div class="v">${st.get("max_drawdown",0):,.0f}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.to_floor")}</div><div class="v">${st.get("distance_to_floor",0):,.0f}</div></div>
 </div>
 
 <div class="cells">
-<div class="c"><div class="k">this week</div><div class="v">{len(wk)} trades · {sum(float(r["r"]) for r in wk):+.2f}R</div></div>
-<div class="c"><div class="k">this month</div><div class="v">{len(mo)} trades · {sum(float(r["r"]) for r in mo):+.2f}R</div></div>
-<div class="c"><div class="k">status</div><div class="v">{st.get("outcome","—")}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.week")}</div><div class="v">{T("ledger.cell.trades_r", n=len(wk), r=wk_r)}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.month")}</div><div class="v">{T("ledger.cell.trades_r", n=len(mo), r=mo_r)}</div></div>
+<div class="c"><div class="k">{T("ledger.cell.status")}</div><div class="v">{status}</div></div>
 </div>
 
-<div class="panel"><p class="eyebrow">Last {min(n,40)} trades</p><div class="scroll"><table>
-<tr><th>closed</th><th>kind</th><th>side</th><th class="num">fills</th><th class="num">bars</th><th>exit</th><th class="num">pnl</th><th class="num">R</th></tr>
+<div class="panel"><p class="eyebrow">{T("ledger.trades.eyebrow", n=min(n,40))}</p><div class="scroll"><table>
+<tr><th>{T("ledger.trades.th.closed")}</th><th>{T("ledger.trades.th.kind")}</th><th>{T("ledger.trades.th.side")}</th><th class="num">{T("ledger.trades.th.fills")}</th><th class="num">{T("ledger.trades.th.bars")}</th><th>{T("ledger.trades.th.exit")}</th><th class="num">{T("ledger.trades.th.pnl")}</th><th class="num">{T("ledger.trades.th.r")}</th></tr>
 {trades_html}</table></div></div>
 
-{trade_charts(rows)}
+{trade_charts(T, rows)}
 
-<p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
-ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br>{site_text.footer_html()}</p>
+<p class="foot">{T("ledger.foot.week")} · {T("ledger.foot.feed")} · {T("ledger.foot.journal")}<br>{site_text.footer_html(T)}</p>
 </div></body></html>'''
-    OUT.write_text(page)
-    print(f"ledger.html: {n} trades, net {net:+,.0f}, {len(live)} logged live -> {OUT}")
+
+
+def main(out=None):
+    """Write the ledger for every published language (site_build.targets()); English to web/public/ledger.html."""
+    live = site_build.targets()
+    for c in live:
+        p = site_build.out_path(c, "ledger", out)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(render_ledger(i18n.Strings(c), live))
+    d = ledger_data()
+    print(f"ledger.html: {d['n']} trades, net {d['net']:+,.0f}, {len(d['logged_live'])} logged live -> "
+          f"{site_build.out_path('en', 'ledger', out)}" + (f" (+ {', '.join(c for c in live if c != 'en')})" if len(live) > 1 else ""))
 
 
 if __name__ == "__main__":

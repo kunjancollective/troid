@@ -1,0 +1,223 @@
+{% include "partials/_head.html" %}<style>
+/* troid brand tokens — see BRAND.md. Identical block on every page. */
+:root{--bg:#070b12;--surface:#0d1420;--surface2:#131c2b;--line:#1c2839;--ink:#e6edf5;
+  --dim:#7d8aa0;--signal:#4da3ff;--warn:#e0a33c;--bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){--bg:#f7f9fc;--surface:#fff;
+  --surface2:#eef2f7;--line:#dde4ee;--ink:#0b1220;--dim:#5f6f86;--signal:#1f6fd1;--warn:#96661a;--bad:#a83f32}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);font-size:15px;
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px 70px}
+/* header */
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  border-bottom:1px solid var(--line);padding:22px 0 18px;margin-bottom:36px}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink);text-decoration:none;border:0}
+.dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
+/* type */
+h1{font-size:clamp(26px,4.6vw,38px);line-height:1.1;letter-spacing:-.03em;font-weight:700;margin:0 0 10px}
+.lede{color:var(--dim);font-size:16.5px;margin:0 0 6px;max-width:56ch}
+.meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
+h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
+h3{font-size:16px;margin:0 0 6px;font-weight:600}
+h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+  color:var(--dim);margin:34px 0 12px;font-weight:500}
+p{margin:0 0 11px}p:last-child{margin-bottom:0}
+ul,ol{margin:0 0 11px;padding-left:20px}li{margin-bottom:6px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding:1px 5px;border-radius:2px}
+/* panels */
+.q,section,.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:20px 22px;margin-bottom:12px}
+.src{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  padding-top:9px;margin-top:12px}
+.stat,.flag{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
+.flag{color:var(--bad)}.stat{color:var(--signal)}
+.verdict{border-left:2px solid var(--signal)}
+.big{font-size:18px;line-height:1.45;margin-bottom:12px}
+.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;
+  border-radius:2px;background:var(--surface2);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;
+  vertical-align:middle}
+.tag.bad{color:var(--bad)}.tag.warn{color:var(--warn)}.tag.good{color:var(--signal)}
+/* tables */
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}
+th{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
+td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}.num{text-align:right}
+.pick td{color:var(--signal);font-weight:500}
+/* audit findings */
+.finding{border-top:1px solid var(--line);padding:15px 0}
+.finding:first-of-type{border-top:none;padding-top:0}.finding:last-child{padding-bottom:0}
+.fh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px}
+/* cells */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+/* disclaimer */
+.disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
+  border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
+.disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
+.disc h4:first-child{margin-top:0}
+.foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}
+</style>
+{{ head_extra }}</head>
+<body>
+<div class="wrap">
+<div class="bar">
+  <a class="mark" href="{{ H }}">tr<span class="dot"></span>id</a>
+  <nav><a href="{{ H }}">{{ t("product.desk") }}</a><a href="{{ L }}/compare">{{ t("product.compare") }}</a><a href="{{ L }}/ledger">{{ t("product.ledger") }}</a><a href="{{ L }}/dashboard">{{ t("product.research") }}</a><a href="{{ L }}/chat">{{ t("product.ask") }}</a><a href="{{ L }}/faq">{{ t("common.nav.faq") }}</a>
+    <a href="https://github.com/kunjancollective/troid">{{ t("common.nav.source") }}</a>{{ switcher }}</nav>
+</div>
+
+<p class="eyebrow" style="text-transform:none">{{ t("dashboard.hero.eyebrow") }}</p>
+<h1>{{ t("dashboard.hero.h1") }}</h1>
+<p class="meta">{{ t("dashboard.hero.meta") }}</p>
+
+<!-- hypo:start -->
+{{ site_text.hypo_html(T=t) }}
+<!-- hypo:end -->
+
+<section class="verdict">
+  <h2>{{ t("dashboard.verdict.h2") }}</h2>
+  <p class="big">{{ t("dashboard.verdict.big") }}</p>
+  <p>{{ t("dashboard.verdict.p1") }}</p>
+  <p>{{ t("dashboard.verdict.p2") }}</p>
+</section>
+
+<section>
+  <h2>{{ t("dashboard.xref.h2") }}</h2>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f1.h3") }}</h3>
+      <span class="tag bad">{{ t("dashboard.xref.f1.tag") }}</span></div>
+    <p>{{ t("dashboard.xref.f1.p1") }}</p>
+    <p>{{ t("dashboard.xref.f1.p2") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f2.h3") }}</h3>
+      <span class="tag bad">{{ t("dashboard.xref.f2.tag") }}</span></div>
+    <p>{{ t("dashboard.xref.f2.p1") }}</p>
+    <p>{{ t("dashboard.xref.f2.p2") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f3.h3") }}</h3>
+      <span class="tag">{{ t("dashboard.xref.tag.resolved") }}</span></div>
+    <p>{{ t("dashboard.xref.f3.p1") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f4.h3") }}</h3>
+      <span class="tag warn">{{ t("dashboard.xref.f4.tag") }}</span></div>
+    <p>{{ t("dashboard.xref.f4.p1") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f5.h3") }}</h3>
+      <span class="tag warn">{{ t("dashboard.xref.f5.tag") }}</span></div>
+    <p>{{ t("dashboard.xref.f5.p1") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f6.h3") }}</h3>
+      <span class="tag">{{ t("dashboard.xref.tag.resolved") }}</span></div>
+    <p>{{ t("dashboard.xref.f6.p1") }}</p>
+  </div>
+
+  <div class="finding">
+    <div class="fh"><h3>{{ t("dashboard.xref.f7.h3") }}</h3>
+      <span class="tag">{{ t("dashboard.xref.f7.tag") }}</span></div>
+    <p>{{ t("dashboard.xref.f7.p1") }}</p>
+  </div>
+</section>
+
+<section>
+  <h2>{{ t("dashboard.variants.h2") }}</h2>
+  <div class="scroll">
+  <table>
+    <tr><th>{{ t("dashboard.variants.th.config") }}</th><th class="num">{{ t("dashboard.variants.th.n") }}</th><th class="num">{{ t("dashboard.variants.th.exp") }}</th>
+      <th class="num">{{ t("dashboard.variants.th.pf") }}</th><th class="num">{{ t("dashboard.variants.th.dd") }}</th><th class="num">{{ t("dashboard.variants.th.fills") }}</th></tr>
+    <tr><td>{{ t("dashboard.variants.row.v1") }}</td><td class="num">89</td><td class="num">&minus;0.05</td>
+      <td class="num">0.91</td><td class="num">&minus;$8,598</td><td class="num">—</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.regime") }}</td><td class="num">75</td><td class="num">+0.03</td>
+      <td class="num">1.04</td><td class="num">&minus;$7,332</td><td class="num">—</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.breakout") }}</td><td class="num">76</td><td class="num">+0.01</td>
+      <td class="num">1.02</td><td class="num">&minus;$7,295</td><td class="num">—</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.weak3") }}</td><td class="num">43</td><td class="num">&minus;0.22</td>
+      <td class="num">0.47</td><td class="num">&minus;$5,829</td><td class="num">1.53 / 2.62</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.weak5") }}</td><td class="num">33</td><td class="num">&minus;0.31</td>
+      <td class="num">0.14</td><td class="num">&minus;$4,973</td><td class="num">1.22 / 3.42</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.strong3") }}</td><td class="num">54</td><td class="num">&minus;0.03</td>
+      <td class="num">0.83</td><td class="num">&minus;$3,147</td><td class="num">3.00 / 1.54</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.strong5") }}</td><td class="num">57</td><td class="num">+0.00</td>
+      <td class="num">1.01</td><td class="num">&minus;$1,931</td><td class="num">4.26 / 1.66</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.rev_tp3") }}</td><td class="num">60</td><td class="num">+0.02</td>
+      <td class="num">1.14</td><td class="num">&minus;$2,044</td><td class="num">4.10 / 1.64</td></tr>
+    <tr class="pick"><td>{{ t("dashboard.variants.row.rev_stop") }}</td><td class="num">78</td><td class="num">+0.03</td>
+      <td class="num">1.29</td><td class="num">&minus;$1,058</td><td class="num">4.48 / 1.64</td></tr>
+    <tr><td>{{ t("dashboard.variants.row.rev_any") }}</td><td class="num">88</td><td class="num">&minus;0.01</td>
+      <td class="num">0.90</td><td class="num">&minus;$1,488</td><td class="num">4.24 / 1.63</td></tr>
+  </table>
+  </div>
+  <p style="margin-top:12px;color:var(--dim);font-size:13.5px">{{ t("dashboard.variants.note") }}</p>
+</section>
+
+<section>
+  <h2>{{ t("dashboard.risk.h2") }}</h2>
+  <div class="grid">
+    <div class="cell"><div class="k">{{ t("dashboard.risk.daily.k") }}</div><div class="v">$4,000</div>
+      <div class="n">{{ t("dashboard.risk.daily.n") }}</div></div>
+    <div class="cell"><div class="k">{{ t("dashboard.risk.floor.k") }}</div><div class="v">$94,000</div>
+      <div class="n">{{ t("dashboard.risk.floor.n") }}</div></div>
+    <div class="cell"><div class="k">{{ t("dashboard.risk.crossover.k") }}</div><div class="v">$98,000</div>
+      <div class="n">{{ t("dashboard.risk.crossover.n") }}</div></div>
+    <div class="cell"><div class="k">{{ t("dashboard.risk.risk.k") }}</div><div class="v">$500</div>
+      <div class="n">{{ t("dashboard.risk.risk.n") }}</div></div>
+    <div class="cell"><div class="k">{{ t("dashboard.risk.fees.k") }}</div><div class="v">0.08%</div>
+      <div class="n">{{ t("dashboard.risk.fees.n") }}</div></div>
+    <div class="cell"><div class="k">{{ t("dashboard.risk.reset.k") }}</div><div class="v">{{ t("dashboard.risk.reset.v") }}</div>
+      <div class="n">{{ t("dashboard.risk.reset.n") }}</div></div>
+  </div>
+  <p style="margin-top:14px">{{ t("dashboard.risk.p") }}</p>
+</section>
+
+<section>
+  <h2>{{ t("dashboard.change.h2") }}</h2>
+  <ol>
+    <li>{{ t("dashboard.change.li1") }}</li>
+    <li>{{ t("dashboard.change.li2") }}</li>
+    <li>{{ t("dashboard.change.li3") }}</li>
+    <li>{{ t("dashboard.change.li4") }}</li>
+  </ol>
+</section>
+
+<section>
+  <h2>{{ t("dashboard.order.h2") }}</h2>
+  <ol>
+    <li>{{ t("dashboard.order.li1") }}</li>
+    <li>{{ t("dashboard.order.li2") }}</li>
+    <li>{{ t("dashboard.order.li3") }}</li>
+    <li>{{ t("dashboard.order.li4") }}</li>
+  </ol>
+</section>
+
+<p class="foot">{{ t("dashboard.foot") }}<br><!-- footer:start -->
+{{ footer }}
+<!-- footer:end --></p>
+
+</div>
+</body>
+</html>

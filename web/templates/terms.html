@@ -1,0 +1,275 @@
+{% include "partials/_head.html" %}<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink);text-decoration:none;border:0}
+.dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:16ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-left:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding:4px 8px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:right}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+.terms h2{font-size:17px;margin:30px 0 8px}.terms p,.terms li{color:var(--ink);font-size:14.5px;line-height:1.65}
+.terms ul{padding-left:20px;margin:0 0 11px}.terms section{scroll-margin-top:16px}
+.toc{columns:2;column-gap:28px;font-family:var(--mono);font-size:12px;padding-left:0;margin:0;list-style:none}
+@media(max-width:640px){.toc{columns:1}}
+.draft{border-left:2px solid var(--warn);background:var(--surface2);padding:10px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}
+</style>
+{{ head_extra }}</head>
+<body>
+
+{% include "partials/_header.html" %}
+
+<div class="wrap">
+
+<div class="hero">
+  <p class="eyebrow" style="text-transform:none">{{ t("terms.hero.eyebrow") }}</p>
+  <h1>{{ t("terms.hero.h1") }}</h1>
+  <p class="lede">{{ t("terms.hero.lede") }}</p>
+</div>
+
+<div class="draft">{{ t("terms.draft") }}</div>
+{#- The terms body stays in English: it is the legal text, never translated. On a translated page (and in the
+    pseudo-locale, which takes the translated path as site_text does) it carries lang="en" dir="ltr", after the
+    one-line summary in the reader's language and the governing line, in the form of
+    site_build.governs_html(T, "legal.summary.terms"). English renders exactly as before. #}
+{%- set translated = code != "en" or t.pseudo %}
+{%- set en_body = ' lang="en" dir="ltr"' if translated else "" %}
+{%- if translated %}
+<p class="governs"><span class="gov-sum">{{ t("legal.summary.terms") }}</span> <span class="gov-line">{{ t("legal.governs") }}</span></p>
+{%- endif %}
+
+<div class="panel"><p class="eyebrow">{{ t("terms.toc.h") }}</p><ul class="toc"{{ en_body }}><li><a href="#acceptance">1. Acceptance of these terms</a></li><li><a href="#service">2. Description of the service</a></li><li><a href="#not-advice">3. Not advice</a></li><li><a href="#rule-data">4. Accuracy of third-party rule data</a></li><li><a href="#verify">5. Your obligation to verify</a></li><li><a href="#hypothetical">6. Hypothetical results</a></li><li><a href="#no-guarantee">7. No guarantee of passing any challenge</a></li><li><a href="#prop-challenges">8. What a prop challenge is</a></li><li><a href="#affiliate">9. Affiliate disclosure</a></li><li><a href="#ask-troid">10. ask troid, the AI assistant</a></li><li><a href="#as-is">11. Provided &ldquo;as is&rdquo;, with no warranty</a></li><li><a href="#liability">12. Limitation of liability</a></li><li><a href="#indemnification">13. Indemnification</a></li><li><a href="#governing-law">14. Governing law</a></li><li><a href="#changes">15. Changes to these terms</a></li><li><a href="#contact">16. Contact</a></li></ul></div>
+
+<div class="panel terms"{{ en_body }}>
+<section id="acceptance">
+<h2>1. Acceptance of these terms</h2>
+<p>These terms govern your use of troid: troid's desk, troid's compare, troid's ledger, troid's research, ask troid, and every other page on this site. In these terms, &ldquo;troid&rdquo; means both the service and the operator of troid.</p>
+<p>By using troid, you accept these terms. If you do not accept them, do not use troid.</p>
+<p>You must be 18 or older to use troid. Where the age of majority is higher, you must have reached it.</p>
+</section>
+
+<section id="service">
+<h2>2. Description of the service</h2>
+<p>troid is a free, informational tool for traders taking prop-firm challenges. It provides:</p>
+<ul>
+<li><strong>troid's desk</strong>: a position-size calculator. It works out, for a trade you enter, how much room a firm's loss limits leave and which limit binds first.</li>
+<li><strong>troid's compare</strong>: the rules of the firms troid lists, side by side. A rule troid has not filled in shows as pending. Not every rule shown has yet been confirmed from the firm's own documents; section 4 explains.</li>
+<li><strong>troid's ledger</strong>: a public record of a simulated strategy, scheduled to update every four hours. Every trade it shows from before 21 September 2026 was backfilled on that date from a backtest on api.binance.us data for 8 January to 21 September 2026. The strategy's parameters were chosen on a Binance.com sample of 8 January to 14 September 2026, so all but the last week of that backtest is in-sample. The page says how many trades were logged live. No real money is traded and no real orders are placed.</li>
+<li><strong>troid's research</strong>: a dashboard, a tearsheet and a methodology page about that simulated strategy and about how troid tests its claims.</li>
+<li><strong>ask troid</strong>: an AI assistant, described in section 10.</li>
+</ul>
+<p>troid does not place, modify or close orders. It does not connect to any brokerage, exchange or prop-firm account. No troid page asks for a login, password, API key or other credential. troid publishes no trading signals and recommends no trade, strategy or firm. ask troid cannot place orders either, and it is instructed not to recommend a trade or a firm and never to ask for a credential. Section 10 says what to do if it breaks those instructions. troid has no user accounts.</p>
+<p>troid's ledger shows a simulated trade only after the trade has closed. troid does not publish the direction, price or stop of an open position, but the strategy's code and data are public, so anyone who runs it can reproduce its positions. It is not a signal service, and it is not published for you to copy. Some firms' contracts prohibit using a third-party or marketed strategy, or trade ideas taken from others, on a challenge. Copying the ledger onto a challenge account may breach those rules.</p>
+<p>troid sets no cookies and runs no analytics. troid's pages are served by a hosting provider, which receives your IP address with every request. Most of troid's pages load fonts from Google Fonts, and troid's ledger loads a chart library from cdn.jsdelivr.net. Those providers receive your IP address when they serve the file. When you follow a troid affiliate link, the firm's site may set its own cookie to record the referral. That cookie is the firm's, under the firm's terms.</p>
+</section>
+
+<section id="not-advice">
+<h2>3. Not advice</h2>
+<p>Nothing troid publishes is financial, investment, trading, legal or tax advice. troid is not licensed or registered as a broker, an investment adviser or a commodity trading advisor.</p>
+<p>troid's information is impersonal. The same rules, formulas and results are published to every reader. troid does not know your finances, experience, objectives or tolerance for loss, and nothing on the site is tailored to you.</p>
+<p>When troid's desk or ask troid computes a number, the number comes from your inputs, a firm's rules as troid has recorded them, troid's modelling assumptions, and troid's default settings for any input you leave unchanged. It is not a recommendation to take the trade, to size it that way, or to buy any challenge.</p>
+<p>troid's desk pre-fills some inputs, such as a 0.5% risk and a 35% budget cap, and ask troid uses the same values when you do not give your own. They are placeholders for the arithmetic, not a recommendation. Replace them with your own.</p>
+<p>Whether to buy a challenge, whether to trade, and how much to risk are your decisions alone. If you want advice, ask a qualified professional who knows your circumstances.</p>
+</section>
+
+<section id="rule-data">
+<h2>4. Accuracy of third-party rule data</h2>
+<p>The firm rules troid shows are third-party information. troid reads them from each firm's own published documents, such as its terms of use, help centre and product pages, and lists those documents in troid's rule data. Beside each rule a result uses, troid's desk and troid's compare show the document, the section and the date troid read it. Where troid shows a value but has not yet recorded its source, the page says the source is not yet recorded. Such a value may have come from a firm's marketing pages or from a third-party directory, and has not been checked against the firm's contract. A rule troid has no value for shows as pending.</p>
+<p>troid marks a firm verified only after reading the firm's terms and its help centre against each other. Not every firm troid lists is verified, and even for a verified firm some rules do not yet have a recorded source. troid's compare shows, for each firm, how many rules are filled and how many have a recorded source, and the date troid last reviewed which firms it lists.</p>
+<p>Firms change their rules, prices and products without notice. Sometimes a firm's own pages disagree with its own contract. troid does not warrant that any rule it shows is complete, is current, or matches the rules the firm applies to your account today. troid can be slow to catch a change, can read a document differently from the firm, and can make mistakes.</p>
+<p>When troid finds an error, it corrects it and records the correction in the corrections table in <a href="/METHODOLOGY.md">troid's methodology</a>. If you find one, send it to <a href="mailto:hello@troid.ai">hello@troid.ai</a>.</p>
+</section>
+
+<section id="verify">
+<h2>5. Your obligation to verify</h2>
+<p>Before you buy a challenge, and before you place any trade on one, check every rule and number that matters to you against the firm's current documents and your account dashboard. Where troid and the firm disagree, the firm decides. For your account's own numbers, such as balance and equity, the firm's dashboard is the reference. For the rules, the firm's contract governs. Where the firm's own pages or dashboard disagree with its contract, ask the firm in writing which it applies before you rely on either.</p>
+<p>Check, at least:</p>
+<ul>
+<li>the daily and maximum loss limits, and how each one is measured;</li>
+<li>when the firm's trading day resets;</li>
+<li>fees, leverage and margin rules;</li>
+<li>holding limits, position limits and minimum trading days;</li>
+<li>prohibited practices;</li>
+<li>payout and refund conditions;</li>
+<li>whether the firm serves residents of your country.</li>
+</ul>
+<p>troid's calculations are only as good as the inputs you enter. Make sure your balance, equity, day-start balance and every other input match your account at the moment you use them.</p>
+</section>
+
+<section id="hypothetical">
+<h2>6. Hypothetical results</h2>
+<p>troid's ledger, troid's research and troid's backtests show the results of a simulated strategy. No real money was traded and no real orders were placed. Every trade on troid's ledger up to 21 September 2026 was backfilled on that date from a backtest, not recorded as it happened. The ledger page shows how many have been logged live since.</p>
+<p>These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p>
+<p>troid's own strategy shows no statistical edge. Tested on data from 1 January 2021 to 7 January 2026, which it was not tuned on, it measured +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades). R is the amount risked on one trade. For both, the 95% confidence interval includes zero, so the result is inside noise. Until a strategy passes that test, treat every number troid publishes about its strategy as noise. Past results, simulated or real, do not predict future results.</p>
+</section>
+
+<section id="no-guarantee">
+<h2>7. No guarantee of passing any challenge</h2>
+<p>troid does not guarantee, and does not predict, that you will pass any challenge, reach a funded account, or receive any payout.</p>
+<p>Correct position sizing does not create an edge. A correctly sized trade can still breach a loss limit through a price gap, slippage or a run of losses. Nothing troid computes stops a firm from applying its rules, its discretion or its penalties to your account.</p>
+</section>
+
+<section id="prop-challenges">
+<h2>8. What a prop challenge is</h2>
+<p>A prop-firm challenge is an evaluation you pay for. In general, the account you trade is a demo, or simulated, account. Your orders are not sent to a real market, and the balance is not money you own or can withdraw. A payout, if the firm makes one, is paid under the firm's own terms, which can let it reduce or refuse the payout.</p>
+<p>In general, a prop firm is not a broker and holds no client funds for you. The fee you pay is the price of the evaluation, not a deposit. Broker regulation, client-money rules and investor-compensation schemes generally do not apply. Apart from the general consumer-protection law where you live, your protections are the firm's contract and nothing else. Read the contract before you pay: who you are contracting with, which country's law applies, what ends an account, and when a payout can be refused.</p>
+<p>Some firms also offer a route that trades a real exchange account, sometimes in your own name. There, the exchange's own terms and risks apply as well. Check which kind of account you are buying.</p>
+</section>
+
+<section id="affiliate">
+<h2>9. Affiliate disclosure</h2>
+<p>troid is an independent affiliate of the firms it compares. When you buy a challenge through a troid link or code, the firm may pay troid a commission under its affiliate terms. troid adds nothing to the price you pay.</p>
+<p>The commission is paid on the purchase, not on your result, so troid is paid whether you pass or fail. Some firms also pay troid a smaller commission when you buy again, including after a failed challenge. That is a conflict of interest, and you should weigh everything troid publishes with it in mind.</p>
+<p>Commissions do not affect the calculations, the rules troid shows, or the order in which firms appear, which is alphabetical. troid does not rank or score firms itself, and does not recommend one. Where a page repeats a third-party figure about a firm, such as a review count or an outside ranking, it names the source. troid is not an employee, agent or representative of any firm. No firm owns or operates troid, and no firm is responsible for its content.</p>
+<p>The current firms, and the criterion for choosing them, are on <a href="{{ L }}/compare">troid's compare</a>.</p>
+</section>
+
+<section id="ask-troid">
+<h2>10. ask troid, the AI assistant</h2>
+<p>ask troid is an automated assistant that runs on a third-party AI model. It is not a person. Its answers are not advice. What ask troid says, troid says: troid is responsible for ask troid's answers in the same way as for every other page on this site, and these terms apply to them in the same way.</p>
+<p>ask troid is given troid's firm rule data (without troid's internal notes or affiliate terms), troid's published notes, a fixed support script (<a href="https://github.com/kunjancollective/troid/blob/main/web/context/support.md">web/context/support.md</a> in troid's public repository) and calculation tools that port the arithmetic in troid's desk. Where the two differ, troid's desk is the reference. ask troid is instructed to answer from them, and to say when a rule is pending or its source is not yet recorded. Not every rule in that data has been confirmed from the firm's own documents (see section 4). Some of ask troid's rule explanations are written separately and can fall out of step with troid's compare.</p>
+<p>ask troid can be wrong. An AI model can misread a question, misstate a rule, answer from outside that data, or misreport what a tool returned. The firm's contract and your account dashboard are the reference, as section 5 explains. Check anything that matters with the firm before you act on it.</p>
+<p>ask troid is instructed not to recommend a trade or a firm. It works out the numbers for a trade you describe. It is instructed to answer questions such as &ldquo;should I&rdquo;, &ldquo;which firm is best for me&rdquo;, &ldquo;will I pass&rdquo; or &ldquo;what should I trade&rdquo; with one fixed reply: troid doesn't recommend; it prices what you bring. If you tell ask troid a number was wrong, it is instructed to ask for or reconstruct your inputs, to reproduce the calculation step by step with each rule and the date troid read it (or a note that the rule's source is not yet recorded), and to point you to the firm's dashboard and to <a href="mailto:hello@troid.ai">hello@troid.ai</a>. It is instructed not to argue, and not to say whose fault a loss was.</p>
+<p>If ask troid recommends a trade, a firm or a strategy, says whether you will pass, or asks for a credential, it has made a mistake. Do not act on it, and tell troid at <a href="mailto:hello@troid.ai">hello@troid.ai</a>.</p>
+<p>What happens to what you type:</p>
+<ul>
+<li>ask troid keeps no memory between sessions. The page holds the conversation only while it is open. So that no one can rewrite ask troid's side of a conversation, each reply carries a signature that the page sends back with the next message. troid does not store the signature.</li>
+<li>To produce each answer, troid sends the conversation so far to the company that provides the AI model. That company handles it under its own terms and may keep it for a limited period. troid does not store it.</li>
+<li>For each message ask troid answers or fails to answer, troid's log records one line: whether it was answered or failed; how many tool calls it used; which model was called; whether the reply was the abuse warning, the fixed reply given when the AI model declines to answer, or the end of the session; and, if the AI provider returned an error, its numeric status code. The log does not record the text of your messages or your IP address. A message turned away before any call to the AI model (ask troid switched off or busy, over the per-address limit, too long, malformed or unverifiable) is not logged.</li>
+<li>ask troid limits each IP address to about 20 messages an hour (for IPv6, each /64 block of addresses). To do that, troid holds the address in the server's working memory until that server instance restarts. It is never written to troid's log.</li>
+<li>troid's hosting provider keeps its own request logs, which can include your IP address.</li>
+</ul>
+<p>Do not enter personal information, account numbers, passwords, API keys or any other credential. ask troid does not need them and is instructed never to ask for a credential.</p>
+<p>The first message of every session says that ask troid is an automated assistant, not a person and not financial advice. If a user keeps being abusive after one warning, ask troid ends the session. Reloading the page starts a new session.</p>
+<p>troid switches ask troid on only after these terms and ask troid's guardrails have had legal review, and may switch it off at any time. The ask troid page shows whether it is on. If troid changes how ask troid handles your messages, troid will update this section before the change takes effect.</p>
+</section>
+
+<section id="as-is">
+<h2>11. Provided &ldquo;as is&rdquo;, with no warranty</h2>
+<p>troid is provided free, &ldquo;as is&rdquo; and &ldquo;as available&rdquo;. To the fullest extent the law allows, troid disclaims all warranties, express or implied, including warranties of accuracy, completeness, merchantability, fitness for a particular purpose and non-infringement.</p>
+<p>troid does not warrant that the service will be available, uninterrupted, error-free or free of harmful components, or that any number it computes is correct for your account.</p>
+<p>Some jurisdictions do not allow certain warranties to be excluded. There, these exclusions apply only as far as the law allows.</p>
+</section>
+
+<section id="liability">
+<h2>12. Limitation of liability</h2>
+<p>troid is free. To the fullest extent the law allows, the total liability of troid and the people who work on it, to you, for all claims arising from or relating to troid or these terms, is zero dollars ($0).</p>
+<p>To the same extent, none of them is liable for any trading loss, lost profit, failed challenge, challenge fee, or lost or refused payout. Nor is any of them liable for any indirect, incidental, special, consequential or punitive damages, however caused, even if troid was told they were possible.</p>
+<p>Some jurisdictions do not allow liability to be limited or excluded in this way. There, the liability of troid and the people who work on it is limited to the smallest amount the law allows. Nothing in these terms limits liability for fraud, gross negligence or wilful misconduct, or any other liability the law does not allow to be limited.</p>
+</section>
+
+<section id="indemnification">
+<h2>13. Indemnification</h2>
+<p>To the extent the law allows, you agree to indemnify troid and the people who work on it against any claim by a third party, and the loss, liability and reasonable legal fees that follow from it, to the extent the claim is caused by:</p>
+<ul>
+<li>your breach of these terms;</li>
+<li>your breach of any law;</li>
+<li>your misuse of troid, including entering another person's information.</li>
+</ul>
+<p>This does not cover a claim to the extent it is caused by troid's own negligence, misconduct or breach of these terms.</p>
+</section>
+
+<section id="governing-law">
+<h2>14. Governing law</h2>
+<p>These terms, and any dispute arising from them or from troid, are governed by the laws of the State of Connecticut, United States, without regard to its conflict-of-law rules.</p>
+</section>
+
+<section id="changes">
+<h2>15. Changes to these terms</h2>
+<p>troid may change these terms at any time. When troid changes them, it publishes the new version on this page with its effective date. The change applies only to your use of troid from that date. It never applies to a dispute about something that happened before that date. If you keep using troid after that date, you accept the new terms.</p>
+<p>troid may also change, suspend or end any part of the service, including ask troid, at any time.</p>
+<p>Every earlier version of this page is public in <a href="https://github.com/kunjancollective/troid">troid's source repository</a>.</p>
+</section>
+
+<section id="contact">
+<h2>16. Contact</h2>
+<p>Questions about these terms, corrections to any number or rule, and complaints go to <a href="mailto:hello@troid.ai">hello@troid.ai</a>.</p>
+</section>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+<!-- footer:start -->
+{{ footer }}
+<!-- footer:end -->
+</div></footer>
+</body>
+</html>
