@@ -20,8 +20,8 @@ HYPO = ("These results are based on simulated or hypothetical performance result
         "similar to these being shown.")
 
 # The owner's footer line (audit handoff 3a, second sentence replaced by the owner on 2026-09-23), on every page.
-FOOTER_TEXT = ("troid is a free informational tool, not financial or investment advice. troid does not publish trade "
-               "signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules "
+FOOTER_TEXT = ("troid is a free informational tool, not financial or investment advice. troid does not place trades "
+               "or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules "
                "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
                "through its links; this does not affect the calculations or comparisons.")
 

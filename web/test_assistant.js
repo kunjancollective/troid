@@ -99,7 +99,7 @@ for (const v of ["That's a real loss and troid takes the question seriously.", "
   "the firm's rule changed after troid's capture date"])
   ok("support.md keeps the handoff's words: " + v.slice(0, 40), flat.includes(v));
 for (const v of ["troid doesn't recommend; it prices what you bring.",
-  "Every number on troid shows the rule it came from and the date troid read it, or says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table."])
+  "Every rule-based number on troid shows the rule it came from and the date troid read it, or says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table."])
   ok("support.md quotes the owner's reply: " + v.slice(0, 40), quoted.includes(v));
 ok("the disclosure is the owner's 23 Sep wording", F0.DISCLOSURE === "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.");
 

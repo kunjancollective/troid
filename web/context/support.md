@@ -44,8 +44,8 @@ Follow these six steps, in order, every time.
 
 One reply, once per session:
 
-> Every number on troid shows the rule it came from and the date troid read it, or says the
-> source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid
+> Every rule-based number on troid shows the rule it came from and the date troid read it, or
+> says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid
 > earns a commission if you buy a challenge, and says so on every page. If a number is wrong,
 > send it to hello@troid.ai and it goes in the corrections table.
 

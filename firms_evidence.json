@@ -222,14 +222,18 @@
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the Express limits come from the blog post of 28 August 2026 already in verified_from and already the source of the Instant limits (https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/, read 2026-09-21). Not re-read from here: troid's egress proxy blocks bitfunded.com.",
    "was_unmapped": "products.express.max_pct = 3. No recorded document or section."
+  },
+  {
+   "field": "price",
+   "product": "1step",
+   "src": [
+    "challenge_type"
+   ],
+   "evidence": "Recorded on the citation of troid's owner, 2026-09-23: help centre Challenge Type page (https://bitfunded.gitbook.io/support/introduction/challenge-type), 'One Step Evaluation' table, row 'Expert · 100,000 USDT · $999', read 2026-09-23. troid's build environment cannot open bitfunded.gitbook.io (egress blocked), so it was not re-read there. Bitfunded's own pages disagree on this price; see rule_changes 2026-09-23 (blog: up to $599 for $100k; blog: Expert $799). The help-centre table governs because it is the only one that separates 1-Step from 2-Step.",
+   "was_unmapped": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded. Still unrecorded on 2026-09-23. It needs one read of Bitfunded's challenge page, which troid's egress proxy blocks from here. Under firms.json _link_rule the Bitfunded link is held until it is recorded."
   }
  ],
  "bitfunded_unmapped": [
-  {
-   "field": "price",
-   "product": "*",
-   "why": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded. Still unrecorded on 2026-09-23. It needs one read of Bitfunded's challenge page, which troid's egress proxy blocks from here. Under firms.json _link_rule the Bitfunded link is held until it is recorded."
-  },
   {
    "field": "refund",
    "product": "*",
@@ -718,6 +722,12 @@
    "read_on": "2026-09-21",
    "doc_dated": "2026-08-28",
    "evidence": "rule_changes date: firms.json bitfunded.rule_changes[2] {date '2026-09-21', found 'Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied.'}. That entry records a reading for 2-Step minimum days. For the Instant limits mapped to this blog, the only dated trace is commit 2384dc8 (2026-09-21), which first added config.example.json profiles.instant._note 'Confirmed Bitfunded blog 2026-08-28' (git log -S'Confirmed Bitfunded blog'). It is the same date, but the kind of evidence differs. The repo says only 'Blog'. This URL is taken to be that blog because it is the only blog URL in verified_from and its slug names 2-Step and Instant. The title is reconstructed from the slug. doc_dated 2026-08-28 is an interpretation: firms.json writes 'Blog (2026-08-28)' and 'Blog 2026-08-28 says', a document-date form, and nothing labels it. The config note 'Confirmed Bitfunded blog 2026-08-28' could instead be read as a confirmation date."
+  },
+  {
+   "id": "challenge_type",
+   "read_on": "2026-09-23",
+   "doc_dated": null,
+   "evidence": "Read by troid's owner on 2026-09-23 and cited with section and row. Not re-read from troid's build environment (egress blocked)."
   }
  ],
  "brightfunded_sources": [

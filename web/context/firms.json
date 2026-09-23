@@ -13,7 +13,8 @@
       "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
       "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
       "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
-      "https://www.bitfunded.com/faq/"
+      "https://www.bitfunded.com/faq/",
+      "https://bitfunded.gitbook.io/support/introduction/challenge-type"
     ],
     "us_available": true,
     "products": {
@@ -94,7 +95,7 @@
     "split": "80% to 90%",
     "payouts_per_30d": 3,
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
-    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs.",
+    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs. | Price of the $100k 1-Step: help centre Challenge Type lists Expert 100,000 USDT at $999 (1-Step and 2-Step in separate tables); a May 2026 blog says up to $599 for $100k; a Sept 2025 blog says Expert $799. The help-centre table governs.",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
     "affiliate_rate_repeat": "3%",
     "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
@@ -142,6 +143,16 @@
       {
         "date": "2026-09-21",
         "found": "Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Price of the $100,000 1-Step (Expert) challenge. The help centre's Challenge Type page lists One Step Evaluation, Expert, 100,000 USDT, $999, in a table separate from Two Steps. A May 2026 blog post says challenge fees go up to $599 for $100,000; a September 2025 blog post says the Expert has a $799 entry. The help-centre table is the only one that separates 1-Step from 2-Step, so it governs: $999. $799 is likely the 2-Step Expert, and $599 a promotional or outdated figure.",
+        "urls": [
+          "https://bitfunded.gitbook.io/support/introduction/challenge-type",
+          "https://www.bitfunded.com/how-us-traders-pass-bitfunded-challenges-step-by-step-strategy-risk-rules/",
+          "https://www.bitfunded.com/choosing-the-right-challenge-base-vs-starter-vs-expert/"
+        ],
+        "url_note": "Read by troid's owner on 2026-09-23. The two blog URLs were located by web search the same day; troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so they were not re-read there."
       }
     ],
     "external_payout_evidence": null,
@@ -213,6 +224,12 @@
           "url": "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
           "read_on": "2026-09-21",
           "doc_dated": "2026-08-28"
+        },
+        "challenge_type": {
+          "doc": "Bitfunded help centre: Challenge Type",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-type",
+          "read_on": "2026-09-23",
+          "doc_dated": null
         }
       },
       "fields": {
@@ -315,6 +332,12 @@
               "criteria"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          },
+          "price": {
+            "src": [
+              "challenge_type"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge Type, One Step Evaluation table, row Expert \u00b7 100,000 USDT \u00b7 $999"
           }
         },
         "instant": {
