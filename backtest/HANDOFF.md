@@ -139,7 +139,7 @@ balance, static floor, 16:00 UTC reset):
   takes a "high at rollover" input instead.
 - Reset windows that shift with DST — BrightFunded rolls over at 23:30–23:59 CET, which
   is 21:30 UTC in summer and 22:30 UTC in winter. The engine's reset is a fixed UTC
-  second. CFT is 00:00 UTC per its docs; Bitfunded 16:00 UTC.
+  second. CFT resets at 00:05 UTC (T&C 8.i–8.ii); Bitfunded at 16:00 UTC.
 - `daily_basis: day_start` (CFT) is a one-line engine change but is not wired: the
   engine reads Bitfunded's constants from `engine.py`, not from `firms.json`.
 

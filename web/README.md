@@ -47,6 +47,18 @@ size of each context file, so a deploy can be checked without a key.
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and a scripted fake of the API.
 
+## Provenance
+
+Every number troid's desk and troid's compare compute carries a block beneath it: the firm and product, the date
+troid read each rule it used, the document and section it came from, the standing warning that rules change
+without notice, and the formula. The data is `provenance` in each firm's entry in `firms.json`, built from repo
+evidence only (`firms_evidence.json` holds the evidence for every mapping and the reason for every gap).
+`backtest/gen_compare.py` emits it into both pages; nothing in the blocks is hand-written. A rule with a value but
+no recorded source says "source not yet recorded" beside it. troid's desk also has a "show the working" toggle:
+the inputs and every step with its intermediate value. A cell computed from the reader's inputs alone (risk per
+trade) says so instead of citing a firm. The exchange-liquidation distance uses a 0.5% maintenance margin, which is
+troid's assumption, and the block says so.
+
 ## Accuracy
 
 `public/index.html` carries a JavaScript port of `scripts/risk.py`. It is verified against

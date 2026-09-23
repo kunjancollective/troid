@@ -149,7 +149,7 @@
     "link_live": true,
     "required_disclaimer": null,
     "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
-    "panel_note": "Every rule verified from Terms + help centre. Where troid's ledger runs.",
+    "panel_note": "Where troid's ledger runs. Each rule's source and read date is on troid's compare.",
     "calc": {
       "daily_basis": "initial",
       "drawdown": "static",
@@ -180,6 +180,168 @@
           "_note": "funded-stage limits as the desk profile carries them (references/bitfunded.md)"
         }
       }
+    },
+    "provenance": {
+      "_note": "Where each rule was read and when. Every computed number on the site cites this block: 'as published on <read_on>'. read_on is the date troid read the document; doc_dated is the document's own date where recorded. A field with a value but no entry here renders 'source not yet recorded'. Built 2026-09-23 from repo evidence only (firms_evidence.json).",
+      "sources": {
+        "tou": {
+          "doc": "Bitfunded Terms of Use",
+          "url": "https://www.bitfunded.com/terms-of-use/",
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        },
+        "criteria": {
+          "doc": "Bitfunded help centre: Criteria to be Success",
+          "url": "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+          "read_on": "2026-09-18",
+          "doc_dated": null
+        },
+        "rtp": {
+          "doc": "Bitfunded help centre: Restricted Trading Practices",
+          "url": "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        },
+        "faq": {
+          "doc": "Bitfunded FAQ",
+          "url": "https://www.bitfunded.com/faq/",
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        },
+        "blog": {
+          "doc": "Bitfunded blog: How to choose the right prop trading challenge (2-Step vs 1-Step vs 1-Step Express vs Instant accounts)",
+          "url": "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
+          "read_on": "2026-09-21",
+          "doc_dated": "2026-08-28"
+        }
+      },
+      "fields": {
+        "daily_pct": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "max_pct": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "target_pct": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "min_days": {
+          "src": [
+            "tou",
+            "faq"
+          ],
+          "section": "Bitfunded Terms of Use 9(a); FAQ"
+        },
+        "daily_basis": {
+          "src": [
+            "faq"
+          ],
+          "section": "Bitfunded FAQ"
+        },
+        "drawdown_type": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "reset_utc": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success, 00:00 UTC+8; UTC is troid's conversion"
+        },
+        "fee_per_side_pct": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "max_leverage": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "hold_cap": {
+          "src": [
+            "rtp"
+          ],
+          "section": "Bitfunded help centre \u2014 Restricted Trading Practices s.1"
+        },
+        "max_open": {
+          "src": [
+            "rtp"
+          ],
+          "section": "Bitfunded help centre \u2014 Restricted Trading Practices s.3"
+        },
+        "drawdown": {
+          "src": [
+            "criteria"
+          ],
+          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        }
+      },
+      "products": {
+        "1step": {
+          "daily_pct": {
+            "src": [
+              "criteria"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          },
+          "max_pct": {
+            "src": [
+              "criteria"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          },
+          "max_leverage": {
+            "src": [
+              "criteria"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          }
+        },
+        "instant": {
+          "daily_pct": {
+            "src": [
+              "blog"
+            ],
+            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          },
+          "max_pct": {
+            "src": [
+              "blog"
+            ],
+            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          },
+          "drawdown": {
+            "src": [
+              "blog"
+            ],
+            "section": "Bitfunded blog \u2014 How to choose the right prop trading challenge"
+          }
+        }
+      },
+      "product_only": [
+        "fee_per_side_pct",
+        "max_leverage"
+      ]
     }
   },
   "brightfunded": {
@@ -339,6 +501,166 @@
         "max_leverage (same page)",
         "2-Step Bright and Classic (pages not yet read)"
       ]
+    },
+    "provenance": {
+      "_note": "Where each rule was read and when. Every computed number on the site cites this block: 'as published on <read_on>'. read_on is the date troid read the document; doc_dated is the document's own date where recorded. A field with a value but no entry here renders 'source not yet recorded'. Built 2026-09-23 from repo evidence only (firms_evidence.json).",
+      "sources": {
+        "product_1step": {
+          "doc": "BrightFunded 1-Step product page",
+          "url": "https://brightfunded.com/1-step",
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        },
+        "tc": {
+          "doc": "BrightFunded Terms and Conditions",
+          "url": "https://brightfunded.com/terms-and-conditions",
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        },
+        "help_daily_loss": {
+          "doc": "BrightFunded help centre article 12291765, 'How does my daily permitted loss work?' (title taken from the URL slug)",
+          "url": "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work",
+          "read_on": "2026-09-22",
+          "doc_dated": "2026-05-20"
+        },
+        "help_1step": {
+          "doc": "BrightFunded help centre article 14284743, 'BrightFunded 1-Step' (title taken from the URL slug)",
+          "url": "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step",
+          "read_on": "2026-09-22",
+          "doc_dated": "2026-05-20"
+        },
+        "affiliate_agreement": {
+          "doc": "BrightFunded affiliate agreement (kept privately)",
+          "url": null,
+          "read_on": "2026-09-21",
+          "doc_dated": null
+        }
+      },
+      "fields": {
+        "daily_pct": {
+          "src": [
+            "product_1step",
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded 1-Step product page and help centre per-plan table, accounts bought from 2025-09-22"
+        },
+        "max_pct": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "target_pct": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "min_days": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "price": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page \u2014 100k price"
+        },
+        "daily_basis": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+        },
+        "drawdown_type": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark"
+        },
+        "reset_utc": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', CET rollover; UTC is troid's conversion"
+        },
+        "refund": {
+          "src": [
+            "tc",
+            "product_1step"
+          ],
+          "section": "BrightFunded T&C 7.7b and 1-Step product page add-ons list"
+        },
+        "split": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "us_available": {
+          "src": [
+            "tc"
+          ],
+          "section": "BrightFunded T&C s.2, MT5 clause only"
+        },
+        "consistency_rule": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "news_rule": {
+          "src": [
+            "product_1step"
+          ],
+          "section": "BrightFunded 1-Step product page"
+        },
+        "drawdown": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark"
+        },
+        "locks_at_initial_after_pct": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+        },
+        "hwm_basis": {
+          "src": [
+            "help_daily_loss",
+            "help_1step"
+          ],
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3"
+        }
+      },
+      "products": {
+        "1step": {
+          "daily_pct": {
+            "src": [
+              "product_1step",
+              "help_daily_loss",
+              "help_1step"
+            ],
+            "section": "BrightFunded 1-Step product page and help centre per-plan table, accounts bought from 2025-09-22"
+          },
+          "max_pct": {
+            "src": [
+              "product_1step"
+            ],
+            "section": "BrightFunded 1-Step product page"
+          }
+        }
+      }
     }
   },
   "_excluded": {
@@ -370,7 +692,7 @@
       "https://cryptofundtrader.com/terms-and-conditions/ (modified 2026-03-30; contains the numbers, unlike BrightFunded's)"
     ],
     "us_available": "YES via Match-Trader only. MT5 not available to US residents (7.3, 7.1xvi). Bybit route requires the user's own Bybit account, which Bybit does not offer to US residents.",
-    "_why_candidate": "#2 by verified-review volume on propfirmmatch (109 at 4.1). Runs up to 100x leverage and a per-trade profit cap per third-party sources \u2014 structurally different from a 5x firm, which the circuit-breaker model handles as a leverage input.",
+    "_why_candidate": "#2 by verified-review volume on propfirmmatch (109 at 4.1). Runs up to 100x leverage on Advanced accounts (T&C) and a per-trade profit cap \u2014 structurally different from a 5x firm, which the circuit-breaker model handles as a leverage input.",
     "products": {
       "1phase": {
         "daily_pct": 4,
@@ -518,9 +840,9 @@
       "max_leverage": 100,
       "hold_cap": "none stated",
       "max_open": "discretionary",
-      "refund": "none",
+      "refund": "none if the evaluation is not completed",
       "split": "up to 90% (add-on); base unconfirmed",
-      "us_available": "yes, Match-Trader only",
+      "us_available": "MT5 barred to US residents; Match-Trader access not yet sourced",
       "consistency_rule": "none (40% on Break)",
       "news_rule": "none on 1-Phase",
       "profit_cap": "$10k / day and / trade"
@@ -554,7 +876,7 @@
     "_link_live_note": "true since 2026-09-22: affiliate terms read in full 2026-09-21 (affiliate_agreement), clause-10 wording in required_disclaimer with its source recorded.",
     "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
     "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
-    "panel_note": "Up to 100\u00d7 leverage per third-party sources \u2014 the breaker model takes that as an input.",
+    "panel_note": "Leverage up to 100\u00d7 on Advanced accounts ($50k+) and 5\u00d7 on Student and Instant accounts, per its Terms and Conditions \u2014 the breaker model takes that as an input.",
     "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
     "calc": {
       "daily_basis": "day_start",
@@ -568,16 +890,175 @@
           "label": "1-Phase (Advanced)"
         },
         "2phase": {
-          "label": "2-Phase",
+          "label": "2-Phase (Advanced)",
           "drawdown": "static"
         },
         "instant": {
           "label": "Instant",
           "drawdown": null,
-          "_note": "drawdown type not stated for Instant; pending"
+          "_note": "drawdown type not stated for Instant; pending",
+          "max_leverage": 5
         }
       },
-      "_leverage_note": "1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). troid's desk uses the Advanced cap."
+      "_leverage_note": "See _lev_bands_note. troid's desk applies the band for the quota entered.",
+      "lev_bands": [
+        {
+          "max_quota": 25000,
+          "lev": 5
+        },
+        {
+          "min_quota": 50000,
+          "lev": 100
+        }
+      ],
+      "_lev_bands_note": "Leverage follows account class, not product: Student (<= $25k) 1:5, Advanced ($50k+) 1:100. Between $25k and $50k no class is recorded, so the cap is pending there. Instant is $2.5k-$10k only, so its cap is 1:5 at every size it sells."
+    },
+    "provenance": {
+      "_note": "Where each rule was read and when. Every computed number on the site cites this block: 'as published on <read_on>'. read_on is the date troid read the document; doc_dated is the document's own date where recorded. A field with a value but no entry here renders 'source not yet recorded'. Built 2026-09-23 from repo evidence only (firms_evidence.json).",
+      "sources": {
+        "tc": {
+          "doc": "Crypto Fund Trader Terms and Conditions",
+          "url": "https://cryptofundtrader.com/terms-and-conditions/",
+          "read_on": "2026-09-21",
+          "doc_dated": "2026-03-30"
+        }
+      },
+      "fields": {
+        "daily_pct": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions"
+        },
+        "max_pct": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions"
+        },
+        "target_pct": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions"
+        },
+        "daily_basis": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 8.i\u20138.ii"
+        },
+        "reset_utc": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 8.i\u20138.ii"
+        },
+        "fee_per_side_pct": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 5.8, Match-Trader and MT5"
+        },
+        "max_leverage": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+        },
+        "hold_cap": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions"
+        },
+        "max_open": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C s.6"
+        },
+        "refund": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 5.1, evaluation not completed"
+        },
+        "us_available": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 7.3 and 7.1(xvi), MT5 bar"
+        },
+        "profit_cap": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 7.1(xiii)"
+        }
+      },
+      "products": {
+        "1phase": {
+          "daily_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_leverage": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+          }
+        },
+        "2phase": {
+          "daily_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_leverage": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+          }
+        },
+        "instant": {
+          "daily_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_pct": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions"
+          },
+          "max_leverage": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Student up to $25k"
+          }
+        }
+      }
     }
   },
   "_watch": {
@@ -596,5 +1077,6 @@
     "email": "hello@troid.ai"
   },
   "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
-  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one."
+  "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one.",
+  "_provenance_rule": "Every rule field that feeds a number on the site carries provenance: the document, the section, and the date troid read it. Where the repo records no source for a field, the site says 'source not yet recorded' beside it; it never invents one. The evidence for each mapping is in firms_evidence.json."
 }

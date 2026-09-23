@@ -1,0 +1,727 @@
+{
+ "bitfunded": [
+  {
+   "field": "daily_pct",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare_product cell 4. compare_product.key = 1step; product '*' marks the compare_product cell per the output schema and is kept because the calc 1step entry already holds that key. It is not a firm-wide claim. references/bitfunded.md: 'Sourced from Bitfunded's own docs (help center \"Criteria to be Success\" and the FAQ). Expert $100,000 / Stage 1 (1 Step) figures.' + 'Max daily loss 4% ($4,000) realized + floating'. FAQ dropped from src: the header credits the block jointly, no evidence file attributes the 4% to the FAQ, and the same file's 'Unresolved' says 'The FAQ also describes a two-stage evaluation ... treat the FAQ as stale'. Corroboration only (outside the evidence list): backtest/engine.py docstring 'Rules modelled (from bitfunded.gitbook.io \"Criteria to be Success\"): Max daily loss 4%'."
+  },
+  {
+   "field": "max_pct",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare_product cell 6 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header ('help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures') + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'Max loss 6% STATIC' under 'from bitfunded.gitbook.io \"Criteria to be Success\"'."
+  },
+  {
+   "field": "target_pct",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare_product cell 10 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header + 'Profit target 10% ($10,000) realized only, floating profit doesn't count'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'profit target 10% realized' under the Criteria to be Success header."
+  },
+  {
+   "field": "min_days",
+   "product": "*",
+   "src": [
+    "tou",
+    "faq"
+   ],
+   "evidence": "compare_product cell 5 (key 1step; '*' = compare_product per the output schema; products.instant.min_days is 0, so this is the 1-Step value). The ToU governs. CLAUDE.md: '9(a) — minimum 5 trading days. The challenge page displays 0; the contract governs.' TROID.md: 'Minimum 5 trading days to clear a stage ... (ToU 9(a))'. firms.json rule_changes[2] (2026-09-21): 'ToU 9(a) says 5'. config.example.json _min_days_note: 'ToU 9(a) says 5 for every profile.' The FAQ is corroboration: references/bitfunded.md 'Unresolved' says 'The challenge page shows 0; the FAQ says at least 5.' That file calls the FAQ stale only where it disagrees, and here it agrees."
+  },
+  {
+   "field": "daily_basis",
+   "product": "*",
+   "src": [
+    "faq"
+   ],
+   "evidence": "compare cell 'initial balance'. CLAUDE.md: 'The daily limit is a FIXED dollar amount = daily% × INITIAL balance (Bitfunded FAQ).' firms.json rule_changes[1] (2026-09-21): 'FAQ states daily limit from INITIAL balance ... FAQ applied'. TROID.md: '[FIXED — Bitfunded FAQ: from initial balance]'. config.example.json _basis_note: 'Bitfunded FAQ: daily limit is a FIXED amount from the INITIAL balance'. The FAQ question's exact title is not recorded; 'daily loss limit' is a descriptive label."
+  },
+  {
+   "field": "drawdown_type",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare cell 'static'. references/bitfunded.md header ('help center \"Criteria to be Success\" and the FAQ') + 'Max loss 6% ($6,000) realized + floating, STATIC' + 'the percentages change but the mechanics don't'. FAQ dropped: joint credit only, and no file ties 'static' to the FAQ. TROID.md '[static — Bitfunded]' and config.example.json _dd_note 'Confirmed static' name no document. Corroboration only: engine.py 'Max loss 6% STATIC ... measured from the initial quota' under the Criteria to be Success header."
+  },
+  {
+   "field": "reset_utc",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "TROID.md: 'Reset at 00:00 UTC+8 = 16:00 UTC = noon New York. ... (Help centre, Criteria to be Success)'. references/bitfunded.md header block: 'Daily reset 00:00 UTC+8'. The 16:00 UTC value is converted from UTC+8."
+  },
+  {
+   "field": "fee_per_side_pct",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare cell 0.04. references/bitfunded.md header ('help center \"Criteria to be Success\" and the FAQ') + 'Fees 0.04% per side on notional (0.08% round trip)'. FAQ dropped: joint credit only, and no file says the FAQ states the fee. Corroboration only: engine.py 'Fees 0.04% of notional per side' under the Criteria to be Success header."
+  },
+  {
+   "field": "max_leverage",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "compare cell 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only. Corroboration only: engine.py 'Max leverage 5x' under the Criteria to be Success header."
+  },
+  {
+   "field": "hold_cap",
+   "product": "*",
+   "src": [
+    "rtp"
+   ],
+   "evidence": "compare cell '10d / 7d / 5d'. CLAUDE.md: 'Hold limit is TIERED (help centre, Restricted Trading Practices s.1): majors 10d, other crypto 7d, TradFi 5d.' TROID.md: 'Hold limit, tiered ... (Restricted Trading Practices s.1)'. firms.json rule_changes[0] (2026-09-21) says the ToU's flat 10 days is superseded."
+  },
+  {
+   "field": "max_open",
+   "product": "*",
+   "src": [
+    "rtp"
+   ],
+   "evidence": "compare cell 5. CLAUDE.md: '5 simultaneous trades max (RTP s.3). The ToU says 10; the help centre is newer and stricter.' TROID.md: '5 open positions max ... (RTP s.3)'. firms.json rule_changes[0]: 'Help centre (Restricted Trading Practices) says 5 open positions'."
+  },
+  {
+   "field": "daily_pct",
+   "product": "1step",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "calc: calc.products.1step has only a label, so backtest/gen_compare.py profiles_js falls back to products['1step'].daily_pct = 4 (confirmed in code). references/bitfunded.md: 'Sourced from ... help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures' + 'Max daily loss 4%'. The FAQ is dropped for the same reason as the compare cell."
+  },
+  {
+   "field": "max_pct",
+   "product": "1step",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "calc: products['1step'].max_pct = 6 via the profiles_js fallback. references/bitfunded.md, same header + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the FAQ is flagged stale and two-stage."
+  },
+  {
+   "field": "daily_pct",
+   "product": "instant",
+   "src": [
+    "blog"
+   ],
+   "evidence": "calc: products.instant.daily_pct = 3 via the fallback. .claude/skills/prop-trading-desk/config.example.json profiles.instant {'max_daily_loss_pct': 3, ..., '_note': 'Confirmed Bitfunded blog 2026-08-28. No target, no min days, static, 60% profit share.'}. CAVEAT: the attribution is at profile level. The note's list does not name 3% or 6%, and the blog-to-URL match is inferred (the only blog in verified_from). The dated trace for this use is commit 2384dc8 (2026-09-21); rule_changes[2] records the blog read for 2-Step minimum days."
+  },
+  {
+   "field": "max_pct",
+   "product": "instant",
+   "src": [
+    "blog"
+   ],
+   "evidence": "calc: products.instant.max_pct = 6 via the fallback. config.example.json profiles.instant 'max_total_drawdown_pct': 6, _note 'Confirmed Bitfunded blog 2026-08-28. No target, no min days, static, 60% profit share.' Same profile-level caveat as daily_pct."
+  },
+  {
+   "field": "daily_basis",
+   "product": "*",
+   "src": [
+    "faq"
+   ],
+   "evidence": "calc.daily_basis = 'initial'. CLAUDE.md: 'daily% × INITIAL balance (Bitfunded FAQ)'. firms.json rule_changes[1] (2026-09-21): 'FAQ states daily limit from INITIAL balance'. config.example.json _basis_note: 'Bitfunded FAQ: daily limit is a FIXED amount from the INITIAL balance'. The FAQ question title is not recorded. The SKILL.md cite was dropped because it is not in the evidence set."
+  },
+  {
+   "field": "drawdown",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "calc.drawdown = 'static'. locks_at_initial_after_pct and hwm_basis are null and not applicable to static. references/bitfunded.md header credits Criteria to be Success (jointly with the FAQ) + 'Max loss 6% ... STATIC' + 'the percentages change but the mechanics don't'. FAQ dropped as for the compare drawdown_type. Corroboration only: engine.py."
+  },
+  {
+   "field": "fee_per_side_pct",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "calc.fee_per_side_pct = 0.04. references/bitfunded.md header + 'Fees 0.04% per side on notional (0.08% round trip)'. FAQ dropped: joint credit only."
+  },
+  {
+   "field": "max_leverage",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "calc.max_leverage = 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only."
+  },
+  {
+   "field": "drawdown",
+   "product": "instant",
+   "src": [
+    "blog"
+   ],
+   "evidence": "config.example.json profiles.instant._note 'Confirmed from Bitfunded blog 2026-08-28: 3% daily, 6% static, no target, 60% split' — the product's own record names the blog for 'static'. Same profile-level caveat as the Instant daily/max mapping."
+  },
+  {
+   "field": "fee_per_side_pct / max_leverage",
+   "product": "1step",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "references/bitfunded.md ties the Criteria to be Success figures to 'Expert $100,000 / Stage 1 (1 Step)'. No firm-wide statement of fee or leverage is recorded, so the cite applies to the 1-Step only (provenance.product_only); other products say 'source not yet recorded'."
+  }
+ ],
+ "bitfunded_unmapped": [
+  {
+   "field": "price",
+   "product": "*",
+   "why": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded."
+  },
+  {
+   "field": "refund",
+   "product": "*",
+   "why": "'100% at first profit split' appears in firms.json.refund and in TROID.md ('Fee refunded in full at first profit split'), and neither cites a document or section."
+  },
+  {
+   "field": "split",
+   "product": "*",
+   "why": "'80% → 90%' appears in firms.json.split ('80% to 90%') and in TROID.md ('Split 80% rising to 90%'), and neither cites a document or section."
+  },
+  {
+   "field": "us_available",
+   "product": "*",
+   "why": "'yes' (us_available true since root commit 2384dc8) has no cited document or section. firms.json itself records that the governing list was never read: bitfunded.restricted_countries = 'per ToU (list not extracted)'."
+  },
+  {
+   "field": "consistency_rule",
+   "product": "*",
+   "why": "The compare cell says 'none', but firm-level firms.json bitfunded.consistency_rule is null (pending). The two contradict each other, and no document or section is recorded for either."
+  },
+  {
+   "field": "news_rule",
+   "product": "*",
+   "why": "'none stated' claims that no rule exists, and the repo does not record which documents were checked. No cite."
+  },
+  {
+   "field": "profit_cap",
+   "product": "*",
+   "why": "'none' has no recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "2step_s1",
+   "why": "The calculator uses products.2step_s1.daily_pct = 5 via the fallback. The only records are config.example.json profile 2step_s1 and the TROID.md table, and neither cites a source. references/bitfunded.md covers only the 1-Step figures. The blog is recorded as read for 2-Step minimum days only (rule_changes[2]), not for limits. Fetch corroboration was not possible: the egress proxy blocks bitfunded.com and bitfunded.gitbook.io."
+  },
+  {
+   "field": "max_pct",
+   "product": "2step_s1",
+   "why": "products.2step_s1.max_pct = 10. Same situation as daily_pct: no recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "2step_s2",
+   "why": "products.2step_s2.daily_pct = 5. Same situation as 2step_s1: no recorded document or section."
+  },
+  {
+   "field": "max_pct",
+   "product": "2step_s2",
+   "why": "products.2step_s2.max_pct = 8. No recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "express",
+   "why": "products.express.daily_pct = 3. It appears only in config.example.json (_name '1-Step Express ($39 at $5k)') and the TROID.md table, with no source. The blog's title names Express, but the repo does not record the blog as the source of the Express limits."
+  },
+  {
+   "field": "max_pct",
+   "product": "express",
+   "why": "products.express.max_pct = 3. No recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "trader",
+   "why": "calc.products.trader.daily_pct = 4, and its _note points to references/bitfunded.md. That file cites a primary source only for 'Expert $100,000 / Stage 1 (1 Step) figures', mentions the Trader Stage only as what the challenge page shows (a page not in verified_from), and gives no funded-stage limits. The desk profile's trader _note, 'Same ceilings as 1-Step', names no document. The chain ends in troid's own files, and a config is not a source."
+  },
+  {
+   "field": "max_pct",
+   "product": "trader",
+   "why": "calc.products.trader.max_pct = 6. The chain breaks at the same point as daily_pct: references/bitfunded.md carries no funded-stage limit and cites no document for one."
+  }
+ ],
+ "brightfunded": [
+  {
+   "field": "daily_pct",
+   "product": "*",
+   "src": [
+    "product_1step",
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.daily_pct = 3 mirrors products.1step.daily_pct = 3. The primary source, listed first, is verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The T&C is '(framework; delegates numbers to Product Specifications)', so it is not the source. The help centre is corroboration, added on a skeptic's challenge and checked here. The df7396d commit message says the daily basis 'a fixed 3% of the original size' came 'from a help-centre article recorded in verified_from'. _daily_rollover_note, from the same patch, gives 'per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%)'. Which help article holds the table is not recorded, and the two help sources are listed in no particular order. SCOPE (_daily_rollover_note): 'accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table'. brightfunded.rule_changes is [] and does not record this change."
+  },
+  {
+   "field": "max_pct",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.max_pct = 6 mirrors products.1step.max_pct = 6. Source: verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The T&C 'delegates numbers to Product Specifications'."
+  },
+  {
+   "field": "target_pct",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.target_pct = 10 mirrors products.1step.target_pct = 10. Source: verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. _calc_rule: 'Products carry only what their pages state.'"
+  },
+  {
+   "field": "min_days",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.min_days = 5 mirrors products.1step.min_days = 5. Source: verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The '5 min days per phase' in _why_candidate is marked '(third-party; unverified)' and is not the source."
+  },
+  {
+   "field": "price",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.price '€497 (€347.90 promo)' comes from products.1step.fee_eur_100k = 497 and fee_eur_100k_promo = 347.9, read from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. currency: 'EUR pricing'. The €347.90 promo is as read on 2026-09-21. A promotion is time-limited, so this part of the cell goes stale sooner than the other product-page numbers."
+  },
+  {
+   "field": "daily_basis",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.daily_basis 'fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount' arrived in firms-patch-2.json, merged in df7396d. The commit message says each of the three fields came 'from a help-centre article recorded in verified_from' and does not say which article. Both recorded help articles are listed, in no particular order. The earlier single-article attribution relied on the URL slug and on _to_verify, a pre-read plan from 187dc35 that names a different title and was never updated. That is inference, so it was dropped. Before the read, _daily_note at 187dc35 recorded that the basis was 'not stated on the product page or in the T&C. Help centre needed.' SCOPE: the 3% belongs to the per-plan table for accounts bought from 2025-09-22 11:00 CET. Older accounts use 'a flat 5% balance-based rule' (_daily_rollover_note). The calc daily_basis entry has the identical src and section, so the two '*' keys cannot render differently."
+  },
+  {
+   "field": "drawdown_type",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.drawdown_type 'trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%' was merged from firms-patch-2.json in df7396d, 'each from a help-centre article recorded in verified_from'. Which article is not recorded, so both are listed in no particular order. _trailing_trap covers the trailing and equity-HWM parts: 'Help-centre Scenario 3 ... balance 100k, open trade +4k floating -> limit rises to 98k'. HANDOFF.md says the same ('help centre scenario 3'). No section is recorded for the 'locks static at initial after +6%' clause. T&C was REMOVED from src on both skeptics' challenge, confirmed here. _dd_note quotes T&C 6.6(c) as 'may be static or trailing depending on the Product', which delegates the choice and does not state trailing, the equity HWM or the lock. It is context only."
+  },
+  {
+   "field": "reset_utc",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.reset_utc '23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window' was merged from firms-patch-2.json in df7396d. The commit message reads 'the reset window (23:30 CET rollover), each from a help-centre article recorded in verified_from' and does not say which article, so both are listed. _to_verify.reset_utc 'help centre, same article' is a pre-read plan and is not evidence of where the window was found. The firm's text gives the CET window only. The UTC figures are troid's conversion: HANDOFF.md 'Engine gaps recorded 2026-09-22' says the window 'is 21:30 UTC in summer and 22:30 UTC in winter'."
+  },
+  {
+   "field": "refund",
+   "product": "*",
+   "src": [
+    "tc",
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.refund 'paid add-on only'. Top-level refund: 'NOT standard. 100% fee refund is a paid add-on only (T&C 7.7b; product page add-ons list).' The 1-Step page is the only product page recorded (products._note: '2-Step pages not yet read')."
+  },
+  {
+   "field": "split",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.split 'up to 90%' mirrors products.1step.split 'up to 90%', from the product-numbers block, verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The section was narrowed on the skeptics' challenge, confirmed here. 'product page add-ons list' is tied only to the refund entry. The top-level split's '(add-on for 90%; base per third-party 80%)' names no document, and the 80% base is third-party, not part of the cell."
+  },
+  {
+   "field": "us_available",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "COMPARE cell. compare_product.us_available 'MT5 barred to US; crypto platform for US unconfirmed'. _us_note: \"T&C s.2: 'services related to MetaTrader 5 (MT5) ... are not intended for residents or citizens of the United States.'\" Only the MT5 clause has a source. 'crypto platform for US unconfirmed' is troid's open question (_open_questions: 'US residents on DxTrade/cTrader - help centre or support'; _to_verify.us_available), not a firm statement, and it carries no source."
+  },
+  {
+   "field": "consistency_rule",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.consistency_rule 'none'. Top-level consistency_rule: 'none (stated on product page)'. This is an explicit record that the page states the absence."
+  },
+  {
+   "field": "news_rule",
+   "product": "*",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "COMPARE cell. compare_product.news_rule '5-min restriction' mirrors products.1step.news_rule '5-minute restriction'. products.1step was added with verified_from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)' in 187dc35. _calc_rule: 'Products carry only what their pages state.'"
+  },
+  {
+   "field": "daily_pct",
+   "product": "1step",
+   "src": [
+    "product_1step",
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "CALC. calc.products.1step has only a label, so gen_compare.py profiles_js() line 98 (dp = pc.get('daily_pct', src.get('daily_pct'))) falls back to products['1step'].daily_pct = 3. The primary source, listed first, is 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. The help-centre corroboration and the scope are as for the compare daily_pct: df7396d '3% of the original size ... from a help-centre article', and _daily_rollover_note 'per-plan table (1-Step 3%...)', with 'flat 5% balance-based' for accounts bought before 2025-09-22 11:00 CET. Which help article holds the table is not recorded."
+  },
+  {
+   "field": "max_pct",
+   "product": "1step",
+   "src": [
+    "product_1step"
+   ],
+   "evidence": "CALC. calc.products.1step has no max_pct, so gen_compare.py line 98 (mp = pc.get('max_pct', src.get('max_pct'))) falls back to products['1step'].max_pct = 6. Source: 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'."
+  },
+  {
+   "field": "daily_basis",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "CALC field, not the compare cell of the same name. calc.daily_basis = 'max_balance_equity' was added in 843db2f on 2026-09-22. It encodes the help-centre value 'floor = max(balance, equity) at rollover − 3% of ORIGINAL size', merged in df7396d 'from a help-centre article recorded in verified_from', article not stated. HANDOFF.md 'Engine gaps recorded 2026-09-22' says 'BrightFunded's daily floor is max(balance, equity) at rollover minus 3% of the original size.' The src and section are identical to the compare daily_basis entry. SCOPE: accounts on the per-plan table, bought from 2025-09-22 11:00 CET (_daily_rollover_note). calc.products lists only 1step, and the 2-Step pages are unread (calc._pending)."
+  },
+  {
+   "field": "drawdown",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "CALC. calc.drawdown = 'trailing' (843db2f) encodes the help-centre drawdown_type merged in df7396d. _trailing_trap: 'Help-centre Scenario 3 ... balance 100k, open trade +4k floating -> limit rises to 98k'. A floor that rises with the high is trailing, and HANDOFF.md cites 'help centre scenario 3' for it. Which of the two articles contains Scenario 3 is not recorded. T&C was removed from src, confirmed here: T&C 6.6(c) says only 'may be static or trailing depending on the Product' (_dd_note). SCOPE: calc.products lists only 1step, and the 2-Step pages are unread (calc._pending)."
+  },
+  {
+   "field": "locks_at_initial_after_pct",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "CALC. calc.locks_at_initial_after_pct = 6 (843db2f) encodes 'locks static at initial after +6%' in drawdown_type. That text was merged from firms-patch-2.json in df7396d, and the commit says 'locking static at initial after +6% ... each from a help-centre article recorded in verified_from'. No article or section is recorded for the lock. Scenario 3 (_trailing_trap) covers the equity-HWM breach, not the lock. SCOPE: 1-Step only (calc.products has only 1step; the 2-Step pages are unread)."
+  },
+  {
+   "field": "hwm_basis",
+   "product": "*",
+   "src": [
+    "help_daily_loss",
+    "help_1step"
+   ],
+   "evidence": "CALC. calc.hwm_basis = 'equity' (843db2f). _trailing_trap: 'Help-centre Scenario 3 ... open trade +4k floating -> limit rises to 98k ... BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.' HANDOFF.md: 'help centre scenario 3: a +$4k unrealised high lifts the floor to $98k'. Which help article contains Scenario 3 is not recorded. SCOPE: 1-Step only (calc.products has only 1step; the 2-Step pages are unread)."
+  }
+ ],
+ "brightfunded_unmapped": [
+  {
+   "field": "profit_cap",
+   "product": "*",
+   "why": "compare_product.profit_cap is 'none stated' and has been since 187dc35 (2026-09-21). It records an absence, and the repo gives no document or section it was read from. firms.json has no note, cite, _to_verify entry or top-level key for it. Neither patch, nor HANDOFF.md, CLAUDE.md, TROID.md, METHODOLOGY.md, bitfunded.md or config.example.json, names a source. gen_compare.py still counts it toward '15 of 18' because the cell is non-null."
+  },
+  {
+   "field": "hold_cap",
+   "product": "*",
+   "why": "Moved from fields on the skeptics' challenge, confirmed here, to match profit_cap. compare_product.hold_cap 'none stated' records an absence, and no document is recorded as the one checked. _hold_note ('No cap stated. T&C requires >=1 trade per 30 days. Third-party says overnight/weekend/crypto holding allowed.') cites the T&C only for the 30-day activity rule, with no section number. Compare _daily_note, which does name the documents checked for the daily basis ('product page or ... T&C'). The top-level hold_cap_days is also null, which under _rule means 'not yet verified'. The cell was written at 187dc35 (2026-09-21), before any help article was read. It still counts toward '15 of 18'."
+  }
+ ],
+ "crypto_fund_trader": [
+  {
+   "field": "daily_pct",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only; no clause is cited for the 4%. firms.json crypto_fund_trader.verified_from[0] reads 'https://cryptofundtrader.com/terms-and-conditions/ (modified 2026-03-30; contains the numbers, unlike BrightFunded's)'. BrightFunded's verified_from says its T&C 'delegates numbers to Product Specifications' and its product page holds '(product numbers ...)', so 'the numbers' means the product rule numbers. compare_product.daily_pct 4 equals products.1phase.daily_pct 4. T&C 8.i, 8.ii is cited for the basis and the reset, not for the percentage. Neither skeptic challenged this entry; kept."
+  },
+  {
+   "field": "max_pct",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only; no clause cited. verified_from[0] says the T&C '(modified 2026-03-30; contains the numbers, unlike BrightFunded's)'. compare_product.max_pct 6 equals products.1phase.max_pct 6. Unchallenged; kept. The trailing/static mechanism that applies this 6% is NOT covered by this entry (see drawdown_type in unmapped)."
+  },
+  {
+   "field": "target_pct",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only; no clause cited. verified_from[0] says the T&C '(... contains the numbers ...)'. compare_product.target_pct 10 equals products.1phase.target_pct 10. Unchallenged; kept."
+  },
+  {
+   "field": "daily_basis",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader.daily_basis reads 'day-start balance at 00:05 UTC (T&C 8.i, 8.ii) - NOT initial. Differs from Bitfunded.' This one citation covers compare_product.daily_basis 'day-start balance' and calc.daily_basis 'day_start'. calc.daily_basis is a firm-level key and no calc product overrides it. products.1phase.daily_basis and products.2phase.daily_basis both read 'balance at 00:05 UTC'. Unchallenged; kept."
+  },
+  {
+   "field": "reset_utc",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader.daily_basis reads 'day-start balance at 00:05 UTC (T&C 8.i, 8.ii)'. The same file has reset_utc '00:05' and products.1phase.daily_basis 'balance at 00:05 UTC', so the cite supports compare_product.reset_utc '00:05'. DISPUTED inside the repo; flag it in the cell until the T&C is re-read. backtest/HANDOFF.md:142 says 'CFT is 00:00 UTC per its docs' (added in 3c707fa, 2026-09-22). web/api/troid.js:239, the ask troid context, says 'CFT at 00:00 UTC'. Neither 00:00 statement names a document or clause, so the clause-cited 00:05 stands, but it is contested. Skeptic 1's correction applied: entry kept with both conflicting statements recorded."
+  },
+  {
+   "field": "fee_per_side_pct",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader._fee_note reads '0.0325%/side crypto on Match-Trader & MT5 (T&C 5.8). Bybit route uses Bybit's native fees.' This covers compare_product.fee_per_side_pct 0.0325 and calc.fee_per_side_pct 0.0325. The calc value is a firm-level key and no calc product overrides it. The cite is by platform, not by product. Unchallenged; kept."
+  },
+  {
+   "field": "max_leverage",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "COMPARE CELL ONLY: compare_product.max_leverage 100 for '1-Phase (Advanced, $100k)'. This entry does NOT cover calc.products.instant; see the calc entries for 1phase and 2phase, and max_leverage/instant in unmapped. Document-level; no clause cited. firms.json max_leverage reads 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The link to the T&C is _leads_third_party.note, 'Corroborates the T&C on every field it covers: ... crypto 1:100 on 1/2-step and 1:5 on Instant', together with _comparability_note 'crypto 1:100 on $100k'. WORDING CONFLICT to fix in the page text: panel_note (added in c3457b6, 2026-09-22) says 'Up to 100× leverage per third-party sources', and _why_candidate (the nomination note) says 'per third-party sources'. Kept per both skeptics, qualified as Advanced ($50k+)."
+  },
+  {
+   "field": "hold_cap",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader._hold_note reads 'No hold cap stated in the T&C.' This records an absence across the whole document, so there is no clause to cite. compare_product.hold_cap is 'none stated' and hold_cap_days is null. Unchallenged; kept."
+  },
+  {
+   "field": "max_open",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader._pos_note reads 'Not fixed; T&C s.6 says the firm may impose 'maximum position size or number of simultaneous positions' at its discretion with prior notice.' compare_product.max_open is 'discretionary'. Unchallenged; kept."
+  },
+  {
+   "field": "refund",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "PARTIAL: this covers only 'no refund if the evaluation is not completed'. firms.json refund reads 'None if the evaluation is not completed (5.1). No free trials (3.2.3).' 3.2.3 is recorded as a free-trials clause, not a refund rule, so it is dropped from the section (skeptic 1's correction applied). The compare cell 'none' claims more than 5.1 as recorded. Nothing records the T&C on a refund after passing or at first payout, and payout_discretion records one refund case ('T&C 14.2 ... sole remedy is refund of fees'). The uncovered part is under refund in unmapped. The cell should be narrowed to 5.1's scope."
+  },
+  {
+   "field": "us_available",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "PARTIAL: this covers only the MT5 exclusion. firms.json us_available reads 'YES via Match-Trader only. MT5 not available to US residents (7.3, 7.1xvi).' The clause numbers follow the MT5 sentence only, and platforms.mt5 reads 'not for US residents'. The affirmative 'yes via Match-Trader' half, which is the main claim of compare_product.us_available 'yes, Match-Trader only', has no cite; it is under us_available in unmapped. Both skeptics' corrections applied: the section is scoped to the MT5 bar."
+  },
+  {
+   "field": "profit_cap",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader.profit_cap reads '$10,000 per day AND per trade (7.1 xiii). Excess is deducted; trades closed in parts or in similar time count as one.' compare_product.profit_cap is '$10k / day and / trade'. Unchallenged; kept."
+  },
+  {
+   "field": "daily_pct",
+   "product": "1phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.1phase sets no daily_pct, so backtest/gen_compare.py profiles_js falls back to products.1phase.daily_pct 4. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. Unchallenged; kept."
+  },
+  {
+   "field": "max_pct",
+   "product": "1phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.1phase falls back to products.1phase.max_pct 6. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. Unchallenged; kept."
+  },
+  {
+   "field": "daily_pct",
+   "product": "2phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.2phase falls back to products.2phase.daily_pct 5. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. Unchallenged; kept."
+  },
+  {
+   "field": "max_pct",
+   "product": "2phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.2phase falls back to products.2phase.max_pct 10. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. Side note, confirmed: backtest/verify_claims.py:50 labels a '4%/6% static floor (CFT 2-Phase shape)'. That does not match these 5%/10% values; 4/6 belongs to 1-Phase and Instant."
+  },
+  {
+   "field": "daily_pct",
+   "product": "instant",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.instant falls back to products.instant.daily_pct 4. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. Unchallenged; kept."
+  },
+  {
+   "field": "max_pct",
+   "product": "instant",
+   "src": [
+    "tc"
+   ],
+   "evidence": "Document-level only. calc.products.instant falls back to products.instant.max_pct 6. Source is verified_from[0], '(... contains the numbers ...)'. No clause cited. calc.products.instant.drawdown is null ('drawdown type not stated for Instant; pending'), so the Instant drawdown is left out as pending."
+  },
+  {
+   "field": "max_leverage",
+   "product": "1phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "calc.max_leverage 100 is a firm-level key and reaches 1phase through profiles_js ('lev': pc.get('max_leverage', c.get('max_leverage'))). calc.products.1phase is labelled '1-Phase (Advanced)'. calc._leverage_note reads '1:100 on Advanced ($50k+); 1:5 on Student (<= $25k). troid's desk uses the Advanced cap.' products.1phase.account_class reads 'Advanced at $50k+ (crypto 1:100)'. The T&C link is _leads_third_party.note, 'Corroborates the T&C ... crypto 1:100 on 1/2-step'. Document-level; no clause cited. Valid only for Advanced accounts ($50k+). The calculator applies 100 at any quota, while the recorded cap at $25k or less is 1:5. The same panel_note/_why_candidate wording conflict applies. Split out from '*' per both skeptics."
+  },
+  {
+   "field": "max_leverage",
+   "product": "2phase",
+   "src": [
+    "tc"
+   ],
+   "evidence": "calc.max_leverage 100 reaches 2phase through profiles_js. No account class is recorded under products.2phase. The firm-level max_leverage is set by account size, not by product: 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. The T&C link is _leads_third_party.note, 'Corroborates the T&C on every field it covers: ... crypto 1:100 on 1/2-step'. Document-level; no clause cited. Valid only at $50k+; below that the recorded cap is 1:5. Split out from '*' per skeptic 2."
+  },
+  {
+   "field": "max_leverage",
+   "product": "instant",
+   "src": [
+    "tc"
+   ],
+   "evidence": "firms.json crypto_fund_trader.max_leverage: 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'; products.instant.sizes: '$2.5k-$10k only' (every Instant size is inside the Student band); the 2phase mapping's note that leverage is set by account size, not by product. Third-party corroboration only: _leads_third_party.note '1:5 on Instant'. calc corrected from 100 to 5 on 2026-09-23."
+  }
+ ],
+ "crypto_fund_trader_unmapped": [
+  {
+   "field": "price",
+   "product": "*",
+   "why": "compare_product.price '$619' equals products.1phase.fee_usd_100k 619, and no clause or document is recorded for it. The T&C annotation 'contains the numbers, unlike BrightFunded's' sets rule numbers against BrightFunded's T&C ('delegates numbers to Product Specifications'). Nothing records the price being read in the T&C, and no CFT pricing or product page is in verified_from."
+  },
+  {
+   "field": "split",
+   "product": "*",
+   "why": "compare_product.split reads 'up to 90% (add-on); base unconfirmed'. The only T&C statement recorded for split is negative: firms.json split says 'base not stated in T&C (FAQ needed)', _to_verify.base_split says 'FAQ', and _open_questions lists 'Base profit split without the add-on (FAQ)'. The 'up to 90%' figure comes from the add-on (addons.split_to_90pct '+20%'). The addons block cites no document, and it is purchase-option data like fee_usd_100k, which is unmapped under price for the same reason. Both skeptics' correction applied."
+  },
+  {
+   "field": "consistency_rule",
+   "product": "*",
+   "why": "compare_product.consistency_rule reads 'none (40% on Break)'. The firm-level consistency_rule ('none on 1/2-phase; 40% on Break final stage') and products.break.consistency_rule cite no clause or document. Nothing records where the 1-Phase absence was read, unlike the hold cap, whose _hold_note says 'No hold cap stated in the T&C'."
+  },
+  {
+   "field": "news_rule",
+   "product": "*",
+   "why": "compare_product.news_rule 'none on 1-Phase' has no cite and no note naming a document. The only news record, products.ascend._note ('2-min news window with 2% max theoretical loss'), is also uncited. Nothing records that the T&C was checked for a 1-Phase news rule."
+  },
+  {
+   "field": "drawdown_type",
+   "product": "*",
+   "why": "compare_product.drawdown_type reads 'trailing → static at initial after +6%'. It comes from products.1phase.drawdown_type ('trailing from max demo balance until +6% profit, then static at opening balance') and the firm-level drawdown_type ('product-dependent: 1-phase trailing-then-static ...'). Neither cites a clause or names a document. The earlier evidence misread _comparability_note. 'numbers in the T&C' is one of the comparability points. '1-phase trailing-then-static' sits in a separate sentence, 'Structural differences the model handles: ...', which names no document; that list also includes the 00:05 reset, which is cited separately to 8.i–8.ii, so the list is a list of model features, not a source record. Without that reading, the only remaining argument is elimination (the T&C is the only verified_from), and this mapping rejects elimination for price, consistency_rule and news_rule. The 'contains the numbers' annotation reaches the percentages, not the trailing/static mechanism. Skeptic 2's correction applied; skeptic 1's keep-by-inference not accepted because the task forbids guessing. To map this: re-read the T&C and record the clause."
+  },
+  {
+   "field": "drawdown",
+   "product": "1phase",
+   "why": "calc.drawdown 'trailing' is a firm-level calc key, but it takes effect only for 1phase: 2phase overrides it with 'static', and instant overrides it with null, which is pending and left out. Its source, products.1phase.drawdown_type, has no clause or document, so attribution to the T&C would be by elimination only (see drawdown_type). Product scoped to 1phase per skeptic 1, and moved to unmapped per skeptic 2."
+  },
+  {
+   "field": "drawdown",
+   "product": "2phase",
+   "why": "calc.products.2phase.drawdown 'static' comes from products.2phase.drawdown_type 'static from initial' and the firm-level '... 2-phase static'. Neither has a clause or a document annotation, so attribution to the T&C would be by elimination only (see drawdown_type). Skeptic 2's correction applied."
+  },
+  {
+   "field": "locks_at_initial_after_pct",
+   "product": "1phase",
+   "why": "calc.locks_at_initial_after_pct 6 is the '+6%' in products.1phase.drawdown_type ('trailing ... until +6% profit, then static at opening balance'). That is the point where a 6% trail reaches the opening balance, so the number exists only as part of the trailing-then-static rule, which has no recorded source (see drawdown_type). The 6 itself is already mapped, as 1phase max_pct. A T&C cite under the lock alone would imply the mechanism is sourced. profiles_js also copies the value into 2phase and instant, where it has no effect (static and pending)."
+  },
+  {
+   "field": "hwm_basis",
+   "product": "1phase",
+   "why": "calc.hwm_basis 'balance' is read from the phrase 'trailing from max demo balance' in products.1phase.drawdown_type, which has no clause or document. The earlier supplementary cite, the uploaded HANDOFF-2026-09-22 ('CFT's on balance'), is not on the admissible evidence list and is a work order in any case. web/api/troid.js:243 ('CFT's trails on balance') names no document either. The 'contains the numbers' annotation cannot cover a balance-versus-equity choice. Skeptic 2's correction applied. profiles_js also copies the value into 2phase and instant, where it has no effect."
+  },
+  {
+   "field": "refund",
+   "product": "*",
+   "why": "PARTIAL: this is the part of the cell 'none' that T&C 5.1 does not cover; the 5.1 part is mapped under fields. 5.1 as recorded covers only 'None if the evaluation is not completed'. Nothing records what the T&C says on a refund after passing or at first payout, which is the case the compare row shows for Bitfunded ('100% at first profit split'). payout_discretion records a refund in one case: 'T&C 14.2 ... sole remedy is refund of fees'. 3.2.3 ('No free trials') is not a refund rule. Show 'none' only with 5.1's scope, or narrow the cell. Skeptic 1's correction applied."
+  },
+  {
+   "field": "us_available",
+   "product": "*",
+   "why": "PARTIAL: this is the affirmative 'yes via Match-Trader' half of compare_product.us_available 'yes, Match-Trader only'; the MT5 bar is mapped under fields as T&C 7.3, 7.1(xvi). No clause is cited for Match-Trader being open to US residents. The records behind it name no document: platforms.match_trader 'no country restrictions', restricted_countries 'none listed' and _comparability_note 'clear US path via Match-Trader'. Their wording echoes _leads_third_party.note 'No restricted countries listed', from propfirmmatch, and backtest/HANDOFF.md says 'Do not fill a field from a review site, a comparison site'. The Bybit-route exclusion ('Bybit does not offer to US residents') is also uncited and is Bybit's own rule. Both skeptics' corrections applied."
+  }
+ ],
+ "bitfunded_sources": [
+  {
+   "id": "tou",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "rule_changes date, the same rule applied to rtp, faq and blog: a document-specific dated record where one exists, otherwise firm-level verified_on. firms.json bitfunded.rule_changes[0] {date '2026-09-21', found '... ToU 14(d)(xi)/(x) say 10 and flat 10 days. Help centre newer; stricter applied.'} and rule_changes[2] {date '2026-09-21', found '... ToU 9(a) says 5. Stricter applied.'}. The METHODOLOGY.md corrections row for 2026-09-21 agrees: 'Open-position cap modelled as 10 (ToU). Help centre says 5 ... Rule added: read Terms and help centre both'. The firm-level verified_on '2026-09-18' is earlier, but it is a stamp for the whole firm and not a record of reading this URL; it first appears in root commit 2384dc8 (2026-09-21). config.example.json _compliance_note ('ToU 14(d): 10-day max hold, 10 open trades') shows the ToU was in use before the 09-21 correction, but the repo records no date for that earlier read. (Changed from 2026-09-18 after skeptic review, for consistency.)"
+  },
+  {
+   "id": "criteria",
+   "read_on": "2026-09-18",
+   "doc_dated": null,
+   "evidence": "firm-level verified_on: firms.json bitfunded.verified_on = '2026-09-18'. No rule_changes entry or other dated record names this page, so under the one rule used for every source the firm-level stamp applies. This is a choice among recorded candidates. The others are the top-level firms.json _last_review '2026-09-21' (a review of the whole file) and the commit that first added the URL, 2384dc8 on 2026-09-21 (a commit date for a root snapshot). Neither is a document-specific read record either."
+  },
+  {
+   "id": "rtp",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "rule_changes date: firms.json bitfunded.rule_changes[0] {date '2026-09-21', found 'Help centre (Restricted Trading Practices) says 5 open positions and tiered hold caps; ToU 14(d)(xi)/(x) say 10 and flat 10 days. Help centre newer; stricter applied.'}. The METHODOLOGY.md 2026-09-21 corrections row agrees. No earlier read is recorded. METHODOLOGY says the cap was modelled as 10 (ToU) and the hold as a flat 10 days until the help centre was read, and config.example.json still carries the pre-RTP values (max_simultaneous_positions 10, max_hold_calendar_days 10). So verified_on 2026-09-18 is not evidence of an RTP read. The repo calls the page 'newer' than the ToU but records no publication date."
+  },
+  {
+   "id": "faq",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "rule_changes date: firms.json bitfunded.rule_changes[1] {date '2026-09-21', found 'FAQ states daily limit from INITIAL balance; earlier troid config assumed day-start. FAQ applied; crossover corrected $97,917 → $98,000.'}. The METHODOLOGY.md 2026-09-21 row agrees: 'Bitfunded's FAQ says initial balance. An unverified assumption in the first config ...'. references/bitfunded.md cites the FAQ but gives no date, so no dated earlier read exists, and firm-level verified_on 2026-09-18 is not evidence of a FAQ read. references/bitfunded.md also says 'The FAQ appears to lag the product ... treat the FAQ as stale where they disagree.'"
+  },
+  {
+   "id": "blog",
+   "read_on": "2026-09-21",
+   "doc_dated": "2026-08-28",
+   "evidence": "rule_changes date: firms.json bitfunded.rule_changes[2] {date '2026-09-21', found 'Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied.'}. That entry records a reading for 2-Step minimum days. For the Instant limits mapped to this blog, the only dated trace is commit 2384dc8 (2026-09-21), which first added config.example.json profiles.instant._note 'Confirmed Bitfunded blog 2026-08-28' (git log -S'Confirmed Bitfunded blog'). It is the same date, but the kind of evidence differs. The repo says only 'Blog'. This URL is taken to be that blog because it is the only blog URL in verified_from and its slug names 2-Step and Instant. The title is reconstructed from the slug. doc_dated 2026-08-28 is an interpretation: firms.json writes 'Blog (2026-08-28)' and 'Blog 2026-08-28 says', a document-date form, and nothing labels it. The config note 'Confirmed Bitfunded blog 2026-08-28' could instead be read as a confirmation date."
+  }
+ ],
+ "brightfunded_sources": [
+  {
+   "id": "product_1step",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "Kind of evidence: a dated annotation in firms.json brightfunded.verified_from, \"https://brightfunded.com/1-step (product numbers, 2026-09-21)\". The git first-added commit agrees: 187dc35, 2026-09-21 22:28 UTC (\"snapshot from the other sandbox (2026-09-21 22:15 UTC)\"). The same commit added products.1step. A product page has no date of its own, so doc_dated is null. The fetch to corroborate failed because brightfunded.com is refused by the egress proxy (CONNECT 403). brightfunded.verified_on is null and verified is false, so a renderer must take this date from this source's read_on. It must not fall back to verified_on or _last_review."
+  },
+  {
+   "id": "tc",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "Kind of evidence: the git first-added commit date only, which is an upper bound and not a recorded read. The URL first appears in 187dc35, 2026-09-21 22:28:33 UTC (git log -S'brightfunded.com/terms-and-conditions' -- firms.json). The verified_from entry has no date, only '(framework; delegates numbers to Product Specifications)'. _last_review is NOT used as evidence. It was already '2026-09-21' in the first commit, 2384dc8, when BrightFunded's verified_from was [], so it dates the firm-selection review and not this read. Other BrightFunded records in the same snapshot are dated 2026-09-21 (the product page annotation, the affiliate signing, comparison_approval). That is consistent with the date but does not record when the T&C was read. No modified date is recorded. The fetch was refused by the egress proxy."
+  },
+  {
+   "id": "help_daily_loss",
+   "read_on": "2026-09-22",
+   "doc_dated": "2026-05-20",
+   "evidence": "Kind of evidence: the git first-added commit date, which is an UPPER BOUND and not a recorded read date. The commit is df7396d, 2026-09-22 03:55:41 UTC (\"firms: BrightFunded to 15 of 18\"). It merged firms-patch-2.json verified_from_add, and the patch carries no read date. The uploaded patch file's mtime, 2026-09-22 03:52:29 UTC, tightens the bound slightly. Lower bound: at snapshot 187dc35 (2026-09-21 22:15 UTC) the help centre was still unread. _daily_note says 'Help centre needed', and _open_questions lists 'static or trailing? (help centre or support)' and 'reset hour and daily basis'. The read therefore fell between 2026-09-21 22:15 UTC and 2026-09-22 03:52 UTC, and may have been on 2026-09-21 UTC. If the site prints 'as published on 2026-09-22', that is the commit date. doc_dated 2026-05-20 is the unlabelled parenthetical beside the URL, 'URL (2026-05-20)'. The repo never says whether it is a publication or an update date. It is treated as the document's date and not troid's read date, because on 2026-09-21 the help centre was still recorded as unread. It is identical for both articles. It could not be corroborated because help.brightfunded.com is refused by the egress proxy (CONNECT 403). _to_verify.daily_basis names a different title, 'Your Daily Loss Limit, Explained'. That entry is a reading plan written at 187dc35 and never updated after df7396d. Whether it names the same article is unconfirmed, and it is not used as evidence of what was read."
+  },
+  {
+   "id": "help_1step",
+   "read_on": "2026-09-22",
+   "doc_dated": "2026-05-20",
+   "evidence": "Kind of evidence: the git first-added commit date, which is an UPPER BOUND and not a recorded read date. The commit is df7396d, 2026-09-22 03:55:41 UTC, the merge of firms-patch-2.json verified_from_add, and the patch carries no read date. The patch file mtime is 2026-09-22 03:52:29 UTC. The lower bound is 187dc35 at 2026-09-21 22:15 UTC, when the help centre was still unread (_daily_note, _open_questions). The read may therefore have been on 2026-09-21 UTC. doc_dated 2026-05-20 is the unlabelled parenthetical beside the URL. Its type is unrecorded. It is treated as the document's date, not a read date, for the same reason as help_daily_loss. It could not be corroborated because help.brightfunded.com is refused by the egress proxy. The repo, including the df7396d message ('each from a help-centre article recorded in verified_from'), never says which of the two articles supplied which field."
+  },
+  {
+   "id": "affiliate_agreement",
+   "read_on": "2026-09-21",
+   "doc_dated": null,
+   "evidence": "Kind of evidence: a dated annotation of troid's own act, 'signed 2026-09-21' in verified_from (the agreement's own record is now kept privately). Troid executed the agreement that day. The git first-added commit agrees: 187dc35, 2026-09-21. doc_dated is null. The signing date is troid's execution date, not a publication or version date of the document, and none is recorded. This is NOT a rules source. verified_from says it is not a source for any trading rule, and no rule field maps to it."
+  }
+ ],
+ "crypto_fund_trader_sources": [
+  {
+   "id": "tc",
+   "read_on": "2026-09-21",
+   "doc_dated": "2026-03-30",
+   "evidence": "DERIVED, NOT A RECORDED READ DATE. crypto_fund_trader.verified_on is null and verified is false, so the date is bracketed from other records. Upper bound (GIT COMMIT DATE): `git log -S'cryptofundtrader.com/terms-and-conditions' -- firms.json` returns 187dc35, 2026-09-21 22:28:33 UTC, message 'snapshot from the other sandbox (2026-09-21 22:15 UTC)'. That commit added the URL and every CFT rule value together, and no rule value has changed since: diffing 187dc35 against the working tree changes only _link_live_note, _required_disclaimer_note, affiliate_agreement, affiliate_payout, calc, link_live, panel_note, required_disclaimer and required_disclaimer_source. Lower bound (same-day dated records): the root commit 2384dc8 (2026-09-21 16:51 UTC) has no crypto_fund_trader key and no _external_ranking_snapshot, and its backtest/HANDOFF.md heading reads 'Firm verification — BrightFunded and Breakout'. CFT was nominated from _external_ranking_snapshot (date '2026-09-21'; _why_candidate quotes its '109 at 4.1'). _leads_third_party (source dated '2026-09-21') says it 'Corroborates the T&C', so the T&C had been read by then. Records NOT used as the read date: _last_review '2026-09-21', because it was already in 2384dc8 before CFT existed in the file and is the firm-list review date (the earlier mapping wrongly cited it as corroboration, and both skeptics are right about this); affiliate_agreement.read '2026-09-21' and _link_note 'Recorded 2026-09-21', because they date the affiliate terms and link, which are other documents; 843db2f (2026-09-22), because it only added the calc block restating the 2026-09-21 values and is a code date. Display rule: show this as 'read by 2026-09-21 (commit date)', never as a verified_on value. Not corroborated live: WebFetch of the URL returned EGRESS_BLOCKED, so none of the cited clauses (5.1, 5.8, s.6, 7.1(xiii), 7.1(xvi), 7.3, 8.i–8.ii) has been checked against the live page."
+  }
+ ]
+}

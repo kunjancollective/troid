@@ -90,6 +90,13 @@ a{color:var(--signal);text-decoration:none;border-bottom:1px solid
   color-mix(in srgb,var(--signal) 30%,transparent)}
 code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
   padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding:4px 8px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:right}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
 footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
 </style>
@@ -155,19 +162,19 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
     <div class="cell">
       <div class="k">Bitfunded · reference</div>
       <div class="v" style="font-size:14px;margin:4px 0">1-Step 4% / 6% static · 2-Step 5% / 10%</div>
-      <div class="s">Every rule verified from Terms + help centre. Where troid&#x27;s ledger runs.</div>
+      <div class="s">Where troid&#x27;s ledger runs. Each rule&#x27;s source and read date is on troid&#x27;s compare.</div>
       <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link · their promos apply here</div>
     </div>
     <div class="cell">
       <div class="k">BrightFunded · #1 by reviews</div>
-      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules verified</div>
+      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules filled · 13 sourced</div>
       <div class="s">128 verified reviews at 4.5 on propfirmmatch. Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
       <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
     </div>
     <div class="cell">
       <div class="k">Crypto Fund Trader · #2 by reviews</div>
-      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules verified</div>
-      <div class="s">109 verified reviews at 4.1 on propfirmmatch. Up to 100× leverage per third-party sources — the breaker model takes that as an input.</div>
+      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 12 sourced</div>
+      <div class="s">109 verified reviews at 4.1 on propfirmmatch. Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.</div>
       <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
     </div>
   </div>
@@ -224,7 +231,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </div></footer>
 
 <!-- profiles:start -->
-<script>var FIRMS={"bitfunded":{"name":"Bitfunded","products":{"1step":{"label":"1-Step","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"2step_s1":{"label":"2-Step \u00b7 S1","d":5,"m":10,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"2step_s2":{"label":"2-Step \u00b7 S2","d":5,"m":8,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"express":{"label":"Express","d":3,"m":3,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"instant":{"label":"Instant","d":3,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5},"trader":{"label":"Funded","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5}}},"brightfunded":{"name":"BrightFunded","products":{"1step":{"label":"1-Step","d":3,"m":6,"basis":"max_balance_equity","dd":"trailing","locks":6,"hwm":"equity","fee":null,"lev":null}}},"crypto_fund_trader":{"name":"Crypto Fund Trader","products":{"1phase":{"label":"1-Phase (Advanced)","d":4,"m":6,"basis":"day_start","dd":"trailing","locks":6,"hwm":"balance","fee":0.0325,"lev":100},"2phase":{"label":"2-Phase","d":5,"m":10,"basis":"day_start","dd":"static","locks":6,"hwm":"balance","fee":0.0325,"lev":100},"instant":{"label":"Instant","d":4,"m":6,"basis":"day_start","dd":null,"locks":6,"hwm":"balance","fee":0.0325,"lev":100}}}};</script>
+<script>var FIRMS={"bitfunded":{"name":"Bitfunded","products":{"1step":{"label":"1-Step","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"m":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"lev":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]}}},"2step_s1":{"label":"2-Step \u00b7 S1","d":5,"m":10,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":null,"m":null,"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":null}},"2step_s2":{"label":"2-Step \u00b7 S2","d":5,"m":8,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":null,"m":null,"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":null}},"express":{"label":"Express","d":3,"m":3,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":null,"m":null,"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":null}},"instant":{"label":"Instant","d":3,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"Blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"m":{"c":"Blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"locks":null,"hwm":null,"fee":null,"lev":null}},"trader":{"label":"Funded","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":null,"m":null,"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":null}}}},"brightfunded":{"name":"BrightFunded","products":{"1step":{"label":"1-Step","d":3,"m":6,"basis":"max_balance_equity","dd":"trailing","locks":6,"hwm":"equity","fee":null,"lev":null,"levb":null,"pv":{"d":{"c":"1-Step product page and help centre per-plan table, accounts bought from 2025-09-22","o":["2026-09-21","2026-09-22"]},"m":{"c":"1-Step product page","o":["2026-09-21"]},"basis":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step'","o":["2026-09-22"]},"dd":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark","o":["2026-09-22"]},"locks":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step'","o":["2026-09-22"]},"hwm":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3","o":["2026-09-22"]},"fee":null,"lev":null}}}},"crypto_fund_trader":{"name":"Crypto Fund Trader","products":{"1phase":{"label":"1-Phase (Advanced)","d":4,"m":6,"basis":"day_start","dd":"trailing","locks":6,"hwm":"balance","fee":0.0325,"lev":100,"levb":[{"max_quota":25000,"lev":5},{"min_quota":50000,"lev":100}],"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}},"2phase":{"label":"2-Phase (Advanced)","d":5,"m":10,"basis":"day_start","dd":"static","locks":6,"hwm":"balance","fee":0.0325,"lev":100,"levb":[{"max_quota":25000,"lev":5},{"min_quota":50000,"lev":100}],"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}},"instant":{"label":"Instant","d":4,"m":6,"basis":"day_start","dd":null,"locks":6,"hwm":"balance","fee":0.0325,"lev":5,"levb":null,"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Student up to $25k","o":["2026-09-21"]}}}}}};var PROV_TAIL="Rules change without notice. Verify with the firm before trading.";</script>
 <!-- profiles:end -->
 <script>
 /* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
@@ -232,41 +239,90 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 var MMR=0.005;
 function n(id){return parseFloat(document.getElementById(id).value)||0}
 function el(id){return document.getElementById(id)}
-function $(x){return "$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
+function $(x){return (x<0?"−$":"$")+Math.abs(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
 var PEND='<span style="color:var(--dim);font-style:italic">pending</span>';
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function n4(x){return x.toLocaleString(undefined,{maximumFractionDigits:6})}
+function pc(x){return x.toFixed(2)+"%"}
+function andj(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}
+/* The provenance block under every result: firm, product, the date troid read each rule it used, each rule's section,
+   and the formula. p.pv comes from firms.json provenance via gen_compare.py; a rule without a recorded source says so.
+   PROV_TAIL is the same sentence troid's compare uses, generated alongside FIRMS. */
+function provBlock(f,p,used,formula,assumed){
+  var by={},order=[],dates=[],missing=[];
+  used.forEach(function(u){var c=p.pv&&p.pv[u[0]];
+    if(!c){missing.push(u[1]);return}
+    if(!by[c.c]){by[c.c]={labs:[],o:c.o||[]};order.push(c.c)}by[c.c].labs.push(u[1]);
+    (c.o||[]).forEach(function(d){if(dates.indexOf(d)<0)dates.push(d)})});
+  dates.sort();
+  var t='Computed from <b>'+esc(f.name)+" "+esc(p.label)+'</b> rules';
+  if(order.length)t+=' as published on <b>'+andj(dates)+'</b> — '+order.map(function(c){
+    return by[c].labs.join(", ")+" from "+esc(c)+(dates.length>1&&by[c].o.length?" (read "+andj(by[c].o)+")":"")}).join(" · ");
+  if(missing.length)t+=(order.length?". ":" — ")+"Source not yet recorded for "+missing.join(", ");
+  if(assumed)t+=". "+assumed;
+  return '<div class="prov">'+t+'. '+PROV_TAIL+' <code>'+formula+'</code></div>';
+}
+function working(steps,open){
+  return '<details class="work"'+(open?" open":"")+'><summary>show the working</summary><div class="wt"><table>'+steps.map(function(x){
+    return '<tr><td>'+x[0]+'</td><td><code>'+x[1]+'</code></td><td class="num">'+x[2]+'</td></tr>'}).join("")+'</table></div></details>';
+}
+/* A firm whose cap depends on account size (lev_bands in firms.json): the band for this quota, or null when no band covers it. */
+function levCapFor(p,quota){
+  if(!p.levb)return p.lev;
+  for(var i=0;i<p.levb.length;i++){var b=p.levb[i];
+    if((b.max_quota==null||quota<=b.max_quota)&&(b.min_quota==null||quota>=b.min_quota))return b.lev}
+  return null;
+}
 function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
 function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
 function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none"}
 function render(){
+  var wOpen=!!document.querySelector("#result details.work[open]");
   var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
   var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
   var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
   var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value;
   var dpct=p.d/100,mpct=p.m/100,notes=[],pend=[];
+  var steps=[["inputs","quota · equity · day start",$(quota)+" · "+$(eq)+" · "+$(ds)],
+             ["inputs","side · entry · stop · target R",(side>0?"long":"short")+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
+             ["inputs","risk % · budget cap % · leverage · margin",n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+mode]];
   // daily floor, by the firm's basis
-  var dFloor=null;
-  if(p.basis==="initial")dFloor=ds-quota*dpct;                      // fixed amount from the initial balance
-  else if(p.basis==="day_start")dFloor=ds*(1-dpct);                  // percentage of the day-start balance
-  else if(p.basis==="max_balance_equity")dFloor=hi-quota*dpct;       // fixed amount below the high at rollover
+  var dFloor=null,fd="",fdd="";
+  if(p.basis==="initial"){dFloor=ds-quota*dpct;fd="day start − quota × "+p.d+"%";}                    // fixed amount from the initial balance
+  else if(p.basis==="day_start"){dFloor=ds*(1-dpct);fd="day start × (1 − "+p.d+"%)";}                 // percentage of the day-start balance
+  else if(p.basis==="max_balance_equity"){dFloor=hi-quota*dpct;fd="high at rollover − quota × "+p.d+"%";
+    steps.push(["high at rollover","input (defaults to day start)",$(hi)]);}                         // fixed amount below the high at rollover
   else pend.push("daily basis");
   // max-loss floor, by the firm's drawdown type
   var ddFloor=null,locked=false;
-  if(p.dd==="static")ddFloor=quota*(1-mpct);
-  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);}
+  if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd="quota × (1 − "+p.m+"%)";}
+  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);
+    fdd=locked?"quota (locked after +"+p.locks+"%)":"high-water mark × (1 − "+p.m+"%)";
+    steps.push(["high-water mark","input (defaults to max(equity, quota))",$(hwm)]);}
   else pend.push("drawdown type");
+  if(dFloor!=null){steps.push(["daily floor",fd,$(dFloor)]);steps.push(["daily budget","equity − daily floor",$(eq-dFloor)]);}
+  if(ddFloor!=null){steps.push(["max-loss floor",fdd,$(ddFloor)]);steps.push(["drawdown budget","equity − max-loss floor",$(eq-ddFloor)]);}
+  var formula=(dFloor!=null&&ddFloor!=null)?"room = min(equity − ("+fd+"), equity − "+fdd+")":
+    (dFloor!=null?"room = equity − ("+fd+")":"room = equity − "+fdd);
+  // the rules this result actually used: only rules that have a value (a pending rule is pending, not unsourced)
+  var used=[];
+  if(dFloor!=null){used.push(["d","daily "+p.d+"%"]);used.push(["basis","daily basis"]);}
+  if(ddFloor!=null){used.push(["m","max "+p.m+"%"]);used.push(["dd","drawdown type"]);
+    if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks","lock at +"+p.locks+"%"]);if(p.hwm!=null)used.push(["hwm","high-water-mark basis"]);}}
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){
     h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · daily basis and drawdown type not yet verified from the firm’s documents</span></div>'+
       '<div class="notes"><div>troid sizes against verified rules only. troid’s compare shows what is pending for this firm.</div></div>';
     el("result").innerHTML=h;return;
   }
-  var bind,eff;
+  var bind,eff,one=(dB==null||ddB==null);
   if(dB==null){bind="max drawdown";eff=ddB;notes.push("daily basis pending for this firm — sized against the drawdown ceiling only");}
   else if(ddB==null){bind="daily loss limit";eff=dB;notes.push("drawdown type pending for this firm — sized against the daily ceiling only");}
   else{bind=dB<=ddB?"daily loss limit":"max drawdown";eff=Math.min(dB,ddB);}
+  var bindStep=["binding",one?"the only verified budget":"min(daily budget, drawdown budget)",bind+" · "+$(eff)];
   if(p.dd==="trailing")notes.push(locked?"trailing floor locked at the initial balance ("+$(quota)+") after +"+p.locks+"%":
-    "trailing floor "+$(ddFloor)+" = high-water mark × (1 − "+(mpct*100)+"%)"+(p.hwm==="equity"?" — trails on equity intraday: an unrealised high raises the floor":""));
-  if(p.basis==="max_balance_equity")notes.push("daily floor = high at rollover − "+(dpct*100)+"% of the original size");
+    "trailing floor "+$(ddFloor)+" = high-water mark × (1 − "+p.m+"%)"+(p.hwm==="equity"?" — trails on equity intraday: an unrealised high raises the floor":""));
+  if(p.basis==="max_balance_equity")notes.push("daily floor = high at rollover − "+p.d+"% of the original size");
   var dist=Math.abs(entry-stop),blocks=[];
   if(side>0&&stop>=entry)blocks.push("stop at or above entry on a long");
   if(side<0&&stop<=entry)blocks.push("stop at or below entry on a short");
@@ -275,34 +331,55 @@ function render(){
   var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
   var reduced=risk<intended-1e-9;
   if(blocks.length){
+    steps.push(bindStep);
     h='<div class="verdict vBLOCK"><span class="vtag">BLOCK</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
-      blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>';
+      blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
     el("result").innerHTML=h;return;
   }
   var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
-  if(!feeKnown){pend.push("fee");notes.push("fee per side pending for this firm — size shown before fees");}
-  var levCap=p.lev,levUsed=lev;
-  if(levCap!=null&&lev>levCap){levUsed=levCap;notes.push("leverage capped at "+levCap+"× by the firm");}
-  if(levCap==null)pend.push("leverage cap");
+  if(feeKnown)used.push(["fee","fee "+p.fee+"% per side"]);
+  else{pend.push("fee");notes.push("fee per side pending for this firm — size shown before fees");}
+  var levCap=levCapFor(p,quota),levUsed=lev;
+  if(levCap!=null){used.push(["lev","leverage cap "+levCap+"×"+(p.levb?" at this account size":"")]);
+    if(lev>levCap){levUsed=levCap;notes.push("leverage capped at "+levCap+"× by the firm");}}
+  else{pend.push("leverage cap");if(p.levb)notes.push("no leverage class recorded for a "+$(quota)+" account — cap pending at this size");}
   var fu=entry*fee*2,qty=risk/(dist+fu),notional=qty*entry,margin=notional/levUsed;
   var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*dist;
   var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
+  steps.push(bindStep);
+  steps.push(["intended risk","equity × "+n("riskPct")+"%",$(intended)]);
+  steps.push(["cap","budget × "+n("capPct")+"%",$(cap)]);
+  steps.push(["risk","min(intended, cap)",$(risk)]);
+  steps.push(["stop distance","|entry − stop|",n4(dist)+" ("+pc(dist/entry*100)+")"]);
+  if(feeKnown)steps.push(["fee per unit","entry × "+p.fee+"% × 2",n4(fu)]);
+  else steps.push(["fee per unit","fee per side pending: taken as 0, size before fees","0"]);
+  steps.push(["quantity",feeKnown?"risk ÷ (stop distance + fee per unit)":"risk ÷ stop distance",n4(qty)]);
+  steps.push(["notional","quantity × entry",$(notional)]);
+  steps.push(["leverage used","min(your "+lev+"×, cap "+(levCap==null?"pending":levCap+"×")+")",levUsed+"×"]);
+  steps.push(["margin","notional ÷ leverage used",$(margin)]);
+  if(feeKnown)steps.push(["fees","quantity × fee per unit",$(fees)+" ("+pc(fshare)+" of risk)"]);
+  steps.push(["budget used","risk ÷ budget",consumes.toFixed(1)+"%"]);
+  steps.push(["losses left","floor(budget ÷ risk)",String(left)]);
+  steps.push(["target","entry "+(side>0?"+":"−")+" "+tR+" × stop distance",target.toFixed(2)]);
   if(feeKnown&&fshare>15)notes.push("fees are "+fshare.toFixed(0)+"% of risk — stop tight enough that costs dominate");
   if(reduced)notes.push("cut from "+$(intended)+" to "+$(risk)+" — "+bind+" budget caps it");
   notes.push(left+" more losses at this size before "+bind+" trips");
-  // circuit breakers: adverse move at which each thing stops you
-  var sp=dist/entry*100,liq;
-  if(mode==="isolated")liq=(1-(1-1/levUsed)/(1-MMR))*100;
-  else liq=notional<eq/MMR?(1-(1-eq/notional)/(1-MMR))*100:Infinity;
+  // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
+  var sp=dist/entry*100,liq,fl;
+  if(mode==="isolated"){liq=(1-(1-1/levUsed)/(1-MMR))*100;fl="1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR "+(MMR*100)+"%)";}
+  else{liq=notional<eq/MMR?(1-(1-eq/notional)/(1-MMR))*100:Infinity;fl="1 − (1 − equity ÷ notional) ÷ (1 − MMR "+(MMR*100)+"%)";}
   var ord=[["your stop",sp]];
-  if(dB!=null)ord.push(["daily limit",dB/notional*100]);
-  if(ddB!=null)ord.push([p.dd==="trailing"&&!locked?"trailing floor":"max-loss floor",ddB/notional*100]);
+  if(dB!=null){ord.push(["daily limit",dB/notional*100]);steps.push(["daily-limit distance","daily budget ÷ notional",pc(dB/notional*100)]);}
+  if(ddB!=null){var fname=p.dd==="trailing"&&!locked?"trailing floor":"max-loss floor";ord.push([fname,ddB/notional*100]);
+    steps.push([fname+" distance","drawdown budget ÷ notional",pc(ddB/notional*100)]);}
   ord.push(["exchange liq ("+mode+")",Math.max(liq,0)]);
+  steps.push(["exchange liq ("+mode+")",fl,isFinite(liq)?pc(Math.max(liq,0)):"unreachable"]);
   ord.sort(function(a,b){return a[1]-b[1]});
   if(ord[0][0]!=="your stop")notes.push("DANGER — "+ord[0][0]+" binds at "+ord[0][1].toFixed(2)+"% adverse, inside your stop");
   else if(mode==="cross")notes.push("cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it");
   else notes.push("isolated: exchange liquidates at "+liq.toFixed(1)+"% for the position’s own margin, before the floor");
   var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"—")}).join("  →  ");
+  var sizeF="size = min(equity × "+n("riskPct")+"%, room × "+n("capPct")+"%) ÷ (stop distance"+(feeKnown?" + entry × "+p.fee+"% × 2":"")+")";
   var v=reduced?"REDUCE":"OK";
   h='<div class="verdict v'+v+'"><span class="vtag">'+v+'</span>'+
     '<span class="vtxt">'+f.name+" · "+p.label+" · binding · "+bind+" · "+$(eff)+' of room</span></div>'+
@@ -314,7 +391,8 @@ function render(){
     '<div class="cell"><div class="k">stop</div><div class="v">'+(dist/entry*100).toFixed(2)+'%</div><div class="s">tgt '+target.toFixed(2)+'</div></div>'+
     '<div class="cell"><div class="k">budget used</div><div class="v">'+consumes.toFixed(0)+'%</div><div class="s">'+(ddFloor==null?"floor "+PEND:"floor "+$(ddFloor))+'</div></div></div>'+
     '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">breakers</span> '+brk+'</div>'+
-    notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>';
+    notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
+    provBlock(f,p,used,formula+"; "+sizeF,"Exchange liquidation assumes a "+(MMR*100)+"% maintenance margin, troid's assumption with no firm source")+working(steps,wOpen);
   el("result").innerHTML=h;
 }
 el("firm").addEventListener("change",fillProfiles);el("profile").addEventListener("change",function(){toggleInputs();render()});

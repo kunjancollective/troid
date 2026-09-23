@@ -33,13 +33,15 @@ ok("BF equity note", r.notes.some((x) => x.includes("trails on equity intraday")
 r = T.check_budget({ firm: "brightfunded", product: "1step", quota: 100000, equity: 106000, day_start: 106000, high_water_mark: 106000, high_at_rollover: 106000 });
 ok("BF locked at +6%", r.trailing_locked === true && r.dd_floor === 100000 && r.daily_budget === 3000, r);
 
-// --- CFT: day-start basis; instant has drawdown pending; leverage capped at 100
+// --- CFT: day-start basis; Instant has drawdown pending; Instant 5× (Student band), 1-Phase 100× (Advanced)
 r = T.check_budget({ firm: "crypto_fund_trader", product: "1phase", quota: 100000, equity: 96000, day_start: 96000 });
 ok("CFT day-start budget 3840, dd 2000", r.daily_budget === 3840 && r.dd_budget === 2000 && r.binding === "max drawdown", r);
 ok("CFT day-start crossover 97916.67", r.crossover_equity === 97916.67, r.crossover_equity);
-r = T.size_trade({ firm: "crypto_fund_trader", product: "instant", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
+r = T.size_trade({ firm: "crypto_fund_trader", product: "instant", quota: 10000, equity: 10000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
 ok("CFT instant drawdown pending, sized on daily", r.pending.includes("drawdown_type") && r.binding === "daily loss limit" && r.dd_floor === null, r);
-ok("CFT leverage capped 100", r.leverage_used === 100 && r.notes.some((x) => x.includes("capped at 100")), r);
+ok("CFT Instant capped at 5 (Student band, $2.5k-$10k)", r.leverage_used === 5 && r.notes.some((x) => x.includes("capped at 5×")), r);
+r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
+ok("CFT 1-Phase capped at 100 (Advanced)", r.leverage_used === 100 && r.notes.some((x) => x.includes("capped at 100×")), r);
 
 // --- unknown firm / product, blocks, compliance, rules
 ok("unknown firm", /unknown firm/.test(T.size_trade({ firm: "ftmo", product: "x", quota: 1, equity: 1, side: "long", entry: 2, stop: 1 }).error));

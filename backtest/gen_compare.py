@@ -35,6 +35,34 @@ FAQ = HERE.parent / "web" / "public" / "faq.html"
 RANK = {e["firm"]: (i + 1, e) for i, e in enumerate((FIRMS.get("_external_ranking_snapshot") or {}).get("top", []))}
 
 
+def cite(f, field, product=None, fallback=True):
+    """Where a rule was read: {'c': section, 'o': [read dates]} from firms.json provenance, or None when no source
+    is recorded. A product's own limits never fall back to the firm-level cite (that would credit one product's
+    source to another); firm-wide rules do."""
+    P = f.get("provenance") or {}
+    ent = ((P.get("products") or {}).get(product) or {}).get(field) if product else None
+    if product and field in (P.get("product_only") or []):
+        fallback = False                                  # the firm-level cite covers one product only
+    if ent is None and fallback:
+        ent = (P.get("fields") or {}).get(field)
+    if not ent:
+        return None
+    S = P.get("sources") or {}
+    unknown = [i for i in ent["src"] if i not in S]
+    assert not unknown, f"{f['name']}: provenance for {field} cites unknown source(s) {unknown}"
+    sec = ent["section"]
+    if sec.startswith(f["name"] + " "):
+        sec = sec[len(f["name"]) + 1:]                    # the block already names the firm
+    return {"c": sec.replace(" — ", ": "), "o": sorted({S[i]["read_on"] for i in ent["src"] if S[i].get("read_on")})}
+
+
+PROV_TAIL = "Rules change without notice. Verify with the firm before trading."
+
+
+def sourced(f, x, p):
+    return p.get(x) is not None and cite(f, x) is not None
+
+
 def link_live(f):
     """The contract: a human set link_live, AND daily, max, target and price are verified from the firm's documents."""
     p = f["compare_product"]
@@ -65,8 +93,8 @@ def panel_cell(k, f):
                                              + (f" {p['drawdown_type']}" if p.get("drawdown_type") else ""))
         v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(summary)}</div>'
     elif link_live(f):
-        n = sum(1 for x in FIELDS if p.get(x) is not None)
-        v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{n} of {len(FIELDS)} rules verified</div>'
+        n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
+        v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{n} of {len(FIELDS)} rules filled · {m} sourced</div>'
     else:
         v = '<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">verification pending</div>'
     notes = []
@@ -104,10 +132,19 @@ def profiles_js():
                             "locks": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
                             "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
                             "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
-                            "lev": pc.get("max_leverage", c.get("max_leverage"))}
+                            "lev": pc.get("max_leverage", c.get("max_leverage")),
+                            "levb": None if "max_leverage" in pc else c.get("lev_bands"),
+                            "pv": {"d": cite(f, "daily_pct", pk, fallback=False), "m": cite(f, "max_pct", pk, fallback=False),
+                                   "basis": cite(f, "daily_basis", pk, fallback="daily_basis" not in pc),
+                                   "dd": cite(f, "drawdown", pk, fallback="drawdown" not in pc),
+                                   "locks": cite(f, "locks_at_initial_after_pct", pk, fallback="locks_at_initial_after_pct" not in pc),
+                                   "hwm": cite(f, "hwm_basis", pk, fallback="hwm_basis" not in pc),
+                                   "fee": cite(f, "fee_per_side_pct", pk, fallback="fee_per_side_pct" not in pc),
+                                   "lev": cite(f, "max_leverage", pk, fallback="max_leverage" not in pc)}}
         if products:
             out[k] = {"name": f["name"], "products": products}
-    return "<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";</script>"
+    return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";var PROV_TAIL=" + json.dumps(PROV_TAIL)
+            + ";</script>")
 
 
 def rewrite_region(path, tag, inner):
@@ -125,19 +162,21 @@ def js(k, f):
     p = f["compare_product"]
     ag = f.get("affiliate_agreement") or {}
     link_ok = link_live(f)
-    return json.dumps({"name": f["name"], "p": p,
+    c = f.get("calc") or {}; pc = (c.get("products") or {}).get(p.get("key")) or {}
+    return json.dumps({"name": f["name"], "p": p, "label": p["label"], "basis": pc.get("daily_basis", c.get("daily_basis")),
+        "prov": {x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open": f.get("_open_questions", []),
         "url": f.get("affiliate_url") if link_ok else None,
         "code": ag.get("customer_code") if link_ok else None, "promo": f.get("_promo_note") if link_ok else None})
 
 def column(k, f):
-    p = f["compare_product"]; n = sum(1 for x in FIELDS if p.get(x) is not None)
-    tag = "good" if n == len(FIELDS) else ("warn" if n >= len(FIELDS)//2 else "bad")
+    p = f["compare_product"]; n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
+    tag = "good" if m == len(FIELDS) else ("warn" if m >= len(FIELDS)//2 else "bad")
     return f'''<div class="col" id="col-{k}">
   <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">{html.escape(f["name"])}</div>
     <div class="s" style="margin-top:3px">{html.escape(p["label"])}</div>
-    <div style="margin-top:7px"><span class="tag {tag}">{n} of {len(FIELDS)} verified</span></div></div>
+    <div style="margin-top:7px"><span class="tag {tag}">{n} of {len(FIELDS)} filled · {m} sourced</span></div></div>
   <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"></div></div>'''
 
 page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
@@ -149,8 +188,9 @@ page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 .col{{background:var(--surface);display:flex;flex-direction:column}}
 .colhead{{padding:16px 16px 12px;border-bottom:1px solid var(--line)}}
 .rows{{flex:1}}
-.r{{display:flex;justify-content:space-between;gap:10px;padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}}
-.r .l{{color:var(--dim);flex-shrink:0}}.r .v{{font-variant-numeric:tabular-nums;text-align:right}}
+.r{{padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}}
+.r .rt{{display:flex;justify-content:space-between;gap:10px}}.r .pv{{font-size:9.5px;line-height:1.5;color:var(--dim);margin-top:4px}}
+.r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim);flex-shrink:0}}.r .v{{font-variant-numeric:tabular-nums;text-align:right}}
 .r.sec{{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}}
 .pend{{color:var(--dim);font-style:italic}}
 .colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}}
@@ -182,7 +222,32 @@ function n(id){{return parseFloat(document.getElementById(id).value)||0}}
 function $(x){{return "$"+x.toLocaleString(undefined,{{maximumFractionDigits:0}})}}
 var P='<span class="pend">pending</span>';
 function v(x,fmt){{return (x===null||x===undefined)?P:(fmt?fmt(x):String(x))}}
-function row(l,val){{return '<div class="r"><span class="l">'+l+'</span><span class="v">'+val+'</span></div>'}}
+function esc(x){{return String(x).replace(/[&<>"]/g,function(c){{return{{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}}[c]}})}}
+var LAB={{daily_pct:"daily %",max_pct:"max %",daily_basis:"daily basis",drawdown_type:"drawdown type",target_pct:"target",
+  min_days:"min days",max_leverage:"leverage cap",fee_per_side_pct:"fee",reset_utc:"reset",hold_cap:"hold cap",max_open:"open positions",
+  refund:"refund",split:"split",us_available:"US access",consistency_rule:"consistency rule",news_rule:"news rule",profit_cap:"profit cap",price:"price"}};
+/* The provenance block under every number: firm, product, the date troid read each rule, the section, the formula. */
+var PROV_TAIL={json.dumps(PROV_TAIL)};
+function andj(a){{return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}}
+function pv(f,keys,formula){{
+  var by={{}},order=[],dates=[],miss=[];
+  keys.forEach(function(x){{var c=f.prov[x];if(f.p[x]===null||f.p[x]===undefined)return;
+    if(!c){{miss.push(LAB[x]||x);return}}
+    if(!by[c.c]){{by[c.c]={{labs:[],o:c.o}};order.push(c.c)}}by[c.c].labs.push(LAB[x]||x);
+    c.o.forEach(function(d){{if(dates.indexOf(d)<0)dates.push(d)}})}});
+  dates.sort();
+  var t="Computed from "+esc(f.name)+" "+esc(f.label)+" rules";
+  if(order.length){{
+    t+=" as published on "+andj(dates)+" — ";
+    t+=(order.length===1&&keys.length===1)?esc(order[0]):order.map(function(c){{return by[c].labs.join(", ")+" from "+esc(c)+(dates.length>1&&by[c].o.length?" (read "+andj(by[c].o)+")":"")}}).join(" · ");
+  }}
+  if(miss.length)t+=(order.length?". ":" — ")+"Source not yet recorded for "+miss.join(", ");
+  t+=". "+PROV_TAIL;
+  if(formula)t+=" <code>"+formula+"</code>";
+  return '<div class="pv">'+t+'</div>';
+}}
+function row(l,val,prov){{return '<div class="r"><div class="rt"><span class="l">'+l+'</span><span class="v">'+val+'</span></div>'+(prov||"")+'</div>'}}
+function rr(f,l,x,fmt,formula){{var val=f.p[x];return row(l,v(val,fmt),val===null||val===undefined?"":pv(f,[x],formula))}}
 function sec(t){{return '<div class="r sec">'+t+'</div>'}}
 function render(){{
   var Q=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
@@ -190,44 +255,54 @@ function render(){{
     var f=F[k],p=f.p,h="";
     var d=p.daily_pct!=null?p.daily_pct/100:null,m=p.max_pct!=null?p.max_pct/100:null;
     var isStatic=p.drawdown_type!=null&&String(p.drawdown_type).indexOf("static")===0;
-    var known=d!=null&&m!=null, derivable=known&&p.drawdown_type!=null;
+    var known=d!=null&&m!=null, derivable=known&&p.drawdown_type!=null&&p.daily_basis!=null;
     h+=sec("rules");
-    h+=row("daily loss",v(p.daily_pct,function(x){{return x+"% · "+$(Q*x/100)}}));
-    h+=row("daily basis",v(p.daily_basis));
-    h+=row("reset (UTC)",v(p.reset_utc));
-    h+=row("max loss",v(p.max_pct,function(x){{return x+"% · "+$(Q*x/100)}}));
-    h+=row("drawdown type",v(p.drawdown_type));
-    h+=row("target",v(p.target_pct,function(x){{return x+"%"}}));
-    h+=row("min days",v(p.min_days));
-    h+=row("leverage cap",v(p.max_leverage,function(x){{return x+"×"}}));
-    h+=row("hold cap",v(p.hold_cap));
-    h+=row("open positions",v(p.max_open));
-    h+=row("consistency rule",v(p.consistency_rule));
-    h+=row("news rule",v(p.news_rule));
-    h+=row("profit cap",v(p.profit_cap));
+    h+=row("daily loss",v(p.daily_pct,function(x){{return x+"% · "+$(Q*x/100)}}),p.daily_pct==null?"":pv(f,["daily_pct","daily_basis"],
+      f.basis==="day_start"?"$ = day-start balance × daily% (shown for a day starting at quota)":"$ = quota × daily%"));
+    h+=rr(f,"daily basis","daily_basis");
+    h+=rr(f,"reset (UTC)","reset_utc");
+    h+=row("max loss",v(p.max_pct,function(x){{return x+"% · "+$(Q*x/100)}}),p.max_pct==null?"":pv(f,["max_pct","drawdown_type"],
+      isStatic?"$ = quota × max%":"$ = high-water mark × max% (shown at a fresh high equal to quota)"));
+    h+=rr(f,"drawdown type","drawdown_type");
+    h+=rr(f,"target","target_pct",function(x){{return x+"%"}});
+    h+=rr(f,"min days","min_days");
+    h+=rr(f,"leverage cap","max_leverage",function(x){{return x+"×"}});
+    h+=rr(f,"hold cap","hold_cap");
+    h+=rr(f,"open positions","max_open");
+    h+=rr(f,"consistency rule","consistency_rule");
+    h+=rr(f,"news rule","news_rule");
+    h+=rr(f,"profit cap","profit_cap");
     h+=sec("at your sizing");
     var risk=rp*Q;
-    h+=row("risk per trade",$(risk)+" ("+(rp*100).toFixed(2)+"%)");
+    h+=row("risk per trade",$(risk)+" ("+(rp*100).toFixed(2)+"%)",'<div class="pv">From your inputs; no firm rule used. <code>risk = quota × risk %</code></div>');
+    var K=["daily_pct","max_pct","daily_basis","drawdown_type"];
+    var cross=null,cf="";
     if(derivable&&isStatic){{
-      var room=Q*(m-d),cross=Q*(1-m+d);
-      h+=row("room before max loss binds",$(room)+" ("+((m-d)*100).toFixed(1)+"%)");
-      h+=row("ceilings swap at",$(cross));
-      h+=row("losses survivable",room>0&&risk>0?Math.floor(room/risk)+" at "+(rp*100).toFixed(2)+"%":"—");
-    }}else if(derivable){{
-      h+=row("room before max loss binds",'<span class="pend">trailing — moves with your high-water mark</span>');
-      h+=row("ceilings swap at",'<span class="pend">not fixed under trailing</span>');
-      h+=row("losses survivable",known?Math.floor(Q*m/risk)+" from a fresh start, fewer after any profit":P);
+      if(f.basis==="initial"||f.basis==="max_balance_equity"){{cross=Q*(1-m+d);cf="quota × (1 − max% + daily%)";}}
+      else if(f.basis==="day_start"){{cross=Q*(1-m)/(1-d);cf="quota × (1 − max%) ÷ (1 − daily%)";}}
+    }}
+    if(cross!==null){{
+      var room=Q-cross;
+      h+=row("room before max loss binds",$(room)+" ("+(room/Q*100).toFixed(1)+"%)",pv(f,K,"room = quota − "+cf));
+      h+=row("ceilings swap at",$(cross),pv(f,K,"crossover = "+cf));
+      h+=row("losses before max loss binds",room>0&&risk>0?Math.floor(room/risk)+" at "+(rp*100).toFixed(2)+"%":"—",pv(f,K,"floor(room ÷ risk)"));
+      h+=row("losses survivable",risk>0?Math.floor(Q*m/risk)+" from a fresh start":"—",pv(f,["max_pct","drawdown_type"],"floor(quota × max% ÷ risk)"));
+    }}else if(derivable&&!isStatic){{
+      h+=row("room before max loss binds",'<span class="pend">trailing — moves with your high-water mark</span>',pv(f,["drawdown_type"]));
+      h+=row("ceilings swap at",'<span class="pend">not fixed under trailing</span>',pv(f,["drawdown_type"]));
+      h+=row("losses before max loss binds",'<span class="pend">moves with your high-water mark</span>',pv(f,["drawdown_type"]));
+      h+=row("losses survivable",risk>0?Math.floor(Q*m/risk)+" from a fresh start, fewer after any profit":"—",pv(f,["max_pct","drawdown_type"],"floor(quota × max% ÷ risk)"));
     }}else{{
-      h+=row("room before max loss binds",P);h+=row("ceilings swap at",P);h+=row("losses survivable",P);
+      h+=row("room before max loss binds",P);h+=row("ceilings swap at",P);h+=row("losses before max loss binds",P);h+=row("losses survivable",P);
     }}
     if(p.fee_per_side_pct!=null){{var fee=p.fee_per_side_pct/100,drag=s>0?2*fee/(s+2*fee)*100:0;
-      h+=row("fee drag at "+(s*100).toFixed(2)+"% stop",drag.toFixed(1)+"% of risk ("+p.fee_per_side_pct+"%/side)");}}
+      h+=row("fee drag at "+(s*100).toFixed(2)+"% stop",drag.toFixed(1)+"% of risk ("+p.fee_per_side_pct+"%/side)",pv(f,["fee_per_side_pct"],"fee share = 2 × fee ÷ (stop % + 2 × fee)"));}}
     else h+=row("fee drag",P);
-    if(p.max_leverage!=null){{var L=Math.min(lev,p.max_leverage);h+=row("isolated liq. distance","~"+((1-(1-1/L))*100).toFixed(0)+"% at "+L+"×");}}
+    if(p.max_leverage!=null){{var L=Math.min(lev,p.max_leverage);h+=row("isolated liq. distance","~"+((1-(1-1/L))*100).toFixed(0)+"% at "+L+"×",pv(f,["max_leverage"],"distance ≈ 1 ÷ min(your leverage, cap "+p.max_leverage+"×)"));}}
     else h+=row("isolated liq. distance",P);
     h+=sec("cost & access");
-    h+=row("challenge fee",v(p.price));h+=row("refund",v(p.refund));h+=row("profit split",v(p.split));
-    h+=row("US residents",v(p.us_available));
+    h+=rr(f,"challenge fee","price");h+=rr(f,"refund","refund");h+=rr(f,"profit split","split");
+    h+=rr(f,"US residents","us_available");
     var foot="";
     if(f.url){{foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · affiliate link';
       if(f.code)foot+='<br>discount code <b>'+f.code+'</b> — cheaper through this link';
