@@ -26,7 +26,8 @@ ROOT = Path(__file__).resolve().parent.parent
 I18N = ROOT / "web" / "i18n"
 LANGS = json.loads((I18N / "languages.json").read_text())["languages"]
 BY_CODE = {l["code"]: l for l in LANGS}
-HEADER_KEYS = ("_reviewed_by", "_reviewed_on", "_status", "_note", "_drafted_by", "_drafted_on", "_data_en", "_review_notes")
+HEADER_KEYS = ("_reviewed_by", "_reviewed_on", "_status", "_note", "_drafted_by", "_drafted_on", "_data_en", "_review_notes",
+               "_drafted_from")
 
 # troid's product names, fixed once per language under these keys (the brand rule in BRAND.md)
 PRODUCTS = {"product.desk": "troid's desk", "product.compare": "troid's compare", "product.ledger": "troid's ledger",
@@ -61,6 +62,19 @@ def english():
     if _EN is None:
         _EN = {k: v for k, v in json.loads((I18N / "en.json").read_text()).items() if not k.startswith("_")}
     return dict(_EN)
+
+
+def en_hash(s):
+    """A draft records the English each string was translated from (_drafted_from: key -> this hash), so a later
+    change to en.json marks that string stale instead of leaving an outdated translation beside new English."""
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()[:10]
+
+
+def stale(code):
+    """Keys whose English changed after the draft was written, or that the draft never had."""
+    h, s = load(code)
+    was = h.get("_drafted_from") or {}
+    return [k for k, v in english().items() if not s.get(k) or (was and was.get(k) != en_hash(v))]
 
 
 def load(code):
@@ -262,6 +276,8 @@ if __name__ == "__main__":
     for c in codes:
         h, s = load(c)
         probs = check_language(c, require_all=h.get("_status") == "live")
-        print(f"{c}: {h.get('_status')} · {len(s)} strings · {len(probs)} problem(s)")
+        st = stale(c) if h.get("_status") != "absent" else []
+        print(f"{c}: {h.get('_status')} · {len(s)} strings · {len(probs)} problem(s)"
+              + (f" · {len(st)} stale (English changed or missing): {st[:6]}" if st else ""))
         for p in probs[:40]:
             print("   ", p)

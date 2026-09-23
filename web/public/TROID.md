@@ -127,37 +127,55 @@ inside the stop.
 | 1-Step | 4% | 6% static | 10% | 5 | $999 |
 | 2-Step Stage 1 | 5% | 10% static | 8% | 5 | $799 |
 | 2-Step Stage 2 | 5% | 8% static | 5% | 5 | — |
-| 1-Step Express | 3% | 3% static | 3% | 5 | $39 at $5k |
+| 1-Step Express | 3% | 3% static | 9%* | 5 | $39 at $5k |
 | Instant | 3% | 6% static | none | 0 | $249 at $5k · 60% split |
-| Trader (funded) | 4% | 6% static | none | — | — |
+| Funded after 1-Step | 4% | 6% static | none | — | 80% split |
+| Funded after Express | 3% | 3% static | none | — | 80% split |
+| Funded after 2-Step | 5% | 8% static | none | — | 80% split |
+
+Funded (Trader Stage) limits depend on the path, leverage 1:5 on each; any Trader Stage breach
+disqualifies the account and a new challenge is required *(help centre, Challenge & Trader
+Stage)*. \*Express target: 9% in the help centre, 3% in the 28 Aug 2026 blog; the Terms are
+silent on Express. Fees: $999 and $799 are the Expert levels in Terms 9(a).
 
 Express: daily and max are the same size, so both ceilings bind from the first dollar
 lost — its crossover *is* the starting balance. Instant trades evaluation time for a 60%
 split instead of 80%.
 
 The 1-Step is the tightest structure. Sizing that clears it clears anything.
-Fee refunded in full at first profit split. Split 80% rising to 90%.
+Refund: Bitfunded's own documents conflict. Terms 9(a) — 100% at the first profit split
+day, all levels (9(b) repeats it). Help centre — 2-Step only, with the 3rd withdrawal, not
+on promotions. Confirm with Bitfunded before relying on a refund. Split 80% rising to 90%.
 
 ---
 
 ## Bitfunded rules that disqualify (verified, with source)
 
-- **Reset at 00:00 UTC+8 = 16:00 UTC = noon New York.** Morning and afternoon are
-  separate daily budgets. A floating loss that survives the reset counts in full against
+- **Reset at 00:00 UTC+8 = 16:00 UTC = noon New York,** effective any time up to 00:10
+  UTC+8 (16:10 UTC) because of platform settlement. The first ten minutes after the reset
+  are ambiguous: don't rely on a fresh daily budget until 16:10 UTC. Morning and afternoon
+  are separate daily budgets. A floating loss that survives the reset counts in full against
   the new day; yesterday's profit does not carry. *(Help centre, Criteria to be Success)*
 - **Hold limit, tiered:** majors (BTC ETH BNB XRP SOL TRX HYPE ZEC DOGE ADA) 10 days;
   other crypto 7; TradFi 5. *(Restricted Trading Practices s.1)*
-- **5 open positions max.** The Terms say 10; the help centre says 5 and is newer.
-  Stricter governs. *(RTP s.3)*
+- **5 open positions max.** The Terms (14(d)(xi), still as revised 2026-03-24) say 10; the
+  help centre says 5. Stricter governs. *(RTP s.3)*
 - **Concentration ladder:** margin at 65% of capital → 50% payout penalty; 75% → 60%;
   90% → 65%; 96% → 70%. *(RTP s.2)*
-- **Minimum 5 trading days** to clear a stage. The challenge page displays 0; the
-  contract governs. *(ToU 9(a))*
+- **Minimum 5 trading days** to clear a stage, 1-Step and both 2-Step stages. The challenge
+  page displays 0 and the help centre "-"; the contract governs. *(ToU 9(a))*
 - **2 closed trades per stage, each open ≥10 min,** before payout. Repeated trading
   without SL/TP can be classed as excessive risk. *(RTP s.4)*
 - **One active account per challenge level.** Max $355,000 across all seven levels, not
   ten copies of one. *(ToU 6(b))*
 - **Marketed strategies prohibited** for passing an evaluation. *(ToU 14(d)(v))*
+- **No switching strategies between assessment and funded accounts.** *(ToU 14(d)(ix))*
+- **No opposite positions across connected accounts.** *(ToU 13(c)(v))* troid cannot check
+  either of these two from a trade plan; say so when they are relevant.
+- **Any Trader Stage breach disqualifies the account;** a new challenge is required.
+  *(Help centre, Challenge & Trader Stage)*
+- **Countries:** the Terms list no excluded countries; 4(b) requires the trader to comply
+  with the laws of their own country. Never call the firm "available" anywhere.
 - **Payouts capped at 3 per 30 days.** KYC at $10,000 cumulative profit.
 
 When the Terms and the help centre disagree, the stricter number governs until the firm

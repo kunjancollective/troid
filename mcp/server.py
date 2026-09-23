@@ -34,16 +34,24 @@ PROFILES = {
                  "target": 8.0,  "min_days": 5},
     "2step_s2": {"name": "Bitfunded 2-Step Stage 2","daily": 5.0, "maxloss": 8.0,
                  "target": 5.0,  "min_days": 5},
-    "trader":   {"name": "Bitfunded Trader (funded)","daily": 4.0, "maxloss": 6.0,
-                 "target": 0.0,  "min_days": 0},
+    # Trader Stage (funded) limits by path: help centre, Challenge & Trader Stage (read 2026-09-23 via the
+    # owner's research session). 80% split and 1:5 leverage on each; any Trader Stage breach disqualifies.
+    "trader_1step":   {"name": "Bitfunded Trader Stage after the 1-Step", "daily": 4.0, "maxloss": 6.0,
+                       "target": 0.0, "min_days": 0},
+    "trader_express": {"name": "Bitfunded Trader Stage after the Express", "daily": 3.0, "maxloss": 3.0,
+                       "target": 0.0, "min_days": 0},
+    "trader_2step":   {"name": "Bitfunded Trader Stage after the 2-Step", "daily": 5.0, "maxloss": 8.0,
+                       "target": 0.0, "min_days": 0},
     "instant":  {"name": "Bitfunded Instant Funding", "daily": 3.0, "maxloss": 6.0,
                  "target": 0.0,  "min_days": 0,
                  "_note": "Confirmed from Bitfunded blog 2026-08-28: 3% daily, 6% static, no target, "
                           "60% split. RTP: 55% concentration ladder start, 3 closed trades min."},
     "express":  {"name": "Bitfunded 1-Step Express", "daily": 3.0, "maxloss": 3.0,
-                 "target": 3.0,  "min_days": 5,
+                 "target": 9.0,  "min_days": 5,
                  "_note": "Daily and max are the SAME size. Crossover is the starting balance: "
-                          "both ceilings bind from the first dollar lost."},
+                          "both ceilings bind from the first dollar lost. Target 9% per the help "
+                          "centre (Challenge & Trader Stage); the 28 Aug 2026 blog says 3%; the "
+                          "Terms are silent on Express."},
 }
 FEE_PER_SIDE = 0.0004        # 0.04% on notional, each side
 MAX_LEVERAGE = 5.0
@@ -86,7 +94,7 @@ def check_budget(quota: float, equity: float, day_start_balance: float,
     crossover equity the static max loss governs and the advertised daily limit is
     irrelevant.
 
-    profile: 1step | 2step_s1 | 2step_s2 | trader
+    profile: 1step | 2step_s1 | 2step_s2 | express | instant | trader_1step | trader_express | trader_2step
     """
     if profile not in PROFILES:
         return {"error": f"unknown profile. options: {', '.join(PROFILES)}"}
@@ -264,11 +272,21 @@ def check_compliance(hold_days: float = 0.0, open_trades: int = 1,
             "detail": f"{trading_days_so_far} trading days so far; {p['min_days']} required "
                       f"to clear the stage. Note the challenge page displays 0 — the "
                       f"contract governs."})
-    return {"profile": p["name"], "clear": not findings,
-            "findings": findings or [{"severity": "ok", "rule": "—",
-                "detail": "No breach detected against the rules modelled here."}],
-            "caveat": "Checks only the rules modelled above. Not a substitute for reading "
-                      "the firm's Terms. Verify anything material with the firm directly."}
+    clear = not findings
+    findings = findings or [{"severity": "ok", "rule": "—",
+                             "detail": "No breach detected against the rules modelled here."}]
+    # Prohibited practices a trade plan cannot show: stated every time, as information.
+    findings += [{"severity": "info", "rule": "ToU 14(d)(ix)",
+                  "detail": "Switching strategies between the assessment account and the funded "
+                            "account is prohibited. troid cannot check this from the inputs."},
+                 {"severity": "info", "rule": "ToU 13(c)(v)",
+                  "detail": "Opposite positions across connected accounts are prohibited, such as a "
+                            "long on one account and a short on the same asset on another. troid "
+                            "cannot check this from the inputs."}]
+    return {"profile": p["name"], "clear": clear, "findings": findings,
+            "caveat": "Checks only the rules modelled above; findings marked info are rules troid "
+                      "cannot check from the inputs. Not a substitute for reading the firm's "
+                      "Terms. Verify anything material with the firm directly."}
 
 
 @mcp.tool()
@@ -276,7 +294,8 @@ def explain_rule(topic: str) -> dict:
     """Explain a prop-firm rule and why it matters, with the arithmetic.
 
     topics: crossover, reset, fees, leverage, drawdown, ladder, ruin, min_days,
-            hold_limit, accounts, marketed_strategies
+            hold_limit, accounts, marketed_strategies, strategy_switching,
+            opposite_positions, funded_stage
     """
     t = topic.lower().strip().replace(" ", "_")
     lib = {
@@ -287,7 +306,10 @@ def explain_rule(topic: str) -> dict:
         "$98,000 — only $2,000 below the start. Below it the max loss binds and the "
         "advertised 4% daily is fiction. Size against the smaller of the two, always.",
       "reset": "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in "
-        "New York. Not midnight. Morning and afternoon sessions draw on separate daily "
+        "New York. Not midnight. Because of the platform's settlement process the reset can "
+        "take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be "
+        "Success): 16:00-16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh "
+        "daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily "
         "budgets. The trap: a floating loss that survives the reset counts in full against "
         "the new day, because the prior day's profit does not carry over. A position inside "
         "the limit at 11:59 can breach at 12:01 without price moving.",
@@ -338,6 +360,18 @@ def explain_rule(topic: str) -> dict:
         "to pass an evaluation. Buying a bot, signal service or strategy pack and running it "
         "on a challenge may place you in breach regardless of how it performs. This is why "
         "troid evaluates trades rather than generating them.",
+      "strategy_switching": "ToU 14(d)(ix) prohibits switching strategies between assessment "
+        "and funded accounts. A trade plan cannot show it, so troid cannot check it; it is a "
+        "rule about how the account is traded over time, not about one trade.",
+      "opposite_positions": "ToU 13(c)(v) prohibits opposite positions across connected "
+        "accounts: a long on one account and a short on the same asset on another. Hedged "
+        "pairs cancel each other's market risk while each account keeps its own chance of "
+        "passing, which is why firms prohibit them. troid cannot see connected accounts.",
+      "funded_stage": "Trader Stage limits depend on the path (help centre, Challenge & Trader "
+        "Stage): after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the "
+        "2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage "
+        "1:5 on each. Any Trader Stage breach disqualifies the account, and a new challenge "
+        "is required.",
     }
     if t not in lib:
         return {"error": f"unknown topic. options: {', '.join(sorted(lib))}"}

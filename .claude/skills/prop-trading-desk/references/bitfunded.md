@@ -10,8 +10,14 @@ Max daily loss      4%  ($4,000)   realized + floating
 Max loss            6%  ($6,000)   realized + floating, STATIC
 Max leverage        5x
 Fees              0.04% per side on notional (0.08% round trip)
-Daily reset       00:00 UTC+8
+Daily reset       00:00 UTC+8 = 16:00 UTC, effective by 00:10 UTC+8 = 16:10 UTC
 ```
+
+Funded (Trader Stage) limits depend on the path (help centre, Challenge & Trader Stage, read
+2026-09-23): after the 1-Step 4% / 6%, after the Express 3% / 3%, after the 2-Step 5% / 8%,
+each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader
+Stage breach disqualifies the account and a new challenge is required. Express target: 9%
+in the help centre, 3% in the 28 Aug 2026 blog, and the Terms are silent; use 9%.
 
 ## The 4:6 ratio is the whole story
 
@@ -72,8 +78,10 @@ recommendations, and treating a dead hazard as urgent costs credibility on the l
 **The reset lands midday.** 00:00 UTC+8 is 16:00 UTC, which is **noon in New York**
 (11:00 EST in winter). Not overnight. A morning session and an afternoon session are
 on different trading days, and a loss at 11:45 plus a loss at 12:15 draw on separate
-budgets. Bitfunded notes the reset may take until 00:10 UTC+8 to apply, so treat the
-ten minutes either side as undefined and don't hold a marginal position through it.
+budgets. Bitfunded's help centre says that, because of the platform's settlement process,
+the reset may become effective anywhere between 00:00 and 00:10 UTC+8 — 16:00 to 16:10 UTC.
+The first ten minutes after the reset are ambiguous: don't rely on a fresh daily budget until
+16:10 UTC, and don't hold a marginal position through the window.
 
 **Floating loss alone fails the account.** Both limits auto-fail on unrealised loss —
 no close required, no margin call, no chance to recover. An open position that dips to
@@ -99,12 +107,32 @@ scalping approach here needs either a materially better hit rate or a wider stop
 break even against a swing approach. `scripts/risk.py` sizes net of fees and warns
 above 15%.
 
+## Rules a trade plan can't show
+
+Terms 14(d)(ix): no switching strategies between assessment and funded accounts. Terms
+13(c)(v): no opposite positions across connected accounts (a long on one, a short on the
+same asset on another). Neither shows up in sizing inputs, so state them when the user
+talks about moving to a funded account or running more than one account.
+
+## Money and access: what the documents say
+
+**Refund — Bitfunded's documents conflict.** Terms 9(a): every level includes a full (100%)
+refund on completing the level and reaching the first profit split day; 9(b) repeats it.
+Help centre (Challenge & Trader Stage): a refund only on Two Steps evaluations, paid with the
+third withdrawal, not on promotional purchases. Don't pick one: tell the user to confirm with
+Bitfunded before relying on a refund.
+
+**Countries.** The Terms (modified 2026-03-24) contain no excluded-country list; 4(b)
+requires the trader to comply with the laws of their own country. Never say "available".
+
+**Free Trial.** Terms 5(b) still describes one; none was offered as of 23 Sep 2026.
+
 ## Unresolved
 
-**Minimum trading days conflict.** The challenge page shows 0; the FAQ says at least
-5. These can't both be right. Tell the user to confirm with support before planning
-around either, because a 0 assumption plus a real 5-day requirement means passing the
-target and then being unable to clear the stage.
+**Minimum trading days conflict.** Terms 9(a) (modified 2026-03-24) state "Minimum Trading
+Days: 5" for the 1-Step and both 2-Step stages; the challenge page shows 0 and the help centre
+"-". The contract governs: plan for 5, because a 0 assumption plus a real 5-day requirement
+means passing the target and then being unable to clear the stage.
 
 The FAQ also describes a two-stage evaluation, while the current challenge page shows a
 single "1 Step" Stage 1 into Trader Stage. The FAQ appears to lag the product. Prefer the challenge page and the help

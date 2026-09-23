@@ -47,7 +47,13 @@ ok("CFT 1-Phase capped at 100 (Advanced)", r.leverage_used === 100 && r.notes.so
 ok("unknown firm", /unknown firm/.test(T.size_trade({ firm: "ftmo", product: "x", quota: 1, equity: 1, side: "long", entry: 2, stop: 1 }).error));
 ok("block: stop above entry on a long", T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 100000, side: "long", entry: 100, stop: 101 }).verdict === "BLOCK");
 r = T.check_compliance({ firm: "bitfunded", product: "1step", symbol: "SOLUSDT", hold_days: 12, open_trades: 6, margin_pct_of_capital: 70, trading_days_so_far: 3, uses_third_party_strategy: true, accounts_at_this_level: 2, closed_trades_this_stage: 1 });
-ok("compliance: seven findings", r.findings.length === 7 && !r.clear, r.findings.map((f) => f.rule));
+ok("compliance: seven findings, then the two it cannot check", r.findings.filter((f) => f.severity !== "info").length === 7 && !r.clear
+   && r.findings.filter((f) => f.severity === "info").map((f) => f.rule).join("|") === "ToU 14(d)(ix)|ToU 13(c)(v)", r.findings.map((f) => f.rule));
+r = T.check_compliance({ firm: "bitfunded", product: "1step", symbol: "BTCUSDT", hold_days: 1, open_trades: 1 });
+ok("compliance: clear plan stays clear, info still listed with the 2026-09-23 reading of the Terms", r.clear && r.findings[0].severity === "ok"
+   && r.findings.filter((f) => f.severity === "info").every((f) => f.sources[0].read_on === "2026-09-23"), r.findings);
+ok("explain_rule: the two prohibitions troid cannot check", /14\(d\)\(ix\)/.test(T.explain_rule({ topic: "strategy_switching" }).explanation)
+   && /13\(c\)\(v\)/.test(T.explain_rule({ topic: "opposite_positions" }).explanation));
 ok("compliance: other firm pending", T.check_compliance({ firm: "brightfunded" }).pending === true);
 ok("explain_rule crossover", /98,000/.test(T.explain_rule({ topic: "crossover" }).explanation));
 ok("explain_rule unknown", /unknown topic/.test(T.explain_rule({ topic: "moon" }).error));
@@ -64,8 +70,13 @@ ok("2-Step S1: limits cite the Terms of Use; fee and leverage still say not yet 
    && ["fee 0.04% per side", "leverage cap 5×"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
 r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
 ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
-r = T.size_trade({ firm: "bitfunded", product: "trader", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("Funded: limits still say not yet recorded", ["daily 4%", "max 6%"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
+for (const [pk, d, m] of [["trader_1step", 4, 6], ["trader_express", 3, 3], ["trader_2step", 5, 8]]) {
+  r = T.size_trade({ firm: "bitfunded", product: pk, quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
+  ok(`Funded after ${pk.slice(7)}: ${d}% / ${m}%, cited to Challenge & Trader Stage, read 2026-09-23`,
+     [`daily ${d}%`, `max ${m}%`, "leverage cap 5×"].every((k) => { const x = r.sources.find((y) => y.rule === k); return x && /Challenge & Trader Stage/.test(x.document_section || "") && x.read_on.includes("2026-09-23"); }), r.sources);
+}
+ok("the single Funded product is gone", /unknown product|not offered|unknown/.test(JSON.stringify(T.size_trade({ firm: "bitfunded", product: "trader", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 }))));
+ok("reset rule: Bitfunded's 16:00–16:10 UTC settlement window", /16:00–16:10 UTC/.test(T.explain_rule({ topic: "reset" }).explanation) && /16:10 UTC/.test(T.explain_rule({ topic: "reset" }).explanation));
 r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 10000, equity: 10000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
 ok("CFT 1-Phase at $10k: Student band 5×, cited to the Student class", r.leverage_used === 5 && /Student up to \$25k/.test(r.sources.find((x) => /leverage/.test(x.rule)).document_section), r);
 r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 30000, equity: 30000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
@@ -98,7 +109,8 @@ ok("availability: a directory-only exclusion never excludes, and says so", r.sta
 r = T.check_availability({ firm: "crypto_fund_trader", country: "US" });
 ok("availability: CFT excludes US from MT5 only", r.status === "platform_excluded", r);
 r = T.check_availability({ firm: "bitfunded", country: "FR" });
-ok("availability: Bitfunded's list not recorded, says so", r.status === "not_recorded" && /Check the firm/.test(r.advice), r);
+ok("availability: Bitfunded's Terms list no countries (4(b)), never called available", r.status === "not_excluded_in_record"
+   && /list no excluded countries/.test(r.detail) && /not a statement/.test(r.detail) && /4\(b\)/.test(r.sources[0].document_section || ""), r);
 ok("availability: bad country code", /ISO 3166/.test(T.check_availability({ firm: "bitfunded", country: "France" }).error || ""));
 ok("availability: unknown firm", /unknown firm/.test(T.check_availability({ firm: "ftmo", country: "US" }).error || ""));
 

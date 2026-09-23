@@ -11,8 +11,8 @@ against the real rule set and check it for disqualification risk, in conversatio
 |---|---|
 | `check_budget` | Both loss ceilings, which one binds, the crossover equity |
 | `size_trade` | Verdict, size, margin, fee share, losses remaining — net of fees |
-| `check_compliance` | 10-day hold, margin concentration, simultaneous trades, min days, account limits, marketed strategies — with ToU section refs |
-| `explain_rule` | Rule mechanics with the arithmetic. 11 topics |
+| `check_compliance` | Tiered hold limit, margin concentration, simultaneous trades, min days, account limits, marketed strategies — with ToU section refs; also states two prohibitions a plan cannot show (strategy switching between assessment and funded, 14(d)(ix); opposite positions across connected accounts, 13(c)(v)) |
+| `explain_rule` | Rule mechanics with the arithmetic. 14 topics |
 | `list_profiles` | Rule sets modelled, with room-before-max-loss for each |
 
 ## Install

@@ -172,7 +172,7 @@ function context() {
 const PROMPT_FIELDS = ["name", "verified", "verified_on", "compare_product", "products", "calc", "provenance", "panel_note",
   "required_disclaimer", "rule_changes", "floating_counts", "margin_modes", "max_open_positions", "hold_cap_days",
   "min_closed_trades_per_stage", "concentration_penalty_ladder", "mandatory_sl", "copy_trading", "payouts_per_30d",
-  "max_capital_per_customer"];
+  "max_capital_per_customer", "refund", "reset_settles_by_utc", "trader_stage_rule", "free_trial"];
 const noNotes = (x) => (Array.isArray(x) ? x.map(noNotes) : x && typeof x === "object"
   ? Object.fromEntries(Object.entries(x).filter(([k]) => !k.startsWith("_")).map(([k, v]) => [k, noNotes(v)])) : x);
 function promptFirms(raw) {
@@ -429,20 +429,28 @@ const MAJORS = new Set(["BTC", "ETH", "BNB", "XRP", "SOL", "TRX", "HYPE", "ZEC",
 const HOLD_DAYS = { major: 10, minor: 7, tradfi: 5 };
 const PENALTY_LADDER = [[65, 50], [75, 60], [90, 65], [96, 70]];
 const PENALTY_LADDER_IF = [[55, 50], [65, 55], [75, 60], [90, 65], [96, 70]];
-const MIN_DAYS = { "1step": 5, "2step_s1": 5, "2step_s2": 5, express: 5, instant: 0, trader: 0 };
+const MIN_DAYS = { "1step": 5, "2step_s1": 5, "2step_s2": 5, express: 5, instant: 0, trader_1step: 0, trader_express: 0, trader_2step: 0 };
 function asset_class(symbol) {
   const base = String(symbol || "BTCUSDT").toUpperCase().split(":").pop().replace("USDT", "").replace("USD", "");
   if (MAJORS.has(base)) return "major";
   if (["XAU", "XAG", "GOLD", "SILVER", "TSLA", "NVDA", "AAPL", "NDX", "DJI", "SPX"].includes(base) || (base.length <= 4 && !/^[A-Z]+$/.test(base))) return "tradfi";
   return "minor";
 }
+// The Terms clauses troid's owner read again on 2026-09-23 (Terms modified 2026-03-24) cite that reading.
+const TOU_0923 = /9\(a\)|9\(b\)|4\(b\)|5\(b\)|13\(c\)\(v\)|14\(d\)\(ix\)|14\(d\)\(xi\)/;
 function refSources(ref) {
   const S = (((context().prompt_firms.bitfunded || {}).provenance) || {}).sources || {};
   const ids = [];
   if (/RTP/.test(ref)) ids.push("rtp");
-  if (/ToU/.test(ref)) ids.push("tou");
+  if (/ToU/.test(ref)) ids.push(TOU_0923.test(ref) && S.tou_0923 ? "tou_0923" : "tou");
   return ids.filter((i) => S[i]).map((i) => ({ document: S[i].doc, read_on: S[i].read_on || "not recorded", url: S[i].url }));
 }
+// Prohibited practices troid cannot detect from a trade plan. check_compliance states them every time, as
+// information, so the assistant can raise them where the conversation makes them relevant.
+const NOT_DETECTABLE = [
+  { severity: "info", rule: "ToU 14(d)(ix)", detail: "Switching strategies between the assessment account and the funded account is prohibited. troid cannot check this from the inputs." },
+  { severity: "info", rule: "ToU 13(c)(v)", detail: "Opposite positions across connected accounts are prohibited, such as a long on one account and a short on the same asset on another. troid cannot check this from the inputs." },
+];
 function check_compliance(a) {
   const firm = a.firm || "bitfunded";
   if (firm !== "bitfunded") return { firm, pending: true, note: "troid models restricted-practice checks for Bitfunded only. For this firm they are pending: say so and point to troid's compare. Do not fill them from memory." };
@@ -460,16 +468,19 @@ function check_compliance(a) {
   if (+a.accounts_at_this_level > 1) findings.push({ severity: "breach", rule: "ToU 6(b)", detail: `${a.accounts_at_this_level} accounts at one challenge level. Limit is one active account per level without written consent.` });
   const minDays = Object.hasOwn(MIN_DAYS, product) ? MIN_DAYS[product] : 5, days = +a.trading_days_so_far || 0;
   if (minDays && days > 0 && days < minDays) findings.push({ severity: "warning", rule: "ToU 9(a)", detail: `${days} trading days so far; ${minDays} required to clear the stage. The challenge page displays 0 — the contract governs.` });
-  for (const x of findings) x.sources = refSources(x.rule);
-  return { firm: "Bitfunded", product, clear: findings.length === 0, findings: findings.length ? findings : [{ severity: "ok", rule: "—", detail: "No breach detected against the rules modelled here." }],
+  const clear = findings.length === 0;
+  if (clear) findings.push({ severity: "ok", rule: "—", detail: "No breach detected against the rules modelled here." });
+  findings.push(...NOT_DETECTABLE.map((x) => ({ ...x })));
+  for (const x of findings) if (x.rule !== "—") x.sources = refSources(x.rule);
+  return { firm: "Bitfunded", product, clear, findings,
            sources: refSources("RTP ToU"),
            tier: "SOURCED — Bitfunded Terms of Use and help centre, sections cited; each finding lists its document and read date",
-           caveat: "Checks only the rules modelled here. Not a substitute for reading the firm's Terms. Verify anything material with the firm directly." };
+           caveat: "Checks only the rules modelled here; findings marked info are rules troid cannot check from the inputs. Not a substitute for reading the firm's Terms. Verify anything material with the firm directly." };
 }
 
 const RULES = {
   crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap at equity = quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below it the max loss binds and the advertised 4% daily is fiction. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover.",
-  reset: "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in New York. Not midnight. Morning and afternoon sessions draw on separate daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over. A position inside the limit at 11:59 can breach at 12:01 without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
+  reset: "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in New York. Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over. A position inside the limit at 11:59 can breach at 12:01 without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
   fees: "Bitfunded: 0.04% per side on notional, 0.08% round trip. Notional scales inversely with stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%. Other firms' fees are in firms.json; a null is pending.",
   leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin that distance is roughly entry × (1 − 1/leverage): ~20% at 5x. Under CROSS margin (Bitfunded's mode) the whole account backs the position, so exchange liquidation is unreachable at any size the firm allows — the firm's own floors fail you first.",
   cross: "Bitfunded runs cross margin at 5x: every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
@@ -480,6 +491,9 @@ const RULES = {
   hold_limit: "Bitfunded: majors 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). Profits from a breaching trade can be removed from payout eligibility.",
   accounts: "Bitfunded: one active account per challenge level without written consent (ToU 6(b)). Across all seven levels that caps simultaneous capital at $355,000.",
   marketed_strategies: "Bitfunded ToU 14(d)(v) prohibits using third-party or marketed strategies to pass an evaluation. This is why troid evaluates trades rather than generating them.",
+  strategy_switching: "Bitfunded ToU 14(d)(ix) prohibits switching strategies between assessment and funded accounts. troid cannot see this from a trade plan, so it cannot check it; it is a rule about how the account is traded over time, not about one trade.",
+  opposite_positions: "Bitfunded ToU 13(c)(v) prohibits opposite positions across connected accounts: a long on one account and a short on the same asset on another. Hedged pairs cancel each other's market risk while each account keeps its own chance of passing, which is why firms prohibit them. troid cannot see connected accounts, so it cannot check this.",
+  funded_stage: "Bitfunded's Trader Stage limits depend on the path (help centre, Challenge & Trader Stage): after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the 2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader Stage breach disqualifies the account, and a new challenge is required.",
 };
 function explain_rule(a) {
   const t = String(a.topic || "").toLowerCase().trim().replace(/\s+/g, "_");
@@ -505,7 +519,7 @@ function check_availability(a) {
   const third = (av.not_from_terms || {})[cc];
   const res = { ...out, status: platforms.length ? "platform_excluded" : "not_excluded_in_record",
     detail: platforms.length ? f.name + "'s terms exclude " + cc + " from " + platforms.join(", ") + " only."
-                             : "troid's record of " + f.name + "'s terms does not exclude " + cc + ". That is not a statement that the firm serves " + cc + ".",
+                             : (av.note ? av.note + " " : "") + "troid's record of " + f.name + "'s terms does not exclude " + cc + ". That is not a statement that the firm serves " + cc + ".",
     sources: [src("availability"), ...(platforms.length ? [src("availability_platform")] : [])],
     advice: "Check the firm's own terms before buying." };
   if (third) res.not_in_terms = "A third party lists " + cc + " as excluded; troid has not read that in the firm's terms (" + third + ").";
@@ -530,7 +544,7 @@ const TOOLS = [
       firm: { type: "string" }, product: { type: "string" }, quota: { type: "number" }, equity: { type: "number" },
       day_start: { type: "number" }, high_water_mark: { type: "number" }, high_at_rollover: { type: "number" } },
       required: ["firm", "product", "quota", "equity"] } },
-  { name: "check_compliance", description: "Check a trade plan against the firm rules that disqualify (hold limit, open-trade cap, concentration ladder, closed-trade minimum, third-party strategies, accounts per level, minimum days). Modelled for Bitfunded only; other firms return pending.",
+  { name: "check_compliance", description: "Check a trade plan against the firm rules that disqualify (hold limit, open-trade cap, concentration ladder, closed-trade minimum, third-party strategies, accounts per level, minimum days). It also lists, as info, two prohibitions it cannot check from a plan (switching strategies between assessment and funded accounts; opposite positions across connected accounts): raise them when the conversation makes them relevant. Modelled for Bitfunded only; other firms return pending.",
     input_schema: { type: "object", properties: {
       firm: { type: "string" }, product: { type: "string" }, symbol: { type: "string" }, hold_days: { type: "number" },
       open_trades: { type: "integer" }, margin_pct_of_capital: { type: "number" }, trading_days_so_far: { type: "integer" },
@@ -539,7 +553,7 @@ const TOOLS = [
   { name: "check_availability", description: "Whether a firm's own terms, as troid has recorded them, exclude a country. Call it for each firm before discussing that firm with a user who has mentioned their country. It never says a firm is available: it reports what the recorded terms exclude, a platform-only exclusion, or that troid has not recorded the list.",
     input_schema: { type: "object", properties: { firm: { type: "string", description: "firm key: bitfunded | brightfunded | crypto_fund_trader" },
       country: { type: "string", description: "ISO 3166-1 alpha-2 code, e.g. US, IN, NG, BR" } }, required: ["firm", "country"] } },
-  { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies.",
+  { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies, strategy_switching, opposite_positions, funded_stage.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
 ];
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule };

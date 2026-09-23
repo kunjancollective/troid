@@ -6,7 +6,7 @@
      avail  each firm's recorded country exclusions, from firms.json (never a statement that a firm is available)
    What it does:
      numbers   TROID.num / TROID.usd format with Intl in the page's locale; currency stays USD, never converted
-     times     [data-utc] (an ISO instant) and [data-utc-hm] (a daily HH:MM in UTC) get the reader's local time
+     times     [data-utc] (an ISO instant) and [data-utc-hm] (a daily HH:MM or HH:MM–HH:MM in UTC) get the reader's local time
                before them, the UTC text staying beside it
      country   [data-country] becomes a country selector, preselected from the browser's language, never from
                location; [data-avail=<firm>] shows "not available in <country> per the firm's terms" in place of
@@ -48,16 +48,18 @@
       if (withDate) {
         var iso = e.getAttribute("data-utc").replace(" ", "T");
         d = new Date(/Z|[+-]\d\d:?\d\d$/.test(iso) ? iso : iso + "Z");
-      } else {
-        var m = /^(\d{1,2}):(\d{2})$/.exec(e.getAttribute("data-utc-hm") || "");
+      } else {                                               // a daily time, or a window: 16:00 or 16:00–16:10
+        var m = /^(\d{1,2}):(\d{2})(?:[–-](\d{1,2}):(\d{2}))?$/.exec(e.getAttribute("data-utc-hm") || "");
         if (!m) return;
         d = new Date(); d.setUTCHours(+m[1], +m[2], 0, 0);
+        if (m[3]) { var d2 = new Date(); d2.setUTCHours(+m[3], +m[4], 0, 0); }
       }
       if (isNaN(d) || offsetMin(d) === 0) return;          // the reader is on UTC: nothing to add
       e.setAttribute("data-tl", "1");
       var s = document.createElement("span"), cell = e.closest("td, .v");
       s.className = "tlocal" + (cell ? " tl-block" : ""); s.title = (t.time_local || "") + " (" + tz + ")";
-      s.textContent = local(d, withDate);
+      s.textContent = d2 ? new Intl.DateTimeFormat(loc, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(d)
+                           + "–" + local(d2, false) : local(d, withDate);
       e.parentNode.insertBefore(s, e);                     // in a table cell or a big value: its own line above
       if (!cell) e.parentNode.insertBefore(document.createTextNode(" · "), e);
     });
@@ -97,7 +99,7 @@
       else {
         var p = Object.keys(a.platform || {}).filter(function (k) { return a.platform[k].indexOf(country) >= 0; });
         msg = p.length ? F(t.avail_platform, { platform: esc(p.join(", ")), country: name })
-                       : F(t.avail_not_excluded, { country: name });
+                       : (a.note ? esc(a.note) : F(t.avail_not_excluded, { country: name }));   // the firm's own note, if troid recorded one
       }
       if (no) e.querySelectorAll("[data-avail-link]").forEach(function (x) { x.hidden = true; });
       var s = document.createElement("div");

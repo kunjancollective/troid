@@ -87,6 +87,10 @@ def check_language(b, url, code, shots, fails):
                 pg.select_option("[data-country] select", cc)
                 check(blk.locator("[data-avail-link]").is_visible() and "MT5" in blk.inner_text(),
                       f"{name}: {firm} platform-only note in {cc}, link shown")
+                bf = pg.locator('[data-avail="bitfunded"]')
+                check(bf.locator(".avail").count() == 1 and bf.locator(".avail.no").count() == 0
+                      and bf.locator("[data-avail-link]").is_visible(),
+                      f"{name}: bitfunded shows its own note (its Terms list no countries), link shown")
                 pg.select_option("[data-country] select", region)
             if vw == 390 and page == "/ledger":
                 check(pg.locator(".tlocal").count() >= 2, f"{name}: local times beside UTC")

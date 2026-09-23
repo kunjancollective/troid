@@ -386,7 +386,7 @@ def load_config(path: str, profile: str | None = None) -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="risk.py")
     ap.add_argument("--config", default="config.json")
-    ap.add_argument("--profile", help="1step | 2step_s1 | 2step_s2 | express | instant | trader")
+    ap.add_argument("--profile", help="1step | 2step_s1 | 2step_s2 | express | instant | trader_1step | trader_express | trader_2step")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     # also accepted after the subcommand; SUPPRESS keeps the subparser from
     # overwriting a flag given before it

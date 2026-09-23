@@ -67,6 +67,7 @@ def export(code, data):
     pos = {k: i for i, k in enumerate(en)}
     rows = [(k, en[k]) for k in sorted(en, key=lambda k: rank(k, pos))] + [(k, v) for k, v in sorted(data.items())]
     check = header.get("_review_notes") or {}      # the drafter's questions for the reviewer, by key ('*': general)
+    stale = set(i18n.stale(code)) if header.get("_drafted_from") else set()
     REVIEW.mkdir(parents=True, exist_ok=True)
     path = REVIEW / f"{code}.csv"
     with path.open("w", newline="", encoding="utf-8-sig") as fh:
@@ -78,7 +79,10 @@ def export(code, data):
             note = note_for(k, v)
             if check.get(k):
                 note = " | ".join(["CHECK FIRST: " + q for q in check[k]] + ([note] if note else []))
-            w.writerow([k, v, s.get(k, ""), "", note])
+            draft = s.get(k, "")
+            if k in stale and draft:        # the English changed after this draft: never offer the old translation
+                draft, note = "", "ENGLISH CHANGED after the draft: translate it in reviewer_edit | " + note
+            w.writerow([k, v, draft, "", note])
     return path, len(rows), sum(1 for k, _ in rows if s.get(k))
 
 

@@ -71,8 +71,10 @@ RUNTIME_KEYS = {"country_label": "common.country.label", "country_unset": "commo
                 "share": "common.share", "share_copied": "common.share.copied", "share_line": "share.line"}
 
 
-def availability():
-    """Each firm's recorded country exclusions (firms.json 'availability'), for the country selector."""
+def availability(T):
+    """Each firm's recorded country exclusions (firms.json 'availability'), for the country selector, with the
+    firm's own note where troid recorded one (Bitfunded: its Terms list no countries; 4(b) puts local law on the
+    trader), translated by content like other firm text."""
     F = json.loads((ROOT / "firms.json").read_text())
     out = {}
     for k, f in F.items():
@@ -81,6 +83,8 @@ def availability():
         a = f["availability"]
         out[k] = {"recorded": bool(a.get("recorded")), "excluded": a.get("excluded") or [],
                   "platform": a.get("platform") or {}}
+        if a.get("note"):
+            out[k]["note"] = T.data(a["note"])
     return out
 
 
@@ -88,7 +92,7 @@ def runtime(T):
     """window.TROID for web/public/i18n.js: the locale, the strings it shows, the availability record. Loaded in
     the head, before the page's own scripts, so they can format with TROID.usd / TROID.num."""
     cfg = {"code": T.code, "loc": T.lang["intl"], "t": {n: T(k) for n, k in RUNTIME_KEYS.items()},
-           "avail": availability()}
+           "avail": availability(T)}
     return ('<script>window.TROID=' + json.dumps(cfg, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
             + ';</script>\n<script src="/i18n.js"></script>')
 

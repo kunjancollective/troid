@@ -14,7 +14,8 @@
       "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
       "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
       "https://www.bitfunded.com/faq/",
-      "https://bitfunded.gitbook.io/support/introduction/challenge-type"
+      "https://bitfunded.gitbook.io/support/introduction/challenge-type",
+      "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage"
     ],
     "us_available": true,
     "products": {
@@ -41,7 +42,7 @@
       "express": {
         "daily_pct": 3,
         "max_pct": 3,
-        "target_pct": 3,
+        "target_pct": 9,
         "min_days": 5,
         "fee_usd_5k": 39
       },
@@ -51,7 +52,26 @@
         "target_pct": 0,
         "min_days": 0,
         "fee_usd_5k": 249,
-        "split": "60%"
+        "split": "60%",
+        "max_leverage": 5
+      },
+      "trader_1step": {
+        "daily_pct": 4,
+        "max_pct": 6,
+        "split": "80%",
+        "max_leverage": 5
+      },
+      "trader_express": {
+        "daily_pct": 3,
+        "max_pct": 3,
+        "split": "80%",
+        "max_leverage": 5
+      },
+      "trader_2step": {
+        "daily_pct": 5,
+        "max_pct": 8,
+        "split": "80%",
+        "max_leverage": 5
       }
     },
     "drawdown_type": "static",
@@ -91,11 +111,11 @@
     "consistency_rule": null,
     "mandatory_sl": "expected; absence can be classed excessive risk",
     "min_closed_trades_per_stage": 2,
-    "refund": "100% at first profit split",
+    "refund": "Conflicting: Terms 9(a) \u2014 100% at first profit split day, all levels. Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.",
     "split": "80% to 90%",
     "payouts_per_30d": 3,
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
-    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs. | Price of the $100k 1-Step: help centre Challenge Type lists Expert 100,000 USDT at $999 (1-Step and 2-Step in separate tables); a May 2026 blog says up to $599 for $100k; a Sept 2025 blog says Expert $799. The help-centre table governs.",
+    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs. | Price of the $100k 1-Step: help centre Challenge Type lists Expert 100,000 USDT at $999 (1-Step and 2-Step in separate tables); a May 2026 blog says up to $599 for $100k; a Sept 2025 blog says Expert $799. The help-centre table governs. | Price: Terms 9(a) (mod. 2026-03-24) list the 1-Step Expert $100,000 at $999 and the 2-Step Expert at $799, which explains the Sept 2025 blog's $799; the May 2026 blog's $599 is unexplained. | Refund: Terms 9(a)/9(b) say 100% at the first profit split day, all levels; the help centre says 2-Step only, with the 3rd withdrawal, not on promotions. troid shows both and picks neither. | Min trading days: Terms 9(a) objectives say 5 for 1-Step and both 2-Step stages; the help centre shows '-'. The contract governs. | Open positions: Terms 14(d)(xi) still say 10 as of the 2026-03-24 revision; the help centre says 5. Stricter stands. | Express target: 9% in the help centre, 3% in the 28 Aug 2026 blog; the Terms are silent on Express. troid shows 9%.",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
     "affiliate_rate_repeat": "3%",
     "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
@@ -109,12 +129,12 @@
       "price": "$999",
       "daily_basis": "initial balance",
       "drawdown_type": "static",
-      "reset_utc": "16:00",
+      "reset_utc": "16:00\u201316:10",
       "fee_per_side_pct": 0.04,
       "max_leverage": 5,
       "hold_cap": "10d / 7d / 5d",
       "max_open": 5,
-      "refund": "100% at first profit split",
+      "refund": "Conflicting: Terms 9(a) \u2014 100% at first profit split day, all levels. Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.",
       "split": "80% \u2192 90%",
       "us_available": "yes",
       "consistency_rule": null,
@@ -128,7 +148,7 @@
     },
     "integration_type": "simulated",
     "execution_type": "simulated (data from unnamed partner exchanges)",
-    "restricted_countries": "per ToU (list not extracted)",
+    "restricted_countries": [],
     "payment_methods": null,
     "trader_payout_methods": null,
     "rule_changes": [
@@ -153,6 +173,81 @@
           "https://www.bitfunded.com/choosing-the-right-challenge-base-vs-starter-vs-expert/"
         ],
         "url_note": "Read by troid's owner on 2026-09-23. The two blog URLs were located by web search the same day; troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so they were not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Price of the $100,000 1-Step. Terms of Use 9(a) (modified 2026-03-24): 1 Step Challenges, Expert Level, account $100,000, challenge fee $999 \u2014 now the primary source for the price, with the help centre's Challenge Type table second. The same clause lists the 2-Step Expert at $799, which explains the September 2025 blog's $799. The May 2026 blog's $599 remains unexplained.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/",
+          "https://bitfunded.gitbook.io/support/introduction/challenge-type"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Refund. Terms of Use 9(a): every challenge level includes a full (100%) refund if the trader completes the level and reaches the first profit split day; 9(b) repeats it as fully refundable on completing the level. Help centre, Challenge & Trader Stage: a refund only on Two Steps evaluations, paid with the third withdrawal, not on promotional purchases. Bitfunded's own documents conflict on a money claim; troid shows both and picks neither. troid had stated '100% at first profit split' for the 1-Step as settled.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/",
+          "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Minimum trading days. Terms of Use 9(a) objectives (modified 2026-03-24): 'Minimum Trading Days: 5' for the 1-Step and both 2-Step stages. The help centre shows '-'. The contract governs: 5.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Open positions. Terms of Use 14(d)(xi) still says 10 as of the 2026-03-24 revision; the help centre (Restricted Trading Practices s.3) says 5. The stricter, 5, stands.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Funded (Trader Stage) limits differ by path. Help centre, Challenge & Trader Stage: after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the 2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader Stage breach disqualifies the account; a new challenge is required. troid had modelled a single Funded product at 4% / 6% with no recorded source.",
+        "urls": [
+          "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Express profit target. Help centre, Challenge & Trader Stage: 9%. The 28 Aug 2026 blog: 3%. The Terms are silent on Express. troid shows 9%.",
+        "urls": [
+          "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage",
+          "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Daily reset. Help centre, Criteria to be Success: the reset is at 00:00 UTC+8, but due to the platform's standard settlement process it may become effective between 00:00 and 00:10 UTC+8 \u2014 16:00\u201316:10 UTC. troid had shown 16:00 UTC flat. The same page confirms the fee: 0.04% per side on position size, at entry and at exit.",
+        "urls": [
+          "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Restricted countries. The Terms of Use (modified 2026-03-24) contain no country exclusion list; 4(b) requires the trader's use of the Services to comply with the laws of the trader's own jurisdiction. troid had recorded the list as not extracted.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
+      },
+      {
+        "date": "2026-09-23",
+        "found": "Free Trial. Terms of Use 5(b) still describes a Free Trial; troid's owner found none offered as of 23 September 2026. Recorded, not listed as a product.",
+        "urls": [
+          "https://www.bitfunded.com/terms-of-use/"
+        ],
+        "url_note": "Read on 2026-09-23 via troid's owner's research session (HANDOFF-bitfunded-sources); troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io, so it was not re-read there."
       }
     ],
     "external_payout_evidence": null,
@@ -184,11 +279,14 @@
         "instant": {
           "label": "Instant"
         },
-        "trader": {
-          "label": "Funded",
-          "daily_pct": 4,
-          "max_pct": 6,
-          "_note": "funded-stage limits as the desk profile carries them (references/bitfunded.md)"
+        "trader_1step": {
+          "label": "Funded \u00b7 after 1-Step"
+        },
+        "trader_express": {
+          "label": "Funded \u00b7 after Express"
+        },
+        "trader_2step": {
+          "label": "Funded \u00b7 after 2-Step"
         }
       }
     },
@@ -230,6 +328,27 @@
           "url": "https://bitfunded.gitbook.io/support/introduction/challenge-type",
           "read_on": "2026-09-23",
           "doc_dated": null
+        },
+        "tou_0923": {
+          "doc": "Bitfunded Terms of Use (modified 2026-03-24)",
+          "url": "https://www.bitfunded.com/terms-of-use/",
+          "read_on": "2026-09-23",
+          "doc_dated": "2026-03-24",
+          "read_via": "owner's research session"
+        },
+        "trader_stage": {
+          "doc": "Bitfunded help centre: Challenge & Trader Stage",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage",
+          "read_on": "2026-09-23",
+          "doc_dated": null,
+          "read_via": "owner's research session"
+        },
+        "criteria_0923": {
+          "doc": "Bitfunded help centre: Criteria to be Success",
+          "url": "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success",
+          "read_on": "2026-09-23",
+          "doc_dated": null,
+          "read_via": "owner's research session"
         }
       },
       "fields": {
@@ -253,10 +372,10 @@
         },
         "min_days": {
           "src": [
-            "tou",
+            "tou_0923",
             "faq"
           ],
-          "section": "Bitfunded Terms of Use 9(a); FAQ"
+          "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
         },
         "daily_basis": {
           "src": [
@@ -272,13 +391,14 @@
         },
         "reset_utc": {
           "src": [
-            "criteria"
+            "criteria_0923"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success, 00:00 UTC+8; UTC is troid's conversion"
+          "section": "Bitfunded help centre \u2014 Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion"
         },
         "fee_per_side_pct": {
           "src": [
-            "criteria"
+            "criteria",
+            "criteria_0923"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success"
         },
@@ -305,6 +425,25 @@
             "criteria"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success"
+        },
+        "refund": {
+          "src": [
+            "tou_0923",
+            "trader_stage"
+          ],
+          "section": "Bitfunded Terms of Use 9(a) and 9(b); help centre \u2014 Challenge & Trader Stage"
+        },
+        "availability": {
+          "src": [
+            "tou_0923"
+          ],
+          "section": "Bitfunded Terms of Use 4(b) (no excluded-country list)"
+        },
+        "trader_stage_rule": {
+          "src": [
+            "trader_stage"
+          ],
+          "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
         }
       },
       "products": {
@@ -323,7 +462,8 @@
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria"
+              "criteria",
+              "criteria_0923"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success"
           },
@@ -335,29 +475,38 @@
           },
           "price": {
             "src": [
+              "tou_0923",
               "challenge_type"
             ],
-            "section": "Bitfunded help centre \u2014 Challenge Type, One Step Evaluation table, row Expert \u00b7 100,000 USDT \u00b7 $999"
+            "section": "Bitfunded Terms of Use 9(a), 1 Step Challenges, Expert Level ($100,000 account, fee $999); help centre \u2014 Challenge Type, One Step Evaluation table"
           }
         },
         "instant": {
           "daily_pct": {
             "src": [
+              "trader_stage",
               "blog"
             ],
-            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
           "max_pct": {
             "src": [
+              "trader_stage",
               "blog"
             ],
-            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
           "drawdown": {
             "src": [
               "blog"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant)"
           }
         },
         "2step_s1": {
@@ -372,6 +521,12 @@
               "tou"
             ],
             "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+          },
+          "price": {
+            "src": [
+              "tou_0923"
+            ],
+            "section": "Bitfunded Terms of Use 9(a), 2 Step Challenges, Expert Level (fee $799)"
           }
         },
         "2step_s2": {
@@ -400,6 +555,90 @@
               "blog"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          },
+          "target_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
+          }
+        },
+        "trader_1step": {
+          "daily_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
+          },
+          "max_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
+          },
+          "split": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
+          }
+        },
+        "trader_express": {
+          "daily_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
+          },
+          "max_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
+          },
+          "split": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
+          }
+        },
+        "trader_2step": {
+          "daily_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
+          },
+          "max_pct": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
+          },
+          "split": {
+            "src": [
+              "trader_stage"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
           }
         }
       },
@@ -409,12 +648,17 @@
       ]
     },
     "availability": {
-      "recorded": false,
-      "excluded": null,
+      "recorded": true,
+      "excluded": [],
       "platform": {},
       "not_from_terms": {},
-      "basis": "Bitfunded's Terms of Use carry a restricted-country list that troid has not extracted yet (restricted_countries: 'per ToU (list not extracted)')"
-    }
+      "basis": "No list in Terms (mod. 2026-03-24). 4(b): trader must comply with local law.",
+      "note": "Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b)."
+    },
+    "restricted_countries_note": "No list in Terms (mod. 2026-03-24). 4(b): trader must comply with local law.",
+    "reset_settles_by_utc": "16:10",
+    "free_trial": "mentioned in Terms 5(b); not offered as of 23 Sep 2026 per owner",
+    "trader_stage_rule": "Any Trader Stage breach disqualifies the account; a new challenge is required."
   },
   "brightfunded": {
     "name": "BrightFunded",

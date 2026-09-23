@@ -25,6 +25,10 @@ FOOTER_TEXT = ("troid is a free informational tool, not financial or investment 
                "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
                "through its links; this does not affect the calculations or comparisons.")
 
+# The operator (owner decision, 23 Sep 2026): Kunjan Collective LLC, a Connecticut limited liability company.
+# A name, not prose: shown as it is on every page, in every language.
+COPYRIGHT = "© 2026 Kunjan Collective LLC"
+
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
          ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
@@ -74,7 +78,7 @@ def footer_html(T=None):
     if _english(T):
         links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS)
         extra = " ".join(html.escape(t) for t in required_sentences())
-        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}" + (f" {extra}" if extra else "")
+        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}" + (f" {extra}" if extra else "") + f"<br><br>{COPYRIGHT}"
     links = " · ".join(f'<a href="{(T.H if u == "/" else T.L + u) if u.startswith("/") else u}">{html.escape(T(LINK_KEYS[u]))}</a>'
                        for u, _ in LINKS)
     req = required_sentences()
@@ -82,7 +86,7 @@ def footer_html(T=None):
     if req:
         extra = (f' <span class="gov-sum">{T("legal.summary.required")}</span> <span class="gov-line">{T("legal.governs")}</span> '
                  + " ".join(f'<span lang="en">{html.escape(t)}</span>' for t in req))
-    return f"{links}<br><br>{T('footer.text')}" + extra
+    return f"{links}<br><br>{T('footer.text')}" + extra + f'<br><br><span translate="no">{COPYRIGHT}</span>'
 
 
 def no_edge_html(T=None):

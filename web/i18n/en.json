@@ -507,7 +507,7 @@
  "faq.daily.p2": "But it often is not the constraint that matters. The 6% maximum loss is static at\n$94,000. Below roughly <span class=\"stat\">$98,000</span> of equity, the distance to that\nstatic floor is smaller than your daily allowance, so the max loss becomes the real\nceiling and the \"4% daily\" number is fiction.",
  "faq.daily.p3": "On a fresh account that crossover is about $2,000 away — half of one bad day. Size\nagainst the smaller of the two, always.",
  "faq.reset.q": "When does your trading day reset?",
- "faq.reset.p1": "00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your\nmorning and afternoon sessions draw on separate daily budgets.",
+ "faq.reset.p1": "00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your\nmorning and afternoon sessions draw on separate daily budgets.\nThe platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count\non a fresh daily budget before then.",
  "faq.reset.p2": "The trap: a floating loss that survives the reset counts in full against the new day,\nbecause the previous day's profit does not carry over. A position comfortably inside the\nlimit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this\nthemselves.",
  "faq.risk.q": "How much should you risk per trade?",
  "faq.risk.p1": "The right number depends on your system, so troid is not going to give you one.\nWhat it can show you is what the arithmetic does to the wrong one.",

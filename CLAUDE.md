@@ -23,6 +23,12 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - 2 closed trades per stage, each ≥10 min, before payout (RTP s.4). Trading without SL/TP can be classed as excessive risk.
 - Day Trader Challenge ($10k, 1–8 hours, 2×–5× boost) is a different product; the strategy cannot run in its window.
 - 9(a) — minimum 5 trading days. The challenge page displays 0; the contract governs.
+- 14(d)(ix) — no switching strategies between assessment and funded accounts; 13(c)(v) — no opposite
+  positions across connected accounts. Not detectable from a trade plan: state them, don't claim to check them.
+- Funded (Trader Stage) limits differ by path (help centre, Challenge & Trader Stage): after 1-Step 4/6, after
+  Express 3/3, after 2-Step 5/8, Instant 3/6; any Trader Stage breach disqualifies.
+- Reset 00:00 UTC+8 = 16:00 UTC, effective by 00:10 UTC+8 (16:10 UTC); don't count on a fresh daily budget before 16:10.
+- Refund: Terms 9(a) and the help centre conflict. Show both; never state one as settled.
 - 6(b) — one active account per challenge level. Max $355,000 across 7 levels.
 
 ## Layout

@@ -231,14 +231,118 @@
    ],
    "evidence": "Recorded on the citation of troid's owner, 2026-09-23: help centre Challenge Type page (https://bitfunded.gitbook.io/support/introduction/challenge-type), 'One Step Evaluation' table, row 'Expert · 100,000 USDT · $999', read 2026-09-23. troid's build environment cannot open bitfunded.gitbook.io (egress blocked), so it was not re-read there. Bitfunded's own pages disagree on this price; see rule_changes 2026-09-23 (blog: up to $599 for $100k; blog: Expert $799). The help-centre table governs because it is the only one that separates 1-Step from 2-Step.",
    "was_unmapped": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded. Still unrecorded on 2026-09-23. It needs one read of Bitfunded's challenge page, which troid's egress proxy blocks from here. Under firms.json _link_rule the Bitfunded link is held until it is recorded."
-  }
- ],
- "bitfunded_unmapped": [
+  },
+  {
+   "field": "price",
+   "product": "1step",
+   "src": [
+    "tou_0923",
+    "challenge_type"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Price, now from the contract: 9(a), 1 Step Challenges, Expert Level, account $100,000, challenge fee $999. Add as the primary source for the price cell (the help centre table stays as a second source).'"
+  },
+  {
+   "field": "price",
+   "product": "2step_s1",
+   "src": [
+    "tou_0923"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Same clause: 2-Step Expert $799 — which explains the $799 blog figure.'"
+  },
+  {
+   "field": "min_days",
+   "product": "*",
+   "src": [
+    "tou_0923",
+    "faq"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: '9(a) objectives state \"Minimum Trading Days: 5\" for 1-Step and both 2-Step stages. Help centre shows \"-\". Existing conflict; add this as the clause.' Replaces the 2026-09-21 ToU reading in this cite; the FAQ stays."
+  },
   {
    "field": "refund",
    "product": "*",
-   "why": "'100% at first profit split' appears in firms.json.refund and in TROID.md ('Fee refunded in full at first profit split'), and neither cites a document or section."
+   "src": [
+    "tou_0923",
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Terms 9(a): all challenge levels include \"full (100%) refund if the Trader successfully completes the challenge level and reaches their first profit split day.\" 9(b) repeats it' and 'Help centre, Challenge & Trader Stage: refund only on Two Steps evaluations, paid with the third withdrawal, not on promotional purchases.' The cell shows both, as the handoff words it."
   },
+  {
+   "field": "availability",
+   "product": "*",
+   "src": [
+    "tou_0923"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Restricted countries: none listed. The Terms contain no country exclusion list. Clause 4(b) puts it on the trader.'"
+  },
+  {
+   "field": "reset_utc",
+   "product": "*",
+   "src": [
+    "criteria_0923"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'resets at 00:00 UTC+8, but \"due to the platform's standard settlement process, the reset may become effective between 00:00 and 00:10 (UTC+8)\" — i.e. 16:00–16:10 UTC.'"
+  },
+  {
+   "field": "fee_per_side_pct",
+   "product": "*",
+   "src": [
+    "criteria",
+    "criteria_0923"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Confirms fees 0.04% per side on position size, at entry and exit.'"
+  },
+  {
+   "field": "target_pct",
+   "product": "express",
+   "src": [
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Express profit target 9% (help centre) vs 3% (28 Aug blog). Terms are silent on Express. Show 9%, log the conflict.'"
+  },
+  {
+   "field": "daily_pct / max_pct / max_leverage",
+   "product": "instant",
+   "src": [
+    "trader_stage",
+    "blog"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: Trader Stage table row 'Instant | 3% | 6% | 60% | 1:5'. The blog stays as a second source for the limits."
+  },
+  {
+   "field": "daily_pct / max_pct / split / max_leverage",
+   "product": "trader_1step",
+   "src": [
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: Trader Stage table row '1-Step → Trader | 4% | 6% | 80% | 1:5'. Replaces the single 'Funded' product, which had no source."
+  },
+  {
+   "field": "daily_pct / max_pct / split / max_leverage",
+   "product": "trader_express",
+   "src": [
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: Trader Stage table row 'Express → Trader | 3% | 3% | 80% | 1:5'. Replaces the single 'Funded' product, which had no source."
+  },
+  {
+   "field": "daily_pct / max_pct / split / max_leverage",
+   "product": "trader_2step",
+   "src": [
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: Trader Stage table row '2-Step → Trader | 5% | 8% | 80% | 1:5'. Replaces the single 'Funded' product, which had no source."
+  },
+  {
+   "field": "trader_stage_rule",
+   "product": "*",
+   "src": [
+    "trader_stage"
+   ],
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Page also states: any Trader Stage breach disqualifies the account; a new challenge is required.'"
+  }
+ ],
+ "bitfunded_unmapped": [
   {
    "field": "split",
    "product": "*",
@@ -263,21 +367,6 @@
    "field": "profit_cap",
    "product": "*",
    "why": "'none' has no recorded document or section."
-  },
-  {
-   "field": "daily_pct",
-   "product": "trader",
-   "why": "calc.products.trader.daily_pct = 4, and its _note points to references/bitfunded.md. That file cites a primary source only for 'Expert $100,000 / Stage 1 (1 Step) figures', mentions the Trader Stage only as what the challenge page shows (a page not in verified_from), and gives no funded-stage limits. The desk profile's trader _note, 'Same ceilings as 1-Step', names no document. The chain ends in troid's own files, and a config is not a source."
-  },
-  {
-   "field": "max_pct",
-   "product": "trader",
-   "why": "calc.products.trader.max_pct = 6. The chain breaks at the same point as daily_pct: references/bitfunded.md carries no funded-stage limit and cites no document for one."
-  },
-  {
-   "field": "availability",
-   "product": "*",
-   "why": "The Terms of Use restricted-country list was never extracted (restricted_countries 'per ToU (list not extracted)'), and troid's build environment cannot open bitfunded.com. recorded:false until someone reads it."
   }
  ],
  "brightfunded": [
@@ -749,6 +838,24 @@
    "read_on": "2026-09-23",
    "doc_dated": null,
    "evidence": "Read by troid's owner on 2026-09-23 and cited with section and row. Not re-read from troid's build environment (egress blocked)."
+  },
+  {
+   "id": "tou_0923",
+   "read_on": "2026-09-23",
+   "doc_dated": "2026-03-24",
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'B. Terms of Use — https://www.bitfunded.com/terms-of-use/ (modified 2026-03-24)'. A second reading of the same document, kept as its own source so the rules read on 2026-09-21 keep their date."
+  },
+  {
+   "id": "trader_stage",
+   "read_on": "2026-09-23",
+   "doc_dated": null,
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'C. Help centre — Challenge & Trader Stage https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage'."
+  },
+  {
+   "id": "criteria_0923",
+   "read_on": "2026-09-23",
+   "doc_dated": null,
+   "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'D. Help centre — Criteria to be Success https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success'. A second reading, kept as its own source so the 2026-09-18 reading keeps its date."
   }
  ],
  "brightfunded_sources": [

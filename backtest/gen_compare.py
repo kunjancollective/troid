@@ -104,7 +104,7 @@ def rewrite_region(path, tag, inner):
 
 # Translated pages only (site_build.features_on): the daily reset gets the reader's local time beside it, the
 # firm's link sits in a block i18n.js can replace with "not available in <country> per the firm's terms".
-RESET_FMT = ',function(x){return /^\\d\\d?:\\d\\d$/.test(x)?\'<bdi data-utc-hm="\'+x+\'">\'+x+\' UTC</bdi>\':x}'
+RESET_FMT = ',function(x){return /^\\d\\d?:\\d\\d([–-]\\d\\d?:\\d\\d)?$/.test(x)?\'<bdi data-utc-hm="\'+x+\'">\'+x+\' UTC</bdi>\':x}'
 AVAIL_WRAP = "\n      foot='<div data-avail-link>'+foot+'</div>';"
 AFTER_RENDER = "\n  TROID.avail_apply(document);TROID.times(document);"
 
