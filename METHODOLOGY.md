@@ -19,7 +19,9 @@ Every published figure carries one of four tiers, and a reader can find which:
 1. Read from the firm's own documents — Terms *and* help centre or product page, both.
 2. Where the two disagree, the stricter figure governs until the firm confirms in writing.
 3. Record the source URL beside the field. A config file is not a source.
-4. Third-party directories and reviews may point at where to look. They never fill a cell.
+4. Third-party directories and reviews may point at where to look. They never fill a cell. A value that
+   predates this rule and has no recorded source says "source not yet recorded" until a source is recorded or
+   the value is replaced from the firm's own documents.
 5. A rule with no value shows *pending*. A value with no recorded source says "source not yet recorded" until
    one is recorded. Every computed number shows the document, section and read date of each rule it used. The
    same rule applies to every firm.
@@ -58,8 +60,9 @@ agreement exists and its daily, max, target and price cells are filled; each sho
 | 2026-09-23 | ask troid's rule explanation said Crypto Fund Trader resets at 00:00 UTC; troid's own engine-gaps note said the same. The T&C (8.i–8.ii) say 00:05 UTC. ask troid is switched off, so no reader saw it. | Both corrected to 00:05 UTC. |
 | 2026-09-23 | troid's terms (section 4) said troid confirms each rule from the firm's documents and marks it pending until then, and that the work was finished for some firms. In practice only a missing value shows pending; a value without a recorded source says "source not yet recorded", and no firm is finished. | Section 4 now describes that practice, and what "verified" means. |
 | 2026-09-23 | The ask troid page said nothing typed is stored and the service logs "a count of messages and nothing else". Each message goes to the AI model's provider, which may keep it for a limited period, and the log line also holds tool calls, the model and outcome flags. ask troid is switched off, so nothing was sent. | The page now says what the terms say (section 10). |
-| 2026-09-23 | troid's terms said the ledger's backtest ran on "the same data the strategy was tuned on", that "some" ledger trades were backfilled, and that the holdout was 2021–2025 data. The parameters were chosen on a TradingView sample of the same period; every ledger trade so far was backfilled; the holdout runs to 7 January 2026. | Sections 2 and 6 give the period, "every trade up to 21 September 2026", and the holdout's dates. |
-| 2026-09-23 | TROID.md answered "Does the strategy work?" with the in-sample result only (+0.033R, n=78). | It now gives the out-of-sample result too: +0.008R on 504 BTC and 498 ETH trades, both inside noise. |
+| 2026-09-23 | troid's terms said the ledger's backtest ran on "the same data the strategy was tuned on", that "some" ledger trades were backfilled, and that the holdout was 2021–2025 data; the walk-forward report, the dashboard and the README said the parameters were chosen on 8 January – 21 September 2026 and called the holdout 2021–2025. The parameters were chosen on a TradingView (Binance.com) sample of 8 January – 14 September 2026; the ledger's backtest runs on api.binance.us data to 21 September; every ledger trade so far was backfilled; the holdout runs to 7 January 2026 (2 of its 504 BTC trades exited in January 2026). | The terms (sections 2 and 6), the walk-forward report, the dashboard, the README and STRATEGY.md give those periods. |
+| 2026-09-23 | TROID.md answered "Does the strategy work?" with the in-sample result only (+0.033R, n=78). | It now gives the out-of-sample result too, MEASURED: +0.008R on 504 BTC trades and +0.008R on 498 ETH trades, standard error 0.016R each, both 95% intervals containing zero. The best-of-30 chance comparison is kept. |
+| 2026-09-23 | The ask troid page said it answers from "troid's verified rule set" and "the verified rules on troid's compare", and its description said "Verified rules"; the landing page's firms panel said "every verified firm". One of the three listed firms is marked verified. | The ask troid page says "troid's rule data" and "the rules on troid's compare"; the panel says "every firm troid lists". |
 
 ## Version
 

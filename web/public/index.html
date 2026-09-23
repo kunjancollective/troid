@@ -156,7 +156,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 
 <div class="panel" id="firms">
-  <p class="eyebrow">Firms · alphabetical · every verified firm, no cap</p>
+  <p class="eyebrow">Firms · alphabetical · every firm <span style="text-transform:none">troid</span> lists, no cap</p>
 <!-- firms:start -->
   <div class="read" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
     <div class="cell">
@@ -306,15 +306,15 @@ function render(){
     if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks","lock at +"+p.locks+"%"]);if(p.hwm!=null)used.push(["hwm","high-water-mark basis"]);}}
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){
-    h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · daily basis and drawdown type not yet verified from the firm’s documents</span></div>'+
-      '<div class="notes"><div>troid sizes against verified rules only. troid’s compare shows what is pending for this firm.</div></div>';
+    h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · troid has no daily basis or drawdown type recorded for this product</span></div>'+
+      '<div class="notes"><div>There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.</div></div>';
     el("result").innerHTML=h;return;
   }
   var bind,eff,one=(dB==null||ddB==null);
   if(dB==null){bind="max drawdown";eff=ddB;notes.push("daily basis pending for this firm — sized against the drawdown ceiling only");}
   else if(ddB==null){bind="daily loss limit";eff=dB;notes.push("drawdown type pending for this firm — sized against the daily ceiling only");}
   else{bind=dB<=ddB?"daily loss limit":"max drawdown";eff=Math.min(dB,ddB);}
-  var bindStep=["binding",one?"the only verified budget":"min(daily budget, drawdown budget)",bind+" · "+$(eff)];
+  var bindStep=["binding",one?"the only budget with its rules recorded":"min(daily budget, drawdown budget)",bind+" · "+$(eff)];
   if(p.dd==="trailing")notes.push(locked?"trailing floor locked at the initial balance ("+$(quota)+") after +"+p.locks+"%":
     "trailing floor "+$(ddFloor)+" = high-water mark × (1 − "+p.m+"%)"+(p.hwm==="equity"?" — trails on equity intraday: an unrealised high raises the floor":""));
   if(p.basis==="max_balance_equity")notes.push("daily floor = high at rollover − "+p.d+"% of the original size");

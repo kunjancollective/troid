@@ -11,7 +11,7 @@ on the ledger (cdn.jsdelivr.net, version pinned).
 | `public/ledger.html` | `/ledger` | troid's ledger, the shadow account: heartbeat, runs, every closed trade, drawn — `backtest/gen_ledger.py` |
 | `public/tearsheet.html` | `/tearsheet` | Part of troid's research: quantstats over the journal — `backtest/gen_tearsheet.py` |
 | `public/dashboard.html` | `/dashboard` | Part of troid's research: strategy review and audit findings |
-| `public/chat.html` | `/chat` | ask troid — built, switched off until legal review |
+| `public/chat.html` | `/chat` | ask troid — built, switched off until troid's terms and ask troid's guardrails have had legal review |
 | `public/terms.html` | `/terms` | Terms of use — a draft published ahead of counsel's review |
 
 `cleanUrls` in `vercel.json` serves `/faq` from `faq.html`.
@@ -35,7 +35,7 @@ fields, never troid's internal notes or affiliate terms), `public/METHODOLOGY.md
 tools ported from `mcp/server.py` and the calculator: `size_trade`, `check_budget`,
 `check_compliance`, `explain_rule`. Arithmetic goes through the tools, never the model; the
 sizing tools return each formula and intermediate value, and every rule-based result lists the
-document, section and read date of the rules it used.
+document, section and read date of the rules it used, or says the source is not yet recorded (explain_rule is written text, as its tier says).
 
 Switched off until troid's terms and ask troid's guardrails have had legal review:
 
@@ -43,15 +43,16 @@ Switched off until troid's terms and ask troid's guardrails have had legal revie
 |---|---|
 | `TROID_ASSISTANT` | `on` enables it. Anything else: the page says it is switched off and the function answers 503, spending nothing. |
 | `ANTHROPIC_API_KEY` | the key. Never in the repo. Put it in its own Anthropic Console workspace with a monthly spend limit: that limit is the only hard wall on cost. |
-| `TROID_TURN_KEY` | 32 random bytes. Signs troid's side of each conversation so a client cannot forge it. Required: without it the function answers 503. |
+| `TROID_TURN_KEY` | 32 random bytes or more. Signs troid's side of each conversation so a client cannot forge it; a change to the guardrails also invalidates older conversations. Required: without it, or with a shorter key, the function answers 503. |
 | `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
 | `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
 | `TROID_TOOLS_EFFORT` | effort on the tool route (default `low`; `none` omits it). Compare `low` and `medium` on real transcripts before switch-on. |
-| `TROID_CALLS_PER_HOUR` | model calls per instance an hour, all users together (default 300) |
-| `TROID_DEADLINE_MS` | time budget for one message, every call and retry included (default 50000; the function limit is 60 s) |
+| `TROID_CALLS_PER_HOUR` | model calls per instance an hour, all users together (default 300; 0 stops all calls) |
+| `TROID_DEADLINE_MS` | time budget for one message, every call and retry included (default 50000, at most 55000; the function limit is 60 s) |
 
 Limits: about twenty messages an hour per address (IPv6 by /64), in memory, per instance; at
-most three tool rounds per message. Before switch-on, also add a Vercel WAF rate-limit rule on
+most three tool rounds per message; one retry after a fast upstream failure, and a retry-after over 10 s
+is answered "busy" at once. Before switch-on, also add a Vercel WAF rate-limit rule on
 `POST /api/troid`, which holds across instances. Only same-origin `application/json` requests
 are answered, so another site cannot spend the key through its visitors' browsers.
 

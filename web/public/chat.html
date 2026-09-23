@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ask troid</title>
-<meta name="description" content="ask troid. Verified rules, exact arithmetic, every number with its tier. Not financial advice.">
+<meta name="description" content="ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:image" content="https://troid.ai/og-image.png">
@@ -133,7 +133,7 @@ button:disabled{opacity:.45;cursor:default}
   <div id="status" class="box">checking whether the assistant is switched on…</div>
   <div id="chat" class="chat" aria-live="polite"></div>
   <div class="row">
-    <textarea id="q" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
+    <textarea id="q" maxlength="2000" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
     <button id="send" disabled>send</button>
   </div>
   <p class="notes" style="margin-top:10px"><span>Not financial advice. Verify with the firm before acting.</span></p>
@@ -145,16 +145,17 @@ button:disabled{opacity:.45;cursor:default}
   <a href="/compare">troid's compare</a>, the <a href="/METHODOLOGY.md">methodology</a> and a fixed
   <a href="https://github.com/kunjancollective/troid/blob/main/web/context/support.md">support script</a>.
   Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
-  document and read date of every rule they use; the model reports what they return. Every
-  number carries its tier. A pending rule stays pending.</p>
+  document and read date of every rule they use, or say its source is not yet recorded; the
+  model reports what they return. Every number carries its tier. A pending rule stays pending.</p>
   <h2 style="margin-top:20px">What it isn't</h2>
   <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
   troid stores nothing you type; the page keeps the conversation only while it is open. To
   answer, troid sends the conversation to the company that provides the AI model, which may
   keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, model, and whether it was a warning, a refusal or the end of
-  the session. Never the text, never your address. The hosting provider keeps its own request
-  logs, which can include your IP address. About twenty messages an hour per address.</p>
+  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
+  the fixed reply given when the AI model declines to answer, or the end of the session, and an
+  error's status code. Never the text, never your address. The hosting provider keeps its own
+  request logs, which can include your IP address. About 20 messages an hour per address.</p>
   <p style="margin-bottom:0" id="discl">ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href="/terms#ask-troid">Section 10 of troid's terms</a> has the detail.</p>
 </div>
@@ -171,13 +172,14 @@ button:disabled{opacity:.45;cursor:default}
 /* The conversation lives in this array and nowhere else. No storage, no account. The opening disclosure
    comes from the service (GET /api/troid), is shown before anything else, and is not part of hist.
    Each reply carries a signature over the conversation so far; the next message sends it back. */
-var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20;
+var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL="This conversation has reached its limit of ten questions. Reloading the page starts a new one.";
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 function stop(msg){ended=true;setOn(false,msg)}
 fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
-  if(s.max_messages)maxMsgs=s.max_messages;
+  if(s.max_messages){maxMsgs=s.max_messages;FULL="This conversation has reached its limit of "+Math.floor(maxMsgs/2)+" questions. Reloading the page starts a new one."}
+  if(s.max_chars)el("q").maxLength=s.max_chars;
   if(s.enabled&&s.disclosure){add("a",s.disclosure);shown=true}
   if(s.enabled)setOn(true,"on · "+(s.context&&s.context.firms?s.context.firms.length+" firms · ":"")+s.limit_per_hour+" messages an hour · no memory between visits");
   else setOn(false,"ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.");
@@ -191,11 +193,11 @@ function send(){
   .then(function(x){var st=x[0],j=x[1];w.remove();
     if(st===200&&j.ended){add("a",j.reply);stop("This session has ended. Reloading the page starts a new one.")}
     else if(st===200){hist.push({role:"assistant",content:j.reply});sig=j.sig||null;add("a",j.reply);
-      add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note);
-      if(hist.length+1>maxMsgs)stop("This conversation reached its length. Reloading the page starts a new one.")}
+      add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model);
+      if(j.full||hist.length+1>maxMsgs)stop(FULL)}
     else{hist.pop();add("s",j.error||("error "+st));
-      if(j.restart)stop(j.error);else if(st===503&&j.enabled===false)setOn(false,j.error||"switched off")}
-  }).catch(function(){w.remove();hist.pop();add("s","ask troid could not be reached.")})
+      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(st===503&&j.enabled===false)setOn(false,j.error||"switched off")}}
+  }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s","ask troid could not be reached.")})
   .then(function(){busy=false;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }
 el("send").addEventListener("click",send);

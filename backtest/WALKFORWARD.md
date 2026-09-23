@@ -8,7 +8,7 @@
 
 Data: `data/BTCUSDT_4h.csv` — BTCUSDT 4h from https://api.binance.us, t,o,h,l,c, gaps forward-filled: 4. Forward-filled bars in the file: 4.
 
-Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameters were chosen on 2026-01-08 -> 2026-09-21 (the frozen sample). Every earlier year is a holdout the config never saw. One continuous run, challenge accounting off, 0.5% risk per trade, trades bucketed by exit time. Buckets under 30 trades are insufficient, not numbers. `flagged` counts trades that held through a forward-filled bar.
+Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameters were chosen on a Binance.com (TradingView) BTC sample of 2026-01-08 -> 2026-09-14; the fit rows below cover 2026-01-08 -> 2026-09-21 on this file. Every earlier year is a holdout the config never saw. One continuous run, challenge accounting off, 0.5% risk per trade, trades bucketed by exit time. Buckets under 30 trades are insufficient, not numbers. `flagged` counts trades that held through a forward-filled bar.
 
 | bucket | n | trades/mo | win | exp R | SE | 95% CI | PF | flagged trades | filled bars |
 |---|---|---|---|---|---|---|---|---|---|
@@ -40,7 +40,7 @@ Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameter
 
 Data: `data/ETHUSDT_4h.csv` — ETHUSDT 4h from https://api.binance.us, t,o,h,l,c, gaps forward-filled: 4. Forward-filled bars in the file: 4.
 
-Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameters were chosen on 2026-01-08 -> 2026-09-21 (the frozen sample). Every earlier year is a holdout the config never saw. One continuous run, challenge accounting off, 0.5% risk per trade, trades bucketed by exit time. Buckets under 30 trades are insufficient, not numbers. `flagged` counts trades that held through a forward-filled bar.
+Strategy: `troid-shadow-1` from `strategy_config.json`, unchanged. Its parameters were chosen on a Binance.com (TradingView) BTC sample of 2026-01-08 -> 2026-09-14; the fit rows below cover 2026-01-08 -> 2026-09-21 on this file. Every earlier year is a holdout the config never saw. One continuous run, challenge accounting off, 0.5% risk per trade, trades bucketed by exit time. Buckets under 30 trades are insufficient, not numbers. `flagged` counts trades that held through a forward-filled bar.
 
 | bucket | n | trades/mo | win | exp R | SE | 95% CI | PF | flagged trades | filled bars |
 |---|---|---|---|---|---|---|---|---|---|

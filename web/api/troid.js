@@ -14,18 +14,21 @@
  *
  * The service, not the model, enforces four things: the opening AI disclosure (prepended to the first
  * reply unless the page has already shown it); one warning before a session ends for abuse (the model
- * answers with END_SESSION; the service ends the session only if a warning is already in the history,
- * and gives the warning otherwise); a model safety refusal (stop_reason "refusal"), which gets a fixed
- * reply; and the history itself, which is signed turn by turn so a client cannot write troid's side of
- * the conversation. The "should I" refusal set is the model's, worded by support.md section 4.
+ * asks with END_SESSION; the service ends the session only if its exact warning is already in the
+ * history, and gives the warning otherwise); a model safety refusal (stop_reason "refusal"), which gets a
+ * fixed reply; and the history itself, which is signed turn by turn so a client cannot write troid's side
+ * of the conversation. The "should I" refusal set is the model's, worded by support.md section 4. The
+ * service keeps no state, so a client that rewinds to an earlier signed turn, or reloads, starts over;
+ * the rate limit is the brake on that.
  *
- * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY and TROID_TURN_KEY set. Otherwise POST
- * answers 503 and spends nothing. Neither key ever leaves the environment.
+ * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY and a TROID_TURN_KEY of at least 32 bytes set.
+ * Otherwise POST answers 503 and spends nothing. Neither key ever leaves the environment.
  *
- * Logging: one line per message passed to the model — tool calls, the model, and warned / refusal /
- * ended / error flags, with the HTTP status of a failed upstream call. No text, no address. The owner
- * may choose 30-day conversation logging instead (audit handoff §4); until then this is count-only,
- * as the terms state.
+ * Logging: one line per message sent to the AI model — tool calls, the model called, and warned /
+ * refusal / ended / error flags, with the HTTP status of a failed upstream call. No text, no address. A
+ * message turned away before any call (switched off, busy, over the limit, malformed, unverifiable) is not
+ * logged. The owner may choose 30-day conversation logging instead (audit handoff §4); until then this is
+ * count-only, as the terms state.
  *
  * Limits: about 20 messages an hour per address (IPv6 by /64), in memory, per instance — a brake, not
  * a wall. A per-instance ceiling on model calls an hour and a 50s deadline per message bound the
@@ -42,19 +45,22 @@ const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // 
 const BASE_URL = process.env.ANTHROPIC_BASE_URL || undefined;               // tests point this at a local fake
 const MODEL_LOOKUP = process.env.TROID_MODEL_LOOKUP || "claude-haiku-4-5";   // lookups
 const MODEL_TOOLS = process.env.TROID_MODEL_TOOLS || "claude-sonnet-5";      // anything that calls a tool
-const TOOLS_EFFORT = process.env.TROID_TOOLS_EFFORT || "low";               // Sonnet route only; Haiku 4.5 takes no effort. "none" omits it
-const MAX_TOKENS = { [MODEL_LOOKUP]: 4096, [MODEL_TOOLS]: 8192 };          // Sonnet 5 thinks adaptively; leave it room
+const TOOLS_EFFORT = process.env.TROID_TOOLS_EFFORT || "low";               // tools route only; Haiku 4.5 takes no effort. "none" omits it
+const ROUTE = { lookup: { model: MODEL_LOOKUP, max_tokens: 4096 },            // keyed by route, not by model name, so the
+                tools: { model: MODEL_TOOLS, max_tokens: 8192 } };            // two can be set to the same model safely
+const num = (v, d) => (v != null && v !== "" && Number.isFinite(+v) ? +v : d);
 const LIMIT_PER_HOUR = 20;
-const CALLS_PER_HOUR = +process.env.TROID_CALLS_PER_HOUR || 300;             // model calls per instance an hour, all users
+const CALLS_PER_HOUR = Math.max(0, num(process.env.TROID_CALLS_PER_HOUR, 300)); // model calls per instance an hour, all users; 0 stops spend
 const MAX_TOOL_ROUNDS = 3;
-const DEADLINE_MS = +process.env.TROID_DEADLINE_MS || 50_000;                // one message, all calls and retries; the function limit is 60s
 const MIN_CALL_MS = 5_000;                                                   // don't start a call with less than this left
+const MAX_RETRY_WAIT_MS = 10_000;                                            // a longer retry-after is answered "busy" at once
+const DEADLINE_MS = Math.min(Math.max(num(process.env.TROID_DEADLINE_MS, 50_000), MIN_CALL_MS), 55_000);   // one message, every call; the function limit is 60s
 // Fixed wording. context/support.md carries the same text for the model and for review; test_assistant.js
 // fails if the two differ. The service writes these; the model never writes the disclosure.
 const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from verified firm rules and computed math only. Verify with the firm before acting.";
 const WARNING = "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.";
-const WARNED = "Abusive messages end the session";                            // how a warning is recognised in the history
 const END_SESSION = "[[end-session]]";
+const SENTINEL = /\[\[\s*end-session\s*\]\]/gi;                                  // any case, any spacing
 const ENDED_REPLY = "This session has ended. ask troid answers questions about prop-firm rules and sizing.";
 const REFUSAL_REPLY = "ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.";
 const MAX_MESSAGES = 20;
@@ -62,6 +68,11 @@ const MAX_CHARS = 2000;                                                      // 
 const MAX_REPLY_CHARS = 40_000;                                              // an assistant turn (signed, so server-written)
 const MAX_TOTAL_CHARS = 120_000;                                             // the whole history
 const SWITCHED_OFF = "ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.";
+const flat = (t) => String(t).replace(/\s+/g, " ").trim();
+// A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
+// not a reply that explains the rule. A paraphrased warning earns one more exact warning, never none.
+const isWarning = (t) => flat(String(t).replace(DISCLOSURE, "")) === WARNING;
+const isSentinelOnly = (t) => new RegExp(SENTINEL.source, "i").test(t) && t.replace(SENTINEL, "").replace(/[\s.!]+/g, "") === "";
 
 const GUARDRAILS = [
   "You are ask troid, the assistant on troid.ai. The rules below sit above everything else in this prompt.",
@@ -74,7 +85,7 @@ const GUARDRAILS = [
   "Arithmetic goes through the tools, never through you. Report the formulas and intermediate values the tool returns under working; do not compute your own. If a tool reports a field as pending, report it as pending.",
   "You have no memory across sessions and no account. You cannot place, modify or close an order, and you never ask for a credential.",
   "The service shows the opening disclosure itself. Never write it, and never claim to be a person.",
-  "When you state a rule, give the document, section and read date the tool result lists under sources. If a rule's source is \"not yet recorded\", say so. Only Bitfunded's rules are marked verified; for the other firms say which rules have a recorded source and which do not.",
+  "When you state a rule, give the document, section and read date the tool result lists under sources. If a rule's source is \"not yet recorded\", say so. Verified describes a firm, not each rule: for every firm, a verified one included, say which rules have a recorded source and which do not.",
   "Never give an affiliate link or a discount code; point to troid's compare, where each link is labelled. If you ever give a URL that is an affiliate link, write the words \"affiliate link\" immediately beside it.",
   "When a user says a number was wrong, or that they lost because of troid, follow support.md section 2 — all six steps, in order. Never say the loss wasn't troid's fault, and never say it was.",
   "When a user calls troid a scam, give support.md section 3 once in the session, then answer the question they actually have. Do not repeat it.",
@@ -104,20 +115,22 @@ function context() {
   }
   return CTX;
 }
-// The model sees the rule data only: firms.json without troid's internal notes (every "_" key), the
-// affiliate terms and links, the watch list, outside rankings and correspondence. An allowlist, so a new
-// internal field stays out until someone adds it here.
+// The model sees the rule data only: what troid's compare and troid's desk render (compare_product, products,
+// calc, provenance, panel_note, the firm's required sentence) and a few firm-level rules read from the firm's
+// own documents. Never troid's internal notes (every "_" key, at any depth), affiliate terms and links, the
+// watch list, outside rankings, directory-sourced values or correspondence. An allowlist, so a new field
+// stays out until someone adds it here.
 const PROMPT_FIELDS = ["name", "verified", "verified_on", "compare_product", "products", "calc", "provenance", "panel_note",
-  "required_disclaimer", "daily_basis", "drawdown_type", "floating_counts", "fee_per_side_pct", "max_leverage", "margin_modes",
-  "max_open_positions", "hold_cap_days", "min_closed_trades_per_stage", "concentration_penalty_ladder", "consistency_rule",
-  "mandatory_sl", "payouts_per_30d", "split", "refund", "reset_utc", "restricted_countries", "us_available", "execution_type",
-  "integration_type", "platforms", "copy_trading", "profit_cap", "payout_discretion", "addons", "governing_law", "entity",
-  "entities", "currency", "max_capital_per_customer", "payment_methods", "trader_payout_methods", "rule_changes"];
+  "required_disclaimer", "rule_changes", "floating_counts", "margin_modes", "max_open_positions", "hold_cap_days",
+  "min_closed_trades_per_stage", "concentration_penalty_ladder", "mandatory_sl", "copy_trading", "payouts_per_30d",
+  "max_capital_per_customer"];
+const noNotes = (x) => (Array.isArray(x) ? x.map(noNotes) : x && typeof x === "object"
+  ? Object.fromEntries(Object.entries(x).filter(([k]) => !k.startsWith("_")).map(([k, v]) => [k, noNotes(v)])) : x);
 function promptFirms(raw) {
   const F = JSON.parse(raw), out = {};
   for (const [k, v] of Object.entries(F)) {
     if (k.startsWith("_") || !v || typeof v !== "object") continue;
-    out[k] = Object.fromEntries(PROMPT_FIELDS.filter((f) => f in v).map((f) => [f, v[f]]));
+    out[k] = noNotes(Object.fromEntries(PROMPT_FIELDS.filter((f) => f in v).map((f) => [f, v[f]])));
     const P = out[k].provenance;
     if (P) {                                                  // only the documents some rule cites
       const cited = new Set();
@@ -129,14 +142,18 @@ function promptFirms(raw) {
   }
   return out;
 }
+function verifiedLine(pf) {                                  // from the data, so it can't go stale
+  const v = Object.values(pf).filter((f) => f.verified === true).map((f) => f.name);
+  return v.length ? v.join(", ") + (v.length > 1 ? " are" : " is") + " marked verified; the others are not" : "No firm is marked verified";
+}
 function systemBlocks() {
   const c = context(), names = Object.values(c.prompt_firms).map((f) => f.name);
   return [
     { type: "text", text: "# Guardrails\n\n" + GUARDRAILS + "\n- You may speak only about these firms: " + names.join(", ") +
-      ". For any other firm, say troid does not cover it and has not read its rules, and stop.\n\n" + c.troid },
+      ". For any other firm, say troid does not cover it and has not read its rules, and stop.\n- " + verifiedLine(c.prompt_firms) + ".\n\n" + c.troid },
     { type: "text", text: "# support.md — fixed wording for the hard conversations\n\n" + c.support },
-    { type: "text", text: "# Firm rules — the rule data behind troid's compare. Each rule has its source and read date under provenance, " +
-      "or no recorded source yet; a null is pending. Only Bitfunded is marked verified.\n\n" + JSON.stringify(c.prompt_firms) },
+    { type: "text", text: "# Firm rules — the rule data behind troid's compare and troid's desk. Each rule has its source and read date under provenance, " +
+      "or no recorded source yet; a null is pending. " + verifiedLine(c.prompt_firms) + ".\n\n" + JSON.stringify(c.prompt_firms) },
     { type: "text", text: "# Methodology — the tiers\n\n" + c.method, cache_control: { type: "ephemeral" } },
   ];
 }
@@ -455,62 +472,88 @@ function runTool(name, input) {
 }
 
 // ---------------------------------------------------------------- limits (in memory, per instance, best effort)
-const HITS = new Map(), CALLS = [];
+const HITS = new Map(), CALLS = [], MAX_KEYS = 5000;
 // One key per IPv4 address, one per IPv6 /64 (one host usually holds a whole /64). Vercel's edge sets
 // x-real-ip and overwrites x-forwarded-for, so neither can be spoofed from outside.
 function clientKey(req) {
   const ip = String(req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || (req.socket && req.socket.remoteAddress) || "?").split(",")[0].trim();
   if (!ip.includes(":") || ip.includes(".")) return ip.replace(/^::ffff:/i, "");
-  const [h, t = ""] = ip.split("::"), a = h ? h.split(":") : [], b = t ? t.split(":") : [];
+  const [h, t = ""] = ip.split("%")[0].split("::"), a = h ? h.split(":") : [], b = t ? t.split(":") : [];
   return [...a, ...Array(Math.max(0, 8 - a.length - b.length)).fill("0"), ...b].slice(0, 4).join(":").toLowerCase() + "::/64";
 }
+// The Map is kept in least-recently-seen order. A full table evicts idle keys, then keys under the limit,
+// then the oldest — it never turns a new visitor away because other addresses filled it.
 function allow(key) {
-  const now = Date.now();
-  if (!HITS.has(key) && HITS.size >= 5000) {                  // full: drop idle keys, never live counters
-    for (const [k, v] of HITS) if (now - v[v.length - 1] >= 3600e3) HITS.delete(k);
-    if (HITS.size >= 5000) return false;
-  }
-  const keep = (HITS.get(key) || []).filter((t) => now - t < 3600e3);
+  const now = Date.now(), keep = (HITS.get(key) || []).filter((t) => now - t < 3600e3);
+  HITS.delete(key);
   if (keep.length >= LIMIT_PER_HOUR) { HITS.set(key, keep); return false; }
   keep.push(now); HITS.set(key, keep);
+  if (HITS.size > MAX_KEYS) {
+    for (const [k, v] of HITS) { if (HITS.size <= MAX_KEYS) break; if (k !== key && (now - v[v.length - 1] >= 3600e3 || v.length < LIMIT_PER_HOUR)) HITS.delete(k); }
+    for (const k of HITS.keys()) { if (HITS.size <= MAX_KEYS) break; if (k !== key) HITS.delete(k); }
+  }
   return true;
 }
-function spend() {                                            // the instance's ceiling on model calls an hour
+function spendable() {                                        // the instance's ceiling on model calls an hour
   const now = Date.now();
   while (CALLS.length && now - CALLS[0] >= 3600e3) CALLS.shift();
-  if (CALLS.length >= CALLS_PER_HOUR) { const e = new Error("instance call ceiling"); e.busy = true; throw e; }
-  CALLS.push(now);
+  return CALLS.length < CALLS_PER_HOUR;
+}
+function spend() {
+  if (!spendable()) { const e = new Error("instance call ceiling"); e.busy = true; throw e; }
+  CALLS.push(Date.now());
 }
 
 // ---------------------------------------------------------------- the call
 let CLIENT = null;
 function client() {
   // logLevel pinned: ANTHROPIC_LOG=debug would otherwise write request bodies (the user's text) to the log.
-  if (!CLIENT) CLIENT = new Anthropic({ apiKey: KEY, baseURL: BASE_URL, maxRetries: 1, timeout: 25_000, logLevel: "warn" });
+  // Timeouts and retries are set per call from the message's deadline, below.
+  if (!CLIENT) CLIENT = new Anthropic({ apiKey: KEY, baseURL: BASE_URL, logLevel: "warn" });
   return CLIENT;
 }
-// Every call gets only the time left before the message's deadline. The abort signal is the hard wall:
-// it also cuts short the SDK's retry-after sleep.
-function callModel(model, messages, deadlineAt) {
-  const left = deadlineAt - Date.now();
-  if (left < MIN_CALL_MS) { const e = new Error("deadline"); e.deadline = true; throw e; }
-  spend();
-  const params = { model, max_tokens: MAX_TOKENS[model] || 4096, cache_control: { type: "ephemeral" },   // + the tail of the conversation
-                   system: systemBlocks(), tools: TOOLS, messages };
-  if (model === MODEL_TOOLS && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
-  return client().messages.create(params, { timeout: left, maxRetries: left > 30_000 ? 1 : 0, signal: AbortSignal.timeout(left) });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Every call gets only the time left before the message's deadline; the abort signal is the hard wall.
+// The SDK does not retry (it would honour any retry-after, however long). One retry happens here, after a
+// fast failure only (rate limit, overload, connection), and only if the wait and a call still fit.
+async function callModel(route, messages, deadlineAt, onSend) {
+  const R = ROUTE[route];
+  for (let attempt = 0; ; attempt++) {
+    const left = deadlineAt - Date.now();
+    if (left < MIN_CALL_MS) { const e = new Error("deadline"); e.deadline = true; throw e; }
+    spend();
+    const params = { model: R.model, max_tokens: R.max_tokens, cache_control: { type: "ephemeral" },   // + the tail of the conversation
+                     system: systemBlocks(), tools: TOOLS, messages };
+    if (route === "tools" && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
+    onSend(R.model);
+    try {
+      return await client().messages.create(params, { timeout: left, maxRetries: 0, signal: AbortSignal.timeout(left) });
+    } catch (e) {
+      const fast = e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError
+        || (e instanceof Anthropic.APIConnectionError && !(e instanceof Anthropic.APIConnectionTimeoutError));
+      if (!fast || attempt > 0) throw e;
+      const h = e.headers && typeof e.headers.get === "function" ? e.headers : null;
+      const ms = h && num(h.get("retry-after-ms"), NaN), sec = h && num(h.get("retry-after"), NaN);
+      const wait = Number.isFinite(ms) ? ms : Number.isFinite(sec) ? sec * 1000 : 500;
+      if (wait > MAX_RETRY_WAIT_MS || Date.now() + wait + MIN_CALL_MS >= deadlineAt) throw e;   // busy: say so now
+      await sleep(wait);
+    }
+  }
 }
 const textOf = (resp) => (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
 const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason === "max_tokens" && (resp.content || []).some((b) => b.type === "tool_use"));
 
 // troid's side of the history is signed: each reply carries an HMAC over the whole conversation up to and
-// including it, and the next message must bring it back. Stateless; nothing is stored.
-const sign = (msgs) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify(msgs.map((m) => [m.role, m.content]))).digest("base64url");
+// including it, and the next message must bring it back. Stateless; nothing is stored. The HMAC input starts
+// with a hash of the guardrails, so a history signed under older guardrails no longer verifies.
+const VERSION = crypto.createHash("sha256").update(GUARDRAILS).digest("hex").slice(0, 16);
+const sign = (msgs) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([VERSION, ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
 function signedOk(msgs, sig) {
   if (msgs.length === 1) return true;
   const want = Buffer.from(sign(msgs.slice(0, -1))), got = Buffer.from(String(sig || ""));
   return got.length === want.length && crypto.timingSafeEqual(got, want);
 }
+// null if the history is malformed; otherwise the messages, trimmed
 function validate(body) {
   const m = body && Array.isArray(body.messages) ? body.messages : null;
   if (!m || !m.length || m.length > MAX_MESSAGES) return null;
@@ -528,8 +571,13 @@ function validate(body) {
   if (total > MAX_TOTAL_CHARS) return null;
   return out.length % 2 === 1 ? out : null;   // ends on the user
 }
+const tooLong = (body) => {                                  // only the new message is over the limit: shorten it, keep the session
+  const m = body && Array.isArray(body.messages) ? body.messages : null, last = m && m[m.length - 1];
+  return !!(last && last.role === "user" && typeof last.content === "string" && last.content.trim().length > MAX_CHARS);
+};
 function json(res, code, obj) { res.statusCode = code; res.setHeader("content-type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); }
-const isOn = () => ENABLED && !!KEY && !!TURN_KEY;
+const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32;
+const BUSY = { enabled: true, error: "ask troid is busy. Try again in a minute." };
 
 module.exports = async (req, res) => {
   res.setHeader("cache-control", "no-store");
@@ -537,34 +585,33 @@ module.exports = async (req, res) => {
     let ctx = null;
     try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
-    return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS },
-                            tools: TOOLS.map((t) => t.name), disclosure: DISCLOSURE, context: ctx });
+    return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
+                            models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), disclosure: DISCLOSURE, context: ctx });
   }
   if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}]}" });
   if (!ENABLED) return json(res, 503, { enabled: false, error: SWITCHED_OFF });
-  if (!KEY || !TURN_KEY) return json(res, 503, { enabled: false, error: "ask troid is not fully configured." });
+  if (!isOn()) return json(res, 503, { enabled: false, error: "ask troid is not fully configured." });
   // Same-origin JSON only: a cross-site form or no-cors fetch can't spend troid's key from someone else's page.
   if (!/^application\/json\b/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "Send application/json." });
   const site = req.headers["sec-fetch-site"];
   if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
+  if (!spendable()) return json(res, 503, BUSY);              // turned away before the model: not logged, costs no hourly message
   if (!allow(clientKey(req))) return json(res, 429, { error: `Limit: ${LIMIT_PER_HOUR} messages an hour.` });
   let body;
   try { body = req.body; if (typeof body === "string") body = JSON.parse(body); } catch (e) { body = null; }
+  if (tooLong(body)) return json(res, 413, { error: `Keep one message under ${MAX_CHARS} characters.` });
   const messages = validate(body);
-  if (!messages) return json(res, 400, { restart: true, error: `This conversation can't continue: send 1–${MAX_MESSAGES - 1} alternating messages, user first and last, each user message under ${MAX_CHARS} characters. Reloading the page starts a new one.` });
+  if (!messages) return json(res, 400, { restart: true, error: `This conversation can't continue: at most ${MAX_MESSAGES - 1} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.` });
   if (!signedOk(messages, body.sig)) return json(res, 400, { restart: true, error: "This conversation could not be verified. Reloading the page starts a new one." });
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
-  const said = (k) => messages.some((m) => m.role === "assistant" && m.content.includes(k));
-  if (messages.some((m) => m.role === "assistant" && m.content === ENDED_REPLY)) {   // an ended session stays ended
-    log.ended = 1; console.log(JSON.stringify(log));
-    return json(res, 200, { reply: ENDED_REPLY, ended: true, model: null, tool_calls: 0, disclosed: true, note: "" });
-  }
+  const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && m.content.startsWith(DISCLOSURE)));
   const deadlineAt = Date.now() + DEADLINE_MS;
-  let model = MODEL_LOOKUP, toolCalls = 0;
+  let sent = null, toolCalls = 0;
+  const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
-    let resp = await callModel(model, messages, deadlineAt);
-    if (wantsTool(resp)) { model = MODEL_TOOLS; resp = await callModel(model, messages, deadlineAt); }   // Haiku's turn is discarded, never replayed
+    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend);
+    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend); }   // Haiku's turn is discarded, never replayed
     const convo = messages.slice();
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
@@ -574,39 +621,47 @@ module.exports = async (req, res) => {
         const out = runTool(u.name, u.input);
         return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
       }) });
-      resp = await callModel(model, convo, deadlineAt);
+      resp = await callModel("tools", convo, deadlineAt, onSend);
     }
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = REFUSAL_REPLY; log.refusal = 1; }
     else {
       reply = textOf(resp);
-      if (reply.replace(/\s+/g, "") === END_SESSION) {                 // the model asks to end; the service checks a warning came first
-        if (said(WARNED)) { reply = ENDED_REPLY; ended = true; log.ended = 1; }
+      // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
+      // that is the session-ended text word for word is treated the same way.
+      if (isSentinelOnly(reply) || flat(reply) === ENDED_REPLY) {
+        if (warned) { reply = ENDED_REPLY; ended = true; log.ended = 1; }
         else reply = WARNING;
       } else {
-        reply = reply.split(END_SESSION).join("").trim();              // the sentinel never reaches the page and ends nothing mid-answer
+        reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + "[This answer hit its length limit and is cut short.]";
         else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]";
       }
-      if (reply.includes(WARNED)) log.warned = 1;
+      if (isWarning(reply)) log.warned = 1;
     }
     if (!reply) reply = "No answer produced.";
     if (first) reply = DISCLOSURE + "\n\n" + reply;
     reply = reply.trim();
-    Object.assign(log, { tool_calls: toolCalls, model });
+    const CUT = "\n\n[This answer hit its length limit and is cut short.]";
+    if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
+    Object.assign(log, { tool_calls: toolCalls, model: sent });
     console.log(JSON.stringify(log));
-    const out = { reply, model, tool_calls: toolCalls, ended, disclosed: true, note: "Not financial advice. Verify with the firm before acting." };
-    if (!ended) out.sig = sign([...messages, { role: "assistant", content: reply }]);
+    const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, note: "Not financial advice. Verify with the firm before acting." };
+    if (!ended) {
+      out.sig = sign([...messages, { role: "assistant", content: reply }]);
+      const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
+      if (messages.length + 2 > MAX_MESSAGES || total + MAX_CHARS > MAX_TOTAL_CHARS) out.full = true;   // the next message could not fit
+    }
     return json(res, 200, out);
   } catch (e) {
-    Object.assign(log, { error: 1, tool_calls: toolCalls, model });
+    Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent });
     if (e && typeof e.status === "number") log.status = e.status;
     console.log(JSON.stringify(log));
-    // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError
-    if (e && (e.deadline || e instanceof Anthropic.APIUserAbortError || e instanceof Anthropic.APIConnectionTimeoutError))
+    // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError. A body
+    // read cut by the deadline surfaces as a bare DOMException (AbortError / TimeoutError).
+    if (e && (e.deadline || e instanceof Anthropic.APIUserAbortError || e instanceof Anthropic.APIConnectionTimeoutError || e.name === "AbortError" || e.name === "TimeoutError"))
       return json(res, 504, { error: "ask troid ran out of time on that one. Ask again, narrower." });
-    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError))
-      return json(res, 503, { enabled: true, error: "ask troid is busy. Try again in a minute." });
+    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError)) return json(res, 503, BUSY);
     if (e instanceof Anthropic.APIConnectionError) return json(res, 502, { error: "The model could not be reached. Try again in a minute." });
     if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError || e instanceof Anthropic.NotFoundError || e instanceof Anthropic.BadRequestError)
       return json(res, 500, { error: "ask troid is misconfigured. Try again later, or write to hello@troid.ai." });

@@ -97,7 +97,8 @@ time-series holdout; survive three months of the public shadow forward test (the
 ends the claim. All three passing earns the right to say "+X R, out of sample."
 
 The time-series holdout has been run (`WALKFORWARD.md`): this configuration was chosen on
-2026, and on the 504 BTC trades from 2021–2025 it never saw it measures +0.008R, SE 0.016R,
+2026 data (a Binance.com sample of 8 January – 14 September), and on the 504 BTC trades from 1 January 2021 to
+7 January 2026 it never saw it measures +0.008R, SE 0.016R,
 95% CI [−0.023R, +0.040R]; ETH, 498 trades, +0.008R. No single year clears +0.04R.
 
 **In-sample-to-holdout shrinkage: 75%.** +0.033R on the 78 trades the parameters were

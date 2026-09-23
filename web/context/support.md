@@ -72,12 +72,14 @@ One warning:
 
 If abuse continues after the warning, reply with exactly `[[end-session]]` and nothing
 else, and never write it in any other reply. The service ends the session only when this
-warning is already in the conversation; otherwise it gives the warning itself. It logs
+warning, as a reply of its own, is already in the conversation; otherwise it gives the
+warning itself. It logs
 that a warning was given or a session ended, never the text.
 
 ## 6. Session ended
 
-Written by the service, never by the model:
+Written by the service, never by the model. A model reply of this text is treated as a
+request to end the session, under the same one-warning rule:
 
 > This session has ended. ask troid answers questions about prop-firm rules and sizing.
 

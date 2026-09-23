@@ -2,7 +2,7 @@
 /* Offline checks for api/troid.js: the tool port against the calculator's reference case,
    then the handler end to end against a scripted fake of the Messages API. Spends nothing. */
 const assert = require("assert");
-process.env.TROID_ASSISTANT = "on"; process.env.ANTHROPIC_API_KEY = "test-key"; process.env.TROID_TURN_KEY = "test-turn-key";
+process.env.TROID_ASSISTANT = "on"; process.env.ANTHROPIC_API_KEY = "test-key"; process.env.TROID_TURN_KEY = "test-turn-key-0123456789abcdefghij";
 process.env.ANTHROPIC_BASE_URL = "http://127.0.0.1:18765";   // the local fake below
 const handler = require("./api/troid.js");
 const T = handler.tools;
@@ -130,7 +130,7 @@ fake.listen(18765, async () => {
     await handler({ method: "GET", headers: {} }, res);
     let j = JSON.parse(res.body);
     ok("GET: on, models, context incl. support.md, disclosure, max messages", j.enabled === true && j.models.lookup === "claude-haiku-4-5" && j.models.tools === "claude-sonnet-5"
-       && j.context.support_md > 500 && j.context.firms.length === 3 && j.disclosure === F.DISCLOSURE && j.max_messages === 20, j);
+       && j.context.support_md > 500 && j.context.firms.length === 3 && j.disclosure === F.DISCLOSURE && j.max_messages === 20 && j.max_chars === 2000, j);
 
     // 1. a lookup: Haiku answers; the service prepends the disclosure on the first message
     script = () => msg("end_turn", [{ type: "text", text: "troid's desk sizes against both ceilings (DERIVED)." }]);
@@ -142,9 +142,14 @@ fake.listen(18765, async () => {
        && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 4 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
     ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "section 4, word for word", F.END_SESSION, "opening disclosure", "affiliate link"].every((k) => calls[0].system[0].text.includes(k)));
     ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader\./.test(calls[0].system[0].text));
-    const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_url", "affiliate_rate", "Affiliate Agreement", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
+    const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
     ok("the prompt carries rule data only: no internal notes, rankings, affiliate terms or correspondence",
        banned.every((k) => !sys.includes(k)) && /"provenance"/.test(sys) && /"lev_bands"/.test(sys), banned.filter((k) => sys.includes(k)));
+    const firmsBlock = calls[0].system[2].text;
+    const BAD = /"_[a-z]|propfirmmatch|trustpilot|affiliate agreement|references\/|firms_evidence|; verify\)|Unusually explicit|third-party/gi;
+    ok("no note at any depth, no directory-sourced value, no affiliate term, no editorial", !(firmsBlock.match(BAD) || []).length, (firmsBlock.match(BAD) || []).slice(0, 8));
+    ok("which firm is verified comes from the data", /Bitfunded is marked verified; the others are not/.test(calls[0].system[0].text) && /Bitfunded is marked verified/.test(firmsBlock)
+       && /Verified describes a firm, not each rule/.test(calls[0].system[0].text));
     r = await post([U("what is the crossover?")], { disclosed: true });
     ok("page already showed the disclosure: not repeated", !r.j.reply.includes(F.DISCLOSURE) && r.j.disclosed === true, r.j.reply);
     r = await post([U("a"), A(F.DISCLOSURE + "\n\nb"), U("c")]);
@@ -194,9 +199,16 @@ fake.listen(18765, async () => {
     script = () => msg("end_turn", [{ type: "text", text: "Abusive sessions end when the reply is exactly " + F.END_SESSION + " — the service ends it." }]);
     r = await post([U("how does the abuse rule work?"), A(F.WARNING), U("explain")], { disclosed: true });
     ok("the sentinel inside an answer ends nothing and is stripped", r.j.ended === false && !r.j.reply.includes(F.END_SESSION), r.j);
-    calls.length = 0;
-    r = await post([U("abuse"), A(F.WARNING), U("abuse"), A(F.ENDED_REPLY), U("hello again")], { disclosed: true });
-    ok("a message after the end: still ended, no upstream call", r.j.ended === true && calls.length === 0, [r.j, calls.length]);
+    script = () => msg("end_turn", [{ type: "text", text: F.ENDED_REPLY }]);
+    r = await post([U("abuse")], { disclosed: true });
+    ok("the model writing the session-ended text, no warning yet: the warning, not an end", r.j.ended === false && r.j.reply === F.WARNING && r.j.sig, r.j);
+    r = await post([U("abuse"), A(F.WARNING), U("abuse again")], { disclosed: true });
+    ok("the same after the warning: ended", r.j.ended === true && r.j.reply === F.ENDED_REPLY, r.j);
+    script = () => msg("end_turn", [{ type: "text", text: "[[END-SESSION]]." }]);
+    r = await post([U("what are the rules here?"), A("Questions about prop-firm rules and sizing. Abusive messages end the session. Ask about any firm troid covers."), U("rude")], { disclosed: true });
+    ok("a reply that explains the rule is not a warning; the sentinel in any case asks to end", r.j.ended === false && r.j.reply === F.WARNING, r.j);
+    r = await post([U("rude"), A(F.WARNING.replace("end the session", "end the\nsession")), U("rude")], { disclosed: true });
+    ok("a warning wrapped across lines still counts", r.j.ended === true, r.j);
 
     // 5. max_tokens: the cut is said out loud, no leading blank lines on an all-thinking answer
     script = () => msg("max_tokens", [{ type: "text", text: "long answer" }]);
@@ -207,15 +219,34 @@ fake.listen(18765, async () => {
     ok("max_tokens with no text: no leading blank lines", r.j.reply.startsWith("[This answer hit its length limit"), r.j.reply);
 
     // 6. upstream errors: typed, each to its own status
-    script = () => ({ status: 429, json: { type: "error", error: { type: "rate_limit_error", message: "slow down" } } });
+    const e429 = (ra) => ({ status: 429, headers: ra == null ? {} : { "retry-after": String(ra) }, json: { type: "error", error: { type: "rate_limit_error", message: "slow down" } } });
+    script = () => e429(60);
+    calls.length = 0; LOGS.length = 0;
+    let t1 = Date.now();
     r = await post([U("x")], { disclosed: true });
-    ok("429 upstream: 503 busy, still on", r.status === 503 && /busy/.test(r.j.error) && r.j.enabled === true, r);
+    ok("429 with a long retry-after: 503 busy at once, status logged, still on", r.status === 503 && /busy/.test(r.j.error) && r.j.enabled === true && Date.now() - t1 < 2000
+       && calls.length === 1 && JSON.parse(LOGS[0]).status === 429, [r, Date.now() - t1, calls.length, LOGS]);
+    let once = 0;
+    script = () => (once++ === 0 ? e429(0) : msg("end_turn", [{ type: "text", text: "ok" }]));
+    calls.length = 0;
+    r = await post([U("x")], { disclosed: true });
+    ok("429 with a short retry-after: one retry, answered", r.status === 200 && calls.length === 2, [r.status, calls.length]);
     script = () => ({ status: 401, json: { type: "error", error: { type: "authentication_error", message: "bad key" } } });
     LOGS.length = 0;
     r = await post([U("x")], { disclosed: true });
     ok("401 upstream: 500 misconfigured, status code logged", r.status === 500 && /misconfigured/.test(r.j.error) && JSON.parse(LOGS[0]).status === 401, [r, LOGS]);
 
-    // 7. transport, shape, rate limit, flag
+    // 7. transport, shape, length, rate limit, flag
+    calls.length = 0;
+    r = await post([U("a"), A("b"), U("y".repeat(2001))], { disclosed: true });
+    ok("one message too long: 413, session kept (no restart), no upstream call", r.status === 413 && !r.j.restart && calls.length === 0, r);
+    script = () => msg("end_turn", [{ type: "text", text: "z".repeat(41000) }]);
+    r = await post([U("long")], { disclosed: true });
+    ok("a reply over the cap is cut with the notice", r.j.reply.length <= 40000 && /length limit/.test(r.j.reply), r.j.reply.length);
+    const nineteen = []; for (let i = 0; i < 9; i++) nineteen.push(U("q" + i), A("a" + i)); nineteen.push(U("q9"));
+    script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
+    r = await post(nineteen, { disclosed: true });
+    ok("the tenth question's answer says the conversation is full", r.status === 200 && r.j.full === true, r.j);
     calls.length = 0;
     r = await post([U("hi")], { disclosed: true }, { headers: { "content-type": "text/plain" } });
     ok("text/plain → 415, no upstream call", r.status === 415 && calls.length === 0, r.status);
@@ -230,6 +261,12 @@ fake.listen(18765, async () => {
     for (let i = 1; i <= 20; i++) await post([U("hi")], { disclosed: true }, { ip: "2001:db8:1:2::" + i.toString(16) });
     last = await post([U("hi")], { disclosed: true }, { ip: "2001:db8:1:2:ffff::99" });
     ok("rate limit: one IPv6 /64 shares one quota", last.status === 429, last.status);
+    for (let i = 0; i < 5100; i++) await post({}, {}, { ip: "2001:db8:9:" + i.toString(16) + "::1" });
+    calls.length = 0;
+    last = await post([U("hi")], { disclosed: true }, { ip: "192.0.2.201" });
+    ok("a table filled by junk never locks out a new visitor", last.status === 200 && calls.length === 1, last.status);
+    last = await post([U("hi")], { disclosed: true }, { ip: "198.51.100.7" });
+    ok("an address at its limit stays limited after the flood", last.status === 429, last.status);
 
     // 8. fresh instances for the module-level settings
     const fresh = (env) => { Object.assign(process.env, env); delete require.cache[require.resolve("./api/troid.js")]; const h = require("./api/troid.js"); return h; };
@@ -243,13 +280,25 @@ fake.listen(18765, async () => {
     h = fresh({ TROID_CALLS_PER_HOUR: "2" });
     script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
     await call(h, [U("1")], { disclosed: true }); await call(h, [U("2")], { disclosed: true });
-    const before = calls.length; r = await call(h, [U("3")], { disclosed: true });
-    ok("instance call ceiling: busy, no upstream call", r.status === 503 && r.j.enabled === true && calls.length === before, r);
+    let before = calls.length; LOGS.length = 0; r = await call(h, [U("3")], { disclosed: true });
+    ok("instance call ceiling: busy, no upstream call, not logged", r.status === 503 && r.j.enabled === true && calls.length === before && LOGS.length === 0, [r, LOGS]);
+    h = fresh({ TROID_CALLS_PER_HOUR: "0" }); before = calls.length; r = await call(h, [U("1")], { disclosed: true });
+    ok("a ceiling of 0 stops spend", r.status === 503 && calls.length === before, r.status);
     delete process.env.TROID_CALLS_PER_HOUR;
+    h = fresh({ TROID_MODEL_LOOKUP: "claude-sonnet-5" });
+    script = (b) => { const last = b.messages[b.messages.length - 1];
+      return Array.isArray(last.content) ? msg("end_turn", [{ type: "text", text: "done" }]) : msg("tool_use", [{ type: "tool_use", id: "t", name: "explain_rule", input: { topic: "fees" } }]); };
+    calls.length = 0; r = await call(h, [U("x")], { disclosed: true });
+    ok("one model on both routes: no duplicate rerun; limits by route", calls.length === 2 && calls[0].max_tokens === 4096 && !calls[0].output_config && calls[1].max_tokens === 8192 && calls[1].output_config.effort === "low", calls.map((c) => [c.model, c.max_tokens]));
+    delete process.env.TROID_MODEL_LOOKUP;
+    const KEEP = process.env.TROID_TURN_KEY;
     h = fresh({ TROID_TURN_KEY: "" });
     r = await call(h, [U("hi")], { disclosed: true });
     ok("no turn key → 503, off", r.status === 503 && r.j.enabled === false, r);
-    process.env.TROID_TURN_KEY = "test-turn-key";
+    h = fresh({ TROID_TURN_KEY: "short" });
+    r = await call(h, [U("hi")], { disclosed: true });
+    ok("a turn key under 32 bytes → 503, off", r.status === 503 && r.j.enabled === false, r);
+    process.env.TROID_TURN_KEY = KEEP;
     h = fresh({ TROID_ASSISTANT: "off" }); res = fakeRes(); const n0 = calls.length;
     await h({ method: "POST", headers: { "content-type": "application/json" }, body: { messages: [U("hi")] } }, res);
     ok("flag off → 503, no upstream call", res.statusCode === 503 && calls.length === n0 && /terms and ask troid's guardrails/.test(JSON.parse(res.body).error), res.statusCode);
