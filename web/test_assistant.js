@@ -105,9 +105,7 @@ ok("availability: unknown firm", /unknown firm/.test(T.check_availability({ firm
 // --- the service's English strings are the ones in web/i18n/en.json (ask.*)
 {
   const fs = require("fs"), path = require("path"), dir = path.join(__dirname, "i18n");
-  let en = {};
-  if (fs.existsSync(path.join(dir, "en.json"))) en = JSON.parse(fs.readFileSync(path.join(dir, "en.json"), "utf8"));
-  else for (const f of fs.readdirSync(path.join(dir, "src"))) Object.assign(en, JSON.parse(fs.readFileSync(path.join(dir, "src", f), "utf8")));
+  const en = JSON.parse(fs.readFileSync(path.join(dir, "en.json"), "utf8"));
   const EN = handler.EN, bad = Object.keys(EN).filter((k) => en[k] !== EN[k]);
   ok("en.json ask.* equals the service's English, key by key", !bad.length && Object.keys(en).filter((k) => k.startsWith("ask.")).length === Object.keys(EN).length, bad);
 }

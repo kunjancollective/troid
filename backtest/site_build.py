@@ -118,13 +118,14 @@ def common(T, page, live, preview=False):
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T),
             "switcher": switcher(T, page, live), "features": features_on(T), "live": live, "preview": preview,
             "footer": site_text.footer_html(T), "governs": governs_html(T),
+            "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text}
 
 
 def governs_html(T, summary_key=None):
     """On a translated page, before English legal text or quotation: a one-line summary in the reader's
     language, then 'This translation is provided for convenience. The English version governs.'"""
-    if T.code == "en":
+    if site_text._english(T):
         return ""
     s = f'<span class="gov-sum">{T(summary_key)}</span> ' if summary_key else ""
     return f'<p class="governs">{s}<span class="gov-line">{T("legal.governs")}</span></p>'

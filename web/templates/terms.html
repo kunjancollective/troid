@@ -107,12 +107,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <div class="draft">{{ t("terms.draft") }}</div>
 {#- The terms body stays in English: it is the legal text, never translated. On a translated page (and in the
     pseudo-locale, which takes the translated path as site_text does) it carries lang="en" dir="ltr", after the
-    one-line summary in the reader's language and the governing line, in the form of
-    site_build.governs_html(T, "legal.summary.terms"). English renders exactly as before. #}
+    one-line summary in the reader's language and the governing line. English renders exactly as before. #}
 {%- set translated = code != "en" or t.pseudo %}
 {%- set en_body = ' lang="en" dir="ltr"' if translated else "" %}
 {%- if translated %}
-<p class="governs"><span class="gov-sum">{{ t("legal.summary.terms") }}</span> <span class="gov-line">{{ t("legal.governs") }}</span></p>
+{{ governs_for("legal.summary.terms") }}
 {%- endif %}
 
 <div class="panel"><p class="eyebrow">{{ t("terms.toc.h") }}</p><ul class="toc"{{ en_body }}><li><a href="#acceptance">1. Acceptance of these terms</a></li><li><a href="#service">2. Description of the service</a></li><li><a href="#not-advice">3. Not advice</a></li><li><a href="#rule-data">4. Accuracy of third-party rule data</a></li><li><a href="#verify">5. Your obligation to verify</a></li><li><a href="#hypothetical">6. Hypothetical results</a></li><li><a href="#no-guarantee">7. No guarantee of passing any challenge</a></li><li><a href="#prop-challenges">8. What a prop challenge is</a></li><li><a href="#affiliate">9. Affiliate disclosure</a></li><li><a href="#ask-troid">10. ask troid, the AI assistant</a></li><li><a href="#as-is">11. Provided &ldquo;as is&rdquo;, with no warranty</a></li><li><a href="#liability">12. Limitation of liability</a></li><li><a href="#indemnification">13. Indemnification</a></li><li><a href="#governing-law">14. Governing law</a></li><li><a href="#changes">15. Changes to these terms</a></li><li><a href="#contact">16. Contact</a></li></ul></div>

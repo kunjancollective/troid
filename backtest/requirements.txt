@@ -1,2 +1,4 @@
-# Only gen_tearsheet.py needs anything beyond the standard library.
+# gen_tearsheet.py needs quantstats; site_build.py (imported by gen_compare, gen_ledger and gen_tearsheet)
+# renders the page templates with jinja2.
 quantstats>=0.0.81
+jinja2>=3.1

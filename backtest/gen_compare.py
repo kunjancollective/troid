@@ -102,18 +102,6 @@ def rewrite_region(path, tag, inner):
     return False
 
 
-def _mark(T, s):
-    """In the pseudo-locale (i18n_pseudo.py), mark text that reaches the page through T.data the way a keyed string
-    is marked: it is translatable (by content), and the scan's data list does not carry firms.json's underscore-keyed
-    prose (_criterion, _link_rule, _disclosure, _reference_firm, _promo_note, _open_questions). Otherwise unchanged."""
-    return i18n.mark(s) if getattr(T, "pseudo", False) and isinstance(s, str) and s.strip() else s
-
-
-def _data(T, s):
-    """Text from firms.json in T's language: its reviewed translation, or the English as it is."""
-    return _mark(T, T.data(s))
-
-
 def _style(T):
     """index.html's icon, og and font links and its stylesheet. English: exactly as index.html has them; another
     language gets its own og title, description and image."""
@@ -146,20 +134,20 @@ def js(k, f, T):
     pt = {}
     for x in FIELDS:
         if isinstance(p.get(x), str):
-            t = _data(T, p[x])
+            t = T.data(p[x])
             if t != p[x]:
                 pt[x] = t
     qs = f.get("_open_questions") or []
-    return json.dumps({"name": f["name"], "p": p, "pt": pt, "label": _data(T, p["label"]),
+    return json.dumps({"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
                      **{b["cite"]: cite(f, b["cite"]) for b in (c.get("lev_bands") or []) if "max_leverage" not in pc}),
         "levb": None if "max_leverage" in pc else c.get("lev_bands"),
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
-        "open_n": len(qs), "open1": _mark(T, T.data(qs[0]).split(".")[0]) if qs else None,
+        "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": ag.get("customer_code") if link_ok else None,
-        "promo": _data(T, f.get("_promo_note")) if link_ok else None})
+        "promo": T.data(f.get("_promo_note")) if link_ok else None})
 
 
 def column(k, f, T):
@@ -167,7 +155,7 @@ def column(k, f, T):
     tag = "good" if m == len(FIELDS) else ("warn" if m >= len(FIELDS)//2 else "bad")
     return f'''<div class="col" id="col-{k}">
   <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">{html.escape(f["name"])}</div>
-    <div class="s" style="margin-top:3px">{html.escape(_data(T, p["label"]))}</div>
+    <div class="s" style="margin-top:3px">{html.escape(T.data(p["label"]))}</div>
     <div style="margin-top:7px"><span class="tag {tag}">{T("compare.col.tag", n=n, total=len(FIELDS), m=m)}</span></div></div>
   <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"></div></div>'''
 
@@ -176,7 +164,7 @@ def render_compare(T, live):
     """troid's compare in T's language, as HTML (site_build.GENERATED). T is an i18n.Strings, live the published
     language codes. English renders exactly as the page did before it was keyed."""
     gov = site_build.governs_html(T, "legal.summary.citations")
-    D = lambda key: html.escape(_data(T, FIRMS.get(key, "")))   # noqa: E731
+    D = lambda key: html.escape(T.data(FIRMS.get(key, "")))   # noqa: E731
     return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("compare.meta.title")}</title>
 {_style(T)}

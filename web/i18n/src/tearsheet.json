@@ -1,8 +1,0 @@
-{
- "tearsheet.meta.title": "troid's research — tearsheet",
- "tearsheet.head.eyebrow": "troid's research · tearsheet",
- "tearsheet.head.box": "A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.",
- "tearsheet.head.sample": "{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.",
- "tearsheet.empty": "No closed trades yet.",
- "tearsheet.stub.english": "The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=\"/tearsheet\">the full tearsheet</a>."
-}

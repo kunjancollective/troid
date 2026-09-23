@@ -2,7 +2,8 @@
 """Find English that is not in web/i18n/en.json: render every page in a pseudo-locale that marks each keyed
 string ⟦like this⟧, drive the desk and compare through their states, and report any visible text that is
 neither marked nor data (firm names and rule values from firms.json, rule-source names, the 4.41 text, the
-firms' required sentences, the terms body — which stay in English by design).
+firms' required sentences, the terms body — which stay in English by design and sit inside lang="en" — and names
+and codes marked translate="no").
 
   python i18n_pseudo.py                  # every page with a template or a generator renderer
   python i18n_pseudo.py --pages index,compare
@@ -45,7 +46,15 @@ def data_strings():
     for k, v in F.items():
         if not k.startswith("_"):
             walk(v)
+    names = [f["name"] for k, f in F.items() if not k.startswith("_") and isinstance(f, dict) and f.get("name")]
+    for s in list(out):                       # rule-source names as gen_compare.cite() shows them: the firm
+        c = s                                 # prefix dropped, " — " shown as ": "
+        for n in names:
+            if c.startswith(n + " "):
+                c = c[len(n) + 1:]
+        out.add(c.replace(" — ", ": "))
     out.update([site_text.HYPO, *site_text.required_sentences()])
+    out.update([html.escape(s, quote=False) for s in out])   # desk and compare states are read as innerHTML
     return sorted((s for s in out if len(s) >= 2), key=len, reverse=True)
 
 
@@ -67,6 +76,9 @@ SCAN = """() => {
   while ((n = w.nextNode())) {
     const p = n.parentElement;
     if (!p || ['SCRIPT','STYLE','NOSCRIPT'].includes(p.tagName)) continue;
+    const le = p.closest('[lang]');                          // English by design: the terms, 4.41, required sentences
+    if (le && le !== document.documentElement && le.getAttribute('lang') === 'en') continue;
+    if (p.closest('[translate="no"]')) continue;             // names and codes: strategy, ticker, exit reasons
     const t = n.textContent; if (t.trim()) out.push(t);
   }
   for (const e of document.querySelectorAll('[placeholder],[title],[aria-label],option,meta[name=description]'))
@@ -86,8 +98,6 @@ def leftovers(texts, data, page):
         s = html.unescape(s)
         s = re.sub(r"\btroid\b|\btr\b|\bid\b|https?://\S+|[\w.-]+\.(md|json|py|csv)\b", " ", s)
         words = re.findall(r"[A-Za-z]{2,}", s)
-        if words and page == "terms" and len(t) > 60:
-            continue                                  # the terms body is English by design
         if words:
             bad.append((" ".join(words)[:80], t.strip()[:120]))
     return bad

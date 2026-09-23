@@ -51,15 +51,15 @@ def _read(path):
     return json.loads(path.read_text()) if path.exists() else None
 
 
+_EN = None
+
+
 def english():
-    """en.json, plus any src/*.json fragments still being converted. A key defined twice is an error."""
-    out = dict(_read(I18N / "en.json") or {})
-    for frag in sorted((I18N / "src").glob("*.json")) if (I18N / "src").exists() else []:
-        for k, v in json.loads(frag.read_text()).items():
-            if k in out and out[k] != v:
-                raise ValueError(f"{frag.name}: key {k} already defined with a different value")
-            out[k] = v
-    return {k: v for k, v in out.items() if not k.startswith("_")}
+    """en.json: every UI string, keyed (read once per process)."""
+    global _EN
+    if _EN is None:
+        _EN = {k: v for k, v in json.loads((I18N / "en.json").read_text()).items() if not k.startswith("_")}
+    return dict(_EN)
 
 
 def load(code):
@@ -124,7 +124,7 @@ class Strings:
         DATA_SEEN[k] = s
         if self.code != "en" and self.s.get(k):
             return self.s[k]
-        return s
+        return mark(s) if self.pseudo else s       # translatable by content, so the pseudo scan counts it as keyed
 
     def js(self, prefix):
         """Every key under prefix, as a JSON object literal for the page's script (T.name)."""

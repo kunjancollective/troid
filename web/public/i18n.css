@@ -16,3 +16,4 @@ bdi,.ltr{unicode-bidi:isolate;direction:ltr}
 .avail{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim)}
 .avail.no{color:var(--bad)}
 [dir="rtl"] .notes div::before{content:"\2190"}
+[dir="rtl"] .mark{direction:ltr}
