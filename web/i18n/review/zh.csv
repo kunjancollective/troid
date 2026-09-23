@@ -807,6 +807,10 @@ ask.cut,[This answer hit its length limit and is cut short.],[该回答达到长
 ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",[troid 问答在单条消息内达到了工具调用或时间上限。请缩小范围后再问一次。],,"troid stays lowercase, in Latin letters"
 ask.no_answer,No answer produced.,未生成回答。,,
 ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
+ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
+ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.173bc3120e68,discretionary,酌情决定,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly

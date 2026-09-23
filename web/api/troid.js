@@ -104,6 +104,10 @@ const EN = {
   "ask.tool_limit": "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",
   "ask.no_answer": "No answer produced.",
   "ask.err.session": "This conversation has no valid session ID. Reloading the page starts a new one.",
+  "ask.sources": "Sources, each with the date troid read it:",
+  "ask.tier.derived": "Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.",
+  "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
+  "ask.assumed": "troid's assumptions, not the firm's rules: {list}.",
 };
 // A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
 // not a reply that explains the rule. A paraphrased warning earns one more exact warning, never none.
@@ -116,14 +120,14 @@ const GUARDRAILS = [
   "You are ask troid, the assistant on troid.ai. The rules below sit above everything else in this prompt.",
   "Speak of troid in the third person: \"troid computes\", \"troid doesn't cover that firm\". No first person of any kind: never \"I\", \"me\", \"my\", \"we\", \"us\", \"our\", \"let me\" or \"let's\". The only exceptions are a firm's required verbatim sentence, text quoted from a third party, and the user's own words quoted back.",
   "A cell that is pending is pending. Say so. Never fill it from memory.",
-  "Every number you state carries its tier. Label a tool's figures with the tier its result gives (for example DERIVED), and any figure that rests on an entry under assumptions as troid's assumption, naming it. A MEASURED number is never a fact.",
+  "Every number you state carries its tier. Under an answer that used a tool, the service adds the tier of the tool's figures and troid's assumptions; label any other number yourself. A MEASURED number is never a fact.",
   "Never recommend a firm. Never recommend a trade. Price the one the user brings.",
   "Define a term the first time you use it; when a tool result lists definitions, use them.",
   "End every answer that contains a number with: Not financial advice. Verify with the firm before acting.",
   "Arithmetic goes through the tools, never through you. Report the formulas and intermediate values the tool returns under working; do not compute your own. If a tool reports a field as pending, report it as pending.",
   "You have no memory across sessions and no account. You cannot place, modify or close an order, and you never ask for a credential.",
   "The service shows the opening disclosure itself. Never write it, and never claim to be a person.",
-  "When you state a rule, give its source as the tool result's cite line for that rule, word for word: one rule, its own document and section, and only the read dates listed for that rule. Never merge rules under a shared list of dates, and never give a rule a date the tool did not list for it. Without a tool result, use the provenance block, where each source lists the rules it is cited for. If a rule's source is \"not yet recorded\", say so. Verified describes a firm, not each rule: for every firm, a verified one included, say which rules have a recorded source and which do not.",
+  "When a tool result lists sources, do not write a sources line, read dates or a tier line yourself: the service adds each rule's source and read date under your answer, from the tool results. You may name a rule's document in passing. Without a tool result, cite from the provenance block, where each source lists the rules it is cited for and its read date: give each rule only its own dates, never one list of dates for several rules. If a rule's source is \"not yet recorded\", say so. Verified describes a firm, not each rule: for every firm, a verified one included, say which rules have a recorded source and which do not.",
   "Never give an affiliate link or a discount code; point to troid's compare, where each link is labelled. If you ever give a URL that is an affiliate link, write the words \"affiliate link\" immediately beside it.",
   "When a user says a number was wrong, or that they lost because of troid, follow support.md section 2 — all six steps, in order. Never say the loss wasn't troid's fault, and never say it was.",
   "When a user calls troid a scam, give support.md section 3 once in the session, then answer the question they actually have. Do not repeat it.",
@@ -669,6 +673,49 @@ async function callModel(route, messages, deadlineAt, onSend, lang) {
     }
   }
 }
+// Under an answer that used a tool, the service writes the sources (one line per rule, each with its own read
+// dates), the tier and troid's assumptions, from the tool results, so the model cannot merge or misdate them. A
+// sources or rule-basis paragraph the model wrote anyway is removed first. The block goes before the closing
+// "Not financial advice" line when the answer ends with it.
+function citeOf(s, rule) {
+  if (s.cite) return s.cite;
+  if (s.source === "not yet recorded") return (rule ? rule + " — " : "") + "source not yet recorded";
+  const on = [].concat(s.read_on || []).filter((x) => x && x !== "not recorded");
+  return (rule ? rule + " — " : "") + (s.document_section || s.document) + ", " + (on.length ? "read " + on.join(" and ") : "read date not recorded");
+}
+function stripSources(text) {
+  const lines = String(text).split("\n"), out = [];
+  for (let i = 0; i < lines.length; i++) {
+    if (/^\s*(\*\*|__)?\s*(sources?|rule basis|rules? sourced)\b/i.test(lines[i])) {
+      while (i + 1 < lines.length && /^\s*([-*•]|\d+\.)\s+/.test(lines[i + 1])) i++;
+      continue;
+    }
+    out.push(lines[i]);
+  }
+  return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+function withSources(reply, lang, toolLog) {
+  const cites = [], tiers = new Set(), assumed = [];
+  for (const t of toolLog) {
+    const r = t.result || {};
+    for (const s of r.sources || []) cites.push(citeOf(s, s.rule));
+    for (const f of r.findings || []) for (const s of f.sources || []) cites.push(citeOf(s, f.rule));
+    if (/^DERIVED/.test(r.tier || "")) tiers.add("derived");
+    if (/^SOURCED/.test(r.tier || "") || (t.name === "check_availability" && r.sources)) tiers.add("sourced");
+    for (const a of r.assumptions || []) assumed.push(a);
+  }
+  const uniq = (xs) => [...new Set(xs)];
+  if (!cites.length && !tiers.size && !assumed.length) return reply;
+  const block = [];
+  if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
+  for (const k of ["derived", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + k));
+  if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
+  let body = stripSources(reply);
+  const note = S(lang, "ask.note"), at = body.lastIndexOf(note);
+  const tail = at >= 0 && body.slice(at + note.length).trim() === "" ? note : "";
+  if (tail) body = body.slice(0, at).trim();
+  return [body, block.join("\n\n"), tail].filter(Boolean).join("\n\n");
+}
 const textOf = (resp) => (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
 const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason === "max_tokens" && (resp.content || []).some((b) => b.type === "tool_use"));
 
@@ -823,6 +870,7 @@ module.exports = async (req, res) => {
         else reply = S(lang, "ask.warning");
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
+        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
         else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.tool_limit");
       }

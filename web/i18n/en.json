@@ -609,5 +609,9 @@
  "ask.cut": "[This answer hit its length limit and is cut short.]",
  "ask.tool_limit": "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",
  "ask.no_answer": "No answer produced.",
- "ask.err.session": "This conversation has no valid session ID. Reloading the page starts a new one."
+ "ask.err.session": "This conversation has no valid session ID. Reloading the page starts a new one.",
+ "ask.sources": "Sources, each with the date troid read it:",
+ "ask.tier.derived": "Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.",
+ "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
+ "ask.assumed": "troid's assumptions, not the firm's rules: {list}."
 }

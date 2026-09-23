@@ -269,6 +269,23 @@ fake.listen(18765, async () => {
     ok("tool turn: assistant content passed back unchanged, thinking block included", calls[2].messages[1].content[0].type === "thinking" && calls[2].messages[1].content[0].signature === "sig");
     ok("tool result carries sources, formula, working and the risk", toolResult.risk === 480 && toolResult.sources.length === 6 && /room = min/.test(toolResult.formula) && toolResult.working.length > 15, toolResult);
     ok("a failed tool is marked is_error, a good one is not", toolResults[1].is_error === true && !("is_error" in toolResults[0]), toolResults.map((x) => x.is_error));
+    ok("tool turn: the service writes each rule's source with its own dates, the tier and troid's assumptions",
+       r.j.reply.startsWith("Risk $480.00 (DERIVED).\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Criteria to be Success, read 2026-09-18\n")
+       && r.j.reply.includes("- fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23") && r.j.reply.includes(handler.EN["ask.tier.derived"])
+       && /troid's assumptions, not the firm's rules: exchange liquidation uses a 0\.5% maintenance margin.*margin mode cross — troid's default/.test(r.j.reply), r.j.reply);
+    script = (b) => {
+      const last = b.messages[b.messages.length - 1];
+      if (Array.isArray(last.content) && last.content[0].type === "tool_result") return msg("end_turn", [{ type: "text", text:
+        "Quantity 1.622183.\n\nSources (SOURCED): daily/max %, fee 0.04%/side — Criteria to be Success, read 2026-09-18/2026-09-23.\n\n**Rule basis:**\n- daily 4% read 2026-09-23\n- max 6%\n\nNot financial advice. Verify with the firm before acting." }]);
+      return msg("tool_use", [{ type: "tool_use", id: "tu_1", name: "check_budget", input: { firm: "bitfunded", product: "1step", quota: 100000, equity: 96000 } }]);
+    };
+    r = await post([U("budget?")], { disclosed: true });
+    ok("a sources paragraph the model wrote is removed; the service's block goes before the closing line",
+       !/2026-09-18\/2026-09-23|Rule basis|read 2026-09-23\n/.test(r.j.reply) && r.j.reply.startsWith("Quantity 1.622183.\n\nSources, each with the date troid read it:")
+       && r.j.reply.endsWith(handler.EN["ask.tier.derived"] + "\n\n" + handler.EN["ask.note"]) && !/assumptions/.test(r.j.reply), r.j.reply);
+    script = () => msg("end_turn", [{ type: "text", text: "Sources: none needed (DERIVED)." }]);
+    r = await post([U("no tool")], { disclosed: true });
+    ok("an answer without a tool is left as written", r.j.reply === "Sources: none needed (DERIVED).", r.j.reply);
 
     // 3. refusal: a fixed reply, never partial content
     script = () => msg("refusal", [{ type: "text", text: "partial" }], { stop_details: { type: "refusal", category: null, explanation: null } });

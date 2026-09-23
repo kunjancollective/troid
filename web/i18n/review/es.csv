@@ -985,6 +985,10 @@ ask.cut,[This answer hit its length limit and is cut short.],[Esta respuesta alc
 ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]","[pregúntale a troid alcanzó su límite de llamadas a herramientas o de tiempo para un mensaje. Vuelve a preguntar, de forma más acotada.]",,"CHECK FIRST: product.ask = 'pregúntale a troid': it is used as a grammatical subject in many keys (ask.warning, ask.err.*, ask.refusal, ask.tool_limit, chat.hero.lede, chat.js.status_off). An imperative used as a name reads oddly in Spanish ('pregúntale a troid está ocupado'). chat.discl was rewritten as 'Las respuestas de pregúntale a troid pueden ser erróneas' to avoid a misreading. The reviewer may prefer keeping 'ask troid' untranslated as a proper name. If so, change it in every key at once, because the checker enforces the fixed form verbatim. | troid stays lowercase, in Latin letters"
 ask.no_answer,No answer produced.,No se generó ninguna respuesta.,,
 ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
+ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
+ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.173bc3120e68,discretionary,discrecional,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
