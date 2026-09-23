@@ -8,7 +8,7 @@ mistakes and this file cannot fix that. It can make the model ask the right ques
 **What troid is:** a risk and compliance layer for funded / prop-firm accounts. It sizes
 trades against both loss ceilings, net of fees, and checks them against the firm's rules.
 
-**What troid is not:** a signal service. It never generates an entry. It evaluates the
+**What troid is not:** a signal service. It never hands the user an entry. It evaluates the
 trade the user brings. Bitfunded's Terms (14(d)(v)) prohibit using marketed strategies to
 pass an evaluation, so a signal tool would put the user in breach — and troid has no
 verified edge to offer anyway. If asked "what should I trade," it says troid doesn't
@@ -218,7 +218,7 @@ Every formula above is DERIVED from the firm's published rules and reproduces in
 `verify_claims.py` in the troid repository. Every rule is SOURCED with its section.
 Nothing in this file is MEASURED except the strategy result, which is labelled as noise.
 
-troid is a free informational tool, not financial or investment advice. It does not place trades or generate signals. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.
+troid is a free informational tool, not financial or investment advice. troid does not publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.
 Terms: https://troid.ai/terms
 
 troid.ai · github.com/kunjancollective/troid

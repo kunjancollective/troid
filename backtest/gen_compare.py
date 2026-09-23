@@ -3,13 +3,15 @@
 
 Three columns, alphabetical, PER-CELL verification. Everything firm-specific on the site comes from
 firms.json: the firms panel on the landing page (<!-- firms:start/end -->), the calculator's data
-(<!-- profiles -->), and the shared footer (<!-- footer -->, from site_text.py) on every static page, which
-carries every listed firm's required_disclaimer. The generic text around those regions never names a firm.
+(<!-- profiles -->), the landing page's crossover stat with its provenance line (<!-- crossover -->), and the
+shared footer (<!-- footer -->, from site_text.py) on every static page, which carries every listed firm's
+required_disclaimer. The generic text around those regions never names a firm.
 
-Every cell shows its value if verified from the firm's own documents, 'pending' if not.
-Derived cells compute only when their inputs exist. The same rule applies to every firm.
-A firm's link shows once its affiliate agreement exists and daily/max/target/price are
-verified. Nothing is scored. Nothing is ranked.
+Every cell shows its value with its source and read date, 'source not yet recorded' where troid has a value
+but no source, or 'pending' where it has no value. Derived cells compute only when their inputs exist. The
+same rule applies to every firm. A firm's link shows once its affiliate agreement exists and daily, max,
+target and price each have a recorded source (firms.json _link_rule); until then it is held. Nothing is
+scored. Nothing is ranked.
 """
 from __future__ import annotations
 import json, html, sys
@@ -63,14 +65,16 @@ PROV_TAIL = "Rules change without notice. Verify with the firm before trading."
 
 
 def sourced(f, x, p):
-    return p.get(x) is not None and cite(f, x) is not None
+    """A compare cell with a value and a recorded source — looked up the way the cell's provenance block is."""
+    return p.get(x) is not None and cite(f, x, p.get("key")) is not None
 
 
 def link_live(f):
-    """The contract: a human set link_live, AND daily, max, target and price are verified from the firm's documents."""
+    """The contract (firms.json _link_rule): a human set link_live, AND daily, max, target and price each have a
+    recorded source. Until then the link is held."""
     p = f["compare_product"]
     return (bool(f.get("link_live")) and bool(f.get("affiliate_url"))
-            and all(p.get(x) is not None for x in ("daily_pct", "max_pct", "target_pct", "price")))
+            and all(sourced(f, x, p) for x in ("daily_pct", "max_pct", "target_pct", "price")))
 
 
 def required_sentences():
@@ -149,6 +153,35 @@ def profiles_js():
             out[k] = {"name": f["name"], "products": products}
     return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";var PROV_TAIL=" + json.dumps(PROV_TAIL)
             + ";</script>")
+
+
+def crossover_html():
+    """The landing page's crossover stat, DERIVED from the reference firm's compare product, with its provenance
+    line. Only the initial-balance basis has this closed form: Q(1 − max% + daily%)."""
+    k = next(k for k in ORDER if FIRMS[k].get("reference"))
+    f = FIRMS[k]; p = f["compare_product"]; pk = p["key"]; c = f.get("calc") or {}
+    basis = ((c.get("products") or {}).get(pk) or {}).get("daily_basis", c.get("daily_basis"))
+    assert basis == "initial", f"{f['name']} {pk}: the crossover stat's formula needs an initial-balance daily basis, got {basis}"
+    q, d, m = 100_000, p["daily_pct"], p["max_pct"]
+    x = round(q * (1 - m / 100 + d / 100))
+    gap, day = q - x, q * d / 100
+    part = "half of one bad day" if gap * 2 == day else f"{gap / day:.0%} of one bad day"
+    by, order, dates = {}, [], set()
+    for field, lab in (("daily_pct", "daily %"), ("max_pct", "max %"), ("drawdown_type", "static floor"),
+                       ("daily_basis", "initial-balance daily limit")):
+        ct = cite(f, field, pk)
+        assert ct, f"{f['name']} {pk}: the crossover stat uses {field}, which has no recorded source"
+        if ct["c"] not in by:
+            by[ct["c"]] = {"labs": [], "o": ct["o"]}; order.append(ct["c"])
+        by[ct["c"]]["labs"].append(lab); dates.update(ct["o"])
+    srcs = " · ".join(", ".join(by[s]["labs"]) + " from " + s + (f" (read {' and '.join(by[s]['o'])})" if by[s]["o"] else "")
+                      for s in order)
+    pv = (f"DERIVED. Computed from {f['name']} {p['label']} rules as published on {' and '.join(sorted(dates))} — {srcs}. "
+          f"{PROV_TAIL} <code>quota × (1 − max% + daily%) = ${q:,} × (1 − {m}% + {d}%)</code>")
+    return (f'  <div class="stat"><div class="n">${x:,}</div>\n'
+            f'    <p>On a ${q // 1000}k {html.escape(p["label"])}, below this equity the {m}% static floor binds instead of the {d}%\n'
+            f'    daily. That is ${gap:,} from the start — {part}.</p>\n'
+            f'    <div class="prov">{pv}</div></div>')
 
 
 def rewrite_region(path, tag, inner):
@@ -317,7 +350,7 @@ function render(){{
     if(f.url){{foot='<a href="'+f.url+'" rel="sponsored noopener">'+f.name+' challenges</a> · affiliate link';
       if(f.code)foot+='<br>discount code <b>'+f.code+'</b> — cheaper through this link';
       if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';}}
-    else foot='<span class="pend">Link appears when '+f.name+"'s affiliate agreement allows it and daily, max, target and price are verified from "+f.name+"'s documents.</span>";
+    else foot='<span class="pend">Link held until daily, max, target and price each have a recorded source in '+f.name+"'s own documents, and "+f.name+"'s affiliate agreement allows it.</span>";
     if(f.open&&f.open.length)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">open: '+f.open.length+' question'+(f.open.length>1?'s':'')+' — '+f.open[0].split('.')[0]+(f.open.length>1?' …':'')+'</div>';
     document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;
   }});
@@ -330,6 +363,7 @@ cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) 
 links=[k for k in ORDER if link_live(FIRMS[k])]
 changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
                                   ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
+                                  ("index.html crossover", rewrite_region(INDEX, "crossover", crossover_html())),
                                   ("dashboard.html hypo", rewrite_region(PUB / "dashboard.html", "hypo", site_text.hypo_html())),
                                   *((f"{pg} footer", rewrite_region(PUB / pg, "footer", site_text.footer_html()))
                                     for pg in ("index.html", "faq.html", "dashboard.html", "chat.html", "terms.html")

@@ -38,7 +38,7 @@ page said so the same day.
 One reference firm, chosen for verification depth, not rank. Two rotating slots by an
 external, public, checkable ranking, reviewed quarterly. Alphabetical on the page. No
 score or badge of troid's own, no recommendation. The link for each appears when its affiliate
-agreement exists and its daily, max, target and price cells are filled; each shows its source, or says it has none.
+agreement exists and its daily, max, target and price cells each have a recorded source; until then it is held.
 
 ## Corrections
 
@@ -62,6 +62,9 @@ agreement exists and its daily, max, target and price cells are filled; each sho
 | 2026-09-23 | The ask troid page said nothing typed is stored and the service logs "a count of messages and nothing else". Each message goes to the AI model's provider, which may keep it for a limited period, and the log line also holds tool calls, the model and outcome flags. ask troid is switched off, so nothing was sent. | The page now says what the terms say (section 10). |
 | 2026-09-23 | troid's terms said the ledger's backtest ran on "the same data the strategy was tuned on", that "some" ledger trades were backfilled, and that the holdout was 2021–2025 data; the walk-forward report, the dashboard and the README said the parameters were chosen on 8 January – 21 September 2026 and called the holdout 2021–2025. The parameters were chosen on a TradingView (Binance.com) sample of 8 January – 14 September 2026; the ledger's backtest runs on api.binance.us data to 21 September; every ledger trade so far was backfilled; the holdout runs to 7 January 2026 (2 of its 504 BTC trades exited in January 2026). | The terms (sections 2 and 6), the walk-forward report, the dashboard, the README and STRATEGY.md give those periods. |
 | 2026-09-23 | TROID.md answered "Does the strategy work?" with the in-sample result only (+0.033R, n=78). | It now gives the out-of-sample result too, MEASURED: +0.008R on 504 BTC trades and +0.008R on 498 ETH trades, standard error 0.016R each, both 95% intervals containing zero. The best-of-30 chance comparison is kept. |
+| 2026-09-23 | The footer on every page, the landing page and the FAQ said troid does not generate signals. Its shadow account generates the simulated strategy's entries; what troid does not do is publish them as signals. | The footer says "troid does not publish trade signals. Its shadow account is a simulated strategy, shown only after trades close." The landing page and FAQ say "publish". |
+| 2026-09-23 | troid's compare showed Bitfunded's consistency rule as "none". troid never read a statement that Bitfunded has none. | Pending until a source is read. |
+| 2026-09-23 | Bitfunded's affiliate link showed while its $999 price had no recorded source. | Links now need a recorded source for daily, max, target and price. Bitfunded's is held until its price is recorded. |
 | 2026-09-23 | The ask troid page said it answers from "troid's verified rule set" and "the verified rules on troid's compare", and its description said "Verified rules"; the landing page's firms panel said "every verified firm". One of the three listed firms is marked verified. | The ask troid page says "troid's rule data" and "the rules on troid's compare"; the panel says "every firm troid lists". |
 
 ## Version
@@ -70,4 +73,4 @@ agreement exists and its daily, max, target and price cells are filled; each sho
 
 ---
 
-troid is a free informational tool, not financial or investment advice. It does not place trades or generate signals. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Terms: https://troid.ai/terms
+troid is a free informational tool, not financial or investment advice. troid does not publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Terms: https://troid.ai/terms

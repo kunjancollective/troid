@@ -19,10 +19,10 @@ HYPO = ("These results are based on simulated or hypothetical performance result
         "of hindsight. No representation is being made that any account will or is likely to achieve profits or losses "
         "similar to these being shown.")
 
-# The owner's footer line (audit handoff 3a), on every page.
-FOOTER_TEXT = ("troid is a free informational tool, not financial or investment advice. It does not place trades or "
-               "generate signals. Prop-firm rules change without notice — verify every number with the firm before "
-               "trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
+# The owner's footer line (audit handoff 3a, second sentence replaced by the owner on 2026-09-23), on every page.
+FOOTER_TEXT = ("troid is a free informational tool, not financial or investment advice. troid does not publish trade "
+               "signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules "
+               "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
                "through its links; this does not affect the calculations or comparisons.")
 
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),

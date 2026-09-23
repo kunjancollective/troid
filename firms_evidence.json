@@ -168,13 +168,67 @@
     "criteria"
    ],
    "evidence": "references/bitfunded.md ties the Criteria to be Success figures to 'Expert $100,000 / Stage 1 (1 Step)'. No firm-wide statement of fee or leverage is recorded, so the cite applies to the 1-Step only (provenance.product_only); other products say 'source not yet recorded'."
+  },
+  {
+   "field": "daily_pct",
+   "product": "2step_s1",
+   "src": [
+    "tou"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
+   "was_unmapped": "The calculator uses products.2step_s1.daily_pct = 5 via the fallback. The only records are config.example.json profile 2step_s1 and the TROID.md table, and neither cites a source. references/bitfunded.md covers only the 1-Step figures. The blog is recorded as read for 2-Step minimum days only (rule_changes[2]), not for limits. Fetch corroboration was not possible: the egress proxy blocks bitfunded.com and bitfunded.gitbook.io."
+  },
+  {
+   "field": "max_pct",
+   "product": "2step_s1",
+   "src": [
+    "tou"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
+   "was_unmapped": "products.2step_s1.max_pct = 10. Same situation as daily_pct: no recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "2step_s2",
+   "src": [
+    "tou"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
+   "was_unmapped": "products.2step_s2.daily_pct = 5. Same situation as 2step_s1: no recorded document or section."
+  },
+  {
+   "field": "max_pct",
+   "product": "2step_s2",
+   "src": [
+    "tou"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
+   "was_unmapped": "products.2step_s2.max_pct = 8. No recorded document or section."
+  },
+  {
+   "field": "daily_pct",
+   "product": "express",
+   "src": [
+    "blog"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the Express limits come from the blog post of 28 August 2026 already in verified_from and already the source of the Instant limits (https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/, read 2026-09-21). Not re-read from here: troid's egress proxy blocks bitfunded.com.",
+   "was_unmapped": "products.express.daily_pct = 3. It appears only in config.example.json (_name '1-Step Express ($39 at $5k)') and the TROID.md table, with no source. The blog's title names Express, but the repo does not record the blog as the source of the Express limits."
+  },
+  {
+   "field": "max_pct",
+   "product": "express",
+   "src": [
+    "blog"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the Express limits come from the blog post of 28 August 2026 already in verified_from and already the source of the Instant limits (https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/, read 2026-09-21). Not re-read from here: troid's egress proxy blocks bitfunded.com.",
+   "was_unmapped": "products.express.max_pct = 3. No recorded document or section."
   }
  ],
  "bitfunded_unmapped": [
   {
    "field": "price",
    "product": "*",
-   "why": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded."
+   "why": "The compare cell '$999' (products.1step.fee_usd 999) has no recorded document or section. It appears only in troid's own files, the config.example.json 1step _name '1-Step (Expert $100k, $999)' and the TROID.md profile table, and neither cites a source. firms.json _link_rule requires price to be verified from the firm's own documents before a link shows, but no such verification is recorded. Still unrecorded on 2026-09-23. It needs one read of Bitfunded's challenge page, which troid's egress proxy blocks from here. Under firms.json _link_rule the Bitfunded link is held until it is recorded."
   },
   {
    "field": "refund",
@@ -194,7 +248,7 @@
   {
    "field": "consistency_rule",
    "product": "*",
-   "why": "The compare cell says 'none', but firm-level firms.json bitfunded.consistency_rule is null (pending). The two contradict each other, and no document or section is recorded for either."
+   "why": "Now null (pending) on troid's compare as well as at firm level, on the decision of troid's owner, 2026-09-23: troid never read a statement that Bitfunded has no consistency rule, so 'none' was a claim without a source."
   },
   {
    "field": "news_rule",
@@ -205,36 +259,6 @@
    "field": "profit_cap",
    "product": "*",
    "why": "'none' has no recorded document or section."
-  },
-  {
-   "field": "daily_pct",
-   "product": "2step_s1",
-   "why": "The calculator uses products.2step_s1.daily_pct = 5 via the fallback. The only records are config.example.json profile 2step_s1 and the TROID.md table, and neither cites a source. references/bitfunded.md covers only the 1-Step figures. The blog is recorded as read for 2-Step minimum days only (rule_changes[2]), not for limits. Fetch corroboration was not possible: the egress proxy blocks bitfunded.com and bitfunded.gitbook.io."
-  },
-  {
-   "field": "max_pct",
-   "product": "2step_s1",
-   "why": "products.2step_s1.max_pct = 10. Same situation as daily_pct: no recorded document or section."
-  },
-  {
-   "field": "daily_pct",
-   "product": "2step_s2",
-   "why": "products.2step_s2.daily_pct = 5. Same situation as 2step_s1: no recorded document or section."
-  },
-  {
-   "field": "max_pct",
-   "product": "2step_s2",
-   "why": "products.2step_s2.max_pct = 8. No recorded document or section."
-  },
-  {
-   "field": "daily_pct",
-   "product": "express",
-   "why": "products.express.daily_pct = 3. It appears only in config.example.json (_name '1-Step Express ($39 at $5k)') and the TROID.md table, with no source. The blog's title names Express, but the repo does not record the blog as the source of the Express limits."
-  },
-  {
-   "field": "max_pct",
-   "product": "express",
-   "why": "products.express.max_pct = 3. No recorded document or section."
   },
   {
    "field": "daily_pct",
@@ -601,14 +625,18 @@
     "tc"
    ],
    "evidence": "firms.json crypto_fund_trader.max_leverage: 'crypto 1:100 on Advanced ($50k+) Match-Trader/MT5; 1:5 on Student (<=$25k)'. One recorded statement, two account classes; the desk cites whichever class the quota falls in."
-  }
- ],
- "crypto_fund_trader_unmapped": [
+  },
   {
    "field": "price",
    "product": "*",
-   "why": "compare_product.price '$619' equals products.1phase.fee_usd_100k 619, and no clause or document is recorded for it. The T&C annotation 'contains the numbers, unlike BrightFunded's' sets rule numbers against BrightFunded's T&C ('delegates numbers to Product Specifications'). Nothing records the price being read in the T&C, and no CFT pricing or product page is in verified_from."
-  },
+   "src": [
+    "tc"
+   ],
+   "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the $619 1-Phase price came from Crypto Fund Trader's Terms and Conditions, read on 2026-09-21 (https://cryptofundtrader.com/terms-and-conditions/, already in verified_from). Recorded at provenance.products.1phase.price. The clause is not recorded. troid's egress proxy blocks cryptofundtrader.com, so it was not re-read from here; the section says 'clause not recorded' until one is.",
+   "was_unmapped": "compare_product.price '$619' equals products.1phase.fee_usd_100k 619, and no clause or document is recorded for it. The T&C annotation 'contains the numbers, unlike BrightFunded's' sets rule numbers against BrightFunded's T&C ('delegates numbers to Product Specifications'). Nothing records the price being read in the T&C, and no CFT pricing or product page is in verified_from."
+  }
+ ],
+ "crypto_fund_trader_unmapped": [
   {
    "field": "split",
    "product": "*",

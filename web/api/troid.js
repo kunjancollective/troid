@@ -57,7 +57,7 @@ const MAX_RETRY_WAIT_MS = 10_000;                                            // 
 const DEADLINE_MS = Math.min(Math.max(num(process.env.TROID_DEADLINE_MS, 50_000), MIN_CALL_MS), 55_000);   // one message, every call; the function limit is 60s
 // Fixed wording. context/support.md carries the same text for the model and for review; test_assistant.js
 // fails if the two differ. The service writes these; the model never writes the disclosure.
-const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from verified firm rules and computed math only. Verify with the firm before acting.";
+const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.";
 const WARNING = "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.";
 const END_SESSION = "[[end-session]]";
 const SENTINEL = /\[\[\s*end-session\s*\]\]/gi;                                  // any case, any spacing

@@ -59,7 +59,13 @@ ok("sources: every rule used is listed", r.sources.map((x) => x.rule).join("|") 
 ok("sources: Criteria read 2026-09-18, FAQ read 2026-09-21", r.sources[0].read_on[0] === "2026-09-18" && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("2-Step S1: limits, fee and leverage say not yet recorded", ["daily 5%", "max 10%", "fee 0.04% per side", "leverage cap 5×"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
+ok("2-Step S1: limits cite the Terms of Use; fee and leverage still say not yet recorded",
+   ["daily 5%", "max 10%"].every((k) => /Terms of Use/.test(r.sources.find((x) => x.rule === k).document_section || ""))
+   && ["fee 0.04% per side", "leverage cap 5×"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
+r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
+ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
+r = T.size_trade({ firm: "bitfunded", product: "trader", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
+ok("Funded: limits still say not yet recorded", ["daily 4%", "max 6%"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
 r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 10000, equity: 10000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
 ok("CFT 1-Phase at $10k: Student band 5×, cited to the Student class", r.leverage_used === 5 && /Student up to \$25k/.test(r.sources.find((x) => /leverage/.test(x.rule)).document_section), r);
 r = T.size_trade({ firm: "crypto_fund_trader", product: "1phase", quota: 30000, equity: 30000, side: "long", entry: 77872, stop: 74814, leverage: 150 });
@@ -93,8 +99,9 @@ for (const v of ["That's a real loss and troid takes the question seriously.", "
   "the firm's rule changed after troid's capture date"])
   ok("support.md keeps the handoff's words: " + v.slice(0, 40), flat.includes(v));
 for (const v of ["troid doesn't recommend; it prices what you bring.",
-  "Every number on this site cites the rule it came from and the date it was read. `verify_claims.py` in the public repo re-derives them. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table."])
-  ok("support.md quotes the handoff's reply: " + v.slice(0, 40), quoted.includes(v));
+  "Every number on troid shows the rule it came from and the date troid read it, or says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table."])
+  ok("support.md quotes the owner's reply: " + v.slice(0, 40), quoted.includes(v));
+ok("the disclosure is the owner's 23 Sep wording", F0.DISCLOSURE === "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.");
 
 // --- handler end to end: the real SDK against a local fake of the Messages API
 const http = require("http");

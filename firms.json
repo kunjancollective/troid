@@ -116,7 +116,7 @@
       "refund": "100% at first profit split",
       "split": "80% \u2192 90%",
       "us_available": "yes",
-      "consistency_rule": "none",
+      "consistency_rule": null,
       "news_rule": "none stated",
       "profit_cap": "none"
     },
@@ -331,6 +331,48 @@
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
           "drawdown": {
+            "src": [
+              "blog"
+            ],
+            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          }
+        },
+        "2step_s1": {
+          "daily_pct": {
+            "src": [
+              "tou"
+            ],
+            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+          },
+          "max_pct": {
+            "src": [
+              "tou"
+            ],
+            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+          }
+        },
+        "2step_s2": {
+          "daily_pct": {
+            "src": [
+              "tou"
+            ],
+            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+          },
+          "max_pct": {
+            "src": [
+              "tou"
+            ],
+            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+          }
+        },
+        "express": {
+          "daily_pct": {
+            "src": [
+              "blog"
+            ],
+            "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
+          },
+          "max_pct": {
             "src": [
               "blog"
             ],
@@ -1030,6 +1072,12 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+          },
+          "price": {
+            "src": [
+              "tc"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions \u2014 1-Phase $100k price (clause not recorded)"
           }
         },
         "2phase": {
@@ -1083,7 +1131,7 @@
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
   "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
-  "_link_rule": "A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells are filled. Each of those cells shows its source and read date, or says its source is not yet recorded. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
+  "_link_rule": "A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
   "_troid_social": {
     "x": "https://x.com/tradingdroid",
