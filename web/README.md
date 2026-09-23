@@ -86,11 +86,16 @@ the English in `api/troid.js` otherwise; the guardrails tell the model to answer
 numbers, tickers and citations exact, keep troid in Latin script, and say that the English terms govern. The
 page's language reaches the model as a separate, uncached system block, so the cached prompt is shared.
 
-Live check after switch-on (a few model calls): `node web/smoke_live.js https://troid.ai`, with
-`KV_REST_API_URL` / `KV_REST_API_TOKEN` in the environment to also read the store. It checks the disclosure
-comes first with the session sentence, a sizing answer with formula and sources, a second message in one
-session, the refusal to "should I buy a challenge", the stored entries' 30-day TTL and absence of any address
-or user agent, and deletion.
+Live check after switch-on (three model calls, about a dozen of the hour's 20 requests from one address):
+`node web/smoke_live.js https://troid.ai [--out replies.json] [--keep]`. It checks the disclosure comes first
+with the session sentence, a sizing answer with formula and sources, a second message in one session, the
+refusal to "should I buy a challenge", that an edited history, the same history under another session ID, a
+malformed session ID and a cross-site request are all refused before the model is called, and deletion: a
+delete without the token, or with another session's token, is refused; the session's own token deletes it and
+the store held it; a second delete finds nothing. With `KV_REST_API_URL` / `KV_REST_API_TOKEN` in the
+environment it also reads the store (two entries, a 30-day TTL, no address or user agent). Without them,
+`--keep` leaves the refusal conversation in the store and prints its key and delete token, so the owner can
+read it in the Upstash console (`TTL conv:<id>`, `LRANGE conv:<id> 0 -1`) and delete it afterwards.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.

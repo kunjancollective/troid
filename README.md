@@ -45,7 +45,7 @@ why troid makes no claim about it — see below.
 | `backtest/STRATEGY.md` | The strategy, pinned. `strategy_config.json` is the only place it's configured. |
 | `backtest/forward.py` | The shadow: replays the strategy forward, journals trades with timestamps. Places nothing. |
 | `backtest/profile_optimizer.py` | Optimal risk per challenge type. |
-| `web/` | The site: troid's desk (the calculator), troid's compare, troid's ledger, troid's research (the dashboard, the tearsheet and the methodology), ask troid (the assistant, switched off until troid's terms and ask troid's guardrails have had legal review), the FAQ and the terms. |
+| `web/` | The site: troid's desk (the calculator), troid's compare, troid's ledger, troid's research (the dashboard, the tearsheet and the methodology), ask troid (the assistant; switched on at launch, 23 September 2026, with conversations kept 30 days), the FAQ and the terms. |
 | `prompts/` | Build brief for the TradingView risk overlay. |
 
 ## The system, five steps
