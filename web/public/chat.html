@@ -179,7 +179,7 @@ function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 function stop(msg){ended=true;setOn(false,msg)}
-fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
+fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
   if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
   if(s.max_chars)el("q").maxLength=s.max_chars;
   if(s.enabled&&s.disclosure){add("a",s.disclosure);shown=true}
@@ -190,7 +190,7 @@ function send(){
   var t=el("q").value.trim();if(!t||busy||ended)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
   var w=add("s",T.waiting);
-  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig})})
+  fetch("/api/troid?lang="+LANG,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,lang:LANG})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
   .then(function(x){var st=x[0],j=x[1];w.remove();
     if(st===200&&j.ended){add("a",j.reply);stop(T.ended)}

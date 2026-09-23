@@ -233,19 +233,23 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <!-- profiles:end -->
 <script>
 /* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
-   a null there is a pending rule and is shown as pending here. Nothing is guessed. */
+   a null there is a pending rule and is shown as pending here. Nothing is guessed.
+   Every word this script shows comes from T (web/i18n, keys index.js.*); F fills a string's {placeholders}. */
+var T={"b_breached":"no budget left — {bind} already breached","b_long":"stop at or above entry on a long","b_short":"stop at or below entry on a short","b_zero":"stop distance is zero","bind_daily":"daily loss limit","bind_dd":"max drawdown","br_daily":"daily limit","br_liq":"exchange liq ({mode})","br_stop":"your stop","breakers":"breakers","budget_used":"budget used","cross":"cross","daily_floor":"daily floor","dd_floor":"max-loss floor","f_binding":"min(daily budget, drawdown budget)","f_binding_one":"the only budget with its rules recorded","f_cap":"budget × {pct}%","f_daily_budget":"equity − daily floor","f_daily_day_start":"day start × (1 − {d}%)","f_daily_dist":"daily budget ÷ notional","f_daily_initial":"day start − quota × {d}%","f_daily_rollover":"high at rollover − quota × {d}%","f_dd_budget":"equity − max-loss floor","f_dd_dist":"drawdown budget ÷ notional","f_dd_locked":"quota (locked after +{locks}%)","f_dd_static":"quota × (1 − {m}%)","f_dd_trailing":"high-water mark × (1 − {m}%)","f_dist":"|entry − stop|","f_fees":"quantity × fee per unit","f_fpu":"entry × {fee}% × 2","f_fpu_pending":"fee per side pending: taken as 0, size before fees","f_hi":"input (defaults to day start)","f_hwm":"input (defaults to max(equity, quota))","f_inputs_account":"quota · equity · day start","f_inputs_risk":"risk % · budget cap % · leverage · margin","f_inputs_trade":"side · entry · stop · target R","f_intended":"equity × {pct}%","f_left":"floor(budget ÷ risk)","f_lev_pending":"your leverage; cap pending","f_lev_pending_held":"your leverage; cap pending (held to {lev}×, the highest cap recorded for this firm)","f_lev_used":"min(your {lev}×, cap {cap}×)","f_liq_cross":"1 − (1 − equity ÷ notional) ÷ (1 − MMR {mmr}%)","f_liq_isolated":"1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR {mmr}%)","f_margin":"notional ÷ leverage used","f_notional":"quantity × entry","f_qty":"risk ÷ (stop distance + fee per unit)","f_qty_nofee":"risk ÷ stop distance","f_risk":"min(intended, cap)","f_room_both":"room = min(equity − ({fd}), equity − {fdd})","f_room_daily":"room = equity − ({fd})","f_room_dd":"room = equity − {fdd}","f_size":"size = min(equity × {risk}%, room × {cap}%) ÷ (stop distance + entry × {fee}% × 2)","f_size_nofee":"size = min(equity × {risk}%, room × {cap}%) ÷ stop distance","f_target_long":"entry + {r} × stop distance","f_target_short":"entry − {r} × stop distance","f_used":"risk ÷ budget","fees":"fees","isolated":"isolated","list_and":"{a} and {b}","list_comma":"{a}, {b}","long":"long","margin":"margin","n_basis_pending":"daily basis pending for this firm — sized against the drawdown ceiling only","n_cross":"cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it","n_cut":"cut from {from} to {to} — {bind} budget caps it","n_danger":"DANGER — {what} binds at {pct}% adverse, inside your stop","n_dd_pending":"drawdown type pending for this firm — sized against the daily ceiling only","n_fee_pending":"fee per side pending for this firm — size shown before fees","n_fees_high":"fees are {pct}% of risk — stop tight enough that costs dominate","n_isolated":"isolated: exchange liquidates at {pct}% for the position’s own margin, before the floor","n_left":"{n} more losses at this size before {bind} trips","n_lev_capped":"leverage capped at {lev}× by the firm","n_lev_class":"no leverage class recorded for a {quota} account — cap pending at this size","n_lev_held":"leverage held to {lev}×, the highest cap this firm records","n_locked":"trailing floor locked at the initial balance ({quota}) after +{locks}%","n_rollover":"daily floor = high at rollover − {d}% of the original size","n_trailing":"trailing floor {floor} = high-water mark × (1 − {m}%)","n_trailing_equity":"trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor","pending":"pending","pending_note":"There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.","pending_txt":"{firm} · {product} · troid has no daily basis or drawdown type recorded for this product","prov_computed":"Computed from <b>{firm} {product}</b> rules.","prov_missing":"Source not yet recorded for {rules}.","prov_mmr":"Exchange liquidation assumes a {mmr}% maintenance margin, troid's assumption with no firm source.","prov_published":"Computed from <b>{firm} {product}</b> rules as published on <b>{dates}</b> — {sources}.","prov_src":"{rules} from {source}","prov_src_read":"{rules} from {source} (read {dates})","prov_unsourced":"Computed from <b>{firm} {product}</b> rules — Source not yet recorded for {rules}.","risk":"risk","s_fee_pending":"per-side fee pending","s_fees_pending":"fees {pending}","s_floor":"floor {floor}","s_incl_fees":"incl {fees} fees","s_lev":"{lev}x","s_lev_pending":"{lev}x · cap {pending}","s_of_risk":"of risk","s_tgt":"tgt {price}","short":"short","show_working":"show the working","size":"size","st_binding":"binding","st_cap":"cap","st_daily_budget":"daily budget","st_daily_dist":"daily-limit distance","st_dd_budget":"drawdown budget","st_dd_dist":"max-loss floor distance","st_dist":"stop distance","st_fpu":"fee per unit","st_hi":"high at rollover","st_hwm":"high-water mark","st_inputs":"inputs","st_intended":"intended risk","st_left":"losses left","st_lev_used":"leverage used","st_notional":"notional","st_qty":"quantity","st_target":"target","st_trailing_dist":"trailing floor distance","stop":"stop","trailing_floor":"trailing floor","u_basis":"daily basis","u_daily":"daily {d}%","u_dd":"drawdown type","u_fee":"fee {fee}% per side","u_hwm":"high-water-mark basis","u_lev":"leverage cap {lev}×","u_lev_band":"leverage cap {lev}× for a {quota} account","u_locks":"lock at +{locks}%","u_max":"max {m}%","v_block":"BLOCK","v_fees":"{fees} ({share} of risk)","v_liq_below":"0.00% — below maintenance at entry","v_ok":"OK","v_pending":"PENDING","v_reduce":"REDUCE","v_txt":"{firm} · {product} · binding · {bind} · {room} of room"};
+function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
 var MMR=0.005;
 function n(id){return parseFloat(document.getElementById(id).value)||0}
 function el(id){return document.getElementById(id)}
 function $(x){return (x<0?"−$":"$")+Math.abs(x).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}
-var PEND='<span style="color:var(--dim);font-style:italic">pending</span>';
+var PEND='<span style="color:var(--dim);font-style:italic">'+T.pending+'</span>';
 function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function n4(x){return x.toLocaleString(undefined,{maximumFractionDigits:6})}
 function pc(x){return x.toFixed(2)+"%"}
-function andj(a){return a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1]}
+function list(a){return a.length?a.reduce(function(x,y){return F(T.list_comma,{a:x,b:y})}):""}
+function andj(a){return a.length<2?a.join(""):F(T.list_and,{a:list(a.slice(0,-1)),b:a[a.length-1]})}
 /* The provenance block under every result: firm, product, the date troid read each rule it used, each rule's section,
    and the formula. p.pv comes from firms.json provenance via gen_compare.py; a rule without a recorded source says so.
-   PROV_TAIL is the same sentence troid's compare uses, generated alongside FIRMS. */
+   PROV_TAIL is the same sentence troid's compare uses, generated alongside FIRMS. Each sentence is one string. */
 function provBlock(f,p,used,formula,assumed){
   var by={},order=[],dates=[],missing=[];
   used.forEach(function(u){var c=p.pv&&p.pv[u[0]];
@@ -253,15 +257,21 @@ function provBlock(f,p,used,formula,assumed){
     if(!by[c.c]){by[c.c]={labs:[],o:c.o||[]};order.push(c.c)}by[c.c].labs.push(u[1]);
     (c.o||[]).forEach(function(d){if(dates.indexOf(d)<0)dates.push(d)})});
   dates.sort();
-  var t='Computed from <b>'+esc(f.name)+" "+esc(p.label)+'</b> rules';
-  if(order.length)t+=' as published on <b>'+andj(dates)+'</b> — '+order.map(function(c){
-    return by[c].labs.join(", ")+" from "+esc(c)+(dates.length>1&&by[c].o.length?" (read "+andj(by[c].o)+")":"")}).join(" · ");
-  if(missing.length)t+=(order.length?". ":" — ")+"Source not yet recorded for "+missing.join(", ");
-  if(assumed)t+=". "+assumed;
-  return '<div class="prov">'+t+'. '+PROV_TAIL+' <code>'+formula+'</code></div>';
+  var o={firm:esc(f.name),product:esc(p.label),rules:list(missing)},s=[];
+  if(order.length){
+    o.dates=andj(dates);
+    o.sources=order.map(function(c){var r={rules:list(by[c].labs),source:esc(c),dates:andj(by[c].o)};
+      return F(dates.length>1&&by[c].o.length?T.prov_src_read:T.prov_src,r)}).join(" · ");
+    s.push(F(T.prov_published,o));
+    if(missing.length)s.push(F(T.prov_missing,o));
+  }
+  else s.push(F(missing.length?T.prov_unsourced:T.prov_computed,o));
+  if(assumed)s.push(assumed);
+  s.push(PROV_TAIL);
+  return '<div class="prov">'+s.join(" ")+' <code>'+formula+'</code></div>';
 }
 function working(steps,open){
-  return '<details class="work"'+(open?" open":"")+'><summary>show the working</summary><div class="wt"><table>'+steps.map(function(x){
+  return '<details class="work"'+(open?" open":"")+'><summary>'+T.show_working+'</summary><div class="wt"><table>'+steps.map(function(x){
     return '<tr><td>'+x[0]+'</td><td><code>'+x[1]+'</code></td><td class="num">'+x[2]+'</td></tr>'}).join("")+'</table></div></details>';
 }
 /* A firm whose cap depends on account size (lev_bands in firms.json): the band for this quota, or null when no band covers it. */
@@ -279,122 +289,123 @@ function render(){
   var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
   var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
   var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
-  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value;
+  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value,modeT=mode==="isolated"?T.isolated:T.cross;
   var dpct=p.d/100,mpct=p.m/100,notes=[],pend=[];
-  var steps=[["inputs","quota · equity · day start",$(quota)+" · "+$(eq)+" · "+$(ds)],
-             ["inputs","side · entry · stop · target R",(side>0?"long":"short")+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
-             ["inputs","risk % · budget cap % · leverage · margin",n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+mode]];
+  var steps=[[T.st_inputs,T.f_inputs_account,$(quota)+" · "+$(eq)+" · "+$(ds)],
+             [T.st_inputs,T.f_inputs_trade,(side>0?T.long:T.short)+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
+             [T.st_inputs,T.f_inputs_risk,n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+modeT]];
   // daily floor, by the firm's basis
   var dFloor=null,fd="",fdd="";
-  if(p.basis==="initial"){dFloor=ds-quota*dpct;fd="day start − quota × "+p.d+"%";}                    // fixed amount from the initial balance
-  else if(p.basis==="day_start"){dFloor=ds*(1-dpct);fd="day start × (1 − "+p.d+"%)";}                 // percentage of the day-start balance
-  else if(p.basis==="max_balance_equity"){dFloor=hi-quota*dpct;fd="high at rollover − quota × "+p.d+"%";
-    steps.push(["high at rollover","input (defaults to day start)",$(hi)]);}                         // fixed amount below the high at rollover
+  if(p.basis==="initial"){dFloor=ds-quota*dpct;fd=F(T.f_daily_initial,{d:p.d});}                    // fixed amount from the initial balance
+  else if(p.basis==="day_start"){dFloor=ds*(1-dpct);fd=F(T.f_daily_day_start,{d:p.d});}             // percentage of the day-start balance
+  else if(p.basis==="max_balance_equity"){dFloor=hi-quota*dpct;fd=F(T.f_daily_rollover,{d:p.d});
+    steps.push([T.st_hi,T.f_hi,$(hi)]);}                                                               // fixed amount below the high at rollover
   else pend.push("daily basis");
   // max-loss floor, by the firm's drawdown type
   var ddFloor=null,locked=false;
-  if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd="quota × (1 − "+p.m+"%)";}
+  if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd=F(T.f_dd_static,{m:p.m});}
   else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);
-    fdd=locked?"quota (locked after +"+p.locks+"%)":"high-water mark × (1 − "+p.m+"%)";
-    steps.push(["high-water mark","input (defaults to max(equity, quota))",$(hwm)]);}
+    fdd=locked?F(T.f_dd_locked,{locks:p.locks}):F(T.f_dd_trailing,{m:p.m});
+    steps.push([T.st_hwm,T.f_hwm,$(hwm)]);}
   else pend.push("drawdown type");
-  if(dFloor!=null){steps.push(["daily floor",fd,$(dFloor)]);steps.push(["daily budget","equity − daily floor",$(eq-dFloor)]);}
-  if(ddFloor!=null){steps.push(["max-loss floor",fdd,$(ddFloor)]);steps.push(["drawdown budget","equity − max-loss floor",$(eq-ddFloor)]);}
-  var formula=(dFloor!=null&&ddFloor!=null)?"room = min(equity − ("+fd+"), equity − "+fdd+")":
-    (dFloor!=null?"room = equity − ("+fd+")":"room = equity − "+fdd);
+  if(dFloor!=null){steps.push([T.daily_floor,fd,$(dFloor)]);steps.push([T.st_daily_budget,T.f_daily_budget,$(eq-dFloor)]);}
+  if(ddFloor!=null){steps.push([T.dd_floor,fdd,$(ddFloor)]);steps.push([T.st_dd_budget,T.f_dd_budget,$(eq-ddFloor)]);}
+  var formula=(dFloor!=null&&ddFloor!=null)?F(T.f_room_both,{fd:fd,fdd:fdd}):
+    (dFloor!=null?F(T.f_room_daily,{fd:fd}):F(T.f_room_dd,{fdd:fdd}));
   // the rules this result actually used: only rules that have a value (a pending rule is pending, not unsourced)
   var used=[];
-  if(dFloor!=null){used.push(["d","daily "+p.d+"%"]);used.push(["basis","daily basis"]);}
-  if(ddFloor!=null){used.push(["m","max "+p.m+"%"]);used.push(["dd","drawdown type"]);
-    if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks","lock at +"+p.locks+"%"]);if(p.hwm!=null)used.push(["hwm","high-water-mark basis"]);}}
+  if(dFloor!=null){used.push(["d",F(T.u_daily,{d:p.d})]);used.push(["basis",T.u_basis]);}
+  if(ddFloor!=null){used.push(["m",F(T.u_max,{m:p.m})]);used.push(["dd",T.u_dd]);
+    if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks",F(T.u_locks,{locks:p.locks})]);if(p.hwm!=null)used.push(["hwm",T.u_hwm]);}}
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){
-    h='<div class="verdict vBLOCK"><span class="vtag">PENDING</span><span class="vtxt">'+f.name+" · "+p.label+' · troid has no daily basis or drawdown type recorded for this product</span></div>'+
-      '<div class="notes"><div>There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.</div></div>';
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_pending+'</span><span class="vtxt">'+F(T.pending_txt,{firm:f.name,product:p.label})+'</span></div>'+
+      '<div class="notes"><div>'+T.pending_note+'</div></div>';
     el("result").innerHTML=h;return;
   }
   var bind,eff,one=(dB==null||ddB==null);
-  if(dB==null){bind="max drawdown";eff=ddB;notes.push("daily basis pending for this firm — sized against the drawdown ceiling only");}
-  else if(ddB==null){bind="daily loss limit";eff=dB;notes.push("drawdown type pending for this firm — sized against the daily ceiling only");}
-  else{bind=dB<=ddB?"daily loss limit":"max drawdown";eff=Math.min(dB,ddB);}
-  var bindStep=["binding",one?"the only budget with its rules recorded":"min(daily budget, drawdown budget)",bind+" · "+$(eff)];
-  if(p.dd==="trailing")notes.push(locked?"trailing floor locked at the initial balance ("+$(quota)+") after +"+p.locks+"%":
-    "trailing floor "+$(ddFloor)+" = high-water mark × (1 − "+p.m+"%)"+(p.hwm==="equity"?" — trails on equity intraday: an unrealised high raises the floor":""));
-  if(p.basis==="max_balance_equity")notes.push("daily floor = high at rollover − "+p.d+"% of the original size");
+  if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
+  else if(ddB==null){bind=T.bind_daily;eff=dB;notes.push(T.n_dd_pending);}
+  else{bind=dB<=ddB?T.bind_daily:T.bind_dd;eff=Math.min(dB,ddB);}
+  var bindStep=[T.st_binding,one?T.f_binding_one:T.f_binding,bind+" · "+$(eff)];
+  if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
+    F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
+  if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
   var dist=Math.abs(entry-stop),blocks=[];
-  if(side>0&&stop>=entry)blocks.push("stop at or above entry on a long");
-  if(side<0&&stop<=entry)blocks.push("stop at or below entry on a short");
-  if(dist<=0)blocks.push("stop distance is zero");
-  if(eff<=0)blocks.push("no budget left — "+bind+" already breached");
+  if(side>0&&stop>=entry)blocks.push(T.b_long);
+  if(side<0&&stop<=entry)blocks.push(T.b_short);
+  if(dist<=0)blocks.push(T.b_zero);
+  if(eff<=0)blocks.push(F(T.b_breached,{bind:bind}));
   var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
   var reduced=risk<intended-1e-9;
   if(blocks.length){
     steps.push(bindStep);
-    h='<div class="verdict vBLOCK"><span class="vtag">BLOCK</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_block+'</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
       blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
     el("result").innerHTML=h;return;
   }
   var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
-  if(feeKnown)used.push(["fee","fee "+p.fee+"% per side"]);
-  else{pend.push("fee");notes.push("fee per side pending for this firm — size shown before fees");}
-  var band=levCapFor(p,quota),levCap=band?band.lev:null,levUsed=lev,levNote="";
-  if(levCap!=null){used.push(["lev","leverage cap "+levCap+"×"+(p.levb?" for a "+$(quota)+" account":"")]);
+  if(feeKnown)used.push(["fee",F(T.u_fee,{fee:p.fee})]);
+  else{pend.push("fee");notes.push(T.n_fee_pending);}
+  var band=levCapFor(p,quota),levCap=band?band.lev:null,levUsed=lev,held=null;
+  if(levCap!=null){used.push(["lev",F(p.levb?T.u_lev_band:T.u_lev,{lev:levCap,quota:$(quota)})]);
     if(band.pv)p.pv.lev=band.pv;
-    if(lev>levCap){levUsed=levCap;notes.push("leverage capped at "+levCap+"× by the firm");}}
+    if(lev>levCap){levUsed=levCap;notes.push(F(T.n_lev_capped,{lev:levCap}));}}
   else{pend.push("leverage cap");
     if(p.levb){var top=Math.max.apply(null,p.levb.map(function(b){return b.lev}));
-      notes.push("no leverage class recorded for a "+$(quota)+" account — cap pending at this size");
-      if(lev>top){levUsed=top;levNote=" (held to "+top+"×, the highest cap recorded for this firm)";notes.push("leverage held to "+top+"×, the highest cap this firm records");}}}
+      notes.push(F(T.n_lev_class,{quota:$(quota)}));
+      if(lev>top){levUsed=top;held=top;notes.push(F(T.n_lev_held,{lev:top}));}}}
   var fu=entry*fee*2,qty=risk/(dist+fu),notional=qty*entry,margin=notional/levUsed;
   var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*dist;
   var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
   steps.push(bindStep);
-  steps.push(["intended risk","equity × "+n("riskPct")+"%",$(intended)]);
-  steps.push(["cap","budget × "+n("capPct")+"%",$(cap)]);
-  steps.push(["risk","min(intended, cap)",$(risk)]);
-  steps.push(["stop distance","|entry − stop|",n4(dist)+" ("+pc(dist/entry*100)+")"]);
-  if(feeKnown)steps.push(["fee per unit","entry × "+p.fee+"% × 2",n4(fu)]);
-  else steps.push(["fee per unit","fee per side pending: taken as 0, size before fees","0"]);
-  steps.push(["quantity",feeKnown?"risk ÷ (stop distance + fee per unit)":"risk ÷ stop distance",n4(qty)]);
-  steps.push(["notional","quantity × entry",$(notional)]);
-  steps.push(["leverage used",levCap==null?"your leverage; cap pending"+levNote:"min(your "+lev+"×, cap "+levCap+"×)",levUsed+"×"]);
-  steps.push(["margin","notional ÷ leverage used",$(margin)]);
-  if(feeKnown)steps.push(["fees","quantity × fee per unit",$(fees)+" ("+pc(fshare)+" of risk)"]);
-  steps.push(["budget used","risk ÷ budget",consumes.toFixed(1)+"%"]);
-  steps.push(["losses left","floor(budget ÷ risk)",String(left)]);
-  steps.push(["target","entry "+(side>0?"+":"−")+" "+tR+" × stop distance",target.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})]);
-  if(feeKnown&&fshare>15)notes.push("fees are "+fshare.toFixed(0)+"% of risk — stop tight enough that costs dominate");
-  if(reduced)notes.push("cut from "+$(intended)+" to "+$(risk)+" — "+bind+" budget caps it");
-  notes.push(left+" more losses at this size before "+bind+" trips");
+  steps.push([T.st_intended,F(T.f_intended,{pct:n("riskPct")}),$(intended)]);
+  steps.push([T.st_cap,F(T.f_cap,{pct:n("capPct")}),$(cap)]);
+  steps.push([T.risk,T.f_risk,$(risk)]);
+  steps.push([T.st_dist,T.f_dist,n4(dist)+" ("+pc(dist/entry*100)+")"]);
+  if(feeKnown)steps.push([T.st_fpu,F(T.f_fpu,{fee:p.fee}),n4(fu)]);
+  else steps.push([T.st_fpu,T.f_fpu_pending,"0"]);
+  steps.push([T.st_qty,feeKnown?T.f_qty:T.f_qty_nofee,n4(qty)]);
+  steps.push([T.st_notional,T.f_notional,$(notional)]);
+  steps.push([T.st_lev_used,levCap==null?(held==null?T.f_lev_pending:F(T.f_lev_pending_held,{lev:held})):F(T.f_lev_used,{lev:lev,cap:levCap}),levUsed+"×"]);
+  steps.push([T.margin,T.f_margin,$(margin)]);
+  if(feeKnown)steps.push([T.fees,T.f_fees,F(T.v_fees,{fees:$(fees),share:pc(fshare)})]);
+  steps.push([T.budget_used,T.f_used,consumes.toFixed(1)+"%"]);
+  steps.push([T.st_left,T.f_left,String(left)]);
+  steps.push([T.st_target,F(side>0?T.f_target_long:T.f_target_short,{r:tR}),target.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})]);
+  if(feeKnown&&fshare>15)notes.push(F(T.n_fees_high,{pct:fshare.toFixed(0)}));
+  if(reduced)notes.push(F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
+  notes.push(F(T.n_left,{n:left,bind:bind}));
   // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
   var sp=dist/entry*100,liq,fl;
-  if(mode==="isolated"){liq=(1-(1-1/levUsed)/(1-MMR))*100;fl="1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR "+(MMR*100)+"%)";}
-  else{liq=notional>0?(1-(1-eq/notional)/(1-MMR))*100:Infinity;fl="1 − (1 − equity ÷ notional) ÷ (1 − MMR "+(MMR*100)+"%)";}
-  var ord=[["your stop",sp]];
-  if(dB!=null){ord.push(["daily limit",dB/notional*100]);steps.push(["daily-limit distance","daily budget ÷ notional",pc(dB/notional*100)]);}
-  if(ddB!=null){var fname=p.dd==="trailing"&&!locked?"trailing floor":"max-loss floor";ord.push([fname,ddB/notional*100]);
-    steps.push([fname+" distance","drawdown budget ÷ notional",pc(ddB/notional*100)]);}
-  ord.push(["exchange liq ("+mode+")",Math.max(liq,0)]);
-  steps.push(["exchange liq ("+mode+")",fl,liq<=0?"0.00% — below maintenance at entry":pc(liq)]);
+  if(mode==="isolated"){liq=(1-(1-1/levUsed)/(1-MMR))*100;fl=F(T.f_liq_isolated,{mmr:MMR*100});}
+  else{liq=notional>0?(1-(1-eq/notional)/(1-MMR))*100:Infinity;fl=F(T.f_liq_cross,{mmr:MMR*100});}
+  var ord=[[T.br_stop,sp,"stop"]];                                   // [label, adverse %, which]
+  if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
+  if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
+    steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,pc(ddB/notional*100)]);}
+  var liqName=F(T.br_liq,{mode:modeT});
+  ord.push([liqName,Math.max(liq,0),"liq"]);
+  steps.push([liqName,fl,liq<=0?T.v_liq_below:pc(liq)]);
   ord.sort(function(a,b){return a[1]-b[1]});
-  if(ord[0][0]!=="your stop")notes.push("DANGER — "+ord[0][0]+" binds at "+ord[0][1].toFixed(2)+"% adverse, inside your stop");
-  else if(mode==="cross")notes.push("cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it");
-  else notes.push("isolated: exchange liquidates at "+liq.toFixed(1)+"% for the position’s own margin, before the floor");
+  if(ord[0][2]!=="stop")notes.push(F(T.n_danger,{what:ord[0][0],pct:ord[0][1].toFixed(2)}));
+  else if(mode==="cross")notes.push(T.n_cross);
+  else notes.push(F(T.n_isolated,{pct:liq.toFixed(1)}));
   var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?e[1].toFixed(2)+"%":"—")}).join("  →  ");
-  var sizeF="size = min(equity × "+n("riskPct")+"%, room × "+n("capPct")+"%) ÷ "+(feeKnown?"(stop distance + entry × "+p.fee+"% × 2)":"stop distance");
+  var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
   var v=reduced?"REDUCE":"OK";
-  h='<div class="verdict v'+v+'"><span class="vtag">'+v+'</span>'+
-    '<span class="vtxt">'+f.name+" · "+p.label+" · binding · "+bind+" · "+$(eff)+' of room</span></div>'+
+  h='<div class="verdict v'+v+'"><span class="vtag">'+(reduced?T.v_reduce:T.v_ok)+'</span>'+
+    '<span class="vtxt">'+F(T.v_txt,{firm:f.name,product:p.label,bind:bind,room:$(eff)})+'</span></div>'+
     '<div class="read">'+
-    '<div class="cell"><div class="k">size</div><div class="v">'+qty.toFixed(6)+'</div><div class="s">'+$(notional)+'</div></div>'+
-    '<div class="cell"><div class="k">margin</div><div class="v">'+$(margin)+'</div><div class="s">'+levUsed+'x'+(levCap==null?" · cap "+PEND:"")+'</div></div>'+
-    '<div class="cell"><div class="k">risk</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?"incl "+$(fees)+" fees":"fees "+PEND)+'</div></div>'+
-    '<div class="cell"><div class="k">fees</div><div class="v">'+(feeKnown?fshare.toFixed(1)+"%":PEND)+'</div><div class="s">'+(feeKnown?"of risk":"per-side fee pending")+'</div></div>'+
-    '<div class="cell"><div class="k">stop</div><div class="v">'+(dist/entry*100).toFixed(2)+'%</div><div class="s">tgt '+target.toFixed(2)+'</div></div>'+
-    '<div class="cell"><div class="k">budget used</div><div class="v">'+consumes.toFixed(0)+'%</div><div class="s">'+(ddFloor==null?"floor "+PEND:"floor "+$(ddFloor))+'</div></div></div>'+
-    '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">breakers</span> '+brk+'</div>'+
+    '<div class="cell"><div class="k">'+T.size+'</div><div class="v">'+qty.toFixed(6)+'</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.margin+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.risk+'</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?F(T.s_incl_fees,{fees:$(fees)}):F(T.s_fees_pending,{pending:PEND}))+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.fees+'</div><div class="v">'+(feeKnown?fshare.toFixed(1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.stop+'</div><div class="v">'+(dist/entry*100).toFixed(2)+'%</div><div class="s">'+F(T.s_tgt,{price:target.toFixed(2)})+'</div></div>'+
+    '<div class="cell"><div class="k">'+T.budget_used+'</div><div class="v">'+consumes.toFixed(0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
+    '<div class="notes"><div style="padding-left:0;color:var(--ink)"><span style="color:var(--dim)">'+T.breakers+'</span> '+brk+'</div>'+
     notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
-    provBlock(f,p,used,formula+"; "+sizeF,"Exchange liquidation assumes a "+(MMR*100)+"% maintenance margin, troid's assumption with no firm source")+working(steps,wOpen);
+    provBlock(f,p,used,formula+"; "+sizeF,F(T.prov_mmr,{mmr:MMR*100}))+working(steps,wOpen);
   el("result").innerHTML=h;
 }
 el("firm").addEventListener("change",fillProfiles);el("profile").addEventListener("change",function(){toggleInputs();render()});
