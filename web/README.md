@@ -11,6 +11,8 @@ on the ledger (cdn.jsdelivr.net, version pinned).
 | `public/ledger.html` | `/ledger` | troid's ledger, the shadow account: heartbeat, runs, every closed trade, drawn — `backtest/gen_ledger.py` |
 | `public/tearsheet.html` | `/tearsheet` | Part of troid's research: quantstats over the journal — `backtest/gen_tearsheet.py` |
 | `public/dashboard.html` | `/dashboard` | Part of troid's research: strategy review and audit findings |
+| `public/chat.html` | `/chat` | ask troid — built, switched off until legal review |
+| `public/terms.html` | `/terms` | Terms of use — a draft published ahead of counsel's review |
 
 `cleanUrls` in `vercel.json` serves `/faq` from `faq.html`.
 

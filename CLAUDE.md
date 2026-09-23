@@ -35,7 +35,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   sample from api.binance.us; `stitch_bars.py` extends it, nothing re-fetches it.
   `gen_ledger.py` and `gen_tearsheet.py` render `web/public/ledger.html` and
   `tearsheet.html` from `journal.csv`; `journal.csv` is append-only and its schema
-  widening on 2026-09-22 kept every row's `logged_utc`.
+  widening on 2026-09-22 kept every row's `logged_utc`. `site_text.py` holds the text every page
+  shares — the footer line and the verbatim 17 CFR 4.41(b)(1)(i) hypothetical-performance text — and
+  `gen_compare.py` writes the footer into the marked `<!-- footer -->` region of every static page.
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.

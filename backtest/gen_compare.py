@@ -12,10 +12,12 @@ A firm's link shows once its affiliate agreement exists and daily/max/target/pri
 verified. Nothing is scored. Nothing is ranked.
 """
 from __future__ import annotations
-import json, html
+import json, html, sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
+sys.path.insert(0, str(HERE))
+import site_text
 FIRMS = json.loads((HERE.parent / "firms.json").read_text())
 OUT = HERE.parent / "web" / "public" / "compare.html"
 BRAND = (HERE.parent / "web" / "public" / "index.html").read_text()
@@ -32,6 +34,7 @@ FIELDS = ["daily_pct","max_pct","target_pct","min_days","price","daily_basis","d
 
 INDEX = HERE.parent / "web" / "public" / "index.html"
 FAQ = HERE.parent / "web" / "public" / "faq.html"
+PUB = HERE.parent / "web" / "public"
 RANK = {e["firm"]: (i + 1, e) for i, e in enumerate((FIRMS.get("_external_ranking_snapshot") or {}).get("top", []))}
 
 
@@ -217,7 +220,8 @@ shows the firm document and the date troid read it, says <em>pending</em>, or sa
 <p class="s" style="margin:16px 0 0;line-height:1.7">{html.escape(FIRMS.get("_reference_firm",""))} {html.escape(FIRMS.get("_bitfunded_directory_note",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_criterion",""))}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_link_rule",""))}</p>
-<p class="foot">{" ".join(x for x in (html.escape(FIRMS.get("_disclosure","")), required_html(inline=True)) if x)} Not financial advice. Simulated trading. Verify every rule with the firm before purchase.<br><a href="/">troid's desk</a> · <a href="/compare">troid's compare</a> · <a href="/ledger">troid's ledger</a> · <a href="/dashboard">troid's research</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
+<p class="s" style="margin:10px 0 0;line-height:1.7">{html.escape(FIRMS.get("_disclosure",""))}</p>
+<p class="foot">{site_text.footer_html()}</p>
 </div>
 <script>
 var F={{{",".join(f'"{k}":{js(k, FIRMS[k])}' for k in ORDER)}}};var ORDER={json.dumps(ORDER)};
@@ -325,8 +329,11 @@ cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) 
 links=[k for k in ORDER if link_live(FIRMS[k])]
 changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
                                   ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
-                                  ("index.html disclaimers", rewrite_region(INDEX, "disclaimers", "  " + required_html(inline=True) if required_sentences() else "")),
-                                  ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html()))) if hit]
+                                  ("faq.html disclaimers", rewrite_region(FAQ, "disclaimers", required_html())),
+                                  ("dashboard.html hypo", rewrite_region(PUB / "dashboard.html", "hypo", site_text.hypo_html())),
+                                  *((f"{pg} footer", rewrite_region(PUB / pg, "footer", site_text.footer_html()))
+                                    for pg in ("index.html", "faq.html", "dashboard.html", "chat.html", "terms.html")
+                                    if (PUB / pg).exists())) if hit]
 # Context bundle for the assistant function (web/api/troid.js): a copy of firms.json outside
 # public/, packaged into the function by vercel.json includeFiles. Not served as a page.
 CONTEXT = HERE.parent / "web" / "context" / "firms.json"

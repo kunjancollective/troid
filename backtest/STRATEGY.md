@@ -4,6 +4,10 @@
 strategies to pass an evaluation. This document exists so the strategy is reproducible
 and auditable, not so anyone trades it. Its measured expectancy is inside noise.
 
+> **Hypothetical performance.** These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.
+>
+> troid's own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 2021–2025 the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.
+
 Configuration is `backtest/strategy_config.json`. Change it there, never in code.
 
 ## What it is

@@ -1,7 +1,8 @@
 # troid
 
-Risk tooling and published research for prop-firm traders. Currently modelled on
-Bitfunded's rule set.
+Risk tooling and published research for prop-firm traders. Three firms today —
+Bitfunded, BrightFunded and Crypto Fund Trader — every rule generated onto the site from
+`firms.json`, each with the document and date it was read from.
 
 **It never places orders and never touches account credentials.** It does arithmetic on
 numbers you give it.
@@ -45,7 +46,7 @@ why troid makes no claim about it — see below.
 | `backtest/STRATEGY.md` | The strategy, pinned. `strategy_config.json` is the only place it's configured. |
 | `backtest/forward.py` | The shadow: replays the strategy forward, journals trades with timestamps. Places nothing. |
 | `backtest/profile_optimizer.py` | Optimal risk per challenge type. |
-| `web/` | Public FAQ and strategy dashboard. |
+| `web/` | The site: troid's desk (the calculator), troid's compare, troid's ledger, the tearsheet, troid's research (dashboard and methodology), ask troid (the assistant, switched off until legal review), the FAQ and the terms. |
 | `prompts/` | Build brief for the TradingView risk overlay. |
 
 ## The system, five steps
@@ -68,7 +69,7 @@ python3 scripts/risk.py size --symbol BTCUSDT --side long \
     --entry 78000 --stop-atr 1.5 --atr 2000 --target-r 2
 ```
 
-Profiles: `1step`, `2step_s1`, `2step_s2`, `trader`.
+Profiles: `1step`, `2step_s1`, `2step_s2`, `express`, `instant`, `trader`.
 
 ## Three numbers worth knowing
 
@@ -85,6 +86,10 @@ risking 1% with no cap on remaining budget blows the account 68% of the time wit
 year. At 2%, 98%. Under a proportional cap, 0%.
 
 ## On troid's own strategy
+
+> **Hypothetical performance.** These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.
+>
+> troid's own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 2021–2025 the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.
 
 troid backtested a 4h BTCUSDT system across ~30 configurations under Bitfunded's exact
 rules. Best result: +0.033R per trade, n=78, standard error 0.046R, 95% CI

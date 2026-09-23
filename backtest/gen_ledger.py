@@ -8,9 +8,12 @@ edited. The page carries the strategy's own verdict on itself: inside noise.
 """
 from __future__ import annotations
 import csv, json, html, math, statistics, datetime as dt
+import sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
+sys.path.insert(0, str(HERE))
+import site_text
 JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_config.json"
 RUNS = HERE/"runs.csv"
 OUT = HERE.parent/"web"/"public"/"ledger.html"
@@ -221,6 +224,7 @@ confidence interval that {"contains" if abs(exp) < 1.96*se else "excludes"} zero
 f' Out of sample, on the {hold["n"]} trades from 2021–2025 the parameters never saw: {hold["exp"]:+.3f}R, SE {hold["se"]:.3f}R. No edge, confirmed.' if hold else ''} It is published so you can watch a null result run forward, not because it works. The <a href="/tearsheet">full tearsheet</a> shows what noise looks like when all of it is shown.
 {len(live)} of these trades were logged live; the rest were backfilled on {rows[0]["logged_utc"][:10] if rows else "—"}.{
 f" {flagged} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded." if flagged else ""}</div>
+{site_text.hypo_html()}
 
 <div class="panel"><p class="eyebrow">Equity</p>{equity_svg(rows)}</div>
 
@@ -248,7 +252,7 @@ f" {flagged} held through a forward-filled bar (a flat bar substituted for a fee
 {trade_charts(rows)}
 
 <p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
-ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/">troid's desk</a> · <a href="/compare">troid's compare</a> · <a href="/ledger">troid's ledger</a> · <a href="/dashboard">troid's research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a></p>
+ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br>{site_text.footer_html()}</p>
 </div></body></html>'''
     OUT.write_text(page)
     print(f"ledger.html: {n} trades, net {net:+,.0f}, {len(live)} logged live -> {OUT}")

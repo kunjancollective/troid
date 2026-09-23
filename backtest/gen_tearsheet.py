@@ -12,6 +12,7 @@ Every metric on the page is MEASURED. The header line says so, verbatim from the
 """
 from __future__ import annotations
 import os, re, csv, json, html, datetime as dt
+import sys
 from pathlib import Path
 os.environ.setdefault("MPLBACKEND", "Agg")
 import logging
@@ -20,6 +21,8 @@ import pandas as pd
 import quantstats as qs
 
 HERE = Path(__file__).parent
+sys.path.insert(0, str(HERE))
+import site_text
 JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_config.json"
 OUT = HERE.parent/"web"/"public"/"tearsheet.html"
 QUOTA = 100_000.0
@@ -62,7 +65,8 @@ def main():
             f'<p style="border-left:2px solid #e0a33c;padding:10px 14px;margin:0 0 6px;background:#f4f6f9">{html.escape(HEADER)}</p>'
             f'<p style="margin:0 0 4px;color:#5f6f86">{len(rows)} closed trades on {cfg["instrument"]} {cfg["timeframe"]}, '
             f'{s.index[0]:%Y-%m-%d} to {s.index[-1]:%Y-%m-%d}. Daily P&amp;L on the ${QUOTA:,.0f} quota, days without an exit count as zero, '
-            f'365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.</p></div>')
+            f'365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.</p>'
+            + site_text.hypo_html() + '</div>')
     i = page.lower().index("<body")
     j = page.index(">", i) + 1
     page = page[:j] + "\n" + head + page[j:]
@@ -75,6 +79,10 @@ def main():
     page = page.replace(' onload="save()"', "", 1)
     page = page.replace("</head>", "<style>#troid-head a{color:#1f6fd1}@media (max-width:760px){body{margin:12px}#left,#right{width:100%;float:none;margin:0}"
                         "#left svg,#right svg{max-width:100%;height:auto}table{width:100%}}</style>\n</head>", 1)
+    foot = ('<div id="troid-foot" style="max-width:960px;margin:30px auto 40px;padding:14px 20px 0;border-top:1px solid #dde4ee;'
+            'font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;line-height:1.8;color:#5f6f86">'
+            + site_text.footer_html() + '</div>')
+    page = page.replace('</body>', foot + '\n</body>', 1)
     OUT.write_text(page)
     print(f"tearsheet.html: {len(rows)} trades, {len(s)} days, {OUT.stat().st_size//1024} KB -> {OUT}")
 
