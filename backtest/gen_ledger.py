@@ -55,11 +55,9 @@ def _style(T):
 
 def header(T, live):
     """The ledger's bar (it has no <header> block, so not partials/_header.html): links inside T's language,
-    the language switcher at the end of the nav. On a translated page the mark is pinned left to right: .mark is
-    inline-flex, so in a right-to-left page it would otherwise read id·tr."""
-    ltr = "" if _english(T) else ' dir="ltr"'
+    the language switcher at the end of the nav. The mark is site_build.mark: the same on every page."""
     return f'''<div class="bar">
-  <a class="mark"{ltr} href="{T.H}">tr<span class="dot"></span>id</a>
+  {site_build.mark(T)}
   <nav><a href="{T.H}">{T("product.desk")}</a><a href="{T.L}/compare">{T("product.compare")}</a><a href="{T.L}/ledger">{T("product.ledger")}</a><a href="{T.L}/dashboard">{T("product.research")}</a><a href="{T.L}/chat">{T("product.ask")}</a><a href="{T.L}/faq">{T("common.nav.faq")}</a>
     <a href="https://github.com/kunjancollective/troid">{T("common.nav.source")}</a>{site_build.switcher(T, "ledger", live)}</nav>
 </div>'''
@@ -336,9 +334,31 @@ def render_ledger(T, live):
 </div></body></html>'''
 
 
+# The shadow loop runs every 4 hours (.github/workflows/shadow.yml, 20 minutes after each bar closes). The status light
+# counts the ledger live while the last run is under two missed runs and an hour old: GitHub's scheduler often starts
+# a run late, and one missed run is late data, not a stopped loop.
+CADENCE_MIN, STALE_AFTER_MIN = 240, 2 * 240 + 60
+
+
+def write_status(out=None):
+    """web/public/status.json: when the shadow loop last ran, for the status light in every page's wordmark
+    (web/public/live.js). Built from runs.csv and state.json only, so it changes only when a run does."""
+    runs = list(csv.DictReader(RUNS.open())) if RUNS.exists() else []
+    st = json.loads(STATE.read_text()) if STATE.exists() else {}
+    status = {"what": "troid's ledger: when the shadow loop last ran. The wordmark's dot ripples while the last run is "
+                      "under stale_after_minutes old, and holds still otherwise.",
+              "last_run_utc": runs[-1]["run_utc"] if runs else None, "as_of_bar_utc": st.get("as_of_bar_utc"),
+              "cadence_minutes": CADENCE_MIN, "stale_after_minutes": STALE_AFTER_MIN, "ledger": "/ledger"}
+    path = (Path(out) if out else site_build.PUB) / "status.json"
+    path.write_text(json.dumps(status, indent=1) + "\n")
+    return path
+
+
 def main(out=None):
-    """Write the ledger for every published language (site_build.targets()); English to web/public/ledger.html."""
+    """Write the ledger for every published language (site_build.targets()); English to web/public/ledger.html.
+    Also web/public/status.json, the status light's source."""
     live = site_build.targets()
+    write_status(out)
     for c in live:
         p = site_build.out_path(c, "ledger", out)
         p.parent.mkdir(parents=True, exist_ok=True)

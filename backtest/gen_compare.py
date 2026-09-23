@@ -134,7 +134,7 @@ def header(T, live):
     """The compare page's bar (it has no <header> block, so not partials/_header.html): links inside T's language,
     the language switcher at the end of the nav."""
     return f'''<div class="bar">
-  <a class="mark" href="{T.H}">tr<span class="dot"></span>id</a>
+  {site_build.mark(T)}
   <nav><a href="{T.H}">{T("product.desk")}</a><a href="{T.L}/compare">{T("product.compare")}</a><a href="{T.L}/ledger">{T("product.ledger")}</a><a href="{T.L}/dashboard">{T("product.research")}</a><a href="{T.L}/chat">{T("product.ask")}</a><a href="{T.L}/faq">{T("common.nav.faq")}</a>
     <a href="https://github.com/kunjancollective/troid">{T("common.nav.source")}</a>{site_build.switcher(T, "compare", live)}</nav>
 </div>'''

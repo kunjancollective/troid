@@ -146,6 +146,18 @@ def switcher(T, page, live):
             + share)
 
 
+def mark(T):
+    """The tr●id wordmark, the same on every page. "tr" and "id" link home; the dot is troid's status light and
+    links to troid's ledger. It holds still until /live.js reads /status.json and finds a shadow run inside the
+    window that file states, then it ripples. Pinned left to right on a translated page (.mark is inline-flex, so a
+    right-to-left page would otherwise read id·tr)."""
+    ltr = "" if T.code == "en" else ' dir="ltr"'
+    return (f'<span class="mark"{ltr} translate="no"><a href="{T.H}" aria-label="{T.attr("common.mark.home")}">tr</a>'
+            f'<a class="dot" href="{T.L}/ledger" aria-label="{T.attr("common.mark.ledger")}" title="{T.attr("common.mark.ledger")}"'
+            f' data-live="{T.attr("common.mark.live")}" data-still="{T.attr("common.mark.still")}"></a>'
+            f'<a href="{T.H}" tabindex="-1" aria-hidden="true">id</a></span><script src="/live.js" defer></script>')
+
+
 def html_attrs(T):
     return f' lang="{T.code}"' + ("" if T.code == "en" else f' dir="{T.lang["dir"]}"')
 
@@ -154,7 +166,7 @@ def common(T, page, live, preview=False):
     """What every template gets."""
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T),
-            "switcher": switcher(T, page, live), "features": features_on(T), "live": live, "preview": preview,
+            "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,

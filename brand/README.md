@@ -13,11 +13,11 @@ the r carries its weight on the right and reads closer than it is.
 | X header 1500×500 | banner-x-1500x500.png |
 | Reddit banner 1920×384 | banner-reddit-1920x384.png |
 | YouTube banner 2560×1440 | banner-youtube-2560x1440.png |
-| Site favicon | favicon.ico, mark-32.png |
-| Apple touch icon | mark-180.png |
-| Site header | lockup-transparent.png |
+| Site favicon | favicon.ico (16 and 32 px: mark-2ceilings-16.png, drawn on the pixel grid, and mark-2ceilings-32.png) |
+| Apple touch icon | mark-2ceilings-180.png (web/public/apple-touch-icon.png) |
+| Site header | CSS, not an image: site_build.mark and the shared style block (the dot, its halo, its ripple while live, two floors) |
 | Wordmark alone, dark / light / transparent | wordmark-*.png |
-| Two-ceilings variant, for large in-page use | mark-2ceilings-*.png |
+| Two-ceilings variant: the site's favicon, touch icon and share image, and large in-page use | mark-2ceilings-*.png |
 
 Colours: bg #070b12 · ink #e6edf5 · signal #4da3ff, halo at 18%.
 Marks sit inside the centre 80% of the canvas; circle crops will not clip them.

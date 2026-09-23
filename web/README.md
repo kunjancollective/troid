@@ -13,11 +13,12 @@ Lightweight Charts on the ledger (cdn.jsdelivr.net, version pinned).
 | `public/ledger.html` | `/ledger` | troid's ledger, the shadow account: heartbeat, runs, every closed trade, drawn — `backtest/gen_ledger.py` |
 | `public/tearsheet.html` | `/tearsheet` | Part of troid's research: quantstats over the journal — `backtest/gen_tearsheet.py` |
 | `public/dashboard.html` | `/dashboard` | Part of troid's research: strategy review and audit findings |
-| `public/chat.html` | `/chat` | ask troid — on once the owner sets the environment below; conversations kept 30 days |
+| `public/chat.html` | `/chat` | ask troid — switched on at launch (23 September 2026); conversations kept 30 days |
 | `public/terms.html` | `/terms` | Terms of use — a draft published ahead of counsel's review |
 
 | `public/{lang}/…` | `/zh`, `/zh/compare`, … | The same pages in a language whose reviewer has signed off (`i18n/{lang}.json` `_status: live`). None yet. |
 | `public/i18n.js`, `public/i18n.css` | — | Translated pages only: Intl numbers (USD, never converted), local time beside UTC, the country selector, share |
+| `public/live.js`, `public/status.json` | `/status.json` | The status light: the dot in every page's wordmark ripples while the last shadow run is under `stale_after_minutes` old (two missed 4-hour runs and an hour) and holds still otherwise; it links to troid's ledger. `status.json` is written by `backtest/gen_ledger.py` on every shadow run |
 
 `cleanUrls` in `vercel.json` serves `/faq` from `faq.html`, and a rewrite serves `/zh` from `zh/index.html`.
 Languages: `i18n/README.md`.

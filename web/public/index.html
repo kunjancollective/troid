@@ -36,10 +36,18 @@ body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg)
 header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
 .bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
-  display:inline-flex;align-items:baseline;color:var(--ink);text-decoration:none;border:0}
-.dot{display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  display:inline-flex;align-items:baseline;color:var(--ink)}
+.mark a{color:inherit;text-decoration:none;border:0}
+.dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
   margin:0 .06em 0 .12em;vertical-align:-.02em;
   box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+.dot::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;pointer-events:none}
+.dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
+  background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
+.dot.live::before{animation:ripple 2.4s cubic-bezier(.2,.7,.3,1) infinite}
+@keyframes ripple{from{transform:scale(1);opacity:.5}to{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot.live::before{animation:none}
+  .dot.live{box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent),0 0 0 .3em color-mix(in srgb,var(--signal) 8%,transparent)}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
@@ -107,7 +115,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 <header><div class="wrap">
   <div class="bar">
-    <a class="mark" href="/">tr<span class="dot"></span>id</a>
+    <span class="mark" translate="no"><a href="/" aria-label="troid, home">tr</a><a class="dot" href="/ledger" aria-label="troid's ledger: the shadow account, live" title="troid's ledger: the shadow account, live" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no shadow run since {time} UTC; its live data may be down"></a><a href="/" tabindex="-1" aria-hidden="true">id</a></span><script src="/live.js" defer></script>
     <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
   </div>

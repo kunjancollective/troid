@@ -1,0 +1,8 @@
+{
+ "what": "troid's ledger: when the shadow loop last ran. The wordmark's dot ripples while the last run is under stale_after_minutes old, and holds still otherwise.",
+ "last_run_utc": "2026-09-23T19:42:50+00:00",
+ "as_of_bar_utc": "2026-09-23T12:00:00+00:00",
+ "cadence_minutes": 240,
+ "stale_after_minutes": 540,
+ "ledger": "/ledger"
+}

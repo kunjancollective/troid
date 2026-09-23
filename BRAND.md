@@ -98,8 +98,19 @@ set in a proportional face looks like marketing; set in mono it looks like an in
 ## Mark
 
 Wordmark `troid` in Plex Mono 600, -.04em, with the o replaced by a signal dot carrying an
-18% halo: `tr●id`. The dot is a status light: the droid is on. The mark on its own is the
-dot above its floor, the loss ceiling.
+18% halo, above two floors: `tr●id`. The floors are the two loss ceilings, the daily limit
+above the max loss; the dot stays above them, and that is the product. On the site the floors
+are ink at 60%, so the letters keep their weight.
+
+The dot is a status light. It ripples while troid's ledger is live (the last shadow run is
+inside the window `web/public/status.json` states: two missed 4-hour runs and an hour) and
+holds still when it is not, so a still dot says the live data has stopped. It links to
+troid's ledger. The ripple is the site's one motion; under `prefers-reduced-motion` it stops
+and a second faint ring shows live instead.
+
+The mark on its own is the dot above its two floors (`brand/mark-2ceilings-*`): the favicon,
+the touch icon and the share image use it. The social avatars and banners in brand/ still
+carry the one-floor mark and the plain wordmark until they are redrawn.
 
 Source files live in brand/. The wordmark's dot is nudged 5% of a cell right of
 geometric centre; do not "correct" it. The site header carries the same nudge in CSS
@@ -113,5 +124,6 @@ No page defines its own tokens. A new page starts by copying that block, then wr
 only the selectors it needs beneath it. If the block changes, it changes on every page
 in the same commit.
 
-The header is the same `.bar` markup on every page: the `tr●id` wordmark linking home,
-the mono nav links. Nothing else goes in it.
+The header is the same `.bar` markup on every page: the `tr●id` wordmark (`site_build.mark`:
+"tr" and "id" link home, the dot links to troid's ledger), the mono nav links. Nothing else
+goes in it.
