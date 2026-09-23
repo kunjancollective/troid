@@ -86,6 +86,12 @@ the English in `api/troid.js` otherwise; the guardrails tell the model to answer
 numbers, tickers and citations exact, keep troid in Latin script, and say that the English terms govern. The
 page's language reaches the model as a separate, uncached system block, so the cached prompt is shared.
 
+Live check after switch-on (a few model calls): `node web/smoke_live.js https://troid.ai`, with
+`KV_REST_API_URL` / `KV_REST_API_TOKEN` in the environment to also read the store. It checks the disclosure
+comes first with the session sentence, a sizing answer with formula and sources, a second message in one
+session, the refusal to "should I buy a challenge", the stored entries' 30-day TTL and absence of any address
+or user agent, and deletion.
+
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.
 
