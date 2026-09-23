@@ -124,8 +124,8 @@ button:disabled{opacity:.45;cursor:default}
 
 <div class="hero">
   <h1>ask troid</h1>
-  <p class="lede">ask troid answers from troid's verified rule set and its own arithmetic
-  tools. It prices the trade you bring. It does not generate one.</p>
+  <p class="lede">ask troid answers from troid's rule data and its own arithmetic tools. It
+  prices the trade you bring. It does not generate one.</p>
 </div>
 
 <div class="panel">
@@ -141,17 +141,22 @@ button:disabled{opacity:.45;cursor:default}
 
 <div class="panel">
   <h2>What it is</h2>
-  <p>A chat over <a href="/TROID.md">TROID.md</a>, the verified rules on
-  <a href="/compare">troid's compare</a> and the <a href="/METHODOLOGY.md">methodology</a>. Sizing,
-  budgets and compliance checks run through tools that do the arithmetic; the model reports
-  what they return. Every number carries its tier. A pending rule stays pending.</p>
+  <p>A chat over <a href="/TROID.md">TROID.md</a>, the rules on
+  <a href="/compare">troid's compare</a>, the <a href="/METHODOLOGY.md">methodology</a> and a fixed
+  <a href="https://github.com/kunjancollective/troid/blob/main/web/context/support.md">support script</a>.
+  Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
+  document and read date of every rule they use; the model reports what they return. Every
+  number carries its tier. A pending rule stays pending.</p>
   <h2 style="margin-top:20px">What it isn't</h2>
   <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  Nothing you type is stored; the page keeps the conversation only while it is open. The
-  service logs a count of messages and nothing else. Twenty messages an hour per address.</p>
-  <p style="margin-bottom:0" id="discl">Not financial advice. troid is an independent affiliate of the firms it
-  compares. It earns a commission on challenge purchases made through its links. ask troid
-  can be wrong; the firm's own documents govern. Verify with the firm before acting.</p>
+  troid stores nothing you type; the page keeps the conversation only while it is open. To
+  answer, troid sends the conversation to the company that provides the AI model, which may
+  keep it for a limited period under its own terms. troid's log records one line per message:
+  answered or failed, tool calls, model, and whether it was a warning, a refusal or the end of
+  the session. Never the text, never your address. The hosting provider keeps its own request
+  logs, which can include your IP address. About twenty messages an hour per address.</p>
+  <p style="margin-bottom:0" id="discl">ask troid can be wrong; the firm's own documents govern. Verify with
+  the firm before acting. <a href="/terms#ask-troid">Section 10 of troid's terms</a> has the detail.</p>
 </div>
 
 </div>
@@ -164,26 +169,32 @@ button:disabled{opacity:.45;cursor:default}
 
 <script>
 /* The conversation lives in this array and nowhere else. No storage, no account. The opening disclosure
-   comes from the service (GET /api/troid), is shown before anything else, and is not part of hist. */
-var hist=[],busy=false,ended=false;
+   comes from the service (GET /api/troid), is shown before anything else, and is not part of hist.
+   Each reply carries a signature over the conversation so far; the next message sends it back. */
+var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20;
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
+function stop(msg){ended=true;setOn(false,msg)}
 fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
-  if(s.enabled&&s.disclosure)add("a",s.disclosure);
-  if(s.enabled)setOn(true,"on · "+(s.context&&s.context.firms?s.context.firms.length+" verified firms":"")+" · "+s.limit_per_hour+" messages an hour · no memory between visits");
-  else setOn(false,"ask troid is built and switched off. It goes live once its disclaimer has had a legal review. Until then troid's desk on the front page does the arithmetic.");
+  if(s.max_messages)maxMsgs=s.max_messages;
+  if(s.enabled&&s.disclosure){add("a",s.disclosure);shown=true}
+  if(s.enabled)setOn(true,"on · "+(s.context&&s.context.firms?s.context.firms.length+" firms · ":"")+s.limit_per_hour+" messages an hour · no memory between visits");
+  else setOn(false,"ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.");
 }).catch(function(){setOn(false,"ask troid could not be reached.")});
 function send(){
-  var t=el("q").value.trim();if(!t||busy)return;
+  var t=el("q").value.trim();if(!t||busy||ended)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
   var w=add("s","…");
-  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:true})})
+  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
   .then(function(x){var st=x[0],j=x[1];w.remove();
-    if(st===200&&j.ended){add("a",j.reply);ended=true;setOn(false,"This session has ended. Reloading the page starts a new one.")}
-    else if(st===200){hist.push({role:"assistant",content:j.reply});add("a",j.reply);add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note)}
-    else{hist.pop();add("s",j.error||("error "+st));if(st===503)setOn(false,j.error||"switched off")}
+    if(st===200&&j.ended){add("a",j.reply);stop("This session has ended. Reloading the page starts a new one.")}
+    else if(st===200){hist.push({role:"assistant",content:j.reply});sig=j.sig||null;add("a",j.reply);
+      add("s",(j.tool_calls?j.tool_calls+" tool call"+(j.tool_calls>1?"s":"")+" · ":"")+j.model+" · "+j.note);
+      if(hist.length+1>maxMsgs)stop("This conversation reached its length. Reloading the page starts a new one.")}
+    else{hist.pop();add("s",j.error||("error "+st));
+      if(j.restart)stop(j.error);else if(st===503&&j.enabled===false)setOn(false,j.error||"switched off")}
   }).catch(function(){w.remove();hist.pop();add("s","ask troid could not be reached.")})
   .then(function(){busy=false;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }

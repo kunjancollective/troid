@@ -27,27 +27,42 @@ propagating first — the domain page shows "Pending" until they do.
 ## ask troid — the assistant (`/chat`, `api/troid.js`)
 
 A Vercel serverless function that calls the Anthropic Messages API with a fixed system
-prompt — `public/TROID.md`, `context/firms.json` (a copy `backtest/gen_compare.py` keeps
-current; not served), `public/METHODOLOGY.md` — and four arithmetic tools ported from
-`mcp/server.py` and the calculator: `size_trade`, `check_budget`, `check_compliance`,
-`explain_rule`. Arithmetic goes through the tools, never the model.
+prompt — the guardrails in `api/troid.js`, `public/TROID.md`, `context/support.md` (the fixed
+support script: the disclosure, the six steps for "the number was wrong", the scam reply, the
+refusal, the abuse warning), the rule data from `context/firms.json` (a copy
+`backtest/gen_compare.py` keeps current; not served; the prompt gets an allowlist of its rule
+fields, never troid's internal notes or affiliate terms), `public/METHODOLOGY.md` — and four
+tools ported from `mcp/server.py` and the calculator: `size_trade`, `check_budget`,
+`check_compliance`, `explain_rule`. Arithmetic goes through the tools, never the model; the
+sizing tools return each formula and intermediate value, and every rule-based result lists the
+document, section and read date of the rules it used.
 
-Behind a feature flag until the disclaimer on `chat.html` has had its legal review:
+Switched off until troid's terms and ask troid's guardrails have had legal review:
 
 | env | meaning |
 |---|---|
 | `TROID_ASSISTANT` | `on` enables it. Anything else: the page says it is switched off and the function answers 503, spending nothing. |
-| `ANTHROPIC_API_KEY` | the key. Never in the repo. |
+| `ANTHROPIC_API_KEY` | the key. Never in the repo. Put it in its own Anthropic Console workspace with a monthly spend limit: that limit is the only hard wall on cost. |
+| `TROID_TURN_KEY` | 32 random bytes. Signs troid's side of each conversation so a client cannot forge it. Required: without it the function answers 503. |
 | `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
 | `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
+| `TROID_TOOLS_EFFORT` | effort on the tool route (default `low`; `none` omits it). Compare `low` and `medium` on real transcripts before switch-on. |
+| `TROID_CALLS_PER_HOUR` | model calls per instance an hour, all users together (default 300) |
+| `TROID_DEADLINE_MS` | time budget for one message, every call and retry included (default 50000; the function limit is 60 s) |
 
-Twenty messages an hour per address, in memory. Logs one line per call with a count and
-nothing else. No memory across sessions, no account, no credentials. The page keeps the
-conversation only while it is open. `GET /api/troid` reports the flag, the models and the
-size of each context file, so a deploy can be checked without a key.
+Limits: about twenty messages an hour per address (IPv6 by /64), in memory, per instance; at
+most three tool rounds per message. Before switch-on, also add a Vercel WAF rate-limit rule on
+`POST /api/troid`, which holds across instances. Only same-origin `application/json` requests
+are answered, so another site cannot spend the key through its visitors' browsers.
+
+Logs one line per message it answers or fails to answer: tool-call count, model, the warned /
+refusal / ended / error flags and an upstream status code. Never text, never an address (terms
+section 10). No memory across sessions, no account, no credentials. The page keeps the
+conversation only while it is open. `GET /api/troid` reports whether it is on, the models and
+the size of each context file, so a deploy can be checked without a key.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
-against the calculator's reference case and a scripted fake of the API.
+against the calculator's reference case and the handler against a local fake of the API.
 
 ## Provenance
 

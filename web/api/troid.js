@@ -1,67 +1,85 @@
 "use strict";
 /* ask troid — troid's customer service, as a Vercel serverless function.
  *
- * Every call: a fixed system prompt (the guardrails below, TROID.md, context/support.md — the
- * fixed de-escalation wording — firms.json, METHODOLOGY.md), the conversation as the page sends it,
- * and four arithmetic tools ported from mcp/server.py and troid's desk. Arithmetic goes through the
- * tools; each tool result carries the firm document, section and read date of every rule it used.
- * No memory across sessions, no account, no credentials. Places nothing.
+ * Every call: a fixed system prompt (the guardrails below, TROID.md, context/support.md — the fixed
+ * support script — the rule data from firms.json without troid's internal notes or affiliate terms,
+ * METHODOLOGY.md), the conversation as the page sends it, and four tools ported from mcp/server.py and
+ * troid's desk. Arithmetic goes through the tools: size_trade and check_budget return each formula and
+ * intermediate value, and every rule-based result lists the document, section and read date of the
+ * rules it used, or says the source is not yet recorded. No memory across sessions, no account, no
+ * credentials. Places nothing.
  *
  * Models (the owner's split): Claude Haiku 4.5 answers lookups; any turn that wants a tool is rerun
  * on Claude Sonnet 5, which runs the tool loop. Calls go through the official SDK.
  *
- * The service, not the model, owns three fixed behaviours: the opening AI disclosure (prepended to
- * the first reply unless the page has already shown it), ending a session after abuse (the model
- * answers with END_SESSION and the service replaces it), and refusals (a fixed reply).
+ * The service, not the model, enforces four things: the opening AI disclosure (prepended to the first
+ * reply unless the page has already shown it); one warning before a session ends for abuse (the model
+ * answers with END_SESSION; the service ends the session only if a warning is already in the history,
+ * and gives the warning otherwise); a model safety refusal (stop_reason "refusal"), which gets a fixed
+ * reply; and the history itself, which is signed turn by turn so a client cannot write troid's side of
+ * the conversation. The "should I" refusal set is the model's, worded by support.md section 4.
  *
- * Feature flag: TROID_ASSISTANT=on. Off (the default) answers 503 and spends nothing.
- * ANTHROPIC_API_KEY never leaves the environment.
+ * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY and TROID_TURN_KEY set. Otherwise POST
+ * answers 503 and spends nothing. Neither key ever leaves the environment.
  *
- * Logging: one line per call with counts — tool calls, the model, refusal / ended flags. No text, no
- * address. The owner may choose 30-day conversation logging instead (audit handoff §4); until then
- * this is count-only, as the terms state.
+ * Logging: one line per message passed to the model — tool calls, the model, and warned / refusal /
+ * ended / error flags, with the HTTP status of a failed upstream call. No text, no address. The owner
+ * may choose 30-day conversation logging instead (audit handoff §4); until then this is count-only,
+ * as the terms state.
  *
- * Rate limit: 20 messages an hour per address, in memory. A serverless instance forgets on recycle,
- * so this is a brake, not a wall.
+ * Limits: about 20 messages an hour per address (IPv6 by /64), in memory, per instance — a brake, not
+ * a wall. A per-instance ceiling on model calls an hour and a 50s deadline per message bound the
+ * spend of any one instance. The real wall is the spend limit on the API key's workspace.
  */
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk").default;
 
 const ENABLED = process.env.TROID_ASSISTANT === "on";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
+const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // signs troid's side of the history
 const BASE_URL = process.env.ANTHROPIC_BASE_URL || undefined;               // tests point this at a local fake
 const MODEL_LOOKUP = process.env.TROID_MODEL_LOOKUP || "claude-haiku-4-5";   // lookups
 const MODEL_TOOLS = process.env.TROID_MODEL_TOOLS || "claude-sonnet-5";      // anything that calls a tool
+const TOOLS_EFFORT = process.env.TROID_TOOLS_EFFORT || "low";               // Sonnet route only; Haiku 4.5 takes no effort. "none" omits it
 const MAX_TOKENS = { [MODEL_LOOKUP]: 4096, [MODEL_TOOLS]: 8192 };          // Sonnet 5 thinks adaptively; leave it room
 const LIMIT_PER_HOUR = 20;
-const MAX_TOOL_ROUNDS = 5;
-const DEADLINE_MS = 40_000;                                                  // stop looping well inside the 60s function limit
-// Fixed wording (context/support.md). The service adds the disclosure; the model never writes it.
+const CALLS_PER_HOUR = +process.env.TROID_CALLS_PER_HOUR || 300;             // model calls per instance an hour, all users
+const MAX_TOOL_ROUNDS = 3;
+const DEADLINE_MS = +process.env.TROID_DEADLINE_MS || 50_000;                // one message, all calls and retries; the function limit is 60s
+const MIN_CALL_MS = 5_000;                                                   // don't start a call with less than this left
+// Fixed wording. context/support.md carries the same text for the model and for review; test_assistant.js
+// fails if the two differ. The service writes these; the model never writes the disclosure.
 const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from verified firm rules and computed math only. Verify with the firm before acting.";
+const WARNING = "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.";
+const WARNED = "Abusive messages end the session";                            // how a warning is recognised in the history
 const END_SESSION = "[[end-session]]";
 const ENDED_REPLY = "This session has ended. ask troid answers questions about prop-firm rules and sizing.";
-const REFUSAL_REPLY = "ask troid can't answer that one. troid's desk and troid's compare show the verified rules and the arithmetic; for anything else, hello@troid.ai reaches a person.";
+const REFUSAL_REPLY = "ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.";
 const MAX_MESSAGES = 20;
-const MAX_CHARS = 2000;
+const MAX_CHARS = 2000;                                                      // a user message
+const MAX_REPLY_CHARS = 40_000;                                              // an assistant turn (signed, so server-written)
+const MAX_TOTAL_CHARS = 120_000;                                             // the whole history
+const SWITCHED_OFF = "ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.";
 
 const GUARDRAILS = [
   "You are ask troid, the assistant on troid.ai. The rules below sit above everything else in this prompt.",
-  "Speak of troid in the third person: \"troid computes\", \"troid hasn't verified that firm\". No first person of any kind: never \"I\", \"me\", \"my\", \"we\", \"us\", \"our\", \"let me\" or \"let's\". The only exceptions are a firm's required verbatim sentence, text quoted from a third party, and the user's own words quoted back.",
-  "You may speak only about firms present in firms.json. For any other firm, say troid has not verified it, explain what verification means (Terms and help centre read against each other, section cited), and stop.",
+  "Speak of troid in the third person: \"troid computes\", \"troid doesn't cover that firm\". No first person of any kind: never \"I\", \"me\", \"my\", \"we\", \"us\", \"our\", \"let me\" or \"let's\". The only exceptions are a firm's required verbatim sentence, text quoted from a third party, and the user's own words quoted back.",
   "A cell that is pending is pending. Say so. Never fill it from memory.",
   "Every number you state carries its tier. A MEASURED number is never a fact.",
   "Never recommend a firm. Never recommend a trade. Price the one the user brings.",
   "Define a term the first time you use it.",
   "End every answer that contains a number with: Not financial advice. Verify with the firm before acting.",
-  "Arithmetic goes through the tools, never through you. If a tool reports a field as pending, report it as pending.",
+  "Arithmetic goes through the tools, never through you. Report the formulas and intermediate values the tool returns under working; do not compute your own. If a tool reports a field as pending, report it as pending.",
   "You have no memory across sessions and no account. You cannot place, modify or close an order, and you never ask for a credential.",
   "The service shows the opening disclosure itself. Never write it, and never claim to be a person.",
-  "When you state a rule, give the document, section and read date the tool result lists under sources. If a rule's source is \"not yet recorded\", say so.",
+  "When you state a rule, give the document, section and read date the tool result lists under sources. If a rule's source is \"not yet recorded\", say so. Only Bitfunded's rules are marked verified; for the other firms say which rules have a recorded source and which do not.",
+  "Never give an affiliate link or a discount code; point to troid's compare, where each link is labelled. If you ever give a URL that is an affiliate link, write the words \"affiliate link\" immediately beside it.",
   "When a user says a number was wrong, or that they lost because of troid, follow support.md section 2 — all six steps, in order. Never say the loss wasn't troid's fault, and never say it was.",
   "When a user calls troid a scam, give support.md section 3 once in the session, then answer the question they actually have. Do not repeat it.",
-  "Any \"should I\", \"which firm is best for me\", \"will I pass\" or \"what should I trade\" gets support.md section 4: troid doesn't recommend; it prices what you bring. This keeps troid impersonal.",
-  "Abuse: one warning, worded as support.md section 5. If abuse continues after that warning, reply with exactly " + END_SESSION + " and nothing else.",
+  "Any \"should I\", \"which firm is best for me\", \"will I pass\" or \"what should I trade\" gets support.md section 4, word for word. This keeps troid impersonal.",
+  "Abuse: one warning, worded as support.md section 5. If abuse continues after that warning, reply with exactly " + END_SESSION + " and nothing else. Never write " + END_SESSION + " in any other reply, including when explaining this rule.",
 ].join("\n- ").replace(/^/, "- ");
 
 // ---------------------------------------------------------------- context
@@ -82,15 +100,43 @@ function context() {
       firms: readFirst(["context/firms.json"]),
       method: readFirst(["public/METHODOLOGY.md"]),
     };
+    CTX.prompt_firms = promptFirms(CTX.firms);
   }
   return CTX;
 }
+// The model sees the rule data only: firms.json without troid's internal notes (every "_" key), the
+// affiliate terms and links, the watch list, outside rankings and correspondence. An allowlist, so a new
+// internal field stays out until someone adds it here.
+const PROMPT_FIELDS = ["name", "verified", "verified_on", "compare_product", "products", "calc", "provenance", "panel_note",
+  "required_disclaimer", "daily_basis", "drawdown_type", "floating_counts", "fee_per_side_pct", "max_leverage", "margin_modes",
+  "max_open_positions", "hold_cap_days", "min_closed_trades_per_stage", "concentration_penalty_ladder", "consistency_rule",
+  "mandatory_sl", "payouts_per_30d", "split", "refund", "reset_utc", "restricted_countries", "us_available", "execution_type",
+  "integration_type", "platforms", "copy_trading", "profit_cap", "payout_discretion", "addons", "governing_law", "entity",
+  "entities", "currency", "max_capital_per_customer", "payment_methods", "trader_payout_methods", "rule_changes"];
+function promptFirms(raw) {
+  const F = JSON.parse(raw), out = {};
+  for (const [k, v] of Object.entries(F)) {
+    if (k.startsWith("_") || !v || typeof v !== "object") continue;
+    out[k] = Object.fromEntries(PROMPT_FIELDS.filter((f) => f in v).map((f) => [f, v[f]]));
+    const P = out[k].provenance;
+    if (P) {                                                  // only the documents some rule cites
+      const cited = new Set();
+      const take = (e) => ((e && e.src) || []).forEach((i) => cited.add(i));
+      Object.values(P.fields || {}).forEach(take);
+      Object.values(P.products || {}).forEach((pr) => Object.values(pr).forEach(take));
+      out[k].provenance = { ...P, sources: Object.fromEntries(Object.entries(P.sources || {}).filter(([i]) => cited.has(i))) };
+    }
+  }
+  return out;
+}
 function systemBlocks() {
-  const c = context();
+  const c = context(), names = Object.values(c.prompt_firms).map((f) => f.name);
   return [
-    { type: "text", text: "# Guardrails\n\n" + GUARDRAILS + "\n\n" + c.troid },
+    { type: "text", text: "# Guardrails\n\n" + GUARDRAILS + "\n- You may speak only about these firms: " + names.join(", ") +
+      ". For any other firm, say troid does not cover it and has not read its rules, and stop.\n\n" + c.troid },
     { type: "text", text: "# support.md — fixed wording for the hard conversations\n\n" + c.support },
-    { type: "text", text: "# Verified firm rules — firms.json. The only firms troid may speak about. A null is pending.\n\n" + c.firms },
+    { type: "text", text: "# Firm rules — the rule data behind troid's compare. Each rule has its source and read date under provenance, " +
+      "or no recorded source yet; a null is pending. Only Bitfunded is marked verified.\n\n" + JSON.stringify(c.prompt_firms) },
     { type: "text", text: "# Methodology — the tiers\n\n" + c.method, cache_control: { type: "ephemeral" } },
   ];
 }
@@ -143,7 +189,7 @@ function profiles() {
 function profile(firm, product) {
   const P = profiles();
   const f = P[firm];
-  if (!f) return { error: "unknown firm. troid has verified: " + Object.keys(P).join(", ") };
+  if (!f) return { error: "unknown firm. troid covers: " + Object.keys(P).join(", ") };
   const p = f.products[product];
   if (!p) return { error: "unknown product for " + f.name + ". options: " + Object.keys(f.products).join(", ") };
   return { f, p };
@@ -158,21 +204,32 @@ function budgets(a) {
   const hwm = a.high_water_mark != null ? +a.high_water_mark : Math.max(eq, quota);
   const hi = a.high_at_rollover != null ? +a.high_at_rollover : ds;
   const dpct = p.d / 100, mpct = p.m / 100, pending = [], notes = [];
-  let dFloor = null;
-  if (p.basis === "initial") dFloor = ds - quota * dpct;
-  else if (p.basis === "day_start") dFloor = ds * (1 - dpct);
-  else if (p.basis === "max_balance_equity") dFloor = hi - quota * dpct;
+  // the same steps and formulas as the "show the working" table on troid's desk
+  const working = [{ step: "inputs", formula: "quota · equity · day start", value: [quota, eq, ds] }];
+  let dFloor = null, fd = "", fdd = "";
+  if (p.basis === "initial") { dFloor = ds - quota * dpct; fd = `day start − quota × ${p.d}%`; }
+  else if (p.basis === "day_start") { dFloor = ds * (1 - dpct); fd = `day start × (1 − ${p.d}%)`; }
+  else if (p.basis === "max_balance_equity") { dFloor = hi - quota * dpct; fd = `high at rollover − quota × ${p.d}%`;
+    working.push({ step: "high at rollover", formula: "input (defaults to day start)", value: hi }); }
   else pending.push("daily_basis");
   let ddFloor = null, locked = false;
-  if (p.dd === "static") ddFloor = quota * (1 - mpct);
-  else if (p.dd === "trailing") { locked = p.locks != null && hwm >= quota * (1 + p.locks / 100); ddFloor = locked ? quota : hwm * (1 - mpct); }
+  if (p.dd === "static") { ddFloor = quota * (1 - mpct); fdd = `quota × (1 − ${p.m}%)`; }
+  else if (p.dd === "trailing") { locked = p.locks != null && hwm >= quota * (1 + p.locks / 100); ddFloor = locked ? quota : hwm * (1 - mpct);
+    fdd = locked ? `quota (locked after +${p.locks}%)` : `high-water mark × (1 − ${p.m}%)`;
+    working.push({ step: "high-water mark", formula: "input (defaults to max(equity, quota))", value: hwm }); }
   else pending.push("drawdown_type");
   const dB = dFloor == null ? null : eq - dFloor, ddB = ddFloor == null ? null : eq - ddFloor;
+  if (dFloor != null) working.push({ step: "daily floor", formula: fd, value: r2(dFloor) }, { step: "daily budget", formula: "equity − daily floor", value: r2(dB) });
+  if (ddFloor != null) working.push({ step: "max-loss floor", formula: fdd, value: r2(ddFloor) }, { step: "drawdown budget", formula: "equity − max-loss floor", value: r2(ddB) });
   let binding = null, eff = null;
   if (dB == null && ddB == null) { /* nothing to size against */ }
   else if (dB == null) { binding = "max drawdown"; eff = ddB; notes.push("daily basis pending for this firm — sized against the drawdown ceiling only"); }
   else if (ddB == null) { binding = "daily loss limit"; eff = dB; notes.push("drawdown type pending for this firm — sized against the daily ceiling only"); }
   else { binding = dB <= ddB ? "daily loss limit" : "max drawdown"; eff = Math.min(dB, ddB); }
+  const formula = dFloor != null && ddFloor != null ? `room = min(equity − (${fd}), equity − ${fdd})`
+    : dFloor != null ? `room = equity − (${fd})` : ddFloor != null ? `room = equity − ${fdd}` : null;
+  if (binding) working.push({ step: "binding", formula: dB == null || ddB == null ? "the only budget with its rules recorded" : "min(daily budget, drawdown budget)",
+                              value: binding + " · " + r2(eff) });
   if (p.dd === "trailing") notes.push(locked ? `trailing floor locked at the initial balance after +${p.locks}%`
     : `trailing floor = high-water mark × (1 − ${p.m}%)` + (p.hwm === "equity" ? " — trails on equity intraday: an unrealised high raises the floor" : ""));
   if (p.basis === "max_balance_equity") notes.push(`daily floor = high at rollover − ${p.d}% of the original size`);
@@ -188,9 +245,10 @@ function budgets(a) {
   return { firm: f.name, product: p.label, daily_basis: p.basis, drawdown_type: p.dd, hwm_basis: p.hwm,
            daily_floor: r2(dFloor), daily_budget: r2(dB), dd_floor: r2(ddFloor), dd_budget: r2(ddB),
            trailing_locked: p.dd === "trailing" ? locked : null, binding, effective_budget: r2(eff),
-           crossover_equity: r2(crossover), pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
+           crossover_equity: r2(crossover), formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
 }
 const r2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
+const r4 = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
 // The rules a result used, each with where troid read it — the tool-side twin of the provenance block.
 function sourcesFor(p, used) {
   return used.map(([k, rule]) => {
@@ -205,7 +263,7 @@ function check_budget(a) {
   if (b.error) return b;
   const { _p, _eq, _used, _quota, ...out } = b;
   out.tier = "DERIVED from the firm's rules in firms.json; each rule's source is under sources";
-  if (!out.binding) out.verdict = "PENDING: daily basis and drawdown type are not yet verified for this product";
+  if (!out.binding) out.verdict = "PENDING: troid has no daily basis or drawdown type recorded for this product";
   return out;
 }
 
@@ -215,18 +273,20 @@ function size_trade(a) {
   const p = b._p, eq = b._eq;
   const side = String(a.side || "long").toLowerCase().startsWith("l") ? 1 : -1;
   const entry = +a.entry, stop = +a.stop, tR = a.target_r != null ? +a.target_r : 2;
-  const rp = (a.risk_pct != null ? +a.risk_pct : 0.5) / 100, cp = (a.budget_cap_pct != null ? +a.budget_cap_pct : 35) / 100;
+  const rpIn = a.risk_pct != null ? +a.risk_pct : 0.5, cpIn = a.budget_cap_pct != null ? +a.budget_cap_pct : 35, rp = rpIn / 100, cp = cpIn / 100;
   const lev = a.leverage != null ? +a.leverage : 5, mode = a.margin_mode === "isolated" ? "isolated" : "cross";
   const { _p, _eq, _used, _quota, ...base } = b;
   base.tier = "DERIVED from the firm's rules in firms.json; each rule's source is under sources";
-  if (!b.binding) return { verdict: "PENDING", reasons: ["daily basis and drawdown type not yet verified for this product; troid sizes against verified rules only"], ...base };
+  if (!b.binding) return { verdict: "PENDING", reasons: ["troid has no daily basis or drawdown type recorded for this product, so there is no budget to size against"], ...base };
   const dist = Math.abs(entry - stop), blocks = [];
   if (side > 0 && stop >= entry) blocks.push("stop at or above entry on a long");
   if (side < 0 && stop <= entry) blocks.push("stop at or below entry on a short");
   if (dist <= 0) blocks.push("stop distance is zero");
   if (b.effective_budget <= 0) blocks.push("no budget left — " + b.binding + " already breached");
   if (blocks.length) return { verdict: "BLOCK", reasons: blocks, ...base };
-  const notes = base.notes.slice();
+  const notes = base.notes.slice(), working = base.working.slice();
+  working.splice(1, 0, { step: "inputs", formula: "side · entry · stop · target R", value: [side > 0 ? "long" : "short", entry, stop, tR] },
+                       { step: "inputs", formula: "risk % · budget cap % · leverage · margin", value: [rpIn, cpIn, lev, mode] });
   const intended = rp * eq, cap = cp * Math.max(b.effective_budget, 0), risk = Math.min(intended, cap);
   const reduced = risk < intended - 1e-9;
   const feeKnown = p.fee != null, fee = feeKnown ? p.fee / 100 : 0;
@@ -253,17 +313,34 @@ function size_trade(a) {
   const fu = entry * fee * 2, qty = risk / (dist + fu), notional = qty * entry, margin = notional / levUsed;
   const fees = qty * fu, fshare = fees / risk * 100, target = entry + side * tR * dist;
   const consumes = risk / b.effective_budget * 100, left = Math.floor(b.effective_budget / risk + 1e-9);
+  working.push({ step: "intended risk", formula: `equity × ${rpIn}%`, value: r2(intended) },
+               { step: "cap", formula: `budget × ${cpIn}%`, value: r2(cap) },
+               { step: "risk", formula: "min(intended, cap)", value: r2(risk) },
+               { step: "stop distance", formula: "|entry − stop|", value: r4(dist) },
+               { step: "fee per unit", formula: feeKnown ? `entry × ${p.fee}% × 2` : "fee per side pending: taken as 0, size before fees", value: r4(fu) },
+               { step: "quantity", formula: feeKnown ? "risk ÷ (stop distance + fee per unit)" : "risk ÷ stop distance", value: Math.round(qty * 1e6) / 1e6 },
+               { step: "notional", formula: "quantity × entry", value: r2(notional) },
+               { step: "leverage used", formula: levCap == null ? "your leverage; cap pending" : `min(your ${lev}×, cap ${levCap}×)`, value: levUsed },
+               { step: "margin", formula: "notional ÷ leverage used", value: r2(margin) });
+  if (feeKnown) working.push({ step: "fees", formula: "quantity × fee per unit", value: r2(fees) });
+  working.push({ step: "budget used", formula: "risk ÷ budget", value: r2(consumes) + "%" },
+               { step: "losses left", formula: "floor(budget ÷ risk)", value: left },
+               { step: "target", formula: `entry ${side > 0 ? "+" : "−"} ${tR} × stop distance`, value: r2(target) });
+  base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? `(stop distance + entry × ${p.fee}% × 2)` : "stop distance");
   if (feeKnown && fshare > 15) notes.push(`fees are ${fshare.toFixed(0)}% of risk — stop tight enough that costs dominate`);
   if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it`);
   notes.push(`${left} more losses at this size before ${b.binding} trips`);
   const sp = dist / entry * 100;
-  let liq;   // MMR 0.5% is troid's assumption, not a firm rule
-  if (mode === "isolated") liq = (1 - (1 - 1 / levUsed) / (1 - MMR)) * 100;
-  else liq = notional > 0 ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity;   // <= 0: already below maintenance
-  const ord = [["your stop", sp]];
+  let liq, fl;   // MMR 0.5% is troid's assumption, not a firm rule
+  if (mode === "isolated") { liq = (1 - (1 - 1 / levUsed) / (1 - MMR)) * 100; fl = `1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR ${MMR * 100}%)`; }
+  else { liq = notional > 0 ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity; fl = `1 − (1 − equity ÷ notional) ÷ (1 − MMR ${MMR * 100}%)`; }   // <= 0: already below maintenance
+  const ord = [["your stop", sp]], fname = p.dd === "trailing" && !b.trailing_locked ? "trailing floor" : "max-loss floor";
   if (b.daily_budget != null) ord.push(["daily limit", b.daily_budget / notional * 100]);
-  if (b.dd_budget != null) ord.push([p.dd === "trailing" && !b.trailing_locked ? "trailing floor" : "max-loss floor", b.dd_budget / notional * 100]);
+  if (b.dd_budget != null) ord.push([fname, b.dd_budget / notional * 100]);
   ord.push([`exchange liquidation (${mode})`, Math.max(liq, 0)]);
+  if (b.daily_budget != null) working.push({ step: "daily-limit distance", formula: "daily budget ÷ notional", value: r2(b.daily_budget / notional * 100) + "%" });
+  if (b.dd_budget != null) working.push({ step: fname + " distance", formula: "drawdown budget ÷ notional", value: r2(b.dd_budget / notional * 100) + "%" });
+  working.push({ step: `exchange liquidation (${mode})`, formula: fl, value: liq <= 0 ? "0% — below maintenance at entry" : r2(liq) + "%" });
   ord.sort((x, y) => x[1] - y[1]);
   if (ord[0][0] !== "your stop") notes.push(`DANGER — ${ord[0][0]} binds at ${ord[0][1].toFixed(2)}% adverse, inside your stop`);
   else if (mode === "cross") notes.push("cross: nothing cuts a runaway before the firm's floor — your stop is the only breaker in front of it");
@@ -274,10 +351,11 @@ function size_trade(a) {
            consumes_pct_of_budget: r2(consumes), losses_remaining: left,
            circuit_breakers: ord.map(([e, v]) => ({ event: e, adverse_move_pct: isFinite(v) ? r2(v) : null })),
            assumptions: ["exchange liquidation uses a 0.5% maintenance margin — troid's assumption, no firm source"],
-           ...base, notes };
+           ...base, working, notes };
 }
 
-// Bitfunded's restricted practices (RTP) and Terms. Verified for Bitfunded only.
+// Bitfunded's restricted practices (RTP) and Terms. Modelled for Bitfunded only. Each finding names the
+// document it comes from and the date troid read it (firms.json provenance.sources: rtp, tou).
 const MAJORS = new Set(["BTC", "ETH", "BNB", "XRP", "SOL", "TRX", "HYPE", "ZEC", "DOGE", "ADA"]);
 const HOLD_DAYS = { major: 10, minor: 7, tradfi: 5 };
 const PENALTY_LADDER = [[65, 50], [75, 60], [90, 65], [96, 70]];
@@ -289,9 +367,16 @@ function asset_class(symbol) {
   if (["XAU", "XAG", "GOLD", "SILVER", "TSLA", "NVDA", "AAPL", "NDX", "DJI", "SPX"].includes(base) || (base.length <= 4 && !/^[A-Z]+$/.test(base))) return "tradfi";
   return "minor";
 }
+function refSources(ref) {
+  const S = (((context().prompt_firms.bitfunded || {}).provenance) || {}).sources || {};
+  const ids = [];
+  if (/RTP/.test(ref)) ids.push("rtp");
+  if (/ToU/.test(ref)) ids.push("tou");
+  return ids.filter((i) => S[i]).map((i) => ({ document: S[i].doc, read_on: S[i].read_on || "not recorded", url: S[i].url }));
+}
 function check_compliance(a) {
   const firm = a.firm || "bitfunded";
-  if (firm !== "bitfunded") return { firm, pending: true, note: "Restricted-practice rules are verified for Bitfunded only. For this firm they are pending: say so and point to troid's compare. Do not fill them from memory." };
+  if (firm !== "bitfunded") return { firm, pending: true, note: "troid models restricted-practice checks for Bitfunded only. For this firm they are pending: say so and point to troid's compare. Do not fill them from memory." };
   const product = a.product || "1step", findings = [];
   const cls = asset_class(a.symbol), cap = HOLD_DAYS[cls];
   if (+a.hold_days > cap) findings.push({ severity: "breach", rule: "RTP s.1 / ToU 14(d)(x)", detail: `Position held ${(+a.hold_days).toFixed(1)} days exceeds the ${cap}-day maximum for ${cls} assets. Majors 10d, other crypto 7d, TradFi 5d.` });
@@ -304,10 +389,12 @@ function check_compliance(a) {
   if (closed > 0 && closed < need) findings.push({ severity: "warning", rule: "RTP s.4", detail: `${closed} closed trades this stage; ${need} required (each open ≥ 10 min) before a payout request.` });
   if (a.uses_third_party_strategy) findings.push({ severity: "breach", rule: "ToU 14(d)(v)", detail: "Using a third-party or marketed strategy to pass an evaluation is prohibited. A bot, signal service or strategy pack run on a challenge may void the account regardless of result." });
   if (+a.accounts_at_this_level > 1) findings.push({ severity: "breach", rule: "ToU 6(b)", detail: `${a.accounts_at_this_level} accounts at one challenge level. Limit is one active account per level without written consent.` });
-  const minDays = MIN_DAYS[product] != null ? MIN_DAYS[product] : 5, days = +a.trading_days_so_far || 0;
+  const minDays = Object.hasOwn(MIN_DAYS, product) ? MIN_DAYS[product] : 5, days = +a.trading_days_so_far || 0;
   if (minDays && days > 0 && days < minDays) findings.push({ severity: "warning", rule: "ToU 9(a)", detail: `${days} trading days so far; ${minDays} required to clear the stage. The challenge page displays 0 — the contract governs.` });
+  for (const x of findings) x.sources = refSources(x.rule);
   return { firm: "Bitfunded", product, clear: findings.length === 0, findings: findings.length ? findings : [{ severity: "ok", rule: "—", detail: "No breach detected against the rules modelled here." }],
-           tier: "SOURCED — Bitfunded Terms and help centre, sections cited",
+           sources: refSources("RTP ToU"),
+           tier: "SOURCED — Bitfunded Terms of Use and help centre, sections cited; each finding lists its document and read date",
            caveat: "Checks only the rules modelled here. Not a substitute for reading the firm's Terms. Verify anything material with the firm directly." };
 }
 
@@ -327,12 +414,15 @@ const RULES = {
 };
 function explain_rule(a) {
   const t = String(a.topic || "").toLowerCase().trim().replace(/\s+/g, "_");
-  if (!RULES[t]) return { error: "unknown topic. options: " + Object.keys(RULES).sort().join(", ") };
-  return { topic: t, explanation: RULES[t], tier: "DERIVED or SOURCED — reproduced by verify_claims.py in the repo. Firm-specific unless it says otherwise." };
+  if (!Object.hasOwn(RULES, t)) return { error: "unknown topic. options: " + Object.keys(RULES).sort().join(", ") };
+  return { topic: t, explanation: RULES[t],
+           tier: "Explanation text written by troid for ask troid, not generated from firms.json, so it can fall out of step with troid's compare. " +
+                 "Its formulas are DERIVED; a rule it cites is SOURCED from the section named, and the firm's own documents govern. For a rule's read date, " +
+                 "use the sources in size_trade or check_budget, or troid's compare." };
 }
 
 const TOOLS = [
-  { name: "size_trade", description: "Size a trade the user brings against a verified firm product: both loss ceilings, the binding one, quantity net of fees, margin, fee share of risk, losses left, circuit-breaker order. Pending fields are reported as pending. Never call this to suggest a trade.",
+  { name: "size_trade", description: "Size a trade the user brings against a firm product troid covers: both loss ceilings, the binding one, quantity net of fees, margin, fee share of risk, losses left, circuit-breaker order, every formula and intermediate value (working), and the source and read date of each rule used. Pending fields are reported as pending. Never call this to suggest a trade.",
     input_schema: { type: "object", properties: {
       firm: { type: "string", description: "firm key from firms.json: bitfunded | brightfunded | crypto_fund_trader" },
       product: { type: "string", description: "product key, e.g. 1step, 2step_s1, 1phase, instant" },
@@ -344,12 +434,12 @@ const TOOLS = [
       budget_cap_pct: { type: "number", description: "cap as percent of the binding budget, default 35" },
       leverage: { type: "number" }, margin_mode: { type: "string", enum: ["cross", "isolated"] } },
       required: ["firm", "product", "quota", "equity", "side", "entry", "stop"] } },
-  { name: "check_budget", description: "Room left under each loss ceiling for a verified firm product, which one binds, and the crossover equity.",
+  { name: "check_budget", description: "Room left under each loss ceiling for a firm product troid covers, which one binds, and the crossover equity, with the formulas (working) and the source and read date of each rule used.",
     input_schema: { type: "object", properties: {
       firm: { type: "string" }, product: { type: "string" }, quota: { type: "number" }, equity: { type: "number" },
       day_start: { type: "number" }, high_water_mark: { type: "number" }, high_at_rollover: { type: "number" } },
       required: ["firm", "product", "quota", "equity"] } },
-  { name: "check_compliance", description: "Check a trade plan against the firm rules that disqualify (hold limit, open-trade cap, concentration ladder, closed-trade minimum, third-party strategies, accounts per level, minimum days). Verified for Bitfunded only; other firms return pending.",
+  { name: "check_compliance", description: "Check a trade plan against the firm rules that disqualify (hold limit, open-trade cap, concentration ladder, closed-trade minimum, third-party strategies, accounts per level, minimum days). Modelled for Bitfunded only; other firms return pending.",
     input_schema: { type: "object", properties: {
       firm: { type: "string" }, product: { type: "string" }, symbol: { type: "string" }, hold_days: { type: "number" },
       open_trades: { type: "integer" }, margin_pct_of_capital: { type: "number" }, trading_days_so_far: { type: "integer" },
@@ -360,98 +450,171 @@ const TOOLS = [
 ];
 const RUN = { size_trade, check_budget, check_compliance, explain_rule };
 function runTool(name, input) {
-  try { return RUN[name] ? RUN[name](input || {}) : { error: "unknown tool " + name }; }
+  try { return Object.hasOwn(RUN, name) ? RUN[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
 
-// ---------------------------------------------------------------- rate limit (in memory, best effort)
-const HITS = new Map();
-function allow(ip) {
-  const now = Date.now(), keep = (HITS.get(ip) || []).filter((t) => now - t < 3600e3);
-  if (keep.length >= LIMIT_PER_HOUR) { HITS.set(ip, keep); return false; }
-  keep.push(now); HITS.set(ip, keep);
-  if (HITS.size > 5000) HITS.clear();
+// ---------------------------------------------------------------- limits (in memory, per instance, best effort)
+const HITS = new Map(), CALLS = [];
+// One key per IPv4 address, one per IPv6 /64 (one host usually holds a whole /64). Vercel's edge sets
+// x-real-ip and overwrites x-forwarded-for, so neither can be spoofed from outside.
+function clientKey(req) {
+  const ip = String(req.headers["x-real-ip"] || req.headers["x-forwarded-for"] || (req.socket && req.socket.remoteAddress) || "?").split(",")[0].trim();
+  if (!ip.includes(":") || ip.includes(".")) return ip.replace(/^::ffff:/i, "");
+  const [h, t = ""] = ip.split("::"), a = h ? h.split(":") : [], b = t ? t.split(":") : [];
+  return [...a, ...Array(Math.max(0, 8 - a.length - b.length)).fill("0"), ...b].slice(0, 4).join(":").toLowerCase() + "::/64";
+}
+function allow(key) {
+  const now = Date.now();
+  if (!HITS.has(key) && HITS.size >= 5000) {                  // full: drop idle keys, never live counters
+    for (const [k, v] of HITS) if (now - v[v.length - 1] >= 3600e3) HITS.delete(k);
+    if (HITS.size >= 5000) return false;
+  }
+  const keep = (HITS.get(key) || []).filter((t) => now - t < 3600e3);
+  if (keep.length >= LIMIT_PER_HOUR) { HITS.set(key, keep); return false; }
+  keep.push(now); HITS.set(key, keep);
   return true;
+}
+function spend() {                                            // the instance's ceiling on model calls an hour
+  const now = Date.now();
+  while (CALLS.length && now - CALLS[0] >= 3600e3) CALLS.shift();
+  if (CALLS.length >= CALLS_PER_HOUR) { const e = new Error("instance call ceiling"); e.busy = true; throw e; }
+  CALLS.push(now);
 }
 
 // ---------------------------------------------------------------- the call
 let CLIENT = null;
 function client() {
-  if (!CLIENT) CLIENT = new Anthropic({ apiKey: KEY, baseURL: BASE_URL, maxRetries: 1, timeout: 25_000 });
+  // logLevel pinned: ANTHROPIC_LOG=debug would otherwise write request bodies (the user's text) to the log.
+  if (!CLIENT) CLIENT = new Anthropic({ apiKey: KEY, baseURL: BASE_URL, maxRetries: 1, timeout: 25_000, logLevel: "warn" });
   return CLIENT;
 }
-function callModel(model, messages) {
-  return client().messages.create({ model, max_tokens: MAX_TOKENS[model] || 4096, system: systemBlocks(), tools: TOOLS, messages });
+// Every call gets only the time left before the message's deadline. The abort signal is the hard wall:
+// it also cuts short the SDK's retry-after sleep.
+function callModel(model, messages, deadlineAt) {
+  const left = deadlineAt - Date.now();
+  if (left < MIN_CALL_MS) { const e = new Error("deadline"); e.deadline = true; throw e; }
+  spend();
+  const params = { model, max_tokens: MAX_TOKENS[model] || 4096, cache_control: { type: "ephemeral" },   // + the tail of the conversation
+                   system: systemBlocks(), tools: TOOLS, messages };
+  if (model === MODEL_TOOLS && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
+  return client().messages.create(params, { timeout: left, maxRetries: left > 30_000 ? 1 : 0, signal: AbortSignal.timeout(left) });
 }
 const textOf = (resp) => (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
+const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason === "max_tokens" && (resp.content || []).some((b) => b.type === "tool_use"));
+
+// troid's side of the history is signed: each reply carries an HMAC over the whole conversation up to and
+// including it, and the next message must bring it back. Stateless; nothing is stored.
+const sign = (msgs) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify(msgs.map((m) => [m.role, m.content]))).digest("base64url");
+function signedOk(msgs, sig) {
+  if (msgs.length === 1) return true;
+  const want = Buffer.from(sign(msgs.slice(0, -1))), got = Buffer.from(String(sig || ""));
+  return got.length === want.length && crypto.timingSafeEqual(got, want);
+}
 function validate(body) {
   const m = body && Array.isArray(body.messages) ? body.messages : null;
   if (!m || !m.length || m.length > MAX_MESSAGES) return null;
   const out = [];
+  let total = 0;
   for (let i = 0; i < m.length; i++) {
     const x = m[i];
     const role = i % 2 === 0 ? "user" : "assistant";
     if (!x || x.role !== role || typeof x.content !== "string") return null;
     const content = x.content.trim();
-    if (!content || content.length > MAX_CHARS) return null;
+    if (!content || content.length > (role === "user" ? MAX_CHARS : MAX_REPLY_CHARS)) return null;
+    total += content.length;
     out.push({ role, content });
   }
+  if (total > MAX_TOTAL_CHARS) return null;
   return out.length % 2 === 1 ? out : null;   // ends on the user
 }
 function json(res, code, obj) { res.statusCode = code; res.setHeader("content-type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); }
+const isOn = () => ENABLED && !!KEY && !!TURN_KEY;
 
 module.exports = async (req, res) => {
   res.setHeader("cache-control", "no-store");
   if (req.method === "GET") {
     let ctx = null;
-    try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, firms_json: c.firms.length, methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
-    return json(res, 200, { enabled: ENABLED, limit_per_hour: LIMIT_PER_HOUR, models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS },
+    try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
+                                     methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
+    return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS },
                             tools: TOOLS.map((t) => t.name), disclosure: DISCLOSURE, context: ctx });
   }
   if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}]}" });
-  if (!ENABLED) return json(res, 503, { enabled: false, error: "ask troid is switched off until its disclaimer has had a legal review." });
-  if (!KEY) return json(res, 503, { enabled: false, error: "ask troid has no API key configured." });
-  const ip = String(req.headers["x-forwarded-for"] || req.socket?.remoteAddress || "?").split(",")[0].trim();
-  if (!allow(ip)) return json(res, 429, { error: `Limit: ${LIMIT_PER_HOUR} messages an hour.` });
-  let body = req.body;
-  if (typeof body === "string") { try { body = JSON.parse(body); } catch (e) { body = null; } }
+  if (!ENABLED) return json(res, 503, { enabled: false, error: SWITCHED_OFF });
+  if (!KEY || !TURN_KEY) return json(res, 503, { enabled: false, error: "ask troid is not fully configured." });
+  // Same-origin JSON only: a cross-site form or no-cors fetch can't spend troid's key from someone else's page.
+  if (!/^application\/json\b/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "Send application/json." });
+  const site = req.headers["sec-fetch-site"];
+  if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
+  if (!allow(clientKey(req))) return json(res, 429, { error: `Limit: ${LIMIT_PER_HOUR} messages an hour.` });
+  let body;
+  try { body = req.body; if (typeof body === "string") body = JSON.parse(body); } catch (e) { body = null; }
   const messages = validate(body);
-  if (!messages) return json(res, 400, { error: `Send 1–${MAX_MESSAGES} alternating messages, user first and last, each under ${MAX_CHARS} characters.` });
-  const first = messages.length === 1 && !(body && body.disclosed === true);
+  if (!messages) return json(res, 400, { restart: true, error: `This conversation can't continue: send 1–${MAX_MESSAGES - 1} alternating messages, user first and last, each user message under ${MAX_CHARS} characters. Reloading the page starts a new one.` });
+  if (!signedOk(messages, body.sig)) return json(res, 400, { restart: true, error: "This conversation could not be verified. Reloading the page starts a new one." });
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
+  const said = (k) => messages.some((m) => m.role === "assistant" && m.content.includes(k));
+  if (messages.some((m) => m.role === "assistant" && m.content === ENDED_REPLY)) {   // an ended session stays ended
+    log.ended = 1; console.log(JSON.stringify(log));
+    return json(res, 200, { reply: ENDED_REPLY, ended: true, model: null, tool_calls: 0, disclosed: true, note: "" });
+  }
+  const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && m.content.startsWith(DISCLOSURE)));
+  const deadlineAt = Date.now() + DEADLINE_MS;
+  let model = MODEL_LOOKUP, toolCalls = 0;
   try {
-    let model = MODEL_LOOKUP, toolCalls = 0;
-    const t0 = Date.now();
-    let resp = await callModel(model, messages);
-    if (resp.stop_reason === "tool_use") { model = MODEL_TOOLS; resp = await callModel(model, messages); }
+    let resp = await callModel(model, messages, deadlineAt);
+    if (wantsTool(resp)) { model = MODEL_TOOLS; resp = await callModel(model, messages, deadlineAt); }   // Haiku's turn is discarded, never replayed
     const convo = messages.slice();
-    for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() - t0 < DEADLINE_MS; round++) {
+    for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
       toolCalls += uses.length;
       convo.push({ role: "assistant", content: resp.content });        // unchanged, thinking blocks included
-      convo.push({ role: "user", content: uses.map((u) => ({ type: "tool_result", tool_use_id: u.id, content: JSON.stringify(runTool(u.name, u.input)) })) });
-      resp = await callModel(model, convo);
+      convo.push({ role: "user", content: uses.map((u) => {
+        const out = runTool(u.name, u.input);
+        return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
+      }) });
+      resp = await callModel(model, convo, deadlineAt);
     }
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = REFUSAL_REPLY; log.refusal = 1; }
     else {
       reply = textOf(resp);
-      if (reply.includes(END_SESSION)) { reply = ENDED_REPLY; ended = true; log.ended = 1; }
-      else if (resp.stop_reason === "max_tokens") reply += "\n\n[This answer hit its length limit and is cut short.]";
-      else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]";
+      if (reply.replace(/\s+/g, "") === END_SESSION) {                 // the model asks to end; the service checks a warning came first
+        if (said(WARNED)) { reply = ENDED_REPLY; ended = true; log.ended = 1; }
+        else reply = WARNING;
+      } else {
+        reply = reply.split(END_SESSION).join("").trim();              // the sentinel never reaches the page and ends nothing mid-answer
+        if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + "[This answer hit its length limit and is cut short.]";
+        else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]";
+      }
+      if (reply.includes(WARNED)) log.warned = 1;
     }
     if (!reply) reply = "No answer produced.";
-    if (first && !ended) reply = DISCLOSURE + "\n\n" + reply;
+    if (first) reply = DISCLOSURE + "\n\n" + reply;
+    reply = reply.trim();
     Object.assign(log, { tool_calls: toolCalls, model });
     console.log(JSON.stringify(log));
-    return json(res, 200, { reply, model, tool_calls: toolCalls, ended, disclosed: first || !!(body && body.disclosed),
-                            note: "Not financial advice. Verify with the firm before acting." });
+    const out = { reply, model, tool_calls: toolCalls, ended, disclosed: true, note: "Not financial advice. Verify with the firm before acting." };
+    if (!ended) out.sig = sign([...messages, { role: "assistant", content: reply }]);
+    return json(res, 200, out);
   } catch (e) {
-    log.error = 1; console.log(JSON.stringify(log));
-    if (e instanceof Anthropic.RateLimitError) return json(res, 503, { error: "ask troid is busy. Try again in a minute." });
+    Object.assign(log, { error: 1, tool_calls: toolCalls, model });
+    if (e && typeof e.status === "number") log.status = e.status;
+    console.log(JSON.stringify(log));
+    // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError
+    if (e && (e.deadline || e instanceof Anthropic.APIUserAbortError || e instanceof Anthropic.APIConnectionTimeoutError))
+      return json(res, 504, { error: "ask troid ran out of time on that one. Ask again, narrower." });
+    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError))
+      return json(res, 503, { enabled: true, error: "ask troid is busy. Try again in a minute." });
+    if (e instanceof Anthropic.APIConnectionError) return json(res, 502, { error: "The model could not be reached. Try again in a minute." });
+    if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError || e instanceof Anthropic.NotFoundError || e instanceof Anthropic.BadRequestError)
+      return json(res, 500, { error: "ask troid is misconfigured. Try again later, or write to hello@troid.ai." });
     if (e instanceof Anthropic.APIError) return json(res, 502, { error: "The model could not be reached. Try again in a minute." });
     return json(res, 502, { error: "ask troid hit an error. Try again in a minute." });
   }
 };
 module.exports.tools = RUN;   // for tests
-module.exports.fixed = { DISCLOSURE, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
+module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
+module.exports._sign = (msgs) => sign(msgs);   // for tests
+module.exports._clientKey = clientKey;

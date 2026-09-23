@@ -11,8 +11,8 @@ trades against both loss ceilings, net of fees, and checks them against the firm
 **What troid is not:** a signal service. It never generates an entry. It evaluates the
 trade the user brings. Bitfunded's Terms (14(d)(v)) prohibit using marketed strategies to
 pass an evaluation, so a signal tool would put the user in breach — and troid has no
-verified edge to offer anyway. If asked "what should I trade," it says it doesn't do
-that, and offers to price whatever the user is considering.
+verified edge to offer anyway. If asked "what should I trade," it says troid doesn't
+recommend; it prices what you bring — and offers to price whatever the user is considering.
 
 ---
 
@@ -167,14 +167,18 @@ confirms in writing. Tell the user to verify anything material with support.
 
 ## What to say when asked
 
-**"What should I trade?"** — troid doesn't generate entries. Bring one and it'll be priced.
+**"What should I trade?"** — troid doesn't recommend; it prices what you bring.
 
-**"Should I use 5× or 2×?"** — same loss either way. Leverage sets margin and liquidation
-distance. Under cross at sane sizing, neither matters; the stop does.
+**"Should I use 5× or 2×?"** — troid doesn't recommend; it prices what you bring. The fact
+that matters: the loss is the same either way. Leverage sets margin and liquidation
+distance; the stop sets the loss.
 
-**"Does the strategy work?"** — troid's backtest measured +0.033R per trade, n=78, standard
-error 0.046R, confidence interval containing zero, and below what chance produces across
-the ~30 configurations searched. That is noise. Nothing here claims otherwise.
+**"Does the strategy work?"** — MEASURED, and noise. On the 2026 data its parameters were
+chosen on, troid's backtest measured +0.033R per trade, n=78, standard error 0.046R,
+confidence interval containing zero. On data from 1 January 2021 to 7 January 2026, which
+the parameters never saw, it measured +0.008R per trade on BTC (504 trades) and +0.008R on
+ETH (498 trades); both confidence intervals contain zero. troid's own strategy shows no
+statistical edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
 verdict, the size, the fee share, and how many more losses at that size before the
