@@ -6,9 +6,9 @@ product.compare,troid's compare,troid तुलना,,"CHECK FIRST: product.com
 product.ledger,troid's ledger,troid लेजर,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,troid रिसर्च,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,troid से पूछें,,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,"troid — prop-firm risk, computed",troid — प्रॉप-फ़र्म रिस्क की गणना,,"troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You make the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","दोनों लॉस सीमाओं के हिसाब से साइज़ तय करें, फ़ीस घटाकर। मुफ़्त। कभी ऑर्डर नहीं लगाता।",,
-og.tagline,"Prop-firm risk, computed.",प्रॉप-फ़र्म रिस्क की गणना।,,
+og.tagline,The droid does the prop-firm math. You make the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,troid फ़र्म के अपने नियमों से आपकी दोनों प्रॉप-फ़र्म लॉस सीमाओं की गणना करता है। मुफ़्त।,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,सवाल-जवाब,,
 common.nav.source,source,सोर्स,,
@@ -47,7 +47,7 @@ hypo.label,Hypothetical performance,काल्पनिक प्रदर्�
 hypo.no_edge_short,troid's own strategy shows no statistical edge.,troid की अपनी रणनीति में कोई सांख्यिकीय एज नहीं दिखता।,,"troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure, inside noise, and not a fact about the future.","आउट-ऑफ़-सैंपल, 1 जनवरी 2021 से 7 जनवरी 2026 तक के {n} BTC ट्रेडों पर, जिन्हें पैरामीटरों ने कभी नहीं देखा था, इसका माप प्रति ट्रेड {exp} है, मानक त्रुटि {se} — यह एक MEASURED (मापा गया) आँकड़ा है, नॉइज़ के भीतर, और भविष्य के बारे में कोई तथ्य नहीं।",,"CHECK FIRST: Tier labels now follow STYLE.md: the English capital first with a Hindi gloss in brackets, e.g. 'MEASURED (मापा गया)', 'DERIVED (व्युत्पन्न)' (hypo.no_edge_tail, tearsheet.head.box, index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase, now also uses the capitals with glosses, for consistency. Check the glosses 'स्रोत-आधारित' (SOURCED) and 'मॉडल-आधारित' (MODELLED). | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,नियम बिना सूचना के बदलते हैं। ट्रेड करने से पहले फ़र्म से सत्यापित करें।,,
-index.meta.title,"troid's desk — prop-firm risk, computed",troid डेस्क — प्रॉप-फ़र्म रिस्क की गणना,,"troid stays lowercase, in Latin letters"
+index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.meta.description,"Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.","प्रॉप-फ़र्म रिस्क और कंप्लायंस की गणना। दोनों लॉस सीमाओं के हिसाब से साइज़ तय करें, फ़ीस घटाकर।",,
 index.hero.h1,"Prop-firm risk, computed.",प्रॉप-फ़र्म रिस्क की गणना।,,
 index.hero.lede,"Most funded accounts fail on position size, not entries. troid computes

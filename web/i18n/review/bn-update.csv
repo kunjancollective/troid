@@ -4,6 +4,9 @@ common.mark.ledger,troid's ledger,,,"NEW: translate it in reviewer_edit | troid 
 common.mark.live,troid's ledger is live: last shadow run {time} UTC,,,"NEW: translate it in reviewer_edit | keep {time} exactly as written; troid stays lowercase, in Latin letters"
 common.mark.still,troid's ledger has had no new data since {time} UTC; its live data may be down,,,"NEW: translate it in reviewer_edit | keep {time} exactly as written; troid stays lowercase, in Latin letters"
 common.mark.unknown,troid's ledger: its live status can't be read,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You make the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.tagline,The droid does the prop-firm math. You make the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
+index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
 message box, and deleted automatically 30 days after its last message. troid keeps your messages,

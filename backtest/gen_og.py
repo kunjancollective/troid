@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Render a language's share image: web/public/og/{lang}.png, 1200x630 — the troid lockup exactly as in
 og-image.png, with the tagline (og.tagline) in that language beneath it. troid stays troid in every image.
+English included (og/en.png); og-image.png stays the lockup alone, the background every card is drawn on.
 
   (cd tools/og && npm install)          # once: the fonts, from @fontsource (Noto for CJK, Devanagari, Bengali, Arabic)
   python gen_og.py ar                   # after i18n_import.py makes a language live
@@ -10,6 +11,7 @@ Chromium lays out the text, so Arabic joins and runs right to left and Devanagar
 """
 import argparse
 import html
+import re
 import sys
 from pathlib import Path
 
@@ -36,8 +38,13 @@ def card(code, fallback=False):
 <style>html,body{{margin:0;width:1200px;height:630px;overflow:hidden}}
 body{{background:url('{(PUB / "og-image.png").as_uri()}') no-repeat 0 0/1200px 630px}}
 .t{{position:absolute;left:120px;right:120px;top:410px;text-align:center;font-family:{fam},sans-serif;font-weight:500;
-font-size:40px;line-height:1.35;color:#e6edf5;letter-spacing:-.01em}}</style></head>
-<body><div class="t">{html.escape(T("og.tagline"))}</div></body></html>"""
+font-size:40px;line-height:1.35;color:#e6edf5;letter-spacing:-.01em;text-wrap:balance}}</style></head>
+<body><div class="t">{nowrap(html.escape(T("og.tagline")))}</div></body></html>"""
+
+
+def nowrap(s):
+    """A hyphenated word stays whole on the card: "prop-firm" never breaks after "prop-"."""
+    return re.sub(r"\S+-\S+", lambda m: f'<span style="white-space:nowrap">{m.group(0)}</span>', s)
 
 
 def render(codes, out, fallback=False):
@@ -72,7 +79,7 @@ def main():
         codes = a.langs or [l["code"] for l in i18n.LANGS if l["code"] != "en"]
         w = render(codes, Path(a.preview), fallback=True)
     else:
-        live = [c for c in i18n.live_codes() if c != "en"]
+        live = i18n.live_codes()
         codes = [c for c in (a.langs or live) if c in live]
         if a.langs and set(a.langs) - set(codes):
             print(f"not live, skipped: {sorted(set(a.langs) - set(codes))}")

@@ -6,9 +6,9 @@ product.compare,troid's compare,сравнение troid,,"troid's product name:
 product.ledger,troid's ledger,реестр troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,исследования troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,ассистент troid,,"CHECK FIRST: product.ask / chat.eyebrow / ask.disclosure: ассистент troid next to 'automated assistant' (автоматизированный помощник) is slightly redundant. The disclosure must still make clear that this is automated and not a person. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,"troid — prop-firm risk, computed","troid — риск проп-трейдинга, рассчитанный",,"troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You make the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","Размер позиции по обоим лимитам убытка, с учётом комиссий. Бесплатно. Никогда не выставляет ордера.",,
-og.tagline,"Prop-firm risk, computed.","Риск проп-трейдинга, рассчитанный.",,
+og.tagline,The droid does the prop-firm math. You make the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,troid рассчитывает оба ваших лимита убытка в проп-фирме по правилам самой фирмы. Бесплатно.,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,вопросы,,
 common.nav.source,source,код,,
@@ -46,7 +46,7 @@ hypo.label,Hypothetical performance,Гипотетические результ�
 hypo.no_edge_short,troid's own strategy shows no statistical edge.,Собственная стратегия troid не показывает статистического преимущества.,,"troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure, inside noise, and not a fact about the future.","Вне выборки, на {n} сделках по BTC с 1 января 2021 года по 7 января 2026 года, которых параметры никогда не видели, она показывает {exp} на сделку при стандартной ошибке {se} — это величина уровня MEASURED (измерено), в пределах шума, а не факт о будущем.",,"CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,"Правила меняются без предупреждения. Прежде чем торговать, сверьтесь с фирмой.",,
-index.meta.title,"troid's desk — prop-firm risk, computed","деск troid — риск проп-трейдинга, рассчитанный",,"troid stays lowercase, in Latin letters"
+index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.meta.description,"Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.","Риск и соблюдение правил проп-фирм, рассчитанные. Размер позиции по обоим лимитам убытка, с учётом комиссий.",,
 index.hero.h1,"Prop-firm risk, computed.","Риск проп-трейдинга, рассчитанный.",,
 index.hero.lede,"Most funded accounts fail on position size, not entries. troid computes

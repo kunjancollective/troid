@@ -125,7 +125,7 @@ def head_extra(T, page, live):
 
 def og(T):
     """og:image / og:title / og:description for this language."""
-    has = T.code != "en" and (PUB / "og" / f"{T.code}.png").exists()     # gen_og.py renders it when the language goes live
+    has = (PUB / "og" / f"{T.code}.png").exists()     # gen_og.py renders it (English too; a language when it goes live)
     img = f"{BASE_URL}/og/{T.code}.png" if has else f"{BASE_URL}/og-image.png"
     return {"image": img, "title": T.attr("og.title"), "description": T.attr("og.description")}
 
