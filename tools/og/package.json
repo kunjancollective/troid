@@ -1,0 +1,12 @@
+{
+  "name": "troid-og",
+  "private": true,
+  "description": "Fonts for backtest/gen_og.py, which renders each published language's share image (web/public/og/{lang}.png). Not part of the deployed site.",
+  "devDependencies": {
+    "@fontsource/inter": "^5.2.0",
+    "@fontsource/noto-sans-arabic": "^5.2.0",
+    "@fontsource/noto-sans-bengali": "^5.2.0",
+    "@fontsource/noto-sans-devanagari": "^5.2.0",
+    "@fontsource/noto-sans-sc": "^5.2.0"
+  }
+}

@@ -273,6 +273,11 @@
    "field": "max_pct",
    "product": "trader",
    "why": "calc.products.trader.max_pct = 6. The chain breaks at the same point as daily_pct: references/bitfunded.md carries no funded-stage limit and cites no document for one."
+  },
+  {
+   "field": "availability",
+   "product": "*",
+   "why": "The Terms of Use restricted-country list was never extracted (restricted_countries 'per ToU (list not extracted)'), and troid's build environment cannot open bitfunded.com. recorded:false until someone reads it."
   }
  ],
  "brightfunded": [
@@ -439,6 +444,14 @@
     "help_1step"
    ],
    "evidence": "CALC. calc.hwm_basis = 'equity' (843db2f). _trailing_trap: 'Help-centre Scenario 3 ... open trade +4k floating -> limit rises to 98k ... BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.' HANDOFF.md: 'help centre scenario 3: a +$4k unrealised high lifts the floor to $98k'. Which help article contains Scenario 3 is not recorded. SCOPE: 1-Step only (calc.products has only 1step; the 2-Step pages are unread)."
+  },
+  {
+   "field": "availability",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "restricted_countries 'Cuba, Iran, North Korea, Syria, Vietnam (T&C)' — the five countries attributed to the T&C (clause not recorded); the MT5 bar for the US is T&C s.2 (_us_note quotes it). Pakistan is from propfirmmatch and the UAE MT5 bar has no clause: both kept under not_from_terms and never used to exclude."
   }
  ],
  "brightfunded_unmapped": [
@@ -638,6 +651,14 @@
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the $619 1-Phase price came from Crypto Fund Trader's Terms and Conditions, read on 2026-09-21 (https://cryptofundtrader.com/terms-and-conditions/, already in verified_from). Recorded at provenance.products.1phase.price. The clause is not recorded. troid's egress proxy blocks cryptofundtrader.com, so it was not re-read from here; the section says 'clause not recorded' until one is.",
    "was_unmapped": "compare_product.price '$619' equals products.1phase.fee_usd_100k 619, and no clause or document is recorded for it. The T&C annotation 'contains the numbers, unlike BrightFunded's' sets rule numbers against BrightFunded's T&C ('delegates numbers to Product Specifications'). Nothing records the price being read in the T&C, and no CFT pricing or product page is in verified_from."
+  },
+  {
+   "field": "availability",
+   "product": "*",
+   "src": [
+    "tc"
+   ],
+   "evidence": "MT5 bar for US residents: T&C 7.3 and 7.1(xvi). 'None listed' for other countries rests on the owner's statement in HANDOFF-global-launch §4 ('CFT: none listed, MT5 barred for US'); the repo's earlier 'none listed' echoed propfirmmatch (_leads_third_party). Clause not recorded."
   }
  ],
  "crypto_fund_trader_unmapped": [

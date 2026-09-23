@@ -22,8 +22,14 @@
   ],
   "functions": {
     "api/troid.js": {
-      "includeFiles": "{context,public}/*.{json,md}",
+      "includeFiles": "{context,public,i18n}/*.{json,md}",
       "maxDuration": 60
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/:lang(zh|hi|es|ar|fr|bn|pt|ru|id)",
+      "destination": "/:lang/index.html"
+    }
+  ]
 }

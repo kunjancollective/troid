@@ -1,0 +1,21 @@
+{
+ "ask.disclosure": "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.",
+ "ask.warning": "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.",
+ "ask.ended": "This session has ended. ask troid answers questions about prop-firm rules and sizing.",
+ "ask.refusal": "ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.",
+ "ask.note": "Not financial advice. Verify with the firm before acting.",
+ "ask.err.switched_off": "ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.",
+ "ask.err.not_configured": "ask troid is not fully configured.",
+ "ask.err.limit": "Limit: {n} messages an hour.",
+ "ask.err.too_long": "Keep one message under {n} characters.",
+ "ask.err.restart": "This conversation can't continue: at most {n} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.",
+ "ask.err.unverified": "This conversation could not be verified. Reloading the page starts a new one.",
+ "ask.err.timeout": "ask troid ran out of time on that one. Ask again, narrower.",
+ "ask.err.busy": "ask troid is busy. Try again in a minute.",
+ "ask.err.unreachable": "The model could not be reached. Try again in a minute.",
+ "ask.err.misconfigured": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+ "ask.err.error": "ask troid hit an error. Try again in a minute.",
+ "ask.cut": "[This answer hit its length limit and is cut short.]",
+ "ask.tool_limit": "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",
+ "ask.no_answer": "No answer produced."
+}

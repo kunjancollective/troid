@@ -12,23 +12,24 @@ but no source, or 'pending' where it has no value. Derived cells compute only wh
 same rule applies to every firm. A firm's link shows once its affiliate agreement exists and daily, max,
 target and price each have a recorded source (firms.json _link_rule); until then it is held. Nothing is
 scored. Nothing is ranked.
+
+The page renders once per published language (render_compare; site_build.py). Its words come from
+web/i18n (compare.*, and the script's compare.js.*); text from firms.json (labels, rule values, the
+criterion, link rule and disclosure, promo notes, open questions) goes through T.data, so a reviewed
+translation of it shows and anything unreviewed stays in English. Rule-source names stay in English.
 """
 from __future__ import annotations
-import json, html, sys
+import json, html, re, sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
+import i18n
+import site_build
 import site_text
 FIRMS = json.loads((HERE.parent / "firms.json").read_text())
-OUT = HERE.parent / "web" / "public" / "compare.html"
 BRAND = (HERE.parent / "web" / "public" / "index.html").read_text()
 STYLE = BRAND[BRAND.index('<link rel="icon"'):BRAND.index("</style>") + 8]
-HEADER = '''<div class="bar">
-  <a class="mark" href="/">tr<span class="dot"></span>id</a>
-  <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
-    <a href="https://github.com/kunjancollective/troid">source</a></nav>
-</div>'''
 ORDER = sorted(k for k in FIRMS if isinstance(FIRMS[k], dict) and "compare_product" in FIRMS[k])
 FIELDS = ["daily_pct","max_pct","target_pct","min_days","price","daily_basis","drawdown_type","reset_utc",
           "fee_per_side_pct","max_leverage","hold_cap","max_open","refund","split","us_available",
@@ -90,100 +91,6 @@ def required_html(inline=False):
     return "\n".join(f"<p>{html.escape(t)}</p>" for _, t in items)
 
 
-def panel_cell(k, f):
-    p = f["compare_product"]; name = html.escape(f["name"])
-    rank = RANK.get(f["name"])
-    role = "reference" if f.get("reference") else (f"#{rank[0]} by reviews" if rank else "")
-    head = f"{name} · {role}" if role else name
-    if f.get("verified"):
-        summary = f.get("panel_summary") or (f"{p['label']} {p['daily_pct']}% / {p['max_pct']}%"
-                                             + (f" {p['drawdown_type']}" if p.get("drawdown_type") else ""))
-        v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(summary)}</div>'
-    elif link_live(f):
-        n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
-        v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{n} of {len(FIELDS)} rules filled · {m} sourced</div>'
-    else:
-        v = '<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">verification pending</div>'
-    notes = []
-    if rank: notes.append(f"{rank[1]['reviews']} verified reviews at {rank[1]['rating']} on propfirmmatch.")
-    if f.get("panel_note"): notes.append(f["panel_note"])
-    note = f'\n      <div class="s">{html.escape(" ".join(notes))}</div>' if notes else ""
-    link = ""
-    if link_live(f):
-        code = (f.get("affiliate_agreement") or {}).get("customer_code")
-        link = (f'\n      <div class="s" style="margin-top:8px"><a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">'
-                f'{name} challenges</a> · affiliate link' + (f" · code {html.escape(code)}" if code else "")
-                + (" · their promos apply here" if f.get("_promo_note") else "") + "</div>")
-    return f'    <div class="cell">\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
-
-
-def firms_panel_html():
-    return ('  <div class="read" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">\n'
-            + "\n".join(panel_cell(k, FIRMS[k]) for k in ORDER) + "\n  </div>")
-
-
-def profiles_js():
-    """The calculator's data: every listed firm's products with basis, drawdown, lock, hwm, fee, leverage. null = pending."""
-    out = {}
-    for k in ORDER:
-        f = FIRMS[k]; c = f.get("calc") or {}; prods = f.get("products") or {}
-        products = {}
-        for pk, pc in (c.get("products") or {}).items():
-            src = prods.get(pk) or {}
-            dp = pc.get("daily_pct", src.get("daily_pct")); mp = pc.get("max_pct", src.get("max_pct"))
-            if dp is None or mp is None:
-                continue                                   # a product without both limits is not offered
-            products[pk] = {"label": pc.get("label", pk), "d": dp, "m": mp,
-                            "basis": pc.get("daily_basis", c.get("daily_basis")),
-                            "dd": pc["drawdown"] if "drawdown" in pc else c.get("drawdown"),
-                            "locks": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
-                            "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
-                            "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
-                            "lev": pc.get("max_leverage", c.get("max_leverage")),
-                            "levb": None if "max_leverage" in pc else [dict({k: v for k, v in b.items() if k != "cite"}, pv=cite(f, b["cite"]))
-                                                                        for b in (c.get("lev_bands") or [])] or None,
-                            "pv": {"d": cite(f, "daily_pct", pk, fallback=False), "m": cite(f, "max_pct", pk, fallback=False),
-                                   "basis": cite(f, "daily_basis", pk, fallback="daily_basis" not in pc),
-                                   "dd": cite(f, "drawdown", pk, fallback="drawdown" not in pc),
-                                   "locks": cite(f, "locks_at_initial_after_pct", pk, fallback="locks_at_initial_after_pct" not in pc),
-                                   "hwm": cite(f, "hwm_basis", pk, fallback="hwm_basis" not in pc),
-                                   "fee": cite(f, "fee_per_side_pct", pk, fallback="fee_per_side_pct" not in pc),
-                                   "lev": cite(f, "max_leverage", pk, fallback="max_leverage" not in pc)}}
-        if products:
-            out[k] = {"name": f["name"], "products": products}
-    return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";var PROV_TAIL=" + json.dumps(PROV_TAIL)
-            + ";</script>")
-
-
-def crossover_html():
-    """The landing page's crossover stat, DERIVED from the reference firm's compare product, with its provenance
-    line. Only the initial-balance basis has this closed form: Q(1 − max% + daily%)."""
-    k = next(k for k in ORDER if FIRMS[k].get("reference"))
-    f = FIRMS[k]; p = f["compare_product"]; pk = p["key"]; c = f.get("calc") or {}
-    basis = ((c.get("products") or {}).get(pk) or {}).get("daily_basis", c.get("daily_basis"))
-    assert basis == "initial", f"{f['name']} {pk}: the crossover stat's formula needs an initial-balance daily basis, got {basis}"
-    q, d, m = 100_000, p["daily_pct"], p["max_pct"]
-    x = round(q * (1 - m / 100 + d / 100))
-    gap, day = q - x, q * d / 100
-    part = "half of one bad day" if gap * 2 == day else f"{gap / day:.0%} of one bad day"
-    by, order, dates = {}, [], set()
-    for field, lab in (("daily_pct", "daily %"), ("max_pct", "max %"), ("drawdown_type", "static floor"),
-                       ("daily_basis", "initial-balance daily limit")):
-        ct = cite(f, field, pk)
-        assert ct, f"{f['name']} {pk}: the crossover stat uses {field}, which has no recorded source"
-        if ct["c"] not in by:
-            by[ct["c"]] = {"labs": [], "o": ct["o"]}; order.append(ct["c"])
-        by[ct["c"]]["labs"].append(lab); dates.update(ct["o"])
-    srcs = " · ".join(", ".join(by[s]["labs"]) + " from " + s + (f" (read {' and '.join(by[s]['o'])})" if by[s]["o"] else "")
-                      for s in order)
-    pv = (f"DERIVED. Computed from {f['name']} {p['label']} rules as published on {' and '.join(sorted(dates))} — {srcs}. "
-          f"{PROV_TAIL} <code>quota × (1 − max% + daily%) = ${q:,} × (1 − {m}% + {d}%)</code>")
-    return (f'  <div class="stat"><div class="n">${x:,}</div>\n'
-            f'    <p>On a ${q // 1000}k {html.escape(p["label"])}, below this equity the {m}% static floor binds instead of the {d}%\n'
-            f'    daily. That is ${gap:,} from the start — {part}.</p>\n'
-            f'    <div class="prov">{pv}</div></div>')
-
-
 def rewrite_region(path, tag, inner):
     """Replace everything between <!-- tag:start --> and <!-- tag:end --> in a static page. Returns True if it changed."""
     start, end = f"<!-- {tag}:start -->", f"<!-- {tag}:end -->"
@@ -218,7 +125,8 @@ def column(k, f):
     <div style="margin-top:7px"><span class="tag {tag}">{n} of {len(FIELDS)} filled · {m} sourced</span></div></div>
   <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"></div></div>'''
 
-page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+def main():
+    page = f'''<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>troid's compare</title>
 {STYLE}
 <style>
@@ -358,21 +266,30 @@ function render(){{
 ["quota","risk","stop","lev"].forEach(function(i){{document.getElementById(i).addEventListener("input",render)}});
 render();
 </script></body></html>'''
-OUT.write_text(page)
-cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) for k in ORDER}
-links=[k for k in ORDER if link_live(FIRMS[k])]
-changed = [name for name, hit in (("index.html firms", rewrite_region(INDEX, "firms", firms_panel_html())),
-                                  ("index.html profiles", rewrite_region(INDEX, "profiles", profiles_js())),
-                                  ("index.html crossover", rewrite_region(INDEX, "crossover", crossover_html())),
-                                  ("dashboard.html hypo", rewrite_region(PUB / "dashboard.html", "hypo", site_text.hypo_html())),
-                                  *((f"{pg} footer", rewrite_region(PUB / pg, "footer", site_text.footer_html()))
-                                    for pg in ("index.html", "faq.html", "dashboard.html", "chat.html", "terms.html")
-                                    if (PUB / pg).exists())) if hit]
-# Context bundle for the assistant function (web/api/troid.js): a copy of firms.json outside
-# public/, packaged into the function by vercel.json includeFiles. Not served as a page.
-CONTEXT = HERE.parent / "web" / "context" / "firms.json"
-CONTEXT.parent.mkdir(exist_ok=True)
-if not CONTEXT.exists() or CONTEXT.read_bytes() != (HERE.parent / "firms.json").read_bytes():
-    CONTEXT.write_bytes((HERE.parent / "firms.json").read_bytes()); changed.append("context/firms.json")
-print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "
-      f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")
+    OUT.write_text(page)
+    cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) for k in ORDER}
+    links=[k for k in ORDER if link_live(FIRMS[k])]
+    import site_build
+    import regions
+    templated = {pg for pg in site_build.STATIC if (site_build.TEMPLATES / f"{pg}.html").exists()}
+    changed = [name for name, hit in (("index.html firms", "index" not in templated and rewrite_region(INDEX, "firms", regions.firms_panel_html())),
+                                      ("index.html profiles", "index" not in templated and rewrite_region(INDEX, "profiles", regions.profiles_js())),
+                                      ("index.html crossover", "index" not in templated and rewrite_region(INDEX, "crossover", regions.crossover_html())),
+                                      ("dashboard.html hypo", "dashboard" not in templated and rewrite_region(PUB / "dashboard.html", "hypo", site_text.hypo_html())),
+                                      *((f"{pg}.html footer", rewrite_region(PUB / f"{pg}.html", "footer", site_text.footer_html()))
+                                        for pg in ("index", "faq", "dashboard", "chat", "terms")
+                                        if (PUB / f"{pg}.html").exists() and pg not in templated)) if hit]
+    changed += site_build.render_static(site_build.targets())
+    changed += [f"removed {c}/" for c in site_build.prune()]
+    # Context bundle for the assistant function (web/api/troid.js): a copy of firms.json outside
+    # public/, packaged into the function by vercel.json includeFiles. Not served as a page.
+    CONTEXT = HERE.parent / "web" / "context" / "firms.json"
+    CONTEXT.parent.mkdir(exist_ok=True)
+    if not CONTEXT.exists() or CONTEXT.read_bytes() != (HERE.parent / "firms.json").read_bytes():
+        CONTEXT.write_bytes((HERE.parent / "firms.json").read_bytes()); changed.append("context/firms.json")
+    print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "
+          f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")
+
+
+if __name__ == "__main__":
+    main()

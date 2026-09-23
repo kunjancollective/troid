@@ -229,6 +229,38 @@ for sym in ("BTCUSDT", "ETHUSDT"):
     check("MEASURED", f"terms section 6 quotes the {sym} holdout n ({_h['n']} trades)", float(f"({_h['n']} trades)" in _terms), 1.0)
     check("MEASURED", f"terms section 6 quotes the {sym} holdout mean ({_h['exp']:+.3f}R)", float(f"{_h['exp']:+.3f}R" in _terms), 1.0)
 
+# ---------------------------------------------------------------------------------------------------------
+# 8. Translations (HANDOFF-global-launch). Translation may change words, never figures. Every live language's
+# strings meet the contract against en.json (i18n.check_pair: same figures, placeholders, tags and links; troid
+# lowercase in Latin script; no exclamation mark; product names in their fixed form), and every published page
+# in that language shows the same figures as its English page, apart from the lines only a translated page
+# carries (the summary and governing lines before English legal text).
+import re as _re
+_sys.path.insert(0, str(_pl.Path(__file__).resolve().parent))
+import i18n as _i18n
+_ROOT = _pl.Path(__file__).resolve().parent.parent
+
+
+def _page_figures(text):
+    text = _re.sub(r"(?s)<script.*?</script>|<style.*?</style>|<head>.*?</head>", " ", text)
+    text = _re.sub(r'(?s)<span class="gov-(sum|line)">.*?</span>|<p class="governs">.*?</p>|<span class="langs".*?</span>', " ", text)
+    return _i18n.figures(_re.sub(r"<[^>]+>", " ", text))
+
+
+_live = [c for c in _i18n.live_codes() if c != "en"]
+if not _live:
+    print("  translations: no language is live yet; English only")
+for _c in _live:
+    _p = _i18n.check_language(_c)
+    check("DERIVED", f"{_c}: every string meets the translation contract ({len(_p)} problem(s))", float(len(_p)), 0.0, 0)
+    for _page in ("index", "compare", "ledger", "dashboard", "chat", "faq", "terms"):
+        _tp = _ROOT / "web" / "public" / _c / f"{_page}.html"
+        _ep = _ROOT / "web" / "public" / f"{_page}.html"
+        if _tp.exists() and _ep.exists():
+            check("DERIVED", f"{_c}/{_page}: the same figures as the English page",
+                  float(_page_figures(_tp.read_text()) == _page_figures(_ep.read_text())), 1.0)
+
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

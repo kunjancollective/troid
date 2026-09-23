@@ -69,9 +69,29 @@ const MAX_REPLY_CHARS = 40_000;                                              // 
 const MAX_TOTAL_CHARS = 120_000;                                             // the whole history
 const SWITCHED_OFF = "ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.";
 const flat = (t) => String(t).replace(/\s+/g, " ").trim();
+// Service text in English. web/i18n/en.json carries the same strings (ask.*) for translation; test_assistant.js
+// fails if they differ. A translated language is used only when its file says _status "live".
+const EN = {
+  "ask.disclosure": DISCLOSURE, "ask.warning": WARNING, "ask.ended": ENDED_REPLY, "ask.refusal": REFUSAL_REPLY,
+  "ask.note": "Not financial advice. Verify with the firm before acting.",
+  "ask.err.switched_off": SWITCHED_OFF, "ask.err.not_configured": "ask troid is not fully configured.",
+  "ask.err.limit": "Limit: {n} messages an hour.", "ask.err.too_long": "Keep one message under {n} characters.",
+  "ask.err.restart": "This conversation can't continue: at most {n} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.",
+  "ask.err.unverified": "This conversation could not be verified. Reloading the page starts a new one.",
+  "ask.err.timeout": "ask troid ran out of time on that one. Ask again, narrower.",
+  "ask.err.busy": "ask troid is busy. Try again in a minute.",
+  "ask.err.unreachable": "The model could not be reached. Try again in a minute.",
+  "ask.err.misconfigured": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+  "ask.err.error": "ask troid hit an error. Try again in a minute.",
+  "ask.cut": "[This answer hit its length limit and is cut short.]",
+  "ask.tool_limit": "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",
+  "ask.no_answer": "No answer produced.",
+};
 // A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
 // not a reply that explains the rule. A paraphrased warning earns one more exact warning, never none.
-const isWarning = (t) => flat(String(t).replace(DISCLOSURE, "")) === WARNING;
+const isWarning = (t) => liveCodes().some((c) => flat(String(t).replace(S(c, "ask.disclosure"), "")) === flat(S(c, "ask.warning")));
+const isEnded = (t) => liveCodes().some((c) => flat(t) === flat(S(c, "ask.ended")));
+const hasDisclosure = (t) => liveCodes().some((c) => String(t).startsWith(S(c, "ask.disclosure")));
 const isSentinelOnly = (t) => new RegExp(SENTINEL.source, "i").test(t) && t.replace(SENTINEL, "").replace(/[\s.!]+/g, "") === "";
 
 const GUARDRAILS = [
@@ -90,10 +110,39 @@ const GUARDRAILS = [
   "When a user says a number was wrong, or that they lost because of troid, follow support.md section 2 — all six steps, in order. Never say the loss wasn't troid's fault, and never say it was.",
   "When a user calls troid a scam, give support.md section 3 once in the session, then answer the question they actually have. Do not repeat it.",
   "Any \"should I\", \"which firm is best for me\", \"will I pass\" or \"what should I trade\" gets support.md section 4, word for word. This keeps troid impersonal.",
+  "Answer in the language the user writes in; when that is unclear, in the page's language (named at the end of this prompt). Keep every number, ticker, formula and rule citation exactly as the tools return them, in Latin digits. Keep troid lowercase, in Latin script. In another language a fixed reply from support.md keeps its meaning exactly; troid's English terms govern, and you say so if asked about the terms.",
+  "When a user mentions their country, call check_availability for each firm before you discuss that firm. If the firm's terms exclude the country, say so and do not discuss buying its challenge. troid never says a firm is available in a country: it says what its record of the firm's terms excludes, or that it has not recorded the list.",
   "Abuse: one warning, worded as support.md section 5. If abuse continues after that warning, reply with exactly " + END_SESSION + " and nothing else. Never write " + END_SESSION + " in any other reply, including when explaining this rule.",
 ].join("\n- ").replace(/^/, "- ");
 
 // ---------------------------------------------------------------- context
+// ---------------------------------------------------------------- languages (web/i18n)
+const I18N_DIR = process.env.TROID_I18N_DIR || "";                           // tests point this at a scratch copy
+let LANG_CACHE = null;
+function languages() {
+  if (!LANG_CACHE) {
+    const read = (rel) => { try { return JSON.parse(I18N_DIR ? fs.readFileSync(path.join(I18N_DIR, rel), "utf8") : readFirst(["i18n/" + rel])); } catch (e) { return null; } };
+    const reg = (read("languages.json") || { languages: [] }).languages;
+    const live = { en: { name: "English", strings: {} } };
+    for (const l of reg) {
+      if (l.code === "en") continue;
+      const d = read(l.code + ".json");
+      if (d && d._status === "live") live[l.code] = { name: l.name, strings: d };
+    }
+    LANG_CACHE = live;
+  }
+  return LANG_CACHE;
+}
+const liveCodes = () => Object.keys(languages());
+const liveLang = (code) => (typeof code === "string" && Object.hasOwn(languages(), code) ? code : "en");
+// Service text in a language: its reviewed string, or English.
+function S(lang, key, vars) {
+  const L = languages()[lang];
+  let v = (L && L.strings[key]) || EN[key];
+  for (const [k, x] of Object.entries(vars || {})) v = v.split("{" + k + "}").join(String(x));
+  return v;
+}
+
 let CTX = null;
 function readFirst(rels) {
   for (const rel of rels) {
@@ -146,9 +195,9 @@ function verifiedLine(pf) {                                  // from the data, s
   const v = Object.values(pf).filter((f) => f.verified === true).map((f) => f.name);
   return v.length ? v.join(", ") + (v.length > 1 ? " are" : " is") + " marked verified; the others are not" : "No firm is marked verified";
 }
-function systemBlocks() {
+function systemBlocks(lang) {
   const c = context(), names = Object.values(c.prompt_firms).map((f) => f.name);
-  return [
+  const blocks = [
     { type: "text", text: "# Guardrails\n\n" + GUARDRAILS + "\n- You may speak only about these firms: " + names.join(", ") +
       ". For any other firm, say troid does not cover it and has not read its rules, and stop.\n- " + verifiedLine(c.prompt_firms) + ".\n\n" + c.troid },
     { type: "text", text: "# support.md — fixed wording for the hard conversations\n\n" + c.support },
@@ -156,6 +205,9 @@ function systemBlocks() {
       "or no recorded source yet; a null is pending. " + verifiedLine(c.prompt_firms) + ".\n\n" + JSON.stringify(c.prompt_firms) },
     { type: "text", text: "# Methodology — the tiers\n\n" + c.method, cache_control: { type: "ephemeral" } },
   ];
+  // after the cached prefix, so each language shares one cache entry
+  if (lang && lang !== "en") blocks.push({ type: "text", text: "The page the user is on is in " + languages()[lang].name + " (" + lang + ")." });
+  return blocks;
 }
 
 // ---------------------------------------------------------------- firms → calculator profiles
@@ -438,6 +490,28 @@ function explain_rule(a) {
                  "use the sources in size_trade or check_budget, or troid's compare." };
 }
 
+// What each firm's own terms exclude, by country (firms.json availability). troid never says a firm is available
+// in a country: it reports what its record of the firm's terms excludes, or that it has not recorded the list.
+function check_availability(a) {
+  const F = JSON.parse(context().firms), key = String(a.firm || ""), cc = String(a.country || "").toUpperCase().trim();
+  if (!Object.hasOwn(F, key) || key.startsWith("_") || !F[key].availability) return { error: "unknown firm. troid covers: " + Object.keys(profiles()).join(", ") };
+  if (!/^[A-Z]{2}$/.test(cc)) return { error: "country must be an ISO 3166-1 alpha-2 code, e.g. US, IN, NG" };
+  const f = F[key], av = f.availability, out = { firm: f.name, country: cc };
+  const src = (field) => { const c = cite(f, field, null, true); return c ? { document_section: c.section, read_on: c.read_on, urls: c.urls } : { source: "not yet recorded" }; };
+  if (!av.recorded) return { ...out, status: "not_recorded", detail: av.basis || "troid has not recorded this firm's excluded countries.",
+                             advice: "Check the firm's own terms before buying." };
+  if ((av.excluded || []).includes(cc)) return { ...out, status: "excluded", detail: f.name + "'s terms exclude " + cc + ".", sources: [src("availability")] };
+  const platforms = Object.entries(av.platform || {}).filter(([, list]) => list.includes(cc)).map(([p]) => p);
+  const third = (av.not_from_terms || {})[cc];
+  const res = { ...out, status: platforms.length ? "platform_excluded" : "not_excluded_in_record",
+    detail: platforms.length ? f.name + "'s terms exclude " + cc + " from " + platforms.join(", ") + " only."
+                             : "troid's record of " + f.name + "'s terms does not exclude " + cc + ". That is not a statement that the firm serves " + cc + ".",
+    sources: [src("availability"), ...(platforms.length ? [src("availability_platform")] : [])],
+    advice: "Check the firm's own terms before buying." };
+  if (third) res.not_in_terms = "A third party lists " + cc + " as excluded; troid has not read that in the firm's terms (" + third + ").";
+  return res;
+}
+
 const TOOLS = [
   { name: "size_trade", description: "Size a trade the user brings against a firm product troid covers: both loss ceilings, the binding one, quantity net of fees, margin, fee share of risk, losses left, circuit-breaker order, every formula and intermediate value (working), and the source and read date of each rule used. Pending fields are reported as pending. Never call this to suggest a trade.",
     input_schema: { type: "object", properties: {
@@ -462,10 +536,13 @@ const TOOLS = [
       open_trades: { type: "integer" }, margin_pct_of_capital: { type: "number" }, trading_days_so_far: { type: "integer" },
       uses_third_party_strategy: { type: "boolean" }, accounts_at_this_level: { type: "integer" }, closed_trades_this_stage: { type: "integer" } },
       required: ["firm"] } },
+  { name: "check_availability", description: "Whether a firm's own terms, as troid has recorded them, exclude a country. Call it for each firm before discussing that firm with a user who has mentioned their country. It never says a firm is available: it reports what the recorded terms exclude, a platform-only exclusion, or that troid has not recorded the list.",
+    input_schema: { type: "object", properties: { firm: { type: "string", description: "firm key: bitfunded | brightfunded | crypto_fund_trader" },
+      country: { type: "string", description: "ISO 3166-1 alpha-2 code, e.g. US, IN, NG, BR" } }, required: ["firm", "country"] } },
   { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
 ];
-const RUN = { size_trade, check_budget, check_compliance, explain_rule };
+const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule };
 function runTool(name, input) {
   try { return Object.hasOwn(RUN, name) ? RUN[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
@@ -516,14 +593,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Every call gets only the time left before the message's deadline; the abort signal is the hard wall.
 // The SDK does not retry (it would honour any retry-after, however long). One retry happens here, after a
 // fast failure only (rate limit, overload, connection), and only if the wait and a call still fit.
-async function callModel(route, messages, deadlineAt, onSend) {
+async function callModel(route, messages, deadlineAt, onSend, lang) {
   const R = ROUTE[route];
   for (let attempt = 0; ; attempt++) {
     const left = deadlineAt - Date.now();
     if (left < MIN_CALL_MS) { const e = new Error("deadline"); e.deadline = true; throw e; }
     spend();
     const params = { model: R.model, max_tokens: R.max_tokens, cache_control: { type: "ephemeral" },   // + the tail of the conversation
-                     system: systemBlocks(), tools: TOOLS, messages };
+                     system: systemBlocks(lang), tools: TOOLS, messages };
     if (route === "tools" && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
     onSend(R.model);
     try {
@@ -577,41 +654,47 @@ const tooLong = (body) => {                                  // only the new mes
 };
 function json(res, code, obj) { res.statusCode = code; res.setHeader("content-type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); }
 const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32;
-const BUSY = { enabled: true, error: "ask troid is busy. Try again in a minute." };
+
+function queryLang(req) {
+  try { return (req.query && req.query.lang) || new URL(req.url || "/", "http://x").searchParams.get("lang"); } catch (e) { return null; }
+}
 
 module.exports = async (req, res) => {
   res.setHeader("cache-control", "no-store");
+  let lang = liveLang(queryLang(req));                                   // the page's language, if it is live; else English
   if (req.method === "GET") {
     let ctx = null;
     try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
-                            models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), disclosure: DISCLOSURE, context: ctx });
+                            models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
+                            disclosure: S(lang, "ask.disclosure"), context: ctx });
   }
   if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}]}" });
-  if (!ENABLED) return json(res, 503, { enabled: false, error: SWITCHED_OFF });
-  if (!isOn()) return json(res, 503, { enabled: false, error: "ask troid is not fully configured." });
+  if (!ENABLED) return json(res, 503, { enabled: false, error: S(lang, "ask.err.switched_off") });
+  if (!isOn()) return json(res, 503, { enabled: false, error: S(lang, "ask.err.not_configured") });
   // Same-origin JSON only: a cross-site form or no-cors fetch can't spend troid's key from someone else's page.
   if (!/^application\/json\b/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "Send application/json." });
   const site = req.headers["sec-fetch-site"];
   if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
-  if (!spendable()) return json(res, 503, BUSY);              // turned away before the model: not logged, costs no hourly message
-  if (!allow(clientKey(req))) return json(res, 429, { error: `Limit: ${LIMIT_PER_HOUR} messages an hour.` });
+  if (!spendable()) return json(res, 503, { enabled: true, error: S(lang, "ask.err.busy") });   // turned away before the model: not logged, costs no hourly message
+  if (!allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
   let body;
   try { body = req.body; if (typeof body === "string") body = JSON.parse(body); } catch (e) { body = null; }
-  if (tooLong(body)) return json(res, 413, { error: `Keep one message under ${MAX_CHARS} characters.` });
+  if (body && body.lang) lang = liveLang(body.lang);
+  if (tooLong(body)) return json(res, 413, { error: S(lang, "ask.err.too_long", { n: MAX_CHARS }) });
   const messages = validate(body);
-  if (!messages) return json(res, 400, { restart: true, error: `This conversation can't continue: at most ${MAX_MESSAGES - 1} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.` });
-  if (!signedOk(messages, body.sig)) return json(res, 400, { restart: true, error: "This conversation could not be verified. Reloading the page starts a new one." });
+  if (!messages) return json(res, 400, { restart: true, error: S(lang, "ask.err.restart", { n: MAX_MESSAGES - 1 }) });
+  if (!signedOk(messages, body.sig)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
-  const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && m.content.startsWith(DISCLOSURE)));
+  const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));
   const deadlineAt = Date.now() + DEADLINE_MS;
   let sent = null, toolCalls = 0;
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
-    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend);
-    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend); }   // Haiku's turn is discarded, never replayed
+    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang);
+    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang); }   // Haiku's turn is discarded, never replayed
     const convo = messages.slice();
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
@@ -621,32 +704,32 @@ module.exports = async (req, res) => {
         const out = runTool(u.name, u.input);
         return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
       }) });
-      resp = await callModel("tools", convo, deadlineAt, onSend);
+      resp = await callModel("tools", convo, deadlineAt, onSend, lang);
     }
     let reply, ended = false;
-    if (resp.stop_reason === "refusal") { reply = REFUSAL_REPLY; log.refusal = 1; }
+    if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
     else {
       reply = textOf(resp);
       // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
-      // that is the session-ended text word for word is treated the same way.
-      if (isSentinelOnly(reply) || flat(reply) === ENDED_REPLY) {
-        if (warned) { reply = ENDED_REPLY; ended = true; log.ended = 1; }
-        else reply = WARNING;
+      // that is the session-ended text word for word (in any published language) is treated the same way.
+      if (isSentinelOnly(reply) || isEnded(reply)) {
+        if (warned) { reply = S(lang, "ask.ended"); ended = true; log.ended = 1; }
+        else reply = S(lang, "ask.warning");
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
-        if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + "[This answer hit its length limit and is cut short.]";
-        else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]";
+        if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
+        else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.tool_limit");
       }
       if (isWarning(reply)) log.warned = 1;
     }
-    if (!reply) reply = "No answer produced.";
-    if (first) reply = DISCLOSURE + "\n\n" + reply;
+    if (!reply) reply = S(lang, "ask.no_answer");
+    if (first) reply = S(lang, "ask.disclosure") + "\n\n" + reply;
     reply = reply.trim();
-    const CUT = "\n\n[This answer hit its length limit and is cut short.]";
+    const CUT = "\n\n" + S(lang, "ask.cut");
     if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
     Object.assign(log, { tool_calls: toolCalls, model: sent });
     console.log(JSON.stringify(log));
-    const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, note: "Not financial advice. Verify with the firm before acting." };
+    const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note") };
     if (!ended) {
       out.sig = sign([...messages, { role: "assistant", content: reply }]);
       const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
@@ -660,16 +743,17 @@ module.exports = async (req, res) => {
     // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError. A body
     // read cut by the deadline surfaces as a bare DOMException (AbortError / TimeoutError).
     if (e && (e.deadline || e instanceof Anthropic.APIUserAbortError || e instanceof Anthropic.APIConnectionTimeoutError || e.name === "AbortError" || e.name === "TimeoutError"))
-      return json(res, 504, { error: "ask troid ran out of time on that one. Ask again, narrower." });
-    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError)) return json(res, 503, BUSY);
-    if (e instanceof Anthropic.APIConnectionError) return json(res, 502, { error: "The model could not be reached. Try again in a minute." });
+      return json(res, 504, { error: S(lang, "ask.err.timeout") });
+    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError)) return json(res, 503, { enabled: true, error: S(lang, "ask.err.busy") });
+    if (e instanceof Anthropic.APIConnectionError) return json(res, 502, { error: S(lang, "ask.err.unreachable") });
     if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError || e instanceof Anthropic.NotFoundError || e instanceof Anthropic.BadRequestError)
-      return json(res, 500, { error: "ask troid is misconfigured. Try again later, or write to hello@troid.ai." });
-    if (e instanceof Anthropic.APIError) return json(res, 502, { error: "The model could not be reached. Try again in a minute." });
-    return json(res, 502, { error: "ask troid hit an error. Try again in a minute." });
+      return json(res, 500, { error: S(lang, "ask.err.misconfigured") });
+    if (e instanceof Anthropic.APIError) return json(res, 502, { error: S(lang, "ask.err.unreachable") });
+    return json(res, 502, { error: S(lang, "ask.err.error") });
   }
 };
 module.exports.tools = RUN;   // for tests
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
+module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
 module.exports._sign = (msgs) => sign(msgs);   // for tests
 module.exports._clientKey = clientKey;

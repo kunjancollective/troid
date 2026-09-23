@@ -55,22 +55,59 @@ def required_sentences():
     return [F[k]["required_disclaimer"].strip() for k in order if (F[k].get("required_disclaimer") or "").strip()]
 
 
-def footer_html():
-    """Inline HTML (no block elements), so it fits both <footer><div> and <p class="foot"> containers."""
-    links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS)
-    extra = " ".join(html.escape(t) for t in required_sentences())
-    return f"{links}<br><br>{html.escape(FOOTER_TEXT)}" + (f" {extra}" if extra else "")
+# The footer's link labels, keyed for translation (web/i18n/en.json); the English labels are LINKS above.
+LINK_KEYS = {"/": "product.desk", "/compare": "product.compare", "/ledger": "product.ledger", "/dashboard": "product.research",
+             "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq", "/terms": "common.link.terms",
+             "https://github.com/kunjancollective/troid": "common.link.source", "https://x.com/tradingdroid": "common.link.x",
+             "https://www.reddit.com/user/tradingdroid/": "common.link.reddit"}
 
 
-def hypo_html(no_edge=None):
+def _english(T):
+    """The English output, byte for byte as before. The pseudo-locale (i18n_pseudo.py) takes the translated path."""
+    return T is None or (T.code == "en" and not getattr(T, "pseudo", False))
+
+
+def footer_html(T=None):
+    """Inline HTML (no block elements), so it fits both <footer><div> and <p class="foot"> containers.
+    English is the owner's line verbatim. A translated page carries the line in its language; each firm's
+    required sentence stays in English (the firm's own words), after a one-line summary and the governing line."""
+    if _english(T):
+        links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS)
+        extra = " ".join(html.escape(t) for t in required_sentences())
+        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}" + (f" {extra}" if extra else "")
+    links = " · ".join(f'<a href="{(T.H if u == "/" else T.L + u) if u.startswith("/") else u}">{html.escape(T(LINK_KEYS[u]))}</a>'
+                       for u, _ in LINKS)
+    req = required_sentences()
+    extra = ""
+    if req:
+        extra = (f' <span class="gov-sum">{T("legal.summary.required")}</span> <span class="gov-line">{T("legal.governs")}</span> '
+                 + " ".join(f'<span lang="en">{html.escape(t)}</span>' for t in req))
+    return f"{links}<br><br>{T('footer.text')}" + extra
+
+
+def no_edge_html(T=None):
+    """troid's no-edge sentence in the page's language (MEASURED figures from the walk-forward output)."""
+    if _english(T):
+        return html.escape(no_edge_sentence())
+    h = holdout()
+    return T("hypo.no_edge_short") + ((" " + T("hypo.no_edge_tail", n=h["n"], exp=f"{h['exp']:+.3f}R", se=f"{h['se']:.3f}R")) if h else "")
+
+
+def hypo_html(no_edge=None, T=None):
     """The disclaimer box: the 4.41 text verbatim, with troid's no-edge sentence beside it. Inline styles with
-    fallbacks, so it renders on pages that don't share the site stylesheet (the tearsheet)."""
-    ne = html.escape(no_edge or no_edge_sentence())
-    return ('<div class="hypo" style="border-left:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);'
-            'padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;'
-            'line-height:1.65;color:var(--dim,#5f6f86)">'
-            '<div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div>'
-            f'<p style="margin:0 0 8px;font:inherit">{html.escape(HYPO)}</p><p style="margin:0;font:inherit">{ne}</p></div>')
+    fallbacks, so it renders on pages that don't share the site stylesheet (the tearsheet). On a translated page
+    the 4.41 text stays in English (it is regulatory text), after a one-line summary and the governing line."""
+    box = ('<div class="hypo" style="border-left:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);'
+           'padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;'
+           'line-height:1.65;color:var(--dim,#5f6f86)">')
+    if _english(T):
+        ne = html.escape(no_edge or no_edge_sentence())
+        return (box + '<div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div>'
+                f'<p style="margin:0 0 8px;font:inherit">{html.escape(HYPO)}</p><p style="margin:0;font:inherit">{ne}</p></div>')
+    ne = T("hypo.no_edge_short") if no_edge == NO_EDGE_SHORT else no_edge_html(T)
+    return (box + f'<div style="letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">{T("hypo.label")}</div>'
+            f'<p style="margin:0 0 6px;font:inherit"><span class="gov-sum">{T("legal.summary.hypo")}</span> <span class="gov-line">{T("legal.governs")}</span></p>'
+            f'<p lang="en" dir="ltr" style="margin:0 0 8px;font:inherit">{html.escape(HYPO)}</p><p style="margin:0;font:inherit">{ne}</p></div>')
 
 
 def hypo_md(no_edge=None):

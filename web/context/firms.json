@@ -407,6 +407,13 @@
         "fee_per_side_pct",
         "max_leverage"
       ]
+    },
+    "availability": {
+      "recorded": false,
+      "excluded": null,
+      "platform": {},
+      "not_from_terms": {},
+      "basis": "Bitfunded's Terms of Use carry a restricted-country list that troid has not extracted yet (restricted_countries: 'per ToU (list not extracted)')"
     }
   },
   "brightfunded": {
@@ -706,6 +713,18 @@
             "help_1step"
           ],
           "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+        },
+        "availability": {
+          "src": [
+            "tc"
+          ],
+          "section": "BrightFunded Terms and Conditions \u2014 restricted countries (clause not recorded)"
+        },
+        "availability_platform": {
+          "src": [
+            "tc"
+          ],
+          "section": "BrightFunded T&C s.2, MT5 clause"
         }
       },
       "products": {
@@ -725,6 +744,25 @@
             "section": "BrightFunded 1-Step product page"
           }
         }
+      }
+    },
+    "availability": {
+      "recorded": true,
+      "excluded": [
+        "CU",
+        "IR",
+        "KP",
+        "SY",
+        "VN"
+      ],
+      "platform": {
+        "MT5": [
+          "US"
+        ]
+      },
+      "not_from_terms": {
+        "PK": "listed by propfirmmatch; not read in BrightFunded's terms",
+        "AE": "MT5 bar for the UAE recorded in troid's notes without a clause"
       }
     }
   },
@@ -1074,6 +1112,18 @@
             "tc"
           ],
           "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+        },
+        "availability": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions \u2014 no restricted-country list (clause not recorded)"
+        },
+        "availability_platform": {
+          "src": [
+            "tc"
+          ],
+          "section": "Crypto Fund Trader T&C 7.3 and 7.1(xvi), MT5 bar"
         }
       },
       "products": {
@@ -1144,6 +1194,17 @@
           }
         }
       }
+    },
+    "availability": {
+      "recorded": true,
+      "excluded": [],
+      "platform": {
+        "MT5": [
+          "US"
+        ]
+      },
+      "not_from_terms": {},
+      "basis": "none listed, per the owner's reading of the Terms and Conditions (HANDOFF-global-launch \u00a74); clause not recorded"
     }
   },
   "_watch": {
@@ -1163,5 +1224,6 @@
   },
   "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
   "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one.",
-  "_provenance_rule": "Every rule field that feeds a number on the site carries provenance: the document, the section, and the date troid read it. Where the repo records no source for a field, the site says 'source not yet recorded' beside it; it never invents one. The evidence for each mapping is in firms_evidence.json."
+  "_provenance_rule": "Every rule field that feeds a number on the site carries provenance: the document, the section, and the date troid read it. Where the repo records no source for a field, the site says 'source not yet recorded' beside it; it never invents one. The evidence for each mapping is in firms_evidence.json.",
+  "_availability_rule": "availability: the countries each firm's own terms exclude, as ISO 3166-1 alpha-2 codes. 'excluded' is the firm-wide list, 'platform' lists exclusions that apply to one platform only, 'not_from_terms' records countries a third party lists that troid has not read in the firm's terms (never used to exclude). recorded:false means troid has not extracted the firm's list: the country selector and ask troid say so instead of implying the firm is available. troid never states that a firm is available in a country, only what its record of the firm's terms excludes."
 }

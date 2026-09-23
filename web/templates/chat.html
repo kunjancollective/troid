@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ask troid</title>
-<meta name="description" content="ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.">
-<link rel="icon" href="/favicon.ico">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta property="og:image" content="https://troid.ai/og-image.png">
-<meta property="og:title" content="troid — prop-firm risk, computed">
-<meta property="og:description" content="Size against both loss ceilings, net of fees. Free. Never places orders.">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
+{% include "partials/_head.html" %}<style>
 /* troid design tokens
    bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
    signal #4da3ff — state only, never decoration
@@ -107,64 +91,42 @@ button:disabled{opacity:.45;cursor:default}
 .box{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:14px}
 .off{border-left-color:var(--bad)}
 </style>
-</head>
+{{ head_extra }}</head>
 <body>
 
-<header><div class="wrap">
-  <div class="bar">
-    <a class="mark" href="/">tr<span class="dot"></span>id</a>
-    <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
-    <a href="https://github.com/kunjancollective/troid">source</a></nav>
-  </div>
-  <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
-    <a href="/compare">compares</a></div>
-</div></header>
+{% include "partials/_header.html" %}
 
 <div class="wrap">
 
 <div class="hero">
-  <h1>ask troid</h1>
-  <p class="lede">ask troid answers from troid's rule data and its own arithmetic tools. It
-  prices the trade you bring. It does not generate one.</p>
+  <h1>{{ t("chat.hero.h1") }}</h1>
+  <p class="lede">{{ t("chat.hero.lede") }}</p>
 </div>
 
 <div class="panel">
-  <p class="eyebrow"><span style="text-transform:none">ask troid</span> · automated assistant</p>
-  <div id="status" class="box">checking whether the assistant is switched on…</div>
+  <p class="eyebrow">{{ t("chat.eyebrow") }}</p>
+  <div id="status" class="box">{{ t("chat.status.checking") }}</div>
   <div id="chat" class="chat" aria-live="polite"></div>
   <div class="row">
-    <textarea id="q" maxlength="2000" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
-    <button id="send" disabled>send</button>
+    <textarea id="q" maxlength="2000" placeholder="{{ t.attr("chat.placeholder") }}" disabled></textarea>
+    <button id="send" disabled>{{ t("chat.send") }}</button>
   </div>
-  <p class="notes" style="margin-top:10px"><span>Not financial advice. Verify with the firm before acting.</span></p>
+  <p class="notes" style="margin-top:10px"><span>{{ t("chat.nfa") }}</span></p>
 </div>
 
 <div class="panel">
-  <h2>What it is</h2>
-  <p>A chat over <a href="/TROID.md">TROID.md</a>, the rules on
-  <a href="/compare">troid's compare</a>, the <a href="/METHODOLOGY.md">methodology</a> and a fixed
-  <a href="https://github.com/kunjancollective/troid/blob/main/web/context/support.md">support script</a>.
-  Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
-  document and read date of every rule they use, or say its source is not yet recorded; the
-  model reports what they return. Every number carries its tier. A pending rule stays pending.</p>
-  <h2 style="margin-top:20px">What it isn't</h2>
-  <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid stores nothing you type; the page keeps the conversation only while it is open. To
-  answer, troid sends the conversation to the company that provides the AI model, which may
-  keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
-  the fixed reply given when the AI model declines to answer, or the end of the session, and an
-  error's status code. Never the text, never your address. The hosting provider keeps its own
-  request logs, which can include your IP address. About 20 messages an hour per address.</p>
-  <p style="margin-bottom:0" id="discl">ask troid can be wrong; the firm's own documents govern. Verify with
-  the firm before acting. <a href="/terms#ask-troid">Section 10 of troid's terms</a> has the detail.</p>
+  <h2>{{ t("chat.is.h2") }}</h2>
+  <p>{{ t("chat.is.p") }}</p>
+  <h2 style="margin-top:20px">{{ t("chat.isnt.h2") }}</h2>
+  <p>{{ t("chat.isnt.p") }}</p>
+  <p style="margin-bottom:0" id="discl">{{ t("chat.discl") }}</p>
 </div>
 
 </div>
 
 <footer><div class="wrap">
 <!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.
+{{ footer }}
 <!-- footer:end -->
 </div></footer>
 
@@ -172,14 +134,14 @@ button:disabled{opacity:.45;cursor:default}
 /* The conversation lives in this array and nowhere else. No storage, no account. The opening disclosure
    comes from the service (GET /api/troid), is shown before anything else, and is not part of hist.
    Each reply carries a signature over the conversation so far; the next message sends it back. */
-var T={"ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
+var T={{ t.js("chat.js.") }},LANG="{{ code }}";
 function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
 var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10});
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 function stop(msg){ended=true;setOn(false,msg)}
-fetch("/api/troid",{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
+fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
   if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
   if(s.max_chars)el("q").maxLength=s.max_chars;
   if(s.enabled&&s.disclosure){add("a",s.disclosure);shown=true}
@@ -190,7 +152,7 @@ function send(){
   var t=el("q").value.trim();if(!t||busy||ended)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
   var w=add("s",T.waiting);
-  fetch("/api/troid",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig})})
+  fetch("/api/troid?lang="+LANG,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,lang:LANG})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
   .then(function(x){var st=x[0],j=x[1];w.remove();
     if(st===200&&j.ended){add("a",j.reply);stop(T.ended)}

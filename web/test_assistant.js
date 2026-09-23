@@ -88,6 +88,30 @@ for (const [q, lev, pend] of [[10000, 5, false], [25000, 5, false], [30000, 100,
   ok(`CFT 1-Phase at $${q}: desk parity, ${lev}×${pend ? " held, cap pending" : ""}`, r.leverage_used === lev && r.pending.includes("max_leverage") === pend, [r.leverage_used, r.pending]);
 }
 
+// --- availability by country (firms.json availability): what the recorded terms exclude, never "available"
+r = T.check_availability({ firm: "brightfunded", country: "ir" });
+ok("availability: BrightFunded excludes IR, cited to its T&C", r.status === "excluded" && /Terms and Conditions/.test(r.sources[0].document_section || ""), r);
+r = T.check_availability({ firm: "brightfunded", country: "US" });
+ok("availability: BrightFunded excludes US from MT5 only, both sources", r.status === "platform_excluded" && /MT5/.test(r.detail) && r.sources.length === 2, r);
+r = T.check_availability({ firm: "brightfunded", country: "PK" });
+ok("availability: a directory-only exclusion never excludes, and says so", r.status === "not_excluded_in_record" && /third party/.test(r.not_in_terms) && /not a statement/.test(r.detail), r);
+r = T.check_availability({ firm: "crypto_fund_trader", country: "US" });
+ok("availability: CFT excludes US from MT5 only", r.status === "platform_excluded", r);
+r = T.check_availability({ firm: "bitfunded", country: "FR" });
+ok("availability: Bitfunded's list not recorded, says so", r.status === "not_recorded" && /Check the firm/.test(r.advice), r);
+ok("availability: bad country code", /ISO 3166/.test(T.check_availability({ firm: "bitfunded", country: "France" }).error || ""));
+ok("availability: unknown firm", /unknown firm/.test(T.check_availability({ firm: "ftmo", country: "US" }).error || ""));
+
+// --- the service's English strings are the ones in web/i18n/en.json (ask.*)
+{
+  const fs = require("fs"), path = require("path"), dir = path.join(__dirname, "i18n");
+  let en = {};
+  if (fs.existsSync(path.join(dir, "en.json"))) en = JSON.parse(fs.readFileSync(path.join(dir, "en.json"), "utf8"));
+  else for (const f of fs.readdirSync(path.join(dir, "src"))) Object.assign(en, JSON.parse(fs.readFileSync(path.join(dir, "src", f), "utf8")));
+  const EN = handler.EN, bad = Object.keys(EN).filter((k) => en[k] !== EN[k]);
+  ok("en.json ask.* equals the service's English, key by key", !bad.length && Object.keys(en).filter((k) => k.startsWith("ask.")).length === Object.keys(EN).length, bad);
+}
+
 // --- the fixed wording: support.md carries the service's constants and the handoff's sentences verbatim
 const F0 = handler.fixed;
 const support = require("fs").readFileSync(require("path").join(__dirname, "context/support.md"), "utf8");
@@ -145,8 +169,8 @@ fake.listen(18765, async () => {
     let r = await post([U("what is the crossover?")]);
     ok("lookup: one Haiku call, disclosure first, a signature back", r.status === 200 && calls.length === 1 && calls[0].model === "claude-haiku-4-5" && r.j.reply.startsWith(F.DISCLOSURE) && r.j.sig, r.j);
     const sys = calls[0].system.map((b) => b.text).join("\n");
-    ok("request: support.md in the system prompt, cache breakpoint on the last block plus the tail, 4 tools, no effort on Haiku", calls[0].system.length === 4 && /support\.md/.test(calls[0].system[1].text)
-       && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 4 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
+    ok("request: support.md in the system prompt, cache breakpoint on the last block plus the tail, 5 tools, no effort on Haiku", calls[0].system.length === 4 && /support\.md/.test(calls[0].system[1].text)
+       && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 5 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
     ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "section 4, word for word", F.END_SESSION, "opening disclosure", "affiliate link"].every((k) => calls[0].system[0].text.includes(k)));
     ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader\./.test(calls[0].system[0].text));
     const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
@@ -298,6 +322,37 @@ fake.listen(18765, async () => {
     calls.length = 0; r = await call(h, [U("x")], { disclosed: true });
     ok("one model on both routes: no duplicate rerun; limits by route", calls.length === 2 && calls[0].max_tokens === 4096 && !calls[0].output_config && calls[1].max_tokens === 8192 && calls[1].output_config.effort === "low", calls.map((c) => [c.model, c.max_tokens]));
     delete process.env.TROID_MODEL_LOOKUP;
+    // 9. a live language: service text in the page's language; warnings and ends recognised across languages
+    {
+      const fs = require("fs"), path = require("path"), os = require("os");
+      const dir = fs.mkdtempSync(path.join(os.tmpdir(), "troid-i18n-"));
+      fs.copyFileSync(path.join(__dirname, "i18n", "languages.json"), path.join(dir, "languages.json"));
+      const zh = { _status: "live", "ask.disclosure": "这是 ask troid，一个自动助手。", "ask.warning": "ask troid 回答规则问题。辱骂会结束会话。",
+                   "ask.ended": "会话已结束。", "ask.note": "不是投资建议。", "ask.err.limit": "上限：每小时 {n} 条消息。" };
+      fs.writeFileSync(path.join(dir, "zh.json"), JSON.stringify(zh));
+      fs.writeFileSync(path.join(dir, "ar.json"), JSON.stringify({ _status: "draft", "ask.disclosure": "مسودة" }));
+      const hz = fresh({ TROID_I18N_DIR: dir });
+      let res2 = fakeRes(); await hz({ method: "GET", headers: {}, query: { lang: "zh" } }, res2);
+      let g = JSON.parse(res2.body);
+      ok("GET ?lang=zh: the Chinese disclosure, zh live", g.lang === "zh" && g.disclosure === zh["ask.disclosure"] && g.languages.join() === "en,zh", g);
+      res2 = fakeRes(); await hz({ method: "GET", headers: {}, query: { lang: "ar" } }, res2);
+      g = JSON.parse(res2.body);
+      ok("GET ?lang=ar (a draft): English, never the draft", g.lang === "en" && g.disclosure === F.DISCLOSURE, g);
+      script = () => msg("end_turn", [{ type: "text", text: F.END_SESSION }]);
+      r = await call(hz, [U("骂人")], { lang: "zh" });
+      ok("zh: first abusive message gets the Chinese disclosure and warning", r.j.reply === zh["ask.disclosure"] + "\n\n" + zh["ask.warning"] && r.j.lang === "zh" && r.j.note === zh["ask.note"], r.j);
+      r = await call(hz, [U("骂人"), A(zh["ask.warning"]), U("又骂")], { lang: "zh", disclosed: true });
+      ok("zh: after the Chinese warning, ended in Chinese", r.j.ended === true && r.j.reply === zh["ask.ended"], r.j);
+      r = await call(hz, [U("x"), A(F.WARNING), U("again")], { lang: "zh", disclosed: true });
+      ok("a warning given in English still counts on a zh page", r.j.ended === true, r.j);
+      script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
+      const n0 = calls.length;
+      r = await call(hz, [U("hi")], { lang: "zh", disclosed: true });
+      ok("zh: the page language goes to the model after the cached prefix", calls[n0].system.length === 5 && /Chinese|中文|\(zh\)/.test(calls[n0].system[4].text) && !calls[n0].system[4].cache_control, calls[n0].system.map((b) => b.text.slice(0, 30)));
+      r = await call(hz, [U("hi")], { lang: "xx", disclosed: true });
+      ok("an unknown language falls back to English", r.j.lang === "en" && r.j.note === "Not financial advice. Verify with the firm before acting.", r.j);
+      delete process.env.TROID_I18N_DIR;
+    }
     const KEEP = process.env.TROID_TURN_KEY;
     h = fresh({ TROID_TURN_KEY: "" });
     r = await call(h, [U("hi")], { disclosed: true });

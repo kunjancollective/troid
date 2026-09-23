@@ -1,0 +1,18 @@
+/* troid in other languages: the language switcher, the governing line before English legal text, local times
+   beside UTC, the country selector. Loaded on translated pages, and on English once a second language is
+   published. Layout mirrors for Arabic through CSS logical properties in each page's own styles; this file only
+   styles what translated pages add. */
+.langs{display:inline-flex;flex-wrap:wrap;gap:2px 8px;margin-inline-start:4px;font-family:var(--sans);font-size:12px}
+.langs a{color:var(--dim)}.langs .lang-cur{color:var(--ink)}
+.governs{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim);border-inline-start:2px solid var(--line);
+  padding-inline-start:10px;margin:0 0 12px}
+.gov-sum{color:var(--ink)}.gov-line{font-style:italic}
+[lang="en"]{unicode-bidi:isolate}
+[dir="rtl"] [lang="en"]{direction:ltr;text-align:start}
+bdi,.ltr{unicode-bidi:isolate;direction:ltr}
+.tlocal{color:var(--dim);white-space:nowrap}
+.country{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 12px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.country select{width:auto;min-width:180px;font-size:12px;padding:5px 7px}
+.avail{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim)}
+.avail.no{color:var(--bad)}
+[dir="rtl"] .notes div::before{content:"\2190"}

@@ -1,0 +1,15 @@
+{
+  "_note": "The ten launch languages (HANDOFF-global-launch). A language is published only when web/i18n/{code}.json has _status 'live' (set by backtest/i18n_import.py from its reviewer's sheet). 'font' is the Google Fonts family loaded after Inter for that script; Plex Mono stays for numerals everywhere. 'intl' is the locale for Intl.NumberFormat / DateTimeFormat, always with Latin digits.",
+  "languages": [
+    {"code": "en", "name": "English",          "dir": "ltr", "font": null,                   "og_locale": "en_US", "intl": "en-US"},
+    {"code": "zh", "name": "中文",              "dir": "ltr", "font": "Noto Sans SC",         "og_locale": "zh_CN", "intl": "zh-Hans-CN-u-nu-latn"},
+    {"code": "hi", "name": "हिन्दी",            "dir": "ltr", "font": "Noto Sans Devanagari", "og_locale": "hi_IN", "intl": "hi-IN-u-nu-latn"},
+    {"code": "es", "name": "Español",          "dir": "ltr", "font": null,                   "og_locale": "es_ES", "intl": "es-ES-u-nu-latn"},
+    {"code": "ar", "name": "العربية",          "dir": "rtl", "font": "Noto Sans Arabic",     "og_locale": "ar_AR", "intl": "ar-u-nu-latn"},
+    {"code": "fr", "name": "Français",         "dir": "ltr", "font": null,                   "og_locale": "fr_FR", "intl": "fr-FR-u-nu-latn"},
+    {"code": "bn", "name": "বাংলা",            "dir": "ltr", "font": "Noto Sans Bengali",    "og_locale": "bn_BD", "intl": "bn-BD-u-nu-latn"},
+    {"code": "pt", "name": "Português",        "dir": "ltr", "font": null,                   "og_locale": "pt_BR", "intl": "pt-BR-u-nu-latn"},
+    {"code": "ru", "name": "Русский",          "dir": "ltr", "font": null,                   "og_locale": "ru_RU", "intl": "ru-RU-u-nu-latn"},
+    {"code": "id", "name": "Bahasa Indonesia", "dir": "ltr", "font": null,                   "og_locale": "id_ID", "intl": "id-ID-u-nu-latn"}
+  ]
+}
