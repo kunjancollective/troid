@@ -76,6 +76,9 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.sess{margin:10px 0 0;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7;overflow-wrap:anywhere}
+.sess code{font-family:var(--mono);color:var(--ink)}
+.lk{background:none;border:0;padding:0;font:inherit;color:var(--signal);cursor:pointer}
 .notes div{padding-inline-start:14px;position:relative}
 .notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
@@ -136,6 +139,9 @@ button:disabled{opacity:.45;cursor:default}
     <textarea id="q" maxlength="2000" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
     <button id="send" disabled>send</button>
   </div>
+  <p class="sess" id="sess">Session <code id="sid" translate="no"></code> — quote this if you contact troid about this conversation.
+    <button type="button" id="copy" class="lk">copy</button> ·
+    <button type="button" id="del" class="lk">delete this conversation</button></p>
   <p class="notes" style="margin-top:10px"><span>Not financial advice. Verify with the firm before acting.</span></p>
 </div>
 
@@ -149,13 +155,13 @@ button:disabled{opacity:.45;cursor:default}
   model reports what they return. Every number carries its tier. A pending rule stays pending.</p>
   <h2 style="margin-top:20px">What it isn't</h2>
   <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid stores nothing you type; the page keeps the conversation only while it is open. To
-  answer, troid sends the conversation to the company that provides the AI model, which may
-  keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
-  the fixed reply given when the AI model declines to answer, or the end of the session, and an
-  error's status code. Never the text, never your address. The hosting provider keeps its own
-  request logs, which can include your IP address. About 20 messages an hour per address.</p>
+  troid keeps each conversation for 30 days after its last message, under the session ID shown
+  under the message box, then deletes it automatically: your messages, ask troid's replies, the
+  tools used and the sources cited. Never your IP address, your browser, your name or an account.
+  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  to train a model. To answer, troid also sends the conversation to the company that provides the
+  AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
+  its own request logs, which can include your IP address. About 20 messages an hour per address.</p>
   <p style="margin-bottom:0" id="discl">ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href="/terms#ask-troid">Section 10 of troid's terms</a> has the detail.</p>
 </div>
@@ -169,12 +175,17 @@ button:disabled{opacity:.45;cursor:default}
 </div></footer>
 
 <script>
-/* The conversation lives in this array and nowhere else. No storage, no account. The opening disclosure
-   comes from the service (GET /api/troid), is shown before anything else, and is not part of hist.
-   Each reply carries a signature over the conversation so far; the next message sends it back. */
-var T={"ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
+/* The page holds the conversation in this array; the service keeps it for 30 days under SESSION, a random
+   128-bit ID made here when the session starts and covered by every signature (terms section 10). The
+   opening disclosure comes from the service (GET /api/troid), is shown before anything else, and is not part
+   of hist. Each reply carries a signature over the conversation so far, which the next message sends back,
+   and the session's delete token, which "delete this conversation" sends. */
+var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
 function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
-var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10});
+var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10}),SESSION="",delTok=null,disc="",onMsg="";
+function newSession(){var b=new Uint8Array(16);crypto.getRandomValues(b);
+  SESSION=Array.prototype.map.call(b,function(x){return("0"+x.toString(16)).slice(-2)}).join("");
+  el("sid").textContent=SESSION;hist=[];sig=null;delTok=null}
 function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
@@ -182,17 +193,17 @@ function stop(msg){ended=true;setOn(false,msg)}
 fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
   if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
   if(s.max_chars)el("q").maxLength=s.max_chars;
-  if(s.enabled&&s.disclosure){add("a",s.disclosure);shown=true}
-  if(s.enabled)setOn(true,F(T.status_on,{firms:s.context&&s.context.firms?F(T.status_firms,{n:s.context.firms.length}):"",limit:s.limit_per_hour}));
+  if(s.enabled&&s.disclosure){disc=s.disclosure;add("a",disc);shown=true}
+  if(s.enabled){onMsg=F(T.status_on,{firms:s.context&&s.context.firms?F(T.status_firms,{n:s.context.firms.length}):"",limit:s.limit_per_hour});setOn(true,onMsg)}
   else setOn(false,T.status_off);
 }).catch(function(){setOn(false,T.unreachable)});
 function send(){
   var t=el("q").value.trim();if(!t||busy||ended)return;
   busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
   var w=add("s",T.waiting);
-  fetch("/api/troid?lang="+LANG,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,lang:LANG})})
+  fetch("/api/troid?lang="+LANG,{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,session:SESSION,lang:LANG})})
   .then(function(r){return r.json().then(function(j){return[r.status,j]})})
-  .then(function(x){var st=x[0],j=x[1];w.remove();
+  .then(function(x){var st=x[0],j=x[1];w.remove();if(j.delete_token&&j.session===SESSION)delTok=j.delete_token;
     if(st===200&&j.ended){add("a",j.reply);stop(T.ended)}
     else if(st===200){hist.push({role:"assistant",content:j.reply});sig=j.sig||null;add("a",j.reply);
       add("s",(j.tool_calls?F(j.tool_calls>1?T.tool_call_n:T.tool_call_1,{n:j.tool_calls}):"")+j.model);
@@ -202,6 +213,19 @@ function send(){
   }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s",T.unreachable)})
   .then(function(){busy=false;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }
+function del(){
+  if(!delTok){add("s",T.delete_none);return}
+  fetch("/api/troid?session="+SESSION+"&lang="+LANG,{method:"DELETE",headers:{"x-troid-token":delTok}})
+  .then(function(r){return r.json().then(function(j){return[r.status,j]})})
+  .then(function(x){if(x[0]!==200||!x[1].deleted){add("s",T.delete_failed);return}
+    el("chat").innerHTML="";newSession();ended=false;shown=!!disc;if(disc)add("a",disc);add("s",T.deleted);
+    if(onMsg)setOn(true,onMsg)})
+  .catch(function(){add("s",T.delete_failed)});
+}
+function copy(){if(navigator.clipboard)navigator.clipboard.writeText(SESSION).then(function(){var b=el("copy"),w=b.textContent;b.textContent=T.copied;setTimeout(function(){b.textContent=w},1500)}).catch(function(){})}
+newSession();
+el("del").addEventListener("click",del);
+el("copy").addEventListener("click",copy);
 el("send").addEventListener("click",send);
 el("q").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
 </script>

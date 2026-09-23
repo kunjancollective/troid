@@ -580,6 +580,9 @@ chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic 
 chat.eyebrow,"<span style=""text-transform:none"">ask troid</span> · automated assistant","<span style=""text-transform:none"">pergunte ao troid</span> · assistente automatizado",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.status.checking,checking whether the assistant is switched on…,verificando se o assistente está ligado…,,
 chat.placeholder,"e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it.","ex.: Bitfunded 1-Step, quota de $100k, equity 96.000, short em 77.872 com stop de 0,3% — dimensione.",,keep every number exactly
+chat.session.line,Session {id} — quote this if you contact troid about this conversation.,,,"NEW: translate it in reviewer_edit | keep {id} exactly as written; troid stays lowercase, in Latin letters"
+chat.session.copy,copy,,,NEW: translate it in reviewer_edit | 
+chat.session.delete,delete this conversation,,,NEW: translate it in reviewer_edit | 
 chat.send,send,enviar,,
 chat.nfa,Not financial advice. Verify with the firm before acting.,Não é aconselhamento financeiro. Confirme com a empresa antes de agir.,,
 chat.is.h2,What it is,O que é,,
@@ -591,19 +594,19 @@ chat.is.p,"A chat over <a href=""/TROID.md"">TROID.md</a>, the rules on
   model reports what they return. Every number carries its tier. A pending rule stays pending.","Um chat sobre o <a href=""/TROID.md"">TROID.md</a>, as regras no <a href=""{L}/compare"">comparador do troid</a>, a <a href=""/METHODOLOGY.md"">metodologia</a> e um <a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">roteiro de suporte</a> fixo. Dimensionamento, orçamentos e verificações de conformidade passam por ferramentas que fazem os cálculos e citam o documento e a data de leitura de cada regra que usam, ou dizem que a fonte dela ainda não foi registrada; o modelo relata o que elas retornam. Cada número traz o seu nível. Uma regra pendente continua pendente.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.isnt.h2,What it isn't,O que não é,,
 chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid stores nothing you type; the page keeps the conversation only while it is open. To
-  answer, troid sends the conversation to the company that provides the AI model, which may
-  keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
-  the fixed reply given when the AI model declines to answer, or the end of the session, and an
-  error's status code. Never the text, never your address. The hosting provider keeps its own
-  request logs, which can include your IP address. About 20 messages an hour per address.","Um serviço de sinais, uma recomendação de empresa, uma memória sobre você ou um meio de acessar a sua conta. O troid não armazena nada do que você digita; a página guarda a conversa apenas enquanto está aberta. Para responder, o troid envia a conversa à empresa que fornece o modelo de IA, que pode guardá-la por um período limitado, de acordo com os próprios termos. O log do troid registra uma linha por mensagem: respondida ou com falha, chamadas de ferramenta, o modelo chamado, se a resposta foi o aviso de abuso, a resposta fixa dada quando o modelo de IA se recusa a responder, ou o fim da sessão, e o código de status de um erro. Nunca o texto, nunca o seu endereço. O provedor de hospedagem mantém os próprios logs de requisições, que podem incluir o seu endereço IP. Cerca de 20 mensagens por hora por endereço.",,"keep every number exactly; troid stays lowercase, in Latin letters"
+  troid keeps each conversation for 30 days after its last message, under the session ID shown
+  under the message box, then deletes it automatically: your messages, ask troid's replies, the
+  tools used and the sources cited. Never your IP address, your browser, your name or an account.
+  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  to train a model. To answer, troid also sends the conversation to the company that provides the
+  AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
+  its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","O pergunte ao troid pode errar; os documentos da própria empresa prevalecem. Confirme com a empresa antes de agir. A <a href=""{L}/terms#ask-troid"">seção 10 dos termos do troid</a> traz os detalhes.",,"CHECK FIRST: product.ask 'pergunte ao troid': it is used as a noun with the article, like 'o Fale Conosco' ('O pergunte ao troid está desligado'). Check that this reads naturally in ask.*, chat.js.status_off and chat.discl, or whether the English 'ask troid' should stay as the product name. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 chat.js.full,This conversation has reached its limit of {n} questions. Reloading the page starts a new one.,Esta conversa atingiu o limite de {n} perguntas. Recarregar a página inicia uma nova.,,keep {n} exactly as written
 chat.js.status_on,on · {firms}{limit} messages an hour · no memory between visits,ligado · {firms}{limit} mensagens por hora · sem memória entre visitas,,keep {firms} {limit} exactly as written
 chat.js.status_firms,{n} firms · ,{n} empresas · ,,keep {n} exactly as written
-chat.js.status_off,ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.,"O pergunte ao troid já está pronto e está desligado. Ele entra no ar depois que os termos do troid e as salvaguardas do pergunte ao troid passarem por revisão jurídica. Até lá, o desk do troid, na página inicial, faz os cálculos.",,"CHECK FIRST: product.ask 'pergunte ao troid': it is used as a noun with the article, like 'o Fale Conosco' ('O pergunte ao troid está desligado'). Check that this reads naturally in ask.*, chat.js.status_off and chat.discl, or whether the English 'ask troid' should stay as the product name. | troid stays lowercase, in Latin letters"
+chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'pergunte ao troid': it is used as a noun with the article, like 'o Fale Conosco' ('O pergunte ao troid está desligado'). Check that this reads naturally in ask.*, chat.js.status_off and chat.discl, or whether the English 'ask troid' should stay as the product name. | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,Não foi possível acessar o pergunte ao troid.,,"troid stays lowercase, in Latin letters"
 chat.js.ended,This session has ended. Reloading the page starts a new one.,Esta sessão foi encerrada. Recarregar a página inicia uma nova.,,
 chat.js.switched_off,switched off,desligado,,
@@ -611,6 +614,10 @@ chat.js.tool_call_1,{n} tool call · ,{n} chamada de ferramenta · ,,keep {n} ex
 chat.js.tool_call_n,{n} tool calls · ,{n} chamadas de ferramenta · ,,keep {n} exactly as written
 chat.js.error,error {status},erro {status},,keep {status} exactly as written
 chat.js.waiting,…,…,,
+chat.js.copied,copied,,,NEW: translate it in reviewer_edit | 
+chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
+chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.meta.title,troid — what the numbers actually say,troid — o que os números realmente dizem,,"troid stays lowercase, in Latin letters"
 faq.hero.h1,What the numbers actually say,O que os números realmente dizem,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","Taxas-base, mecânica das regras e os próprios conflitos de interesse do troid — o que uma landing page deixa de fora.",,"troid stays lowercase, in Latin letters"
@@ -702,6 +709,16 @@ run it and get the same numbers, including the unflattering ones.","Não confie 
 faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
 troid's own strategy tested out of sample at +0.008R over 504 trades — no edge — and the
 page says so.","O <a href=""{L}/ledger"">registro do troid</a> publica os próprios resultados a cada quatro horas, perdas incluídas. A própria estratégia do troid, testada fora da amostra, deu +0,008R em 504 operações — sem vantagem — e a página diz isso.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
+message box, and deleted automatically 30 days after its last message. troid keeps your messages,
+ask troid's replies, the tools it used with their inputs and results, the rule sources and read
+dates it cited, the page's language and the AI model used; never your IP address, your browser's
+user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
+to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
+troid can read them. They are never sold and never used for marketing or to train an AI model. To
+delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
+<a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,Vale a pena comprar um desafio?,,
 faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
 reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
@@ -770,15 +787,14 @@ terms.hero.eyebrow,troid · terms,troid · termos,,"troid stays lowercase, in La
 terms.hero.h1,Terms of use,Termos de uso,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","O troid é uma ferramenta informativa gratuita. Não é aconselhamento, não envia nenhuma ordem, e os documentos da própria empresa prevalecem. Os termos completos vêm a seguir.",,"troid stays lowercase, in Latin letters"
-terms.draft,"Draft of 23 September 2026, effective from that date and published ahead of review by counsel.
-Counsel's edits will replace this version, and this date will change when they do.","Rascunho de 23 de setembro de 2026, em vigor a partir dessa data e publicado antes da revisão jurídica. As alterações da revisão jurídica substituirão esta versão, e esta data mudará quando isso acontecer.",,keep every number exactly
+terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,Sumário,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.","Este é o pergunte ao troid, um assistente automatizado. Ele não é uma pessoa e não é aconselhamento financeiro. Ele responde com base nas regras que cada empresa publica e em cálculos feitos por computador, e mostra a fonte — ou diz quando uma fonte ainda não foi registrada. Confirme com a empresa antes de agir.",,"CHECK FIRST: ask.disclosure: 'computed math' became 'cálculos feitos por computador'. Check that it neither adds nor loses a claim. | troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: ask.disclosure: 'computed math' became 'cálculos feitos por computador'. Check that it neither adds nor loses a claim. | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento. Mensagens abusivas encerram a sessão.,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Esta sessão foi encerrada. O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento.,,"troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","O pergunte ao troid não pode responder a essa pergunta. O desk do troid e o comparador do troid mostram as regras, as fontes delas e os cálculos; para qualquer outro assunto, escreva para hello@troid.ai.",,"troid stays lowercase, in Latin letters"
 ask.note,Not financial advice. Verify with the firm before acting.,Não é aconselhamento financeiro. Confirme com a empresa antes de agir.,,
-ask.err.switched_off,ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.,O pergunte ao troid está desligado até que os termos do troid e as salvaguardas do pergunte ao troid passem por revisão jurídica.,,"troid stays lowercase, in Latin letters"
+ask.err.switched_off,ask troid is switched off at the moment.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.err.not_configured,ask troid is not fully configured.,O pergunte ao troid não está totalmente configurado.,,"troid stays lowercase, in Latin letters"
 ask.err.limit,Limit: {n} messages an hour.,Limite: {n} mensagens por hora.,,keep {n} exactly as written
 ask.err.too_long,Keep one message under {n} characters.,Cada mensagem deve ter menos de {n} caracteres.,,keep {n} exactly as written
@@ -792,6 +808,7 @@ ask.err.error,ask troid hit an error. Try again in a minute.,O pergunte ao troid
 ask.cut,[This answer hit its length limit and is cut short.],[Esta resposta atingiu o limite de tamanho e foi interrompida.],,
 ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]","[O pergunte ao troid atingiu o limite de chamadas de ferramenta ou de tempo para uma mensagem. Pergunte de novo, de forma mais específica.]",,"troid stays lowercase, in Latin letters"
 ask.no_answer,No answer produced.,Nenhuma resposta foi gerada.,,
+ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.173bc3120e68,discretionary,discricionário,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly

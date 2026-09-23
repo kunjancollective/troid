@@ -268,6 +268,31 @@ for _c in _live:
                   float(_i18n.figures_match(_page_text(_ep.read_text()), _page_text(_tp.read_text()))), 1.0)
 
 
+# 9. ask troid's conversation record (launch handoff §1). The disclosure is one sentence set in three places, and
+# the retention facts must read the same on every surface that states them.
+print()
+print("="*76)
+print("  9. ask troid - the disclosure and the 30-day record, everywhere they are stated")
+print("="*76)
+_js = (_ROOT / "web" / "api" / "troid.js").read_text()
+_disc = _re.search(r'const DISCLOSURE = "(.*?)";', _js).group(1)
+_ret = _re.search(r"const RETENTION_S = ([0-9_]+);", _js).group(1).replace("_", "")
+check("SOURCED", "store TTL in troid.js is 30 days (2,592,000 s)", float(_ret == "2592000"), 1.0)
+_en = _json.loads((_ROOT / "web" / "i18n" / "en.json").read_text())
+check("DERIVED", "disclosure: troid.js = en.json ask.disclosure", float(_en["ask.disclosure"] == _disc), 1.0)
+_sup = " ".join(l[2:] for l in (_ROOT / "web" / "context" / "support.md").read_text().splitlines() if l.startswith("> "))
+check("DERIVED", "disclosure: quoted verbatim in support.md", float(_disc in _sup), 1.0)
+check("DERIVED", "disclosure states the 30 days and the session ID", float("kept for 30 days under the session ID" in _disc), 1.0)
+_sec10 = _html.unescape(_re.search(r'<section id="ask-troid">(.*?)</section>', _read("web/public/terms.html"), _re.S).group(1))
+for _fact in ("for 30 days after its last message", "deletes it automatically", "does not keep your IP address",
+              "Only the Company can read", "never sells conversations", "never uses them for marketing or to train any AI model",
+              "delete this conversation", "hello@troid.ai"):
+    check("DERIVED", f"terms section 10 says: {_fact}", float(_fact in _sec10), 1.0)
+_faq = _html.unescape(_read("web/public/faq.html"))
+check("DERIVED", "FAQ answers 'Does troid keep my conversation with ask troid?'",
+      float(_en["faq.keep.q"] in _faq and "30 days" in _faq and "never used for marketing or to train an AI model" in _faq), 1.0)
+check("DERIVED", "chat page states the 30-day record", float("30 days after its last message" in _html.unescape(_read("web/public/chat.html"))), 1.0)
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

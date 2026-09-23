@@ -275,8 +275,9 @@ if __name__ == "__main__":
     codes = sys.argv[1:] or [l["code"] for l in LANGS if l["code"] != "en"]
     for c in codes:
         h, s = load(c)
-        probs = check_language(c, require_all=h.get("_status") == "live")
         st = stale(c) if h.get("_status") != "absent" else []
+        probs = [x for x in check_language(c, require_all=h.get("_status") == "live")
+                 if h.get("_status") == "live" or x.split(":")[0] not in st]     # a stale draft is re-translated, not checked
         print(f"{c}: {h.get('_status')} · {len(s)} strings · {len(probs)} problem(s)"
               + (f" · {len(st)} stale (English changed or missing): {st[:6]}" if st else ""))
         for p in probs[:40]:

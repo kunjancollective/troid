@@ -665,6 +665,9 @@ chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic 
 chat.eyebrow,"<span style=""text-transform:none"">ask troid</span> · automated assistant","<span style=""text-transform:none"">troid से पूछें</span> · स्वचालित सहायक",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.status.checking,checking whether the assistant is switched on…,जाँच हो रही है कि सहायक चालू है या नहीं…,,
 chat.placeholder,"e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it.","उदा. Bitfunded 1-Step, $100k कोटा, इक्विटी 96,000, शॉर्ट 77,872 पर 0.3% स्टॉप के साथ — इसका साइज़ तय करें।",,keep every number exactly
+chat.session.line,Session {id} — quote this if you contact troid about this conversation.,,,"NEW: translate it in reviewer_edit | keep {id} exactly as written; troid stays lowercase, in Latin letters"
+chat.session.copy,copy,,,NEW: translate it in reviewer_edit | 
+chat.session.delete,delete this conversation,,,NEW: translate it in reviewer_edit | 
 chat.send,send,भेजें,,
 chat.nfa,Not financial advice. Verify with the firm before acting.,वित्तीय सलाह नहीं। कोई भी कदम उठाने से पहले फ़र्म से सत्यापित करें।,,
 chat.is.h2,What it is,यह क्या है,,
@@ -678,21 +681,20 @@ chat.is.p,"A chat over <a href=""/TROID.md"">TROID.md</a>, the rules on
   साइज़िंग, बजट और कंप्लायंस जाँचें ऐसे टूल्स से चलती हैं जो गणना करते हैं और अपने इस्तेमाल किए हर नियम का दस्तावेज़ और पढ़ने की तारीख बताते हैं, या कहते हैं कि उसका स्रोत अभी दर्ज नहीं है; मॉडल वही बताता है जो वे लौटाते हैं। हर संख्या के साथ उसकी श्रेणी होती है। लंबित नियम लंबित ही रहता है।",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.isnt.h2,What it isn't,यह क्या नहीं है,,
 chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid stores nothing you type; the page keeps the conversation only while it is open. To
-  answer, troid sends the conversation to the company that provides the AI model, which may
-  keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
-  the fixed reply given when the AI model declines to answer, or the end of the session, and an
-  error's status code. Never the text, never your address. The hosting provider keeps its own
-  request logs, which can include your IP address. About 20 messages an hour per address.","सिग्नल सेवा, किसी फ़र्म की सिफ़ारिश, आपको याद रखने वाली कोई चीज़, या आपके अकाउंट तक पहुँचने का ज़रिया — यह इनमें से कुछ भी नहीं है।
-  आप जो टाइप करते हैं, troid उसमें से कुछ भी स्टोर नहीं करता; पेज बातचीत को सिर्फ़ तब तक रखता है जब तक वह खुला है। जवाब देने के लिए troid बातचीत को उस कंपनी को भेजता है जो AI मॉडल उपलब्ध कराती है, और वह कंपनी अपनी शर्तों के तहत उसे सीमित अवधि तक रख सकती है। troid का लॉग हर संदेश के लिए एक पंक्ति दर्ज करता है: जवाब दिया गया या विफल रहा, टूल कॉल, कौन-सा मॉडल कॉल हुआ, क्या जवाब दुर्व्यवहार की चेतावनी था, AI मॉडल के जवाब देने से मना करने पर दिया जाने वाला तय जवाब था, या सत्र का अंत, और किसी एरर का स्टेटस कोड। टेक्स्ट कभी नहीं, आपका पता कभी नहीं। होस्टिंग प्रदाता अपने अलग रिक्वेस्ट लॉग रखता है, जिनमें आपका IP पता शामिल हो सकता है। प्रति पता लगभग 20 संदेश प्रति घंटा।",,"CHECK FIRST: chat.isnt.p: 'never your address' is kept as ambiguous as the English ('आपका पता'); it means the IP address. The long list of what the log records was reordered and should be checked item by item. | keep every number exactly; troid stays lowercase, in Latin letters"
+  troid keeps each conversation for 30 days after its last message, under the session ID shown
+  under the message box, then deletes it automatically: your messages, ask troid's replies, the
+  tools used and the sources cited. Never your IP address, your browser, your name or an account.
+  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  to train a model. To answer, troid also sends the conversation to the company that provides the
+  AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
+  its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: chat.isnt.p: 'never your address' is kept as ambiguous as the English ('आपका पता'); it means the IP address. The long list of what the log records was reordered and should be checked item by item. | keep every number exactly; troid stays lowercase, in Latin letters"
 chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","‘troid से पूछें’ ग़लत हो सकता है; फ़र्म के अपने दस्तावेज़ ही मान्य हैं। कोई भी कदम उठाने से पहले
   फ़र्म से सत्यापित करें। विवरण <a href=""{L}/terms#ask-troid"">troid की शर्तों के सेक्शन 10</a> में है।",,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 chat.js.full,This conversation has reached its limit of {n} questions. Reloading the page starts a new one.,यह बातचीत {n} सवालों की अपनी सीमा तक पहुँच गई है। पेज दोबारा लोड करने पर नई बातचीत शुरू होती है।,,keep {n} exactly as written
 chat.js.status_on,on · {firms}{limit} messages an hour · no memory between visits,चालू · {firms}{limit} संदेश प्रति घंटा · विज़िट के बीच कोई याद नहीं,,keep {firms} {limit} exactly as written
 chat.js.status_firms,{n} firms · ,{n} फ़र्में · ,,keep {n} exactly as written
-chat.js.status_off,ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.,‘troid से पूछें’ तैयार है और बंद रखा गया है। troid की शर्तों और ‘troid से पूछें’ के गार्डरेल्स की कानूनी समीक्षा हो जाने के बाद यह चालू होगा। तब तक होम पेज पर troid डेस्क गणना करता है।,,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
+chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,‘troid से पूछें’ तक पहुँचा नहीं जा सका।,,"troid stays lowercase, in Latin letters"
 chat.js.ended,This session has ended. Reloading the page starts a new one.,यह सत्र समाप्त हो गया है। पेज दोबारा लोड करने पर नया सत्र शुरू होता है।,,
 chat.js.switched_off,switched off,बंद,,
@@ -700,6 +702,10 @@ chat.js.tool_call_1,{n} tool call · ,{n} टूल कॉल · ,,keep {n} exac
 chat.js.tool_call_n,{n} tool calls · ,{n} टूल कॉल · ,,keep {n} exactly as written
 chat.js.error,error {status},एरर {status},,keep {status} exactly as written
 chat.js.waiting,…,…,,
+chat.js.copied,copied,,,NEW: translate it in reviewer_edit | 
+chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
+chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.meta.title,troid — what the numbers actually say,troid — आँकड़े असल में क्या कहते हैं,,"troid stays lowercase, in Latin letters"
 faq.hero.h1,What the numbers actually say,आँकड़े असल में क्या कहते हैं,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","बेस रेट, नियम कैसे काम करते हैं, और troid के अपने हितों के टकराव — वे बातें जो एक लैंडिंग पेज छोड़ देता है।",,"troid stays lowercase, in Latin letters"
@@ -838,6 +844,16 @@ troid's own strategy tested out of sample at +0.008R over 504 trades — no edge
 page says so.","<a href=""{L}/ledger"">troid लेजर</a> हर चार घंटे में अपने नतीजे प्रकाशित करता है, लॉस समेत।
 troid की अपनी रणनीति का आउट-ऑफ़-सैंपल परीक्षण 504 ट्रेडों पर +0.008R आया — कोई एज नहीं — और
 पेज यह बात कहता है।",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
+message box, and deleted automatically 30 days after its last message. troid keeps your messages,
+ask troid's replies, the tools it used with their inputs and results, the rule sources and read
+dates it cited, the page's language and the AI model used; never your IP address, your browser's
+user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
+to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
+troid can read them. They are never sold and never used for marketing or to train an AI model. To
+delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
+<a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,क्या चैलेंज ख़रीदना फ़ायदेमंद है?,,
 faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
 reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
@@ -944,16 +960,14 @@ terms.hero.eyebrow,troid · terms,troid · शर्तें,,"troid stays lowe
 terms.hero.h1,Terms of use,उपयोग की शर्तें,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","troid एक मुफ़्त सूचनात्मक टूल है। यह सलाह नहीं है, यह कोई ऑर्डर नहीं लगाता, और फ़र्म के अपने दस्तावेज़ ही मान्य हैं। पूरी शर्तें नीचे हैं।",,"troid stays lowercase, in Latin letters"
-terms.draft,"Draft of 23 September 2026, effective from that date and published ahead of review by counsel.
-Counsel's edits will replace this version, and this date will change when they do.","23 सितंबर 2026 का ड्राफ़्ट, उसी तारीख से प्रभावी, और कानूनी सलाहकार की समीक्षा से पहले प्रकाशित।
-कानूनी सलाहकार के संशोधन इस संस्करण की जगह लेंगे, और तब यह तारीख बदल जाएगी।",,keep every number exactly
+terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,विषय-सूची,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.","यह ‘troid से पूछें’ है, एक स्वचालित सहायक। यह कोई इंसान नहीं है और वित्तीय सलाह नहीं है। यह हर फ़र्म के अपने प्रकाशित नियमों और की गई गणना से जवाब देता है, और स्रोत दिखाता है — या बताता है कि स्रोत अभी दर्ज नहीं है। कोई भी कदम उठाने से पहले फ़र्म से सत्यापित करें।",,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,‘troid से पूछें’ प्रॉप-फ़र्म के नियमों और साइज़िंग से जुड़े सवालों के जवाब देता है। अपमानजनक संदेश सत्र को समाप्त कर देते हैं।,,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,यह सत्र समाप्त हो गया है। ‘troid से पूछें’ प्रॉप-फ़र्म के नियमों और साइज़िंग से जुड़े सवालों के जवाब देता है।,,"troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","‘troid से पूछें’ इसका जवाब नहीं दे सकता। troid डेस्क और troid तुलना नियम, उनके स्रोत और गणना दिखाते हैं; किसी और चीज़ के लिए hello@troid.ai पर लिखें।",,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
 ask.note,Not financial advice. Verify with the firm before acting.,वित्तीय सलाह नहीं। कोई भी कदम उठाने से पहले फ़र्म से सत्यापित करें।,,
-ask.err.switched_off,ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.,‘troid से पूछें’ तब तक बंद है जब तक troid की शर्तों और ‘troid से पूछें’ के गार्डरेल्स की कानूनी समीक्षा नहीं हो जाती।,,"troid stays lowercase, in Latin letters"
+ask.err.switched_off,ask troid is switched off at the moment.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.err.not_configured,ask troid is not fully configured.,‘troid से पूछें’ पूरी तरह कॉन्फ़िगर नहीं है।,,"troid stays lowercase, in Latin letters"
 ask.err.limit,Limit: {n} messages an hour.,सीमा: प्रति घंटा {n} संदेश।,,keep {n} exactly as written
 ask.err.too_long,Keep one message under {n} characters.,एक संदेश {n} कैरेक्टर से कम रखें।,,keep {n} exactly as written
@@ -967,6 +981,7 @@ ask.err.error,ask troid hit an error. Try again in a minute.,‘troid से प
 ask.cut,[This answer hit its length limit and is cut short.],[यह जवाब अपनी लंबाई की सीमा तक पहुँच गया और अधूरा रह गया है।],,
 ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]","[‘troid से पूछें’ एक संदेश के लिए अपनी टूल-कॉल या समय की सीमा तक पहुँच गया। दोबारा पूछें, ज़्यादा सीमित सवाल के साथ।]",,"troid stays lowercase, in Latin letters"
 ask.no_answer,No answer produced.,कोई जवाब तैयार नहीं हुआ।,,
+ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.173bc3120e68,discretionary,फ़र्म के विवेक पर,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly

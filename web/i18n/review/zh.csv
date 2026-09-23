@@ -577,6 +577,9 @@ chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic 
 chat.eyebrow,"<span style=""text-transform:none"">ask troid</span> · automated assistant","<span style=""text-transform:none"">troid 问答</span> · 自动助手",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.status.checking,checking whether the assistant is switched on…,正在检查助手是否已开启…,,
 chat.placeholder,"e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it.","例如：Bitfunded 1-Step，额度 $100k，净值 96,000，在 77,872 做空，止损 0.3%——计算仓位。",,keep every number exactly
+chat.session.line,Session {id} — quote this if you contact troid about this conversation.,,,"NEW: translate it in reviewer_edit | keep {id} exactly as written; troid stays lowercase, in Latin letters"
+chat.session.copy,copy,,,NEW: translate it in reviewer_edit | 
+chat.session.delete,delete this conversation,,,NEW: translate it in reviewer_edit | 
 chat.send,send,发送,,
 chat.nfa,Not financial advice. Verify with the firm before acting.,不构成财务建议。行动前请向公司核实。,,
 chat.is.h2,What it is,它是什么,,
@@ -588,19 +591,19 @@ chat.is.p,"A chat over <a href=""/TROID.md"">TROID.md</a>, the rules on
   model reports what they return. Every number carries its tier. A pending rule stays pending.","一个基于 <a href=""/TROID.md"">TROID.md</a>、<a href=""{L}/compare"">troid 对比</a>上的规则、<a href=""/METHODOLOGY.md"">方法论</a>和一份固定<a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">客服脚本</a>的对话。仓位计算、预算和合规检查都通过工具进行：工具负责算术，并注明所用每条规则的文件和读取日期，或说明其来源尚未记录；模型报告工具返回的结果。每个数字都标明其可信度层级。待定的规则仍标为待定。",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 chat.isnt.h2,What it isn't,它不是什么,,
 chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid stores nothing you type; the page keeps the conversation only while it is open. To
-  answer, troid sends the conversation to the company that provides the AI model, which may
-  keep it for a limited period under its own terms. troid's log records one line per message:
-  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
-  the fixed reply given when the AI model declines to answer, or the end of the session, and an
-  error's status code. Never the text, never your address. The hosting provider keeps its own
-  request logs, which can include your IP address. About 20 messages an hour per address.",它不是信号服务，不是对某家公司的推荐，不保留对你的记忆，也不是接触你账户的途径。troid 不存储你输入的任何内容；页面只在打开期间保留对话。为了作答，troid 会把对话发送给提供 AI 模型的公司，该公司可能依据其自身条款在有限期限内保留对话。troid 的日志每条消息记录一行：已回答或失败、工具调用、所调用的模型、回复是否为滥用警告、AI 模型拒绝回答时给出的固定回复或会话结束，以及错误的状态码。从不记录文本，从不记录你的地址。托管服务商会保留自己的请求日志，其中可能包括你的 IP 地址。每个地址每小时约 20 条消息。,,"CHECK FIRST: chat.isnt.p: 'Never your address' became 从不记录你的地址. The English means the IP address, and the Chinese keeps the English's vagueness. index.js.list_and / compare.js.list_and are '{a} 和 {b}' with spaces, since they mostly join ISO dates. | keep every number exactly; troid stays lowercase, in Latin letters"
+  troid keeps each conversation for 30 days after its last message, under the session ID shown
+  under the message box, then deletes it automatically: your messages, ask troid's replies, the
+  tools used and the sources cited. Never your IP address, your browser, your name or an account.
+  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  to train a model. To answer, troid also sends the conversation to the company that provides the
+  AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
+  its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: chat.isnt.p: 'Never your address' became 从不记录你的地址. The English means the IP address, and the Chinese keeps the English's vagueness. index.js.list_and / compare.js.list_and are '{a} 和 {b}' with spaces, since they mostly join ISO dates. | keep every number exactly; troid stays lowercase, in Latin letters"
 chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","troid 问答可能出错；以公司自己的文件为准。行动前请向公司核实。详情见 <a href=""{L}/terms#ask-troid"">troid 条款第 10 节</a>。",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 chat.js.full,This conversation has reached its limit of {n} questions. Reloading the page starts a new one.,本次对话已达到 {n} 个问题的上限。重新加载页面即可开始新的对话。,,keep {n} exactly as written
 chat.js.status_on,on · {firms}{limit} messages an hour · no memory between visits,已开启 · {firms}每小时 {limit} 条消息 · 两次访问之间不保留记忆,,keep {firms} {limit} exactly as written
 chat.js.status_firms,{n} firms · ,{n} 家公司 · ,,keep {n} exactly as written
-chat.js.status_off,ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.,troid 问答已建成，目前处于关闭状态。待 troid 的条款和 troid 问答的防护规则完成法律审查后，它才会上线。在此之前，由首页上的 troid 风控台进行计算。,,"troid stays lowercase, in Latin letters"
+chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,无法连接 troid 问答。,,"troid stays lowercase, in Latin letters"
 chat.js.ended,This session has ended. Reloading the page starts a new one.,本次会话已结束。重新加载页面即可开始新的会话。,,
 chat.js.switched_off,switched off,已关闭,,
@@ -608,6 +611,10 @@ chat.js.tool_call_1,{n} tool call · ,{n} 次工具调用 · ,,keep {n} exactly 
 chat.js.tool_call_n,{n} tool calls · ,{n} 次工具调用 · ,,keep {n} exactly as written
 chat.js.error,error {status},错误 {status},,keep {status} exactly as written
 chat.js.waiting,…,…,,
+chat.js.copied,copied,,,NEW: translate it in reviewer_edit | 
+chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
+chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.meta.title,troid — what the numbers actually say,troid——这些数字究竟说明了什么,,"troid stays lowercase, in Latin letters"
 faq.hero.h1,What the numbers actually say,这些数字究竟说明了什么,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.",基础比率、规则机制，以及 troid 自身的利益冲突——落地页略去不提的那些内容。,,"troid stays lowercase, in Latin letters"
@@ -699,6 +706,16 @@ run it and get the same numbers, including the unflattering ones.",不要仅凭 
 faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
 troid's own strategy tested out of sample at +0.008R over 504 trades — no edge — and the
 page says so.","<a href=""{L}/ledger"">troid 账本</a>每四小时公布一次自己的结果，包括亏损。troid 自己的策略在 504 笔交易的样本外测试中为 +0.008R——没有优势——页面上也写明了这一点。",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
+message box, and deleted automatically 30 days after its last message. troid keeps your messages,
+ask troid's replies, the tools it used with their inputs and results, the rule sources and read
+dates it cited, the page's language and the AI model used; never your IP address, your browser's
+user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
+to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
+troid can read them. They are never sold and never used for marketing or to train an AI model. To
+delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
+<a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,挑战值得买吗？,,
 faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
 reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
@@ -767,15 +784,14 @@ terms.hero.eyebrow,troid · terms,troid · 条款,,"troid stays lowercase, in La
 terms.hero.h1,Terms of use,使用条款,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.",troid 是一个免费的信息工具。它不构成建议，不下任何订单，以公司自己的文件为准。完整条款如下。,,"troid stays lowercase, in Latin letters"
-terms.draft,"Draft of 23 September 2026, effective from that date and published ahead of review by counsel.
-Counsel's edits will replace this version, and this date will change when they do.",2026 年 9 月 23 日的草案，自该日起生效，在律师审阅之前发布。律师的修改将取代此版本，届时此日期也会随之更改。,,keep every number exactly
+terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,目录,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.",这是 troid 问答，一个自动助手。它不是真人，也不构成财务建议。它依据各公司自己公布的规则和计算结果作答，并注明来源——或在来源尚未记录时说明这一点。行动前请向公司核实。,,"troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,troid 问答回答关于自营交易公司规则和仓位计算的问题。辱骂性消息将导致会话结束。,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,本次会话已结束。troid 问答回答关于自营交易公司规则和仓位计算的问题。,,"troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.",troid 问答无法回答这个问题。troid 风控台和 troid 对比会展示规则、规则来源和计算过程；其他任何事宜，请写信至 hello@troid.ai。,,"troid stays lowercase, in Latin letters"
 ask.note,Not financial advice. Verify with the firm before acting.,不构成财务建议。行动前请向公司核实。,,
-ask.err.switched_off,ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.,在 troid 的条款和 troid 问答的防护规则完成法律审查之前，troid 问答处于关闭状态。,,"troid stays lowercase, in Latin letters"
+ask.err.switched_off,ask troid is switched off at the moment.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.err.not_configured,ask troid is not fully configured.,troid 问答尚未完全配置。,,"troid stays lowercase, in Latin letters"
 ask.err.limit,Limit: {n} messages an hour.,上限：每小时 {n} 条消息。,,keep {n} exactly as written
 ask.err.too_long,Keep one message under {n} characters.,单条消息请控制在 {n} 个字符以内。,,keep {n} exactly as written
@@ -789,6 +805,7 @@ ask.err.error,ask troid hit an error. Try again in a minute.,troid 问答出错�
 ask.cut,[This answer hit its length limit and is cut short.],[该回答达到长度上限，已被截断。],,
 ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",[troid 问答在单条消息内达到了工具调用或时间上限。请缩小范围后再问一次。],,"troid stays lowercase, in Latin letters"
 ask.no_answer,No answer produced.,未生成回答。,,
+ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.173bc3120e68,discretionary,酌情决定,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly

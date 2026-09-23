@@ -18,17 +18,26 @@
  * history, and gives the warning otherwise); a model safety refusal (stop_reason "refusal"), which gets a
  * fixed reply; and the history itself, which is signed turn by turn so a client cannot write troid's side
  * of the conversation. The "should I" refusal set is the model's, worded by support.md section 4. The
- * service keeps no state, so a client that rewinds to an earlier signed turn, or reloads, starts over;
- * the rate limit is the brake on that.
+ * service holds no conversation state between messages, so a client that rewinds to an earlier signed
+ * turn, or reloads, starts over; the rate limit is the brake on that.
  *
- * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY and a TROID_TURN_KEY of at least 32 bytes set.
- * Otherwise POST answers 503 and spends nothing. Neither key ever leaves the environment.
+ * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
+ * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
+ * and spends nothing, so the disclosure never promises a log that is not being kept. No key ever leaves
+ * the environment.
  *
- * Logging: one line per message sent to the AI model — tool calls, the model called, and warned /
- * refusal / ended / error flags, with the HTTP status of a failed upstream call. No text, no address. A
- * message turned away before any call (switched off, busy, over the limit, malformed, unverifiable) is not
- * logged. The owner may choose 30-day conversation logging instead (audit handoff §4); until then this is
- * count-only, as the terms state.
+ * Conversations (owner's decision, launch handoff §1): kept 30 days under a session ID the page creates
+ * (128 random bits) and that every signature covers. Key conv:<session>, one entry per message: the time,
+ * the page's language, the message, the reply, each tool call with its inputs and result, the sources and
+ * read dates cited, the model. Never an IP address, a user agent, a name or an account. The 30-day expiry
+ * is set again on every write, so nothing needs deleting by hand. DELETE /api/troid?session=<id> with the
+ * session's delete token (returned with every reply) removes it at once. No endpoint returns a transcript;
+ * the owner reads them in the Upstash console.
+ *
+ * Logging: also one line per message sent to the AI model — tool calls, the model called, whether the
+ * conversation store took the entry, and warned / refusal / ended / error flags, with the HTTP status of a
+ * failed upstream call. No text, no address. A message turned away before any call (switched off, busy,
+ * over the limit, malformed, unverifiable) is neither logged nor stored.
  *
  * Limits: about 20 messages an hour per address (IPv6 by /64), in memory, per instance — a brake, not
  * a wall. A per-instance ceiling on model calls an hour and a 50s deadline per message bound the
@@ -42,6 +51,12 @@ const Anthropic = require("@anthropic-ai/sdk").default;
 const ENABLED = process.env.TROID_ASSISTANT === "on";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // signs troid's side of the history
+// The 30-day conversation store: Upstash Redis over its REST API (the Vercel Marketplace integration sets
+// KV_REST_API_URL / KV_REST_API_TOKEN; Upstash's own names are accepted too).
+const STORE_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, "");
+const STORE_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN || "";
+const RETENTION_S = 2_592_000;                                                // 30 days, set again on every write
+const SESSION_RE = /^[0-9a-f]{32}$/;                                          // 128 random bits, made by the page
 const BASE_URL = process.env.ANTHROPIC_BASE_URL || undefined;               // tests point this at a local fake
 const MODEL_LOOKUP = process.env.TROID_MODEL_LOOKUP || "claude-haiku-4-5";   // lookups
 const MODEL_TOOLS = process.env.TROID_MODEL_TOOLS || "claude-sonnet-5";      // anything that calls a tool
@@ -57,7 +72,7 @@ const MAX_RETRY_WAIT_MS = 10_000;                                            // 
 const DEADLINE_MS = Math.min(Math.max(num(process.env.TROID_DEADLINE_MS, 50_000), MIN_CALL_MS), 55_000);   // one message, every call; the function limit is 60s
 // Fixed wording. context/support.md carries the same text for the model and for review; test_assistant.js
 // fails if the two differ. The service writes these; the model never writes the disclosure.
-const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.";
+const DISCLOSURE = "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.";
 const WARNING = "ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.";
 const END_SESSION = "[[end-session]]";
 const SENTINEL = /\[\[\s*end-session\s*\]\]/gi;                                  // any case, any spacing
@@ -67,7 +82,7 @@ const MAX_MESSAGES = 20;
 const MAX_CHARS = 2000;                                                      // a user message
 const MAX_REPLY_CHARS = 40_000;                                              // an assistant turn (signed, so server-written)
 const MAX_TOTAL_CHARS = 120_000;                                             // the whole history
-const SWITCHED_OFF = "ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.";
+const SWITCHED_OFF = "ask troid is switched off at the moment.";
 const flat = (t) => String(t).replace(/\s+/g, " ").trim();
 // Service text in English. web/i18n/en.json carries the same strings (ask.*) for translation; test_assistant.js
 // fails if they differ. A translated language is used only when its file says _status "live".
@@ -86,6 +101,7 @@ const EN = {
   "ask.cut": "[This answer hit its length limit and is cut short.]",
   "ask.tool_limit": "[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",
   "ask.no_answer": "No answer produced.",
+  "ask.err.session": "This conversation has no valid session ID. Reloading the page starts a new one.",
 };
 // A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
 // not a reply that explains the rule. A paraphrased warning earns one more exact warning, never none.
@@ -638,11 +654,41 @@ const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason
 // including it, and the next message must bring it back. Stateless; nothing is stored. The HMAC input starts
 // with a hash of the guardrails, so a history signed under older guardrails no longer verifies.
 const VERSION = crypto.createHash("sha256").update(GUARDRAILS).digest("hex").slice(0, 16);
-const sign = (msgs) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([VERSION, ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
-function signedOk(msgs, sig) {
+// The session ID is inside the signature, so a conversation cannot move to another session mid-way.
+const sign = (msgs, session) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([VERSION, String(session || ""), ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
+function signedOk(msgs, sig, session) {
   if (msgs.length === 1) return true;
-  const want = Buffer.from(sign(msgs.slice(0, -1))), got = Buffer.from(String(sig || ""));
+  const want = Buffer.from(sign(msgs.slice(0, -1), session)), got = Buffer.from(String(sig || ""));
   return got.length === want.length && crypto.timingSafeEqual(got, want);
+}
+// What the page must show to delete its own conversation: an HMAC of the session ID under the turn key. It
+// does not depend on the guardrails, so it stays valid for the 30 days the conversation is kept.
+const deleteToken = (session) => crypto.createHmac("sha256", TURN_KEY).update("troid-delete\0" + session).digest("base64url");
+function tokenOk(session, token) {
+  const want = Buffer.from(deleteToken(session)), got = Buffer.from(String(token || ""));
+  return got.length === want.length && crypto.timingSafeEqual(got, want);
+}
+
+// ---------------------------------------------------------------- the conversation store
+const storeOn = () => !!(STORE_URL && STORE_TOKEN);
+// One transaction (MULTI/EXEC) over Upstash's REST API; throws if any command fails.
+async function store(commands, ms) {
+  const r = await fetch(STORE_URL + "/multi-exec", { method: "POST", signal: AbortSignal.timeout(ms || 3000),
+    headers: { authorization: "Bearer " + STORE_TOKEN, "content-type": "application/json" }, body: JSON.stringify(commands) });
+  const out = await r.json().catch(() => null);
+  if (!r.ok || !Array.isArray(out) || out.some((x) => !x || x.error)) throw new Error("store " + r.status);
+  return out.map((x) => x.result);
+}
+// One entry per message, built field by field from what the service itself holds: nothing from the request's
+// headers, so no address and no user agent can reach it.
+function entry(lang, user, reply, model, tools, flags) {
+  const sources = [];
+  for (const t of tools) for (const s of ((t.result && t.result.sources) || [])) sources.push(s);
+  return JSON.stringify(Object.assign({ at: new Date().toISOString(), lang, user, reply, model, tool_calls: tools, sources }, flags || {}));
+}
+async function keep(session, text) {
+  const key = "conv:" + session;
+  await store([["RPUSH", key, text], ["EXPIRE", key, String(RETENTION_S)]]);
 }
 // null if the history is malformed; otherwise the messages, trimmed
 function validate(body) {
@@ -667,7 +713,8 @@ const tooLong = (body) => {                                  // only the new mes
   return !!(last && last.role === "user" && typeof last.content === "string" && last.content.trim().length > MAX_CHARS);
 };
 function json(res, code, obj) { res.statusCode = code; res.setHeader("content-type", "application/json; charset=utf-8"); res.end(JSON.stringify(obj)); }
-const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32;
+const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32 && storeOn();
+const querySession = (req) => { try { return (req.query && req.query.session) || new URL(req.url || "/", "http://x").searchParams.get("session") || ""; } catch (e) { return ""; } };
 
 function queryLang(req) {
   try { return (req.query && req.query.lang) || new URL(req.url || "/", "http://x").searchParams.get("lang"); } catch (e) { return null; }
@@ -682,9 +729,20 @@ module.exports = async (req, res) => {
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
-                            disclosure: S(lang, "ask.disclosure"), context: ctx });
+                            disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx });
   }
-  if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}]}" });
+  if (req.method === "DELETE") {                                        // the page's own conversation, at once
+    if (!storeOn() || Buffer.byteLength(TURN_KEY) < 32) return json(res, 503, { error: S(lang, "ask.err.not_configured") });
+    const site = req.headers["sec-fetch-site"];
+    if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
+    if (!allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
+    const session = String(querySession(req));
+    if (!SESSION_RE.test(session)) return json(res, 400, { error: S(lang, "ask.err.session") });
+    if (!tokenOk(session, req.headers["x-troid-token"])) return json(res, 403, { deleted: false, error: "Only the page that holds this conversation can delete it here. Otherwise write to hello@troid.ai with the session ID." });
+    try { const [n] = await store([["DEL", "conv:" + session]]); return json(res, 200, { deleted: true, existed: n > 0, session }); }
+    catch (e) { return json(res, 502, { deleted: false, error: S(lang, "ask.err.error") }); }
+  }
+  if (req.method !== "POST") return json(res, 405, { error: "POST {messages:[{role, content}], session}" });
   if (!ENABLED) return json(res, 503, { enabled: false, error: S(lang, "ask.err.switched_off") });
   if (!isOn()) return json(res, 503, { enabled: false, error: S(lang, "ask.err.not_configured") });
   // Same-origin JSON only: a cross-site form or no-cors fetch can't spend troid's key from someone else's page.
@@ -699,12 +757,15 @@ module.exports = async (req, res) => {
   if (tooLong(body)) return json(res, 413, { error: S(lang, "ask.err.too_long", { n: MAX_CHARS }) });
   const messages = validate(body);
   if (!messages) return json(res, 400, { restart: true, error: S(lang, "ask.err.restart", { n: MAX_MESSAGES - 1 }) });
-  if (!signedOk(messages, body.sig)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
+  const session = String(body.session || "");
+  if (!SESSION_RE.test(session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.session") });
+  if (!signedOk(messages, body.sig, session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));
   const deadlineAt = Date.now() + DEADLINE_MS;
   let sent = null, toolCalls = 0;
+  const toolLog = [];                                                   // each tool call with its inputs and result, for the store
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
     let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang);
@@ -716,6 +777,7 @@ module.exports = async (req, res) => {
       convo.push({ role: "assistant", content: resp.content });        // unchanged, thinking blocks included
       convo.push({ role: "user", content: uses.map((u) => {
         const out = runTool(u.name, u.input);
+        toolLog.push({ name: u.name, input: u.input, result: out });
         return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
       }) });
       resp = await callModel("tools", convo, deadlineAt, onSend, lang);
@@ -742,10 +804,14 @@ module.exports = async (req, res) => {
     const CUT = "\n\n" + S(lang, "ask.cut");
     if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
     Object.assign(log, { tool_calls: toolCalls, model: sent });
+    const user = messages[messages.length - 1].content;
+    try { await keep(session, entry(lang, user, reply, sent, toolLog, ended ? { ended: 1 } : log.refusal ? { refusal: 1 } : null)); log.stored = 1; }
+    catch (e) { log.store_error = 1; }
     console.log(JSON.stringify(log));
-    const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note") };
+    const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note"),
+                  session, delete_token: deleteToken(session) };
     if (!ended) {
-      out.sig = sign([...messages, { role: "assistant", content: reply }]);
+      out.sig = sign([...messages, { role: "assistant", content: reply }], session);
       const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
       if (messages.length + 2 > MAX_MESSAGES || total + MAX_CHARS > MAX_TOTAL_CHARS) out.full = true;   // the next message could not fit
     }
@@ -753,21 +819,27 @@ module.exports = async (req, res) => {
   } catch (e) {
     Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent });
     if (e && typeof e.status === "number") log.status = e.status;
+    try {                                                               // the message is kept even when no answer came back
+      await keep(session, entry(lang, messages[messages.length - 1].content, null, sent, toolLog, { error: log.status || 1 }));
+      log.stored = 1;
+    } catch (e2) { log.store_error = 1; }
     console.log(JSON.stringify(log));
+    const E = (code, obj) => json(res, code, Object.assign(obj, { session, delete_token: deleteToken(session) }));   // stored: deletable
     // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError. A body
     // read cut by the deadline surfaces as a bare DOMException (AbortError / TimeoutError).
     if (e && (e.deadline || e instanceof Anthropic.APIUserAbortError || e instanceof Anthropic.APIConnectionTimeoutError || e.name === "AbortError" || e.name === "TimeoutError"))
-      return json(res, 504, { error: S(lang, "ask.err.timeout") });
-    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError)) return json(res, 503, { enabled: true, error: S(lang, "ask.err.busy") });
-    if (e instanceof Anthropic.APIConnectionError) return json(res, 502, { error: S(lang, "ask.err.unreachable") });
+      return E(504, { error: S(lang, "ask.err.timeout") });
+    if (e && (e.busy || e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError)) return E(503, { enabled: true, error: S(lang, "ask.err.busy") });
+    if (e instanceof Anthropic.APIConnectionError) return E(502, { error: S(lang, "ask.err.unreachable") });
     if (e instanceof Anthropic.AuthenticationError || e instanceof Anthropic.PermissionDeniedError || e instanceof Anthropic.NotFoundError || e instanceof Anthropic.BadRequestError)
-      return json(res, 500, { error: S(lang, "ask.err.misconfigured") });
-    if (e instanceof Anthropic.APIError) return json(res, 502, { error: S(lang, "ask.err.unreachable") });
-    return json(res, 502, { error: S(lang, "ask.err.error") });
+      return E(500, { error: S(lang, "ask.err.misconfigured") });
+    if (e instanceof Anthropic.APIError) return E(502, { error: S(lang, "ask.err.unreachable") });
+    return E(502, { error: S(lang, "ask.err.error") });
   }
 };
 module.exports.tools = RUN;   // for tests
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
-module.exports._sign = (msgs) => sign(msgs);   // for tests
+module.exports._sign = (msgs, session) => sign(msgs, session);   // for tests
+module.exports._deleteToken = deleteToken;                         // for tests
 module.exports._clientKey = clientKey;

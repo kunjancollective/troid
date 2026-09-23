@@ -27,11 +27,16 @@ the reviewer, by key. `review/{lang}.csv` is the sheet to send.
    `key, english, draft, reviewer_edit, note`, UTF-8 for Google Sheets. Product names come first (they are fixed
    once and used everywhere), then shared lines, then each page in page order, then text from firm data. Rows
    whose note starts `CHECK FIRST:` are the drafter's doubts; a row with an empty key is a general question.
-   The reviewer fills `reviewer_edit` where the draft is wrong and leaves it empty where it is right.
-2. `python backtest/i18n_import.py {lang} returned.csv --by INITIALS --on YYYY-MM-DD [--dry-run]` applies the
-   edits, checks every string against its English, and writes `{lang}.json` with `_reviewed_by`, `_reviewed_on`
-   and `_status: "live"`. A sheet is refused whole if an English cell changed since the export (export again), a
-   key has no value, or any string breaks the contract.
+   The reviewer fills `reviewer_edit` where the draft is wrong and leaves it empty where it is right. It also
+   writes `review/{lang}-update.csv` with only the rows that are new or whose English changed since the draft, for
+   a reviewer who already has the full sheet. `review/README.md` is the reviewer packet: how to fill the sheet,
+   and the sharing rules the affiliate contracts set (organic only; no boosted or paid posts; no coupon or deal
+   sites).
+2. `python backtest/i18n_import.py {lang} returned.csv [returned-update.csv] --by INITIALS --on YYYY-MM-DD
+   [--dry-run]` applies the edits (an update sheet's rows replace the full sheet's), checks every string against
+   its English, and writes `{lang}.json` with `_reviewed_by`, `_reviewed_on` and `_status: "live"`. It is refused
+   whole if an English cell changed since the export (add the update sheet, or export again), a key has no value,
+   or any string breaks the contract.
 3. `python backtest/gen_og.py {lang}` renders `web/public/og/{lang}.png` (the share image with the translated
    tagline; needs `(cd tools/og && npm install)` once).
 4. `python backtest/i18n_check_pages.py {lang}` (every page in Chromium at 390 and 1280 px), then the build

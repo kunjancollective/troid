@@ -13,7 +13,7 @@ Lightweight Charts on the ledger (cdn.jsdelivr.net, version pinned).
 | `public/ledger.html` | `/ledger` | troid's ledger, the shadow account: heartbeat, runs, every closed trade, drawn — `backtest/gen_ledger.py` |
 | `public/tearsheet.html` | `/tearsheet` | Part of troid's research: quantstats over the journal — `backtest/gen_tearsheet.py` |
 | `public/dashboard.html` | `/dashboard` | Part of troid's research: strategy review and audit findings |
-| `public/chat.html` | `/chat` | ask troid — built, switched off until troid's terms and ask troid's guardrails have had legal review |
+| `public/chat.html` | `/chat` | ask troid — on once the owner sets the environment below; conversations kept 30 days |
 | `public/terms.html` | `/terms` | Terms of use — a draft published ahead of counsel's review |
 
 | `public/{lang}/…` | `/zh`, `/zh/compare`, … | The same pages in a language whose reviewer has signed off (`i18n/{lang}.json` `_status: live`). None yet. |
@@ -44,13 +44,14 @@ country; it never says a firm is available). Arithmetic goes through the tools, 
 sizing tools return each formula and intermediate value, and every rule-based result lists the
 document, section and read date of the rules it used, or says the source is not yet recorded (explain_rule is written text, as its tier says).
 
-Switched off until troid's terms and ask troid's guardrails have had legal review:
+Switched on by the owner in Vercel → Project → Environment Variables. Without all four of the first four rows it stays off and answers 503:
 
 | env | meaning |
 |---|---|
 | `TROID_ASSISTANT` | `on` enables it. Anything else: the page says it is switched off and the function answers 503, spending nothing. |
 | `ANTHROPIC_API_KEY` | the key. Never in the repo. Put it in its own Anthropic Console workspace with a monthly spend limit: that limit is the only hard wall on cost. |
 | `TROID_TURN_KEY` | 32 random bytes or more. Signs troid's side of each conversation so a client cannot forge it; a change to the guardrails also invalidates older conversations. Required: without it, or with a shorter key, the function answers 503. |
+| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the conversation store: Upstash Redis, added from the Vercel Marketplace (Upstash's own `UPSTASH_REDIS_REST_URL` / `_TOKEN` also work). Required: the disclosure promises a 30-day record, so without a store ask troid stays off. |
 | `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
 | `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
 | `TROID_TOOLS_EFFORT` | effort on the tool route (default `low`; `none` omits it). Compare `low` and `medium` on real transcripts before switch-on. |
@@ -63,11 +64,21 @@ is answered "busy" at once. Before switch-on, also add a Vercel WAF rate-limit r
 `POST /api/troid`, which holds across instances. Only same-origin `application/json` requests
 are answered, so another site cannot spend the key through its visitors' browsers.
 
-Logs one line per message it answers or fails to answer: tool-call count, model, the warned /
-refusal / ended / error flags and an upstream status code. Never text, never an address (terms
-section 10). No memory across sessions, no account, no credentials. The page keeps the
-conversation only while it is open. `GET /api/troid` reports whether it is on, the models and
-the size of each context file, so a deploy can be checked without a key.
+Conversations (terms section 10): the page makes a random 128-bit session ID, shows it under the message
+box, and sends it with every message; each signature covers it. Each message is appended to `conv:<session>`
+in the store, and the 30-day expiry (2,592,000 s) is set again on every write, so nothing is deleted by hand.
+An entry holds the time, the page's language, the message, the reply, each tool call with its inputs and
+result, the sources and read dates cited, and the model. It is built from fields the service holds, never
+from request headers: no IP address, no user agent, no name, no account. `DELETE /api/troid?session=<id>`
+with the session's delete token (header `x-troid-token`, returned with every reply) removes it at once;
+requests by email to hello@troid.ai are handled in the Upstash console, which is also the only place a
+transcript can be read. No endpoint returns one.
+
+The server log also gets one line per message it answers or fails to answer: tool-call count, model,
+whether the store took the entry, the warned / refusal / ended / error flags and an upstream status code.
+Never text, never an address. No memory across sessions, no account, no credentials. `GET /api/troid`
+reports whether it is on, whether the store is configured, the models and the size of each context file,
+so a deploy can be checked without a key.
 
 Languages: the page sends its language (`?lang=` and `lang` in the body). The disclosure, the warning, the
 refusal and every other fixed reply come from `i18n/{lang}.json` (`ask.*`) when that language is live, and from

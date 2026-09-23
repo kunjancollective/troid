@@ -3,6 +3,7 @@
 
   python i18n_import.py ar returned.csv --by NA --on 2026-10-02
   python i18n_import.py ar returned.csv --by NA --on 2026-10-02 --dry-run
+  python i18n_import.py ar returned.csv returned-update.csv --by NA --on 2026-10-02   # with the update sheet
 
 For every row the value is reviewer_edit where the reviewer wrote one, otherwise the draft. The sheet is refused
 if any English cell no longer matches en.json (the page changed since the export: export again), if any key is
@@ -34,6 +35,18 @@ def read_sheet(path):
     return rows
 
 
+def read_sheets(paths):
+    """The full sheet, then any update sheets: a later sheet's row replaces an earlier row for the same key, so
+    an update sheet supplies the strings that were new or changed after the full sheet went out."""
+    merged = {}
+    for path in paths:
+        for r in read_sheet(path):
+            k = (r["key"] or "").strip()
+            if k:
+                merged[k] = r
+    return list(merged.values())
+
+
 def build(code, rows):
     en = i18n.english()
     out, data_en, problems, edited = {}, {}, [], 0
@@ -56,7 +69,8 @@ def build(code, rows):
             problems.append(f"{k}: no longer a key in en.json; export again")
             continue
         elif r["english"] != en[k]:
-            problems.append(f"{k}: the English has changed since this sheet was exported; export again")
+            problems.append(f"{k}: the English has changed since this sheet was exported; add the update sheet "
+                            f"(web/i18n/review/{code}-update.csv, filled in) after this one, or export again")
             continue
         out[k] = value
     for k in en:
@@ -72,7 +86,7 @@ def build(code, rows):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("lang")
-    ap.add_argument("sheet")
+    ap.add_argument("sheets", nargs="+", help="the returned sheet, then any returned update sheet ({lang}-update.csv)")
     ap.add_argument("--by", required=True, help="the reviewer's initials")
     ap.add_argument("--on", default=dt.date.today().isoformat(), help="the date the reviewer signed off")
     ap.add_argument("--dry-run", action="store_true")
@@ -80,7 +94,7 @@ def main():
     if a.lang not in i18n.BY_CODE or a.lang == "en":
         raise SystemExit(f"unknown language {a.lang}")
     dt.date.fromisoformat(a.on)
-    out, data_en, problems, edited = build(a.lang, read_sheet(a.sheet))
+    out, data_en, problems, edited = build(a.lang, read_sheets(a.sheets))
     if problems:
         print(f"{a.lang}: {len(problems)} problem(s); nothing written.")
         for p in problems[:80]:

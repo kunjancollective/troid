@@ -8,6 +8,9 @@ shared lines, then each page, then text that comes from firm data (firms.json).
 
   python i18n_export.py            # every language with a file
   python i18n_export.py ar zh
+
+Also writes review/{lang}-update.csv with only the new or changed rows, for a reviewer who already has the
+full sheet; i18n_import.py reads the two together.
 """
 import csv
 import sys
@@ -80,10 +83,31 @@ def export(code, data):
             if check.get(k):
                 note = " | ".join(["CHECK FIRST: " + q for q in check[k]] + ([note] if note else []))
             draft = s.get(k, "")
-            if k in stale and draft:        # the English changed after this draft: never offer the old translation
-                draft, note = "", "ENGLISH CHANGED after the draft: translate it in reviewer_edit | " + note
+            if k in stale:                   # never offer an old translation beside new English
+                note = ("ENGLISH CHANGED after the draft" if draft else "NEW") + ": translate it in reviewer_edit | " + note
+                draft = ""
             w.writerow([k, v, draft, "", note])
-    return path, len(rows), sum(1 for k, _ in rows if s.get(k))
+    return path, len(rows), sum(1 for k, _ in rows if s.get(k) and k not in stale)
+
+
+def export_update(code):
+    """review/{lang}-update.csv: only the rows that are new or whose English changed since the draft, for a
+    reviewer who already has the full sheet. i18n_import.py takes both sheets together."""
+    en = i18n.english()
+    stale = [k for k in en if k in set(i18n.stale(code))]
+    path = REVIEW / f"{code}-update.csv"
+    if not stale:
+        if path.exists():
+            path.unlink()
+        return None, 0
+    REVIEW.mkdir(parents=True, exist_ok=True)
+    header, s = i18n.load(code)
+    with path.open("w", newline="", encoding="utf-8-sig") as fh:
+        w = csv.writer(fh)
+        w.writerow(["key", "english", "draft", "reviewer_edit", "note"])
+        for k in stale:
+            w.writerow([k, en[k], "", "", ("ENGLISH CHANGED" if s.get(k) else "NEW") + ": translate it in reviewer_edit | " + note_for(k, en[k])])
+    return path, len(stale)
 
 
 def main():
@@ -91,7 +115,9 @@ def main():
     data = data_strings()
     for c in codes:
         p, n, d = export(c, data)
-        print(f"{c}: {p.relative_to(i18n.ROOT)} · {n} rows · {d} drafted")
+        u, m = export_update(c)
+        print(f"{c}: {p.relative_to(i18n.ROOT)} · {n} rows · {d} drafted"
+              + (f" · {u.relative_to(i18n.ROOT)} · {m} new or changed" if u else ""))
 
 
 if __name__ == "__main__":
