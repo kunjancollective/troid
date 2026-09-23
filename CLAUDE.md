@@ -41,6 +41,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- `web/templates/` + `web/i18n/` — every page is rendered from a template and `en.json` by
+  `backtest/site_build.py` (the generators call it); never hand-edit `web/public/*.html`. A language publishes only
+  when `web/i18n/{lang}.json` is `_status: live`, set by `i18n_import.py` from its native reviewer's sheet.
+  `i18n_equiv.py` proves English unchanged; `web/i18n/README.md` has the workflow.
 - `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
   the compare page, the firms panel and required disclaimers in the marked regions of

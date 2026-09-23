@@ -1,7 +1,9 @@
 # troid.ai — static site
 
-Static pages, no build step, no framework. The only external script is Lightweight Charts
-on the ledger (cdn.jsdelivr.net, version pinned).
+Static pages, no framework. The HTML in `public/` is generated: `backtest/site_build.py` renders
+`templates/` with the strings in `i18n/` (and `gen_compare.py`, `gen_ledger.py`, `gen_tearsheet.py` render
+their pages), in the daily loop. Edit a template or `i18n/en.json`, never the page. The only external script is
+Lightweight Charts on the ledger (cdn.jsdelivr.net, version pinned).
 
 | file | route | what |
 |---|---|---|
@@ -14,7 +16,11 @@ on the ledger (cdn.jsdelivr.net, version pinned).
 | `public/chat.html` | `/chat` | ask troid — built, switched off until troid's terms and ask troid's guardrails have had legal review |
 | `public/terms.html` | `/terms` | Terms of use — a draft published ahead of counsel's review |
 
-`cleanUrls` in `vercel.json` serves `/faq` from `faq.html`.
+| `public/{lang}/…` | `/zh`, `/zh/compare`, … | The same pages in a language whose reviewer has signed off (`i18n/{lang}.json` `_status: live`). None yet. |
+| `public/i18n.js`, `public/i18n.css` | — | Translated pages only: Intl numbers (USD, never converted), local time beside UTC, the country selector, share |
+
+`cleanUrls` in `vercel.json` serves `/faq` from `faq.html`, and a rewrite serves `/zh` from `zh/index.html`.
+Languages: `i18n/README.md`.
 
 ## Deploy
 
@@ -31,9 +37,10 @@ prompt — the guardrails in `api/troid.js`, `public/TROID.md`, `context/support
 support script: the disclosure, the six steps for "the number was wrong", the scam reply, the
 refusal, the abuse warning), the rule data from `context/firms.json` (a copy
 `backtest/gen_compare.py` keeps current; not served; the prompt gets an allowlist of its rule
-fields, never troid's internal notes or affiliate terms), `public/METHODOLOGY.md` — and four
+fields, never troid's internal notes or affiliate terms), `public/METHODOLOGY.md` — and five
 tools ported from `mcp/server.py` and the calculator: `size_trade`, `check_budget`,
-`check_compliance`, `explain_rule`. Arithmetic goes through the tools, never the model; the
+`check_compliance`, `explain_rule`, and `check_availability` (what a firm's recorded terms exclude for a
+country; it never says a firm is available). Arithmetic goes through the tools, never the model; the
 sizing tools return each formula and intermediate value, and every rule-based result lists the
 document, section and read date of the rules it used, or says the source is not yet recorded (explain_rule is written text, as its tier says).
 
@@ -61,6 +68,12 @@ refusal / ended / error flags and an upstream status code. Never text, never an 
 section 10). No memory across sessions, no account, no credentials. The page keeps the
 conversation only while it is open. `GET /api/troid` reports whether it is on, the models and
 the size of each context file, so a deploy can be checked without a key.
+
+Languages: the page sends its language (`?lang=` and `lang` in the body). The disclosure, the warning, the
+refusal and every other fixed reply come from `i18n/{lang}.json` (`ask.*`) when that language is live, and from
+the English in `api/troid.js` otherwise; the guardrails tell the model to answer in the user's language, keep
+numbers, tickers and citations exact, keep troid in Latin script, and say that the English terms govern. The
+page's language reaches the model as a separate, uncached system block, so the cached prompt is shared.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.

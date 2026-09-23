@@ -1,0 +1,838 @@
+﻿key,english,draft,reviewer_edit,note
+product.desk,troid's desk,مكتب troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.compare,troid's compare,مقارنة troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.ledger,troid's ledger,سجل troid,,"CHECK FIRST: product.ledger 'سجل troid': the word سجل is common. Other uses were worded so they never form 'سجل troid': the journal is 'دفتر اليومية', and the chat log (chat.isnt.p) is 'سجلّ الأحداث'. Please check that no remaining سجل reads as the product. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.research,troid's research,أبحاث troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.ask,ask troid,اسأل troid,,"CHECK FIRST: product.ask and every ask.* / chat.* string: 'اسأل troid' is an imperative, so it reads oddly as a sentence subject. In running prose it is wrapped in guillemets («اسأل troid»), while nav labels and titles use it bare. The fixed form still appears verbatim, but the reviewer should confirm that the guillemets, and the imperative itself, are acceptable as a product name. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+og.title,"troid — prop-firm risk, computed",troid — مخاطر شركات تمويل المتداولين، محسوبة,,"troid stays lowercase, in Latin letters"
+og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.",حدّد حجم الصفقة وفق سقفَي الخسارة معًا، بعد خصم الرسوم. مجاني. لا يضع أوامر أبدًا.,,
+og.tagline,"Prop-firm risk, computed.",مخاطر شركات تمويل المتداولين، محسوبة.,,
+share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,يحسب troid حدَّي الخسارة لديك في شركة تمويل المتداولين من قواعد الشركة نفسها. مجاني.,,"troid stays lowercase, in Latin letters"
+common.nav.faq,faq,الأسئلة الشائعة,,
+common.nav.source,source,الشيفرة المصدرية,,
+common.languages,Languages,اللغات,,
+common.discl,"Free · never places orders · troid is an independent affiliate of the firms it
+    <a href=""{L}/compare"">compares</a>","مجاني · لا يضع أوامر أبدًا · troid شريك تسويق مستقل بالعمولة للشركات التي <a href=""{L}/compare"">يقارن بينها</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+common.link.tearsheet,tearsheet,تقرير الأداء,,
+common.link.faq,faq,الأسئلة الشائعة,,
+common.link.terms,terms,الشروط,,
+common.link.source,source,الشيفرة المصدرية,,
+common.link.x,x,x,,
+common.link.reddit,reddit,reddit,,
+common.country.label,Your country,بلدك,,
+common.country.unset,not set,غير محدد,,
+common.country.note,"Preselected from your browser's language, never from your location.",يُحدَّد مسبقًا بناءً على لغة متصفحك، وليس بناءً على موقعك أبدًا.,,
+common.avail.excluded,not available in {country} per the firm's terms,غير متاح في {country} وفقًا لشروط الشركة,,keep {country} exactly as written
+common.avail.platform,{platform}: not available in {country} per the firm's terms,{platform}: غير متاح في {country} وفقًا لشروط الشركة,,keep {country} {platform} exactly as written
+common.avail.not_recorded,troid has not yet recorded which countries this firm's terms exclude. Check them before you buy.,لم يسجّل troid بعد الدول التي تستثنيها شروط هذه الشركة. تحقّق منها قبل الشراء.,,"troid stays lowercase, in Latin letters"
+common.avail.not_excluded,{country} is not on the list of excluded countries troid recorded from this firm's terms. The terms govern.,لم يرد اسم {country} في قائمة الدول المستثناة التي سجّلها troid من شروط هذه الشركة. والشروط هي المعتمدة.,,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere. | keep {country} exactly as written; troid stays lowercase, in Latin letters"
+common.time.local,your time zone,منطقتك الزمنية,,
+common.share,share,مشاركة,,
+common.share.copied,link copied,تم نسخ الرابط,,
+footer.text,"troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.",troid أداة معلوماتية مجانية، وليست نصيحة مالية أو استثمارية. لا يضع troid صفقات ولا ينشر إشارات تداول. حسابه الظلّي استراتيجية مُحاكاة لا تُعرض إلا بعد إغلاق الصفقات. تتغير قواعد شركات تمويل المتداولين دون إشعار — تحقّق من كل رقم مع الشركة قبل التداول. troid شريك تسويق مستقل بالعمولة للشركات التي يقارن بينها، ويتقاضى عمولة على عمليات الشراء التي تتم عبر روابطه؛ ولا يؤثر ذلك في الحسابات أو المقارنات.,,"troid stays lowercase, in Latin letters"
+legal.governs,This translation is provided for convenience. The English version governs.,هذه الترجمة مقدَّمة للتيسير. والنسخة الإنجليزية هي المعتمدة.,,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere."
+legal.summary.required,"Required by the firm's affiliate terms, in the firm's own English words:",تشترطه شروط التسويق بالعمولة لدى الشركة، بكلمات الشركة نفسها باللغة الإنجليزية:,,
+legal.summary.hypo,"The standard US regulatory warning about simulated results (17 CFR 4.41), in its required English form.",التحذير التنظيمي الأمريكي المعياري بشأن النتائج المُحاكاة (17 CFR 4.41)، بصيغته الإنجليزية المطلوبة.,,keep every number exactly
+legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.",شروط استخدام troid. وهي منشورة بالإنجليزية، والنص الإنجليزي هو المعتمد.,,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere. | troid stays lowercase, in Latin letters"
+legal.summary.citations,"Rule sources are named in English, as each firm publishes them.",تُذكر مصادر القواعد بالإنجليزية، كما تنشرها كل شركة.,,
+hypo.label,Hypothetical performance,أداء افتراضي,,
+hypo.no_edge_short,troid's own strategy shows no statistical edge.,لا تُظهر استراتيجية troid نفسها أي أفضلية إحصائية.,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure, inside noise, and not a fact about the future.",خارج العيّنة، على {n} صفقة BTC من 1 يناير 2021 إلى 7 يناير 2026 لم ترها المعاملات قط، تبلغ نتيجتها المقاسة {exp} لكل صفقة، بخطأ معياري {se} — وهو رقم MEASURED (مُقاس)، داخل نطاق الضجيج، وليس حقيقة عن المستقبل.,,"CHECK FIRST: Tier labels now appear as the English capital followed by an Arabic gloss in parentheses: 'MEASURED (مُقاس)' (hypo.no_edge_tail, tearsheet.head.box), 'DERIVED (مُشتق).' (index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase prose, keeps them translated (مُشتق، موثّق المصدر، مُنمذَج، مُقاس). Please confirm both treatments. | CHECK FIRST: hypo.no_edge_tail and dashboard.verdict.p1 / change.li1: 'which the parameters never saw' is rendered literally ('لم ترها المعاملات قط' / 'لم يرها قط'). An idiomatic ML/statistics phrasing may be preferred. | CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {exp} {n} {se} exactly as written; keep every number exactly"
+prov.tail,Rules change without notice. Verify with the firm before trading.,تتغير القواعد دون إشعار. تحقّق مع الشركة قبل التداول.,,
+index.meta.title,"troid's desk — prop-firm risk, computed",مكتب troid — مخاطر شركات تمويل المتداولين، محسوبة,,"troid stays lowercase, in Latin letters"
+index.meta.description,"Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.",مخاطر شركات تمويل المتداولين والامتثال لقواعدها، محسوبة. حدّد الحجم وفق سقفَي الخسارة معًا، بعد خصم الرسوم.,,
+index.hero.h1,"Prop-firm risk, computed.",مخاطر شركات تمويل المتداولين، محسوبة.,,
+index.hero.lede,"Most funded accounts fail on position size, not entries. troid computes
+  both of your loss ceilings, reports which one actually binds, and sizes the trade net
+  of fees.",تفشل معظم الحسابات الممولة بسبب حجم المركز، لا بسبب نقاط الدخول. يحسب troid سقفَي الخسارة لديك، ويبيّن أيّهما هو المقيِّد فعلًا، ويحدّد حجم الصفقة بعد خصم الرسوم.,,"troid stays lowercase, in Latin letters"
+index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">مكتب troid</span> · حدّد حجم صفقة",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.calc.firm,Firm,الشركة,,
+index.calc.challenge,Challenge,التحدي,,
+index.calc.quota,Quota,حجم الحساب,,
+index.calc.equity,Equity,حقوق الملكية,,
+index.calc.daystart,Day start,رصيد بداية اليوم,,
+index.calc.hirollover,High at rollover,الأعلى عند التجديد اليومي,,
+index.calc.hirollover_ph,= day start,= رصيد بداية اليوم,,
+index.calc.hwm,High-water mark,أعلى قمة,,
+index.calc.hwm_ph,"= max(equity, quota)",= max(حقوق الملكية، حجم الحساب),,"CHECK FIRST: Formulas (index.crossover.formula, index.js.f_*, compare.js.f_*, index.calc.hwm_ph): the variable words are translated (حجم الحساب، الأقصى%، اليومي%) but the function names min/max/floor stay Latin, and the Arabic comma separates arguments. Nothing on the site forces <code> or formula text to LTR, so mixed-direction rendering should be checked on a real RTL page."
+index.calc.side,Side,الاتجاه,,
+index.calc.entry,Entry,الدخول,,
+index.calc.stop,Stop,الوقف,,
+index.calc.target_r,Target R,الهدف R,,
+index.calc.risk_pct,Risk %,المخاطرة %,,
+index.calc.cap_pct,Budget cap %,سقف الميزانية %,,
+index.calc.leverage,Leverage,الرافعة المالية,,
+index.calc.mode,Margin mode,نوع الهامش,,
+index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","الشركات · بالترتيب الأبجدي · كل شركة يدرجها <span style=""text-transform:none"">troid</span>، دون حدّ لعددها",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.firms.why,"{firm} is the reference firm because troid verified it first and most completely, not because it ranks highest.
+    Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
+    recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
+    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    troid computes, you choose.",{firm} هي الشركة المرجعية لأن troid تحقّق منها أولًا وبأكبر قدر من الاكتمال، لا لأنها تحتل المرتبة الأعلى. كل قاعدة في مقارنة troid تُظهر وثيقة الشركة والتاريخ الذي قرأها فيه troid، أو تذكر أن مصدرها لم يُسجَّل بعد. أما الشركة التي يُتحقَّق منها تاليًا فيحدّدها ترتيب المراجعات على propfirmmatch؛ ولا حدّ لعدد الشركات في الصفحة. troid شريك تسويق مستقل بالعمولة للشركات التي يقارن بينها؛ وحيث يظهر رمز يكون السعر أرخص عبر رابط الإحالة، وحيث لا يظهر يكون السعر نفسه. troid يحسب، وأنت تختار.,,"keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+index.firms.reference,reference,مرجعية,,
+index.firms.rank,#{n} by reviews,المرتبة {n} حسب المراجعات,,keep {n} exactly as written
+index.firms.filled,{n} of {total} rules filled · {m} sourced,القواعد المُعبّأة: {n} من {total} · بمصدر مسجّل: {m},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {m} {n} {total} exactly as written"
+index.firms.pending,verification pending,التحقق معلّق,,
+index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch.,مراجعات موثّقة: {n}، بتقييم {rating} على propfirmmatch.,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} {rating} exactly as written"
+index.firms.challenges,{firm} challenges,تحديات {firm},,keep {firm} exactly as written
+index.firms.affiliate,affiliate link,رابط الإحالة,,
+index.firms.code,code {code},الرمز {code},,keep {code} exactly as written
+index.firms.promos,their promos apply here,عروضها الترويجية تسري هنا,,
+index.stats.failures.n,~70%,~70%,,keep every number exactly
+index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
+    report failures trace to size, not strategy selection.",من حالات الفشل في شركات تمويل المتداولين هي تجاوزات لحدود الخسارة، ومعظمها خلال الأسبوع الأول. وتفيد الشركات بأن حالات الفشل تعود إلى الحجم، لا إلى اختيار الاستراتيجية.,,
+index.stats.blowup.n,68%,68%,,keep every number exactly
+index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
+    with no cap on remaining budget. Under a cap, zero.",من الحسابات تنهار خلال عام بأفضلية بمستوى احترافي قدرها +0.35R، عند المخاطرة بنسبة 1% دون سقف على الميزانية المتبقية. ومع السقف، صفر.,,keep every number exactly
+index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
+    daily. That is {gap} from the start — half of one bad day.",في حساب {product} بحجم {quota}، تحت هذا المستوى من حقوق الملكية تصبح الأرضية الثابتة البالغة {max}% هي المقيِّدة بدلًا من الحد اليومي البالغ {daily}%. وهذا المستوى على بُعد {gap} من البداية — نصف يوم سيئ واحد.,,keep {daily} {gap} {max} {product} {quota} exactly as written
+index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
+    daily. That is {gap} from the start — {share} of one bad day.",في حساب {product} بحجم {quota}، تحت هذا المستوى من حقوق الملكية تصبح الأرضية الثابتة البالغة {max}% هي المقيِّدة بدلًا من الحد اليومي البالغ {daily}%. وهذا المستوى على بُعد {gap} من البداية — {share} من يوم سيئ واحد.,,keep {daily} {gap} {max} {product} {quota} {share} exactly as written
+index.crossover.prov,DERIVED. Computed from {firm} {product} rules as published on {dates} — {sources}. {tail} <code>{formula}</code>,DERIVED (مُشتق). محسوب من قواعد {firm} {product} كما نُشرت في {dates} — {sources}. {tail} <code>{formula}</code>,,"CHECK FIRST: Tier labels now appear as the English capital followed by an Arabic gloss in parentheses: 'MEASURED (مُقاس)' (hypo.no_edge_tail, tearsheet.head.box), 'DERIVED (مُشتق).' (index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase prose, keeps them translated (مُشتق، موثّق المصدر، مُنمذَج، مُقاس). Please confirm both treatments. | keep {dates} {firm} {formula} {product} {sources} {tail} exactly as written; keep the <…> tags and links as they are; translate only the words"
+index.crossover.formula,quota × (1 − max% + daily%) = {quota} × (1 − {max}% + {daily}%),حجم الحساب × (1 − الأقصى% + اليومي%) = {quota} × (1 − {max}% + {daily}%),,"CHECK FIRST: Formulas (index.crossover.formula, index.js.f_*, compare.js.f_*, index.calc.hwm_ph): the variable words are translated (حجم الحساب، الأقصى%، اليومي%) but the function names min/max/floor stay Latin, and the Arabic comma separates arguments. Nothing on the site forces <code> or formula text to LTR, so mixed-direction rendering should be checked on a real RTL page. | keep {daily} {max} {quota} exactly as written; keep every number exactly"
+index.crossover.lab_daily,daily %,اليومي %,,
+index.crossover.lab_max,max %,الأقصى %,,
+index.crossover.lab_static,static floor,الأرضية الثابتة,,
+index.crossover.lab_basis,initial-balance daily limit,حد يومي على أساس الرصيد الأولي,,
+index.does.h2,What troid does,ما يفعله troid,,"troid stays lowercase, in Latin letters"
+index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
+  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  margin concentration limit, the five-day minimum. Works across every challenge type and
+  every asset the firm lists.",يحسب سقفَي الخسارة ويبيّن أيّهما المقيِّد. يحدّد أحجام المراكز بعد خصم رسوم 0.04% لكل جانب. يفحص الصفقات مقابل قواعد الشركة — الحد الأقصى لمدة الاحتفاظ البالغ عشرة أيام، وحد تركّز الهامش، والحد الأدنى البالغ خمسة أيام. ويعمل مع كل أنواع التحديات وكل الأصول التي تدرجها الشركة.,,keep every number exactly
+index.doesnt.h2,What it doesn't,ما لا يفعله,,
+index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,لا ينشر إشارات تداول. لا يضع أوامر. لا يلمس بيانات دخولك. لا يبيعك استراتيجية.,,CHECK FIRST: index.doesnt.p and chat.isnt.p: the English lists fragments under the headings 'What it doesn't' and 'What it isn't'. In Arabic each item is written as an explicit negation (لا ينشر… لا يضع…; ليس… ولا…) so a fragment can never be read as a positive claim. Please confirm the result is not heavy.
+index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
+  assistant as a system prompt. The <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">MCP
+  server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.","يجمع الملف <a href=""/TROID.md"">TROID.md</a> قواعد troid وحساباته في ملف واحد — الصقه في أي مساعد ذكاء اصطناعي كموجّه نظام (system prompt). ويؤدي <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">خادم MCP</a> الوظيفة نفسها في Claude Desktop أو Cursor، بحسابات دقيقة.",,"CHECK FIRST: Mixed-direction runs now that word order is natural: dashboard.foot ('1,539 شمعة 4h', '8 يناير إلى 21 سبتمبر 2026'), faq.daily.p1 ('حساب 1-Step بقيمة $100,000'), index.doesnt.tools and chat.is.p ('الملف TROID.md' as link text). Please check these render in the right visual order on an RTL page. | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.doesnt.verify,"Every figure here is arithmetic you can check.
+  <code>verify_claims.py</code> in the repo re-derives each published number from first
+  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
+  A measured number is never stated as fact.",كل رقم هنا عملية حسابية يمكنك التحقق منها. يعيد <code>verify_claims.py</code> في المستودع اشتقاق كل رقم منشور من المبادئ الأولى، ويصنّفه حسب مستوى الثقة — مُشتق، أو موثّق المصدر، أو مُنمذَج، أو مُقاس. ولا يُقدَّم الرقم المُقاس أبدًا على أنه حقيقة.,,"CHECK FIRST: Tier labels now appear as the English capital followed by an Arabic gloss in parentheses: 'MEASURED (مُقاس)' (hypo.no_edge_tail, tearsheet.head.box), 'DERIVED (مُشتق).' (index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase prose, keeps them translated (مُشتق، موثّق المصدر، مُنمذَج، مُقاس). Please confirm both treatments. | keep the <…> tags and links as they are; translate only the words"
+index.js.pending,pending,معلّق,,
+index.js.list_comma,"{a}, {b}",{a}، {b},,keep {a} {b} exactly as written
+index.js.list_and,{a} and {b},{a} و{b},,keep {a} {b} exactly as written
+index.js.long,long,شراء,,
+index.js.short,short,بيع,,
+index.js.cross,cross,متقاطع,,
+index.js.isolated,isolated,معزول,,
+index.js.show_working,show the working,اعرض خطوات الحساب,,
+index.js.prov_computed,Computed from <b>{firm} {product}</b> rules.,محسوب من قواعد <b>{firm} {product}</b>.,,keep {firm} {product} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_published,Computed from <b>{firm} {product}</b> rules as published on <b>{dates}</b> — {sources}.,محسوب من قواعد <b>{firm} {product}</b> كما نُشرت في <b>{dates}</b> — {sources}.,,keep {dates} {firm} {product} {sources} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_unsourced,Computed from <b>{firm} {product}</b> rules — Source not yet recorded for {rules}.,محسوب من قواعد <b>{firm} {product}</b> — لم يُسجَّل المصدر بعد: {rules}.,,keep {firm} {product} {rules} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_missing,Source not yet recorded for {rules}.,لم يُسجَّل المصدر بعد: {rules}.,,keep {rules} exactly as written
+index.js.prov_src,{rules} from {source},{rules} من {source},,keep {rules} {source} exactly as written
+index.js.prov_src_read,{rules} from {source} (read {dates}),{rules} من {source} (قُرئت في {dates}),,keep {dates} {rules} {source} exactly as written
+index.js.prov_mmr,"Exchange liquidation assumes a {mmr}% maintenance margin, troid's assumption with no firm source.",تفترض تصفية المنصة هامش صيانة قدره {mmr}%، وهو افتراض من troid دون مصدر من الشركة.,,"keep {mmr} exactly as written; troid stays lowercase, in Latin letters"
+index.js.st_inputs,inputs,المُدخلات,,
+index.js.f_inputs_account,quota · equity · day start,حجم الحساب · حقوق الملكية · رصيد بداية اليوم,,
+index.js.f_inputs_trade,side · entry · stop · target R,الاتجاه · الدخول · الوقف · الهدف R,,
+index.js.f_inputs_risk,risk % · budget cap % · leverage · margin,المخاطرة % · سقف الميزانية % · الرافعة المالية · الهامش,,
+index.js.f_daily_initial,day start − quota × {d}%,رصيد بداية اليوم − حجم الحساب × {d}%,,keep {d} exactly as written
+index.js.f_daily_day_start,day start × (1 − {d}%),رصيد بداية اليوم × (1 − {d}%),,keep {d} exactly as written; keep every number exactly
+index.js.f_daily_rollover,high at rollover − quota × {d}%,الأعلى عند التجديد اليومي − حجم الحساب × {d}%,,keep {d} exactly as written
+index.js.st_hi,high at rollover,الأعلى عند التجديد اليومي,,
+index.js.f_hi,input (defaults to day start),مُدخَل (افتراضيًا رصيد بداية اليوم),,
+index.js.f_dd_static,quota × (1 − {m}%),حجم الحساب × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_locked,quota (locked after +{locks}%),حجم الحساب (يُثبَّت بعد +{locks}%),,keep {locks} exactly as written
+index.js.f_dd_trailing,high-water mark × (1 − {m}%),أعلى قمة × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.st_hwm,high-water mark,أعلى قمة,,
+index.js.f_hwm,"input (defaults to max(equity, quota))",مُدخَل (افتراضيًا max(حقوق الملكية، حجم الحساب)),,
+index.js.daily_floor,daily floor,الأرضية اليومية,,
+index.js.st_daily_budget,daily budget,الميزانية اليومية,,
+index.js.f_daily_budget,equity − daily floor,حقوق الملكية − الأرضية اليومية,,
+index.js.dd_floor,max-loss floor,أرضية الحد الأقصى للخسارة,,
+index.js.trailing_floor,trailing floor,الأرضية المتحركة,,
+index.js.st_dd_budget,drawdown budget,ميزانية التراجع,,
+index.js.f_dd_budget,equity − max-loss floor,حقوق الملكية − أرضية الحد الأقصى للخسارة,,
+index.js.f_room_both,"room = min(equity − ({fd}), equity − {fdd})",المساحة المتاحة = min(حقوق الملكية − ({fd})، حقوق الملكية − {fdd}),,keep {fdd} {fd} exactly as written
+index.js.f_room_daily,room = equity − ({fd}),المساحة المتاحة = حقوق الملكية − ({fd}),,keep {fd} exactly as written
+index.js.f_room_dd,room = equity − {fdd},المساحة المتاحة = حقوق الملكية − {fdd},,keep {fdd} exactly as written
+index.js.u_daily,daily {d}%,اليومي {d}%,,keep {d} exactly as written
+index.js.u_basis,daily basis,أساس الحد اليومي,,
+index.js.u_max,max {m}%,الأقصى {m}%,,keep {m} exactly as written
+index.js.u_dd,drawdown type,نوع التراجع,,
+index.js.u_locks,lock at +{locks}%,التثبيت عند +{locks}%,,keep {locks} exactly as written
+index.js.u_hwm,high-water-mark basis,أساس أعلى قمة,,
+index.js.u_fee,fee {fee}% per side,رسوم {fee}% لكل جانب,,keep {fee} exactly as written
+index.js.u_lev,leverage cap {lev}×,سقف الرافعة {lev}×,,keep {lev} exactly as written
+index.js.u_lev_band,leverage cap {lev}× for a {quota} account,سقف الرافعة {lev}× لحساب بحجم {quota},,keep {lev} {quota} exactly as written
+index.js.v_pending,PENDING,معلّق,,
+index.js.v_block,BLOCK,محظور,,CHECK FIRST: index.js.v_block/v_reduce/v_ok verdict tags: محظور / خفِّض / مقبول. Also index.js.n_danger: 'binds at' is rendered as 'يُبلَغ' (is reached). Please check that the tone of the danger note is not softened.
+index.js.v_reduce,REDUCE,خفِّض,,CHECK FIRST: index.js.v_block/v_reduce/v_ok verdict tags: محظور / خفِّض / مقبول. Also index.js.n_danger: 'binds at' is rendered as 'يُبلَغ' (is reached). Please check that the tone of the danger note is not softened.
+index.js.v_ok,OK,مقبول,,CHECK FIRST: index.js.v_block/v_reduce/v_ok verdict tags: محظور / خفِّض / مقبول. Also index.js.n_danger: 'binds at' is rendered as 'يُبلَغ' (is reached). Please check that the tone of the danger note is not softened.
+index.js.pending_txt,{firm} · {product} · troid has no daily basis or drawdown type recorded for this product,{firm} · {product} · لم يسجّل troid لهذا المنتج أساسًا للحد اليومي ولا نوعًا للتراجع,,"keep {firm} {product} exactly as written; troid stays lowercase, in Latin letters"
+index.js.pending_note,There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.,لا يوجد ما يُحدَّد الحجم وفقه حتى تُسجَّل تلك القواعد. تُظهر مقارنة troid ما هو معلّق لهذه الشركة.,,"troid stays lowercase, in Latin letters"
+index.js.bind_daily,daily loss limit,حد الخسارة اليومي,,
+index.js.bind_dd,max drawdown,الحد الأقصى للتراجع,,
+index.js.n_basis_pending,daily basis pending for this firm — sized against the drawdown ceiling only,أساس الحد اليومي معلّق لهذه الشركة — حُدِّد الحجم وفق سقف التراجع فقط,,
+index.js.n_dd_pending,drawdown type pending for this firm — sized against the daily ceiling only,نوع التراجع معلّق لهذه الشركة — حُدِّد الحجم وفق السقف اليومي فقط,,
+index.js.st_binding,binding,المقيِّد,,
+index.js.f_binding,"min(daily budget, drawdown budget)",min(الميزانية اليومية، ميزانية التراجع),,
+index.js.f_binding_one,the only budget with its rules recorded,الميزانية الوحيدة المسجّلة قواعدها,,
+index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,الأرضية المتحركة مثبّتة عند الرصيد الأولي ({quota}) بعد +{locks}%,,keep {locks} {quota} exactly as written
+index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),الأرضية المتحركة {floor} = أعلى قمة × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,الأرضية المتحركة {floor} = أعلى قمة × (1 − {m}%) — تتبع حقوق الملكية خلال اليوم: القمة غير المحققة ترفع الأرضية,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,الأرضية اليومية = الأعلى عند التجديد اليومي − {d}% من الحجم الأصلي,,keep {d} exactly as written
+index.js.b_long,stop at or above entry on a long,الوقف عند سعر الدخول أو فوقه في صفقة شراء,,
+index.js.b_short,stop at or below entry on a short,الوقف عند سعر الدخول أو تحته في صفقة بيع,,
+index.js.b_zero,stop distance is zero,مسافة الوقف صفر,,
+index.js.b_breached,no budget left — {bind} already breached,لا ميزانية متبقية — تم تجاوز {bind} بالفعل,,keep {bind} exactly as written
+index.js.n_fee_pending,fee per side pending for this firm — size shown before fees,الرسوم لكل جانب معلّقة لهذه الشركة — الحجم المعروض قبل الرسوم,,
+index.js.n_lev_capped,leverage capped at {lev}× by the firm,الرافعة محدودة عند {lev}× من قِبل الشركة,,keep {lev} exactly as written
+index.js.n_lev_class,no leverage class recorded for a {quota} account — cap pending at this size,لا توجد فئة رافعة مسجّلة لحساب بحجم {quota} — السقف معلّق عند هذا الحجم,,keep {quota} exactly as written
+index.js.n_lev_held,"leverage held to {lev}×, the highest cap this firm records",الرافعة مقيّدة عند {lev}×، وهو أعلى سقف تسجّله هذه الشركة,,keep {lev} exactly as written
+index.js.st_intended,intended risk,المخاطرة المقصودة,,
+index.js.f_intended,equity × {pct}%,حقوق الملكية × {pct}%,,keep {pct} exactly as written
+index.js.st_cap,cap,السقف,,
+index.js.f_cap,budget × {pct}%,الميزانية × {pct}%,,keep {pct} exactly as written
+index.js.risk,risk,المخاطرة,,
+index.js.f_risk,"min(intended, cap)",min(المقصودة، السقف),,
+index.js.st_dist,stop distance,مسافة الوقف,,
+index.js.f_dist,|entry − stop|,|الدخول − الوقف|,,
+index.js.st_fpu,fee per unit,الرسوم لكل وحدة,,
+index.js.f_fpu,entry × {fee}% × 2,الدخول × {fee}% × 2,,keep {fee} exactly as written; keep every number exactly
+index.js.f_fpu_pending,"fee per side pending: taken as 0, size before fees",الرسوم لكل جانب معلّقة: تُحتسب 0، والحجم قبل الرسوم,,keep every number exactly
+index.js.st_qty,quantity,الكمية,,
+index.js.f_qty,risk ÷ (stop distance + fee per unit),المخاطرة ÷ (مسافة الوقف + الرسوم لكل وحدة),,
+index.js.f_qty_nofee,risk ÷ stop distance,المخاطرة ÷ مسافة الوقف,,
+index.js.st_notional,notional,القيمة الاسمية,,
+index.js.f_notional,quantity × entry,الكمية × الدخول,,
+index.js.st_lev_used,leverage used,الرافعة المستخدمة,,
+index.js.f_lev_used,"min(your {lev}×, cap {cap}×)",min(رافعتك {lev}×، السقف {cap}×),,keep {cap} {lev} exactly as written
+index.js.f_lev_pending,your leverage; cap pending,رافعتك؛ السقف معلّق,,
+index.js.f_lev_pending_held,"your leverage; cap pending (held to {lev}×, the highest cap recorded for this firm)",رافعتك؛ السقف معلّق (مقيّدة عند {lev}×، أعلى سقف مسجّل لهذه الشركة),,keep {lev} exactly as written
+index.js.margin,margin,الهامش,,
+index.js.f_margin,notional ÷ leverage used,القيمة الاسمية ÷ الرافعة المستخدمة,,
+index.js.fees,fees,الرسوم,,
+index.js.f_fees,quantity × fee per unit,الكمية × الرسوم لكل وحدة,,
+index.js.v_fees,{fees} ({share} of risk),{fees} ({share} من المخاطرة),,keep {fees} {share} exactly as written
+index.js.budget_used,budget used,الميزانية المستخدمة,,
+index.js.f_used,risk ÷ budget,المخاطرة ÷ الميزانية,,
+index.js.st_left,losses left,الخسائر المتبقية,,
+index.js.f_left,floor(budget ÷ risk),floor(الميزانية ÷ المخاطرة),,
+index.js.st_target,target,الهدف,,
+index.js.f_target_long,entry + {r} × stop distance,الدخول + {r} × مسافة الوقف,,keep {r} exactly as written
+index.js.f_target_short,entry − {r} × stop distance,الدخول − {r} × مسافة الوقف,,keep {r} exactly as written
+index.js.n_fees_high,fees are {pct}% of risk — stop tight enough that costs dominate,الرسوم تمثّل {pct}% من المخاطرة — الوقف ضيق إلى حدّ أن التكاليف تطغى,,keep {pct} exactly as written
+index.js.n_cut,cut from {from} to {to} — {bind} budget caps it,خُفِّض من {from} إلى {to} — ميزانية {bind} تضع له سقفًا,,keep {bind} {from} {to} exactly as written
+index.js.n_left,{n} more losses at this size before {bind} trips,الخسائر الإضافية الممكنة بهذا الحجم قبل تجاوز {bind}: {n},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {bind} {n} exactly as written"
+index.js.f_liq_isolated,1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR {mmr}%),1 − (1 − 1 ÷ الرافعة المستخدمة) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
+index.js.f_liq_cross,1 − (1 − equity ÷ notional) ÷ (1 − MMR {mmr}%),1 − (1 − حقوق الملكية ÷ القيمة الاسمية) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
+index.js.br_stop,your stop,وقفك,,
+index.js.br_daily,daily limit,الحد اليومي,,
+index.js.st_daily_dist,daily-limit distance,المسافة إلى الحد اليومي,,
+index.js.f_daily_dist,daily budget ÷ notional,الميزانية اليومية ÷ القيمة الاسمية,,
+index.js.st_trailing_dist,trailing floor distance,المسافة إلى الأرضية المتحركة,,
+index.js.st_dd_dist,max-loss floor distance,المسافة إلى أرضية الحد الأقصى للخسارة,,
+index.js.f_dd_dist,drawdown budget ÷ notional,ميزانية التراجع ÷ القيمة الاسمية,,
+index.js.br_liq,exchange liq ({mode}),تصفية المنصة ({mode}),,keep {mode} exactly as written
+index.js.v_liq_below,0.00% — below maintenance at entry,0.00% — دون هامش الصيانة عند الدخول,,keep every number exactly
+index.js.n_danger,"DANGER — {what} binds at {pct}% adverse, inside your stop",خطر — يُبلَغ {what} عند حركة معاكسة بنسبة {pct}%، أي داخل مسافة وقفك,,CHECK FIRST: index.js.v_block/v_reduce/v_ok verdict tags: محظور / خفِّض / مقبول. Also index.js.n_danger: 'binds at' is rendered as 'يُبلَغ' (is reached). Please check that the tone of the danger note is not softened. | keep {pct} {what} exactly as written
+index.js.n_cross,cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it,متقاطع: لا شيء يوقف حركة جامحة قبل أرضية الشركة — وقفك هو القاطع الوحيد أمامها,,
+index.js.n_isolated,"isolated: exchange liquidates at {pct}% for the position’s own margin, before the floor",معزول: تُصفّي المنصة المركز عند {pct}% على هامشه الخاص، قبل الأرضية,,keep {pct} exactly as written
+index.js.f_size,"size = min(equity × {risk}%, room × {cap}%) ÷ (stop distance + entry × {fee}% × 2)",الحجم = min(حقوق الملكية × {risk}%، المساحة المتاحة × {cap}%) ÷ (مسافة الوقف + الدخول × {fee}% × 2),,keep {cap} {fee} {risk} exactly as written; keep every number exactly
+index.js.f_size_nofee,"size = min(equity × {risk}%, room × {cap}%) ÷ stop distance",الحجم = min(حقوق الملكية × {risk}%، المساحة المتاحة × {cap}%) ÷ مسافة الوقف,,keep {cap} {risk} exactly as written
+index.js.v_txt,{firm} · {product} · binding · {bind} · {room} of room,{firm} · {product} · المقيِّد · {bind} · مساحة متاحة {room},,keep {bind} {firm} {product} {room} exactly as written
+index.js.size,size,الحجم,,
+index.js.stop,stop,الوقف,,
+index.js.s_lev,{lev}x,{lev}x,,keep {lev} exactly as written
+index.js.s_lev_pending,{lev}x · cap {pending},{lev}x · السقف {pending},,keep {lev} {pending} exactly as written
+index.js.s_incl_fees,incl {fees} fees,يشمل رسومًا بقيمة {fees},,keep {fees} exactly as written
+index.js.s_fees_pending,fees {pending},الرسوم {pending},,keep {pending} exactly as written
+index.js.s_of_risk,of risk,من المخاطرة,,
+index.js.s_fee_pending,per-side fee pending,الرسوم لكل جانب معلّقة,,
+index.js.s_tgt,tgt {price},الهدف {price},,keep {price} exactly as written
+index.js.s_floor,floor {floor},الأرضية {floor},,keep {floor} exactly as written
+index.js.breakers,breakers,القواطع,,
+compare.meta.title,troid's compare,مقارنة troid,,"troid stays lowercase, in Latin letters"
+compare.hero.h1,"Three firms, your numbers.",ثلاث شركات، وأرقامك أنت.,,
+compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
+shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.",أدخل إعدادات الحجم مرة واحدة. يُظهر كل عمود ما تكلّفه هذه الإعدادات وفق قواعد تلك الشركة. كل خانة تُظهر وثيقة الشركة والتاريخ الذي قرأها فيه troid، أو تذكر <em>معلّق</em>، أو تذكر أن مصدرها لم يُسجَّل بعد. لا تُمنح أي درجات تقييم.,,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},بالترتيب الأبجدي · شركة مرجعية واحدة + شركتان حسب تصنيف خارجي · رُوجعت في {date},,keep {date} exactly as written
+compare.sizing.h,Your sizing,إعدادات الحجم لديك,,
+compare.sizing.quota,Quota,حجم الحساب,,
+compare.sizing.risk,Risk % per trade,المخاطرة % لكل صفقة,,
+compare.sizing.stop,Stop % of price,الوقف % من السعر,,
+compare.sizing.lev,Leverage you use,الرافعة التي تستخدمها,,
+compare.col.tag,{n} of {total} filled · {m} sourced,المُعبّأة: {n} من {total} · بمصدر مسجّل: {m},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {m} {n} {total} exactly as written"
+compare.js.pending,pending,معلّق,,
+compare.js.list_and,{a} and {b},{a} و{b},,keep {a} {b} exactly as written
+compare.js.lab_daily_pct,daily %,اليومي %,,
+compare.js.lab_max_pct,max %,الأقصى %,,
+compare.js.lab_daily_basis,daily basis,أساس الحد اليومي,,
+compare.js.lab_drawdown_type,drawdown type,نوع التراجع,,
+compare.js.lab_target_pct,target,الهدف,,
+compare.js.lab_min_days,min days,الحد الأدنى للأيام,,
+compare.js.lab_max_leverage,leverage cap,سقف الرافعة,,
+compare.js.lab_fee_per_side_pct,fee,الرسوم,,
+compare.js.lab_reset_utc,reset,إعادة الضبط,,
+compare.js.lab_hold_cap,hold cap,سقف مدة الاحتفاظ,,
+compare.js.lab_max_open,open positions,المراكز المفتوحة,,
+compare.js.lab_refund,refund,الاسترداد,,
+compare.js.lab_split,split,تقسيم الأرباح,,
+compare.js.lab_us_available,US access,الإتاحة في الولايات المتحدة,,
+compare.js.lab_consistency_rule,consistency rule,قاعدة الاتساق,,
+compare.js.lab_news_rule,news rule,قاعدة الأخبار,,
+compare.js.lab_profit_cap,profit cap,سقف الأرباح,,
+compare.js.lab_price,price,السعر,,
+compare.js.pv_plain,Computed from {firm} {product} rules. {tail},محسوب من قواعد {firm} {product}. {tail},,keep {firm} {product} {tail} exactly as written
+compare.js.pv_dated,Computed from {firm} {product} rules as published on {dates} — {sources}. {tail},محسوب من قواعد {firm} {product} كما نُشرت في {dates} — {sources}. {tail},,keep {dates} {firm} {product} {sources} {tail} exactly as written
+compare.js.pv_dated_miss,Computed from {firm} {product} rules as published on {dates} — {sources}. Source not yet recorded for {missing}. {tail},محسوب من قواعد {firm} {product} كما نُشرت في {dates} — {sources}. لم يُسجَّل المصدر بعد: {missing}. {tail},,keep {dates} {firm} {missing} {product} {sources} {tail} exactly as written
+compare.js.pv_miss,Computed from {firm} {product} rules — Source not yet recorded for {missing}. {tail},محسوب من قواعد {firm} {product} — لم يُسجَّل المصدر بعد: {missing}. {tail},,keep {firm} {missing} {product} {tail} exactly as written
+compare.js.pv_src,{labels} from {source},{labels} من {source},,keep {labels} {source} exactly as written
+compare.js.pv_src_read,{labels} from {source} (read {dates}),{labels} من {source} (قُرئت في {dates}),,keep {dates} {labels} {source} exactly as written
+compare.js.pv_inputs,From your inputs; no firm rule used.,من مُدخلاتك؛ لم تُستخدم أي قاعدة من قواعد الشركة.,,
+compare.js.sec_rules,rules,القواعد,,
+compare.js.sec_sizing,at your sizing,بإعدادات الحجم لديك,,
+compare.js.sec_cost,cost & access,التكلفة والإتاحة,,
+compare.js.row_daily_loss,daily loss,الخسارة اليومية,,
+compare.js.row_daily_basis,daily basis,أساس الحد اليومي,,
+compare.js.row_reset,reset (UTC),إعادة الضبط (UTC),,
+compare.js.row_max_loss,max loss,الحد الأقصى للخسارة,,
+compare.js.row_drawdown_type,drawdown type,نوع التراجع,,
+compare.js.row_target,target,الهدف,,
+compare.js.row_min_days,min days,الحد الأدنى للأيام,,
+compare.js.row_leverage_cap,leverage cap,سقف الرافعة,,
+compare.js.row_hold_cap,hold cap,سقف مدة الاحتفاظ,,
+compare.js.row_open_positions,open positions,المراكز المفتوحة,,
+compare.js.row_consistency_rule,consistency rule,قاعدة الاتساق,,
+compare.js.row_news_rule,news rule,قاعدة الأخبار,,
+compare.js.row_profit_cap,profit cap,سقف الأرباح,,
+compare.js.row_risk,risk per trade,المخاطرة لكل صفقة,,
+compare.js.row_room,room before max loss binds,المساحة المتاحة قبل أن يُقيِّد الحد الأقصى للخسارة,,
+compare.js.row_cross,ceilings swap at,يتبادل السقفان عند,,
+compare.js.row_losses,losses before max loss binds,الخسائر قبل أن يُقيِّد الحد الأقصى للخسارة,,
+compare.js.row_survive,losses survivable,الخسائر الممكن تحمّلها,,
+compare.js.row_fee_at,fee drag at {stop}% stop,عبء الرسوم عند وقف {stop}%,,keep {stop} exactly as written
+compare.js.row_fee,fee drag,عبء الرسوم,,
+compare.js.row_liq,isolated liq. distance,مسافة التصفية (معزول),,
+compare.js.row_price,challenge fee,رسوم التحدي,,
+compare.js.row_refund,refund,الاسترداد,,
+compare.js.row_split,profit split,تقسيم الأرباح,,
+compare.js.row_us,US residents,المقيمون في الولايات المتحدة,,
+compare.js.v_losses,{n} at {pct}%,{n} عند {pct}%,,keep {n} {pct} exactly as written
+compare.js.v_survive,{n} from a fresh start,{n} من بداية جديدة,,keep {n} exactly as written
+compare.js.v_survive_trail,"{n} from a fresh start, fewer after any profit",{n} من بداية جديدة، وأقل بعد أي ربح,,keep {n} exactly as written
+compare.js.v_room_trail,trailing — moves with your high-water mark,متحرك — يتحرك مع أعلى قمة لديك,,
+compare.js.v_cross_trail,not fixed under trailing,غير ثابت في النوع المتحرك,,
+compare.js.v_losses_trail,moves with your high-water mark,يتحرك مع أعلى قمة لديك,,
+compare.js.v_fee,{drag}% of risk ({fee}%/side),{drag}% من المخاطرة ({fee}%/جانب),,keep {drag} {fee} exactly as written
+compare.js.v_liq,~{pct}% at {lev}×,~{pct}% عند {lev}×,,keep {lev} {pct} exactly as written
+compare.js.f_daily,$ = quota × daily%,$ = حجم الحساب × اليومي%,,
+compare.js.f_daily_day_start,$ = day-start balance × daily% (shown for a day starting at quota),$ = رصيد بداية اليوم × اليومي% (معروض ليوم يبدأ عند حجم الحساب),,
+compare.js.f_max,$ = quota × max%,$ = حجم الحساب × الأقصى%,,
+compare.js.f_max_trailing,$ = high-water mark × max% (shown at a fresh high equal to quota),$ = أعلى قمة × الأقصى% (معروض عند قمة جديدة تساوي حجم الحساب),,
+compare.js.f_risk,risk = quota × risk %,المخاطرة = حجم الحساب × المخاطرة %,,
+compare.js.f_cf_initial,quota × (1 − max% + daily%),حجم الحساب × (1 − الأقصى% + اليومي%),,keep every number exactly
+compare.js.f_cf_day_start,quota × (1 − max%) ÷ (1 − daily%),حجم الحساب × (1 − الأقصى%) ÷ (1 − اليومي%),,keep every number exactly
+compare.js.f_room,room = quota − {cf},المساحة المتاحة = حجم الحساب − {cf},,keep {cf} exactly as written
+compare.js.f_cross,crossover = {cf},نقطة التقاطع = {cf},,keep {cf} exactly as written
+compare.js.f_losses,floor(room ÷ risk),floor(المساحة المتاحة ÷ المخاطرة),,
+compare.js.f_survive,floor(quota × max% ÷ risk),floor(حجم الحساب × الأقصى% ÷ المخاطرة),,
+compare.js.f_fee,fee share = 2 × fee ÷ (stop % + 2 × fee),حصة الرسوم = 2 × الرسوم ÷ (الوقف % + 2 × الرسوم),,keep every number exactly
+compare.js.f_liq,"distance ≈ 1 ÷ min(your leverage, cap {cap}× for a {quota} account)",المسافة ≈ 1 ÷ min(رافعتك، السقف {cap}× لحساب بحجم {quota}),,keep {cap} {quota} exactly as written; keep every number exactly
+compare.js.foot_link,"<a href=""{url}"" rel=""sponsored noopener"">{name} challenges</a> · affiliate link","<a href=""{url}"" rel=""sponsored noopener"">تحديات {name}</a> · رابط الإحالة",,keep {name} {url} exactly as written; keep the <…> tags and links as they are; translate only the words
+compare.js.foot_code,discount code <b>{code}</b> — cheaper through this link,رمز الخصم <b>{code}</b> — أرخص عبر هذا الرابط,,keep {code} exactly as written; keep the <…> tags and links as they are; translate only the words
+compare.js.foot_held,"Link held until daily, max, target and price each have a recorded source in {name}'s own documents, and {name}'s affiliate agreement allows it.",الرابط محجوب إلى أن يكون لكلٍّ من الحد اليومي والحد الأقصى والهدف والسعر مصدرٌ مسجّل في وثائق {name} نفسها، وإلى أن تسمح بذلك اتفاقية التسويق بالعمولة لدى {name}.,,keep {name} exactly as written
+compare.js.foot_open_1,open: {n} question — {first},سؤال مفتوح: {n} — {first},,keep {first} {n} exactly as written
+compare.js.foot_open_n,open: {n} questions — {first} …,أسئلة مفتوحة: {n} — {first} …,,keep {first} {n} exactly as written
+ledger.meta.title,troid's ledger,سجل troid,,"troid stays lowercase, in Latin letters"
+ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.",الحساب الظلّي. كل صفقة مغلقة، دون تعديل، بما فيها الخاسرة. لا يضع أي أمر — ذلك عمل الإنسان.,,
+ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar",حتى {asof} UTC · {market} · قواعد {profile} · هامش متقاطع 5x · يُعاد تشغيله كل 4 ساعات، بعد 20 دقيقة من إغلاق الشمعة,,keep {asof} {market} {profile} exactly as written; keep every number exactly
+ledger.hb.last_bar,last bar,آخر شمعة,,
+ledger.hb.last_bar_note,UTC · close {close},UTC · الإغلاق {close},,keep {close} exactly as written
+ledger.hb.realized,realized,المحقَّق,,
+ledger.hb.room,room,المساحة المتاحة,,
+ledger.hb.binding,binding · {binding},المقيِّد · {binding},,keep {binding} exactly as written
+ledger.hb.daily,daily {amount},اليومي {amount},,keep {amount} exactly as written
+ledger.hb.position,position,المركز,,
+ledger.hb.position_note,"no direction, price or stop is published",لا يُنشر أي اتجاه أو سعر أو وقف,,
+ledger.hb.open_since,open since {since} UTC · {filled} of {total} tranche(s),مفتوح منذ {since} UTC · الشرائح المنفّذة: {filled} من {total},,keep {filled} {since} {total} exactly as written
+ledger.pos.flat,flat,بلا مركز,,
+ledger.pos.open,open,مفتوح,,
+ledger.binding.daily,daily limit,الحد اليومي,,
+ledger.binding.floor,max-loss floor,أرضية الحد الأقصى للخسارة,,
+ledger.runs.none_yet,runs: none recorded yet,مرات التشغيل: لم يُسجَّل أي منها بعد,,
+ledger.runs.none_7d,runs: none in the last 7 days,مرات التشغيل: لا شيء خلال آخر 7 أيام,,keep every number exactly
+ledger.runs.eyebrow,Runs · last 7 days · {n},مرات التشغيل · آخر 7 أيام · {n},,keep {n} exactly as written; keep every number exactly
+ledger.runs.th.run,run (UTC),التشغيل (UTC),,
+ledger.runs.th.bar,bar,الشمعة,,
+ledger.runs.th.balance,balance,الرصيد,,
+ledger.runs.th.closed,closed,المُغلقة,,
+ledger.runs.th.position,position,المركز,,
+ledger.warn.measure_contains_below,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that contains zero, and a result below what chance produces across the
+~30 configurations searched (~{noise}).",تسجّل هذه الاستراتيجية قيمة مقاسة قدرها {exp} لكل صفقة على مدى {n} صفقة — بخطأ معياري قدره ~{se}، وفترة ثقة تتضمن الصفر، ونتيجة أدنى مما تُنتجه الصدفة عبر ~30 إعدادًا جرى البحث فيها (~{noise}).,,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_contains_above,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that contains zero, and a result above what chance produces across the
+~30 configurations searched (~{noise}).",تسجّل هذه الاستراتيجية قيمة مقاسة قدرها {exp} لكل صفقة على مدى {n} صفقة — بخطأ معياري قدره ~{se}، وفترة ثقة تتضمن الصفر، ونتيجة أعلى مما تُنتجه الصدفة عبر ~30 إعدادًا جرى البحث فيها (~{noise}).,,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_excludes_below,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that excludes zero, and a result below what chance produces across the
+~30 configurations searched (~{noise}).",تسجّل هذه الاستراتيجية قيمة مقاسة قدرها {exp} لكل صفقة على مدى {n} صفقة — بخطأ معياري قدره ~{se}، وفترة ثقة تستبعد الصفر، ونتيجة أدنى مما تُنتجه الصدفة عبر ~30 إعدادًا جرى البحث فيها (~{noise}).,,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_excludes_above,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that excludes zero, and a result above what chance produces across the
+~30 configurations searched (~{noise}).",تسجّل هذه الاستراتيجية قيمة مقاسة قدرها {exp} لكل صفقة على مدى {n} صفقة — بخطأ معياري قدره ~{se}، وفترة ثقة تستبعد الصفر، ونتيجة أعلى مما تُنتجه الصدفة عبر ~30 إعدادًا جرى البحث فيها (~{noise}).,,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.published,"It is published so you can watch a null result run forward, not because it works. The <a href=""{L}/tearsheet"">full tearsheet</a> shows what noise looks like when all of it is shown.","تُنشر لكي تتابع نتيجة بلا دلالة إحصائية وهي تمضي قُدُمًا، لا لأنها ناجحة. ويُظهر <a href=""{L}/tearsheet"">تقرير الأداء الكامل</a> كيف يبدو الضجيج عندما يُعرض كله.",,CHECK FIRST: ledger.warn.published: 'null result' is rendered as 'نتيجة بلا دلالة إحصائية'. Please check it is neither stronger nor weaker than the English. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
+ledger.warn.logged,{live} of these trades were logged live; the rest were backfilled on {date}.,سُجِّلت {live} من هذه الصفقات مباشرةً؛ أما البقية فأُضيفت بأثر رجعي في {date}.,,keep {date} {live} exactly as written
+ledger.warn.flagged,"{n} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded.",بقيت {n} منها مفتوحة عبر شمعة مُعبّأة أماميًا (شمعة ثابتة وُضعت مكان فجوة في مصدر البيانات)، وهي مُعلَّمة بالرمز ⚑ أدناه — مُعلَّمة، لا مستبعدة.,,keep {n} exactly as written
+ledger.equity.eyebrow,Equity,حقوق الملكية,,
+ledger.equity.start,start {quota} · dashed,البداية {quota} · خط متقطع,,keep {quota} exactly as written
+ledger.cell.balance,balance,الرصيد,,
+ledger.cell.net,net,الصافي,,
+ledger.cell.trades,trades,الصفقات,,
+ledger.cell.win,win,نسبة الفوز,,
+ledger.cell.exp,exp,التوقع,,
+ledger.cell.pf,pf,معامل الربح,,
+ledger.cell.max_dd,max dd,أقصى تراجع,,
+ledger.cell.to_floor,to floor,إلى الأرضية,,
+ledger.cell.week,this week,هذا الأسبوع,,
+ledger.cell.month,this month,هذا الشهر,,
+ledger.cell.status,status,الحالة,,
+ledger.cell.trades_r,{n} trades · {r},الصفقات: {n} · {r},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} {r} exactly as written"
+ledger.status.running,running,جارٍ,,
+ledger.status.pass,pass,ناجح,,
+ledger.status.fail_daily,fail_daily,فشل: الحد اليومي,,
+ledger.status.fail_maxloss,fail_maxloss,فشل: الحد الأقصى للخسارة,,
+ledger.status.zombie,zombie,زومبي,,"CHECK FIRST: Term choices with no single settled Arabic equivalent: prop firm = 'شركات تمويل المتداولين' / 'شركة التمويل'; drawdown = 'التراجع' (chosen over 'السحب', which clashes with withdrawal); high-water mark = 'أعلى قمة'; floor = 'الأرضية'; room = 'المساحة المتاحة'; rollover = 'التجديد اليومي'; reset = 'إعادة الضبط'; binding = 'المقيِّد'; edge = 'أفضلية'; affiliate = 'شريك تسويق مستقل بالعمولة'; affiliate link = 'رابط الإحالة'; tearsheet = 'تقرير الأداء'; walk-forward = 'اختبار السير للأمام'; regime = 'نظام السوق' / 'مرشّح حالة السوق'; tranche/ladder = 'شريحة/سلّم'; forward-filled bar = 'شمعة مُعبّأة أماميًا'; zombie = 'زومبي' (ledger.status.zombie, dashboard.verdict.p1)."
+ledger.trades.eyebrow,Last {n} trades,آخر {n} من الصفقات,,keep {n} exactly as written
+ledger.trades.th.closed,closed,الإغلاق,,
+ledger.trades.th.kind,kind,النوع,,
+ledger.trades.th.side,side,الاتجاه,,
+ledger.trades.th.fills,fills,التنفيذات,,
+ledger.trades.th.bars,bars,الشموع,,
+ledger.trades.th.exit,exit,الخروج,,
+ledger.trades.th.pnl,pnl,الربح/الخسارة,,
+ledger.trades.th.r,R,R,,
+ledger.kind.pullback,pullback,ارتداد,,
+ledger.kind.breakout,breakout,اختراق,,
+ledger.kind.reverse,reverse,انعكاس,,
+ledger.side.long,long,شراء,,
+ledger.side.short,short,بيع,,
+ledger.side_cap.long,Long,شراء,,
+ledger.side_cap.short,Short,بيع,,
+ledger.exit.tp1,TP1,TP1,,keep every number exactly
+ledger.exit.tp2,TP2,TP2,,keep every number exactly
+ledger.exit.tp3,TP3,TP3,,keep every number exactly
+ledger.exit.stop,stop,الوقف,,
+ledger.exit.max_hold_10d,max hold,أقصى مدة احتفاظ,,
+ledger.exit.reset_flat,reset flatten,إغلاق عند إعادة الضبط,,
+ledger.exit.reset_flat_loser,reset flatten,إغلاق عند إعادة الضبط,,
+ledger.flag.title,held through a forward-filled bar,بقيت مفتوحة عبر شمعة مُعبّأة أماميًا,,
+ledger.charts.eyebrow,Last {n} closed trades · drawn,آخر {n} من الصفقات المغلقة · مرسومة,,keep {n} exactly as written
+ledger.charts.note,"Bars from 10 before entry to 5 after exit. Entry, initial stop and take-profits as the engine set them; the stop moves to average entry after TP1 and is not redrawn. Open position: not drawn.",الشموع من 10 قبل الدخول إلى 5 بعد الخروج. الدخول والوقف الأولي ومستويات جني الأرباح كما حدّدها المحرّك؛ ينتقل الوقف إلى متوسط سعر الدخول بعد TP1 ولا يُعاد رسمه. المركز المفتوح: غير مرسوم.,,keep every number exactly
+ledger.charts.caption,"{side} · {kind} · {entry_time} → {exit_time} UTC · entry {entry} · stop {stop} ({stop_pct}) · sized {risk} = {risk_pct} · {binding} binding, {room} room · {fills} of {tranches} tranches · exit {exit} after {bars} bars · {r} · fees {fees} of risk",{side} · {kind} · {entry_time} ← {exit_time} UTC · الدخول {entry} · الوقف {stop} ({stop_pct}) · الحجم {risk} = {risk_pct} · المقيِّد {binding}، المساحة المتاحة {room} · الشرائح {fills} من {tranches} · الخروج {exit} بعد {bars} شمعة · {r} · الرسوم {fees} من المخاطرة,,"CHECK FIRST: ledger.charts.caption, data.44fadd8eb267 ('80% ← 90%'), data.601c3530e85e: '→' was changed to '←'. Bidi does not mirror arrows, so in an RTL line '←' is the one that points from the first value to the second. Please confirm on the rendered page. | keep {bars} {binding} {entry_time} {entry} {exit_time} {exit} {fees} {fills} {kind} {risk_pct} {risk} {room} {r} {side} {stop_pct} {stop} {tranches} exactly as written"
+ledger.js.nolib,chart library did not load (cdn.jsdelivr.net) — the caption is the record,لم تُحمَّل مكتبة الرسوم البيانية (cdn.jsdelivr.net) — الوصف النصي هو السجل المعتمد,,
+ledger.js.entry,entry,الدخول,,
+ledger.js.stop,stop,الوقف,,
+ledger.js.tp,TP{n},TP{n},,keep {n} exactly as written
+ledger.foot.week,"A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
+ledger entry, not a claim. Read it that way.",أسبوع من الصفقات يعني n≈2 بخطأ معياري قدره ~0.26R. السطر الأسبوعي أعلاه قيدٌ في السجل، لا ادّعاء. اقرأه على هذا الأساس.,,keep every number exactly
+ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.",الشموع من api.binance.us، مصدر بيانات واحد من البداية إلى النهاية؛ ويشير ⚑ إلى صفقة بقيت مفتوحة عبر شمعة مُعبّأة أماميًا.,,
+ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">journal.csv في المستودع</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.meta.title,troid's research — strategy review,أبحاث troid — مراجعة الاستراتيجية,,"troid stays lowercase, in Latin letters"
+dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","أبحاث troid · مراجعة الاستراتيجية · <a href=""{L}/tearsheet"">تقرير الأداء</a> · <a href=""/METHODOLOGY.md"">المنهجية</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.hero.h1,Strategy review,مراجعة الاستراتيجية,,
+dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed",Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · مراجعة تقاطعية حتى 21 سبتمبر 2026 · الشموع من api.binance.us، مصدر بيانات واحد,,keep every number exactly
+dashboard.verdict.h2,Lowest-drawdown structure tested,الهيكل صاحب أدنى تراجع بين ما اختُبر,,
+dashboard.verdict.big,"<strong>Five-tranche strength ladder + regime filter + desk cap</strong> — but
+  do <em>not</em> buy a challenge. The walk-forward has been run, and it came back as noise.",<strong>سلّم قوة من خمس شرائح + مرشّح حالة السوق + سقف المكتب</strong> — لكن <em>لا</em> تشترِ تحديًا. أُجري اختبار السير للأمام، وجاءت نتيجته ضجيجًا.,,keep the <…> tags and links as they are; translate only the words
+dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
+  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), zero failed and
+  zero zombie accounts across 72 rolling challenge starts, median ending balance $100,409.
+  It is also still <strong>+0.03R</strong> on the sample it was chosen on, and
+  <strong>+0.008R</strong> on the 504 BTC trades from 1 January 2021 to 7 January 2026 it never saw
+  (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>).
+  That is a well-built vehicle with no engine in it.","من بين كل ما اختُبر، لديه أدنى تراجع (<strong>&minus;$1,058</strong> مقابل &minus;$7,295 للدخول الواحد)، وصفر حسابات فاشلة وصفر حسابات زومبي عبر 72 بداية تحدٍّ متعاقبة، ووسيط الرصيد الختامي $100,409. كما أنه لا يزال عند <strong>+0.03R</strong> على العيّنة التي اختير عليها، وعند <strong>+0.008R</strong> على 504 صفقات BTC من 1 يناير 2021 إلى 7 يناير 2026 لم يرها قط (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>). إنها مركبة محكمة البناء لا محرّك فيها.",,"CHECK FIRST: Term choices with no single settled Arabic equivalent: prop firm = 'شركات تمويل المتداولين' / 'شركة التمويل'; drawdown = 'التراجع' (chosen over 'السحب', which clashes with withdrawal); high-water mark = 'أعلى قمة'; floor = 'الأرضية'; room = 'المساحة المتاحة'; rollover = 'التجديد اليومي'; reset = 'إعادة الضبط'; binding = 'المقيِّد'; edge = 'أفضلية'; affiliate = 'شريك تسويق مستقل بالعمولة'; affiliate link = 'رابط الإحالة'; tearsheet = 'تقرير الأداء'; walk-forward = 'اختبار السير للأمام'; regime = 'نظام السوق' / 'مرشّح حالة السوق'; tranche/ladder = 'شريحة/سلّم'; forward-filled bar = 'شمعة مُعبّأة أماميًا'; zombie = 'زومبي' (ledger.status.zombie, dashboard.verdict.p1). | CHECK FIRST: hypo.no_edge_tail and dashboard.verdict.p1 / change.li1: 'which the parameters never saw' is rendered literally ('لم ترها المعاملات قط' / 'لم يرها قط'). An idiomatic ML/statistics phrasing may be preferred. | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
+  of holdout just said the entry logic has no measurable edge. At a 14% industry base
+  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",<strong>لماذا لا:</strong> تحدٍّ بسعر $999 يشتري نتيجة ثنائية واحدة يغلب عليها الضجيج. خمس سنوات من العيّنة المحجوزة قالت للتو إن منطق الدخول لا يملك أفضلية قابلة للقياس. ومع معدل أساسي في القطاع قدره 14%، فإن النجاح مرة واحدة بالكاد يغيّر تقديرك لما إذا كنت تملك أفضلية — فكثير من المتداولين الذين لا يملكون أفضلية ينجحون.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.h2,Cross-reference — things that don't add up,مراجعة تقاطعية — أمور لا تتّسق,,
+dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. «الدخول التدريجي 5x لمركز أكبر» يفعل العكس,,keep every number exactly
+dashboard.xref.f1.tag,design assumption inverted,افتراض تصميمي معكوس,,
+dashboard.xref.f1.p1,"At the same $500 risk, a 5-tranche <em>strength</em> ladder holds
+    <strong>34% less</strong> quantity than a single entry (0.109 BTC vs 0.167 BTC;
+    $8,524 vs $13,000 notional). Because the stop stays anchored at T1's structure,
+    each later tranche sits further from the stop and therefore gets less size.","عند المخاطرة نفسها البالغة $500، يحمل سلّم <em>القوة</em> ذو الـ5 شرائح كمية <strong>أقل بنسبة 34%</strong> من الدخول الواحد (0.109 BTC مقابل 0.167 BTC؛ $8,524 مقابل $13,000 قيمة اسمية). ولأن الوقف يبقى مثبّتًا عند هيكل T1، تقع كل شريحة لاحقة أبعد عن الوقف، فتحصل بالتالي على حجم أصغر.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f1.p2,"The ladder's benefit is <strong>conditionality, not size</strong>: losers fill
+    1.66 tranches, winners fill 4.26. You're small when wrong and large when right. If
+    what you actually want is a bigger position, that comes from raising risk per trade,
+    and the ruin math says don't.",فائدة السلّم هي <strong>الشَّرطية، لا الحجم</strong>: الصفقات الخاسرة تملأ 1.66 شريحة، والرابحة تملأ 4.26. تكون صغيرًا حين تخطئ وكبيرًا حين تصيب. وإن كان ما تريده فعلًا مركزًا أكبر، فذلك يأتي من رفع المخاطرة لكل صفقة، وحسابات خطر الإفلاس تقول: لا تفعل.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f2.h3,2. The income model assumed 4.3&times; the trade frequency,2. افترض نموذج الدخل 4.3&times; وتيرة التداول,,keep every number exactly
+dashboard.xref.f2.tag,changes the conclusion,يغيّر الاستنتاج,,
+dashboard.xref.f2.p1,"<code>income_math.py</code> ran at 30 trades/month. The strategy produces
+    <strong>10.1/month</strong> (78 trades in 7.7 months). Every encouraging number in the
+    $5k/month analysis — the 4-months-to-target row, $614 at the real 9/mo frequency (was $1,862 at an assumed 30/mo)/account — assumed a frequency
+    this strategy does not reach.","عمل <code>income_math.py</code> على أساس 30 صفقة/شهر. بينما تُنتج الاستراتيجية <strong>10.1/شهر</strong> (78 صفقة في 7.7 أشهر). كل رقم مشجّع في تحليل $5k/شهر — صف «4 أشهر حتى الهدف»، و$614 عند الوتيرة الفعلية 9/شهر (كان $1,862 عند وتيرة مفترضة 30/شهر)/حساب — افترض وتيرة لا تبلغها هذه الاستراتيجية.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f2.p2,"Corrected: at 10.1 trades/month and 0.5% risk, $6,250/month gross needs
+    <strong>+1.24R per trade</strong>. Not credible at any skill level. Either the
+    timeframe drops below 4h to raise frequency, or the income target needs more accounts
+    than the scaling table implied.","بعد التصحيح: عند 10.1 صفقة/شهر ومخاطرة 0.5%، يتطلب تحقيق $6,250/شهر إجمالًا <strong>+1.24R لكل صفقة</strong>. وهذا غير قابل للتصديق عند أي مستوى مهارة. فإما أن ينخفض الإطار الزمني إلى ما دون 4h لرفع الوتيرة، أو يحتاج هدف الدخل إلى حسابات أكثر مما أوحى به جدول التوسيع.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f3.h3,3. RESULTS.md was stale on every row,3. كان RESULTS.md متقادمًا في كل صف,,keep every number exactly
+dashboard.xref.tag.resolved,resolved,تم الحل,,
+dashboard.xref.f3.p1,"It was hand-written and drifted from the engine after every change. It is now
+    generated by <code>gen_results.py</code> from the live engine on the frozen sample, and
+    <code>verify_claims.py</code> re-derives the published statistics from
+    <code>journal.csv</code> and fails if either drifts. The table below is that output.",كان مكتوبًا يدويًا وينحرف عن المحرّك بعد كل تغيير. أما الآن فيولّده <code>gen_results.py</code> من المحرّك الفعلي على العيّنة المجمّدة، ويعيد <code>verify_claims.py</code> اشتقاق الإحصاءات المنشورة من <code>journal.csv</code> ويفشل إذا انحرف أيٌّ منهما. الجدول أدناه هو ذلك الناتج.,,keep the <…> tags and links as they are; translate only the words
+dashboard.xref.f4.h3,4. The skill still describes the rollover trap as a general hazard,4. لا تزال المهارة (skill) تصف فخ التجديد اليومي كخطر عام,,keep every number exactly
+dashboard.xref.f4.tag,skill text,نص المهارة,,
+dashboard.xref.f4.p1,"<code>bitfunded.md</code> presents it as broadly dangerous. Measured: it needs
+    <em>both</em> uncapped risk &ge;4% per position <em>and</em> a policy that holds
+    losers through the reset. Under desk sizing plus swing_safe it is dead twice over —
+    by cap and by policy. Largest floating loss actually carried into a reset was $3,422
+    against the $4,000 line, at 4% naive risk.","يعرضه <code>bitfunded.md</code> على أنه خطير على نطاق واسع. بالقياس: يتطلب <em>معًا</em> مخاطرة غير مسقوفة &ge;4% لكل مركز <em>و</em>سياسةً تُبقي الصفقات الخاسرة مفتوحة عبر إعادة الضبط. ومع تحديد الحجم عبر المكتب إضافةً إلى swing_safe، يصبح منتفيًا مرتين — بالسقف وبالسياسة. أكبر خسارة عائمة نُقلت فعلًا إلى ما بعد إعادة الضبط كانت $3,422 مقابل خط $4,000، عند مخاطرة ساذجة قدرها 4%.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f5.h3,5. Reverse-after-TP3 was untested; the trigger moved to the stop-out,5. لم يكن الانعكاس بعد TP3 مُختبرًا؛ فانتقل المُحفِّز إلى الخروج بالوقف,,keep every number exactly
+dashboard.xref.f5.tag,still one regime,لا يزال نظام سوق واحدًا,,
+dashboard.xref.f5.p1,"On TP3 it fired 4 times in 8 months, because only ~8% of trades reach 3R. On the
+    stop-out it fires 24 times in the 78-trade sample, which is a sample rather than
+    an anecdote — but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January 2026)
+    says the whole configuration is inside noise.",عند TP3 انطلق 4 مرات في 8 أشهر، لأن ~8% فقط من الصفقات تبلغ 3R. أما عند الخروج بالوقف فينطلق 24 مرة في عيّنة الـ78 صفقة، وهذه عيّنة لا مجرد حكاية — لكنها لا تزال أصلًا واحدًا في نظام سوق واحد، والعيّنة المحجوزة (من 1 يناير 2021 إلى 7 يناير 2026) تقول إن الإعداد بأكمله داخل نطاق الضجيج.,,keep every number exactly
+dashboard.xref.f6.h3,6. None of it was in the repo,6. لم يكن أيٌّ منه في المستودع,,keep every number exactly
+dashboard.xref.f6.p1,"All of it is in <code>kunjancollective/troid</code>, and troid's ledger runs daily from
+    <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit.
+    The journal's <code>logged_utc</code> column is the timestamp nothing can backdate.",كله موجود في <code>kunjancollective/troid</code>، ويعمل سجل troid يوميًا من <code>.github/workflows/shadow.yml</code>: شموع جديدة، إعادة تشغيل، دفتر اليومية، السجل، إيداع (commit). عمود <code>logged_utc</code> في دفتر اليومية هو الطابع الزمني الذي لا يمكن لأي شيء أن يؤرّخه بأثر رجعي.,,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.xref.f7.h3,"7. Two known small defects, both flagged and unfixed",7. عيبان صغيران معروفان، كلاهما مُعلَّم وغير مُصلَح,,keep every number exactly
+dashboard.xref.f7.tag,minor,ثانوي,,
+dashboard.xref.f7.p1,"<code>income_math.py</code>'s <code>withdraw=False</code> arm reports $0 by
+    construction — it counts only withdrawals as income, so the ""bank profits to grow the
+    buffer"" comparison can't be sized. And <code>risk.py</code> accepts
+    <code>--json</code> only before the subcommand.",فرع <code>withdraw=False</code> في <code>income_math.py</code> يُبلغ عن $0 بحكم بنائه — فهو لا يحتسب دخلًا سوى السحوبات، لذا لا يمكن قياس مقارنة «ادّخار الأرباح لتنمية الاحتياطي». كما أن <code>risk.py</code> لا يقبل <code>--json</code> إلا قبل الأمر الفرعي.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.variants.h2,Where each variant stands — corrected numbers,موقع كل صيغة — أرقام مصحّحة,,
+dashboard.variants.th.config,Configuration,الإعداد,,
+dashboard.variants.th.n,n,n,,
+dashboard.variants.th.exp,exp R,التوقع R,,
+dashboard.variants.th.pf,PF,معامل الربح,,
+dashboard.variants.th.dd,max DD,أقصى تراجع,,
+dashboard.variants.th.fills,fills W/L,التنفيذات رابحة/خاسرة,,
+dashboard.variants.row.v1,"v1 pullback, no filter",v1 ارتداد، دون مرشّح,,keep every number exactly
+dashboard.variants.row.regime,+ regime filter,+ مرشّح حالة السوق,,
+dashboard.variants.row.breakout,"+ breakout, single entry",+ اختراق، دخول واحد,,
+dashboard.variants.row.weak3,3-tranche weakness ladder,سلّم ضعف من 3 شرائح,,keep every number exactly
+dashboard.variants.row.weak5,5-tranche weakness ladder,سلّم ضعف من 5 شرائح,,keep every number exactly
+dashboard.variants.row.strong3,3-tranche strength ladder,سلّم قوة من 3 شرائح,,keep every number exactly
+dashboard.variants.row.strong5,5-tranche strength ladder,سلّم قوة من 5 شرائح,,keep every number exactly
+dashboard.variants.row.rev_tp3,5-strength + reverse on TP3,قوة-5 + انعكاس عند TP3,,keep every number exactly
+dashboard.variants.row.rev_stop,5-strength + reverse on stop,قوة-5 + انعكاس عند الوقف,,keep every number exactly
+dashboard.variants.row.rev_any,5-strength + reverse on any,قوة-5 + انعكاس عند أي خروج,,keep every number exactly
+dashboard.variants.note,"Ladder direction is the
+  single largest structural effect found: same signals, same stops, only the side the
+  tranches sit on. Weakness at 5 tranches is the worst profit factor in the project
+  (0.14); strength at 5 with the reverse on stop is the best drawdown (&minus;$1,058).","اتجاه السلّم هو أكبر أثر هيكلي منفرد عُثر عليه: الإشارات نفسها، والوقف نفسه، والفرق فقط في الجانب الذي تقع عليه الشرائح. سلّم الضعف بـ5 شرائح هو أسوأ معامل ربح في المشروع (0.14)؛ وسلّم القوة بـ5 شرائح مع الانعكاس عند الوقف هو أفضل تراجع (&minus;$1,058).",,keep every number exactly
+dashboard.risk.h2,"Risk model — verified, independent of strategy",نموذج المخاطر — مُتحقَّق منه، ومستقل عن الاستراتيجية,,
+dashboard.risk.daily.k,Daily budget,الميزانية اليومية,,
+dashboard.risk.daily.n,"4% of the initial balance, fixed",4% من الرصيد الأولي، ثابتة,,keep every number exactly
+dashboard.risk.floor.k,Static floor,الأرضية الثابتة,,
+dashboard.risk.floor.n,"6% of quota, fixed",6% من حجم الحساب، ثابتة,,keep every number exactly
+dashboard.risk.crossover.k,Ceiling crossover,نقطة تقاطع السقفين,,
+dashboard.risk.crossover.n,"below this, max loss binds",تحتها يصبح الحد الأقصى للخسارة هو المقيِّد,,
+dashboard.risk.risk.k,Risk / trade,المخاطرة / صفقة,,
+dashboard.risk.risk.n,capped at 35% of budget,بسقف 35% من الميزانية,,keep every number exactly
+dashboard.risk.fees.k,Fees,الرسوم,,
+dashboard.risk.fees.n,"round trip, on notional",ذهابًا وإيابًا، على القيمة الاسمية,,
+dashboard.risk.reset.k,Reset,إعادة الضبط,,
+dashboard.risk.reset.n,noon in New York,الظهر في نيويورك,,
+dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
+dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
+  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
+  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
+  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.",سقف الميزانية ليس تحفّظًا — بل هو الشيء الوحيد الذي يجعل الحساب قادرًا على الصمود. عند <strong>+0.35R</strong>، وهو نظام ممتاز حقًا، يؤدي تحديد الحجم الساذج عند 1% إلى انهيار الحساب في <strong>68%</strong> من الحالات خلال عام، وعند 2% تبلغ النسبة 98%. وكل خانة من تلك الخانات تساوي 0.0% في ظل السقف.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.h2,What would change the verdict,ما الذي قد يغيّر الحكم,,
+dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
+      parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
+      on api.binance.us: the config was chosen on 2026; on the 504 BTC trades from
+      1 January 2021 to 7 January 2026 it never saw, +0.008R, 95% CI [&minus;0.023R, +0.040R]. ETH, 498 trades:
+      +0.008R. Not met.</em>","<strong>أن يأتي اختبار السير للأمام بنتيجة &gt;+0.10R خارج العيّنة</strong> مع جوار مستقر للمعاملات. هذه هي البوابة لكل ما عداها. <em>أُجري في 21 سبتمبر 2026 على api.binance.us: اختير الإعداد على بيانات 2026؛ وعلى 504 صفقات BTC من 1 يناير 2021 إلى 7 يناير 2026 لم يرها قط، +0.008R، وفترة ثقة 95% [&minus;0.023R, +0.040R]. ETH، 498 صفقة: +0.008R. لم يتحقق.</em>",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li2,"<strong>Frequency reaches ~30 trades/month</strong>, which on this structure means
+      dropping below the 4h timeframe. Without it the income target needs roughly four
+      times the accounts the scaling model suggested.",<strong>أن تبلغ الوتيرة ~30 صفقة/شهر</strong>، وهذا يعني في هذا الهيكل النزول إلى ما دون الإطار الزمني 4h. ومن دون ذلك يحتاج هدف الدخل إلى نحو أربعة أضعاف الحسابات التي اقترحها نموذج التوسيع.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li3,"<strong>Reverse moves to TP2 or stop-out</strong> so the exhaustion thesis gets a
+      real sample instead of n=4. <em>Done: reverse-on-stop is the config, 24 reverse
+      trades in the sample. It did not change the verdict.</em>",<strong>أن ينتقل الانعكاس إلى TP2 أو الخروج بالوقف</strong> لكي تحصل فرضية الإنهاك على عيّنة حقيقية بدلًا من n=4. <em>تم: الانعكاس عند الوقف هو الإعداد المعتمد، مع 24 صفقة انعكاس في العيّنة. ولم يغيّر ذلك الحكم.</em>,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
+      withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
+      four correlated accounts running one strategy aren't four independent bets anyway.",<strong>خطة التوسيع لدى Bitfunded</strong> — 10% صافيًا لمدة 4 أشهر متتالية، و2 من عمليات السحب — تُنمّي حسابًا واحدًا بدلًا من شراء أربعة. أرخص، وأقل عبئًا في الإدارة، ثم إن أربعة حسابات مترابطة تشغّل استراتيجية واحدة ليست أربعة رهانات مستقلة على أي حال.,,"CHECK FIRST: dashboard.change.li4: '2 withdrawals' had to keep the digit, so it reads 'و2 من عمليات السحب'. Please check this is acceptable. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.order.h2,Order of work,ترتيب العمل,,
+dashboard.order.li1,"Push the scratch copy to the repo and apply the six verified patches
+      as the merged reset block. <em>Done.</em>",ادفع النسخة التجريبية إلى المستودع وطبّق الرقع الست المُتحقَّق منها بوصفها كتلة إعادة الضبط المدمجة. <em>تم.</em>,,keep the <…> tags and links as they are; translate only the words
+dashboard.order.li2,"Rewrite <code>RESULTS.md</code> with corrected numbers; revise
+      <code>bitfunded.md</code>'s rollover section to the measured condition.",أعد كتابة <code>RESULTS.md</code> بالأرقام المصحّحة؛ وعدّل قسم التجديد اليومي في <code>bitfunded.md</code> ليعكس الشرط المُقاس.,,keep the <…> tags and links as they are; translate only the words
+dashboard.order.li3,"Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
+      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em>",اسحب بيانات BTCUSDT 4h من 2021 حتى الآن وأجرِ اختبار السير للأمام وفق <code>HANDOFF.md</code>. <em>تم للخط الأساسي: داخل نطاق الضجيج. التالي هو <code>troid-shadow-2</code>.</em>,,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.order.li4,"Only then: challenge purchase, or not.",عندها فقط: شراء التحدي، أو عدمه.,,
+dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
+asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
+inside noise on BTC and ETH.","أرقام العيّنة من 1,539 شمعة 4h، من 8 يناير إلى 21 سبتمبر 2026، api.binance.us — أصل واحد، ونظام سوق واحد. والعيّنة المحجوزة، من 1 يناير 2021 إلى 7 يناير 2026 (<code>backtest/WALKFORWARD.md</code>)، جاءت داخل نطاق الضجيج على BTC وETH.",,"CHECK FIRST: Mixed-direction runs now that word order is natural: dashboard.foot ('1,539 شمعة 4h', '8 يناير إلى 21 سبتمبر 2026'), faq.daily.p1 ('حساب 1-Step بقيمة $100,000'), index.doesnt.tools and chat.is.p ('الملف TROID.md' as link text). Please check these render in the right visual order on an RTL page. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+tearsheet.meta.title,troid's research — tearsheet,أبحاث troid — تقرير الأداء,,"troid stays lowercase, in Latin letters"
+tearsheet.head.eyebrow,troid's research · tearsheet,أبحاث troid · تقرير الأداء,,"troid stays lowercase, in Latin letters"
+tearsheet.head.box,A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.,تقرير أداء كامل لاستراتيجية توقّعها على العيّنة المحجوزة +0.008R. كل مقياس أدناه MEASURED (مُقاس) وداخل نطاق الضجيج. يُنشر لأن هذا هو شكل الضجيج حين يُعرض عليك كله.,,"CHECK FIRST: Tier labels now appear as the English capital followed by an Arabic gloss in parentheses: 'MEASURED (مُقاس)' (hypo.no_edge_tail, tearsheet.head.box), 'DERIVED (مُشتق).' (index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase prose, keeps them translated (مُشتق، موثّق المصدر، مُنمذَج، مُقاس). Please confirm both treatments. | keep every number exactly"
+tearsheet.head.sample,"{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.",{n} صفقة مغلقة على {market}، من {start} إلى {end}. الربح والخسارة اليوميان على حجم حساب {quota}، والأيام التي لا خروج فيها تُحتسب صفرًا، و365 فترة في السنة، بالجمع لا بالضرب. المصدر: journal.csv في المستودع. ليست نصيحة مالية.,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {end} {market} {n} {quota} {start} exactly as written; keep every number exactly"
+tearsheet.empty,No closed trades yet.,لا توجد صفقات مغلقة بعد.,,
+tearsheet.stub.english,"The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=""/tearsheet"">the full tearsheet</a>.","التقرير نفسه — كل مقياس وجدول ورسم بياني — يُولَّد بالإنجليزية بواسطة quantstats ويُنشر مرة واحدة دون ترجمة: <a href=""/tearsheet"">تقرير الأداء الكامل</a>.",,keep the <…> tags and links as they are; translate only the words
+chat.meta.title,ask troid,اسأل troid,,"troid stays lowercase, in Latin letters"
+chat.meta.description,"ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.",اسأل troid. بيانات القواعد لدى troid مع مصدر كل قاعدة وتاريخ قراءتها، وحسابات تُجرى عبر أدوات، وكل رقم مع مستوى الثقة الخاص به. ليست نصيحة مالية.,,"troid stays lowercase, in Latin letters"
+chat.hero.h1,ask troid,اسأل troid,,"troid stays lowercase, in Latin letters"
+chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic tools. It
+  prices the trade you bring. It does not generate one.",يجيب «اسأل troid» من بيانات القواعد لدى troid ومن أدواته الحسابية الخاصة. وهو يسعّر الصفقة التي تأتي بها. ولا يولّد صفقة.,,"troid stays lowercase, in Latin letters"
+chat.eyebrow,"<span style=""text-transform:none"">ask troid</span> · automated assistant","<span style=""text-transform:none"">اسأل troid</span> · مساعد آلي",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+chat.status.checking,checking whether the assistant is switched on…,جارٍ التحقق مما إذا كان المساعد مُفعَّلًا…,,
+chat.placeholder,"e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it.","مثال: Bitfunded 1-Step، حجم الحساب $100k، حقوق الملكية 96,000، بيع عند 77,872 مع وقف 0.3% — حدّد الحجم.",,keep every number exactly
+chat.send,send,إرسال,,
+chat.nfa,Not financial advice. Verify with the firm before acting.,ليست نصيحة مالية. تحقّق مع الشركة قبل التصرف.,,
+chat.is.h2,What it is,ما هو,,
+chat.is.p,"A chat over <a href=""/TROID.md"">TROID.md</a>, the rules on
+  <a href=""{L}/compare"">troid's compare</a>, the <a href=""/METHODOLOGY.md"">methodology</a> and a fixed
+  <a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">support script</a>.
+  Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
+  document and read date of every rule they use, or say its source is not yet recorded; the
+  model reports what they return. Every number carries its tier. A pending rule stays pending.","محادثة مبنية على الملف <a href=""/TROID.md"">TROID.md</a>، والقواعد في <a href=""{L}/compare"">مقارنة troid</a>، و<a href=""/METHODOLOGY.md"">المنهجية</a>، و<a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">نص دعم</a> ثابت. تُجرى عمليات تحديد الحجم والميزانيات وفحوص الامتثال عبر أدوات تتولى الحساب وتذكر الوثيقة وتاريخ القراءة لكل قاعدة تستخدمها، أو تذكر أن مصدرها لم يُسجَّل بعد؛ ويُبلغ النموذج بما تُعيده هذه الأدوات. كل رقم يحمل مستوى الثقة الخاص به. والقاعدة المعلّقة تبقى معلّقة.",,"CHECK FIRST: Mixed-direction runs now that word order is natural: dashboard.foot ('1,539 شمعة 4h', '8 يناير إلى 21 سبتمبر 2026'), faq.daily.p1 ('حساب 1-Step بقيمة $100,000'), index.doesnt.tools and chat.is.p ('الملف TROID.md' as link text). Please check these render in the right visual order on an RTL page. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+chat.isnt.h2,What it isn't,ما ليس هو,,
+chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way to reach your account.
+  troid stores nothing you type; the page keeps the conversation only while it is open. To
+  answer, troid sends the conversation to the company that provides the AI model, which may
+  keep it for a limited period under its own terms. troid's log records one line per message:
+  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
+  the fixed reply given when the AI model declines to answer, or the end of the session, and an
+  error's status code. Never the text, never your address. The hosting provider keeps its own
+  request logs, which can include your IP address. About 20 messages an hour per address.",ليس خدمة إشارات، ولا توصية بشركة، ولا ذاكرة تتذكّرك، ولا وسيلة للوصول إلى حسابك. لا يخزّن troid أي شيء تكتبه؛ وتحتفظ الصفحة بالمحادثة فقط ما دامت مفتوحة. وللإجابة، يرسل troid المحادثة إلى الشركة التي توفّر نموذج الذكاء الاصطناعي، والتي قد تحتفظ بها لفترة محدودة وفق شروطها الخاصة. ويدوّن troid في سجلّ الأحداث سطرًا واحدًا لكل رسالة: أُجيبت أم فشلت، واستدعاءات الأدوات، والنموذج المُستدعى، وما إذا كان الرد هو تحذير الإساءة، أو الرد الثابت الذي يُعطى عندما يرفض نموذج الذكاء الاصطناعي الإجابة، أو نهاية الجلسة، ورمز الحالة في حال الخطأ. لا النص أبدًا، ولا عنوانك أبدًا. ويحتفظ مزوّد الاستضافة بسجلات الطلبات الخاصة به، والتي قد تتضمن عنوان IP الخاص بك. نحو 20 رسالة في الساعة لكل عنوان.,,"CHECK FIRST: product.ledger 'سجل troid': the word سجل is common. Other uses were worded so they never form 'سجل troid': the journal is 'دفتر اليومية', and the chat log (chat.isnt.p) is 'سجلّ الأحداث'. Please check that no remaining سجل reads as the product. | CHECK FIRST: index.doesnt.p and chat.isnt.p: the English lists fragments under the headings 'What it doesn't' and 'What it isn't'. In Arabic each item is written as an explicit negation (لا ينشر… لا يضع…; ليس… ولا…) so a fragment can never be read as a positive claim. Please confirm the result is not heavy. | keep every number exactly; troid stays lowercase, in Latin letters"
+chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
+  the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","قد يخطئ «اسأل troid»؛ ووثائق الشركة نفسها هي الحاكمة. تحقّق مع الشركة قبل التصرف. وتجد التفاصيل في <a href=""{L}/terms#ask-troid"">القسم 10 من شروط troid</a>.",,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+chat.js.full,This conversation has reached its limit of {n} questions. Reloading the page starts a new one.,بلغت هذه المحادثة الحد الأقصى لعدد الأسئلة ({n}). إعادة تحميل الصفحة تبدأ محادثة جديدة.,,keep {n} exactly as written
+chat.js.status_on,on · {firms}{limit} messages an hour · no memory between visits,مُفعَّل · {firms}{limit} رسالة في الساعة · لا ذاكرة بين الزيارات,,keep {firms} {limit} exactly as written
+chat.js.status_firms,{n} firms · ,الشركات: {n} · ,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} exactly as written"
+chat.js.status_off,ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.,«اسأل troid» مكتمل البناء لكنه مُعطَّل. وسيبدأ العمل بمجرد خضوع شروط troid وضوابط «اسأل troid» لمراجعة قانونية. وحتى ذلك الحين، يتولى مكتب troid في الصفحة الرئيسية الحسابات.,,"troid stays lowercase, in Latin letters"
+chat.js.unreachable,ask troid could not be reached.,تعذّر الوصول إلى «اسأل troid».,,"troid stays lowercase, in Latin letters"
+chat.js.ended,This session has ended. Reloading the page starts a new one.,انتهت هذه الجلسة. إعادة تحميل الصفحة تبدأ جلسة جديدة.,,
+chat.js.switched_off,switched off,مُعطَّل,,
+chat.js.tool_call_1,{n} tool call · ,استدعاء أداة: {n} · ,,keep {n} exactly as written
+chat.js.tool_call_n,{n} tool calls · ,استدعاءات الأدوات: {n} · ,,keep {n} exactly as written
+chat.js.error,error {status},خطأ {status},,keep {status} exactly as written
+chat.js.waiting,…,…,,
+faq.meta.title,troid — what the numbers actually say,troid — ما تقوله الأرقام فعلًا,,"troid stays lowercase, in Latin letters"
+faq.hero.h1,What the numbers actually say,ما تقوله الأرقام فعلًا,,
+faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.",المعدلات الأساسية، وآليات القواعد، وتضارب المصالح لدى troid نفسه — الأمور التي تُسقطها صفحة الهبوط.,,"troid stays lowercase, in Latin letters"
+faq.hero.updated,Last updated 23 September 2026,آخر تحديث: 23 سبتمبر 2026,,keep every number exactly
+faq.sec.base,Base rates,المعدلات الأساسية,,
+faq.pass.q,What percentage of people actually pass?,ما نسبة من ينجحون فعلًا؟,,
+faq.pass.p1,"The largest independent dataset covers more than 300,000 accounts from roughly 100,000
+traders across 10 firms. About <span class=""stat"">14%</span> passed a challenge and
+reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
+a challenge ever got paid.","تغطي أكبر مجموعة بيانات مستقلة أكثر من 300,000 حساب لنحو 100,000 متداول عبر 10 شركات. نجح نحو <span class=""stat"">14%</span> في تحدٍّ ووصلوا إلى حساب ممول. ولم يحصل على أي مبلغ قط سوى نحو <span class=""stat"">7%</span> من كل من اشتروا تحديًا.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,تُعلن معظم الشركات بنفسها عن معدلات نجاح في نطاق 5–10%.,,keep every number exactly
+faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,المصدر: بيانات مجمّعة من FPFX Technology؛ وإفصاحات الشركات كلٌّ على حدة.,,
+faq.cost.q,What does it really cost to get funded?,كم يكلّف الحصول على التمويل فعلًا؟,,
+faq.cost.p1,"The average trader needs about three attempts, spending over
+<span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","يحتاج المتداول المتوسط إلى نحو ثلاث محاولات، وينفق أكثر من <span class=""stat"">$1,600</span> على الرسوم لتحدٍّ بقيمة $100,000.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
+fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
+the pass-rate data implies arithmetically.","اجمع الرقمين معًا: بالنسبة لمعظم المشاركين، القيمة المتوقعة لرسوم التحدي <span class=""flag"">سالبة</span>. وهذا ليس ادّعاءً مثيرًا للجدل، بل هو ما تقتضيه بيانات معدلات النجاح حسابيًا.",,keep the <…> tags and links as they are; translate only the words
+faq.fail.q,Why do people fail?,لماذا يفشل الناس؟,,
+faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
+or maximum drawdown. Most happen in the first week. Very few people fail by reaching the
+end of the evaluation period and missing the profit target.","نحو <span class=""stat"">70%</span> من حالات الفشل هي تجاوزات لحدود الخسارة — الخسارة اليومية أو الحد الأقصى للتراجع. ويحدث معظمها في الأسبوع الأول. وقلّة قليلة جدًا يفشلون ببلوغ نهاية فترة التقييم دون تحقيق هدف الربح.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace back to
+<strong>size</strong>, not to strategy selection. People do not blow accounts because
+their entries are bad. They blow them because one position was too large on a day that
+went wrong.",يقولها ملخّص إحدى الشركات نفسها بوضوح: تكاد جميع حالات الفشل تعود إلى <strong>الحجم</strong>، لا إلى اختيار الاستراتيجية. لا يخسر الناس حساباتهم لأن نقاط دخولهم سيئة. بل يخسرونها لأن مركزًا واحدًا كان أكبر من اللازم في يوم ساءت فيه الأمور.,,keep the <…> tags and links as they are; translate only the words
+faq.offer.q,Then what is troid actually offering?,إذن، ماذا يقدّم troid فعلًا؟,,"troid stays lowercase, in Latin letters"
+faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
+a firm's loss ceilings at once, net of fees, and tells you which one is actually
+binding. It does not publish trade signals and it will never place a trade.",أداة مخاطر مجانية ومفتوحة، والأبحاث التي تقف وراءها. تحدّد أحجام المراكز وفق سقفَي الخسارة لدى الشركة معًا، بعد خصم الرسوم، وتخبرك أيّهما هو المقيِّد فعلًا. لا تنشر إشارات تداول، ولن تضع صفقة أبدًا.,,
+faq.offer.p2,"troid built it because the failure data points at sizing, not entries. Whether you use
+troid's desk, someone else's tool, or a spreadsheet, the arithmetic is the part worth getting
+right.",بنى troid هذه الأداة لأن بيانات الفشل تشير إلى تحديد الحجم، لا إلى نقاط الدخول. وسواء استخدمت مكتب troid، أو أداة شخص آخر، أو جدول بيانات، فإن الحساب هو الجزء الذي يستحق أن تُتقنه.,,"troid stays lowercase, in Latin letters"
+faq.sec.rules,Things worth knowing about the rules,أمور تستحق المعرفة عن القواعد,,
+faq.challenge.q,"What is a prop challenge, really?",ما هو تحدي شركة التمويل حقًا؟,,
+faq.challenge.p,"A prop challenge is an evaluation you pay for. The account you trade is usually a demo account. Your orders do not reach a real market, and the balance is not money you own. If you pass, the firm may pay you a share of simulated profits, on its own terms. In general, the firm is not a broker and holds no client funds. The fee buys the evaluation. It is not a deposit. So, in most cases, no broker regulation, client-money rule or investor-compensation scheme protects the account. Apart from the general consumer-protection law where you live, your protections are the firm's contract and nothing else. Read the contract before you pay: who you are contracting with, which country's law applies, what ends an account, and when a payout can be refused. A few firms also offer a route through a real exchange account. Check which kind you are buying.",تحدي شركة التمويل تقييمٌ تدفع ثمنه. والحساب الذي تتداول عليه عادةً حساب تجريبي. لا تصل أوامرك إلى سوق حقيقية، والرصيد ليس مالًا تملكه. إذا نجحت، فقد تدفع لك الشركة حصة من أرباح مُحاكاة، وفق شروطها هي. وبوجه عام، الشركة ليست وسيطًا ولا تحتفظ بأموال العملاء. الرسوم تشتري التقييم. وهي ليست إيداعًا. لذلك، في معظم الحالات، لا تحمي الحسابَ أيُّ لوائح للوساطة، ولا قاعدة لأموال العملاء، ولا نظام لتعويض المستثمرين. وبصرف النظر عن قانون حماية المستهلك العام حيث تقيم، فإن حمايتك هي عقد الشركة ولا شيء غيره. اقرأ العقد قبل أن تدفع: مع من تتعاقد، وقانون أي دولة يسري، وما الذي يُنهي الحساب، ومتى يمكن رفض صرف الأرباح. وتقدّم بضع شركات أيضًا مسارًا عبر حساب حقيقي على منصة تداول. تحقّق من النوع الذي تشتريه.,,
+faq.daily.q,What is your daily loss limit really?,ما هو حد خسارتك اليومي حقًا؟,,
+faq.daily.p1,"On a $100,000 1-Step account it is a fixed $4,000 — 4% of the <em>initial</em> balance,
+not of the day's starting balance. The day's loss is measured from your balance at the
+reset, and it counts <em>floating</em> losses on open positions, not just closed ones.","في حساب 1-Step بقيمة $100,000، هو مبلغ ثابت قدره $4,000 — أي 4% من الرصيد <em>الأولي</em>، لا من رصيد بداية اليوم. وتُقاس خسارة اليوم من رصيدك عند إعادة الضبط، وتُحتسب فيها الخسائر <em>العائمة</em> على المراكز المفتوحة، لا المغلقة فقط.",,"CHECK FIRST: Mixed-direction runs now that word order is natural: dashboard.foot ('1,539 شمعة 4h', '8 يناير إلى 21 سبتمبر 2026'), faq.daily.p1 ('حساب 1-Step بقيمة $100,000'), index.doesnt.tools and chat.is.p ('الملف TROID.md' as link text). Please check these render in the right visual order on an RTL page. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.daily.p2,"But it often is not the constraint that matters. The 6% maximum loss is static at
+$94,000. Below roughly <span class=""stat"">$98,000</span> of equity, the distance to that
+static floor is smaller than your daily allowance, so the max loss becomes the real
+ceiling and the ""4% daily"" number is fiction.","لكنه في الغالب ليس القيد المهم. فالحد الأقصى للخسارة البالغ 6% ثابت عند $94,000. وتحت نحو <span class=""stat"">$98,000</span> من حقوق الملكية، تصبح المسافة إلى تلك الأرضية الثابتة أصغر من المسموح اليومي لديك، فيصبح الحد الأقصى للخسارة هو السقف الحقيقي، ويغدو رقم «4% يوميًا» وهمًا.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one bad day. Size
+against the smaller of the two, always.","في حساب جديد، تقع نقطة التقاطع هذه على بُعد نحو $2,000 — نصف يوم سيئ واحد. حدّد الحجم وفق الأصغر من الاثنين، دائمًا.",,keep every number exactly
+faq.reset.q,When does your trading day reset?,متى يُعاد ضبط يوم تداولك؟,,
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
+morning and afternoon sessions draw on separate daily budgets.",00:00 UTC+8، أي 16:00 UTC — <strong>الظهر في نيويورك</strong>، لا منتصف الليل. جلستك الصباحية وجلستك بعد الظهر تسحبان من ميزانيتين يوميتين منفصلتين.,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
+because the previous day's profit does not carry over. A position comfortably inside the
+limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+themselves.",الفخ: الخسارة العائمة التي تبقى بعد إعادة الضبط تُحتسب كاملةً على اليوم الجديد، لأن ربح اليوم السابق لا يُرحَّل. فالمركز الذي يكون داخل الحد بارتياح عند 11:59 قد يتجاوزه عند 12:01 دون أن يتحرك السعر إطلاقًا. وتوثّق Bitfunded ذلك بنفسها.,,keep every number exactly
+faq.risk.q,How much should you risk per trade?,كم ينبغي أن تخاطر في كل صفقة؟,,
+faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
+What it can show you is what the arithmetic does to the wrong one.",الرقم الصحيح يعتمد على نظامك، لذا لن يعطيك troid رقمًا. ما يمكنه أن يُريك إياه هو ما تفعله الحسابات بالرقم الخاطئ.,,"troid stays lowercase, in Latin letters"
+faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
+most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
+trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
+2%, <span class=""stat"">98%</span>. Capping each trade at a fraction of the
+<em>remaining</em> budget rather than a fixed slice of the balance took all of those to
+0%.","حاكى troid متداولًا يملك أفضلية ممتازة حقًا — +0.35R لكل صفقة، وهو أفضل مما يحافظ عليه معظم المحترفين. وعند المخاطرة بنسبة 1% لكل صفقة دون سقف على الميزانية المتبقية، خسر ذلك المتداول الحساب في <span class=""stat"">68%</span> من الحالات خلال اثني عشر شهرًا. وعند 2%، <span class=""stat"">98%</span>. أما وضع سقف لكل صفقة عند جزء من الميزانية <em>المتبقية</em> بدلًا من حصة ثابتة من الرصيد، فقد أنزل كل تلك النسب إلى 0%.",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
+whether you survive long enough to use it.",الأفضلية الحقيقية لا تكفي وحدها. في ظل مجموعة قواعد 4%/6%، يحدّد حجم المركز ما إذا كنت ستصمد مدة كافية لاستخدامها.,,keep every number exactly
+faq.fees.q,Do fees matter?,هل الرسوم مهمة؟,,
+faq.fees.p1,"More than most people model. Bitfunded charges 0.04% of position size on entry and
+again on exit, calculated on notional — which at 5× leverage is five times your margin.",أكثر مما يحتسبه معظم الناس في نماذجهم. تتقاضى Bitfunded نسبة 0.04% من حجم المركز عند الدخول ومرة أخرى عند الخروج، محسوبة على القيمة الاسمية — التي تبلغ عند رافعة 5× خمسة أضعاف هامشك.,,keep every number exactly
+faq.fees.p2,"Because notional scales inversely with stop distance, tight stops are punished hardest.
+A stop 3.9% away costs about 2% of your risk budget in fees. A 0.3% scalp stop costs
+<span class=""stat"">21%</span>. On a $500 risk that is $105 gone before price moves.","ولأن القيمة الاسمية تتناسب عكسيًا مع مسافة الوقف، فإن أشد العقاب يقع على الوقف الضيق. وقفٌ على بُعد 3.9% يكلّف نحو 2% من ميزانية المخاطرة في الرسوم. ووقف مضاربة سريعة (scalp) بمسافة 0.3% يكلّف <span class=""stat"">21%</span>. وعلى مخاطرة قدرها $500، يعني ذلك ضياع $105 قبل أن يتحرك السعر.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.sec.about,"About <span style=""text-transform:none"">troid</span>","عن <span style=""text-transform:none"">troid</span>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.money.q,How does troid make money?,كيف يجني troid المال؟,,"troid stays lowercase, in Latin letters"
+faq.money.p1,"Two ways, and only one exists yet.",بطريقتين، ولا توجد حتى الآن إلا واحدة منهما.,,
+faq.money.p2,"troid is an independent affiliate of the firms it compares. When
+someone buys a challenge through one of its links or codes, that firm pays troid a commission. It's
+paid on the purchase, not on your result — troid would be paid if you failed. Where a code is shown,
+it's cheaper through the affiliate link; where it isn't, it's the same price. That's worth knowing, and worth
+weighing everything on this site against. Which firms, and the criterion for choosing them, is
+stated on <a href=""{L}/compare"">troid's compare</a> and reviewed quarterly.","troid شريك تسويق مستقل بالعمولة للشركات التي يقارن بينها. عندما يشتري شخص ما تحديًا عبر أحد روابطه أو رموزه، تدفع تلك الشركة عمولة إلى troid. وتُدفع العمولة على عملية الشراء، لا على نتيجتك — إذ يتقاضاها troid حتى لو فشلت. وحيث يظهر رمز، يكون السعر أرخص عبر رابط الإحالة؛ وحيث لا يظهر، يكون السعر نفسه. هذا أمر يستحق أن تعرفه، وأن تزن به كل ما في هذا الموقع. أما أيّ الشركات، ومعيار اختيارها، فمذكوران في <a href=""{L}/compare"">مقارنة troid</a> ويُراجعان كل ثلاثة أشهر.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.money.p3,"The second way, later, is a paid tier for people who want more than troid's desk — the
+MCP server, journal analysis, multi-account tracking. That revenue doesn't depend on
+anyone buying a challenge, which is deliberate.",والطريقة الثانية، لاحقًا، هي مستوى مدفوع لمن يريد أكثر من مكتب troid — خادم MCP، وتحليل دفتر اليومية، وتتبّع حسابات متعددة. ولا يعتمد هذا الدخل على شراء أي شخص لتحدٍّ، وهذا مقصود.,,"troid stays lowercase, in Latin letters"
+faq.trust.q,Why should you trust any of this?,لماذا ينبغي أن تثق بأيٍّ من هذا؟,,
+faq.trust.p1,"Don't, on troid's say-so. Everything above is checkable: the pass-rate data is published,
+Bitfunded's rules are in their own documentation, and troid's backtest code is open — you can
+run it and get the same numbers, including the unflattering ones.",لا تثق لمجرد أن troid يقول ذلك. كل ما سبق قابل للتحقق: بيانات معدلات النجاح منشورة، وقواعد Bitfunded موجودة في وثائقها، وشيفرة الاختبار الرجعي لدى troid مفتوحة — يمكنك تشغيلها والحصول على الأرقام نفسها، بما فيها الأرقام غير المُرضية.,,"troid stays lowercase, in Latin letters"
+faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
+troid's own strategy tested out of sample at +0.008R over 504 trades — no edge — and the
+page says so.","ينشر <a href=""{L}/ledger"">سجل troid</a> نتائجه كل أربع ساعات، بما فيها الخسائر. واختُبرت استراتيجية troid نفسها خارج العيّنة فجاءت عند +0.008R على 504 صفقات — بلا أفضلية — والصفحة تقول ذلك.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.worth.q,Is a challenge worth buying?,هل يستحق التحدي الشراء؟,,
+faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
+reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
+sizing survives will find those out from a challenge, at $799, faster than from a spreadsheet at no cost.
+The base rates on this page are the rest of it.",لا يجيب troid عن هذا السؤال نيابةً عن أحد؛ بل يسعّر ما تأتي به. والحساب واحد لكل قارئ: المتداول الذي لا يستطيع أن يحدّد أفضليته، ومتوسط نسبة الربح إلى الخسارة لديه، وسلسلة الخسائر التي يصمد أمامها تحديد حجمه، سيكتشف ذلك من تحدٍّ بسعر $799 أسرع مما يكتشفه من جدول بيانات بلا تكلفة. والمعدلات الأساسية في هذه الصفحة هي بقية الصورة.,,"CHECK FIRST: faq.worth.p1 is translated literally, including 'faster than from a spreadsheet at no cost'. Please confirm the Arabic keeps the English's dry, slightly ironic sense and adds no recommendation. | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.worth.p2,"<a href=""{L}/compare"">troid's compare</a> has the affiliate links and codes, and the criterion for which firms are
+on it. They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code
+is shown.","في <a href=""{L}/compare"">مقارنة troid</a> روابط الإحالة والرموز، ومعيار اختيار الشركات المدرجة فيها. وهي مصدر تمويل troid، ولا تكلّفك شيئًا إضافيًا. والشراء المباشر بالسعر نفسه حيث لا يظهر أي رمز.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.sec.disclaimer,Disclaimer,إخلاء المسؤولية,,
+faq.disc.advice.h,Not financial advice,ليست نصيحة مالية,,
+faq.disc.advice.p,"Everything on this site is general information and education. It is not financial,
+investment, trading, tax, or legal advice, and it does not account for your circumstances,
+objectives, or risk tolerance. troid and the people who run it are not licensed financial advisors, brokers, or
+registered investment professionals. Consult a qualified professional before making
+financial decisions.",كل ما في هذا الموقع معلومات عامة ومحتوى تعليمي. وهو ليس نصيحة مالية أو استثمارية أو تداولية أو ضريبية أو قانونية، ولا يراعي ظروفك أو أهدافك أو قدرتك على تحمّل المخاطر. وليس troid ولا القائمون عليه مستشارين ماليين مرخّصين أو وسطاء أو مهنيين استثماريين مسجّلين. استشر مختصًا مؤهلًا قبل اتخاذ قرارات مالية.,,"troid stays lowercase, in Latin letters"
+faq.disc.affiliate.h,Affiliate relationship,علاقة التسويق بالعمولة,,
+faq.disc.affiliate.p,"troid is an independent affiliate of the firms it compares. It earns a commission on
+challenge purchases made through its links or discount codes. It is not an employee, agent or
+representative of any firm, and no firm owns or operates this website or is responsible for its
+contents. The current firms, and the criterion for choosing them, are on
+<a href=""{L}/compare"">troid's compare</a>.","troid شريك تسويق مستقل بالعمولة للشركات التي يقارن بينها. ويتقاضى عمولة على مشتريات التحديات التي تتم عبر روابطه أو رموز الخصم الخاصة به. وهو ليس موظفًا أو وكيلًا أو ممثلًا لأي شركة، ولا تملك أي شركة هذا الموقع أو تديره أو تتحمّل مسؤولية محتواه. الشركات الحالية، ومعيار اختيارها، موجودة في <a href=""{L}/compare"">مقارنة troid</a>.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.disc.simulated.h,Simulated trading,التداول المُحاكى,,
+faq.disc.simulated.p,"Prop challenges and funded accounts are generally simulated trading environments.
+<a href=""#prop-challenge"">{question}</a> above says what that means for your protections.
+Read the firm's terms yourself.","تحديات شركات التمويل والحسابات الممولة هي عمومًا بيئات تداول مُحاكاة. ويبيّن السؤال <a href=""#prop-challenge"">{question}</a> أعلاه ما يعنيه ذلك بالنسبة لحمايتك. اقرأ شروط الشركة بنفسك.",,keep {question} exactly as written; keep the <…> tags and links as they are; translate only the words
+faq.disc.hypo.h,Backtest and hypothetical results,نتائج الاختبار الرجعي والنتائج الافتراضية,,
+faq.disc.hypo.p,"The hypothetical-performance disclosure, in the regulator's own words, is in
+<a href=""{L}/terms#hypothetical"">troid's terms, section 6</a>, and beside every result on troid's ledger and
+troid's research. troid's published backtests cover BTC and ETH on one exchange feed; the out-of-sample test
+showed no measurable edge, and troid publishes that result rather than the in-sample one.","إفصاح الأداء الافتراضي، بكلمات الجهة التنظيمية نفسها، موجود في <a href=""{L}/terms#hypothetical"">شروط troid، القسم 6</a>، وبجانب كل نتيجة في سجل troid وأبحاث troid. تغطي الاختبارات الرجعية التي نشرها troid عملتَي BTC وETH على مصدر بيانات واحد من منصة واحدة؛ ولم يُظهر الاختبار خارج العيّنة أي أفضلية قابلة للقياس، وينشر troid تلك النتيجة بدلًا من نتيجة داخل العيّنة.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.disc.eval.h,Prop firm evaluations,تقييمات شركات التمويل,,
+faq.disc.eval.p1,"Challenge fees are generally non-refundable if you fail. Breaching a firm rule can
+void accrued profits, terminate the account, or trigger a payout penalty — not merely
+end the evaluation. Firms change their terms, and troid's rule summaries can lag those
+changes.",رسوم التحدي غير قابلة للاسترداد عمومًا إذا فشلت. وقد يؤدي خرق قاعدة من قواعد الشركة إلى إلغاء الأرباح المتراكمة، أو إنهاء الحساب، أو فرض غرامة على صرف الأرباح — لا مجرد إنهاء التقييم. وتغيّر الشركات شروطها، وقد تتأخر ملخصات القواعد لدى troid عن مواكبة تلك التغييرات.,,"troid stays lowercase, in Latin letters"
+faq.disc.eval.p2,"Nothing troid publishes is a substitute for reading the firm's own Terms of Use. Where the two
+disagree, <strong>the contract governs</strong> — troid has
+already found one case where a firm's own challenge page displays a figure that
+contradicts its Terms.",لا شيء مما ينشره troid يُغني عن قراءة شروط الاستخدام الخاصة بالشركة. وحيث يختلف الاثنان، <strong>فالعقد هو الحاكم</strong> — وقد وجد troid بالفعل حالة واحدة تعرض فيها صفحة التحدي الخاصة بإحدى الشركات رقمًا يناقض شروطها.,,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere. | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.disc.eval.p3,"Two rules deserve specific attention because they are commonly missed. Bitfunded's
+Terms prohibit using third-party or marketed strategies to pass an evaluation, so buying
+a strategy, bot, or signal service and running it on a challenge may place you in breach
+regardless of how it performs. And traders are limited to one active account per
+challenge level absent written consent, which caps multi-account plans well below what
+most people assume.",قاعدتان تستحقان اهتمامًا خاصًا لأنهما كثيرًا ما تُغفلان. تحظر شروط Bitfunded استخدام استراتيجيات طرف ثالث أو استراتيجيات مُسوَّقة لاجتياز التقييم، لذا فإن شراء استراتيجية أو روبوت أو خدمة إشارات وتشغيلها على تحدٍّ قد يضعك في حالة خرق بصرف النظر عن أدائها. كما يقتصر المتداولون على حساب نشط واحد لكل مستوى تحدٍّ ما لم تُمنح موافقة كتابية، وهو ما يضع سقفًا لخطط الحسابات المتعددة أدنى بكثير مما يفترضه معظم الناس.,,
+faq.disc.eval.p4,"troid's tools compute arithmetic against rules as it understands them at the time of
+writing. They cannot detect a rule it has not modelled, a term that changed after
+publication, or a firm-specific interpretation. Verify anything material with the firm
+directly — Bitfunded provides support tickets for rule clarification.",تُجري أدوات troid حساباتها وفق القواعد كما يفهمها troid وقت الكتابة. ولا يمكنها اكتشاف قاعدة لم يُنمذجها، أو شرط تغيّر بعد النشر، أو تفسير خاص بشركة بعينها. تحقّق من أي أمر جوهري مع الشركة مباشرةً — إذ توفّر Bitfunded تذاكر دعم لتوضيح القواعد.,,"troid stays lowercase, in Latin letters"
+faq.disc.eval.p5,"Beyond the affiliate relationship above, troid is not affiliated with, employed by, endorsed by, or authorised to speak for any
+prop firm.",باستثناء علاقة التسويق بالعمولة المذكورة أعلاه، فإن troid ليس تابعًا لأي شركة تمويل متداولين، ولا موظفًا لديها، ولا معتمدًا منها، ولا مخوّلًا بالتحدث باسمها.,,"troid stays lowercase, in Latin letters"
+faq.disc.risk.h,Risk,المخاطر,,
+faq.disc.risk.p,"Trading leveraged cryptocurrency carries substantial risk. Most participants in prop
+firm evaluations do not receive a payout. Challenge fees are generally non-refundable.
+Never risk money you cannot afford to lose.",ينطوي تداول العملات المشفرة بالرافعة المالية على مخاطر كبيرة. ولا يحصل معظم المشاركين في تقييمات شركات التمويل على أي صرف للأرباح. ورسوم التحدي غير قابلة للاسترداد عمومًا. لا تخاطر أبدًا بمال لا تستطيع تحمّل خسارته.,,
+faq.disc.software.h,Software,البرمجيات,,
+faq.disc.software.p,"troid's tools are provided as-is, without warranty of any kind. They perform arithmetic on
+numbers you supply. They do not place, modify, or close trades, and they never handle
+account credentials. You are responsible for verifying any output before acting on it.",تُقدَّم أدوات troid «كما هي»، دون ضمان من أي نوع. وهي تُجري عمليات حسابية على أرقام تقدّمها أنت. ولا تضع صفقات أو تعدّلها أو تغلقها، ولا تتعامل أبدًا مع بيانات الدخول إلى الحسابات. وأنت مسؤول عن التحقق من أي مُخرَج قبل التصرف بناءً عليه.,,"troid stays lowercase, in Latin letters"
+faq.disc.jurisdiction.h,Jurisdiction,الاختصاص القضائي,,
+faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by country. It is your
+responsibility to confirm you are eligible to participate where you live.",يختلف توفّر خدمات شركات التمويل ومشروعيتها من بلد إلى آخر. وتقع عليك مسؤولية التأكد من أهليتك للمشاركة حيث تقيم.,,
+terms.meta.title,troid — terms of use,troid — شروط الاستخدام,,"troid stays lowercase, in Latin letters"
+terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.",شروط استخدام troid: أداة معلوماتية مجانية، وليست نصيحة. تحقّق من كل رقم مع الشركة قبل التداول.,,"troid stays lowercase, in Latin letters"
+terms.hero.eyebrow,troid · terms,troid · الشروط,,"troid stays lowercase, in Latin letters"
+terms.hero.h1,Terms of use,شروط الاستخدام,,
+terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
+  documents govern. The full terms follow.",troid أداة معلوماتية مجانية. وهو ليس نصيحة، ولا يضع أي أمر تداول، ووثائق الشركة نفسها هي الحاكمة. وفيما يلي الشروط الكاملة.,,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, chat.discl, terms.hero.lede, faq.disc.eval.p2: 'governs' is rendered two ways. The translation-precedence lines use 'هي المعتمدة' (the authoritative version); lines about the firm's documents or contract governing use 'هي الحاكمة'. Counsel or the reviewer should pick the legal formula (other candidates are 'العبرة بالنسخة الإنجليزية' and 'تسود النسخة الإنجليزية') and apply it everywhere. | troid stays lowercase, in Latin letters"
+terms.draft,"Draft of 23 September 2026, effective from that date and published ahead of review by counsel.
+Counsel's edits will replace this version, and this date will change when they do.",مسودة بتاريخ 23 سبتمبر 2026، سارية من ذلك التاريخ ومنشورة قبل مراجعتها من قِبل مستشار قانوني. وستحلّ تعديلات المستشار القانوني محل هذه النسخة، وسيتغيّر هذا التاريخ عندئذٍ.,,keep every number exactly
+terms.toc.h,Contents,المحتويات,,
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.",هذا «اسأل troid»، مساعد آلي. ليس إنسانًا وليس نصيحة مالية. يجيب استنادًا إلى القواعد التي نشرتها كل شركة بنفسها وإلى حسابات مُجراة، ويُظهر المصدر — أو يذكر متى لم يُسجَّل المصدر بعد. تحقّق مع الشركة قبل التصرف.,,"troid stays lowercase, in Latin letters"
+ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,يجيب «اسأل troid» عن أسئلة حول قواعد شركات تمويل المتداولين وتحديد الحجم. الرسائل المسيئة تُنهي الجلسة.,,"troid stays lowercase, in Latin letters"
+ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,انتهت هذه الجلسة. يجيب «اسأل troid» عن أسئلة حول قواعد شركات تمويل المتداولين وتحديد الحجم.,,"troid stays lowercase, in Latin letters"
+ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.",لا يستطيع «اسأل troid» الإجابة عن هذا السؤال. يُظهر مكتب troid ومقارنة troid القواعد ومصادرها والحسابات؛ ولأي شيء آخر، راسل hello@troid.ai.,,"troid stays lowercase, in Latin letters"
+ask.note,Not financial advice. Verify with the firm before acting.,ليست نصيحة مالية. تحقّق مع الشركة قبل التصرف.,,
+ask.err.switched_off,ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.,«اسأل troid» مُعطَّل إلى أن تخضع شروط troid وضوابط «اسأل troid» لمراجعة قانونية.,,"troid stays lowercase, in Latin letters"
+ask.err.not_configured,ask troid is not fully configured.,«اسأل troid» غير مُهيّأ بالكامل.,,"troid stays lowercase, in Latin letters"
+ask.err.limit,Limit: {n} messages an hour.,الحد: {n} رسالة في الساعة.,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} exactly as written"
+ask.err.too_long,Keep one message under {n} characters.,اجعل الرسالة الواحدة أقل من {n} حرف.,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} exactly as written"
+ask.err.restart,"This conversation can't continue: at most {n} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.",لا يمكن متابعة هذه المحادثة: الحد الأقصى {n} من الرسائل المتناوبة، تبدأ وتنتهي برسالة من المستخدم، وضمن حدود الطول. إعادة تحميل الصفحة تبدأ محادثة جديدة.,,keep {n} exactly as written
+ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,تعذّر التحقق من هذه المحادثة. إعادة تحميل الصفحة تبدأ محادثة جديدة.,,
+ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.",نفد الوقت المتاح لـ«اسأل troid» في هذا السؤال. اسأل مجددًا بصيغة أضيق.,,"troid stays lowercase, in Latin letters"
+ask.err.busy,ask troid is busy. Try again in a minute.,«اسأل troid» مشغول. حاول مجددًا بعد دقيقة.,,"troid stays lowercase, in Latin letters"
+ask.err.unreachable,The model could not be reached. Try again in a minute.,تعذّر الوصول إلى النموذج. حاول مجددًا بعد دقيقة.,,
+ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.",إعدادات «اسأل troid» غير صحيحة. حاول مجددًا لاحقًا، أو راسل hello@troid.ai.,,"troid stays lowercase, in Latin letters"
+ask.err.error,ask troid hit an error. Try again in a minute.,واجه «اسأل troid» خطأ. حاول مجددًا بعد دقيقة.,,"troid stays lowercase, in Latin letters"
+ask.cut,[This answer hit its length limit and is cut short.],[بلغت هذه الإجابة حدّ الطول فاقتُطعت.],,
+ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",[بلغ «اسأل troid» حدّ استدعاءات الأدوات أو حدّ الوقت للرسالة الواحدة. اسأل مجددًا بصيغة أضيق.],,"troid stays lowercase, in Latin letters"
+ask.no_answer,No answer produced.,لم تُنتَج أي إجابة.,,
+data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.173bc3120e68,discretionary,تقديري,,text from a firm's rules (firms.json)
+data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.1d95103da2c3,Rules go on this page only after they're read from BrightFunded's own documents.,لا تُدرج القواعد في هذه الصفحة إلا بعد قراءتها من وثائق BrightFunded نفسها.,,text from a firm's rules (firms.json)
+data.1f7a32c047e8,none if the evaluation is not completed,لا يوجد إذا لم يكتمل التقييم,,text from a firm's rules (firms.json)
+data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,التجديد اليومي 23:30–23:59 CET = 21:30 UTC (CEST) / 22:30 UTC (CET)؛ وتنصح الشركة بعدم التداول خلال هذه الفترة,,text from a firm's rules (firms.json); keep every number exactly
+data.254f81f3de77,up to 90% (add-on); base unconfirmed,حتى 90% (إضافة)؛ النسبة الأساسية غير مؤكدة,,text from a firm's rules (firms.json); keep every number exactly
+data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,تُطلق Bitfunded عروضها الترويجية الخاصة (اشترِ واحدًا واحصل على آخر، وما شابه) وهي تسري عبر هذا الرابط — دون حاجة إلى رمز.,,text from a firm's rules (firms.json)
+data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
+data.3ce26c9516b7,none stated,لم يُذكر شيء,,text from a firm's rules (firms.json)
+data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,حيث يعمل سجل troid. مصدر كل قاعدة وتاريخ قراءتها موجودان في مقارنة troid.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.44fadd8eb267,80% → 90%,80% ← 90%,,"CHECK FIRST: ledger.charts.caption, data.44fadd8eb267 ('80% ← 90%'), data.601c3530e85e: '→' was changed to '←'. Bidi does not mirror arrows, so in an RTL line '←' is the one that points from the first value to the second. Please confirm on the rendered page. | text from a firm's rules (firms.json); keep every number exactly"
+data.45c9dde99668,day-start balance,رصيد بداية اليوم,,text from a firm's rules (firms.json)
+data.4f6eab8d3b65,"A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",يظهر رابط الشركة عندما تكون قيمة link_live هي true في مُدخلها، وفي الوقت نفسه يكون لكلٍّ من خانات الحد اليومي والحد الأقصى والهدف والسعر مصدرٌ مسجّل: وثيقة الشركة، والقسم، والتاريخ الذي قرأها فيه troid. وحتى ذلك الحين يبقى الرابط محجوبًا، أيًّا كان ما تسمح به اتفاقية التسويق بالعمولة. ويضبط إنسانٌ قيمة link_live عندما تكون اتفاقية التسويق بالعمولة قائمة وتتحقق شروطها للربط. أما الخانات الأخرى فتُظهر «معلّق» كلٌّ على حدة. وتُعرض الإتاحة في الولايات المتحدة دائمًا في صف مستقل.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.5129c48719a9,5-min restriction,قيد 5 دقائق,,text from a firm's rules (firms.json); keep every number exactly
+data.57fe3b35e2a2,16:00,16:00,,text from a firm's rules (firms.json); keep every number exactly
+data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,عمولة العملات المشفرة 0.012%/جانب - تحقّق عبر brightfunded.com/trading-instruments,,text from a firm's rules (firms.json); keep every number exactly
+data.601c3530e85e,trailing → static at initial after +6%,متحرك ← ثابت عند الرصيد الأولي بعد +6%,,"CHECK FIRST: ledger.charts.caption, data.44fadd8eb267 ('80% ← 90%'), data.601c3530e85e: '→' was changed to '←'. Bidi does not mirror arrows, so in an RTL line '←' is the one that points from the first value to the second. Please confirm on the rendered page. | text from a firm's rules (firms.json); keep every number exactly"
+data.64d2206416ad,$10k / day and / trade,$10k لكل يوم ولكل صفقة,,text from a firm's rules (firms.json); keep every number exactly
+data.65de6a9cbafc,$999,$999,,text from a firm's rules (firms.json); keep every number exactly
+data.66f1cdf92813,MT5 barred to US residents; Match-Trader access not yet sourced,MT5 محظورة على المقيمين في الولايات المتحدة؛ ولم يُوثَّق بعد مصدر لإتاحة Match-Trader,,text from a firm's rules (firms.json); keep every number exactly
+data.71f8e7976e4c,none,لا يوجد,,text from a firm's rules (firms.json)
+data.788bd94c8a8e,"trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",متحرك، لحظيًا (REAL-TIME) على أعلى قمة لحقوق الملكية (العائم يُحتسب)، ويتحوّل إلى ثابت عند الرصيد الأولي بعد +6%,,text from a firm's rules (firms.json); keep every number exactly
+data.78fc80eb213f,10d / 7d / 5d,10 أيام / 7 أيام / 5 أيام,,text from a firm's rules (firms.json); keep every number exactly
+data.7bf372bece8d,initial balance,الرصيد الأولي,,text from a firm's rules (firms.json)
+data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,هل يعني «التداول العكسي» (reverse trading) (7.1 xiv) الإيقاف والعكس (stop-and-reverse)؟ يمنع ذلك تشغيل shadow-1 هناك.,,text from a firm's rules (firms.json); keep every number exactly
+data.7f8cd7953b97,"One reference firm — Bitfunded, verified first and most completely — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",شركة مرجعية واحدة — Bitfunded، التي جرى التحقق منها أولًا وبأكبر قدر من الاكتمال — ثم الشركات التالية حسب حجم المراجعات الموثّقة على propfirmmatch.com/crypto، وهو تصنيف خارجي عام تُفصح منهجيته عن نموذجه القائم على التسويق بالعمولة وتنصّ على أن الترتيب لا يمكن شراؤه، مع قيد يذكره بنفسه وهو أن الحجم الأكبر لا يعني تلقائيًا الأفضل. ترتيب أبجدي، دون حدّ لعدد الشركات. تُدرج الشركة بمجرد أن تسمح شروط التسويق بالعمولة لديها بإجراء مقارنة. كل قاعدة تُظهر وثيقة الشركة والتاريخ الذي قرأها فيه troid، أو تذكر أن مصدرها لم يُسجَّل بعد، أو تُظهر «معلّق» ما دام troid لا يملك قيمة لها.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4% / 6% ثابت · 2-Step 5% / 10%,,text from a firm's rules (firms.json); keep every number exactly
+data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
+data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
+data.a381562afa0e,static,ثابت,,text from a firm's rules (firms.json)
+data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
+data.c07565a92bfd,paid add-on only,إضافة مدفوعة فقط,,text from a firm's rules (firms.json)
+data.c2eea93a2517,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",Bitfunded غير مدرجة في دليل العملات المشفرة لدى propfirmmatch (تم التحقق في 2026-09-21). ومكانة الشركة المرجعية تتعلق بعمق التحقق، لا بالترتيب في الدليل.,,text from a firm's rules (firms.json); keep every number exactly
+data.c4a0a386ab47,100% at first profit split,100% عند أول تقسيم للأرباح,,text from a firm's rules (firms.json); keep every number exactly
+data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.cbbffba007fb,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",Bitfunded هي الشركة المرجعية، لا الشركة الأعلى ترتيبًا. إنها الشركة التي تحقّق منها troid أولًا وبأكبر قدر من الاكتمال من الوثائق الأولية، وحيث عُثر على تناقضين بين الشروط ومركز المساعدة وجرى حلّهما، وحيث يعمل سجل troid. وهذا التحقق هو منتج troid. يُعرض مصدر كل قاعدة وتاريخ قراءتها بجانبها، والقاعدة التي لا مصدر مسجّلًا لها تذكر ذلك. وأي شركة أخرى يُتحقَّق منها بالعمق نفسه تنال المكانة نفسها.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.cc9922ebfa08,€497 (€347.90 promo),€497 (€347.90 بالعرض الترويجي),,text from a firm's rules (firms.json); keep every number exactly
+data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",حيث يظهر رمز، يكون السعر أرخص عبر رابط الإحالة؛ وحيث لا يظهر، يكون السعر نفسه. وتختلف هياكل العمولات. troid يحسب؛ وأنت تختار.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.d4978ed5cbab,none (40% on Break),لا يوجد (40% على Break),,text from a firm's rules (firms.json); keep every number exactly
+data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount",مبلغ ثابت = 3% من الحجم الأصلي (ORIGINAL)؛ الأرضية = max(الرصيد، حقوق الملكية) عند التجديد اليومي − ذلك المبلغ,,text from a firm's rules (firms.json); keep every number exactly
+data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 محظورة على الولايات المتحدة؛ ومنصة العملات المشفرة للولايات المتحدة غير مؤكدة,,text from a firm's rules (firms.json); keep every number exactly
+data.e49a4a29c821,none on 1-Phase,لا يوجد على 1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
+data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
+data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
+data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.",رافعة حتى 100× على حسابات Advanced ($50k+) و5× على حسابات Student وInstant، وفقًا لشروطها وأحكامها — ويأخذ نموذج القواطع ذلك كمُدخَل.,,text from a firm's rules (firms.json); keep every number exactly
+data.f15129262732,up to 90%,حتى 90%,,text from a firm's rules (firms.json); keep every number exactly
+data.f6a99f3a2084,Funded,Funded,,text from a firm's rules (firms.json)
+data.fb360f9c09ac,yes,نعم,,text from a firm's rules (firms.json)

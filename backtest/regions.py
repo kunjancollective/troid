@@ -11,6 +11,8 @@ import html
 import json
 
 import i18n
+import site_build
+import site_text
 from gen_compare import FIRMS, ORDER, FIELDS, RANK, cite, sourced, link_live   # noqa: F401
 
 
@@ -62,8 +64,9 @@ def panel_cell(k, f, T=None):
                 T("index.firms.affiliate")]
         if code: bits.append(T("index.firms.code", code=html.escape(code)))
         if f.get("_promo_note"): bits.append(T("index.firms.promos"))
-        link = f'\n      <div class="s" style="margin-top:8px">{" · ".join(bits)}</div>'
-    return f'    <div class="cell">\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
+        hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
+        link = f'\n      <div class="s" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
+    return f'    <div class="cell"{site_build.avail_attr(T)(k)}>\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
 
 
 def firms_panel_html(T=None):
@@ -103,7 +106,9 @@ def profiles_js(T=None):
                                    "lev": cite(f, "max_leverage", pk, fallback="max_leverage" not in pc)}}
         if products:
             out[k] = {"name": f["name"], "products": products}
-    return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":")) + ";var PROV_TAIL=" + json.dumps(T("prov.tail"))
+    ascii_ = site_text._english(T)                  # English exactly as before; other scripts written as themselves
+    return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":"), ensure_ascii=ascii_) + ";var PROV_TAIL="
+            + json.dumps(T("prov.tail"), ensure_ascii=ascii_)
             + ";</script>")
 
 

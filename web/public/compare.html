@@ -57,7 +57,7 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
 .g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
 @media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
 .verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
-  margin-bottom:14px;border-left:2px solid;background:var(--surface2);flex-wrap:wrap}
+  margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
 .vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
 .vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
 .vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
@@ -71,8 +71,8 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
-.notes div{padding-left:14px;position:relative}
-.notes div::before{content:"\2192";position:absolute;left:0;color:var(--signal)}
+.notes div{padding-inline-start:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
 .stat{background:var(--surface);padding:22px}
@@ -88,8 +88,8 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
 .prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
 .prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
 .work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
-.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding:4px 8px 4px 0;border-bottom:1px solid var(--line);vertical-align:top}
-.work td:first-child{color:var(--dim)}.work td.num{text-align:right}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
 @media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
 .work .wt{overflow-x:auto}
 footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
@@ -103,7 +103,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .rows{flex:1}
 .r{padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
 .r .rt{display:flex;justify-content:space-between;gap:10px}.r .pv{font-size:9.5px;line-height:1.5;color:var(--dim);margin-top:4px}
-.r .pv code{font-size:9.5px;padding:0 3px}.r .l{color:var(--dim);flex-shrink:0}.r .v{font-variant-numeric:tabular-nums;text-align:right}
+.r .pv code{font-size:9.5px;padding:0 3px}.r .l{color:var(--dim);flex-shrink:0}.r .v{font-variant-numeric:tabular-nums;text-align:end}
 .r.sec{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}
 .pend{color:var(--dim);font-style:italic}
 .colfoot{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}
@@ -152,7 +152,7 @@ var FIRMS={"bitfunded":{"name": "Bitfunded", "p": {"key": "1step", "label": "1-S
 var T={"f_cf_day_start":"quota × (1 − max%) ÷ (1 − daily%)","f_cf_initial":"quota × (1 − max% + daily%)","f_cross":"crossover = {cf}","f_daily":"$ = quota × daily%","f_daily_day_start":"$ = day-start balance × daily% (shown for a day starting at quota)","f_fee":"fee share = 2 × fee ÷ (stop % + 2 × fee)","f_liq":"distance ≈ 1 ÷ min(your leverage, cap {cap}× for a {quota} account)","f_losses":"floor(room ÷ risk)","f_max":"$ = quota × max%","f_max_trailing":"$ = high-water mark × max% (shown at a fresh high equal to quota)","f_risk":"risk = quota × risk %","f_room":"room = quota − {cf}","f_survive":"floor(quota × max% ÷ risk)","foot_code":"discount code <b>{code}</b> — cheaper through this link","foot_held":"Link held until daily, max, target and price each have a recorded source in {name}'s own documents, and {name}'s affiliate agreement allows it.","foot_link":"<a href=\"{url}\" rel=\"sponsored noopener\">{name} challenges</a> · affiliate link","foot_open_1":"open: {n} question — {first}","foot_open_n":"open: {n} questions — {first} …","lab_consistency_rule":"consistency rule","lab_daily_basis":"daily basis","lab_daily_pct":"daily %","lab_drawdown_type":"drawdown type","lab_fee_per_side_pct":"fee","lab_hold_cap":"hold cap","lab_max_leverage":"leverage cap","lab_max_open":"open positions","lab_max_pct":"max %","lab_min_days":"min days","lab_news_rule":"news rule","lab_price":"price","lab_profit_cap":"profit cap","lab_refund":"refund","lab_reset_utc":"reset","lab_split":"split","lab_target_pct":"target","lab_us_available":"US access","list_and":"{a} and {b}","pending":"pending","pv_dated":"Computed from {firm} {product} rules as published on {dates} — {sources}. {tail}","pv_dated_miss":"Computed from {firm} {product} rules as published on {dates} — {sources}. Source not yet recorded for {missing}. {tail}","pv_inputs":"From your inputs; no firm rule used.","pv_miss":"Computed from {firm} {product} rules — Source not yet recorded for {missing}. {tail}","pv_plain":"Computed from {firm} {product} rules. {tail}","pv_src":"{labels} from {source}","pv_src_read":"{labels} from {source} (read {dates})","row_consistency_rule":"consistency rule","row_cross":"ceilings swap at","row_daily_basis":"daily basis","row_daily_loss":"daily loss","row_drawdown_type":"drawdown type","row_fee":"fee drag","row_fee_at":"fee drag at {stop}% stop","row_hold_cap":"hold cap","row_leverage_cap":"leverage cap","row_liq":"isolated liq. distance","row_losses":"losses before max loss binds","row_max_loss":"max loss","row_min_days":"min days","row_news_rule":"news rule","row_open_positions":"open positions","row_price":"challenge fee","row_profit_cap":"profit cap","row_refund":"refund","row_reset":"reset (UTC)","row_risk":"risk per trade","row_room":"room before max loss binds","row_split":"profit split","row_survive":"losses survivable","row_target":"target","row_us":"US residents","sec_cost":"cost & access","sec_rules":"rules","sec_sizing":"at your sizing","v_cross_trail":"not fixed under trailing","v_fee":"{drag}% of risk ({fee}%/side)","v_liq":"~{pct}% at {lev}×","v_losses":"{n} at {pct}%","v_losses_trail":"moves with your high-water mark","v_room_trail":"trailing — moves with your high-water mark","v_survive":"{n} from a fresh start","v_survive_trail":"{n} from a fresh start, fewer after any profit"},LANG="en";
 function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
 function n(id){return parseFloat(document.getElementById(id).value)||0}
-function $(x){return "$"+x.toLocaleString(undefined,{maximumFractionDigits:0})}
+function fx(x,d){return x.toFixed(d)}function tl(x,o){return x.toLocaleString(undefined,o)}function $(x){return "$"+tl(x,{maximumFractionDigits:0})}
 var P='<span class="pend">'+T.pending+'</span>';
 function v(x,fmt){return (x===null||x===undefined)?P:(fmt?fmt(x):String(x))}
 function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
@@ -160,7 +160,9 @@ var LAB={};for(var lk in T)if(lk.indexOf("lab_")===0)LAB[lk.slice(4)]=T[lk];
 /* The provenance block under every number: firm, product, the date troid read each rule, the section, the formula.
    Section names stay in English, as each firm publishes them. */
 var PROV_TAIL="Rules change without notice. Verify with the firm before trading.";
-function andj(a){return a.length<2?a.join(""):F(T.list_and,{a:a.slice(0,-1).join(", "),b:a[a.length-1]})}
+var LC="{a}, {b}";
+function list(a){return a.length?a.reduce(function(x,y){return F(LC,{a:x,b:y})}):""}
+function andj(a){return a.length<2?a.join(""):F(T.list_and,{a:list(a.slice(0,-1)),b:a[a.length-1]})}
 function pv(f,keys,formula){
   var by={},order=[],dates=[],miss=[];
   keys.forEach(function(x){var c=f.prov[x];if((x in f.p)&&(f.p[x]===null||f.p[x]===undefined))return;
@@ -168,11 +170,11 @@ function pv(f,keys,formula){
     if(!by[c.c]){by[c.c]={labs:[],o:c.o};order.push(c.c)}by[c.c].labs.push(LAB[x]||x);
     c.o.forEach(function(d){if(dates.indexOf(d)<0)dates.push(d)})});
   dates.sort();
-  var t,o={firm:esc(f.name),product:esc(f.label),missing:miss.join(", "),tail:PROV_TAIL};
+  var t,o={firm:esc(f.name),product:esc(f.label),missing:list(miss),tail:PROV_TAIL};
   if(order.length){
     o.dates=andj(dates);
     o.sources=(order.length===1&&keys.length===1)?esc(order[0]):order.map(function(c){
-      return F(dates.length>1&&by[c].o.length?T.pv_src_read:T.pv_src,{labels:by[c].labs.join(", "),source:esc(c),dates:andj(by[c].o)})}).join(" · ");
+      return F(dates.length>1&&by[c].o.length?T.pv_src_read:T.pv_src,{labels:list(by[c].labs),source:esc(c),dates:andj(by[c].o)})}).join(" · ");
     t=F(miss.length?T.pv_dated_miss:T.pv_dated,o);
   }else t=F(miss.length?T.pv_miss:T.pv_plain,o);
   if(formula)t+=" <code>"+formula+"</code>";
@@ -206,7 +208,7 @@ function render(){
     h+=rr(f,T.row_profit_cap,"profit_cap");
     h+=sec(T.sec_sizing);
     var risk=rp*Q;
-    h+=row(T.row_risk,$(risk)+" ("+(rp*100).toFixed(2)+"%)",'<div class="pv">'+T.pv_inputs+' <code>'+T.f_risk+'</code></div>');
+    h+=row(T.row_risk,$(risk)+" ("+fx((rp*100),2)+"%)",'<div class="pv">'+T.pv_inputs+' <code>'+T.f_risk+'</code></div>');
     var K=["daily_pct","max_pct","daily_basis","drawdown_type"];
     var cross=null,cf="";
     if(derivable&&isStatic){
@@ -215,9 +217,9 @@ function render(){
     }
     if(cross!==null){
       var room=Q-cross;
-      h+=row(T.row_room,$(room)+" ("+(room/Q*100).toFixed(1)+"%)",pv(f,K,F(T.f_room,{cf:cf})));
+      h+=row(T.row_room,$(room)+" ("+fx((room/Q*100),1)+"%)",pv(f,K,F(T.f_room,{cf:cf})));
       h+=row(T.row_cross,$(cross),pv(f,K,F(T.f_cross,{cf:cf})));
-      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{n:Math.floor(room/risk),pct:(rp*100).toFixed(2)}):"—",pv(f,K,T.f_losses));
+      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{n:Math.floor(room/risk),pct:fx((rp*100),2)}):"—",pv(f,K,T.f_losses));
       h+=row(T.row_survive,risk>0?F(T.v_survive,{n:Math.floor(Q*m/risk)}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }else if(derivable&&!isStatic){
       h+=row(T.row_room,'<span class="pend">'+T.v_room_trail+'</span>',pv(f,["drawdown_type"]));
@@ -228,11 +230,11 @@ function render(){
       h+=row(T.row_room,P);h+=row(T.row_cross,P);h+=row(T.row_losses,P);h+=row(T.row_survive,P);
     }
     if(p.fee_per_side_pct!=null){var fee=p.fee_per_side_pct/100,drag=s>0?2*fee/(s+2*fee)*100:0;
-      h+=row(F(T.row_fee_at,{stop:(s*100).toFixed(2)}),F(T.v_fee,{drag:drag.toFixed(1),fee:p.fee_per_side_pct}),pv(f,["fee_per_side_pct"],T.f_fee));}
+      h+=row(F(T.row_fee_at,{stop:fx((s*100),2)}),F(T.v_fee,{drag:fx(drag,1),fee:p.fee_per_side_pct}),pv(f,["fee_per_side_pct"],T.f_fee));}
     else h+=row(T.row_fee,P);
     var cap=p.max_leverage,ck="max_leverage";
     if(f.levb){cap=null;f.levb.forEach(function(b){if((b.max_quota==null||Q<=b.max_quota)&&(b.min_quota==null||Q>=b.min_quota)){cap=b.lev;ck=b.cite}})}
-    if(cap!=null){var L=Math.min(lev,cap);h+=row(T.row_liq,F(T.v_liq,{pct:((1-(1-1/L))*100).toFixed(0),lev:L}),pv(f,[ck],F(T.f_liq,{cap:cap,quota:$(Q)})));}
+    if(cap!=null){var L=Math.min(lev,cap);h+=row(T.row_liq,F(T.v_liq,{pct:fx(((1-(1-1/L))*100),0),lev:L}),pv(f,[ck],F(T.f_liq,{cap:cap,quota:$(Q)})));}
     else h+=row(T.row_liq,P);
     h+=sec(T.sec_cost);
     h+=rr(f,T.row_price,"price");h+=rr(f,T.row_refund,"refund");h+=rr(f,T.row_split,"split");

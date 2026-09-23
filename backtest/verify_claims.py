@@ -241,10 +241,10 @@ import i18n as _i18n
 _ROOT = _pl.Path(__file__).resolve().parent.parent
 
 
-def _page_figures(text):
+def _page_text(text):
     text = _re.sub(r"(?s)<script.*?</script>|<style.*?</style>|<head>.*?</head>", " ", text)
     text = _re.sub(r'(?s)<span class="gov-(sum|line)">.*?</span>|<p class="governs">.*?</p>|<span class="langs".*?</span>', " ", text)
-    return _i18n.figures(_re.sub(r"<[^>]+>", " ", text))
+    return _re.sub(r"<[^>]+>", " ", text)
 
 
 _live = [c for c in _i18n.live_codes() if c != "en"]
@@ -257,8 +257,9 @@ for _c in _live:
         _tp = _ROOT / "web" / "public" / _c / f"{_page}.html"
         _ep = _ROOT / "web" / "public" / f"{_page}.html"
         if _tp.exists() and _ep.exists():
+            # the same figures; a month the English names may appear as its number (2026 年 9 月 23 日)
             check("DERIVED", f"{_c}/{_page}: the same figures as the English page",
-                  float(_page_figures(_tp.read_text()) == _page_figures(_ep.read_text())), 1.0)
+                  float(_i18n.figures_match(_page_text(_ep.read_text()), _page_text(_tp.read_text()))), 1.0)
 
 
 print()

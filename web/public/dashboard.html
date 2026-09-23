@@ -45,7 +45,7 @@ h3{font-size:16px;margin:0 0 6px;font-weight:600}
 h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);margin:34px 0 12px;font-weight:500}
 p{margin:0 0 11px}p:last-child{margin-bottom:0}
-ul,ol{margin:0 0 11px;padding-left:20px}li{margin-bottom:6px}
+ul,ol{margin:0 0 11px;padding-inline-start:20px}li{margin-bottom:6px}
 a{color:var(--signal);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--signal) 30%,transparent)}
 code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding:1px 5px;border-radius:2px}
 /* panels */
@@ -55,7 +55,7 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding
   padding-top:9px;margin-top:12px}
 .stat,.flag{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
 .flag{color:var(--bad)}.stat{color:var(--signal)}
-.verdict{border-left:2px solid var(--signal)}
+.verdict{border-inline-start:2px solid var(--signal)}
 .big{font-size:18px;line-height:1.45;margin-bottom:12px}
 .tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;
   border-radius:2px;background:var(--surface2);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;
@@ -64,10 +64,10 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding
 /* tables */
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}
-th{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
-  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}
-td{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-tr:last-child td{border-bottom:none}.num{text-align:right}
+th{text-align:start;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 0 8px;padding-inline:0 10px;border-bottom:1px solid var(--line)}
+td{padding-block:9px;padding-inline:0 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}.num{text-align:end}
 .pick td{color:var(--signal);font-weight:500}
 /* audit findings */
 .finding{border-top:1px solid var(--line);padding:15px 0}
@@ -86,7 +86,7 @@ tr:last-child td{border-bottom:none}.num{text-align:right}
 .disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
 .disc h4:first-child{margin-top:0}
 .foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
-  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}
 </style>
 </head>
 <body>
@@ -102,7 +102,7 @@ tr:last-child td{border-bottom:none}.num{text-align:right}
 <p class="meta">Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed</p>
 
 <!-- hypo:start -->
-<div class="hypo" style="border-left:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.</p></div>
+<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.</p></div>
 <!-- hypo:end -->
 
 <section class="verdict">

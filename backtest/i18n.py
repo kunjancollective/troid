@@ -19,13 +19,14 @@ import hashlib
 import html
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 I18N = ROOT / "web" / "i18n"
 LANGS = json.loads((I18N / "languages.json").read_text())["languages"]
 BY_CODE = {l["code"]: l for l in LANGS}
-HEADER_KEYS = ("_reviewed_by", "_reviewed_on", "_status", "_note", "_drafted_by", "_drafted_on", "_data_en")
+HEADER_KEYS = ("_reviewed_by", "_reviewed_on", "_status", "_note", "_drafted_by", "_drafted_on", "_data_en", "_review_notes")
 
 # troid's product names, fixed once per language under these keys (the brand rule in BRAND.md)
 PRODUCTS = {"product.desk": "troid's desk", "product.compare": "troid's compare", "product.ledger": "troid's ledger",
@@ -149,7 +150,14 @@ TAG = re.compile(r"<\s*(/?)\s*([a-zA-Z0-9]+)([^>]*)>")
 HREF = re.compile(r'''\b(?:href|src)\s*=\s*"([^"]*)"''')
 PH = re.compile(r"\{[A-Za-z_][A-Za-z0-9_]*\}")
 NATIVE_DIGITS = re.compile(r"[٠-٩۰-۹०-९০-৯０-９]")
-NUM = re.compile(r"\d(?:[\d.,    ]*\d)?")
+# A figure: digits joined by . or , (decimals, grouping) or by a space that groups thousands ("96 000", "1 539"),
+# never by a space before anything else ("Sep 21 2026" is two figures, "1,539 4h" is two).
+NUM = re.compile(r"\d+(?:(?:[.,]|[    ](?=\d{3}(?!\d)))\d+)*")
+MONTHS = {m: i % 12 + 1 for i, m in enumerate(
+    "January February March April May June July August September October November December "
+    "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split())}
+MONTHS["Sept"] = 9
+MONTH = re.compile(r"\b(" + "|".join(sorted(MONTHS, key=len, reverse=True)) + r")\b")
 
 
 def _text(s):
@@ -160,7 +168,31 @@ def _text(s):
 
 def figures(s):
     """The figures in a string, separators removed, as a sorted list: '96,000' and '96 000' are the same figure."""
-    return sorted(re.sub(r"[.,    ]", "", m.group(0)) for m in NUM.finditer(_text(s)))
+    return sorted(re.sub(r"[.,\u00a0\u202f\u2009 ]", "", m.group(0)) for m in NUM.finditer(_text(s)))
+
+
+def month_figures(s):
+    """A month the English names may be written as its number in a translation (2021 年 1 月 1 日): each named
+    month allows one extra figure, the month's number, with or without a leading zero."""
+    out = Counter()
+    for m in MONTH.finditer(_text(s)):
+        n = MONTHS[m.group(1)]
+        out[str(n)] += 1
+        if n < 10:
+            out[f"0{n}"] += 1
+    return out
+
+
+def figures_match(en, tr):
+    """The same figures, except that a translation may write a month the English names as its number."""
+    fe, ft = Counter(figures(en)), Counter(figures(tr))
+    if fe == ft:
+        return True
+    if fe - ft:
+        return False
+    extra, allowed = ft - fe, month_figures(en)
+    return (all(allowed[k] >= v for k, v in extra.items())
+            and sum(extra.values()) <= sum(1 for _ in MONTH.finditer(_text(en))))
 
 
 def tags(s):
@@ -174,7 +206,7 @@ def check_pair(key, en, tr, products=None):
         return [f"{key}: empty"]
     if NATIVE_DIGITS.search(tr):
         out.append(f"{key}: uses non-Latin digits; troid shows Latin digits in every language")
-    if figures(en) != figures(tr):
+    if not figures_match(en, tr):
         out.append(f"{key}: figures differ — English {figures(en)} vs {figures(tr)}")
     if sorted(PH.findall(en)) != sorted(PH.findall(tr)):
         out.append(f"{key}: placeholders differ — {sorted(PH.findall(en))} vs {sorted(PH.findall(tr))}")
@@ -186,7 +218,7 @@ def check_pair(key, en, tr, products=None):
     if re.search(r"(?i)troid", _text(en)):
         if "troid" not in ttext:
             out.append(f"{key}: 'troid' missing — it stays lowercase, in Latin script")
-    if re.search(r"Troid|TROID|[Тт]роид|トロイド|特洛伊德", ttext):
+    if re.search(r"Troid|TROID|[Тт]роид|トロイド|特洛伊德", ttext.replace("TROID.md", "")):   # the file name TROID.md stays
         out.append(f"{key}: troid must stay lowercase and in Latin script")
     if re.search(r"[!！¡]", ttext):
         out.append(f"{key}: exclamation mark (troid never uses one)")

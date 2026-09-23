@@ -21,12 +21,18 @@ every language.
   everywhere else: troid's desk, troid's compare, troid's ledger, troid's research, ask troid. Keep `troid`
   inside each.
 - Firm names (Bitfunded, BrightFunded, Crypto Fund Trader), product labels (1-Step, 2-Phase, Instant), tickers
-  (BTC, BTCUSDT), units (R, ×, %), UTC and file names stay as they are.
+  (BTC, BTCUSDT), units (R, ×, %), UTC and file names (TROID.md, including as link text) stay as they are.
+- The evidence tiers DERIVED, SOURCED, MODELLED and MEASURED stay in English capitals, as labels; a short gloss in
+  your language may follow the first one in a sentence.
 
 ## Figures and code
 
 - Every number stays exactly as in the English, in Latin digits (0-9) — never Arabic-Indic, Devanagari or Bengali
-  digits. The site formats numbers for the reader's locale by itself where it computes them.
+  digits. The site formats numbers for the reader's locale by itself where it computes them (98.000,00 US$ in
+  Spanish, 98 000,00 $US in French); in text you may use your language's separators the same way, as long as the
+  value is unchanged. Amounts stay in the currency the English gives: never convert.
+- Dates read the way your language writes them: day and month order, month names or month numbers
+  (2021 年 1 月 1 日) are all fine. The check allows a named month to become its number.
 - Placeholders such as `{n}`, `{firm}`, `{L}`, `{H}` stay exactly as written; the site fills them. Move them to
   wherever the sentence needs them.
 - HTML tags and link targets stay exactly as they are; translate only the words between them.

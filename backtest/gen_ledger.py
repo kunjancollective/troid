@@ -72,6 +72,15 @@ def code(T, s):
     return s if _english(T) else f'<bdi translate="no">{s}</bdi>'
 
 
+def utc(T, iso):
+    """A UTC time as the page shows it (YYYY-MM-DD HH:MM). On a translated page i18n.js puts the reader's local time
+    before it, the UTC time staying beside it."""
+    txt = iso[:16].replace("T", " ")
+    if not iso or not site_build.features_on(T):
+        return txt
+    return f'<bdi data-utc="{html.escape(iso[:16], quote=True)}Z">{txt}</bdi>'
+
+
 def word(T, section, value, markup=True):
     """A recorded value the page shows as an English word (ledger.{section}.{value}: side, kind, pos, status,
     binding, exit): its keyed label. A value with no key is shown as recorded, as data."""
@@ -105,9 +114,9 @@ def equity_svg(T, rows, w=760, h=180):
 def heartbeat(T, st):
     """Last bar, balance, room, binding, position. No direction, no price, no stop."""
     if not st: return ""
-    bar = st.get("as_of_bar_utc", "")[:16].replace("T", " ")
+    bar = utc(T, st.get("as_of_bar_utc", ""))
     pos = st.get("position")
-    ptxt = (T("ledger.hb.open_since", since=pos['open_since_utc'][:16].replace('T', ' '),
+    ptxt = (T("ledger.hb.open_since", since=utc(T, pos['open_since_utc']),
               filled=pos['tranches_filled'], total=pos['tranches'])
             if pos else T("ledger.pos.flat"))
     b = st.get("binding", "")
@@ -127,7 +136,7 @@ def runs_table(T):
     now = dt.datetime.now(dt.timezone.utc)
     rows = [r for r in csv.DictReader(RUNS.open()) if dt.datetime.fromisoformat(r["run_utc"]) >= now - dt.timedelta(days=7)]
     if not rows: return f'<p class="hs" style="margin:0 0 14px">{T("ledger.runs.none_7d")}</p>'
-    body = "".join(f'<tr><td>{r["run_utc"][:16].replace("T", " ")}</td><td>{r["as_of_bar_utc"][:16].replace("T", " ")}</td>'
+    body = "".join(f'<tr><td>{utc(T, r["run_utc"])}</td><td>{utc(T, r["as_of_bar_utc"])}</td>'
                    f'<td class="num">{float(r["balance"]):,.0f}</td><td class="num">{r["trades_new"]}</td><td>{word(T, "pos", r["position"])}</td></tr>'
                    for r in reversed(rows[-42:]))
     return (f'<div class="panel"><p class="eyebrow">{T("ledger.runs.eyebrow", n=len(rows))}</p><div class="scroll"><table>'
@@ -188,7 +197,7 @@ def trade_charts(T, rows):
     return (f'<div class="panel"><p class="eyebrow">{T("ledger.charts.eyebrow", n=len(items))}</p>'
             f'<p class="hs" style="margin:-8px 0 14px">{T("ledger.charts.note")}</p>'
             + "".join(caps) + "</div>"
-            + f'<script src="{LWC}"></script>\n<script>var TRADES=' + json.dumps(items, separators=(",", ":")) + ";\n"
+            + f'<script src="{LWC}"></script>\n<script>var TRADES=' + json.dumps(items, separators=(",", ":"), ensure_ascii=_english(T)) + ";\n"
             + "var T=" + T.js("ledger.js.") + ";\n" + F_JS + "\n" + CHART_JS + "</script>")
 
 
@@ -268,7 +277,7 @@ def render_ledger(T, live):
             + (" " + T("ledger.warn.flagged", n=d["flagged"]) if d["flagged"] else ""))
     status = word(T, "status", st["outcome"]) if st.get("outcome") else "—"
     wk_r, mo_r = f'{sum(float(r["r"]) for r in wk):+.2f}R', f'{sum(float(r["r"]) for r in mo):+.2f}R'
-    asof = T("ledger.hero.asof", asof=st.get("as_of_bar_utc", "—")[:16].replace("T", " "),
+    asof = T("ledger.hero.asof", asof=utc(T, st.get("as_of_bar_utc", "")) or "—",
              market=code(T, f'{cfg["instrument"]} {cfg["timeframe"]}'), profile=code(T, cfg["profile"]))
 
     return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
@@ -279,10 +288,10 @@ def render_ledger(T, live):
 .cells{{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;margin-bottom:14px}}
 .c{{background:var(--surface);padding:12px}}
 .hs{{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}}
-.warnbox{{border-left:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}}
-.meta{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}}table{{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}}th{{text-align:left;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
-  letter-spacing:.1em;padding:0 10px 8px 0;border-bottom:1px solid var(--line)}}td{{padding:9px 10px 9px 0;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}}tr:last-child td{{border-bottom:none}}.num{{text-align:right}}.foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
-  margin-top:36px;padding-top:20px;line-height:1.8;text-align:left}}
+.warnbox{{border-inline-start:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);margin-bottom:14px;line-height:1.6}}
+.meta{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}}table{{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}}th{{text-align:start;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;padding:0 0 8px;padding-inline:0 10px;border-bottom:1px solid var(--line)}}td{{padding-block:9px;padding-inline:0 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}}tr:last-child td{{border-bottom:none}}.num{{text-align:end}}.foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
+  margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}}
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
 .tc{{margin-bottom:18px}}.tchart{{height:300px;border:1px solid var(--line);border-radius:3px;overflow:hidden}}
 .tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>

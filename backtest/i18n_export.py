@@ -53,24 +53,32 @@ def note_for(key, en):
     return "; ".join(tips)
 
 
-def rank(key):
+def rank(key, pos):
+    """The sheet's order: the prefix groups above, and inside a group the order the page shows the strings in."""
     for i, p in enumerate(ORDER):
         if key.startswith(p):
-            return (i, key)
-    return (len(ORDER), key)
+            return (i, pos.get(key, 0), key)
+    return (len(ORDER), pos.get(key, 0), key)
 
 
 def export(code, data):
     en = i18n.english()
     header, s = i18n.load(code)
-    rows = [(k, en[k]) for k in sorted(en, key=rank)] + [(k, v) for k, v in sorted(data.items())]
+    pos = {k: i for i, k in enumerate(en)}
+    rows = [(k, en[k]) for k in sorted(en, key=lambda k: rank(k, pos))] + [(k, v) for k, v in sorted(data.items())]
+    check = header.get("_review_notes") or {}      # the drafter's questions for the reviewer, by key ('*': general)
     REVIEW.mkdir(parents=True, exist_ok=True)
     path = REVIEW / f"{code}.csv"
     with path.open("w", newline="", encoding="utf-8-sig") as fh:
         w = csv.writer(fh)
         w.writerow(["key", "english", "draft", "reviewer_edit", "note"])
+        for q in check.get("*", []):
+            w.writerow(["", "", "", "", "CHECK FIRST: " + q])
         for k, v in rows:
-            w.writerow([k, v, s.get(k, ""), "", note_for(k, v)])
+            note = note_for(k, v)
+            if check.get(k):
+                note = " | ".join(["CHECK FIRST: " + q for q in check[k]] + ([note] if note else []))
+            w.writerow([k, v, s.get(k, ""), "", note])
     return path, len(rows), sum(1 for k, _ in rows if s.get(k))
 
 

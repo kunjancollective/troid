@@ -76,11 +76,11 @@ jobs:
         run: |
           git config user.name "troid-shadow"
           git config user.email "shadow@troid.ai"
+          # web/public as a whole: the English pages, and each published language's directory
+          # (web/public/{lang}/, og/{lang}.png), added when a language goes live and removed when it is withdrawn
           git add backtest/journal.csv backtest/state.json backtest/runs.csv backtest/RESULTS.md \
-                  web/public/ledger.html web/public/tearsheet.html web/public/compare.html \
-                  web/public/index.html web/public/faq.html web/public/dashboard.html \
-                  web/public/chat.html web/public/terms.html web/context/firms.json \
-                  backtest/data/live_4h.csv
+                  web/context/firms.json backtest/data/live_4h.csv
+          git add -A web/public
           if git diff --cached --quiet; then
             echo "no change today"
           else

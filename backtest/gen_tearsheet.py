@@ -78,7 +78,7 @@ def head_html(T, live, n, cfg, first, last, tail=""):
             f'<div style="margin-bottom:10px"><a href="{T.H}" style="text-decoration:none;color:inherit;font-weight:600;font-size:18px;letter-spacing:-.04em">troid</a>'
             f'{sep}{nav}{site_build.switcher(T, "tearsheet", live)}</div>'
             f'<p style="margin:0 0 8px;font-size:11px;color:#5f6f86;letter-spacing:.12em">{T("tearsheet.head.eyebrow")}</p>'
-            f'<p style="border-left:2px solid #e0a33c;padding:10px 14px;margin:0 0 6px;background:#f4f6f9">{T("tearsheet.head.box")}</p>'
+            f'<p style="border-inline-start:2px solid #e0a33c;padding:10px 14px;margin:0 0 6px;background:#f4f6f9">{T("tearsheet.head.box")}</p>'
             + (f'<p style="margin:0 0 4px;color:#5f6f86">'
                + T("tearsheet.head.sample", n=n, market=market, start=f"{first:%Y-%m-%d}", end=f"{last:%Y-%m-%d}", quota=f"${QUOTA:,.0f}")
                + '</p>' + site_text.hypo_html(site_text.NO_EDGE_SHORT, T=T) if n else "")

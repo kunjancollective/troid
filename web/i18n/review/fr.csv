@@ -1,0 +1,838 @@
+﻿key,english,draft,reviewer_edit,note
+product.desk,troid's desk,desk de troid,,"CHECK FIRST: product.desk 'desk de troid' (the anglicism 'desk' is standard on French trading desks) and product.ledger 'registre de troid'. 'journal' was avoided because it collides with journal.csv; 'grand livre' is the alternative. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.compare,troid's compare,comparateur de troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.ledger,troid's ledger,registre de troid,,"CHECK FIRST: product.desk 'desk de troid' (the anglicism 'desk' is standard on French trading desks) and product.ledger 'registre de troid'. 'journal' was avoided because it collides with journal.csv; 'grand livre' is the alternative. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.research,troid's research,recherche de troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+product.ask,ask troid,demandez à troid,,"CHECK FIRST: product.ask 'demandez à troid': an imperative used as a name reads oddly as a sentence subject, so running text wraps it in « » (all ask.*, chat.hero.lede, chat.discl, chat.js.status_off). The reviewer may prefer another fixed form, or keeping 'ask troid'. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
+og.title,"troid — prop-firm risk, computed","troid — le risque en prop firm, calculé",,"troid stays lowercase, in Latin letters"
+og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","Dimensionnez face aux deux plafonds de perte, frais inclus. Gratuit. Ne passe jamais d'ordres.",,
+og.tagline,"Prop-firm risk, computed.","Le risque en prop firm, calculé.",,
+share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,troid calcule vos deux limites de perte en prop firm à partir des règles de la firme elle-même. Gratuit.,,"troid stays lowercase, in Latin letters"
+common.nav.faq,faq,faq,,
+common.nav.source,source,source,,
+common.languages,Languages,Langues,,
+common.discl,"Free · never places orders · troid is an independent affiliate of the firms it
+    <a href=""{L}/compare"">compares</a>","Gratuit · ne passe jamais d'ordres · troid est un affilié indépendant des firmes qu'il <a href=""{L}/compare"">compare</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+common.link.tearsheet,tearsheet,tearsheet,,
+common.link.faq,faq,faq,,
+common.link.terms,terms,conditions,,
+common.link.source,source,source,,
+common.link.x,x,x,,
+common.link.reddit,reddit,reddit,,
+common.country.label,Your country,Votre pays,,
+common.country.unset,not set,non défini,,
+common.country.note,"Preselected from your browser's language, never from your location.","Présélectionné d'après la langue de votre navigateur, jamais d'après votre localisation.",,
+common.avail.excluded,not available in {country} per the firm's terms,non disponible (pays : {country}) selon les conditions de la firme,,keep {country} exactly as written
+common.avail.platform,{platform}: not available in {country} per the firm's terms,{platform} : non disponible (pays : {country}) selon les conditions de la firme,,keep {country} {platform} exactly as written
+common.avail.not_recorded,troid has not yet recorded which countries this firm's terms exclude. Check them before you buy.,troid n'a pas encore enregistré les pays exclus par les conditions de cette firme. Vérifiez-les avant d'acheter.,,"troid stays lowercase, in Latin letters"
+common.avail.not_excluded,{country} is not on the list of excluded countries troid recorded from this firm's terms. The terms govern.,{country} ne figure pas sur la liste des pays exclus que troid a relevée dans les conditions de cette firme. Les conditions font foi.,,"keep {country} exactly as written; troid stays lowercase, in Latin letters"
+common.time.local,your time zone,votre fuseau horaire,,
+common.share,share,partager,,
+common.share.copied,link copied,lien copié,,
+footer.text,"troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.","troid est un outil d'information gratuit, et non un conseil financier ou en investissement. troid ne passe pas d'ordres et ne publie pas de signaux de trading. Son compte fantôme est une stratégie simulée, affichée uniquement après la clôture des trades. Les règles des prop firms changent sans préavis — vérifiez chaque chiffre auprès de la firme avant de trader. troid est un affilié indépendant des firmes qu'il compare et perçoit une commission sur les achats effectués via ses liens ; cela n'affecte ni les calculs ni les comparaisons.",,"troid stays lowercase, in Latin letters"
+legal.governs,This translation is provided for convenience. The English version governs.,Cette traduction est fournie pour votre commodité. La version anglaise fait foi.,,CHECK FIRST: legal.governs: 'fournie pour votre commodité … La version anglaise fait foi.' Legal phrasing needs a native check; 'à titre indicatif' is the common idiom but shifts the meaning slightly. legal.summary.required also needs a wording check.
+legal.summary.required,"Required by the firm's affiliate terms, in the firm's own English words:","Exigé par les conditions d'affiliation de la firme, dans ses propres termes, en anglais :",,CHECK FIRST: legal.governs: 'fournie pour votre commodité … La version anglaise fait foi.' Legal phrasing needs a native check; 'à titre indicatif' is the common idiom but shifts the meaning slightly. legal.summary.required also needs a wording check.
+legal.summary.hypo,"The standard US regulatory warning about simulated results (17 CFR 4.41), in its required English form.","L'avertissement réglementaire américain standard sur les résultats simulés (17 CFR 4.41), dans sa forme anglaise obligatoire.",,keep every number exactly
+legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.","Les conditions d'utilisation de troid. Elles sont publiées en anglais, et le texte anglais fait foi.",,"troid stays lowercase, in Latin letters"
+legal.summary.citations,"Rule sources are named in English, as each firm publishes them.","Les sources des règles sont citées en anglais, telles que chaque firme les publie.",,
+hypo.label,Hypothetical performance,Performance hypothétique,,
+hypo.no_edge_short,troid's own strategy shows no statistical edge.,La propre stratégie de troid ne montre aucun avantage statistique.,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure, inside noise, and not a fact about the future.","Hors échantillon, sur {n} trades BTC du 1er janvier 2021 au 7 janvier 2026, que les paramètres n'ont jamais vus, elle mesure {exp} par trade, erreur type {se} — un chiffre MEASURED (mesuré), dans le bruit, et non un fait sur l'avenir.",,"CHECK FIRST: Tier labels now stay in English capitals with a French gloss: 'MEASURED (mesuré)' in hypo.no_edge_tail, 'MEASURED (mesurée)' in tearsheet.head.box, 'DERIVED (dérivé)' in index.crossover.prov. index.doesnt.verify names the tiers in lowercase in the English ('derived, sourced, modelled, or measured') as descriptions, not labels, so it keeps the French words dérivé/sourcé/modélisé/mesuré; the reviewer may want the English capitals there too. | keep {exp} {n} {se} exactly as written; keep every number exactly"
+prov.tail,Rules change without notice. Verify with the firm before trading.,Les règles changent sans préavis. Vérifiez auprès de la firme avant de trader.,,
+index.meta.title,"troid's desk — prop-firm risk, computed","desk de troid — le risque en prop firm, calculé",,"troid stays lowercase, in Latin letters"
+index.meta.description,"Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.","Risque et conformité en prop firm, calculés. Dimensionnez face aux deux plafonds de perte, frais inclus.",,
+index.hero.h1,"Prop-firm risk, computed.","Le risque en prop firm, calculé.",,
+index.hero.lede,"Most funded accounts fail on position size, not entries. troid computes
+  both of your loss ceilings, reports which one actually binds, and sizes the trade net
+  of fees.","La plupart des comptes financés échouent à cause de la taille des positions, pas des entrées. troid calcule vos deux plafonds de perte, indique lequel est réellement contraignant et dimensionne le trade en tenant compte des frais.",,"troid stays lowercase, in Latin letters"
+index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">desk de troid</span> · dimensionner un trade",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.calc.firm,Firm,Firme,,
+index.calc.challenge,Challenge,Challenge,,
+index.calc.quota,Quota,Capital,,"CHECK FIRST: Terms with no settled French equivalent: quota → 'capital' (index.calc.quota, compare.sizing.quota, every formula); room → 'réserve' (index.js.f_room_*, v_txt, compare.js.row_room); daily basis → 'base journalière'; high-water mark → 'plus haut historique'; per side → 'par sens'; binding → 'contrainte'/'contraignant'; forward-filled bar → 'barre complétée par report' (ledger.warn.flagged, ledger.flag.title)."
+index.calc.equity,Equity,Equity,,
+index.calc.daystart,Day start,Début de journée,,
+index.calc.hirollover,High at rollover,Plus haut au rollover,,
+index.calc.hirollover_ph,= day start,= début de journée,,
+index.calc.hwm,High-water mark,Plus haut historique,,
+index.calc.hwm_ph,"= max(equity, quota)","= max(equity, capital)",,
+index.calc.side,Side,Sens,,
+index.calc.entry,Entry,Entrée,,
+index.calc.stop,Stop,Stop,,
+index.calc.target_r,Target R,Objectif R,,
+index.calc.risk_pct,Risk %,Risque %,,
+index.calc.cap_pct,Budget cap %,Plafond du budget %,,
+index.calc.leverage,Leverage,Levier,,
+index.calc.mode,Margin mode,Mode de marge,,
+index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","Firmes · ordre alphabétique · toutes les firmes que <span style=""text-transform:none"">troid</span> référence, sans limite de nombre",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.firms.why,"{firm} is the reference firm because troid verified it first and most completely, not because it ranks highest.
+    Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
+    recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
+    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    troid computes, you choose.","{firm} est la firme de référence parce que troid l'a vérifiée en premier et de la façon la plus complète, et non parce qu'elle est la mieux classée. Chaque règle du comparateur de troid indique le document de la firme et la date à laquelle troid l'a lu, ou signale que sa source n'est pas encore enregistrée. L'ordre des prochaines vérifications suit le classement par avis de propfirmmatch ; la page n'a pas de limite de nombre. troid est un affilié indépendant des firmes qu'il compare ; là où un code est affiché, c'est moins cher via le lien d'affiliation, là où il n'y en a pas, c'est le même prix. troid calcule, vous choisissez.",,"keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+index.firms.reference,reference,référence,,
+index.firms.rank,#{n} by reviews,n° {n} en nombre d'avis,,keep {n} exactly as written
+index.firms.filled,{n} of {total} rules filled · {m} sourced,{n} règles renseignées sur {total} · {m} sourcées,,keep {m} {n} {total} exactly as written
+index.firms.pending,verification pending,vérification en attente,,
+index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch.,"{n} avis vérifiés, note de {rating} sur propfirmmatch.",,keep {n} {rating} exactly as written
+index.firms.challenges,{firm} challenges,challenges {firm},,keep {firm} exactly as written
+index.firms.affiliate,affiliate link,lien d'affiliation,,
+index.firms.code,code {code},code {code},,keep {code} exactly as written
+index.firms.promos,their promos apply here,leurs promotions s'appliquent ici,,
+index.stats.failures.n,~70%,~70 %,,keep every number exactly
+index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
+    report failures trace to size, not strategy selection.","des échecs en prop firm sont des dépassements de limite de perte, la plupart dès la première semaine. Les firmes rapportent que les échecs tiennent à la taille des positions, pas au choix de la stratégie.",,
+index.stats.blowup.n,68%,68 %,,keep every number exactly
+index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
+    with no cap on remaining budget. Under a cap, zero.","des comptes sautent en moins d'un an avec un avantage de niveau professionnel de +0,35R, en risquant 1 % sans plafond sur le budget restant. Avec un plafond, zéro.",,"CHECK FIRST: 'faire sauter le compte' / 'sautent' for 'blow up' (index.stats.blowup.p, faq.fail.p2, faq.risk.p2, dashboard.risk.p) is idiomatic. Check the register. | keep every number exactly"
+index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
+    daily. That is {gap} from the start — half of one bad day.","Sur un {product} de {quota}, en dessous de cette equity, c'est le plancher statique de {max} % qui devient contraignant, et non la limite journalière de {daily} %. Cela se situe à {gap} du départ — la moitié d'une mauvaise journée.",,keep {daily} {gap} {max} {product} {quota} exactly as written
+index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
+    daily. That is {gap} from the start — {share} of one bad day.","Sur un {product} de {quota}, en dessous de cette equity, c'est le plancher statique de {max} % qui devient contraignant, et non la limite journalière de {daily} %. Cela se situe à {gap} du départ — {share} d'une mauvaise journée.",,keep {daily} {gap} {max} {product} {quota} {share} exactly as written
+index.crossover.prov,DERIVED. Computed from {firm} {product} rules as published on {dates} — {sources}. {tail} <code>{formula}</code>,DERIVED (dérivé). Calculé à partir des règles {firm} {product} telles que publiées le {dates} — {sources}. {tail} <code>{formula}</code>,,"CHECK FIRST: Tier labels now stay in English capitals with a French gloss: 'MEASURED (mesuré)' in hypo.no_edge_tail, 'MEASURED (mesurée)' in tearsheet.head.box, 'DERIVED (dérivé)' in index.crossover.prov. index.doesnt.verify names the tiers in lowercase in the English ('derived, sourced, modelled, or measured') as descriptions, not labels, so it keeps the French words dérivé/sourcé/modélisé/mesuré; the reviewer may want the English capitals there too. | keep {dates} {firm} {formula} {product} {sources} {tail} exactly as written; keep the <…> tags and links as they are; translate only the words"
+index.crossover.formula,quota × (1 − max% + daily%) = {quota} × (1 − {max}% + {daily}%),capital × (1 − max % + journalier %) = {quota} × (1 − {max} % + {daily} %),,keep {daily} {max} {quota} exactly as written; keep every number exactly
+index.crossover.lab_daily,daily %,% journalier,,
+index.crossover.lab_max,max %,% max,,
+index.crossover.lab_static,static floor,plancher statique,,
+index.crossover.lab_basis,initial-balance daily limit,limite journalière sur solde initial,,
+index.does.h2,What troid does,Ce que fait troid,,"troid stays lowercase, in Latin letters"
+index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
+  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  margin concentration limit, the five-day minimum. Works across every challenge type and
+  every asset the firm lists.","Calcule les deux plafonds de perte et indique celui qui est contraignant. Dimensionne les positions en tenant compte des frais de 0,04 % par sens. Vérifie les trades au regard des règles de la firme — la durée de détention maximale de dix jours, la limite de concentration de marge, le minimum de cinq jours. Fonctionne pour chaque type de challenge et chaque actif proposé par la firme.",,keep every number exactly
+index.doesnt.h2,What it doesn't,Ce qu'il ne fait pas,,
+index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,Publier des signaux de trading. Passer des ordres. Toucher à vos identifiants. Vous vendre une stratégie.,,
+index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
+  assistant as a system prompt. The <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">MCP
+  server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.","<a href=""/TROID.md"">TROID.md</a> réunit en un seul fichier les règles et les calculs de troid — collez-le dans n'importe quel assistant comme prompt système. Le <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">serveur MCP</a> fait de même pour Claude Desktop ou Cursor, avec des calculs exacts.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.doesnt.verify,"Every figure here is arithmetic you can check.
+  <code>verify_claims.py</code> in the repo re-derives each published number from first
+  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
+  A measured number is never stated as fact.","Chaque chiffre ici est un calcul que vous pouvez vérifier. <code>verify_claims.py</code>, dans le dépôt, recalcule chaque nombre publié à partir des principes de base et l'étiquette selon son niveau de confiance — dérivé, sourcé, modélisé ou mesuré. Un nombre mesuré n'est jamais présenté comme un fait.",,"CHECK FIRST: Tier labels now stay in English capitals with a French gloss: 'MEASURED (mesuré)' in hypo.no_edge_tail, 'MEASURED (mesurée)' in tearsheet.head.box, 'DERIVED (dérivé)' in index.crossover.prov. index.doesnt.verify names the tiers in lowercase in the English ('derived, sourced, modelled, or measured') as descriptions, not labels, so it keeps the French words dérivé/sourcé/modélisé/mesuré; the reviewer may want the English capitals there too. | keep the <…> tags and links as they are; translate only the words"
+index.js.pending,pending,en attente,,
+index.js.list_comma,"{a}, {b}","{a}, {b}",,keep {a} {b} exactly as written
+index.js.list_and,{a} and {b},{a} et {b},,keep {a} {b} exactly as written
+index.js.long,long,long,,
+index.js.short,short,short,,
+index.js.cross,cross,croisée,,
+index.js.isolated,isolated,isolée,,
+index.js.show_working,show the working,voir le détail du calcul,,
+index.js.prov_computed,Computed from <b>{firm} {product}</b> rules.,Calculé à partir des règles <b>{firm} {product}</b>.,,keep {firm} {product} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_published,Computed from <b>{firm} {product}</b> rules as published on <b>{dates}</b> — {sources}.,Calculé à partir des règles <b>{firm} {product}</b> telles que publiées le <b>{dates}</b> — {sources}.,,keep {dates} {firm} {product} {sources} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_unsourced,Computed from <b>{firm} {product}</b> rules — Source not yet recorded for {rules}.,Calculé à partir des règles <b>{firm} {product}</b> — Source pas encore enregistrée pour {rules}.,,keep {firm} {product} {rules} exactly as written; keep the <…> tags and links as they are; translate only the words
+index.js.prov_missing,Source not yet recorded for {rules}.,Source pas encore enregistrée pour {rules}.,,keep {rules} exactly as written
+index.js.prov_src,{rules} from {source},{rules} d'après {source},,keep {rules} {source} exactly as written
+index.js.prov_src_read,{rules} from {source} (read {dates}),{rules} d'après {source} (lu le {dates}),,keep {dates} {rules} {source} exactly as written
+index.js.prov_mmr,"Exchange liquidation assumes a {mmr}% maintenance margin, troid's assumption with no firm source.","La liquidation par l'exchange suppose une marge de maintenance de {mmr} %, une hypothèse de troid sans source de la firme.",,"keep {mmr} exactly as written; troid stays lowercase, in Latin letters"
+index.js.st_inputs,inputs,saisies,,
+index.js.f_inputs_account,quota · equity · day start,capital · equity · début de journée,,
+index.js.f_inputs_trade,side · entry · stop · target R,sens · entrée · stop · objectif R,,
+index.js.f_inputs_risk,risk % · budget cap % · leverage · margin,risque % · plafond du budget % · levier · marge,,
+index.js.f_daily_initial,day start − quota × {d}%,début de journée − capital × {d} %,,keep {d} exactly as written
+index.js.f_daily_day_start,day start × (1 − {d}%),début de journée × (1 − {d} %),,keep {d} exactly as written; keep every number exactly
+index.js.f_daily_rollover,high at rollover − quota × {d}%,plus haut au rollover − capital × {d} %,,keep {d} exactly as written
+index.js.st_hi,high at rollover,plus haut au rollover,,
+index.js.f_hi,input (defaults to day start),saisie (par défaut : début de journée),,
+index.js.f_dd_static,quota × (1 − {m}%),capital × (1 − {m} %),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_locked,quota (locked after +{locks}%),capital (verrouillé après +{locks} %),,keep {locks} exactly as written
+index.js.f_dd_trailing,high-water mark × (1 − {m}%),plus haut historique × (1 − {m} %),,keep {m} exactly as written; keep every number exactly
+index.js.st_hwm,high-water mark,plus haut historique,,
+index.js.f_hwm,"input (defaults to max(equity, quota))","saisie (par défaut : max(equity, capital))",,
+index.js.daily_floor,daily floor,plancher journalier,,
+index.js.st_daily_budget,daily budget,budget journalier,,
+index.js.f_daily_budget,equity − daily floor,equity − plancher journalier,,
+index.js.dd_floor,max-loss floor,plancher de perte max.,,
+index.js.trailing_floor,trailing floor,plancher suiveur,,
+index.js.st_dd_budget,drawdown budget,budget de drawdown,,
+index.js.f_dd_budget,equity − max-loss floor,equity − plancher de perte max.,,
+index.js.f_room_both,"room = min(equity − ({fd}), equity − {fdd})","réserve = min(equity − ({fd}), equity − {fdd})",,keep {fdd} {fd} exactly as written
+index.js.f_room_daily,room = equity − ({fd}),réserve = equity − ({fd}),,keep {fd} exactly as written
+index.js.f_room_dd,room = equity − {fdd},réserve = equity − {fdd},,keep {fdd} exactly as written
+index.js.u_daily,daily {d}%,journalier {d} %,,keep {d} exactly as written
+index.js.u_basis,daily basis,base journalière,,
+index.js.u_max,max {m}%,max {m} %,,keep {m} exactly as written
+index.js.u_dd,drawdown type,type de drawdown,,
+index.js.u_locks,lock at +{locks}%,verrouillage à +{locks} %,,keep {locks} exactly as written
+index.js.u_hwm,high-water-mark basis,base du plus haut historique,,
+index.js.u_fee,fee {fee}% per side,frais {fee} % par sens,,keep {fee} exactly as written
+index.js.u_lev,leverage cap {lev}×,plafond de levier {lev}×,,keep {lev} exactly as written
+index.js.u_lev_band,leverage cap {lev}× for a {quota} account,plafond de levier {lev}× pour un compte de {quota},,keep {lev} {quota} exactly as written
+index.js.v_pending,PENDING,EN ATTENTE,,
+index.js.v_block,BLOCK,BLOQUÉ,,CHECK FIRST: index.js.v_block / v_reduce: the English verdicts are imperative (BLOCK/REDUCE); I used the participles BLOQUÉ/RÉDUIT so the two tags are consistent. Confirm that traders read RÉDUIT as 'risk was cut by the cap'.
+index.js.v_reduce,REDUCE,RÉDUIT,,
+index.js.v_ok,OK,OK,,
+index.js.pending_txt,{firm} · {product} · troid has no daily basis or drawdown type recorded for this product,{firm} · {product} · troid n'a ni base journalière ni type de drawdown enregistrés pour ce produit,,"keep {firm} {product} exactly as written; troid stays lowercase, in Latin letters"
+index.js.pending_note,There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.,Aucun plafond par rapport auquel dimensionner tant que ces règles ne sont pas enregistrées. Le comparateur de troid indique ce qui est en attente pour cette firme.,,"troid stays lowercase, in Latin letters"
+index.js.bind_daily,daily loss limit,limite de perte journalière,,
+index.js.bind_dd,max drawdown,drawdown max.,,
+index.js.n_basis_pending,daily basis pending for this firm — sized against the drawdown ceiling only,base journalière en attente pour cette firme — taille calculée uniquement face au plafond de drawdown,,
+index.js.n_dd_pending,drawdown type pending for this firm — sized against the daily ceiling only,type de drawdown en attente pour cette firme — taille calculée uniquement face au plafond journalier,,
+index.js.st_binding,binding,contrainte,,
+index.js.f_binding,"min(daily budget, drawdown budget)","min(budget journalier, budget de drawdown)",,
+index.js.f_binding_one,the only budget with its rules recorded,le seul budget dont les règles sont enregistrées,,
+index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,plancher suiveur verrouillé au solde initial ({quota}) après +{locks} %,,keep {locks} {quota} exactly as written
+index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),plancher suiveur {floor} = plus haut historique × (1 − {m} %),,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,plancher suiveur {floor} = plus haut historique × (1 − {m} %) — suit l'equity en intraday : un plus haut latent relève le plancher,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,plancher journalier = plus haut au rollover − {d} % de la taille initiale,,keep {d} exactly as written
+index.js.b_long,stop at or above entry on a long,stop au niveau de l'entrée ou au-dessus sur un long,,
+index.js.b_short,stop at or below entry on a short,stop au niveau de l'entrée ou en dessous sur un short,,
+index.js.b_zero,stop distance is zero,la distance du stop est nulle,,
+index.js.b_breached,no budget left — {bind} already breached,plus aucun budget — seuil déjà franchi : {bind},,keep {bind} exactly as written
+index.js.n_fee_pending,fee per side pending for this firm — size shown before fees,frais par sens en attente pour cette firme — taille affichée hors frais,,
+index.js.n_lev_capped,leverage capped at {lev}× by the firm,levier plafonné à {lev}× par la firme,,keep {lev} exactly as written
+index.js.n_lev_class,no leverage class recorded for a {quota} account — cap pending at this size,aucune classe de levier enregistrée pour un compte de {quota} — plafond en attente pour cette taille,,keep {quota} exactly as written
+index.js.n_lev_held,"leverage held to {lev}×, the highest cap this firm records","levier limité à {lev}×, le plafond le plus élevé que cette firme enregistre",,keep {lev} exactly as written
+index.js.st_intended,intended risk,risque visé,,
+index.js.f_intended,equity × {pct}%,equity × {pct} %,,keep {pct} exactly as written
+index.js.st_cap,cap,plafond,,
+index.js.f_cap,budget × {pct}%,budget × {pct} %,,keep {pct} exactly as written
+index.js.risk,risk,risque,,
+index.js.f_risk,"min(intended, cap)","min(visé, plafond)",,
+index.js.st_dist,stop distance,distance du stop,,
+index.js.f_dist,|entry − stop|,|entrée − stop|,,
+index.js.st_fpu,fee per unit,frais par unité,,
+index.js.f_fpu,entry × {fee}% × 2,entrée × {fee} % × 2,,keep {fee} exactly as written; keep every number exactly
+index.js.f_fpu_pending,"fee per side pending: taken as 0, size before fees","frais par sens en attente : pris à 0, taille hors frais",,keep every number exactly
+index.js.st_qty,quantity,quantité,,
+index.js.f_qty,risk ÷ (stop distance + fee per unit),risque ÷ (distance du stop + frais par unité),,
+index.js.f_qty_nofee,risk ÷ stop distance,risque ÷ distance du stop,,
+index.js.st_notional,notional,notionnel,,
+index.js.f_notional,quantity × entry,quantité × entrée,,
+index.js.st_lev_used,leverage used,levier utilisé,,
+index.js.f_lev_used,"min(your {lev}×, cap {cap}×)","min(votre {lev}×, plafond {cap}×)",,keep {cap} {lev} exactly as written
+index.js.f_lev_pending,your leverage; cap pending,votre levier ; plafond en attente,,
+index.js.f_lev_pending_held,"your leverage; cap pending (held to {lev}×, the highest cap recorded for this firm)","votre levier ; plafond en attente (limité à {lev}×, le plafond le plus élevé enregistré pour cette firme)",,keep {lev} exactly as written
+index.js.margin,margin,marge,,
+index.js.f_margin,notional ÷ leverage used,notionnel ÷ levier utilisé,,
+index.js.fees,fees,frais,,
+index.js.f_fees,quantity × fee per unit,quantité × frais par unité,,
+index.js.v_fees,{fees} ({share} of risk),{fees} ({share} du risque),,keep {fees} {share} exactly as written
+index.js.budget_used,budget used,budget consommé,,
+index.js.f_used,risk ÷ budget,risque ÷ budget,,
+index.js.st_left,losses left,pertes restantes,,
+index.js.f_left,floor(budget ÷ risk),floor(budget ÷ risque),,"CHECK FIRST: index.js.f_left, compare.js.f_losses, compare.js.f_survive: 'floor(…)' is kept as the math function name, like min/max. A French reader may confuse it with 'plancher'; 'partie entière' is the alternative."
+index.js.st_target,target,objectif,,
+index.js.f_target_long,entry + {r} × stop distance,entrée + {r} × distance du stop,,keep {r} exactly as written
+index.js.f_target_short,entry − {r} × stop distance,entrée − {r} × distance du stop,,keep {r} exactly as written
+index.js.n_fees_high,fees are {pct}% of risk — stop tight enough that costs dominate,les frais représentent {pct} % du risque — stop assez serré pour que les coûts dominent,,keep {pct} exactly as written
+index.js.n_cut,cut from {from} to {to} — {bind} budget caps it,ramené de {from} à {to} — plafonné par le budget ({bind}),,keep {bind} {from} {to} exactly as written
+index.js.n_left,{n} more losses at this size before {bind} trips,encore {n} pertes à cette taille avant d'atteindre le seuil ({bind}),,keep {bind} {n} exactly as written
+index.js.f_liq_isolated,1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR {mmr}%),1 − (1 − 1 ÷ levier utilisé) ÷ (1 − MMR {mmr} %),,keep {mmr} exactly as written; keep every number exactly
+index.js.f_liq_cross,1 − (1 − equity ÷ notional) ÷ (1 − MMR {mmr}%),1 − (1 − equity ÷ notionnel) ÷ (1 − MMR {mmr} %),,keep {mmr} exactly as written; keep every number exactly
+index.js.br_stop,your stop,votre stop,,
+index.js.br_daily,daily limit,limite journalière,,
+index.js.st_daily_dist,daily-limit distance,distance de la limite journalière,,
+index.js.f_daily_dist,daily budget ÷ notional,budget journalier ÷ notionnel,,
+index.js.st_trailing_dist,trailing floor distance,distance du plancher suiveur,,
+index.js.st_dd_dist,max-loss floor distance,distance du plancher de perte max.,,
+index.js.f_dd_dist,drawdown budget ÷ notional,budget de drawdown ÷ notionnel,,
+index.js.br_liq,exchange liq ({mode}),liq. exchange ({mode}),,keep {mode} exactly as written
+index.js.v_liq_below,0.00% — below maintenance at entry,"0,00 % — sous la marge de maintenance dès l'entrée",,keep every number exactly
+index.js.n_danger,"DANGER — {what} binds at {pct}% adverse, inside your stop","DANGER — {what} se déclenche à {pct} % de mouvement adverse, avant votre stop",,keep {pct} {what} exactly as written
+index.js.n_cross,cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it,croisée : rien ne coupe une perte qui s'emballe avant le plancher de la firme — votre stop est le seul disjoncteur placé avant lui,,
+index.js.n_isolated,"isolated: exchange liquidates at {pct}% for the position’s own margin, before the floor","isolée : l'exchange liquide à {pct} %, sur la seule marge de la position, avant le plancher",,keep {pct} exactly as written
+index.js.f_size,"size = min(equity × {risk}%, room × {cap}%) ÷ (stop distance + entry × {fee}% × 2)","taille = min(equity × {risk} %, réserve × {cap} %) ÷ (distance du stop + entrée × {fee} % × 2)",,keep {cap} {fee} {risk} exactly as written; keep every number exactly
+index.js.f_size_nofee,"size = min(equity × {risk}%, room × {cap}%) ÷ stop distance","taille = min(equity × {risk} %, réserve × {cap} %) ÷ distance du stop",,keep {cap} {risk} exactly as written
+index.js.v_txt,{firm} · {product} · binding · {bind} · {room} of room,{firm} · {product} · contrainte · {bind} · {room} de réserve,,keep {bind} {firm} {product} {room} exactly as written
+index.js.size,size,taille,,
+index.js.stop,stop,stop,,
+index.js.s_lev,{lev}x,{lev}x,,keep {lev} exactly as written
+index.js.s_lev_pending,{lev}x · cap {pending},{lev}x · plafond {pending},,keep {lev} {pending} exactly as written
+index.js.s_incl_fees,incl {fees} fees,dont {fees} de frais,,keep {fees} exactly as written
+index.js.s_fees_pending,fees {pending},frais {pending},,keep {pending} exactly as written
+index.js.s_of_risk,of risk,du risque,,
+index.js.s_fee_pending,per-side fee pending,frais par sens en attente,,
+index.js.s_tgt,tgt {price},obj. {price},,keep {price} exactly as written
+index.js.s_floor,floor {floor},plancher {floor},,keep {floor} exactly as written
+index.js.breakers,breakers,disjoncteurs,,
+compare.meta.title,troid's compare,comparateur de troid,,"troid stays lowercase, in Latin letters"
+compare.hero.h1,"Three firms, your numbers.","Trois firmes, vos chiffres.",,
+compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
+shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.","Saisissez votre dimensionnement une fois. Chaque colonne montre ce que ce dimensionnement coûte selon les règles de cette firme. Chaque cellule indique le document de la firme et la date à laquelle troid l'a lu, affiche <em>en attente</em>, ou signale que sa source n'est pas encore enregistrée. Rien n'est noté.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},ordre alphabétique · une firme de référence + deux selon un classement externe · revu le {date},,keep {date} exactly as written
+compare.sizing.h,Your sizing,Votre dimensionnement,,
+compare.sizing.quota,Quota,Capital,,"CHECK FIRST: Terms with no settled French equivalent: quota → 'capital' (index.calc.quota, compare.sizing.quota, every formula); room → 'réserve' (index.js.f_room_*, v_txt, compare.js.row_room); daily basis → 'base journalière'; high-water mark → 'plus haut historique'; per side → 'par sens'; binding → 'contrainte'/'contraignant'; forward-filled bar → 'barre complétée par report' (ledger.warn.flagged, ledger.flag.title)."
+compare.sizing.risk,Risk % per trade,Risque % par trade,,
+compare.sizing.stop,Stop % of price,Stop % du prix,,
+compare.sizing.lev,Leverage you use,Levier utilisé,,
+compare.col.tag,{n} of {total} filled · {m} sourced,{n} sur {total} renseignées · {m} sourcées,,keep {m} {n} {total} exactly as written
+compare.js.pending,pending,en attente,,
+compare.js.list_and,{a} and {b},{a} et {b},,keep {a} {b} exactly as written
+compare.js.lab_daily_pct,daily %,% journalier,,
+compare.js.lab_max_pct,max %,% max,,
+compare.js.lab_daily_basis,daily basis,base journalière,,
+compare.js.lab_drawdown_type,drawdown type,type de drawdown,,
+compare.js.lab_target_pct,target,objectif,,
+compare.js.lab_min_days,min days,jours min.,,
+compare.js.lab_max_leverage,leverage cap,plafond de levier,,
+compare.js.lab_fee_per_side_pct,fee,frais,,
+compare.js.lab_reset_utc,reset,réinitialisation,,
+compare.js.lab_hold_cap,hold cap,durée max. de détention,,
+compare.js.lab_max_open,open positions,positions ouvertes,,
+compare.js.lab_refund,refund,remboursement,,
+compare.js.lab_split,split,partage,,
+compare.js.lab_us_available,US access,accès US,,
+compare.js.lab_consistency_rule,consistency rule,règle de cohérence,,
+compare.js.lab_news_rule,news rule,règle sur les annonces,,
+compare.js.lab_profit_cap,profit cap,plafond de profit,,
+compare.js.lab_price,price,prix,,
+compare.js.pv_plain,Computed from {firm} {product} rules. {tail},Calculé à partir des règles {firm} {product}. {tail},,keep {firm} {product} {tail} exactly as written
+compare.js.pv_dated,Computed from {firm} {product} rules as published on {dates} — {sources}. {tail},Calculé à partir des règles {firm} {product} telles que publiées le {dates} — {sources}. {tail},,keep {dates} {firm} {product} {sources} {tail} exactly as written
+compare.js.pv_dated_miss,Computed from {firm} {product} rules as published on {dates} — {sources}. Source not yet recorded for {missing}. {tail},Calculé à partir des règles {firm} {product} telles que publiées le {dates} — {sources}. Source pas encore enregistrée pour {missing}. {tail},,keep {dates} {firm} {missing} {product} {sources} {tail} exactly as written
+compare.js.pv_miss,Computed from {firm} {product} rules — Source not yet recorded for {missing}. {tail},Calculé à partir des règles {firm} {product} — Source pas encore enregistrée pour {missing}. {tail},,keep {firm} {missing} {product} {tail} exactly as written
+compare.js.pv_src,{labels} from {source},{labels} d'après {source},,keep {labels} {source} exactly as written
+compare.js.pv_src_read,{labels} from {source} (read {dates}),{labels} d'après {source} (lu le {dates}),,keep {dates} {labels} {source} exactly as written
+compare.js.pv_inputs,From your inputs; no firm rule used.,D'après vos saisies ; aucune règle de firme utilisée.,,
+compare.js.sec_rules,rules,règles,,
+compare.js.sec_sizing,at your sizing,à votre dimensionnement,,
+compare.js.sec_cost,cost & access,coût et accès,,
+compare.js.row_daily_loss,daily loss,perte journalière,,
+compare.js.row_daily_basis,daily basis,base journalière,,
+compare.js.row_reset,reset (UTC),réinitialisation (UTC),,
+compare.js.row_max_loss,max loss,perte max.,,
+compare.js.row_drawdown_type,drawdown type,type de drawdown,,
+compare.js.row_target,target,objectif,,
+compare.js.row_min_days,min days,jours min.,,
+compare.js.row_leverage_cap,leverage cap,plafond de levier,,
+compare.js.row_hold_cap,hold cap,durée max. de détention,,
+compare.js.row_open_positions,open positions,positions ouvertes,,
+compare.js.row_consistency_rule,consistency rule,règle de cohérence,,
+compare.js.row_news_rule,news rule,règle sur les annonces,,
+compare.js.row_profit_cap,profit cap,plafond de profit,,
+compare.js.row_risk,risk per trade,risque par trade,,
+compare.js.row_room,room before max loss binds,réserve avant que la perte max. devienne contraignante,,"CHECK FIRST: Terms with no settled French equivalent: quota → 'capital' (index.calc.quota, compare.sizing.quota, every formula); room → 'réserve' (index.js.f_room_*, v_txt, compare.js.row_room); daily basis → 'base journalière'; high-water mark → 'plus haut historique'; per side → 'par sens'; binding → 'contrainte'/'contraignant'; forward-filled bar → 'barre complétée par report' (ledger.warn.flagged, ledger.flag.title)."
+compare.js.row_cross,ceilings swap at,les plafonds s'inversent à,,
+compare.js.row_losses,losses before max loss binds,pertes avant que la perte max. devienne contraignante,,
+compare.js.row_survive,losses survivable,pertes encaissables,,
+compare.js.row_fee_at,fee drag at {stop}% stop,poids des frais avec un stop à {stop} %,,keep {stop} exactly as written
+compare.js.row_fee,fee drag,poids des frais,,
+compare.js.row_liq,isolated liq. distance,distance de liq. (isolée),,
+compare.js.row_price,challenge fee,prix du challenge,,
+compare.js.row_refund,refund,remboursement,,
+compare.js.row_split,profit split,partage des profits,,
+compare.js.row_us,US residents,résidents US,,
+compare.js.v_losses,{n} at {pct}%,{n} à {pct} %,,keep {n} {pct} exactly as written
+compare.js.v_survive,{n} from a fresh start,{n} sur un compte neuf,,keep {n} exactly as written
+compare.js.v_survive_trail,"{n} from a fresh start, fewer after any profit","{n} sur un compte neuf, moins après tout profit",,keep {n} exactly as written
+compare.js.v_room_trail,trailing — moves with your high-water mark,suiveur — évolue avec votre plus haut historique,,
+compare.js.v_cross_trail,not fixed under trailing,non fixe avec un drawdown suiveur,,
+compare.js.v_losses_trail,moves with your high-water mark,évolue avec votre plus haut historique,,
+compare.js.v_fee,{drag}% of risk ({fee}%/side),{drag} % du risque ({fee} %/sens),,keep {drag} {fee} exactly as written
+compare.js.v_liq,~{pct}% at {lev}×,~{pct} % à {lev}×,,keep {lev} {pct} exactly as written
+compare.js.f_daily,$ = quota × daily%,$ = capital × journalier %,,
+compare.js.f_daily_day_start,$ = day-start balance × daily% (shown for a day starting at quota),$ = solde en début de journée × journalier % (affiché pour une journée démarrant au capital),,
+compare.js.f_max,$ = quota × max%,$ = capital × max %,,
+compare.js.f_max_trailing,$ = high-water mark × max% (shown at a fresh high equal to quota),$ = plus haut historique × max % (affiché pour un nouveau plus haut égal au capital),,
+compare.js.f_risk,risk = quota × risk %,risque = capital × risque %,,
+compare.js.f_cf_initial,quota × (1 − max% + daily%),capital × (1 − max % + journalier %),,keep every number exactly
+compare.js.f_cf_day_start,quota × (1 − max%) ÷ (1 − daily%),capital × (1 − max %) ÷ (1 − journalier %),,keep every number exactly
+compare.js.f_room,room = quota − {cf},réserve = capital − {cf},,keep {cf} exactly as written
+compare.js.f_cross,crossover = {cf},bascule = {cf},,keep {cf} exactly as written
+compare.js.f_losses,floor(room ÷ risk),floor(réserve ÷ risque),,"CHECK FIRST: index.js.f_left, compare.js.f_losses, compare.js.f_survive: 'floor(…)' is kept as the math function name, like min/max. A French reader may confuse it with 'plancher'; 'partie entière' is the alternative."
+compare.js.f_survive,floor(quota × max% ÷ risk),floor(capital × max % ÷ risque),,"CHECK FIRST: index.js.f_left, compare.js.f_losses, compare.js.f_survive: 'floor(…)' is kept as the math function name, like min/max. A French reader may confuse it with 'plancher'; 'partie entière' is the alternative."
+compare.js.f_fee,fee share = 2 × fee ÷ (stop % + 2 × fee),part des frais = 2 × frais ÷ (stop % + 2 × frais),,keep every number exactly
+compare.js.f_liq,"distance ≈ 1 ÷ min(your leverage, cap {cap}× for a {quota} account)","distance ≈ 1 ÷ min(votre levier, plafond {cap}× pour un compte de {quota})",,keep {cap} {quota} exactly as written; keep every number exactly
+compare.js.foot_link,"<a href=""{url}"" rel=""sponsored noopener"">{name} challenges</a> · affiliate link","<a href=""{url}"" rel=""sponsored noopener"">challenges {name}</a> · lien d'affiliation",,keep {name} {url} exactly as written; keep the <…> tags and links as they are; translate only the words
+compare.js.foot_code,discount code <b>{code}</b> — cheaper through this link,code de réduction <b>{code}</b> — moins cher via ce lien,,keep {code} exactly as written; keep the <…> tags and links as they are; translate only the words
+compare.js.foot_held,"Link held until daily, max, target and price each have a recorded source in {name}'s own documents, and {name}'s affiliate agreement allows it.","Lien suspendu jusqu'à ce que la limite journalière, la perte max., l'objectif et le prix aient chacun une source enregistrée dans les propres documents de {name}, et que le contrat d'affiliation de {name} le permette.",,keep {name} exactly as written
+compare.js.foot_open_1,open: {n} question — {first},en suspens : {n} question — {first},,keep {first} {n} exactly as written
+compare.js.foot_open_n,open: {n} questions — {first} …,en suspens : {n} questions — {first} …,,keep {first} {n} exactly as written
+ledger.meta.title,troid's ledger,registre de troid,,"troid stays lowercase, in Latin letters"
+ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.","Le compte fantôme. Chaque trade clôturé, sans retouche, perdants compris. Il ne passe aucun ordre — un humain le ferait.",,
+ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar","au {asof} UTC · {market} · règles {profile} · marge croisée 5x · rejoué toutes les 4 h, 20 min après la barre",,keep {asof} {market} {profile} exactly as written; keep every number exactly
+ledger.hb.last_bar,last bar,dernière barre,,
+ledger.hb.last_bar_note,UTC · close {close},UTC · clôture {close},,keep {close} exactly as written
+ledger.hb.realized,realized,réalisé,,
+ledger.hb.room,room,réserve,,
+ledger.hb.binding,binding · {binding},contrainte · {binding},,keep {binding} exactly as written
+ledger.hb.daily,daily {amount},journalier {amount},,keep {amount} exactly as written
+ledger.hb.position,position,position,,
+ledger.hb.position_note,"no direction, price or stop is published","ni sens, ni prix, ni stop ne sont publiés",,
+ledger.hb.open_since,open since {since} UTC · {filled} of {total} tranche(s),ouverte depuis {since} UTC · {filled} tranche(s) sur {total},,keep {filled} {since} {total} exactly as written
+ledger.pos.flat,flat,à plat,,
+ledger.pos.open,open,ouverte,,
+ledger.binding.daily,daily limit,limite journalière,,
+ledger.binding.floor,max-loss floor,plancher de perte max.,,
+ledger.runs.none_yet,runs: none recorded yet,exécutions : aucune enregistrée pour l'instant,,
+ledger.runs.none_7d,runs: none in the last 7 days,exécutions : aucune au cours des 7 derniers jours,,keep every number exactly
+ledger.runs.eyebrow,Runs · last 7 days · {n},Exécutions · 7 derniers jours · {n},,keep {n} exactly as written; keep every number exactly
+ledger.runs.th.run,run (UTC),exécution (UTC),,
+ledger.runs.th.bar,bar,barre,,
+ledger.runs.th.balance,balance,solde,,
+ledger.runs.th.closed,closed,clôturés,,
+ledger.runs.th.position,position,position,,
+ledger.warn.measure_contains_below,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that contains zero, and a result below what chance produces across the
+~30 configurations searched (~{noise}).","Cette stratégie mesure {exp} par trade sur {n} trades — une erreur type de ~{se}, un intervalle de confiance qui contient zéro, et un résultat inférieur à ce que le hasard produit sur les ~30 configurations explorées (~{noise}).",,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_contains_above,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that contains zero, and a result above what chance produces across the
+~30 configurations searched (~{noise}).","Cette stratégie mesure {exp} par trade sur {n} trades — une erreur type de ~{se}, un intervalle de confiance qui contient zéro, et un résultat supérieur à ce que le hasard produit sur les ~30 configurations explorées (~{noise}).",,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_excludes_below,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that excludes zero, and a result below what chance produces across the
+~30 configurations searched (~{noise}).","Cette stratégie mesure {exp} par trade sur {n} trades — une erreur type de ~{se}, un intervalle de confiance qui exclut zéro, et un résultat inférieur à ce que le hasard produit sur les ~30 configurations explorées (~{noise}).",,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.measure_excludes_above,"This strategy measures {exp} per trade over {n} trades — a standard error of ~{se}, a
+confidence interval that excludes zero, and a result above what chance produces across the
+~30 configurations searched (~{noise}).","Cette stratégie mesure {exp} par trade sur {n} trades — une erreur type de ~{se}, un intervalle de confiance qui exclut zéro, et un résultat supérieur à ce que le hasard produit sur les ~30 configurations explorées (~{noise}).",,keep {exp} {noise} {n} {se} exactly as written; keep every number exactly
+ledger.warn.published,"It is published so you can watch a null result run forward, not because it works. The <a href=""{L}/tearsheet"">full tearsheet</a> shows what noise looks like when all of it is shown.","Elle est publiée pour que vous puissiez suivre un résultat nul en conditions réelles, pas parce qu'elle fonctionne. Le <a href=""{L}/tearsheet"">tearsheet complet</a> montre à quoi ressemble le bruit quand on le montre en entier.",,keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
+ledger.warn.logged,{live} of these trades were logged live; the rest were backfilled on {date}.,{live} de ces trades ont été enregistrés en direct ; les autres ont été reconstitués a posteriori le {date}.,,keep {date} {live} exactly as written
+ledger.warn.flagged,"{n} held through a forward-filled bar (a flat bar substituted for a feed gap), marked ⚑ below — flagged, not excluded.","{n} ont traversé une barre complétée par report (une barre plate substituée à un trou dans le flux), marqués ⚑ ci-dessous — signalés, pas exclus.",,"CHECK FIRST: Terms with no settled French equivalent: quota → 'capital' (index.calc.quota, compare.sizing.quota, every formula); room → 'réserve' (index.js.f_room_*, v_txt, compare.js.row_room); daily basis → 'base journalière'; high-water mark → 'plus haut historique'; per side → 'par sens'; binding → 'contrainte'/'contraignant'; forward-filled bar → 'barre complétée par report' (ledger.warn.flagged, ledger.flag.title). | keep {n} exactly as written"
+ledger.equity.eyebrow,Equity,Equity,,
+ledger.equity.start,start {quota} · dashed,départ {quota} · en pointillés,,keep {quota} exactly as written
+ledger.cell.balance,balance,solde,,
+ledger.cell.net,net,net,,
+ledger.cell.trades,trades,trades,,
+ledger.cell.win,win,gagnants,,
+ledger.cell.exp,exp,esp.,,
+ledger.cell.pf,pf,pf,,
+ledger.cell.max_dd,max dd,dd max,,
+ledger.cell.to_floor,to floor,jusqu'au plancher,,
+ledger.cell.week,this week,cette semaine,,
+ledger.cell.month,this month,ce mois-ci,,
+ledger.cell.status,status,statut,,
+ledger.cell.trades_r,{n} trades · {r},{n} trades · {r},,keep {n} {r} exactly as written
+ledger.status.running,running,en cours,,
+ledger.status.pass,pass,réussi,,
+ledger.status.fail_daily,fail_daily,échec_journalier,,"CHECK FIRST: ledger.status.fail_daily / fail_maxloss: these code-like labels were rendered 'échec_journalier' / 'échec_perte_max', underscores kept. The reviewer may want plain words or the English codes."
+ledger.status.fail_maxloss,fail_maxloss,échec_perte_max,,
+ledger.status.zombie,zombie,zombie,,
+ledger.trades.eyebrow,Last {n} trades,{n} derniers trades,,keep {n} exactly as written
+ledger.trades.th.closed,closed,clôture,,
+ledger.trades.th.kind,kind,type,,
+ledger.trades.th.side,side,sens,,
+ledger.trades.th.fills,fills,remplissages,,
+ledger.trades.th.bars,bars,barres,,
+ledger.trades.th.exit,exit,sortie,,
+ledger.trades.th.pnl,pnl,pnl,,
+ledger.trades.th.r,R,R,,
+ledger.kind.pullback,pullback,pullback,,
+ledger.kind.breakout,breakout,breakout,,
+ledger.kind.reverse,reverse,retournement,,
+ledger.side.long,long,long,,
+ledger.side.short,short,short,,
+ledger.side_cap.long,Long,Long,,
+ledger.side_cap.short,Short,Short,,
+ledger.exit.tp1,TP1,TP1,,keep every number exactly
+ledger.exit.tp2,TP2,TP2,,keep every number exactly
+ledger.exit.tp3,TP3,TP3,,keep every number exactly
+ledger.exit.stop,stop,stop,,
+ledger.exit.max_hold_10d,max hold,durée max.,,
+ledger.exit.reset_flat,reset flatten,clôture à la réinitialisation,,
+ledger.exit.reset_flat_loser,reset flatten,clôture à la réinitialisation,,
+ledger.flag.title,held through a forward-filled bar,a traversé une barre complétée par report,,"CHECK FIRST: Terms with no settled French equivalent: quota → 'capital' (index.calc.quota, compare.sizing.quota, every formula); room → 'réserve' (index.js.f_room_*, v_txt, compare.js.row_room); daily basis → 'base journalière'; high-water mark → 'plus haut historique'; per side → 'par sens'; binding → 'contrainte'/'contraignant'; forward-filled bar → 'barre complétée par report' (ledger.warn.flagged, ledger.flag.title)."
+ledger.charts.eyebrow,Last {n} closed trades · drawn,{n} derniers trades clôturés · tracés,,keep {n} exactly as written
+ledger.charts.note,"Bars from 10 before entry to 5 after exit. Entry, initial stop and take-profits as the engine set them; the stop moves to average entry after TP1 and is not redrawn. Open position: not drawn.","Barres de 10 avant l'entrée à 5 après la sortie. Entrée, stop initial et take-profits tels que le moteur les a fixés ; le stop passe au prix d'entrée moyen après TP1 et n'est pas redessiné. Position ouverte : non tracée.",,keep every number exactly
+ledger.charts.caption,"{side} · {kind} · {entry_time} → {exit_time} UTC · entry {entry} · stop {stop} ({stop_pct}) · sized {risk} = {risk_pct} · {binding} binding, {room} room · {fills} of {tranches} tranches · exit {exit} after {bars} bars · {r} · fees {fees} of risk","{side} · {kind} · {entry_time} → {exit_time} UTC · entrée {entry} · stop {stop} ({stop_pct}) · risque dimensionné à {risk} = {risk_pct} · contrainte : {binding}, réserve {room} · {fills} tranches sur {tranches} · sortie {exit} après {bars} barres · {r} · frais {fees} du risque",,keep {bars} {binding} {entry_time} {entry} {exit_time} {exit} {fees} {fills} {kind} {risk_pct} {risk} {room} {r} {side} {stop_pct} {stop} {tranches} exactly as written
+ledger.js.nolib,chart library did not load (cdn.jsdelivr.net) — the caption is the record,la bibliothèque de graphiques ne s'est pas chargée (cdn.jsdelivr.net) — la légende tient lieu d'enregistrement,,
+ledger.js.entry,entry,entrée,,
+ledger.js.stop,stop,stop,,
+ledger.js.tp,TP{n},TP{n},,keep {n} exactly as written
+ledger.foot.week,"A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
+ledger entry, not a claim. Read it that way.","Une semaine de trades, c'est n≈2 avec une erreur type de ~0,26R. La ligne hebdomadaire ci-dessus est une écriture de registre, pas une affirmation. Lisez-la ainsi.",,keep every number exactly
+ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.","Barres d'api.binance.us, un seul flux de bout en bout ; ⚑ signale un trade qui a traversé une barre complétée par report.",,
+ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">journal.csv dans le dépôt</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.meta.title,troid's research — strategy review,recherche de troid — revue de stratégie,,"troid stays lowercase, in Latin letters"
+dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","recherche de troid · revue de stratégie · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">méthodologie</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.hero.h1,Strategy review,Revue de stratégie,,
+dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed","Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · recoupement au 21 sept. 2026 · barres d'api.binance.us, un seul flux",,keep every number exactly
+dashboard.verdict.h2,Lowest-drawdown structure tested,La structure au drawdown le plus faible parmi celles testées,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.verdict.big,"<strong>Five-tranche strength ladder + regime filter + desk cap</strong> — but
+  do <em>not</em> buy a challenge. The walk-forward has been run, and it came back as noise.","<strong>Échelle sur force à cinq tranches + filtre de régime + plafond du desk</strong> — mais n'achetez <em>pas</em> de challenge. Le walk-forward a été exécuté, et il est ressorti comme du bruit.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words"
+dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
+  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), zero failed and
+  zero zombie accounts across 72 rolling challenge starts, median ending balance $100,409.
+  It is also still <strong>+0.03R</strong> on the sample it was chosen on, and
+  <strong>+0.008R</strong> on the 504 BTC trades from 1 January 2021 to 7 January 2026 it never saw
+  (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>).
+  That is a well-built vehicle with no engine in it.","De tout ce qui a été testé, c'est elle qui a le drawdown le plus faible (<strong>&minus;$1 058</strong> contre &minus;$7 295 en entrée unique), zéro compte en échec et zéro compte zombie sur 72 démarrages glissants de challenge, solde final médian de $100 409. Elle est aussi toujours à <strong>+0,03R</strong> sur l'échantillon sur lequel elle a été choisie, et à <strong>+0,008R</strong> sur les 504 trades BTC du 1er janvier 2021 au 7 janvier 2026 qu'elle n'a jamais vus (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>). C'est un véhicule bien construit, sans moteur dedans.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
+  of holdout just said the entry logic has no measurable edge. At a 14% industry base
+  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.","<strong>Pourquoi ne pas acheter :</strong> un challenge à $999 achète un seul résultat binaire et bruité. Cinq ans de données hors échantillon viennent de montrer que la logique d'entrée n'a aucun avantage mesurable. Avec un taux de base de 14 % dans le secteur, réussir une fois ne renseigne presque pas sur le fait que vous ayez un avantage — beaucoup de traders sans avantage réussissent.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.h2,Cross-reference — things that don't add up,Recoupement — ce qui ne colle pas,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. « Entrée échelonnée 5x pour une position plus grosse » produit l'inverse,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f1.tag,design assumption inverted,hypothèse de conception inversée,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f1.p1,"At the same $500 risk, a 5-tranche <em>strength</em> ladder holds
+    <strong>34% less</strong> quantity than a single entry (0.109 BTC vs 0.167 BTC;
+    $8,524 vs $13,000 notional). Because the stop stays anchored at T1's structure,
+    each later tranche sits further from the stop and therefore gets less size.","À risque égal de $500, une échelle <em>sur force</em> à 5 tranches détient <strong>34 % de quantité en moins</strong> qu'une entrée unique (0,109 BTC contre 0,167 BTC ; $8 524 contre $13 000 de notionnel). Comme le stop reste ancré sur la structure de T1, chaque tranche suivante est plus éloignée du stop et reçoit donc une taille plus petite.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.f1.p2,"The ladder's benefit is <strong>conditionality, not size</strong>: losers fill
+    1.66 tranches, winners fill 4.26. You're small when wrong and large when right. If
+    what you actually want is a bigger position, that comes from raising risk per trade,
+    and the ruin math says don't.","L'intérêt de l'échelle est <strong>la conditionnalité, pas la taille</strong> : les perdants remplissent 1,66 tranche, les gagnants 4,26. Vous êtes petit quand vous avez tort et gros quand vous avez raison. Si ce que vous voulez vraiment, c'est une position plus grosse, cela passe par une hausse du risque par trade, et les calculs de ruine disent de ne pas le faire.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.f2.h3,2. The income model assumed 4.3&times; the trade frequency,"2. Le modèle de revenus supposait une fréquence de trades 4,3&times; plus élevée",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f2.tag,changes the conclusion,change la conclusion,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f2.p1,"<code>income_math.py</code> ran at 30 trades/month. The strategy produces
+    <strong>10.1/month</strong> (78 trades in 7.7 months). Every encouraging number in the
+    $5k/month analysis — the 4-months-to-target row, $614 at the real 9/mo frequency (was $1,862 at an assumed 30/mo)/account — assumed a frequency
+    this strategy does not reach.","<code>income_math.py</code> tournait à 30 trades/mois. La stratégie en produit <strong>10,1/mois</strong> (78 trades en 7,7 mois). Chaque chiffre encourageant de l'analyse à $5k/mois — la ligne « 4 mois jusqu'à l'objectif », $614 par compte à la fréquence réelle de 9/mois (auparavant $1 862 à une fréquence supposée de 30/mois) — supposait une fréquence que cette stratégie n'atteint pas.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.f2.p2,"Corrected: at 10.1 trades/month and 0.5% risk, $6,250/month gross needs
+    <strong>+1.24R per trade</strong>. Not credible at any skill level. Either the
+    timeframe drops below 4h to raise frequency, or the income target needs more accounts
+    than the scaling table implied.","Corrigé : à 10,1 trades/mois et 0,5 % de risque, $6 250/mois bruts exigent <strong>+1,24R par trade</strong>. Pas crédible, quel que soit le niveau. Soit l'unité de temps descend sous le 4h pour augmenter la fréquence, soit l'objectif de revenus exige plus de comptes que ne le laissait entendre le tableau de scaling.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.f3.h3,3. RESULTS.md was stale on every row,3. RESULTS.md était périmé sur chaque ligne,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.tag.resolved,resolved,résolu,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f3.p1,"It was hand-written and drifted from the engine after every change. It is now
+    generated by <code>gen_results.py</code> from the live engine on the frozen sample, and
+    <code>verify_claims.py</code> re-derives the published statistics from
+    <code>journal.csv</code> and fails if either drifts. The table below is that output.","Il était écrit à la main et s'écartait du moteur après chaque modification. Il est désormais généré par <code>gen_results.py</code> à partir du moteur actuel sur l'échantillon figé, et <code>verify_claims.py</code> recalcule les statistiques publiées à partir de <code>journal.csv</code> et échoue si l'un ou l'autre dérive. Le tableau ci-dessous est ce résultat.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words"
+dashboard.xref.f4.h3,4. The skill still describes the rollover trap as a general hazard,4. Le skill décrit encore le piège du rollover comme un danger général,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f4.tag,skill text,texte du skill,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f4.p1,"<code>bitfunded.md</code> presents it as broadly dangerous. Measured: it needs
+    <em>both</em> uncapped risk &ge;4% per position <em>and</em> a policy that holds
+    losers through the reset. Under desk sizing plus swing_safe it is dead twice over —
+    by cap and by policy. Largest floating loss actually carried into a reset was $3,422
+    against the $4,000 line, at 4% naive risk.","<code>bitfunded.md</code> le présente comme dangereux de manière générale. Mesuré : il faut <em>à la fois</em> un risque non plafonné &ge;4 % par position <em>et</em> une politique qui conserve les perdants au-delà de la réinitialisation. Avec le dimensionnement du desk plus swing_safe, il est doublement neutralisé — par le plafond et par la politique. La plus grosse perte latente réellement portée au-delà d'une réinitialisation était de $3 422 face au seuil de $4 000, avec un risque naïf de 4 %.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.xref.f5.h3,5. Reverse-after-TP3 was untested; the trigger moved to the stop-out,5. Le retournement après TP3 n'était pas testé ; le déclencheur est passé à la sortie au stop,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f5.tag,still one regime,toujours un seul régime,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f5.p1,"On TP3 it fired 4 times in 8 months, because only ~8% of trades reach 3R. On the
+    stop-out it fires 24 times in the 78-trade sample, which is a sample rather than
+    an anecdote — but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January 2026)
+    says the whole configuration is inside noise.","Sur TP3, il s'est déclenché 4 fois en 8 mois, car seuls ~8 % des trades atteignent 3R. Sur la sortie au stop, il se déclenche 24 fois dans l'échantillon de 78 trades, ce qui constitue un échantillon plutôt qu'une anecdote — mais cela reste un seul actif sur un seul régime, et la période hors échantillon (du 1er janvier 2021 au 7 janvier 2026) dit que toute la configuration est dans le bruit.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f6.h3,6. None of it was in the repo,6. Rien de tout cela n'était dans le dépôt,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f6.p1,"All of it is in <code>kunjancollective/troid</code>, and troid's ledger runs daily from
+    <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit.
+    The journal's <code>logged_utc</code> column is the timestamp nothing can backdate.","Tout est dans <code>kunjancollective/troid</code>, et le registre de troid tourne chaque jour depuis <code>.github/workflows/shadow.yml</code> : nouvelles barres, rejeu, journal, registre, commit. La colonne <code>logged_utc</code> du journal est l'horodatage que rien ne peut antidater.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.xref.f7.h3,"7. Two known small defects, both flagged and unfixed","7. Deux petits défauts connus, tous deux signalés et non corrigés",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+dashboard.xref.f7.tag,minor,mineur,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+dashboard.xref.f7.p1,"<code>income_math.py</code>'s <code>withdraw=False</code> arm reports $0 by
+    construction — it counts only withdrawals as income, so the ""bank profits to grow the
+    buffer"" comparison can't be sized. And <code>risk.py</code> accepts
+    <code>--json</code> only before the subcommand.","La branche <code>withdraw=False</code> de <code>income_math.py</code> affiche $0 par construction — elle ne compte que les retraits comme revenus, donc la comparaison « mettre les profits de côté pour grossir le coussin » ne peut pas être chiffrée. Et <code>risk.py</code> n'accepte <code>--json</code> qu'avant la sous-commande.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.variants.h2,Where each variant stands — corrected numbers,Où en est chaque variante — chiffres corrigés,,
+dashboard.variants.th.config,Configuration,Configuration,,
+dashboard.variants.th.n,n,n,,
+dashboard.variants.th.exp,exp R,esp. R,,
+dashboard.variants.th.pf,PF,PF,,
+dashboard.variants.th.dd,max DD,DD max,,
+dashboard.variants.th.fills,fills W/L,remplissages G/P,,
+dashboard.variants.row.v1,"v1 pullback, no filter","v1 pullback, sans filtre",,keep every number exactly
+dashboard.variants.row.regime,+ regime filter,+ filtre de régime,,
+dashboard.variants.row.breakout,"+ breakout, single entry","+ breakout, entrée unique",,
+dashboard.variants.row.weak3,3-tranche weakness ladder,échelle sur faiblesse à 3 tranches,,keep every number exactly
+dashboard.variants.row.weak5,5-tranche weakness ladder,échelle sur faiblesse à 5 tranches,,keep every number exactly
+dashboard.variants.row.strong3,3-tranche strength ladder,échelle sur force à 3 tranches,,keep every number exactly
+dashboard.variants.row.strong5,5-tranche strength ladder,échelle sur force à 5 tranches,,keep every number exactly
+dashboard.variants.row.rev_tp3,5-strength + reverse on TP3,5 sur force + retournement sur TP3,,keep every number exactly
+dashboard.variants.row.rev_stop,5-strength + reverse on stop,5 sur force + retournement sur stop,,keep every number exactly
+dashboard.variants.row.rev_any,5-strength + reverse on any,5 sur force + retournement sur toute sortie,,keep every number exactly
+dashboard.variants.note,"Ladder direction is the
+  single largest structural effect found: same signals, same stops, only the side the
+  tranches sit on. Weakness at 5 tranches is the worst profit factor in the project
+  (0.14); strength at 5 with the reverse on stop is the best drawdown (&minus;$1,058).","Le sens de l'échelle est le plus grand effet structurel constaté : mêmes signaux, mêmes stops, seul change le côté où se placent les tranches. Sur faiblesse à 5 tranches, c'est le pire profit factor du projet (0,14) ; sur force à 5 avec retournement sur stop, c'est le meilleur drawdown (&minus;$1 058).",,keep every number exactly
+dashboard.risk.h2,"Risk model — verified, independent of strategy","Modèle de risque — vérifié, indépendant de la stratégie",,
+dashboard.risk.daily.k,Daily budget,Budget journalier,,
+dashboard.risk.daily.n,"4% of the initial balance, fixed","4 % du solde initial, fixe",,keep every number exactly
+dashboard.risk.floor.k,Static floor,Plancher statique,,
+dashboard.risk.floor.n,"6% of quota, fixed","6 % du capital, fixe",,keep every number exactly
+dashboard.risk.crossover.k,Ceiling crossover,Bascule des plafonds,,
+dashboard.risk.crossover.n,"below this, max loss binds","en dessous, la perte max. devient contraignante",,
+dashboard.risk.risk.k,Risk / trade,Risque / trade,,
+dashboard.risk.risk.n,capped at 35% of budget,plafonné à 35 % du budget,,keep every number exactly
+dashboard.risk.fees.k,Fees,Frais,,
+dashboard.risk.fees.n,"round trip, on notional","aller-retour, sur le notionnel",,
+dashboard.risk.reset.k,Reset,Réinitialisation,,
+dashboard.risk.reset.n,noon in New York,midi à New York,,
+dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,"CHECK FIRST: Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'. | keep every number exactly"
+dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
+  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
+  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
+  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.","Le plafond de budget n'est pas du conservatisme — c'est la seule chose qui rend le compte viable. À <strong>+0,35R</strong>, un système réellement excellent, un dimensionnement naïf à 1 % fait sauter le compte <strong>68 %</strong> du temps en moins d'un an, et à 2 %, c'est 98 %. Chacune de ces cases tombe à 0,0 % sous le plafond.",,"CHECK FIRST: 'faire sauter le compte' / 'sautent' for 'blow up' (index.stats.blowup.p, faq.fail.p2, faq.risk.p2, dashboard.risk.p) is idiomatic. Check the register. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.change.h2,What would change the verdict,Ce qui changerait le verdict,,
+dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
+      parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
+      on api.binance.us: the config was chosen on 2026; on the 504 BTC trades from
+      1 January 2021 to 7 January 2026 it never saw, +0.008R, 95% CI [&minus;0.023R, +0.040R]. ETH, 498 trades:
+      +0.008R. Not met.</em>","<strong>Le walk-forward ressort &gt;+0,10R hors échantillon</strong> avec un voisinage de paramètres stable. C'est la condition préalable à tout le reste. <em>Exécuté le 21 sept. 2026 sur api.binance.us : la config a été choisie sur 2026 ; sur les 504 trades BTC du 1er janvier 2021 au 7 janvier 2026 qu'elle n'a jamais vus, +0,008R, IC à 95 % [&minus;0,023R ; +0,040R]. ETH, 498 trades : +0,008R. Non atteint.</em>",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li2,"<strong>Frequency reaches ~30 trades/month</strong>, which on this structure means
+      dropping below the 4h timeframe. Without it the income target needs roughly four
+      times the accounts the scaling model suggested.","<strong>La fréquence atteint ~30 trades/mois</strong>, ce qui, sur cette structure, implique de descendre sous l'unité de temps 4h. Sans cela, l'objectif de revenus exige environ quatre fois plus de comptes que ne le suggérait le modèle de scaling.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li3,"<strong>Reverse moves to TP2 or stop-out</strong> so the exhaustion thesis gets a
+      real sample instead of n=4. <em>Done: reverse-on-stop is the config, 24 reverse
+      trades in the sample. It did not change the verdict.</em>","<strong>Le retournement passe sur TP2 ou sur la sortie au stop</strong>, pour que la thèse d'essoufflement dispose d'un vrai échantillon au lieu de n=4. <em>Fait : le retournement sur stop est la config retenue, 24 trades de retournement dans l'échantillon. Cela n'a pas changé le verdict.</em>",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
+      withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
+      four correlated accounts running one strategy aren't four independent bets anyway.","<strong>Le plan de scaling de Bitfunded</strong> — 10 % net pendant 4 mois consécutifs, 2 retraits — fait grandir un seul compte au lieu d'en acheter quatre. Moins cher, moins de gestion, et de toute façon quatre comptes corrélés qui font tourner une même stratégie ne sont pas quatre paris indépendants.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.order.h2,Order of work,Ordre des travaux,,
+dashboard.order.li1,"Push the scratch copy to the repo and apply the six verified patches
+      as the merged reset block. <em>Done.</em>",Pousser la copie de travail dans le dépôt et appliquer les six correctifs vérifiés sous forme de bloc de réinitialisation fusionné. <em>Fait.</em>,,keep the <…> tags and links as they are; translate only the words
+dashboard.order.li2,"Rewrite <code>RESULTS.md</code> with corrected numbers; revise
+      <code>bitfunded.md</code>'s rollover section to the measured condition.",Réécrire <code>RESULTS.md</code> avec les chiffres corrigés ; aligner la section rollover de <code>bitfunded.md</code> sur la condition mesurée.,,keep the <…> tags and links as they are; translate only the words
+dashboard.order.li3,"Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
+      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em>",Récupérer BTCUSDT 4h de 2021 à aujourd'hui et lancer le walk-forward selon <code>HANDOFF.md</code>. <em>Fait pour la référence : dans le bruit. Prochaine étape : <code>troid-shadow-2</code>.</em>,,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.order.li4,"Only then: challenge purchase, or not.","Seulement ensuite : achat du challenge, ou pas.",,
+dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
+asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
+inside noise on BTC and ETH.","Chiffres de l'échantillon sur 1 539 barres 4h, du 8 janv. au 21 sept. 2026, api.binance.us — un actif, un régime. La période hors échantillon, du 1er janvier 2021 au 7 janvier 2026 (<code>backtest/WALKFORWARD.md</code>), est ressortie dans le bruit sur BTC et ETH.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+tearsheet.meta.title,troid's research — tearsheet,recherche de troid — tearsheet,,"troid stays lowercase, in Latin letters"
+tearsheet.head.eyebrow,troid's research · tearsheet,recherche de troid · tearsheet,,"troid stays lowercase, in Latin letters"
+tearsheet.head.box,A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.,"Un tearsheet complet d'une stratégie dont l'espérance hors échantillon est de +0,008R. Chaque métrique ci-dessous est MEASURED (mesurée) et dans le bruit. Publié parce que c'est à cela que ressemble le bruit quand on vous le montre en entier.",,"CHECK FIRST: Tier labels now stay in English capitals with a French gloss: 'MEASURED (mesuré)' in hypo.no_edge_tail, 'MEASURED (mesurée)' in tearsheet.head.box, 'DERIVED (dérivé)' in index.crossover.prov. index.doesnt.verify names the tiers in lowercase in the English ('derived, sourced, modelled, or measured') as descriptions, not labels, so it keeps the French words dérivé/sourcé/modélisé/mesuré; the reviewer may want the English capitals there too. | keep every number exactly"
+tearsheet.head.sample,"{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.","{n} trades clôturés sur {market}, du {start} au {end}. P&amp;L journalier sur le capital de {quota}, les jours sans sortie comptent pour zéro, 365 périodes par an, sommes et non produits. Source : journal.csv dans le dépôt. Pas un conseil financier.",,keep {end} {market} {n} {quota} {start} exactly as written; keep every number exactly
+tearsheet.empty,No closed trades yet.,Aucun trade clôturé pour l'instant.,,
+tearsheet.stub.english,"The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=""/tearsheet"">the full tearsheet</a>.","Le rapport lui-même — chaque métrique, tableau et graphique — est généré en anglais par quantstats et publié une seule fois, sans traduction : <a href=""/tearsheet"">le tearsheet complet</a>.",,keep the <…> tags and links as they are; translate only the words
+chat.meta.title,ask troid,demandez à troid,,"troid stays lowercase, in Latin letters"
+chat.meta.description,"ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.","« demandez à troid » : les données de règles de troid, avec la source et la date de lecture de chaque règle, des calculs effectués par des outils, chaque chiffre avec son niveau de confiance. Pas un conseil financier.",,"troid stays lowercase, in Latin letters"
+chat.hero.h1,ask troid,demandez à troid,,"troid stays lowercase, in Latin letters"
+chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic tools. It
+  prices the trade you bring. It does not generate one.",« demandez à troid » répond à partir des données de règles de troid et de ses propres outils de calcul. Il chiffre le trade que vous lui soumettez. Il n'en génère aucun.,,"CHECK FIRST: product.ask 'demandez à troid': an imperative used as a name reads oddly as a sentence subject, so running text wraps it in « » (all ask.*, chat.hero.lede, chat.discl, chat.js.status_off). The reviewer may prefer another fixed form, or keeping 'ask troid'. | troid stays lowercase, in Latin letters"
+chat.eyebrow,"<span style=""text-transform:none"">ask troid</span> · automated assistant","<span style=""text-transform:none"">demandez à troid</span> · assistant automatisé",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+chat.status.checking,checking whether the assistant is switched on…,vérification de l'activation de l'assistant…,,
+chat.placeholder,"e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it.","p. ex. Bitfunded 1-Step, capital $100k, equity 96 000, short à 77 872 avec un stop à 0,3 % — calculez la taille.",,CHECK FIRST: chat.placeholder: the example user request ends 'calculez la taille' (vous addressed to the assistant); check it is natural for a chat prompt. | keep every number exactly
+chat.send,send,envoyer,,
+chat.nfa,Not financial advice. Verify with the firm before acting.,Pas un conseil financier. Vérifiez auprès de la firme avant d'agir.,,
+chat.is.h2,What it is,Ce que c'est,,
+chat.is.p,"A chat over <a href=""/TROID.md"">TROID.md</a>, the rules on
+  <a href=""{L}/compare"">troid's compare</a>, the <a href=""/METHODOLOGY.md"">methodology</a> and a fixed
+  <a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">support script</a>.
+  Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
+  document and read date of every rule they use, or say its source is not yet recorded; the
+  model reports what they return. Every number carries its tier. A pending rule stays pending.","Un chat qui s'appuie sur <a href=""/TROID.md"">TROID.md</a>, les règles du <a href=""{L}/compare"">comparateur de troid</a>, la <a href=""/METHODOLOGY.md"">méthodologie</a> et un <a href=""https://github.com/kunjancollective/troid/blob/main/web/context/support.md"">script de support</a> figé. Le dimensionnement, les budgets et les contrôles de conformité passent par des outils qui font les calculs et citent le document et la date de lecture de chaque règle utilisée, ou indiquent que sa source n'est pas encore enregistrée ; le modèle rapporte ce qu'ils renvoient. Chaque chiffre porte son niveau de confiance. Une règle en attente reste en attente.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+chat.isnt.h2,What it isn't,Ce que ce n'est pas,,
+chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way to reach your account.
+  troid stores nothing you type; the page keeps the conversation only while it is open. To
+  answer, troid sends the conversation to the company that provides the AI model, which may
+  keep it for a limited period under its own terms. troid's log records one line per message:
+  answered or failed, tool calls, the model called, whether the reply was the abuse warning,
+  the fixed reply given when the AI model declines to answer, or the end of the session, and an
+  error's status code. Never the text, never your address. The hosting provider keeps its own
+  request logs, which can include your IP address. About 20 messages an hour per address.","Un service de signaux, une recommandation de firme, une mémoire qui se souvient de vous, ou un moyen d'accéder à votre compte. troid ne stocke rien de ce que vous tapez ; la page ne conserve la conversation que tant qu'elle est ouverte. Pour répondre, troid envoie la conversation à l'entreprise qui fournit le modèle d'IA, laquelle peut la conserver pendant une durée limitée selon ses propres conditions. Le journal de troid enregistre une ligne par message : réponse donnée ou échec, appels d'outils, modèle appelé, si la réponse était l'avertissement pour abus, la réponse fixe donnée quand le modèle d'IA refuse de répondre, ou la fin de la session, et le code d'état d'une erreur. Jamais le texte, jamais votre adresse. L'hébergeur conserve ses propres journaux de requêtes, qui peuvent inclure votre adresse IP. Environ 20 messages par heure et par adresse.",,"CHECK FIRST: chat.isnt.p: 'une mémoire qui se souvient de vous' for 'a memory of you', and 'Le journal de troid' for 'troid's log'. | keep every number exactly; troid stays lowercase, in Latin letters"
+chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
+  the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","« demandez à troid » peut se tromper ; les documents de la firme elle-même font foi. Vérifiez auprès de la firme avant d'agir. La <a href=""{L}/terms#ask-troid"">section 10 des conditions de troid</a> donne le détail.",,"CHECK FIRST: product.ask 'demandez à troid': an imperative used as a name reads oddly as a sentence subject, so running text wraps it in « » (all ask.*, chat.hero.lede, chat.discl, chat.js.status_off). The reviewer may prefer another fixed form, or keeping 'ask troid'. | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+chat.js.full,This conversation has reached its limit of {n} questions. Reloading the page starts a new one.,Cette conversation a atteint sa limite de {n} questions. Recharger la page en démarre une nouvelle.,,keep {n} exactly as written
+chat.js.status_on,on · {firms}{limit} messages an hour · no memory between visits,activé · {firms}{limit} messages par heure · aucune mémoire entre les visites,,keep {firms} {limit} exactly as written
+chat.js.status_firms,{n} firms · ,{n} firmes · ,,keep {n} exactly as written
+chat.js.status_off,ask troid is built and switched off. It goes live once troid's terms and ask troid's guardrails have had legal review. Until then troid's desk on the front page does the arithmetic.,"« demandez à troid » est développé et désactivé. Il sera mis en service une fois que les conditions de troid et les garde-fous de « demandez à troid » auront fait l'objet d'un examen juridique. D'ici là, le desk de troid, sur la page d'accueil, fait les calculs.",,"CHECK FIRST: product.ask 'demandez à troid': an imperative used as a name reads oddly as a sentence subject, so running text wraps it in « » (all ask.*, chat.hero.lede, chat.discl, chat.js.status_off). The reviewer may prefer another fixed form, or keeping 'ask troid'. | troid stays lowercase, in Latin letters"
+chat.js.unreachable,ask troid could not be reached.,Impossible de joindre « demandez à troid ».,,"troid stays lowercase, in Latin letters"
+chat.js.ended,This session has ended. Reloading the page starts a new one.,Cette session est terminée. Recharger la page en démarre une nouvelle.,,
+chat.js.switched_off,switched off,désactivé,,
+chat.js.tool_call_1,{n} tool call · ,{n} appel d'outil · ,,keep {n} exactly as written
+chat.js.tool_call_n,{n} tool calls · ,{n} appels d'outils · ,,keep {n} exactly as written
+chat.js.error,error {status},erreur {status},,keep {status} exactly as written
+chat.js.waiting,…,…,,
+faq.meta.title,troid — what the numbers actually say,troid — ce que disent vraiment les chiffres,,"troid stays lowercase, in Latin letters"
+faq.hero.h1,What the numbers actually say,Ce que disent vraiment les chiffres,,
+faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","Taux de base, mécanique des règles et conflits d'intérêts de troid lui-même — ce qu'une landing page passe sous silence.",,"troid stays lowercase, in Latin letters"
+faq.hero.updated,Last updated 23 September 2026,Dernière mise à jour : 23 septembre 2026,,keep every number exactly
+faq.sec.base,Base rates,Taux de base,,
+faq.pass.q,What percentage of people actually pass?,Quel pourcentage de candidats réussit vraiment ?,,
+faq.pass.p1,"The largest independent dataset covers more than 300,000 accounts from roughly 100,000
+traders across 10 firms. About <span class=""stat"">14%</span> passed a challenge and
+reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
+a challenge ever got paid.","Le plus grand jeu de données indépendant couvre plus de 300 000 comptes, détenus par environ 100 000 traders répartis sur 10 firmes. Environ <span class=""stat"">14 %</span> ont réussi un challenge et obtenu un compte financé. Seuls environ <span class=""stat"">7 %</span> de tous ceux qui ont acheté un challenge ont un jour été payés.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,La plupart des firmes déclarent elles-mêmes des taux de réussite de l'ordre de 5 à 10 %.,,keep every number exactly
+faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,Source : données agrégées de FPFX Technology ; déclarations individuelles des firmes.,,
+faq.cost.q,What does it really cost to get funded?,Combien coûte réellement l'obtention d'un compte financé ?,,
+faq.cost.p1,"The average trader needs about three attempts, spending over
+<span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","Le trader moyen a besoin d'environ trois tentatives, soit plus de <span class=""stat"">$1 600</span> de frais pour un challenge de $100 000.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
+fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
+the pass-rate data implies arithmetically.","Mettez les deux chiffres ensemble : pour la plupart des participants, l'espérance de gain des frais de challenge est <span class=""flag"">négative</span>. Ce n'est pas une affirmation controversée, c'est ce qu'impliquent arithmétiquement les données sur les taux de réussite.",,keep the <…> tags and links as they are; translate only the words
+faq.fail.q,Why do people fail?,Pourquoi les gens échouent-ils ?,,
+faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
+or maximum drawdown. Most happen in the first week. Very few people fail by reaching the
+end of the evaluation period and missing the profit target.","Environ <span class=""stat"">70 %</span> des échecs sont des dépassements de limite de perte — perte journalière ou drawdown maximal. La plupart surviennent la première semaine. Très peu de gens échouent en arrivant au bout de la période d'évaluation sans avoir atteint l'objectif de profit.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace back to
+<strong>size</strong>, not to strategy selection. People do not blow accounts because
+their entries are bad. They blow them because one position was too large on a day that
+went wrong.","Le résumé d'une firme le dit sans détour : presque tous les échecs remontent à la <strong>taille</strong>, pas au choix de la stratégie. Les gens ne font pas sauter leurs comptes parce que leurs entrées sont mauvaises. Ils les font sauter parce qu'une position était trop grosse un jour où tout a mal tourné.",,"CHECK FIRST: 'faire sauter le compte' / 'sautent' for 'blow up' (index.stats.blowup.p, faq.fail.p2, faq.risk.p2, dashboard.risk.p) is idiomatic. Check the register. | keep the <…> tags and links as they are; translate only the words"
+faq.offer.q,Then what is troid actually offering?,"Alors, que propose réellement troid ?",,"troid stays lowercase, in Latin letters"
+faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
+a firm's loss ceilings at once, net of fees, and tells you which one is actually
+binding. It does not publish trade signals and it will never place a trade.","Un outil de risque gratuit et ouvert, et la recherche qui le sous-tend. Il dimensionne les positions face aux deux plafonds de perte d'une firme à la fois, frais inclus, et vous indique lequel est réellement contraignant. Il ne publie pas de signaux de trading et ne passera jamais d'ordre.",,
+faq.offer.p2,"troid built it because the failure data points at sizing, not entries. Whether you use
+troid's desk, someone else's tool, or a spreadsheet, the arithmetic is the part worth getting
+right.","troid l'a construit parce que les données sur les échecs désignent le dimensionnement, pas les entrées. Que vous utilisiez le desk de troid, l'outil de quelqu'un d'autre ou un tableur, c'est l'arithmétique qu'il vaut la peine de faire juste.",,"troid stays lowercase, in Latin letters"
+faq.sec.rules,Things worth knowing about the rules,Ce qu'il faut savoir sur les règles,,
+faq.challenge.q,"What is a prop challenge, really?","Qu'est-ce qu'un challenge de prop firm, au juste ?",,
+faq.challenge.p,"A prop challenge is an evaluation you pay for. The account you trade is usually a demo account. Your orders do not reach a real market, and the balance is not money you own. If you pass, the firm may pay you a share of simulated profits, on its own terms. In general, the firm is not a broker and holds no client funds. The fee buys the evaluation. It is not a deposit. So, in most cases, no broker regulation, client-money rule or investor-compensation scheme protects the account. Apart from the general consumer-protection law where you live, your protections are the firm's contract and nothing else. Read the contract before you pay: who you are contracting with, which country's law applies, what ends an account, and when a payout can be refused. A few firms also offer a route through a real exchange account. Check which kind you are buying.","Un challenge de prop firm est une évaluation que vous payez. Le compte sur lequel vous tradez est généralement un compte démo. Vos ordres n'atteignent pas un marché réel, et le solde n'est pas de l'argent qui vous appartient. Si vous réussissez, la firme peut vous verser une part de profits simulés, selon ses propres conditions. En général, la firme n'est pas un courtier et ne détient aucun fonds de clients. Les frais paient l'évaluation. Ce n'est pas un dépôt. Ainsi, dans la plupart des cas, aucune réglementation des courtiers, aucune règle sur les fonds des clients ni aucun mécanisme d'indemnisation des investisseurs ne protège le compte. En dehors du droit général de la protection des consommateurs là où vous vivez, vos seules protections sont le contrat de la firme. Lisez le contrat avant de payer : avec qui vous contractez, quel droit national s'applique, ce qui met fin à un compte, et quand un payout peut être refusé. Quelques firmes proposent aussi une formule passant par un véritable compte sur un exchange. Vérifiez quel type vous achetez.",,
+faq.daily.q,What is your daily loss limit really?,Quelle est vraiment votre limite de perte journalière ?,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others."
+faq.daily.p1,"On a $100,000 1-Step account it is a fixed $4,000 — 4% of the <em>initial</em> balance,
+not of the day's starting balance. The day's loss is measured from your balance at the
+reset, and it counts <em>floating</em> losses on open positions, not just closed ones.","Sur un compte 1-Step de $100 000, c'est un montant fixe de $4 000 — 4 % du solde <em>initial</em>, et non du solde en début de journée. La perte du jour est mesurée depuis votre solde au moment de la réinitialisation, et elle inclut les pertes <em>latentes</em> sur les positions ouvertes, pas seulement les positions clôturées.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.daily.p2,"But it often is not the constraint that matters. The 6% maximum loss is static at
+$94,000. Below roughly <span class=""stat"">$98,000</span> of equity, the distance to that
+static floor is smaller than your daily allowance, so the max loss becomes the real
+ceiling and the ""4% daily"" number is fiction.","Mais ce n'est souvent pas la contrainte qui compte. La perte maximale de 6 % est statique, à $94 000. En dessous d'environ <span class=""stat"">$98 000</span> d'equity, la distance jusqu'à ce plancher statique est inférieure à votre enveloppe journalière, donc la perte max. devient le vrai plafond et le chiffre « 4 % journalier » est une fiction.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one bad day. Size
+against the smaller of the two, always.","Sur un compte neuf, ce point de bascule se trouve à environ $2 000 — la moitié d'une mauvaise journée. Dimensionnez toujours en fonction du plus petit des deux.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep every number exactly"
+faq.reset.q,When does your trading day reset?,Quand votre journée de trading se réinitialise-t-elle ?,,"CHECK FIRST: Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
+morning and afternoon sessions draw on separate daily budgets.","00:00 UTC+8, soit 16:00 UTC — <strong>midi à New York</strong>, pas minuit. Vos sessions du matin et de l'après-midi puisent dans des budgets journaliers distincts.",,"CHECK FIRST: Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
+because the previous day's profit does not carry over. A position comfortably inside the
+limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+themselves.","Le piège : une perte latente qui passe la réinitialisation compte en totalité contre la nouvelle journée, car le profit de la veille n'est pas reporté. Une position confortablement dans la limite à 11:59 peut la franchir à 12:01 sans que le prix ne bouge du tout. Bitfunded le documente lui-même.",,"CHECK FIRST: Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'. | keep every number exactly"
+faq.risk.q,How much should you risk per trade?,Combien devriez-vous risquer par trade ?,,
+faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
+What it can show you is what the arithmetic does to the wrong one.","Le bon chiffre dépend de votre système, donc troid ne vous en donnera pas. Ce qu'il peut vous montrer, c'est ce que l'arithmétique fait d'un mauvais chiffre.",,"troid stays lowercase, in Latin letters"
+faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
+most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
+trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
+2%, <span class=""stat"">98%</span>. Capping each trade at a fraction of the
+<em>remaining</em> budget rather than a fixed slice of the balance took all of those to
+0%.","troid a simulé un trader doté d'un avantage réellement excellent — +0,35R par trade, mieux que ce que la plupart des professionnels tiennent dans la durée. En risquant 1 % par trade sans plafond sur le budget restant, ce trader a fait sauter le compte <span class=""stat"">68 %</span> du temps en moins de douze mois. À 2 %, <span class=""stat"">98 %</span>. Plafonner chaque trade à une fraction du budget <em>restant</em> plutôt qu'à une part fixe du solde a ramené tous ces chiffres à 0 %.",,"CHECK FIRST: 'faire sauter le compte' / 'sautent' for 'blow up' (index.stats.blowup.p, faq.fail.p2, faq.risk.p2, dashboard.risk.p) is idiomatic. Check the register. | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
+whether you survive long enough to use it.","Un véritable avantage ne suffit pas à lui seul. Avec des règles à 4 %/6 %, c'est le dimensionnement des positions qui décide si vous survivez assez longtemps pour l'exploiter.",,keep every number exactly
+faq.fees.q,Do fees matter?,Les frais comptent-ils ?,,
+faq.fees.p1,"More than most people model. Bitfunded charges 0.04% of position size on entry and
+again on exit, calculated on notional — which at 5× leverage is five times your margin.","Plus que ce que la plupart des gens modélisent. Bitfunded facture 0,04 % de la taille de la position à l'entrée, puis de nouveau à la sortie, calculés sur le notionnel — qui, avec un levier de 5×, vaut cinq fois votre marge.",,keep every number exactly
+faq.fees.p2,"Because notional scales inversely with stop distance, tight stops are punished hardest.
+A stop 3.9% away costs about 2% of your risk budget in fees. A 0.3% scalp stop costs
+<span class=""stat"">21%</span>. On a $500 risk that is $105 gone before price moves.","Comme le notionnel varie à l'inverse de la distance du stop, ce sont les stops serrés qui sont le plus pénalisés. Un stop à 3,9 % coûte environ 2 % de votre budget de risque en frais. Un stop de scalping à 0,3 % coûte <span class=""stat"">21 %</span>. Pour un risque de $500, cela fait $105 perdus avant que le prix ne bouge.",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+faq.sec.about,"About <span style=""text-transform:none"">troid</span>","À propos de <span style=""text-transform:none"">troid</span>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.money.q,How does troid make money?,Comment troid gagne-t-il de l'argent ?,,"troid stays lowercase, in Latin letters"
+faq.money.p1,"Two ways, and only one exists yet.","De deux façons, dont une seule existe pour l'instant.",,
+faq.money.p2,"troid is an independent affiliate of the firms it compares. When
+someone buys a challenge through one of its links or codes, that firm pays troid a commission. It's
+paid on the purchase, not on your result — troid would be paid if you failed. Where a code is shown,
+it's cheaper through the affiliate link; where it isn't, it's the same price. That's worth knowing, and worth
+weighing everything on this site against. Which firms, and the criterion for choosing them, is
+stated on <a href=""{L}/compare"">troid's compare</a> and reviewed quarterly.","troid est un affilié indépendant des firmes qu'il compare. Quand quelqu'un achète un challenge via l'un de ses liens ou codes, la firme verse une commission à troid. Elle est versée sur l'achat, pas sur votre résultat — troid serait payé si vous échouiez. Là où un code est affiché, c'est moins cher via le lien d'affiliation ; là où il n'y en a pas, c'est le même prix. C'est bon à savoir, et c'est à mettre en balance avec tout ce qui figure sur ce site. Les firmes concernées, et le critère qui préside à leur choix, sont indiqués sur le <a href=""{L}/compare"">comparateur de troid</a> et revus chaque trimestre.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.money.p3,"The second way, later, is a paid tier for people who want more than troid's desk — the
+MCP server, journal analysis, multi-account tracking. That revenue doesn't depend on
+anyone buying a challenge, which is deliberate.","La seconde, plus tard, est une offre payante pour ceux qui veulent plus que le desk de troid — le serveur MCP, l'analyse de journal, le suivi multi-comptes. Ce revenu ne dépend pas de l'achat d'un challenge par qui que ce soit, et c'est voulu.",,"troid stays lowercase, in Latin letters"
+faq.trust.q,Why should you trust any of this?,Pourquoi devriez-vous faire confiance à tout cela ?,,
+faq.trust.p1,"Don't, on troid's say-so. Everything above is checkable: the pass-rate data is published,
+Bitfunded's rules are in their own documentation, and troid's backtest code is open — you can
+run it and get the same numbers, including the unflattering ones.","Ne le faites pas sur la seule parole de troid. Tout ce qui précède est vérifiable : les données de taux de réussite sont publiées, les règles de Bitfunded figurent dans sa propre documentation, et le code de backtest de troid est ouvert — vous pouvez l'exécuter et obtenir les mêmes chiffres, y compris les moins flatteurs.",,"troid stays lowercase, in Latin letters"
+faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
+troid's own strategy tested out of sample at +0.008R over 504 trades — no edge — and the
+page says so.","Le <a href=""{L}/ledger"">registre de troid</a> publie ses propres résultats toutes les quatre heures, pertes comprises. La propre stratégie de troid a donné +0,008R hors échantillon sur 504 trades — aucun avantage — et la page le dit.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.worth.q,Is a challenge worth buying?,Un challenge vaut-il la peine d'être acheté ?,,
+faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
+reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
+sizing survives will find those out from a challenge, at $799, faster than from a spreadsheet at no cost.
+The base rates on this page are the rest of it.","troid ne répond à cette question pour personne ; il chiffre ce que vous apportez. L'arithmétique est la même pour chaque lecteur : un trader qui ne sait pas énoncer un avantage, un ratio moyen gain/perte et la série de pertes que son dimensionnement peut encaisser les découvrira avec un challenge, à $799, plus vite qu'avec un tableur gratuit. Les taux de base de cette page font le reste.",,"CHECK FIRST: faq.worth.p1: the English is ambiguous ('will find those out from a challenge, at $799, faster than from a spreadsheet at no cost'). It is translated literally ('plus vite qu'avec un tableur gratuit'). Confirm the intended meaning. | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.worth.p2,"<a href=""{L}/compare"">troid's compare</a> has the affiliate links and codes, and the criterion for which firms are
+on it. They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code
+is shown.","Le <a href=""{L}/compare"">comparateur de troid</a> contient les liens d'affiliation et les codes, ainsi que le critère qui détermine quelles firmes y figurent. C'est ainsi que troid est financé, et cela ne vous coûte rien de plus. En direct, le prix est le même là où aucun code n'est affiché.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.sec.disclaimer,Disclaimer,Avertissement,,
+faq.disc.advice.h,Not financial advice,Pas un conseil financier,,
+faq.disc.advice.p,"Everything on this site is general information and education. It is not financial,
+investment, trading, tax, or legal advice, and it does not account for your circumstances,
+objectives, or risk tolerance. troid and the people who run it are not licensed financial advisors, brokers, or
+registered investment professionals. Consult a qualified professional before making
+financial decisions.","Tout le contenu de ce site relève de l'information générale et de la pédagogie. Il ne constitue pas un conseil financier, en investissement, en trading, fiscal ou juridique, et il ne tient pas compte de votre situation, de vos objectifs ni de votre tolérance au risque. troid et les personnes qui le gèrent ne sont ni des conseillers financiers agréés, ni des courtiers, ni des professionnels de l'investissement enregistrés. Consultez un professionnel qualifié avant de prendre des décisions financières.",,"troid stays lowercase, in Latin letters"
+faq.disc.affiliate.h,Affiliate relationship,Relation d'affiliation,,
+faq.disc.affiliate.p,"troid is an independent affiliate of the firms it compares. It earns a commission on
+challenge purchases made through its links or discount codes. It is not an employee, agent or
+representative of any firm, and no firm owns or operates this website or is responsible for its
+contents. The current firms, and the criterion for choosing them, are on
+<a href=""{L}/compare"">troid's compare</a>.","troid est un affilié indépendant des firmes qu'il compare. Il perçoit une commission sur les achats de challenges effectués via ses liens ou codes de réduction. Il n'est ni employé, ni agent, ni représentant d'aucune firme, et aucune firme ne possède ni n'exploite ce site, ni n'est responsable de son contenu. Les firmes actuelles, et le critère qui préside à leur choix, figurent sur le <a href=""{L}/compare"">comparateur de troid</a>.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.disc.simulated.h,Simulated trading,Trading simulé,,
+faq.disc.simulated.p,"Prop challenges and funded accounts are generally simulated trading environments.
+<a href=""#prop-challenge"">{question}</a> above says what that means for your protections.
+Read the firm's terms yourself.","Les challenges de prop firms et les comptes financés sont généralement des environnements de trading simulé. La question <a href=""#prop-challenge"">{question}</a>, plus haut, explique ce que cela implique pour vos protections. Lisez vous-même les conditions de la firme.",,keep {question} exactly as written; keep the <…> tags and links as they are; translate only the words
+faq.disc.hypo.h,Backtest and hypothetical results,Backtests et résultats hypothétiques,,
+faq.disc.hypo.p,"The hypothetical-performance disclosure, in the regulator's own words, is in
+<a href=""{L}/terms#hypothetical"">troid's terms, section 6</a>, and beside every result on troid's ledger and
+troid's research. troid's published backtests cover BTC and ETH on one exchange feed; the out-of-sample test
+showed no measurable edge, and troid publishes that result rather than the in-sample one.","L'avertissement sur les performances hypothétiques, dans les termes mêmes du régulateur, figure dans les <a href=""{L}/terms#hypothetical"">conditions de troid, section 6</a>, ainsi qu'à côté de chaque résultat sur le registre de troid et la recherche de troid. Les backtests publiés par troid portent sur BTC et ETH, sur un seul flux d'exchange ; le test hors échantillon n'a montré aucun avantage mesurable, et troid publie ce résultat plutôt que celui obtenu dans l'échantillon.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.disc.eval.h,Prop firm evaluations,Évaluations des prop firms,,
+faq.disc.eval.p1,"Challenge fees are generally non-refundable if you fail. Breaching a firm rule can
+void accrued profits, terminate the account, or trigger a payout penalty — not merely
+end the evaluation. Firms change their terms, and troid's rule summaries can lag those
+changes.","Les frais de challenge ne sont généralement pas remboursables en cas d'échec. Enfreindre une règle d'une firme peut annuler les profits accumulés, entraîner la clôture du compte ou déclencher une pénalité sur le payout — et pas seulement mettre fin à l'évaluation. Les firmes modifient leurs conditions, et les résumés de règles de troid peuvent avoir du retard sur ces changements.",,"troid stays lowercase, in Latin letters"
+faq.disc.eval.p2,"Nothing troid publishes is a substitute for reading the firm's own Terms of Use. Where the two
+disagree, <strong>the contract governs</strong> — troid has
+already found one case where a firm's own challenge page displays a figure that
+contradicts its Terms.","Rien de ce que publie troid ne remplace la lecture des conditions d'utilisation de la firme elle-même. En cas de désaccord entre les deux, <strong>le contrat fait foi</strong> — troid a déjà relevé un cas où la page de challenge d'une firme affiche un chiffre qui contredit ses propres conditions.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+faq.disc.eval.p3,"Two rules deserve specific attention because they are commonly missed. Bitfunded's
+Terms prohibit using third-party or marketed strategies to pass an evaluation, so buying
+a strategy, bot, or signal service and running it on a challenge may place you in breach
+regardless of how it performs. And traders are limited to one active account per
+challenge level absent written consent, which caps multi-account plans well below what
+most people assume.","Deux règles méritent une attention particulière, car elles passent souvent inaperçues. Les conditions de Bitfunded interdisent d'utiliser des stratégies de tiers ou commercialisées pour réussir une évaluation ; acheter une stratégie, un bot ou un service de signaux et l'utiliser sur un challenge peut donc vous mettre en infraction, quelle que soit sa performance. Et, sauf accord écrit, les traders sont limités à un seul compte actif par niveau de challenge, ce qui plafonne les projets multi-comptes bien en dessous de ce que la plupart des gens imaginent.",,
+faq.disc.eval.p4,"troid's tools compute arithmetic against rules as it understands them at the time of
+writing. They cannot detect a rule it has not modelled, a term that changed after
+publication, or a firm-specific interpretation. Verify anything material with the firm
+directly — Bitfunded provides support tickets for rule clarification.","Les outils de troid effectuent des calculs sur la base des règles telles que troid les comprend au moment de la rédaction. Ils ne peuvent détecter ni une règle que troid n'a pas modélisée, ni une clause modifiée après publication, ni une interprétation propre à une firme. Vérifiez directement auprès de la firme tout point important — Bitfunded propose des tickets de support pour clarifier les règles.",,"troid stays lowercase, in Latin letters"
+faq.disc.eval.p5,"Beyond the affiliate relationship above, troid is not affiliated with, employed by, endorsed by, or authorised to speak for any
+prop firm.","En dehors de la relation d'affiliation décrite ci-dessus, troid n'est affilié à aucune prop firm, n'est employé par aucune, n'est approuvé par aucune et n'est autorisé à parler au nom d'aucune.",,"troid stays lowercase, in Latin letters"
+faq.disc.risk.h,Risk,Risque,,
+faq.disc.risk.p,"Trading leveraged cryptocurrency carries substantial risk. Most participants in prop
+firm evaluations do not receive a payout. Challenge fees are generally non-refundable.
+Never risk money you cannot afford to lose.",Le trading de cryptomonnaies avec effet de levier comporte un risque important. La plupart des participants aux évaluations des prop firms ne reçoivent aucun payout. Les frais de challenge ne sont généralement pas remboursables. Ne risquez jamais de l'argent que vous ne pouvez pas vous permettre de perdre.,,
+faq.disc.software.h,Software,Logiciel,,
+faq.disc.software.p,"troid's tools are provided as-is, without warranty of any kind. They perform arithmetic on
+numbers you supply. They do not place, modify, or close trades, and they never handle
+account credentials. You are responsible for verifying any output before acting on it.","Les outils de troid sont fournis en l'état, sans garantie d'aucune sorte. Ils effectuent des calculs sur les chiffres que vous fournissez. Ils ne passent, ne modifient ni ne clôturent aucun trade, et ne manipulent jamais d'identifiants de compte. Il vous appartient de vérifier tout résultat avant d'agir en conséquence.",,"troid stays lowercase, in Latin letters"
+faq.disc.jurisdiction.h,Jurisdiction,Juridiction,,
+faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by country. It is your
+responsibility to confirm you are eligible to participate where you live.",La disponibilité et la légalité des services des prop firms varient selon les pays. Il vous appartient de vérifier que vous remplissez les conditions pour participer là où vous vivez.,,
+terms.meta.title,troid — terms of use,troid — conditions d'utilisation,,"troid stays lowercase, in Latin letters"
+terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.","Conditions d'utilisation de troid : un outil d'information gratuit, pas un conseil. Vérifiez chaque chiffre auprès de la firme avant de trader.",,"troid stays lowercase, in Latin letters"
+terms.hero.eyebrow,troid · terms,troid · conditions,,"troid stays lowercase, in Latin letters"
+terms.hero.h1,Terms of use,Conditions d'utilisation,,
+terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
+  documents govern. The full terms follow.","troid est un outil d'information gratuit. Ce n'est pas un conseil, il ne passe aucun ordre, et les documents de la firme elle-même font foi. Les conditions complètes suivent.",,"troid stays lowercase, in Latin letters"
+terms.draft,"Draft of 23 September 2026, effective from that date and published ahead of review by counsel.
+Counsel's edits will replace this version, and this date will change when they do.","Version provisoire du 23 septembre 2026, en vigueur à compter de cette date et publiée avant son examen par un conseil juridique. Les modifications du conseil juridique remplaceront cette version, et cette date changera à ce moment-là.",,keep every number exactly
+terms.toc.h,Contents,Sommaire,,
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting.","Ceci est « demandez à troid », un assistant automatisé. Ce n'est pas une personne, et ce n'est pas un conseil financier. Il répond à partir des règles publiées par chaque firme et de calculs effectués, et indique la source — ou signale qu'une source n'est pas encore enregistrée. Vérifiez auprès de la firme avant d'agir.",,"troid stays lowercase, in Latin letters"
+ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,« demandez à troid » répond aux questions sur les règles des prop firms et le dimensionnement des positions. Les messages abusifs mettent fin à la session.,,"troid stays lowercase, in Latin letters"
+ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Cette session est terminée. « demandez à troid » répond aux questions sur les règles des prop firms et le dimensionnement des positions.,,"troid stays lowercase, in Latin letters"
+ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","« demandez à troid » ne peut pas répondre à cette question. Le desk de troid et le comparateur de troid montrent les règles, leurs sources et les calculs ; pour tout le reste, écrivez à hello@troid.ai.",,"troid stays lowercase, in Latin letters"
+ask.note,Not financial advice. Verify with the firm before acting.,Pas un conseil financier. Vérifiez auprès de la firme avant d'agir.,,
+ask.err.switched_off,ask troid is switched off until troid's terms and ask troid's guardrails have had legal review.,« demandez à troid » est désactivé tant que les conditions de troid et les garde-fous de « demandez à troid » n'ont pas fait l'objet d'un examen juridique.,,"troid stays lowercase, in Latin letters"
+ask.err.not_configured,ask troid is not fully configured.,« demandez à troid » n'est pas entièrement configuré.,,"troid stays lowercase, in Latin letters"
+ask.err.limit,Limit: {n} messages an hour.,Limite : {n} messages par heure.,,keep {n} exactly as written
+ask.err.too_long,Keep one message under {n} characters.,Chaque message doit faire moins de {n} caractères.,,keep {n} exactly as written
+ask.err.restart,"This conversation can't continue: at most {n} alternating messages, user first and last, within the length limits. Reloading the page starts a new one.","Cette conversation ne peut pas continuer : {n} messages alternés au maximum, le premier et le dernier venant de l'utilisateur, dans les limites de longueur. Recharger la page en démarre une nouvelle.",,keep {n} exactly as written
+ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,Cette conversation n'a pas pu être vérifiée. Recharger la page en démarre une nouvelle.,,
+ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.",« demandez à troid » a manqué de temps sur cette question. Reposez-la de façon plus ciblée.,,"troid stays lowercase, in Latin letters"
+ask.err.busy,ask troid is busy. Try again in a minute.,« demandez à troid » est occupé. Réessayez dans une minute.,,"troid stays lowercase, in Latin letters"
+ask.err.unreachable,The model could not be reached. Try again in a minute.,Impossible de joindre le modèle. Réessayez dans une minute.,,
+ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.",« demandez à troid » est mal configuré. Réessayez plus tard ou écrivez à hello@troid.ai.,,"troid stays lowercase, in Latin letters"
+ask.err.error,ask troid hit an error. Try again in a minute.,« demandez à troid » a rencontré une erreur. Réessayez dans une minute.,,"troid stays lowercase, in Latin letters"
+ask.cut,[This answer hit its length limit and is cut short.],[Cette réponse a atteint sa limite de longueur et a été tronquée.],,
+ask.tool_limit,"[ask troid reached its tool-call or time limit for one message. Ask again, narrower.]",[« demandez à troid » a atteint sa limite d'appels d'outils ou de temps pour un message. Reposez la question de façon plus ciblée.],,"troid stays lowercase, in Latin letters"
+ask.no_answer,No answer produced.,Aucune réponse produite.,,
+data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.173bc3120e68,discretionary,discrétionnaire,,text from a firm's rules (firms.json)
+data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.1d95103da2c3,Rules go on this page only after they're read from BrightFunded's own documents.,Les règles ne figurent sur cette page qu'après avoir été lues dans les propres documents de BrightFunded.,,text from a firm's rules (firms.json)
+data.1f7a32c047e8,none if the evaluation is not completed,néant si l'évaluation n'est pas menée à terme,,"CHECK FIRST: data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string. | text from a firm's rules (firms.json)"
+data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,rollover 23:30–23:59 CET = 21:30 UTC (CEST) / 22:30 UTC (CET) ; la firme déconseille de trader pendant cette plage,,text from a firm's rules (firms.json); keep every number exactly
+data.254f81f3de77,up to 90% (add-on); base unconfirmed,jusqu'à 90 % (option) ; base non confirmée,,text from a firm's rules (firms.json); keep every number exactly
+data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,"Bitfunded mène ses propres promotions (un acheté, un offert, et similaires), et elles s'appliquent via ce lien — aucun code nécessaire.",,text from a firm's rules (firms.json)
+data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
+data.3ce26c9516b7,none stated,aucune mention,,"CHECK FIRST: data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string. | text from a firm's rules (firms.json)"
+data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,Là où tourne le registre de troid. La source et la date de lecture de chaque règle figurent sur le comparateur de troid.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.44fadd8eb267,80% → 90%,80 % → 90 %,,text from a firm's rules (firms.json); keep every number exactly
+data.45c9dde99668,day-start balance,solde en début de journée,,text from a firm's rules (firms.json)
+data.4f6eab8d3b65,"A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.","Le lien d'une firme s'affiche quand link_live vaut true dans son entrée ET que ses cellules journalier, max, objectif et prix ont chacune une source enregistrée : le document de la firme, la section et la date à laquelle troid l'a lu. D'ici là, le lien est suspendu, quoi que permette le contrat d'affiliation. link_live est activé par un humain lorsque le contrat d'affiliation existe et que ses conditions pour publier un lien sont remplies. Les autres cellules affichent « en attente » individuellement. La disponibilité aux États-Unis est toujours affichée sur sa propre ligne.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.5129c48719a9,5-min restriction,restriction de 5 min,,text from a firm's rules (firms.json); keep every number exactly
+data.57fe3b35e2a2,16:00,16:00,,"CHECK FIRST: Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'. | text from a firm's rules (firms.json); keep every number exactly"
+data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,"commission crypto 0,012 %/sens - à vérifier sur brightfunded.com/trading-instruments",,text from a firm's rules (firms.json); keep every number exactly
+data.601c3530e85e,trailing → static at initial after +6%,suiveur → statique au niveau initial après +6 %,,text from a firm's rules (firms.json); keep every number exactly
+data.64d2206416ad,$10k / day and / trade,$10k / jour et / trade,,text from a firm's rules (firms.json); keep every number exactly
+data.65de6a9cbafc,$999,$999,,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | text from a firm's rules (firms.json); keep every number exactly"
+data.66f1cdf92813,MT5 barred to US residents; Match-Trader access not yet sourced,MT5 interdit aux résidents US ; accès Match-Trader pas encore sourcé,,text from a firm's rules (firms.json); keep every number exactly
+data.71f8e7976e4c,none,néant,,"CHECK FIRST: data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string. | text from a firm's rules (firms.json)"
+data.788bd94c8a8e,"trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%","suiveur, en TEMPS RÉEL sur le plus haut historique de l'equity (le latent compte), devient statique au niveau initial après +6 %",,text from a firm's rules (firms.json); keep every number exactly
+data.78fc80eb213f,10d / 7d / 5d,10 j / 7 j / 5 j,,text from a firm's rules (firms.json); keep every number exactly
+data.7bf372bece8d,initial balance,solde initial,,text from a firm's rules (firms.json)
+data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,« Reverse trading » (7.1 xiv) signifie-t-il stop-and-reverse ? Bloque le lancement de shadow-1 chez cette firme.,,text from a firm's rules (firms.json); keep every number exactly
+data.7f8cd7953b97,"One reference firm — Bitfunded, verified first and most completely — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.","Une firme de référence — Bitfunded, vérifiée en premier et de la façon la plus complète — puis les firmes suivantes par volume d'avis vérifiés sur propfirmmatch.com/crypto, un classement externe et public dont la méthodologie révèle son modèle d'affiliation et affirme que les classements ne s'achètent pas, avec sa propre limite déclarée : un volume plus élevé ne signifie pas automatiquement meilleur. Ordre alphabétique, sans limite de nombre. Une firme est listée dès que ses conditions d'affiliation permettent une comparaison. Chaque règle indique le document de la firme et la date à laquelle troid l'a lu, signale que sa source n'est pas encore enregistrée, ou affiche « en attente » tant que troid n'a pas de valeur.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4 % / 6 % statique · 2-Step 5 % / 10 %,,text from a firm's rules (firms.json); keep every number exactly
+data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
+data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
+data.a381562afa0e,static,statique,,text from a firm's rules (firms.json)
+data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
+data.c07565a92bfd,paid add-on only,option payante uniquement,,text from a firm's rules (firms.json)
+data.c2eea93a2517,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.","Bitfunded ne figure pas dans l'annuaire crypto de propfirmmatch (vérifié le 2026-09-21). Le statut de firme de référence tient à la profondeur de vérification, pas au rang dans l'annuaire.",,text from a firm's rules (firms.json); keep every number exactly
+data.c4a0a386ab47,100% at first profit split,100 % au premier partage des profits,,text from a firm's rules (firms.json); keep every number exactly
+data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.cbbffba007fb,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.","Bitfunded est la firme de référence, pas la mieux classée. C'est la firme que troid a vérifiée en premier et de la façon la plus complète à partir de documents primaires, où deux contradictions entre les conditions et le centre d'aide ont été relevées et résolues, et où tourne le registre de troid. Cette vérification est le produit de troid. La source et la date de lecture de chaque règle sont affichées à côté d'elle, et une règle sans source enregistrée l'indique. Une autre firme vérifiée aussi en profondeur obtient le même statut.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.cc9922ebfa08,€497 (€347.90 promo),"€497 (€347,90 en promo)",,"CHECK FIRST: Currency position: I kept the symbol where the English has it, with French digit grouping ($4 000, $100k, €497, €347,90), because the desk, compare and ledger always print '$' before computed amounts. French norm puts it after (4 000 $). This affects faq.cost.p1, faq.daily.*, faq.fees.p2, dashboard.verdict.*, dashboard.xref.*, data.cc9922ebfa08, data.65de6a9cbafc and others. | text from a firm's rules (firms.json); keep every number exactly"
+data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.","Là où un code est affiché, c'est moins cher via le lien d'affiliation ; là où il n'y en a pas, c'est le même prix. Les structures de commission diffèrent. troid calcule ; vous choisissez.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.d4978ed5cbab,none (40% on Break),néant (40 % sur Break),,"CHECK FIRST: data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string. | text from a firm's rules (firms.json); keep every number exactly"
+data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","montant fixe = 3 % de la taille INITIALE ; plancher = max(solde, equity) au rollover − ce montant",,text from a firm's rules (firms.json); keep every number exactly
+data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 interdit aux US ; plateforme crypto pour les US non confirmée,,text from a firm's rules (firms.json); keep every number exactly
+data.e49a4a29c821,none on 1-Phase,néant sur 1-Phase,,"CHECK FIRST: data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string. | text from a firm's rules (firms.json); keep every number exactly"
+data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
+data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
+data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
+data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.","Levier jusqu'à 100× sur les comptes Advanced ($50k et plus) et 5× sur les comptes Student et Instant, selon ses conditions générales — le modèle de disjoncteurs le prend comme donnée d'entrée.",,text from a firm's rules (firms.json); keep every number exactly
+data.f15129262732,up to 90%,jusqu'à 90 %,,text from a firm's rules (firms.json); keep every number exactly
+data.f6a99f3a2084,Funded,Funded,,text from a firm's rules (firms.json)
+data.fb360f9c09ac,yes,oui,,text from a firm's rules (firms.json)

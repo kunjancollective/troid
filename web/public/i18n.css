@@ -11,9 +11,20 @@
 [dir="rtl"] [lang="en"]{direction:ltr;text-align:start}
 bdi,.ltr{unicode-bidi:isolate;direction:ltr}
 .tlocal{color:var(--dim);white-space:nowrap}
+.tl-block{display:block;white-space:normal;font-size:10.5px;line-height:1.5;font-weight:400;letter-spacing:0}
 .country{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:0 0 12px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.country label{margin:0}
 .country select{width:auto;min-width:180px;font-size:12px;padding:5px 7px}
-.avail{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim)}
+.country .cnote{flex-basis:100%;font-size:10.5px}
+.avail{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim);margin-top:6px}
 .avail.no{color:var(--bad)}
 [dir="rtl"] .notes div::before{content:"\2190"}
 [dir="rtl"] .mark{direction:ltr}
+.share{background:none;border:0;padding:0;margin-inline-start:10px;font:inherit;font-family:var(--mono);font-size:12px;
+  color:var(--dim);cursor:pointer}
+.share:hover{color:var(--ink)}
+/* right to left: prices arrive isolated left to right (i18n.js); a formula takes the direction of its first letter,
+   so min(a, b) reads left to right and a formula written in Arabic words reads right to left with its figures whole */
+[dir="rtl"] code{unicode-bidi:plaintext}
+/* labels run longer in other languages: a compare row's value drops below its label instead of overflowing */
+.r .rt{flex-wrap:wrap}.r .l{flex-shrink:1;min-width:0}.r .v{margin-inline-start:auto;min-width:0}

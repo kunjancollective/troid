@@ -46,8 +46,10 @@ def serve(directory):
             pass
 
         def do_GET(self):
-            path = self.path.split("?")[0]
-            if path != "/" and "." not in path.rsplit("/", 1)[-1]:
+            path = self.path.split("?")[0].rstrip("/") or "/"
+            if path != "/" and (Path(directory) / path.lstrip("/")).is_dir():
+                self.path = path + "/index.html"                # /zh -> zh/index.html, as vercel.json rewrites it
+            elif path != "/" and "." not in path.rsplit("/", 1)[-1]:
                 self.path = path + ".html"                      # cleanUrls, as Vercel serves them
             return super().do_GET()
     srv = socketserver.TCPServer(("127.0.0.1", 0), H)
@@ -64,6 +66,24 @@ for q, eq, ds, side, entry, stop, lev, mode in [
         (10000, 10000, 10000, "1", 100, 101, 5, "cross"),
         (100000, 93000, 94000, "1", 77872, 77600, 20, "isolated")]:
     DESK_GRID.append(dict(quota=q, equity=eq, daystart=ds, side=side, entry=entry, stop=stop, lev=lev, mode=mode))
+
+
+# CSS written with logical properties renders the same as the physical ones in a left-to-right page; the markup of
+# a result may say either. Only these renames are treated as equal, everything else must match byte for byte.
+LOGICAL = [("padding-inline-start:", "padding-left:"), ("padding-inline-end:", "padding-right:"),
+           ("margin-inline-start:", "margin-left:"), ("margin-inline-end:", "margin-right:"),
+           ("border-inline-start:", "border-left:"), ("text-align:start", "text-align:left"),
+           ("text-align:end", "text-align:right"), ("inset-inline-start:", "left:")]
+
+
+def physical(html_text):
+    for a, b in LOGICAL:
+        html_text = html_text.replace(a, b)
+    return html_text
+
+
+def same_state(x, y):
+    return x[:-1] == y[:-1] and physical(x[-1]) == physical(y[-1])
 
 
 def desk_states(page):
@@ -150,7 +170,7 @@ def main():
                             if u == u_old:
                                 desk_old = st
                             else:
-                                bad = [x[:3] for x, y in zip(desk_old, st) if x != y]
+                                bad = [x[:3] for x, y in zip(desk_old, st) if not same_state(x, y)]
                                 if len(desk_old) != len(st) or bad:
                                     fails.append(f"desk: {len(bad)} of {len(st)} states differ, first {bad[:3]}")
                                 else:
@@ -160,7 +180,7 @@ def main():
                             if u == u_old:
                                 cmp_old = st
                             else:
-                                bad = [x[:4] for x, y in zip(cmp_old, st) if x != y]
+                                bad = [x[:4] for x, y in zip(cmp_old, st) if not same_state(x, y)]
                                 if bad:
                                     fails.append(f"compare: {len(bad)} sizing states differ: {bad}")
                                 else:

@@ -64,6 +64,35 @@ def features_on(T):
     return T.code != "en" or bool(SITE.get("english_features"))
 
 
+RUNTIME_KEYS = {"country_label": "common.country.label", "country_unset": "common.country.unset",
+                "country_note": "common.country.note", "avail_excluded": "common.avail.excluded",
+                "avail_platform": "common.avail.platform", "avail_not_recorded": "common.avail.not_recorded",
+                "avail_not_excluded": "common.avail.not_excluded", "time_local": "common.time.local",
+                "share": "common.share", "share_copied": "common.share.copied", "share_line": "share.line"}
+
+
+def availability():
+    """Each firm's recorded country exclusions (firms.json 'availability'), for the country selector."""
+    F = json.loads((ROOT / "firms.json").read_text())
+    out = {}
+    for k, f in F.items():
+        if k.startswith("_") or not isinstance(f, dict) or not f.get("availability"):
+            continue
+        a = f["availability"]
+        out[k] = {"recorded": bool(a.get("recorded")), "excluded": a.get("excluded") or [],
+                  "platform": a.get("platform") or {}}
+    return out
+
+
+def runtime(T):
+    """window.TROID for web/public/i18n.js: the locale, the strings it shows, the availability record. Loaded in
+    the head, before the page's own scripts, so they can format with TROID.usd / TROID.num."""
+    cfg = {"code": T.code, "loc": T.lang["intl"], "t": {n: T(k) for n, k in RUNTIME_KEYS.items()},
+           "avail": availability()}
+    return ('<script>window.TROID=' + json.dumps(cfg, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+            + ';</script>\n<script src="/i18n.js"></script>')
+
+
 def head_extra(T, page, live):
     """hreflang alternates, the language's og tags and font. Empty for English while it is the only
     published language, so the English pages stay exactly as they were."""
@@ -82,8 +111,10 @@ def head_extra(T, page, live):
         fam = lang["font"].replace(" ", "+")
         parts.append(f'<link href="https://fonts.googleapis.com/css2?family={fam}:wght@400;500;600;700&display=swap" rel="stylesheet">')
         parts.append('<style>:root{--sans:"Inter","' + lang["font"] + '",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}</style>')
-    if T.code != "en" or len(live) > 1:
+    if T.code != "en" or len(live) > 1 or features_on(T):
         parts.append('<link rel="stylesheet" href="/i18n.css">')   # switcher, governing line, RTL details
+    if features_on(T):
+        parts.append(runtime(T))
     return "".join(p + "\n" for p in parts)
 
 
@@ -105,7 +136,9 @@ def switcher(T, page, live):
             items.append(f'<span class="lang-cur" lang="{c}" aria-current="true">{name}</span>')
         else:
             items.append(f'<a href="{page_url(c, page)}" hreflang="{c}" lang="{c}">{name}</a>')
-    return f'\n    <span class="langs" aria-label="{T.attr("common.languages")}">' + " · ".join(items) + "</span>"
+    share = f' <button type="button" class="share" data-share>{T("common.share")}</button>' if features_on(T) else ""
+    return (f'\n    <span class="langs" aria-label="{T.attr("common.languages")}">' + " · ".join(items) + "</span>"
+            + share)
 
 
 def html_attrs(T):
@@ -119,7 +152,18 @@ def common(T, page, live, preview=False):
             "switcher": switcher(T, page, live), "features": features_on(T), "live": live, "preview": preview,
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
-            "intl": T.lang["intl"], "site_text": site_text}
+            "intl": T.lang["intl"], "site_text": site_text,
+            "country_box": country_box(T), "avail_attr": avail_attr(T)}
+
+
+def country_box(T):
+    """Where i18n.js puts the country selector (compare page, firms panel). Nothing where the features are off."""
+    return '<div class="country" data-country></div>' if features_on(T) else ""
+
+
+def avail_attr(T):
+    """A function for templates and generators: the data-avail attribute for a firm's block, or nothing."""
+    return (lambda key: f' data-avail="{key}"') if features_on(T) else (lambda key: "")
 
 
 def governs_html(T, summary_key=None):
@@ -193,6 +237,9 @@ def prune(out=None):
         if l["code"] != "en" and l["code"] not in live and d.is_dir():
             shutil.rmtree(d)
             gone.append(l["code"])
+        og_png = base / "og" / f"{l['code']}.png"
+        if l["code"] != "en" and l["code"] not in live and og_png.exists():
+            og_png.unlink()                          # its share image goes with it
     return gone
 
 

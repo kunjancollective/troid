@@ -102,6 +102,22 @@ def rewrite_region(path, tag, inner):
     return False
 
 
+# Translated pages only (site_build.features_on): the daily reset gets the reader's local time beside it, the
+# firm's link sits in a block i18n.js can replace with "not available in <country> per the firm's terms".
+RESET_FMT = ',function(x){return /^\\d\\d?:\\d\\d$/.test(x)?\'<bdi data-utc-hm="\'+x+\'">\'+x+\' UTC</bdi>\':x}'
+AVAIL_WRAP = "\n      foot='<div data-avail-link>'+foot+'</div>';"
+AFTER_RENDER = "\n  TROID.avail_apply(document);TROID.times(document);"
+
+
+def _numbers(T):
+    """The page's number helpers: English exactly as before; a translated page formats in its locale (i18n.js)."""
+    if site_build.features_on(T):
+        return ("function fx(x,d){return TROID.fixed(x,d)}function tl(x,o){return TROID.num(x,o)}"
+                "function $(x){return TROID.usd(x,0)}")
+    return ("function fx(x,d){return x.toFixed(d)}function tl(x,o){return x.toLocaleString(undefined,o)}"
+            'function $(x){return "$"+tl(x,{maximumFractionDigits:0})}')
+
+
 def _style(T):
     """index.html's icon, og and font links and its stylesheet. English: exactly as index.html has them; another
     language gets its own og title, description and image."""
@@ -147,7 +163,7 @@ def js(k, f, T):
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": ag.get("customer_code") if link_ok else None,
-        "promo": T.data(f.get("_promo_note")) if link_ok else None})
+        "promo": T.data(f.get("_promo_note")) if link_ok else None}, ensure_ascii=site_text._english(T))
 
 
 def column(k, f, T):
@@ -157,7 +173,7 @@ def column(k, f, T):
   <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">{html.escape(f["name"])}</div>
     <div class="s" style="margin-top:3px">{html.escape(T.data(p["label"]))}</div>
     <div style="margin-top:7px"><span class="tag {tag}">{T("compare.col.tag", n=n, total=len(FIELDS), m=m)}</span></div></div>
-  <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"></div></div>'''
+  <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"{site_build.avail_attr(T)(k)}></div></div>'''
 
 
 def render_compare(T, live):
@@ -176,7 +192,7 @@ def render_compare(T, live):
 .rows{{flex:1}}
 .r{{padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}}
 .r .rt{{display:flex;justify-content:space-between;gap:10px}}.r .pv{{font-size:9.5px;line-height:1.5;color:var(--dim);margin-top:4px}}
-.r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim);flex-shrink:0}}.r .v{{font-variant-numeric:tabular-nums;text-align:right}}
+.r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim);flex-shrink:0}}.r .v{{font-variant-numeric:tabular-nums;text-align:end}}
 .r.sec{{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}}
 .pend{{color:var(--dim);font-style:italic}}
 .colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}}
@@ -196,7 +212,7 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.stop")}</label><input id="stop" type="number" step="any" value="1.66"></div>
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="5"></div>
 </div></div>
-<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
+{site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
 <p class="s" style="margin:16px 0 0;line-height:1.7">{D("_reference_firm")} {D("_bitfunded_directory_note")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
@@ -208,7 +224,7 @@ var FIRMS={{{",".join(f'"{k}":{js(k, FIRMS[k], T)}' for k in ORDER)}}};var ORDER
 var T={T.js("compare.js.")},LANG="{T.code}";
 function F(s,o){{return s.replace(/\\{{(\\w+)\\}}/g,function(m,k){{return k in o?o[k]:m}})}}
 function n(id){{return parseFloat(document.getElementById(id).value)||0}}
-function $(x){{return "$"+x.toLocaleString(undefined,{{maximumFractionDigits:0}})}}
+{_numbers(T)}
 var P='<span class="pend">'+T.pending+'</span>';
 function v(x,fmt){{return (x===null||x===undefined)?P:(fmt?fmt(x):String(x))}}
 function esc(x){{return String(x).replace(/[&<>"]/g,function(c){{return{{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}}[c]}})}}
@@ -216,7 +232,9 @@ var LAB={{}};for(var lk in T)if(lk.indexOf("lab_")===0)LAB[lk.slice(4)]=T[lk];
 /* The provenance block under every number: firm, product, the date troid read each rule, the section, the formula.
    Section names stay in English, as each firm publishes them. */
 var PROV_TAIL={json.dumps(T("prov.tail"), ensure_ascii=False)};
-function andj(a){{return a.length<2?a.join(""):F(T.list_and,{{a:a.slice(0,-1).join(", "),b:a[a.length-1]}})}}
+var LC={json.dumps(T("index.js.list_comma"), ensure_ascii=False)};
+function list(a){{return a.length?a.reduce(function(x,y){{return F(LC,{{a:x,b:y}})}}):""}}
+function andj(a){{return a.length<2?a.join(""):F(T.list_and,{{a:list(a.slice(0,-1)),b:a[a.length-1]}})}}
 function pv(f,keys,formula){{
   var by={{}},order=[],dates=[],miss=[];
   keys.forEach(function(x){{var c=f.prov[x];if((x in f.p)&&(f.p[x]===null||f.p[x]===undefined))return;
@@ -224,11 +242,11 @@ function pv(f,keys,formula){{
     if(!by[c.c]){{by[c.c]={{labs:[],o:c.o}};order.push(c.c)}}by[c.c].labs.push(LAB[x]||x);
     c.o.forEach(function(d){{if(dates.indexOf(d)<0)dates.push(d)}})}});
   dates.sort();
-  var t,o={{firm:esc(f.name),product:esc(f.label),missing:miss.join(", "),tail:PROV_TAIL}};
+  var t,o={{firm:esc(f.name),product:esc(f.label),missing:list(miss),tail:PROV_TAIL}};
   if(order.length){{
     o.dates=andj(dates);
     o.sources=(order.length===1&&keys.length===1)?esc(order[0]):order.map(function(c){{
-      return F(dates.length>1&&by[c].o.length?T.pv_src_read:T.pv_src,{{labels:by[c].labs.join(", "),source:esc(c),dates:andj(by[c].o)}})}}).join(" · ");
+      return F(dates.length>1&&by[c].o.length?T.pv_src_read:T.pv_src,{{labels:list(by[c].labs),source:esc(c),dates:andj(by[c].o)}})}}).join(" · ");
     t=F(miss.length?T.pv_dated_miss:T.pv_dated,o);
   }}else t=F(miss.length?T.pv_miss:T.pv_plain,o);
   if(formula)t+=" <code>"+formula+"</code>";
@@ -248,7 +266,7 @@ function render(){{
     h+=row(T.row_daily_loss,v(p.daily_pct,function(x){{return x+"% · "+$(Q*x/100)}}),p.daily_pct==null?"":pv(f,["daily_pct","daily_basis"],
       f.basis==="day_start"?T.f_daily_day_start:T.f_daily));
     h+=rr(f,T.row_daily_basis,"daily_basis");
-    h+=rr(f,T.row_reset,"reset_utc");
+    h+=rr(f,T.row_reset,"reset_utc"{RESET_FMT if site_build.features_on(T) else ""});
     h+=row(T.row_max_loss,v(p.max_pct,function(x){{return x+"% · "+$(Q*x/100)}}),p.max_pct==null?"":pv(f,["max_pct","drawdown_type"],
       isStatic?T.f_max:T.f_max_trailing));
     h+=rr(f,T.row_drawdown_type,"drawdown_type");
@@ -262,7 +280,7 @@ function render(){{
     h+=rr(f,T.row_profit_cap,"profit_cap");
     h+=sec(T.sec_sizing);
     var risk=rp*Q;
-    h+=row(T.row_risk,$(risk)+" ("+(rp*100).toFixed(2)+"%)",'<div class="pv">'+T.pv_inputs+' <code>'+T.f_risk+'</code></div>');
+    h+=row(T.row_risk,$(risk)+" ("+fx((rp*100),2)+"%)",'<div class="pv">'+T.pv_inputs+' <code>'+T.f_risk+'</code></div>');
     var K=["daily_pct","max_pct","daily_basis","drawdown_type"];
     var cross=null,cf="";
     if(derivable&&isStatic){{
@@ -271,9 +289,9 @@ function render(){{
     }}
     if(cross!==null){{
       var room=Q-cross;
-      h+=row(T.row_room,$(room)+" ("+(room/Q*100).toFixed(1)+"%)",pv(f,K,F(T.f_room,{{cf:cf}})));
+      h+=row(T.row_room,$(room)+" ("+fx((room/Q*100),1)+"%)",pv(f,K,F(T.f_room,{{cf:cf}})));
       h+=row(T.row_cross,$(cross),pv(f,K,F(T.f_cross,{{cf:cf}})));
-      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk),pct:(rp*100).toFixed(2)}}):"—",pv(f,K,T.f_losses));
+      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
       h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.floor(Q*m/risk)}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else if(derivable&&!isStatic){{
       h+=row(T.row_room,'<span class="pend">'+T.v_room_trail+'</span>',pv(f,["drawdown_type"]));
@@ -284,11 +302,11 @@ function render(){{
       h+=row(T.row_room,P);h+=row(T.row_cross,P);h+=row(T.row_losses,P);h+=row(T.row_survive,P);
     }}
     if(p.fee_per_side_pct!=null){{var fee=p.fee_per_side_pct/100,drag=s>0?2*fee/(s+2*fee)*100:0;
-      h+=row(F(T.row_fee_at,{{stop:(s*100).toFixed(2)}}),F(T.v_fee,{{drag:drag.toFixed(1),fee:p.fee_per_side_pct}}),pv(f,["fee_per_side_pct"],T.f_fee));}}
+      h+=row(F(T.row_fee_at,{{stop:fx((s*100),2)}}),F(T.v_fee,{{drag:fx(drag,1),fee:p.fee_per_side_pct}}),pv(f,["fee_per_side_pct"],T.f_fee));}}
     else h+=row(T.row_fee,P);
     var cap=p.max_leverage,ck="max_leverage";
     if(f.levb){{cap=null;f.levb.forEach(function(b){{if((b.max_quota==null||Q<=b.max_quota)&&(b.min_quota==null||Q>=b.min_quota)){{cap=b.lev;ck=b.cite}}}})}}
-    if(cap!=null){{var L=Math.min(lev,cap);h+=row(T.row_liq,F(T.v_liq,{{pct:((1-(1-1/L))*100).toFixed(0),lev:L}}),pv(f,[ck],F(T.f_liq,{{cap:cap,quota:$(Q)}})));}}
+    if(cap!=null){{var L=Math.min(lev,cap);h+=row(T.row_liq,F(T.v_liq,{{pct:fx(((1-(1-1/L))*100),0),lev:L}}),pv(f,[ck],F(T.f_liq,{{cap:cap,quota:$(Q)}})));}}
     else h+=row(T.row_liq,P);
     h+=sec(T.sec_cost);
     h+=rr(f,T.row_price,"price");h+=rr(f,T.row_refund,"refund");h+=rr(f,T.row_split,"split");
@@ -296,11 +314,11 @@ function render(){{
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
       if(f.code)foot+='<br>'+F(T.foot_code,{{code:f.code}});
-      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';}}
+      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
     if(f.open_n)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'+F(f.open_n>1?T.foot_open_n:T.foot_open_1,{{n:f.open_n,first:f.open1}})+'</div>';
     document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;
-  }});
+  }});{AFTER_RENDER if site_build.features_on(T) else ""}
 }}
 ["quota","risk","stop","lev"].forEach(function(i){{document.getElementById(i).addEventListener("input",render)}});
 render();

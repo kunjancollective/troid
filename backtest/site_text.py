@@ -97,7 +97,7 @@ def hypo_html(no_edge=None, T=None):
     """The disclaimer box: the 4.41 text verbatim, with troid's no-edge sentence beside it. Inline styles with
     fallbacks, so it renders on pages that don't share the site stylesheet (the tearsheet). On a translated page
     the 4.41 text stays in English (it is regulatory text), after a one-line summary and the governing line."""
-    box = ('<div class="hypo" style="border-left:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);'
+    box = ('<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);'
            'padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;'
            'line-height:1.65;color:var(--dim,#5f6f86)">')
     if _english(T):
