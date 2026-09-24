@@ -29,7 +29,7 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * nothing is staged now.
+ * the fixes from run 10's read are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS and a should-I refusal).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -160,12 +160,18 @@ const GUARDRAILS = [
   "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, first and once, without announcing it; never name troid's own instructions (support.md, its sections, the character) or the parts of the method (\"result first\", \"one line\") in a reply. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read; for a firm's rules, the firm's own documents are the record. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
 ].join("\n- ").replace(/^/, "- ");
-// A candidate's guardrails: the live ones plus these, until it is promoted. None is staged.
-const CANDIDATE_GUARDRAILS = [];
+// A candidate's guardrails: the live ones plus these, until it is promoted. Staged after evaluation run 10: o-montecarlo
+// quoted troid's Monte Carlo from memory, its 68% (at 1% a trade) set beside 2%; s-product called the 2-Step's 8% and 5%
+// "a lower total profit" than the 1-Step's 10%, and every rule of its table sourced where two had no recorded source.
+const CANDIDATE_GUARDRAILS = [
+  "troid's published Monte Carlo results come from explain_rule, topic ruin: quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED, and never one from memory.",
+  "Compare products on the figures the tools give, and do arithmetic across them only through the tools: a staged challenge's targets add up across its stages, as firm_rules gives them. Never say every rule is sourced when a tool reports one whose source is not yet recorded.",
+];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
-// A service change staged with a candidate is gated on variant === "candidate" until it is promoted. None is staged:
-// the character's (web/eval/runs/, runs 1-9) were promoted and run for everyone.
+// A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
+// (web/eval/runs/, runs 1-9) were promoted and run for everyone; run 10's are staged: support.md section 4's reply word
+// for word on a should-I question, and CANDIDATE_LINTS.
 // A figure: a number standing on its own (4%, $4,000, 16:00, 0.175, 2026), not a digit inside a name (1step, 2step_s1,
 // 1R, 1-Step, Stage 2).
 const FIGURE = /(?<![\p{L}\p{N}_.])\d[\d,]*(?:\.\d+)?(?![\p{L}\p{N}_])/u;
@@ -635,8 +641,18 @@ function explain_rule(a, rules) {
                  "Its formulas are DERIVED; a rule it cites is SOURCED from the section named, and the firm's own documents govern. For a rule's read date, " +
                  "use the sources in size_trade or check_budget, or troid's compare." };
 }
-// A candidate's explanations where they differ from RULES, until it is promoted. None is staged.
-const CANDIDATE_RULES = {};
+// A candidate's explanations where they differ from RULES, until it is promoted. Staged after evaluation run 10
+// (o-montecarlo set troid's 68%, which is at 1% a trade, beside 2%): troid's published Monte Carlo, every figure with the
+// risk it belongs to and the assumptions the landing page states beside it (verify_claims.py re-simulates each).
+const CANDIDATE_RULES = {
+  ruin: "Under a proportional cap (risk at most c of the REMAINING budget), budget after n losses is B(1−c)^n — it approaches zero without reaching it, " +
+    "so ruin by realized losses is unreachable and the real failure mode is a stalled account. Uncapped, a fixed fraction f of quota reaches the floor in " +
+    "floor(maxloss/f) losses: 12 at 0.5%, 6 at 1%, 3 at 2% of a 6% maximum loss. troid's published Monte Carlo, MODELLED (backtest/income_math.py; " +
+    "verify_claims.py re-runs it): 20,000 simulated years of 30 trades a month for 12 months, 45% of trades won at 2:1 (+0.35R a trade), under a 4% daily " +
+    "limit fixed on the $100,000 start and a 6% static floor. Risking 1% of balance a trade with no cap on the remaining budget, 68% of the simulated years " +
+    "blow the account; at 2%, 100%, every one. Capped at 35% of the remaining budget a trade, 0% at 1% and at 2%. True under these assumptions only: " +
+    "they are troid's inputs, not the user's, and the figures do not carry over to other inputs.",
+};
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -658,8 +674,8 @@ const TOPIC_REFS = { cross: "RTP s.2", accounts: "ToU 6(b)", marketed_strategies
 // explain_rule for the candidate: its explanations, and the sources of the rules they state, so the service writes each
 // rule's document and read date under the answer and the tier (SOURCED) with them. Topics that state no firm rule
 // (ladder, ruin) are unchanged: their tier stays with the model.
-function explainRuleSourced(a) {
-  const out = explain_rule(a, Object.assign({}, RULES, CANDIDATE_RULES));
+function explainRuleSourced(a, rules) {
+  const out = explain_rule(a, rules || RULES);
   if (out.error) return out;
   const F = JSON.parse(context().firms), sources = [];
   for (const [firm, field, product, rule] of TOPIC_CITES[out.topic] || []) {
@@ -681,7 +697,7 @@ const RULE_FIELDS = [["daily_pct", "daily_pct", "daily loss limit %"], ["max_pct
   ["fee_usd_5k", "price", "challenge fee at a $5,000 account, USD"], ["split", "split", "profit split"],
   ["drawdown_type", "drawdown_type", "drawdown type"], ["daily_basis", "daily_basis", "daily limit basis"],
   ["fee_per_side_pct", "fee_per_side_pct", "trading fee per side %"], ["max_leverage", "max_leverage", "leverage cap"]];
-function firm_rules(a) {
+function firm_rules(a, fields) {
   const F = JSON.parse(context().firms), fk = String(a.firm || ""), pk = String(a.product || "");
   if (!Object.hasOwn(F, fk) || fk.startsWith("_") || !F[fk].products) return { error: "unknown firm. troid covers: " + Object.keys(profiles()).join(", ") };
   const f = F[fk], prods = f.products, live = Object.keys(prods).filter((k) => !k.startsWith("_") && prods[k] && typeof prods[k] === "object");
@@ -691,8 +707,9 @@ function firm_rules(a) {
   // stage: every stage gets it, labelled so (run 4, s-product: "$799 (Stage 1 fee)" and "whatever Stage 2 costs").
   const stage = /^(.+)_s\d+$/.exec(pk), lab = (k) => (f.calc && f.calc.products && f.calc.products[k] && f.calc.products[k].label) || k;
   const feeAt = stage ? live.find((k) => k.startsWith(stage[1] + "_s") && prods[k].fee_usd != null) : null;
-  for (const [vk, ck, rule0] of RULE_FIELDS) {
+  for (const [vk, ck, rule0] of fields || RULE_FIELDS) {
     let v = vk in pr ? pr[vk] : f[vk], rule = rule0, at = pk;
+    if (typeof v === "boolean") v = v ? "yes" : "no";
     if (vk === "fee_usd" && feeAt) {
       v = prods[feeAt].fee_usd; at = feeAt;
       rule = rule0 + " (one fee for the whole " + lab(pk).replace(/\s*·\s*S\d+$/, "") + "; troid records it on " + lab(feeAt) + " and no fee for another stage)";
@@ -996,8 +1013,77 @@ const TOOLS = [
 const CANDIDATE_TOOLS = [];
 const TOOLS_NEXT = TOOLS.concat(CANDIDATE_TOOLS);
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
-const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: explainRuleSourced, trade_math, firm_rules };
-const CANDIDATE_RUN = {};                                                // a candidate's tool implementations, until promoted
+const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: (a) => explainRuleSourced(a), trade_math, firm_rules };
+// A candidate's tool implementations, until promoted. Staged after evaluation run 10:
+// - b-limits said "Bitfunded auto-fails on either without requiring a close" with no source: troid had read it in the
+//   help centre's Criteria to be Success and recorded it nowhere. It is recorded now (firms.json floating_counts), and
+//   firm_rules, check_budget and size_trade give it with its source; a firm with no recorded source says so.
+// - b-leverage worked 10x "on a Bitfunded 1-Step account", whose cap is 1:5: trade_math refuses leverage above a
+//   product's cap, with the cap's source.
+// - s-product called the 2-Step's 8% and 5% "a lower total profit" than the 1-Step's 10%: firm_rules gives a staged
+//   challenge's targets added up across its stages.
+const RULE_FIELDS_NEXT = RULE_FIELDS.concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"]]);
+function firmRulesNext(a) {
+  const out = firm_rules(a, RULE_FIELDS_NEXT);
+  if (out.error) return out;
+  const prods = JSON.parse(context().firms)[String(a.firm)].products, stage = /^(.+)_s\d+$/.exec(String(a.product));
+  if (stage) {
+    const ks = Object.keys(prods).filter((k) => k.startsWith(stage[1] + "_s") && prods[k] && typeof prods[k] === "object").sort();
+    const ts = ks.map((k) => prods[k].target_pct);
+    if (ks.length > 1 && ts.every((t) => typeof t === "number")) {
+      const sum = rd(ts.reduce((x, y) => x + y, 0), 4);
+      Object.assign(out, { stage_targets: ks.map((k, i) => ({ product: k, profit_target_pct: ts[i] })),
+        profit_target_all_stages: { formula: ts.map((t) => t + "%").join(" + "), value_pct: sum,
+          note: "Each stage's target is a percent of the account size, so the targets add up: the realized profit the whole challenge asks for is " +
+                sum + "% of the account size. DERIVED from the stages' targets, each with its source above." } });
+    }
+  }
+  return out;
+}
+// a firm's floating-loss rule, with its source or "not yet recorded", on a tool result that used the firm's limits
+function withFloatingSource(out, a) {
+  if (!out || out.error) return out;
+  const F = JSON.parse(context().firms), f = Object.hasOwn(F, String(a.firm || "")) ? F[String(a.firm)] : null;
+  if (!f || f.floating_counts !== true) return out;
+  const rule = "floating losses count toward the daily and maximum loss (" + f.name + ")", c = cite(f, "floating_counts", String(a.product || ""), true);
+  const on = c && c.read_on.length ? c.read_on : null;
+  out.sources = (out.sources || []).concat(c ? [{ rule, document_section: c.section, read_on: on || "not recorded", urls: c.urls,
+    cite: rule + " — " + c.section + ", " + (on ? "read " + on.join(" and ") : "read date not recorded") }]
+    : [{ rule, source: "not yet recorded", cite: rule + " — source not yet recorded" }]);
+  return out;
+}
+// trade_math's position_size on a firm's product keeps to that product's leverage cap
+function tradeMathNext(a) {
+  if (String(a.calc || "") === "position_size" && a.leverage != null && (a.firm != null || a.product != null) && String(a.firm) !== "all") {
+    const g = profile(String(a.firm || ""), String(a.product || "")), lev = Number(a.leverage), bal = a.balance == null ? null : Number(a.balance);
+    if (!g.error && Number.isFinite(lev)) {
+      let cap = g.p.lev, key = "lev", size = "";
+      if (g.p.levb) {
+        const band = bal != null ? g.p.levb.find((x) => (x.max_quota == null || bal <= x.max_quota) && (x.min_quota == null || bal >= x.min_quota)) : null;
+        if (band) { cap = band.lev; g.p._band_pv = band.pv; key = "lev_band"; size = " for a $" + bal.toLocaleString("en-US") + " account"; }
+        else {
+          cap = Math.min(...g.p.levb.map((x) => x.lev));
+          if (lev > cap) return { error: g.f.name + " " + g.p.label + "'s leverage cap depends on the account size (" +
+            g.p.levb.map((x) => "1:" + x.lev + (x.max_quota != null ? " up to $" + x.max_quota.toLocaleString("en-US") : " from $" + x.min_quota.toLocaleString("en-US"))).join(", ") +
+            "): give balance, or work the example at 1:" + cap + " or below, or without a firm and product" };
+        }
+      }
+      if (cap != null && lev > cap) {
+        const src = sourcesFor(g.p, [[key, "leverage cap " + cap + "× (" + g.f.name + " " + g.p.label + size + ")"]]);
+        return { error: g.f.name + " " + g.p.label + " caps leverage at 1:" + cap + size + ", so " + lev + "× is not available on it. Work the example at " +
+          cap + "× or below on this product, or without a firm and product (with fee_per_side_pct).", sources: src };
+      }
+    }
+  }
+  return trade_math(a);
+}
+const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
+  explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES)),
+  firm_rules: firmRulesNext,
+  check_budget: (a) => withFloatingSource(check_budget(a), a),
+  size_trade: (a) => withFloatingSource(size_trade(a), a),
+  trade_math: tradeMathNext,
+};
 const RUN_NEXT = Object.assign({}, RUN, CANDIDATE_RUN);
 function runTool(name, input, variant) {
   const run = variant === "candidate" ? RUN_NEXT : RUN;
@@ -1153,6 +1239,19 @@ const LINTS = [
    "troid's own strategy: its out-of-sample result comes first, +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero, each figure marked MEASURED; the in-sample figure only after it."],
 ];
 const lintNotes = (t) => LINTS.filter(([test]) => test(t)).map(([, note]) => note);
+// A candidate's lints, until it is promoted: (text, the turn's tool calls) → a note. Staged after evaluation run 10:
+// o-montecarlo quoted troid's Monte Carlo from memory (its 68%, at 1% a trade, beside 2%); s-product called every rule
+// of its table sourced ("all SOURCED with their read dates") where the split and the 2-Step's trading fee had none.
+const ALL_SOURCED_RX = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sourced|dated)\b|\b(all|every) (rules?|figures?)\b[^.\n]{0,40}\b(with|carr(y|ies)) (its|their) (sources?|read dates?)\b|\ball\b[^.\n]{0,20}\bwith their read dates\b/;
+const MC_68_RX = /\b68\s?%[^.\n]{0,80}\b(simulat|years?\b|blow|ruin|fail)|\b(simulat|Monte Carlo|blow|ruin)[^.\n]{0,90}\b68\s?%/i;   // the Monte Carlo's figure, not a win rate
+const CANDIDATE_LINTS = [
+  [(t, tools) => MC_68_RX.test(t) && !tools.some((x) => x.name === "explain_rule" && String((x.input || {}).topic || "").toLowerCase().trim() === "ruin"),
+   "troid's published Monte Carlo comes from explain_rule, topic ruin: get it there, then quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED."],
+  [(t, tools) => ALL_SOURCED_RX.test(t) && tools.some((x) => JSON.stringify(x.result || {}).includes("not yet recorded")),
+   "Some rules the tools gave have no recorded source: say so beside each of them (source not yet recorded), and never that every rule is sourced."],
+];
+const lintNotesFor = (t, variant, tools) => lintNotes(t).concat(variant === "candidate"
+  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [])).map(([, note]) => note) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
   notes.map((n) => "- " + n).join("\n") + ")";
 const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
@@ -1166,6 +1265,17 @@ function refusalOnceFirst(reply) {
   const rest = reply.slice(first + m.length).replace(SHOULD_I_RX, "").replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").replace(/\n{3,}/g, "\n\n");
   const keepHead = head.trim() && (head.length > 160 || hasFigure(head.replace(/\bsection \d+\b/gi, " ")));
   return ((keepHead ? head : "") + m + rest).replace(/^\s+/, "").replace(/(^|\n\n) +/g, "$1").replace(/\n{3,}/g, "\n\n");
+}
+// support.md section 4's reply word for word on a should-I question, for the candidate until it is promoted (run 10:
+// s-product and s-firm paraphrased it, "…isn't something troid computes as advice — troid prices what you bring"). A
+// first sentence that paraphrases it goes; the rest stays. English only: another language's reply is its reviewer's.
+const SHOULD_ASK_RX = /(^|[.?!,;:]\s*|\b(so|and|but)\s+)(should I\b|which\b[^.?!\n]{0,60}\bbest\b|will I pass\b|what should I (trade|buy|pick|choose)\b|(do|would) you recommend\b)/i;
+const PARAPHRASE_RX = /prices what you bring|\bdoes(n['’]t| not) recommend|not something troid\b|isn['’]t something troid\b/i;
+function refusalWordForWord(reply, lastUser) {
+  if (!SHOULD_ASK_RX.test(String(lastUser || "")) || /troid doesn['’]t recommend; it prices what you bring\./.test(reply)) return reply;
+  const body = reply.replace(/^\s+/, ""), m = body.match(/^[^\n]*?[.?!](?=\s|$)/);
+  const rest = m && m[0].length <= 240 && PARAPHRASE_RX.test(m[0]) ? body.slice(m[0].length).replace(/^[ \t]+/, "") : body;
+  return ("troid doesn't recommend; it prices what you bring." + (rest.startsWith("\n") ? "" : " ") + rest).trim();
 }
 function withSupportStep5(reply, lang) {
   if (!SUPPORT_OPENER.test(reply) || (/hello@troid\.ai/i.test(reply) && /dashboard/i.test(reply))) return reply;
@@ -1273,7 +1383,8 @@ module.exports = async (req, res) => {
                                      firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
-                        guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name) };
+                        guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
+                        rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
                             disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
@@ -1369,7 +1480,7 @@ module.exports = async (req, res) => {
     // A finished draft that trips one of LINTS is sent back once to be written again, with a note for
     // each. If the rewrite can't finish in time, or fails, the draft stands.
     if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
-      const notes = lintNotes([...said, textOf(resp)].join("\n\n"));
+      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog);
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
@@ -1395,6 +1506,7 @@ module.exports = async (req, res) => {
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
+        if (reply && variant === "candidate" && lang === "en") reply = refusalWordForWord(reply, lastUser);
         if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog);
         if (reply) reply = closeWithNote(reply, lang);
@@ -1450,6 +1562,9 @@ module.exports = async (req, res) => {
 module.exports.tools = RUN;   // for tests
 module.exports._refusalOnceFirst = refusalOnceFirst;
 module.exports._lintNotes = lintNotes;
+module.exports._lintNotesFor = lintNotesFor;
+module.exports._refusalWordForWord = refusalWordForWord;
+module.exports._candidateGuardrails = CANDIDATE_GUARDRAILS;
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
 module.exports._sign = (msgs, session, variant) => sign(msgs, session, variant);   // for tests

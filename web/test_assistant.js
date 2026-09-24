@@ -223,7 +223,11 @@ ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are iden
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
 const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBlocks("en", "candidate");
 const candText = liveSys.map((b) => b.text).join("\n");
-ok("nothing staged: the candidate prompt and tools are the live ones", JSON.stringify(candSys) === JSON.stringify(liveSys)
+// run 10's candidate: the live prompt plus two guardrails, the same tools (their staged implementations are CANDIDATE_RUN's)
+const CG = handler._candidateGuardrails;
+ok("candidate: the live prompt plus run 10's two guardrails (the Monte Carlo through explain_rule, arithmetic across products through the tools); the same tools",
+   CG.length === 2 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[1])
+   && JSON.stringify(candSys.slice(1)) === JSON.stringify(liveSys.slice(1)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1])
    && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
 ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
    liveSys.length === 5 && /^# Guardrails/.test(liveSys[0].text) && /## Who troid is/.test(liveSys[0].text) && /^# troid's character/.test(liveSys[1].text)
@@ -303,6 +307,45 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
 { const R = (n) => require("./eval/runs/2026-09-24-run" + n + ".json").results, L = handler._lintNotes;
   const hit8 = R(8).filter((x) => L(x.reply).length).map((x) => x.id).sort().join(), hit7 = R(7).filter((x) => L(x.reply).length).map((x) => x.id);
   ok("lints: run 8's b-stop, o-montecarlo, q-stats, s-firm and s-product, none of run 7", hit8 === "b-stop,o-montecarlo,q-stats,s-firm,s-product" && !hit7.length, [hit8, hit7]); }
+// run 10's staged changes (CANDIDATE_RUN, CANDIDATE_LINTS, the refusal word for word); the live tools stay as they were
+{ const r10 = require("./eval/runs/2026-09-24-run10.json").results, byId = (id) => r10.find((x) => x.id === id);
+  const fl = (o) => (o.sources || []).find((x) => /^floating losses count/.test(x.rule));
+  const c1 = RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate"), l1 = RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live");
+  const cb = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "candidate");
+  ok("candidate firm_rules: Bitfunded's floating-loss rule with its source (Criteria to be Success, read 2026-09-24); a firm with none recorded says so; live unchanged (run 10, b-limits)",
+     c1.rules.some((x) => /^floating losses count/.test(x.rule) && x.value === "yes") && /Criteria to be Success, 1\. Maximum Daily Loss and 2\. Maximum Loss/.test(fl(c1).document_section)
+     && fl(c1).read_on.join() === "2026-09-24" && (cb.error || fl(cb).source === "not yet recorded") && !l1.rules.some((x) => /floating/.test(x.rule)), [fl(c1), cb.error || fl(cb)]);
+  const s1 = RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), s2 = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
+  ok("candidate firm_rules: the 2-Step's targets added across its stages, 8% + 5% = 13% of the account size; a one-stage product and live have none (run 10, s-product)",
+     [s1, s2].every((f) => f.profit_target_all_stages.value_pct === 13 && f.profit_target_all_stages.formula === "8% + 5%" && f.stage_targets.length === 2)
+     && !("profit_target_all_stages" in c1) && !("profit_target_all_stages" in RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "live")), s1.profit_target_all_stages);
+  const bc = RT("check_budget", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 }, "candidate"), bl = RT("check_budget", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 }, "live");
+  const sc = RT("size_trade", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000, side: "long", entry: 100000, stop: 98000 }, "candidate");
+  ok("candidate check_budget and size_trade: the floating-loss rule under the answer with its read date; live unchanged",
+     fl(bc) && fl(bc).read_on.join() === "2026-09-24" && /floating losses count toward the daily and maximum loss \(Bitfunded\) — Bitfunded help centre — Criteria to be Success.*read 2026-09-24$/.test(fl(bc).cite)
+     && fl(sc) && !fl(bl) && JSON.stringify(Object.assign({}, bc, { sources: bl.sources })) === JSON.stringify(bl), [fl(bc), fl(sc)]);
+  const P = (x, v) => RT("trade_math", Object.assign({ calc: "position_size", risk: 500, entry: 100000, stop: 98000 }, x), v);
+  const over = P({ firm: "bitfunded", product: "1step", leverage: 10 }, "candidate"), atCap = P({ firm: "bitfunded", product: "1step", leverage: 5 }, "candidate");
+  const cft = P({ firm: "crypto_fund_trader", product: "1phase", leverage: 10 }, "candidate"), cftBig = P({ firm: "crypto_fund_trader", product: "1phase", leverage: 10, balance: 100000 }, "candidate");
+  ok("candidate trade_math: 10× on the Bitfunded 1-Step is refused with the 1:5 cap and its source; 5× and no firm are worked; Crypto Fund Trader's cap by account size; live unchanged (run 10, b-leverage)",
+     /caps leverage at 1:5, so 10× is not available/.test(over.error) && over.sources[0].read_on.join() === "2026-09-23" && Math.abs(atCap.result.margin - atCap.result.notional / 5) < 0.01
+     && P({ leverage: 10 }, "candidate").result.margin > 0 && /depends on the account size \(1:5 up to \$25,000, 1:100 from \$50,000\)/.test(cft.error) && cftBig.result.margin > 0
+     && P({ firm: "bitfunded", product: "1step", leverage: 10 }, "live").result.margin > 0, [over, cft.error]);
+  const ruinC = RT("explain_rule", { topic: "ruin" }, "candidate").explanation, ruinL = RT("explain_rule", { topic: "ruin" }, "live").explanation;
+  ok("candidate explain_rule ruin: troid's published Monte Carlo, each figure with its risk and the assumptions (68% at 1%, 100% at 2%, 0% capped); live unchanged (run 10, o-montecarlo)",
+     /Risking 1% of balance a trade with no cap on the remaining budget, 68% of the simulated years blow the account; at 2%, 100%/.test(ruinC) && /20,000 simulated years/.test(ruinC)
+     && /\+0\.35R/.test(ruinC) && /MODELLED/.test(ruinC) && !/at 2%, 100%/.test(ruinL) && /1% uncapped blows up 68%/.test(ruinL), ruinC);
+  const LF = handler._lintNotesFor, toolsOf = (c) => (c.tools_used || []).map((name) => ({ name, input: {}, result: /not yet recorded/.test(c.reply) ? { s: "not yet recorded" } : {} }));
+  const extra = (c, v) => LF(c.reply, v, toolsOf(c)).length - handler._lintNotes(c.reply).length;
+  ok("candidate lints: run 10's o-montecarlo (the Monte Carlo from memory) and s-product (every rule called sourced); none on live",
+     r10.filter((c) => extra(c, "candidate")).map((c) => c.id).join() === "o-montecarlo,s-product" && r10.every((c) => extra(c, "live") === 0)
+     && LF(byId("o-montecarlo").reply, "candidate", [{ name: "explain_rule", input: { topic: "ruin" }, result: {} }]).length === handler._lintNotes(byId("o-montecarlo").reply).length);
+  const WW = handler._refusalWordForWord, REF = "troid doesn't recommend; it prices what you bring.";
+  const wp = WW(byId("s-product").reply, byId("s-product").q), wf = WW(byId("s-firm").reply, byId("s-firm").q);
+  ok("refusal word for word on a should-I question: run 10's paraphrases give way to support.md section 4's reply; a reply that has it, and another question, are left alone",
+     wp.startsWith(REF + " What it can do is lay the two products") && !/isn't something troid computes/.test(wp) && wf.startsWith(REF + "\n\nWhether a firm suits you")
+     && WW(byId("ex-kelly").reply, byId("ex-kelly").q) === byId("ex-kelly").reply && WW(byId("b-limits").reply, byId("b-limits").q) === byId("b-limits").reply
+     && WW("R is the loss at the stop.", "How should I calculate R?") === "R is the loss at the stop." && WW("Here is the table.", "Which firm is best for me?") === REF + " Here is the table.", [wp.slice(0, 120), wf.slice(0, 80)]); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -711,8 +754,9 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; no guardrails or tools since the promotion) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 0 && !gc.tools.length && !resC.body.includes(CK), gc);
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 2 && !gc.tools.length && gc.rules.join() === "ruin"
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 2 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));
@@ -735,6 +779,12 @@ fake.listen(18765, async () => {
     before = calls.length;
     r = await call(hc, [U("FTMO's daily limit?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: an answer with no figure stays with Haiku and gets no note", calls.length === before + 1 && r.j.reply === "troid does not cover FTMO and has not read its rules.", r.j.reply);
+    script = () => msg("end_turn", [{ type: "text", text: "Which firm is best isn't something troid answers — it prices what you bring.\n\nFees differ by product." }]);
+    r = await call(hc, [U("Which prop firm is best for me?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    const rl = await call(hc, [U("Which prop firm is best for me?")], { disclosed: true });
+    ok("candidate: a should-I question gets support.md section 4's reply word for word, the paraphrase gone; live, beside it, unchanged until promotion (run 10, s-firm)",
+       r.j.reply === "troid doesn't recommend; it prices what you bring.\n\nFees differ by product."
+       && rl.j.reply === "Which firm is best isn't something troid answers — it prices what you bring.\n\nFees differ by product.", [r.j.reply, rl.j.reply]);
     step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "er1", name: "explain_rule", input: { topic: "hold_limit" } }])
       : msg("end_turn", [{ type: "text", text: "ETH is a major: 10 days.\n\nTier: SOURCED, Restricted Trading Practices s.1, read 2026-09-21.\n\nNot financial advice. Verify with the firm before acting." }]));

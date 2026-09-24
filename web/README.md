@@ -116,9 +116,10 @@ with the key get the candidate; they are not stored and not held to a visitor's 
 reads every reply and records what they find beside the run (`<run>.read.json`); `--report <run>.json --read
 <run>.read.json --recheck` writes the report again under the current checks. Promote only when a run passes every
 automated check and the read finds no error: move the files into place and fold the candidate constants into the live
-ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; nothing is staged. With
-the key and nothing staged the runner evaluates the live prompt at full speed; without it, one case every 185 seconds,
-deleting each conversation after reading it.
+ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; run 10, the live prompt,
+passed 22 of 24 and its read found five errors, whose fixes are staged now (`CANDIDATE_LINTS` and a should-I refusal
+gated on the candidate besides the constants above). With the key and nothing staged the runner evaluates the live
+prompt at full speed; without it, one case every 185 seconds, deleting each conversation after reading it.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.

@@ -66,6 +66,27 @@ const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\
 const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer) first,? (in )?one line\b|\bin one line:/i;
 // troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
 const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
+// A firm's floating-loss rule with no source line for it (run 10, b-limits: "Bitfunded auto-fails on either without requiring
+// a close"; troid had read it and recorded it nowhere).
+const FLOAT_RULE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,120}\\bfloat|\\bfloat[^.\\n]{0,120}\\b(${FIRMS})\\b`, "i");
+const FLOAT_SOURCED = /^- [^\n]*\bfloat[^\n]*(\bread (on )?\d|source not yet recorded)/im;
+// Every rule called sourced where a source line says one isn't (run 10, s-product: "all SOURCED with their read dates" over a
+// split and a 2-Step trading fee whose sources are not yet recorded).
+const ALL_SOURCED = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sourced|dated)\b|\b(all|every) (rules?|figures?)\b[^.\n]{0,40}\b(with|carr(y|ies)) (its|their) (sources?|read dates?)\b|\ball\b[^.\n]{0,20}\bwith their read dates\b/;
+// troid's published Monte Carlo with a figure beside the wrong risk (run 10, o-montecarlo: "2% fixed risk with a 68% simulated
+// failure rate"; 68% is at 1% a trade, 100% at 2%).
+const RUIN_MIX = /\b2(\.0)?\s?%[^.\n;,]{0,50}\b68\s?%|\b68\s?%[^.\n;]{0,30}\bat 2\s?%|\b1(\.0)?\s?%[^.\n;,]{0,50}\b100\s?%\s?(of|blow|fail|ruin)/i;
+// A worked example on a firm's product at leverage above its cap, the cap unsaid (run 10, b-leverage: 10x "on a Bitfunded
+// 1-Step account"; run 6: on the reference account). A paragraph naming Bitfunded, leverage above 5x, and no cap.
+function levOverCap(t) {
+  for (const para of unquoted(t).split(/\n\s*\n/)) {
+    if (!/\bBitfunded\b/.test(para) || !/leverage/i.test(para)) continue;
+    if (/1:5\b|\bcap(s|ped)?\b[^.\n]{0,30}\b5\s?[×x]|\b5\s?[×x][^.\n]{0,20}\bcap/i.test(para)) continue;
+    const m = para.match(/(?<![\d.,])(?:[6-9]|[1-9]\d{1,2})\s?[×x](?![\w])(?!\s*[\d(])/);   // a leverage, not a product (77,872 × 0.04%)
+    if (m) return m[0];
+  }
+  return null;
+}
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
@@ -179,6 +200,12 @@ function check(c, r, variant) {
   { const m = reply.match(INTERNAL); add("names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")", !m, m && m[0]); }   // run 8
   add("troid's own strategy: out of sample first, each figure MEASURED", !OOS_LATE.test(reply) && !(/\b0\.008\s?R/.test(reply) && !/\bMEASURED\b/.test(reply)), null);   // run 8
   { const m = reply.match(AGENCY); add("troid never trades: the risk and the trade are the trader's", !m, m && m[0]); }             // run 4
+  { const m = unquoted(reply).match(FLOAT_RULE);                                                                                          // run 10
+    if (m) add("a firm's floating-loss rule carries its source, or says it is not yet recorded", FLOAT_SOURCED.test(reply), m[0]); }
+  { const m = unquoted(reply).split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b/i.test(l)).join("\n").match(ALL_SOURCED);                    // run 10
+    add("never calls every rule sourced where one has no recorded source", !(m && /source not yet recorded|read date not recorded/.test(reply)), m && m[0]); }
+  { const m = reply.match(RUIN_MIX); add("troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)", !m, m && m[0]); }   // run 10
+  { const m = levOverCap(reply); add("an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it", !m, m); }   // runs 6, 10
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
     add("troid's tools and defaults are troid's, not a firm's", !m, m && m[0]); }
   for (const rx of c.all || []) add("says: /" + rx + "/", new RegExp(rx, "i").test(reply), null);
@@ -202,7 +229,7 @@ function check(c, r, variant) {
 function writeReport(record, out, notes) {
   const n = record.results.length, failed = record.results.filter((x) => !x.pass).length;
   const passedThen = record.rechecked && record.passed != null ? record.passed : n - failed;
-  const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.variant} prompt, ${record.base})`;
+  const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.nothing_staged ? "live" : record.variant} prompt, ${record.base})`;
   const read = notes || {};
   const md = [`# troid's character — evaluation run, ${record.started_utc.slice(0, 16).replace("T", " ")} UTC`, "",
     `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
@@ -255,7 +282,8 @@ if (REPORT) {                                                      // a saved ru
   // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
   // prompt at full speed, unstored and not held to a visitor's limit.
   const cd = g.j.candidate || {};
-  record.nothing_staged = !!KEY && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length;
+  record.nothing_staged = !!KEY && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length
+    && !(cd.rules || []).length && !(cd.run || []).length && !cd.lints;
   if (record.nothing_staged) console.log("nothing is staged: the candidate key evaluates the live prompt");
   let failed = 0;
   for (let i = 0; i < cases.length; i++) {

@@ -134,7 +134,8 @@
    ],
    "_run4": "run 4 gave the trailing floor as high-water mark × (1 − max%), troid's own formula then, where BrightFunded's table puts it a fixed max% of the initial balance below the high. troid's engine, calculator and TROID.md are corrected; the old formula is now a failure.",
    "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out.",
-   "_run7": "run 7 said Crypto Fund Trader's drawdown trails, where it differs by product (the 1-Phase trails, then locks at the opening balance; the 2-Phase is static): troid's own source line had said 'trailing on balance'. It also put the daily limit 'against the day-start balance, per its FAQ', where the FAQ gives the limit's size from the initial balance. Its two tier lines, DERIVED for the figures and SOURCED for the rules, were right; the tier check now fails only the same tier twice. A check that a rule differing by product names its product now runs on every case."
+   "_run7": "run 7 said Crypto Fund Trader's drawdown trails, where it differs by product (the 1-Phase trails, then locks at the opening balance; the 2-Phase is static): troid's own source line had said 'trailing on balance'. It also put the daily limit 'against the day-start balance, per its FAQ', where the FAQ gives the limit's size from the initial balance. Its two tier lines, DERIVED for the figures and SOURCED for the rules, were right; the tier check now fails only the same tier twice. A check that a rule differing by product names its product now runs on every case.",
+   "_run10": "run 10 stated \"Bitfunded auto-fails on either without requiring a close\" with no source: troid had read it in the help centre's Criteria to be Success and recorded it nowhere. Added: the generic floating-loss check."
   },
   {
    "id": "b-stop",
@@ -173,7 +174,8 @@
    ],
    "_run4": "run 4 wrote the liquidation price entry × (1 − 1/leverage) as a distance 'from entry', from troid's own explain_rule text, now corrected.",
    "_run5": "run 5 gave no worked example and no tier (see b-limits).",
-   "_run6": "run 6 worked its example on troid's reference account (a Bitfunded 1-Step) at 10× without saying that account caps leverage at 1:5. Arithmetic is now worked through trade_math with troid's own numbers; an example on a firm's account keeps to its rules."
+   "_run6": "run 6 worked its example on troid's reference account (a Bitfunded 1-Step) at 10× without saying that account caps leverage at 1:5. Arithmetic is now worked through trade_math with troid's own numbers; an example on a firm's account keeps to its rules.",
+   "_run10": "run 10 worked its example at 10× \"on a Bitfunded 1-Step account\", whose cap is 1:5, with the cap unsaid, and wrote a planning sentence (\"To work an example, size a trade so the numbers are concrete\"). Added: the generic leverage-cap check for any paragraph naming Bitfunded."
   },
   {
    "id": "q-expectancy",
@@ -378,7 +380,8 @@
    "_run1": "run 1 listed 'what troid would need to run your simulation' (ask troid runs none) and called 1% risk 'where prop-firm traders belong'. Added: says it runs none; never offers to.",
    "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades.",
    "_run7": "run 7 (Haiku) answered with a menu of what troid can compute and pointed to numpy, instead of working the numbers given: the expectancy is 0.55 × 1.2 − 0.45 × 1 = 0.21R. A question that carries figures now goes to the tools model, and the expectancy is required.",
-   "_run8": "run 8 worked the 0.21R and 21R through trade_math, but wrote 'Result first, one line:', the method's own words."
+   "_run8": "run 8 worked the 0.21R and 21R through trade_math, but wrote 'Result first, one line:', the method's own words.",
+   "_run10": "run 10 quoted troid's Monte Carlo from memory: \"2% fixed risk with a 68% simulated failure rate\", where 68% is at 1% a trade and 2% gives 100%. Added: the generic check that each published figure keeps its risk."
   },
   {
    "id": "o-news",
@@ -408,7 +411,8 @@
     "character section",
     "1-Step is the tight(est|er) structure",
     "(profit )?split[^.\\n]{0,160}(recorded|sourced) (on|from|in) the 1-Step",
-    "fixed (answer|refusal|reply)"
+    "fixed (answer|refusal|reply)",
+    "\\b(lower|smaller|less)\\b[^.\\n]{0,40}\\b(total|combined|overall|in all)\\b[^.\\n]{0,40}\\b(profit|target|gain)"
    ],
    "sourced": true,
    "_run1": "run 1's rules table had no sources, and its text gave Stage 2 a 5% maximum loss where its own table said 8%. Added: sourced.",
@@ -417,7 +421,8 @@
    "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected.",
    "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)",
    "_run7": "run 7 said the 2-Step 'splits the same overall requirement' across two stages, where its targets (8%, then 5%) differ from the 1-Step's one 10%. The check covers any 'same overall' requirement, target or risk.",
-   "_run8": "run 8 announced 'Should-I questions get a fixed answer' and gave the reply twice. The service now gives support.md section 4's reply first and once."
+   "_run8": "run 8 announced 'Should-I questions get a fixed answer' and gave the reply twice. The service now gives support.md section 4's reply first and once.",
+   "_run10": "run 10 paraphrased the refusal (\"…isn't something troid computes as advice — troid prices what you bring\"), called every rule of its table \"all SOURCED with their read dates\" over a split and a 2-Step trading fee whose sources are not yet recorded, and said the 2-Step asks for \"a lower total profit\" (8% then 5%, against 10% in one go): 8% and 5% of the account size is 13%. Added: the lower-total pattern; the generic all-sourced check."
   },
   {
    "id": "s-firm",
@@ -440,7 +445,8 @@
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
    "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure.",
-   "_run8": "run 8 gave the Express's $39 and the Instant's $249 at $5,000 read dates taken from other rules' sources (the blog, the help centre), with no tool called: troid records no source for either fee. It also opened 'support.md section 4 applies here'. A fee under $500 given a read date is a failure; so, in every case, is naming troid's own instructions."
+   "_run8": "run 8 gave the Express's $39 and the Instant's $249 at $5,000 read dates taken from other rules' sources (the blog, the help centre), with no tool called: troid records no source for either fee. It also opened 'support.md section 4 applies here'. A fee under $500 given a read date is a failure; so, in every case, is naming troid's own instructions.",
+   "_run10": "run 10 paraphrased the refusal (\"…is not something troid answers — it prices what you bring\"); the rest was right."
   },
   {
    "id": "u-ftmo",
