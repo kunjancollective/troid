@@ -526,7 +526,7 @@
   "dashboard.risk.fees.k": "72abbc9284",
   "dashboard.risk.fees.n": "c68227325a",
   "dashboard.risk.reset.k": "44c57abd88",
-  "dashboard.risk.reset.n": "e506750bcc",
+  "dashboard.risk.reset.n": "7e4a718201",
   "dashboard.risk.reset.v": "59b5034cdc",
   "dashboard.risk.p": "4119a353d4",
   "dashboard.change.h2": "9f91adf999",
@@ -566,8 +566,8 @@
   "faq.daily.p2": "85946467b3",
   "faq.daily.p3": "8088510911",
   "faq.reset.q": "0ef6a61e70",
-  "faq.reset.p1": "f2a05a2a4c",
-  "faq.reset.p2": "f696c72ee3",
+  "faq.reset.p1": "343aac25b0",
+  "faq.reset.p2": "bf4ef5f9f5",
   "faq.risk.q": "a84680c7ad",
   "faq.risk.p1": "4f29942070",
   "faq.risk.p2": "c3e4aaf01d",
@@ -862,17 +862,17 @@
    "data.3ce26c9516b7 'aucune mention' and data.71f8e7976e4c, data.d4978ed5cbab, data.e49a4a29c821, data.1f7a32c047e8 'néant …': gender-neutral fillers for 'none' because the compare row each fills is not known from the string."
   ],
   "dashboard.risk.reset.v": [
-   "Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
+   "Times stay as 16:00, 11:00, 16:10, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
   ],
   "faq.reset.p1": [
-   "Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'.",
+   "Times stay as 16:00, 11:00, 16:10, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'.",
    "faq.reset.p1: 'Le règlement de la plateforme' for 'the platform's settlement' can also read as 'the platform's rules'. Alternatives are 'traitement de clôture' or 'liquidation'."
   ],
   "faq.reset.p2": [
-   "Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
+   "Times stay as 16:00, 11:00, 16:10, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
   ],
   "faq.reset.q": [
-   "Times stay as 16:00, 11:59, 12:01, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
+   "Times stay as 16:00, 11:00, 16:10, 00:00 UTC+8 (faq.reset.*, dashboard.risk.reset.v, data.57fe3b35e2a2) to match the data cells, not French '16 h'."
   ],
   "chat.placeholder": [
    "chat.placeholder: the example user request ends 'calculez la taille' (vous addressed to the assistant); check it is natural for a chat prompt."
@@ -1359,7 +1359,7 @@
  "dashboard.risk.fees.k": "Frais",
  "dashboard.risk.fees.n": "aller-retour, sur le notionnel",
  "dashboard.risk.reset.k": "Réinitialisation",
- "dashboard.risk.reset.n": "midi à New York",
+ "dashboard.risk.reset.n": "midi à New York, 11:00 en hiver",
  "dashboard.risk.reset.v": "16:00 UTC",
  "dashboard.risk.p": "Le plafond de budget n'est pas du conservatisme — c'est la seule chose qui rend le compte viable. À <strong>+0,35R</strong>, un système réellement excellent, un dimensionnement naïf à 1 % fait sauter le compte <strong>68 %</strong> du temps en moins d'un an, et à 2 %, c'est 98 %. Chacune de ces cases tombe à 0,0 % sous le plafond.",
  "dashboard.change.h2": "Ce qui changerait le verdict",
@@ -1399,8 +1399,8 @@
  "faq.daily.p2": "Mais ce n'est souvent pas la contrainte qui compte. La perte maximale de 6 % est statique, à $94 000. En dessous d'environ <span class=\"stat\">$98 000</span> d'equity, la distance jusqu'à ce plancher statique est inférieure à votre enveloppe journalière, donc la perte max. devient le vrai plafond et le chiffre « 4 % journalier » est une fiction.",
  "faq.daily.p3": "Sur un compte neuf, ce point de bascule se trouve à environ $2 000 — la moitié d'une mauvaise journée. Dimensionnez toujours en fonction du plus petit des deux.",
  "faq.reset.q": "Quand votre journée de trading se réinitialise-t-elle ?",
- "faq.reset.p1": "00:00 UTC+8, soit 16:00 UTC — <strong>midi à New York</strong>, pas minuit. Vos sessions du matin et de l'après-midi puisent dans des budgets journaliers distincts. Le règlement de la plateforme peut retarder la réinitialisation de dix minutes au plus, jusqu'à 16:10 UTC ; ne comptez donc pas sur un nouveau budget journalier avant cette heure.",
- "faq.reset.p2": "Le piège : une perte latente qui passe la réinitialisation compte en totalité contre la nouvelle journée, car le profit de la veille n'est pas reporté. Une position confortablement dans la limite à 11:59 peut la franchir à 12:01 sans que le prix ne bouge du tout. Bitfunded le documente lui-même.",
+ "faq.reset.p1": "00:00 UTC+8, soit 16:00 UTC — <strong>midi à New York</strong> en été, 11:00 en hiver — pas minuit. Pour un trader à New York, la réinitialisation tombe en pleine séance : une perte du matin et une perte de l'après-midi peuvent relever de journées de trading différentes et puiser dans des budgets journaliers différents. Le règlement de la plateforme peut retarder la réinitialisation de dix minutes au plus, jusqu'à 16:10 UTC ; ne comptez donc pas sur un nouveau budget journalier avant cette heure.",
+ "faq.reset.p2": "Le piège : une perte latente qui passe la réinitialisation compte en totalité contre la nouvelle journée, car le profit de la veille n'est pas reporté. Une position confortablement dans la limite une minute avant la réinitialisation peut la franchir une minute après sans que le prix ne bouge du tout. Bitfunded le documente lui-même.",
  "faq.risk.q": "Combien devriez-vous risquer par trade ?",
  "faq.risk.p1": "Le bon chiffre dépend de votre système, donc troid ne vous en donnera pas. Ce qu'il peut vous montrer, c'est ce que l'arithmétique fait d'un mauvais chiffre.",
  "faq.risk.p2": "troid a simulé un trader doté d'un avantage réellement excellent — +0,35R par trade, mieux que ce que la plupart des professionnels tiennent dans la durée. En risquant 1 % par trade sans plafond sur le budget restant, ce trader a fait sauter le compte <span class=\"stat\">68 %</span> du temps en moins de douze mois. À 2 %, <span class=\"stat\">98 %</span>. Plafonner chaque trade à une fraction du budget <em>restant</em> plutôt qu'à une part fixe du solde a ramené tous ces chiffres à 0 %.",

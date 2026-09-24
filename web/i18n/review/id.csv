@@ -618,7 +618,7 @@ dashboard.risk.risk.n,capped at 35% of budget,dibatasi pada 35% dari anggaran,,k
 dashboard.risk.fees.k,Fees,Biaya,,
 dashboard.risk.fees.n,"round trip, on notional","round trip, atas nosional",,
 dashboard.risk.reset.k,Reset,Reset,,
-dashboard.risk.reset.n,noon in New York,tengah hari di New York,,
+dashboard.risk.reset.n,"noon in New York, 11:00 in winter","tengah hari di New York, 11:00 saat musim dingin",,keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
@@ -802,20 +802,22 @@ faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of
 against the smaller of the two, always.","Pada akun baru, titik silang itu berjarak sekitar $2.000 — setengah dari satu hari yang buruk. Tentukan ukuran posisi
 terhadap yang lebih kecil dari keduanya, selalu.",,keep every number exactly
 faq.reset.q,When does your trading day reset?,Kapan hari trading Anda di-reset?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
-morning and afternoon sessions draw on separate daily budgets.
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
+For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","00:00 UTC+8, yaitu 16:00 UTC — <strong>tengah hari di New York</strong>, bukan tengah malam. Sesi
-pagi dan sore Anda memakai anggaran harian yang terpisah.
+on a fresh daily budget before then.","00:00 UTC+8, yaitu 16:00 UTC — <strong>tengah hari di New York</strong> saat musim panas, 11:00 saat musim dingin — bukan tengah malam.
+Bagi trader di New York, reset jatuh di tengah sesi, sehingga kerugian pagi dan kerugian sore bisa jatuh pada
+hari trading yang berbeda dan memakai anggaran harian yang berbeda.
 Proses settlement platform dapat menunda reset hingga sepuluh menit, sampai 16:10 UTC, jadi jangan mengandalkan
 anggaran harian yang baru sebelum waktu itu.",,CHECK FIRST: faq.reset.p1: 'ten minutes' is written out as 'sepuluh menit' to match the English wording. 'settlement' is kept as a loanword ('Proses settlement platform'). The reviewer should check that this is natural Indonesian. | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
-limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this
 themselves.","Jebakannya: kerugian mengambang yang bertahan melewati reset dihitung penuh terhadap hari yang baru,
 karena profit hari sebelumnya tidak terbawa. Posisi yang dengan nyaman berada di dalam
-batas pada 11:59 dapat melanggar batas pada 12:01 tanpa harga bergerak sama sekali. Bitfunded sendiri
-mendokumentasikan hal ini.",,keep every number exactly
+batas semenit sebelum reset dapat melanggar batas semenit sesudahnya tanpa harga bergerak sama sekali. Bitfunded sendiri
+mendokumentasikan hal ini.",,
 faq.risk.q,How much should you risk per trade?,Berapa banyak yang sebaiknya Anda risikokan per trade?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","Angka yang tepat bergantung pada sistem Anda, jadi troid tidak akan memberikannya kepada Anda.

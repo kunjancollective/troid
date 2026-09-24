@@ -560,7 +560,7 @@ dashboard.risk.risk.n,capped at 35% of budget,limitado a 35% do orçamento,,keep
 dashboard.risk.fees.k,Fees,Taxas,,
 dashboard.risk.fees.n,"round trip, on notional","ida e volta, sobre o nocional",,
 dashboard.risk.reset.k,Reset,Reset,,
-dashboard.risk.reset.n,noon in New York,meio-dia em Nova York,,
+dashboard.risk.reset.n,"noon in New York, 11:00 in winter","meio-dia em Nova York, 11:00 no inverno",,keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
@@ -701,14 +701,15 @@ ceiling and the ""4% daily"" number is fiction.","Mas muitas vezes ele não é a
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one bad day. Size
 against the smaller of the two, always.","Em uma conta nova, esse ponto de cruzamento fica a cerca de $2.000 de distância — metade de um dia ruim. Dimensione pelo menor dos dois, sempre.",,"CHECK FIRST: '$' kept per the brief rather than the usual pt-BR 'US$' (faq.cost.p1, faq.daily.*, dashboard.*, data.* prices). | keep every number exactly"
 faq.reset.q,When does your trading day reset?,Quando o seu dia de operações reinicia?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
-morning and afternoon sessions draw on separate daily budgets.
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
+For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","00:00 UTC+8, que é 16:00 UTC — <strong>meio-dia em Nova York</strong>, não meia-noite. As suas sessões da manhã e da tarde usam orçamentos diários separados. A liquidação da plataforma pode atrasar o reset em até dez minutos, até 16:10 UTC, então não conte com um novo orçamento diário antes disso.",,"CHECK FIRST: faq.reset.p1: 'settlement' is 'liquidação da plataforma'. 'reset' is kept as the anglicism, matching faq.reset.p2. The line breaks inside the English were joined into one line, as in the earlier draft. | CHECK FIRST: Status: both checks are clean. 'python3 backtest/i18n.py pt' reports 0 problems. The second check prints '0 problems []'. Only web/i18n/pt.json was edited. The file now has 662 top-level keys, 56 of them data keys, and _data_en has 56 entries. faq.reset.p1's _drafted_from hash is f2a05a2a4c. git diff also shows uncommitted changes in the other language files (ar, bn, es, fr, hi, id, ru, zh). I did not touch those; they came from somewhere else. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+on a fresh daily budget before then.","00:00 UTC+8, que é 16:00 UTC — <strong>meio-dia em Nova York</strong> no verão, 11:00 no inverno — não meia-noite. Para quem opera em Nova York, o reset cai no meio da sessão: uma perda de manhã e outra à tarde podem cair em dias de trading diferentes e usar orçamentos diários diferentes. A liquidação da plataforma pode atrasar o reset em até dez minutos, até 16:10 UTC, então não conte com um novo orçamento diário antes disso.",,"CHECK FIRST: faq.reset.p1: 'settlement' is 'liquidação da plataforma'. 'reset' is kept as the anglicism, matching faq.reset.p2. The line breaks inside the English were joined into one line, as in the earlier draft. | CHECK FIRST: Status: both checks are clean. 'python3 backtest/i18n.py pt' reports 0 problems. The second check prints '0 problems []'. Only web/i18n/pt.json was edited. The file now has 662 top-level keys, 56 of them data keys, and _data_en has 56 entries. faq.reset.p1's _drafted_from hash is f2a05a2a4c. git diff also shows uncommitted changes in the other language files (ar, bn, es, fr, hi, id, ru, zh). I did not touch those; they came from somewhere else. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
-limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
-themselves.","A armadilha: uma perda flutuante que atravessa o reset conta integralmente contra o novo dia, porque o lucro do dia anterior não é transportado. Uma posição confortavelmente dentro do limite às 11:59 pode violá-lo às 12:01 sem que o preço se mova. A própria Bitfunded documenta isso.",,keep every number exactly
+limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this
+themselves.","A armadilha: uma perda flutuante que atravessa o reset conta integralmente contra o novo dia, porque o lucro do dia anterior não é transportado. Uma posição confortavelmente dentro do limite um minuto antes do reset pode violá-lo um minuto depois sem que o preço se mova. A própria Bitfunded documenta isso.",,
 faq.risk.q,How much should you risk per trade?,Quanto você deve arriscar por operação?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","O número certo depende do seu sistema, então o troid não vai lhe dar um. O que ele pode mostrar é o que a aritmética faz com o número errado.",,"troid stays lowercase, in Latin letters"

@@ -617,7 +617,7 @@ dashboard.risk.risk.n,capped at 35% of budget,बजट के 35% पर कै
 dashboard.risk.fees.k,Fees,फ़ीस,,
 dashboard.risk.fees.n,"round trip, on notional","राउंड ट्रिप, नोशनल पर",,
 dashboard.risk.reset.k,Reset,रीसेट,,
-dashboard.risk.reset.n,noon in New York,न्यूयॉर्क में मध्याह्न,,"CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph."
+dashboard.risk.reset.n,"noon in New York, 11:00 in winter","न्यूयॉर्क में मध्याह्न, सर्दियों में 11:00",,"CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | keep every number exactly"
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
@@ -796,20 +796,22 @@ faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of
 against the smaller of the two, always.","नए अकाउंट पर वह क्रॉसओवर लगभग $2,000 दूर है — एक बुरे दिन का आधा। साइज़
 हमेशा दोनों में से छोटी सीमा के हिसाब से तय करें।",,keep every number exactly
 faq.reset.q,When does your trading day reset?,आपका ट्रेडिंग दिन कब रीसेट होता है?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
-morning and afternoon sessions draw on separate daily budgets.
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
+For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","00:00 UTC+8, यानी 16:00 UTC — <strong>न्यूयॉर्क में मध्याह्न</strong>, आधी रात नहीं। आपके
-सुबह और दोपहर बाद के सेशन अलग-अलग डेली बजट से चलते हैं।
+on a fresh daily budget before then.","00:00 UTC+8, यानी 16:00 UTC — गर्मियों में <strong>न्यूयॉर्क में मध्याह्न</strong>, सर्दियों में 11:00 — आधी रात नहीं।
+न्यूयॉर्क के ट्रेडर के लिए रीसेट सेशन के बीच में पड़ता है, इसलिए सुबह का घाटा और दोपहर बाद का घाटा अलग-अलग
+ट्रेडिंग दिनों में पड़ सकते हैं और अलग-अलग डेली बजट से गिने जा सकते हैं।
 प्लेटफ़ॉर्म के सेटलमेंट से रीसेट में दस मिनट तक, यानी 16:10 UTC तक, की देरी हो सकती है, इसलिए उससे पहले
 नए डेली बजट पर भरोसा न करें।",,"CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | CHECK FIRST: faq.reset.p1: 'settlement' is kept as the loanword 'सेटलमेंट', and the line break sits in a different place from the English line wrap. Neither affects the tags or figures. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
-limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this
 themselves.","जाल यह है: जो फ़्लोटिंग लॉस रीसेट के पार बना रहता है, वह पूरा का पूरा नए दिन के ख़िलाफ़ गिना जाता है,
-क्योंकि पिछले दिन का मुनाफ़ा आगे नहीं जुड़ता। जो पोज़िशन 11:59 पर सीमा के
-आराम से भीतर है, वह 12:01 पर कीमत बिल्कुल हिले बिना सीमा तोड़ सकती है। Bitfunded ख़ुद अपने दस्तावेज़ों में
-यह बताता है।",,keep every number exactly
+क्योंकि पिछले दिन का मुनाफ़ा आगे नहीं जुड़ता। जो पोज़िशन रीसेट से एक मिनट पहले सीमा के
+आराम से भीतर है, वह रीसेट के एक मिनट बाद कीमत बिल्कुल हिले बिना सीमा तोड़ सकती है। Bitfunded ख़ुद अपने दस्तावेज़ों में
+यह बताता है।",,
 faq.risk.q,How much should you risk per trade?,आपको प्रति ट्रेड कितना रिस्क लेना चाहिए?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","सही संख्या आपके सिस्टम पर निर्भर करती है, इसलिए troid आपको कोई संख्या नहीं देगा।

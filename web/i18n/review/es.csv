@@ -617,7 +617,7 @@ dashboard.risk.risk.n,capped at 35% of budget,con tope del 35% del presupuesto,,
 dashboard.risk.fees.k,Fees,Comisiones,,
 dashboard.risk.fees.n,"round trip, on notional","ida y vuelta, sobre el nocional",,
 dashboard.risk.reset.k,Reset,Reinicio,,
-dashboard.risk.reset.n,noon in New York,mediodía en Nueva York,,
+dashboard.risk.reset.n,"noon in New York, 11:00 in winter","mediodía en Nueva York, 11:00 en invierno",,keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
@@ -798,20 +798,22 @@ faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of
 against the smaller of the two, always.","En una cuenta nueva ese cruce está a unos $2,000: la mitad de un mal día. Dimensiona
 siempre frente al menor de los dos.",,keep every number exactly
 faq.reset.q,When does your trading day reset?,¿Cuándo se reinicia tu día de trading?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
-morning and afternoon sessions draw on separate daily budgets.
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
+For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","A las 00:00 UTC+8, que son las 16:00 UTC: <strong>mediodía en Nueva York</strong>, no medianoche. Tus
-sesiones de mañana y de tarde consumen presupuestos diarios separados.
+on a fresh daily budget before then.","A las 00:00 UTC+8, que son las 16:00 UTC: <strong>mediodía en Nueva York</strong> en verano, las 11:00 en invierno; no medianoche.
+Para quien opera desde Nueva York el reinicio cae en plena sesión, así que una pérdida de la mañana y otra de la tarde pueden caer
+en días de trading distintos y consumir presupuestos diarios distintos.
 La liquidación de la plataforma puede retrasar el reinicio hasta diez minutos, hasta las 16:10 UTC, así que no
 cuentes con un presupuesto diario nuevo antes de esa hora.",,CHECK FIRST: faq.reset.p1: 'settlement' became 'liquidación' and 'fresh daily budget' became 'presupuesto diario nuevo'. Check that these sound natural. Line breaks follow the English layout. | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
-limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
+limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this
 themselves.","La trampa: una pérdida flotante que sobrevive al reinicio cuenta íntegramente contra el nuevo día,
 porque el beneficio del día anterior no se traslada. Una posición cómodamente dentro del
-límite a las 11:59 puede incumplirlo a las 12:01 sin que el precio se mueva en absoluto. La propia Bitfunded
-lo documenta.",,keep every number exactly
+límite un minuto antes del reinicio puede incumplirlo un minuto después sin que el precio se mueva en absoluto. La propia Bitfunded
+lo documenta.",,
 faq.risk.q,How much should you risk per trade?,¿Cuánto deberías arriesgar por operación?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","El número correcto depende de tu sistema, así que troid no te va a dar uno.

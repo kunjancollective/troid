@@ -558,7 +558,7 @@ dashboard.risk.risk.n,capped at 35% of budget,не более 35% бюджета
 dashboard.risk.fees.k,Fees,Комиссии,,
 dashboard.risk.fees.n,"round trip, on notional","за полный круг, от объёма",,
 dashboard.risk.reset.k,Reset,Сброс,,
-dashboard.risk.reset.n,noon in New York,полдень в Нью-Йорке,,
+dashboard.risk.reset.n,"noon in New York, 11:00 in winter","полдень в Нью-Йорке, зимой 11:00",,keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
@@ -699,14 +699,15 @@ ceiling and the ""4% daily"" number is fiction.","Но часто значени
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one bad day. Size
 against the smaller of the two, always.",На свежем счёте эта точка пересечения примерно в $2 000 от старта — половина одного плохого дня. Всегда рассчитывайте размер по меньшему из двух.,,keep every number exactly
 faq.reset.q,When does your trading day reset?,Когда сбрасывается ваш торговый день?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong>, not midnight. Your
-morning and afternoon sessions draw on separate daily budgets.
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
+For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","В 00:00 UTC+8, то есть в 16:00 UTC — <strong>в полдень в Нью-Йорке</strong>, а не в полночь. Ваши утренняя и послеобеденная сессии расходуют разные дневные бюджеты. Расчёты на платформе могут задержать сброс на срок до десяти минут, до 16:10 UTC, поэтому не рассчитывайте на новый дневной бюджет раньше этого времени.",,"CHECK FIRST: faq.reset.p1: 'The platform's settlement' is 'Расчёты на платформе'. Check that this reads as the platform's settlement or processing step, not as calculations in general. Alternatives are 'клиринг платформы' or 'обработка на платформе'. | CHECK FIRST: The new faq.reset.p1 value has no line breaks, while the English has them. That matches how the existing ru value was written (HTML treats line breaks as spaces). | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+on a fresh daily budget before then.","В 00:00 UTC+8, то есть в 16:00 UTC — <strong>в полдень в Нью-Йорке</strong> летом и в 11:00 зимой, а не в полночь. У трейдера в Нью-Йорке сброс приходится на середину сессии, поэтому утренний и дневной убыток могут прийтись на разные торговые дни и расходовать разные дневные бюджеты. Расчёты на платформе могут задержать сброс на срок до десяти минут, до 16:10 UTC, поэтому не рассчитывайте на новый дневной бюджет раньше этого времени.",,"CHECK FIRST: faq.reset.p1: 'The platform's settlement' is 'Расчёты на платформе'. Check that this reads as the platform's settlement or processing step, not as calculations in general. Alternatives are 'клиринг платформы' or 'обработка на платформе'. | CHECK FIRST: The new faq.reset.p1 value has no line breaks, while the English has them. That matches how the existing ru value was written (HTML treats line breaks as spaces). | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
-limit at 11:59 can breach at 12:01 without price moving at all. Bitfunded documents this
-themselves.","Ловушка: плавающий убыток, переживший сброс, целиком засчитывается в новый день, потому что прибыль предыдущего дня не переносится. Позиция, которая в 11:59 спокойно укладывалась в лимит, в 12:01 может его нарушить, даже если цена вообще не двигалась. Bitfunded описывает это в собственной документации.",,keep every number exactly
+limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this
+themselves.","Ловушка: плавающий убыток, переживший сброс, целиком засчитывается в новый день, потому что прибыль предыдущего дня не переносится. Позиция, которая за минуту до сброса спокойно укладывалась в лимит, через минуту после него может его нарушить, даже если цена вообще не двигалась. Bitfunded описывает это в собственной документации.",,
 faq.risk.q,How much should you risk per trade?,Сколько стоит рисковать на сделку?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","Правильное число зависит от вашей системы, поэтому troid его вам не назовёт. Показать он может другое: что арифметика делает с неправильным.",,"troid stays lowercase, in Latin letters"
