@@ -512,9 +512,13 @@ function size_trade(a) {
   if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it`);
   notes.push(`${left} more losses at this size before ${b.binding} trips`);
   const sp = dist / entry * 100;
-  let liq, fl;   // MMR 0.5% is troid's assumption, not a firm rule
-  if (mode === "isolated") { liq = (1 - (1 - 1 / levUsed) / (1 - MMR)) * 100; fl = `1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR ${MMR * 100}%)`; }
-  else { liq = notional > 0 ? (1 - (1 - eq / notional) / (1 - MMR)) * 100 : Infinity; fl = `1 − (1 − equity ÷ notional) ÷ (1 − MMR ${MMR * 100}%)`; }   // <= 0: already below maintenance
+  // MMR 0.5% is troid's assumption, not a firm rule. The exchange liquidates when the margin behind the position falls to
+  // the maintenance margin on the notional at the liquidation price: lower than entry for a long, higher for a short.
+  // Adverse move = (m − MMR) ÷ (1 − MMR) long, (m − MMR) ÷ (1 + MMR) short; m = 1 ÷ leverage isolated, equity ÷ notional
+  // cross. (Until 2026-09-24 the long formula served both sides.) <= 0: already below maintenance.
+  const sg = side > 0 ? "−" : "+", mBack = mode === "isolated" ? 1 / levUsed : notional > 0 ? eq / notional : Infinity;
+  const liq = isFinite(mBack) ? (mBack - MMR) / (1 - side * MMR) * 100 : Infinity;
+  const fl = (mode === "isolated" ? "(1 ÷ leverage used" : "(equity ÷ notional") + ` − MMR ${MMR * 100}%) ÷ (1 ${sg} MMR)`;
   const assumed = ["exchange liquidation uses a 0.5% maintenance margin — troid's assumption, no firm source"];
   if (a.margin_mode == null) assumed.push("margin mode " + mode + " — troid's default, not an input you gave" + (p.pv.margin_modes ? "" : "; troid has no recorded source for this firm's margin modes"));
   if (a.leverage == null) assumed.push("leverage " + lev + "× — troid's default, not an input you gave");

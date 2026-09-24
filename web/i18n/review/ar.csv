@@ -226,8 +226,8 @@ index.js.f_target_short,entry − {r} × stop distance,الدخول − {r} × �
 index.js.n_fees_high,fees are {pct}% of risk — stop tight enough that costs dominate,الرسوم تمثّل {pct}% من المخاطرة — الوقف ضيق إلى حدّ أن التكاليف تطغى,,keep {pct} exactly as written
 index.js.n_cut,cut from {from} to {to} — {bind} budget caps it,خُفِّض من {from} إلى {to} — ميزانية {bind} تضع له سقفًا,,keep {bind} {from} {to} exactly as written
 index.js.n_left,{n} more losses at this size before {bind} trips,الخسائر الإضافية الممكنة بهذا الحجم قبل تجاوز {bind}: {n},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {bind} {n} exactly as written"
-index.js.f_liq_isolated,1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR {mmr}%),1 − (1 − 1 ÷ الرافعة المستخدمة) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
-index.js.f_liq_cross,1 − (1 − equity ÷ notional) ÷ (1 − MMR {mmr}%),1 − (1 − حقوق الملكية ÷ القيمة الاسمية) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
+index.js.f_liq_isolated,(1 ÷ leverage used − MMR {mmr}%) ÷ (1 {sign} MMR),(1 ÷ الرافعة المستخدمة − MMR {mmr}%) ÷ (1 {sign} MMR),,keep {mmr} {sign} exactly as written; keep every number exactly
+index.js.f_liq_cross,(equity ÷ notional − MMR {mmr}%) ÷ (1 {sign} MMR),(حقوق الملكية ÷ القيمة الاسمية − MMR {mmr}%) ÷ (1 {sign} MMR),,keep {mmr} {sign} exactly as written; keep every number exactly
 index.js.br_stop,your stop,وقفك,,
 index.js.br_daily,daily limit,الحد اليومي,,
 index.js.st_daily_dist,daily-limit distance,المسافة إلى الحد اليومي,,
@@ -852,6 +852,7 @@ ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed 
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.tier.inputs,Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
+ask.support_step5,"The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly

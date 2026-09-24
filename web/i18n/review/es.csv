@@ -238,8 +238,8 @@ index.js.f_target_short,entry − {r} × stop distance,entrada − {r} × distan
 index.js.n_fees_high,fees are {pct}% of risk — stop tight enough that costs dominate,las comisiones son el {pct}% del riesgo: el stop es tan ajustado que dominan los costos,,keep {pct} exactly as written
 index.js.n_cut,cut from {from} to {to} — {bind} budget caps it,reducido de {from} a {to}: lo limita el presupuesto del {bind},,keep {bind} {from} {to} exactly as written
 index.js.n_left,{n} more losses at this size before {bind} trips,{n} pérdidas más con este tamaño antes de alcanzar el {bind},,keep {bind} {n} exactly as written
-index.js.f_liq_isolated,1 − (1 − 1 ÷ leverage used) ÷ (1 − MMR {mmr}%),1 − (1 − 1 ÷ apalancamiento usado) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
-index.js.f_liq_cross,1 − (1 − equity ÷ notional) ÷ (1 − MMR {mmr}%),1 − (1 − equity ÷ nocional) ÷ (1 − MMR {mmr}%),,keep {mmr} exactly as written; keep every number exactly
+index.js.f_liq_isolated,(1 ÷ leverage used − MMR {mmr}%) ÷ (1 {sign} MMR),(1 ÷ apalancamiento usado − MMR {mmr}%) ÷ (1 {sign} MMR),,keep {mmr} {sign} exactly as written; keep every number exactly
+index.js.f_liq_cross,(equity ÷ notional − MMR {mmr}%) ÷ (1 {sign} MMR),(equity ÷ nocional − MMR {mmr}%) ÷ (1 {sign} MMR),,keep {mmr} {sign} exactly as written; keep every number exactly
 index.js.br_stop,your stop,tu stop,,
 index.js.br_daily,daily limit,límite diario,,
 index.js.st_daily_dist,daily-limit distance,distancia al límite diario,,
@@ -1011,6 +1011,7 @@ ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed 
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.tier.inputs,Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
+ask.support_step5,"The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly

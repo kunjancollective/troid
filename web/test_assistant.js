@@ -24,7 +24,11 @@ ok("ref2 fees 101.05 = 21.05%", r.fees === 101.05 && r.fee_share_of_risk_pct ===
 ok("ref2 consumes 24, losses left 4", r.consumes_pct_of_budget === 24 && r.losses_remaining === 4, [r.consumes_pct_of_budget, r.losses_remaining]);
 ok("ref2 crossover 98000", r.crossover_equity === 98000, r.crossover_equity);
 ok("ref2 breakers order", r.circuit_breakers.map((b) => b.event).join(">") === "your stop>max-loss floor>daily limit>exchange liquidation (cross)", r.circuit_breakers);
-ok("ref2 cross liq 75.88", r.circuit_breakers[3].adverse_move_pct === 75.88, r.circuit_breakers[3]);
+ok("ref2 cross liq 75.12 on this short: (equity ÷ notional − MMR) ÷ (1 + MMR); the long formula gave 75.88",
+   r.circuit_breakers[3].adverse_move_pct === 75.12 && r.working.some((w) => w.formula === "(equity ÷ notional − MMR 0.5%) ÷ (1 + MMR)"), r.circuit_breakers[3]);
+{ const liqAt = (side, stop) => T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 100000, side, entry: 77872, stop, risk_pct: 0.5, margin_mode: "isolated", leverage: 5 })
+    .circuit_breakers.find((b) => /liquidation/.test(b.event)).adverse_move_pct;
+  ok("isolated 5×: a long liquidates 19.6% away, a short 19.4% (the maintenance margin is on the notional at the higher price)", liqAt("long", 77638.384) === 19.6 && liqAt("short", 78105.616) === 19.4); }
 
 // --- BrightFunded: max_balance_equity + trailing on equity, fee and leverage pending
 r = T.size_trade({ firm: "brightfunded", product: "1step", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });

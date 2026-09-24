@@ -104,15 +104,14 @@ def check_budget(quota: float, equity: float, day_start_balance: float,
     return b
 
 
-@mcp.tool()
-def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget, dd_budget):
+def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget, dd_budget):   # a helper, not a tool
     stop_pct = abs(entry - stop) / entry * 100
     daily_pct = daily_budget / notional * 100
     floor_pct = dd_budget / notional * 100
-    if mode == "isolated":
-        liq = (1 - (1 - 1 / leverage) / (1 - MMR)) * 100
-    else:
-        liq = (1 - (1 - equity / notional) / (1 - MMR)) * 100 if notional > 0 else 1e9   # <= 0: already below maintenance
+    # adverse move = (m - MMR) / (1 - MMR) long, (m - MMR) / (1 + MMR) short: the maintenance margin is charged on the
+    # notional at the liquidation price. m = 1/leverage isolated, equity/notional cross. <= 0: already below maintenance.
+    m = 1 / leverage if mode == "isolated" else (equity / notional if notional > 0 else None)
+    liq = (m - MMR) / (1 - side * MMR) * 100 if m is not None else 1e9
     order = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
                     ("max loss floor", floor_pct), (f"exchange liquidation ({mode})", max(liq, 0))],
                    key=lambda e: e[1])
@@ -428,8 +427,9 @@ def list_profiles() -> dict:
                   "min_trading_days": p["min_days"],
                   "crossover_pct_of_quota": round(cross * 100, 2),
                   "room_before_max_loss_binds_pct": round((1 - cross) * 100, 2)}
-    out["_note"] = ("The 1-Step is the tightest structure — least room, highest target. "
-                    "Sizing that clears it clears any of the others.")
+    out["_note"] = ("Express is the tightest structure (3% daily, 3% maximum: its crossover is the starting "
+                    "balance), then Instant (3% daily), then the 1-Step (4%, 6%, the highest target). Sizing that "
+                    "clears a tighter structure clears a looser one on the same account.")
     return out
 
 

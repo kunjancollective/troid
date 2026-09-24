@@ -125,8 +125,8 @@ inside the stop.
 | profile | daily | max | target | min days | fee |
 |---|---|---|---|---|---|
 | 1-Step | 4% | 6% static | 10% | 5 | $999 |
-| 2-Step Stage 1 | 5% | 10% static | 8% | 5 | $799 |
-| 2-Step Stage 2 | 5% | 8% static | 5% | 5 | — |
+| 2-Step Stage 1 | 5% | 10% static | 8% | 5 | $799, one fee for both stages |
+| 2-Step Stage 2 | 5% | 8% static | 5% | 5 | in the $799 |
 | 1-Step Express | 3% | 3% static | 9%* | 5 | $39 at $5k |
 | Instant | 3% | 6% static | none | 0 | $249 at $5k · 60% split |
 | Funded after 1-Step | 4% | 6% static | none | — | 80% split |
@@ -142,7 +142,8 @@ Express: daily and max are the same size, so both ceilings bind from the first d
 lost — its crossover *is* the starting balance. Instant trades evaluation time for a 60%
 split instead of 80%.
 
-The 1-Step is the tightest structure. Sizing that clears it clears anything.
+Express is the tightest structure (3% daily, 3% maximum), then Instant (3% daily, 6% maximum), then
+the 1-Step (4%, 6%). Sizing that clears a tighter structure clears a looser one on the same account.
 Refund: Bitfunded's own documents conflict. Terms 9(a) — 100% at the first profit split
 day, all levels (9(b) repeats it). Help centre — 2-Step only, with the 3rd withdrawal, not
 on promotions. Confirm with Bitfunded before relying on a refund. Split 80% rising to 90%.

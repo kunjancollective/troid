@@ -344,8 +344,10 @@ function render(){
   notes.push(F(T.n_left,{n:left,bind:bind}));
   // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
   var sp=dist/entry*100,liq,fl;
-  if(mode==="isolated"){liq=(1-(1-1/levUsed)/(1-MMR))*100;fl=F(T.f_liq_isolated,{mmr:MMR*100});}
-  else{liq=notional>0?(1-(1-eq/notional)/(1-MMR))*100:Infinity;fl=F(T.f_liq_cross,{mmr:MMR*100});}
+  // adverse move = (m − MMR) ÷ (1 − MMR) long, (m − MMR) ÷ (1 + MMR) short; m = 1 ÷ leverage isolated, equity ÷ notional cross
+  var mB=mode==="isolated"?1/levUsed:(notional>0?eq/notional:Infinity),sg=side>0?"−":"+";
+  liq=isFinite(mB)?(mB-MMR)/(1-side*MMR)*100:Infinity;
+  fl=F(mode==="isolated"?T.f_liq_isolated:T.f_liq_cross,{mmr:MMR*100,sign:sg});
   var ord=[[T.br_stop,sp,"stop"]];                                   // [label, adverse %, which]
   if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
   if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
