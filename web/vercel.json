@@ -24,6 +24,9 @@
     "api/troid.js": {
       "includeFiles": "{context,public,i18n}/*.{json,md}",
       "maxDuration": 60
+    },
+    "api/digest.js": {
+      "maxDuration": 60
     }
   },
   "rewrites": [
@@ -43,6 +46,12 @@
       ],
       "destination": "https://troid.ai/:path*",
       "permanent": true
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/digest",
+      "schedule": "30 4 * * 1"
     }
   ]
 }

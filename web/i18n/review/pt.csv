@@ -105,9 +105,10 @@ index.crossover.lab_static,static floor,piso estático,,
 index.crossover.lab_basis,initial-balance daily limit,limite diário sobre o saldo inicial,,
 index.does.h2,What troid does,O que o troid faz,,"troid stays lowercase, in Latin letters"
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
-  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
+  5 for TradFi), the
   margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.","Calcula os dois tetos de perda e informa qual deles limita. Dimensiona posições com a taxa de 0,04% por lado já descontada. Verifica as operações em relação às regras da empresa — a permanência máxima de dez dias, o limite de concentração de margem, o mínimo de cinco dias. Funciona com todos os tipos de desafio e com todos os ativos que a empresa oferece.",,keep every number exactly
+  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 index.doesnt.h2,What it doesn't,O que ele não faz,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,Publicar sinais de trading. Enviar ordens. Mexer nas suas credenciais. Vender uma estratégia para você.,,
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -602,7 +603,8 @@ chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way 
   troid keeps each conversation for 30 days after its last message, under the session ID shown
   under the message box, then deletes it automatically: your messages, ask troid's replies, the
   tools used and the sources cited. Never your IP address, your browser, your name or an account.
-  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  Once a week troid counts which topics come up most, never quoting anyone.
+  Only troid's operator can read a conversation; it is never sold and never used for marketing or
   to train a model. To answer, troid also sends the conversation to the company that provides the
   AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
   its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
@@ -721,8 +723,9 @@ message box, and deleted automatically 30 days after its last message. troid kee
 ask troid's replies, the tools it used with their inputs and results, the rule sources and read
 dates it cited, the page's language and the AI model used; never your IP address, your browser's
 user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
-to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
-troid can read them. They are never sold and never used for marketing or to train an AI model. To
+to correct errors, to check that ask troid keeps to its guardrails, and to learn which questions
+come up most so troid can improve its pages and answers: once a week it counts them by topic,
+never quoting a message. Only troid's operator can read a conversation. They are never sold and never used for marketing or to train an AI model. To
 delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
 <a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,Vale a pena comprar um desafio?,,
@@ -793,9 +796,9 @@ terms.hero.eyebrow,troid · terms,troid · termos,,"troid stays lowercase, in La
 terms.hero.h1,Terms of use,Termos de uso,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","O troid é uma ferramenta informativa gratuita. Não é aconselhamento, não envia nenhuma ordem, e os documentos da própria empresa prevalecem. Os termos completos vêm a seguir.",,"troid stays lowercase, in Latin letters"
-terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,Sumário,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: ask.disclosure: 'computed math' became 'cálculos feitos por computador'. Check that it neither adds nor loses a claim. | keep every number exactly; troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: ask.disclosure: 'computed math' became 'cálculos feitos por computador'. Check that it neither adds nor loses a claim. | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento. Mensagens abusivas encerram a sessão.,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Esta sessão foi encerrada. O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento.,,"troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","O pergunte ao troid não pode responder a essa pergunta. O desk do troid e o comparador do troid mostram as regras, as fontes delas e os cálculos; para qualquer outro assunto, escreva para hello@troid.ai.",,"troid stays lowercase, in Latin letters"

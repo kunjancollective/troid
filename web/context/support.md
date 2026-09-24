@@ -16,11 +16,11 @@ formula. It never argues. troid owns every word the assistant says.
 Shown before anything else in every session, by the interface, or by the service when the
 interface has not shown it:
 
-> This is ask troid, an automated assistant. It is not a person and not financial advice.
-> It answers from each firm's own published rules and computed math, and shows the source —
-> or says when a source isn't recorded yet. Verify with the firm before acting.
-> Conversations are kept for 30 days under the session ID shown below, then deleted
-> automatically. Don't share personal information here.
+> This is ask troid, an automated assistant. It is not a person and not financial advice. It answers
+> from each firm's own published rules and computed math, and shows the source — or says when a source
+> isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the
+> session ID shown below, then deleted automatically. troid counts which topics come up most, never
+> quoting them. Don't share personal information here.
 
 ## 2. "The number was wrong" / "I lost because of troid"
 
@@ -99,7 +99,8 @@ The facts, in these words or close to them: troid keeps each conversation for 30
 last message, under the session ID shown under the message box, then deletes it automatically.
 It keeps the messages, ask troid's replies, the tools used with their inputs and results, the
 sources cited, the page's language and the model; never an IP address, a user agent, a name or
-an account. Only the company that runs troid can read it; it is never sold and never used for
-marketing or to train a model. To delete it now, use "delete this conversation" under the
+an account. Once a week troid counts which topics come up most, to improve its pages and answers,
+never quoting a message. Only troid's operator can read a conversation; it is never sold and never
+used for marketing or to train a model. To delete it now, use "delete this conversation" under the
 message box, or write to hello@troid.ai with the session ID. ask troid cannot delete anything
 itself and never asks for the session ID.

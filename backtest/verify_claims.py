@@ -285,13 +285,21 @@ check("DERIVED", "disclosure: quoted verbatim in support.md", float(_disc in _su
 check("DERIVED", "disclosure states the 30 days and the session ID", float("kept for 30 days under the session ID" in _disc), 1.0)
 _sec10 = _html.unescape(_re.search(r'<section id="ask-troid">(.*?)</section>', _read("web/public/terms.html"), _re.S).group(1))
 for _fact in ("for 30 days after its last message", "deletes it automatically", "does not keep your IP address",
-              "Only the Company can read", "never sells conversations", "never uses them for marketing or to train any AI model",
-              "delete this conversation", "hello@troid.ai"):
+              "Only the Operator can read", "never sells conversations", "never uses them for marketing or to train any AI model",
+              "delete this conversation", "hello@troid.ai", "which questions come up most", "no quotation and no session ID",
+              "does not publish them"):
     check("DERIVED", f"terms section 10 says: {_fact}", float(_fact in _sec10), 1.0)
 _faq = _html.unescape(_read("web/public/faq.html"))
 check("DERIVED", "FAQ answers 'Does troid keep my conversation with ask troid?'",
       float(_en["faq.keep.q"] in _faq and "30 days" in _faq and "never used for marketing or to train an AI model" in _faq), 1.0)
 check("DERIVED", "chat page states the 30-day record", float("30 days after its last message" in _html.unescape(_read("web/public/chat.html"))), 1.0)
+check("DERIVED", "disclosure states the weekly topic counts, never quoted", float("counts which topics come up most, never quoting them" in _disc), 1.0)
+check("DERIVED", "FAQ states the fourth purpose", float("which questions\ncome up most" in _en["faq.keep.p"] and "never quoting a message" in _en["faq.keep.p"]), 1.0)
+check("DERIVED", "chat page states the weekly topic counts", float("counts which topics come up most, never quoting anyone" in " ".join(_html.unescape(_read("web/public/chat.html")).split())), 1.0)
+_terms_all = _html.unescape(_read("web/public/terms.html"))
+check("SOURCED", "terms section 1 names the operator: Kunjan Patel (owner decision 2026-09-24)", float("troid is operated by Kunjan Patel (“the Operator”)" in _terms_all and "Company" not in _terms_all), 1.0)
+for page in sorted((_ROOT / "web" / "public").glob("*.html")):
+    check("DERIVED", f"footer carries © 2026 Kunjan Patel on {page.name}", float("© 2026 Kunjan Patel" in _html.unescape(page.read_text())), 1.0)
 
 print()
 print("="*76)

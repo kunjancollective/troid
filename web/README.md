@@ -18,6 +18,7 @@ Lightweight Charts on the ledger (cdn.jsdelivr.net, version pinned).
 
 | `public/{lang}/…` | `/zh`, `/zh/compare`, … | The same pages in a language whose reviewer has signed off (`i18n/{lang}.json` `_status: live`). None yet. |
 | `public/i18n.js`, `public/i18n.css` | — | Translated pages only: Intl numbers (USD, never converted), local time beside UTC, the country selector, share |
+| `api/digest.js`, `lib/faq_digest.js`, `faq_digest.js` | `/api/digest` (cron only) | The weekly question digest (terms section 10, the fourth purpose): Mondays 04:30 UTC, Vercel Cron counts the past ISO week's stored messages by topic, firm, tool and language, by fixed rules, into `digest:<week>` in the store with no expiry. No text, no quotation, no session ID; nothing committed or published. `node web/faq_digest.js [--week 2026-W39]` does the same by hand and writes `business/faq_digest/<week>.json` (gitignored). Tests: `node web/test_digest.js`. |
 | `public/live.js`, `public/status.json` | `/status.json` | The status light: the dot in every page's wordmark ripples while the last shadow run and the last bar are inside the windows it states (13 hours for the run, 17 for the bar) and holds still otherwise; it links to troid's ledger. `status.json` is written by `backtest/gen_ledger.py` on every shadow run |
 
 `cleanUrls` in `vercel.json` serves `/faq` from `faq.html`, and a rewrite serves `/zh` from `zh/index.html`.
@@ -53,6 +54,7 @@ Switched on by the owner in Vercel → Project → Environment Variables. Withou
 | `ANTHROPIC_API_KEY` | the key. Never in the repo. Put it in its own Anthropic Console workspace with a monthly spend limit: that limit is the only hard wall on cost. |
 | `TROID_TURN_KEY` | 32 random bytes or more. Signs troid's side of each conversation so a client cannot forge it; a change to the guardrails also invalidates older conversations. Required: without it, or with a shorter key, the function answers 503. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the conversation store: Upstash Redis, added from the Vercel Marketplace (Upstash's own `UPSTASH_REDIS_REST_URL` / `_TOKEN` also work). Required: the disclosure promises a 30-day record, so without a store ask troid stays off. |
+| `CRON_SECRET` | 16 characters or more (`openssl rand -hex 32`). Vercel Cron sends it to `/api/digest` each Monday; without it the digest route answers 503 and counts nothing. |
 | `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
 | `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
 | `TROID_TOOLS_EFFORT` | effort on the tool route (default `low`; `none` omits it). Compare `low` and `medium` on real transcripts before switch-on. |

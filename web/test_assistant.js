@@ -160,7 +160,7 @@ for (const v of ["That's a real loss and troid takes the question seriously.", "
 for (const v of ["troid doesn't recommend; it prices what you bring.",
   "Every rule-based number on troid shows the rule it came from and the date troid read it, or says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table."])
   ok("support.md quotes the owner's reply: " + v.slice(0, 40), quoted.includes(v));
-ok("the disclosure is the owner's wording, with the launch handoff's 30-day sentence", F0.DISCLOSURE === "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.");
+ok("the disclosure is the owner's wording: the 30-day sentence and the weekly topic counts", F0.DISCLOSURE === "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.");
 
 // --- handler end to end: the real SDK against a local fake of the Messages API
 const http = require("http");
@@ -229,7 +229,7 @@ fake.listen(18765, async () => {
        && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 5 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
     ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "section 4, word for word", F.END_SESSION, "opening disclosure", "affiliate link"].every((k) => calls[0].system[0].text.includes(k)));
     ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader\./.test(calls[0].system[0].text));
-    const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
+    const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_code", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
     ok("the prompt carries rule data only: no internal notes, rankings, affiliate terms or correspondence",
        banned.every((k) => !sys.includes(k)) && /"provenance"/.test(sys) && /"lev_bands"/.test(sys), banned.filter((k) => sys.includes(k)));
     const firmsBlock = calls[0].system[2].text;

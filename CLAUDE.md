@@ -47,6 +47,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
+  never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
+  written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.
 - `web/templates/` + `web/i18n/` — every page is rendered from a template and `en.json` by
   `backtest/site_build.py` (the generators call it); never hand-edit `web/public/*.html`. A language publishes only
   when `web/i18n/{lang}.json` is `_status: live`, set by `i18n_import.py` from its native reviewer's sheet.

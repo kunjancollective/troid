@@ -144,7 +144,7 @@ def js(k, f, T):
     """One firm's column data for the page's script. p holds the rule values as firms.json has them (the script's
     logic reads them); pt holds the ones whose text differs in T's language, which the script shows instead."""
     p = f["compare_product"]
-    ag = f.get("affiliate_agreement") or {}
+    code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")   # public: it is in the link
     link_ok = link_live(f)
     c = f.get("calc") or {}; pc = (c.get("products") or {}).get(p.get("key")) or {}
     pt = {}
@@ -162,7 +162,7 @@ def js(k, f, T):
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
-        "code": ag.get("customer_code") if link_ok else None,
+        "code": code if link_ok else None,
         "promo": T.data(f.get("_promo_note")) if link_ok else None}, ensure_ascii=site_text._english(T))
 
 

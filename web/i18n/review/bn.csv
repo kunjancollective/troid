@@ -104,9 +104,10 @@ index.crossover.lab_static,static floor,স্ট্যাটিক ফ্লো
 index.crossover.lab_basis,initial-balance daily limit,প্রাথমিক ব্যালান্সভিত্তিক দৈনিক লিমিট,,
 index.does.h2,What troid does,troid কী করে,,"troid stays lowercase, in Latin letters"
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
-  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
+  5 for TradFi), the
   margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.","ক্ষতির দুটি সীমাই হিসাব করে এবং কোনটি কার্যকর তা জানায়। প্রতি সাইডে 0.04% ফি ধরে পজিশনের সাইজ নির্ধারণ করে। ফার্মের নিয়মের সাথে ট্রেড মিলিয়ে দেখে — দশ দিনের সর্বোচ্চ হোল্ড, মার্জিন কনসেন্ট্রেশন সীমা, পাঁচ দিনের ন্যূনতম সীমা। ফার্মের তালিকাভুক্ত প্রতিটি চ্যালেঞ্জ টাইপ ও প্রতিটি অ্যাসেটে কাজ করে।",,keep every number exactly
+  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 index.doesnt.h2,What it doesn't,যা করে না,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,ট্রেড সিগন্যাল প্রকাশ করে না। অর্ডার দেয় না। আপনার লগইন তথ্যে হাত দেয় না। আপনার কাছে কোনো স্ট্র্যাটেজি বিক্রি করে না।,,"CHECK FIRST: index.doesnt.p: each item is written as its own negation ('…প্রকাশ করে না। অর্ডার দেয় না।…') rather than bare verbs under the heading 'যা করে না', so every item stays a negation when read alone. Confirm that this is acceptable."
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -601,7 +602,8 @@ chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way 
   troid keeps each conversation for 30 days after its last message, under the session ID shown
   under the message box, then deletes it automatically: your messages, ask troid's replies, the
   tools used and the sources cited. Never your IP address, your browser, your name or an account.
-  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  Once a week troid counts which topics come up most, never quoting anyone.
+  Only troid's operator can read a conversation; it is never sold and never used for marketing or
   to train a model. To answer, troid also sends the conversation to the company that provides the
   AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
   its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
@@ -720,8 +722,9 @@ message box, and deleted automatically 30 days after its last message. troid kee
 ask troid's replies, the tools it used with their inputs and results, the rule sources and read
 dates it cited, the page's language and the AI model used; never your IP address, your browser's
 user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
-to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
-troid can read them. They are never sold and never used for marketing or to train an AI model. To
+to correct errors, to check that ask troid keeps to its guardrails, and to learn which questions
+come up most so troid can improve its pages and answers: once a week it counts them by topic,
+never quoting a message. Only troid's operator can read a conversation. They are never sold and never used for marketing or to train an AI model. To
 delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
 <a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,একটি চ্যালেঞ্জ কি কেনার মতো?,,
@@ -792,9 +795,9 @@ terms.hero.eyebrow,troid · terms,troid · শর্তাবলি,,"troid stay
 terms.hero.h1,Terms of use,ব্যবহারের শর্তাবলি,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","troid একটি বিনামূল্যের তথ্যভিত্তিক টুল। এটি পরামর্শ নয়, এটি কোনো অর্ডার দেয় না, এবং ফার্মের নিজস্ব ডকুমেন্টই চূড়ান্ত। পূর্ণ শর্তাবলি নিচে দেওয়া হলো।",,"CHECK FIRST: legal.governs, legal.summary.terms, faq.disc.eval.p2: 'governs' is rendered 'প্রাধান্য পাবে' (the Bangladeshi statutory idiom 'পাঠ প্রাধান্য পাইবে'). In UI prose, 'the firm's own documents govern' uses 'চূড়ান্ত' instead (chat.discl, terms.hero.lede, common.avail.not_excluded). Please confirm the split is acceptable in legal register. | troid stays lowercase, in Latin letters"
-terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,সূচিপত্র,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,আস্ক troid প্রপ-ফার্মের নিয়ম ও সাইজিং নিয়ে প্রশ্নের উত্তর দেয়। অপমানজনক মেসেজ পাঠালে সেশন শেষ হয়ে যায়।,,"CHECK FIRST: ask.warning: 'Abusive messages' = 'অপমানজনক মেসেজ'. Check the strength. ask.err.timeout and ask.tool_limit: 'Ask again, narrower' = 'আরও নির্দিষ্ট করে আবার জিজ্ঞাসা করুন'. | troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,এই সেশন শেষ হয়েছে। আস্ক troid প্রপ-ফার্মের নিয়ম ও সাইজিং নিয়ে প্রশ্নের উত্তর দেয়।,,"troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","আস্ক troid এই প্রশ্নের উত্তর দিতে পারে না। troid ডেস্ক ও troid তুলনা নিয়ম, সেগুলোর উৎস ও হিসাব দেখায়; অন্য যেকোনো বিষয়ে hello@troid.ai-তে লিখুন।",,"troid stays lowercase, in Latin letters"

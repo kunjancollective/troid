@@ -706,11 +706,8 @@
     "split": "up to 90% (add-on for 90%; base per third-party 80%)",
     "payouts_per_30d": null,
     "affiliate_url": "https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA",
-    "affiliate_agreement": {
-      "signed": "2026-09-21",
-      "customer_code": "YQfyv0bgQtOZMHTXOSAoAA",
-      "customer_code_note": "10% off for the reader through this link. The code is the attribution."
-    },
+    "affiliate_code": "YQfyv0bgQtOZMHTXOSAoAA",
+    "affiliate_code_note": "10% off for the reader through this link. The code is the attribution.",
     "_link_note": "Recorded 2026-09-21. Goes on the page only when verified=true.",
     "_daily_note": "Page says 'reset daily'. Basis (initial vs day-start) and reset hour not stated on the product page or in the T&C. Help centre needed.",
     "_dd_note": "T&C 6.6(c): 'may be static or trailing depending on the Product.' Product page does not say which. BLOCKING - every derived room/crossover figure depends on it.",

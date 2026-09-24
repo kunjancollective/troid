@@ -59,7 +59,7 @@ def panel_cell(k, f, T=None):
     note = f'\n      <div class="s">{" ".join(notes)}</div>' if notes else ""
     link = ""
     if link_live(f):
-        code = (f.get("affiliate_agreement") or {}).get("customer_code")
+        code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")
         bits = [f'<a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">{T("index.firms.challenges", firm=name)}</a>',
                 T("index.firms.affiliate")]
         if code: bits.append(T("index.firms.code", code=html.escape(code)))

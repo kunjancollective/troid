@@ -115,12 +115,10 @@ index.crossover.lab_static,static floor,batas bawah statis,,
 index.crossover.lab_basis,initial-balance daily limit,batas harian berbasis saldo awal akun,,
 index.does.h2,What troid does,Apa yang dilakukan troid,,"troid stays lowercase, in Latin letters"
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
-  0.04%-per-side fee. Checks trades against firm rules — the ten-day maximum hold, the
+  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
+  5 for TradFi), the
   margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.","Menghitung kedua batas kerugian dan melaporkan mana yang mengikat. Menentukan ukuran posisi setelah
-  biaya 0,04% per sisi. Memeriksa trade terhadap aturan perusahaan — batas hold maksimum sepuluh hari,
-  batas konsentrasi margin, minimum lima hari trading. Berlaku untuk setiap jenis challenge dan
-  setiap aset yang dicantumkan perusahaan.",,keep every number exactly
+  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 index.doesnt.h2,What it doesn't,Yang tidak dilakukannya,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,Tidak memublikasikan sinyal trading. Tidak memasang order. Tidak menyentuh kredensial Anda. Tidak menjual strategi kepada Anda.,,"CHECK FIRST: Negations: index.doesnt.p now negates each item ('Tidak memublikasikan…'), because out of context the plain list read as things troid does. chat.isnt.h2 'Ini bukan' plus the list in chat.isnt.p follows the English, where the heading carries the negation. Check that it reads unambiguously."
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -694,7 +692,8 @@ chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way 
   troid keeps each conversation for 30 days after its last message, under the session ID shown
   under the message box, then deletes it automatically: your messages, ask troid's replies, the
   tools used and the sources cited. Never your IP address, your browser, your name or an account.
-  Only the company that runs troid can read it; it is never sold and never used for marketing or
+  Once a week troid counts which topics come up most, never quoting anyone.
+  Only troid's operator can read a conversation; it is never sold and never used for marketing or
   to train a model. To answer, troid also sends the conversation to the company that provides the
   AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
   its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Negations: index.doesnt.p now negates each item ('Tidak memublikasikan…'), because out of context the plain list read as things troid does. chat.isnt.h2 'Ini bukan' plus the list in chat.isnt.p follows the English, where the heading carries the negation. Check that it reads unambiguously. | CHECK FIRST: ask.warning: 'Abusive messages' is 'Pesan yang kasar atau melecehkan', and the matching phrase in chat.isnt.p is 'peringatan atas pesan kasar'. Check that the strength matches 'abusive'. | keep every number exactly; troid stays lowercase, in Latin letters"
@@ -862,8 +861,9 @@ message box, and deleted automatically 30 days after its last message. troid kee
 ask troid's replies, the tools it used with their inputs and results, the rule sources and read
 dates it cited, the page's language and the AI model used; never your IP address, your browser's
 user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
-to correct errors and to check that ask troid keeps to its guardrails. Only the company that runs
-troid can read them. They are never sold and never used for marketing or to train an AI model. To
+to correct errors, to check that ask troid keeps to its guardrails, and to learn which questions
+come up most so troid can improve its pages and answers: once a week it counts them by topic,
+never quoting a message. Only troid's operator can read a conversation. They are never sold and never used for marketing or to train an AI model. To
 delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
 <a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.worth.q,Is a challenge worth buying?,Apakah challenge layak dibeli?,,
@@ -973,9 +973,9 @@ terms.hero.h1,Terms of use,Ketentuan penggunaan,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","troid adalah alat informasi gratis. troid bukan nasihat, tidak memasang apa pun, dan yang berlaku adalah
   dokumen milik perusahaan itu sendiri. Ketentuan lengkapnya ada di bawah ini.",,"troid stays lowercase, in Latin letters"
-terms.draft,Effective 23 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,Daftar isi,,
-ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,tanya troid menjawab pertanyaan tentang aturan prop firm dan sizing. Pesan yang kasar atau melecehkan akan mengakhiri sesi.,,"CHECK FIRST: product.*: 'desk troid' and 'ledger troid' keep the English nouns; 'perbandingan troid' and 'riset troid' are Indonesian. Alternatives are meja troid, buku besar troid and komparasi troid. Product names are lowercase even at the start of a sentence, as in English ('tanya troid menjawab…' in chat.hero.lede, ask.warning, ask.ended, chat.discl, ask.err.*). That looks unusual in Indonesian. Sentences in ask.refusal and index.js.pending_note were rebuilt so they don't open with a product name. | CHECK FIRST: ask.warning: 'Abusive messages' is 'Pesan yang kasar atau melecehkan', and the matching phrase in chat.isnt.p is 'peringatan atas pesan kasar'. Check that the strength matches 'abusive'. | troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Sesi ini telah berakhir. tanya troid menjawab pertanyaan tentang aturan prop firm dan sizing.,,"CHECK FIRST: product.*: 'desk troid' and 'ledger troid' keep the English nouns; 'perbandingan troid' and 'riset troid' are Indonesian. Alternatives are meja troid, buku besar troid and komparasi troid. Product names are lowercase even at the start of a sentence, as in English ('tanya troid menjawab…' in chat.hero.lede, ask.warning, ask.ended, chat.discl, ask.err.*). That looks unusual in Indonesian. Sentences in ask.refusal and index.js.pending_note were rebuilt so they don't open with a product name. | troid stays lowercase, in Latin letters"
 ask.refusal,"ask troid can't answer that one. troid's desk and troid's compare show the rules, their sources and the arithmetic; for anything else, write to hello@troid.ai.","tanya troid tidak dapat menjawab pertanyaan itu. Aturan, sumbernya, dan aritmetikanya ada di desk troid dan perbandingan troid; untuk hal lain, tulis ke hello@troid.ai.",,"CHECK FIRST: product.*: 'desk troid' and 'ledger troid' keep the English nouns; 'perbandingan troid' and 'riset troid' are Indonesian. Alternatives are meja troid, buku besar troid and komparasi troid. Product names are lowercase even at the start of a sentence, as in English ('tanya troid menjawab…' in chat.hero.lede, ask.warning, ask.ended, chat.discl, ask.err.*). That looks unusual in Indonesian. Sentences in ask.refusal and index.js.pending_note were rebuilt so they don't open with a product name. | troid stays lowercase, in Latin letters"
