@@ -260,6 +260,15 @@ function check(c, r, variant) {
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
   { const m = unquoted(reply).match(/\bno crossover\b|\bnever cross(es)?\b/i); add("every product has a crossover (with equal limits, the quota itself)", !m, m && m[0]); }   // run 15
+  { // a firm's daily or maximum loss stated as a figure, with neither a source line for it nor a read date in the sentence
+    // (run 16, ex-r: "the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8)", the sources holding only the fee)
+    const sp = splitSources(reply), src = sp.lines.join("\n"), bad = [];
+    for (const sent of unquoted(sp.body).split(/(?<=[.!?])\s+|\n+/)) {
+      const m = sent.match(/\b(daily (loss )?limit|daily loss|max(imum)?[- ](loss|drawdown))\b[^.\n]{0,40}(\$\s?\d|\d\s?%)|(\$\s?\d[\d,]*|\d+(\.\d+)?\s?%)[^.\n]{0,40}\b(daily (loss )?limit|daily loss|max(imum)?[- ](loss|drawdown))\b/i);
+      if (!m || !LINT_FIRM.test(sent) || READ_DATE.test(sent)) continue;
+      if (!(/daily/i.test(m[0]) ? /\bdaily\b/i : /\bmax/i).test(src)) bad.push(sent.slice(0, 140));
+    }
+    add("a firm's loss limit it states as a figure carries its source and read date", !bad.length, bad); }
   if (/\bFormula\b/i.test(reply) && !/That['’]s a real loss,? and troid takes the question seriously/i.test(reply)) {                       // run 14
     const m = unquoted(splitSources(reply).body).match(ASK_NUMBERS);
     add("a teaching answer works its own example; it never asks the user for the numbers", !m, m && m[0]); }
@@ -275,7 +284,7 @@ function check(c, r, variant) {
   // a reply that states no figure states no rule to date (run 11, s-product: the refusal, then an offer to price a trade)
   if (c.sourced && hasFigure(splitSources(reply).body.replace(NOTE, ""))) add("each rule it states carries its document and read date", READ_DATE.test(reply), null);
   if (c.teach) {                                                   // the method's six parts, as far as a pattern can see them
-    add("method: a formula", /[=×÷√]|\bf\*|sqrt/.test(reply), null);
+    add("method: a formula", /[=×÷√]|\bf\*|sqrt/.test(reply) && (/=/.test(splitSources(reply).body) || /\bFormula\b/i.test(reply)), null);   // run 16: a "÷" in passing is not a formula
     // counted in troid's own text: not the sources block, the tier or the note, and not a date (run 5: the read dates in
     // b-limits' and b-leverage's sources blocks had stood in for a worked example they never gave)
     const body = unquoted(reply).split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b/i.test(l) && !l.includes(NOTE)).join("\n")

@@ -38,7 +38,8 @@
    "_run3": "run 3 passed every check but never said what R is: the service dropped the text the model wrote before its tool call. The candidate keeps it.",
    "_run6": "run 6 worked R on troid's reference account through size_trade (fees, 0.369195 units, '1R ≈ $477 without the fee'): the guardrail sending examples to the reference account over-steered. Arithmetic is worked through trade_math with troid's own numbers again.",
    "_run11": "run 11 wrote \"Bitfunded's 4% daily limit\" with only the fee among the sources; the old check passed it because the fee's read date was in the reply. Added: the generic check that a firm's percentage is among the listed sources.",
-   "_run14": "run 14 wrote \"Bitfunded's 1-Step daily limit of $4,000 (4% of the $100,000 quota)\" with a source it wrote itself; the service's sources held only the fee. The firm-percentage check missed \"4% of the … quota\". Added; with it, runs 9 and 10 fail the same way."
+   "_run14": "run 14 wrote \"Bitfunded's 1-Step daily limit of $4,000 (4% of the $100,000 quota)\" with a source it wrote itself; the service's sources held only the fee. The firm-percentage check missed \"4% of the … quota\". Added; with it, runs 9 and 10 fail the same way.",
+   "_run16": "run 16 gave \"the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8), a limit set as a fixed amount of the initial balance\" with no tool and no read date: the percentage check missed a rule stated in dollars. Added: the generic dated-limit check (runs 9, 10, 11 and 14 fail it too)."
   },
   {
    "id": "ex-kelly",
@@ -165,7 +166,11 @@
    "_run8": "run 8 called the risk 'the dollar amount troid is willing to lose' (the check from run 4 caught it). The service now sends a draft that says troid takes a trade back once to be written again.",
    "_run13": "run 13 chose a stop 1.5% below entry and worked out its price itself, 76,705 (1.5% below 77,872 is 76,703.92), wrote \"Result first:\" and \"stop_pct\", and gave its formula and why it works twice (before and after the tool call).",
    "_run14": "run 14 wrote \"the dollar amount troid allows on the trade\". Added to the generic agency check.",
-   "_run15": "run 15 wrote \"how many units troid can let into a trade\" (the generic agency check)."
+   "_run15": "run 15 wrote \"how many units troid can let into a trade\" (the generic agency check).",
+   "none": [
+    "\\b3\\.5 times\\b"
+   ],
+   "_run16": "run 16 said a stop at 77,500 buys \"roughly 3.5 times as many units\" for the same $500: 1,292 ÷ 372 without the fee its own formula includes; with it, 500 ÷ 434.30 = 1.151 units, 3.1 times. Added."
   },
   {
    "id": "b-leverage",
@@ -189,7 +194,8 @@
    "_run5": "run 5 gave no worked example and no tier (see b-limits).",
    "_run6": "run 6 worked its example on troid's reference account (a Bitfunded 1-Step) at 10× without saying that account caps leverage at 1:5. Arithmetic is now worked through trade_math with troid's own numbers; an example on a firm's account keeps to its rules.",
    "_run10": "run 10 worked its example at 10× \"on a Bitfunded 1-Step account\", whose cap is 1:5, with the cap unsaid, and wrote a planning sentence (\"To work an example, size a trade so the numbers are concrete\"). Added: the generic leverage-cap check for any paragraph naming Bitfunded.",
-   "_run14": "run 14 called no tool, worked no example and asked the user for \"a specific entry, stop and quantity\" (the generic ask-for-numbers check)."
+   "_run14": "run 14 called no tool, worked no example and asked the user for \"a specific entry, stop and quantity\" (the generic ask-for-numbers check).",
+   "_run16": "run 16 wrote no formula and no why-it-works; the formula check had passed it on a \"÷\" in passing. Tightened: a formula needs an equals sign or the word."
   },
   {
    "id": "q-expectancy",
@@ -399,7 +405,8 @@
    "none": [
     "(troid|ask troid) (can|could|will|would) (run|simulate)|to run (your|the|a|this) (monte carlo )?simulation|would need to run",
     "of the risk unit|0\\.21\\s?% of",
-    "\\bnumpy\\b|you['’]d (use|need) a tool like"
+    "\\bnumpy\\b|you['’]d (use|need) a tool like",
+    "outcome is p\\s?[·×*]\\s?W"
    ],
    "_run1": "run 1 listed 'what troid would need to run your simulation' (ask troid runs none) and called 1% risk 'where prop-firm traders belong'. Added: says it runs none; never offers to.",
    "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades.",
@@ -408,7 +415,8 @@
    "_run10": "run 10 quoted troid's Monte Carlo from memory: \"2% fixed risk with a 68% simulated failure rate\", where 68% is at 1% a trade and 2% gives 100%. Added: the generic check that each published figure keeps its risk.",
    "_run12": "run 12 printed DERIVED twice: the service's own two tier lines, one for trade_math with a firm's rule and one without.",
    "_run13": "run 13 wrote \"One-line answer:\", named the calc \"`kelly`\", and said half-Kelly is above the risk \"any prop-firm ceiling troid has read would allow\" with no tool behind it.",
-   "_run15": "run 15 kept its lead-in to the tool call (\"… computed through trade_math. Getting those now:\") above a final answer that said it again, and wrote \"(topic: ruin)\". Added: the generic tool-parameter and narration checks."
+   "_run15": "run 15 kept its lead-in to the tool call (\"… computed through trade_math. Getting those now:\") above a final answer that said it again, and wrote \"(topic: ruin)\". Added: the generic tool-parameter and narration checks.",
+   "_run16": "run 16 wrote \"each trade's outcome is p·W with probability p\": the outcome is W. Added."
   },
   {
    "id": "o-news",
