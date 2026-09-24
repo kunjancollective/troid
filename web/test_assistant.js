@@ -357,8 +357,8 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length);
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
-  ok("candidate lints (run 11): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; none of run 9",
-     hit11 === "ex-r,b-limits,e-blown,o-montecarlo,s-firm" && !hit9.length && r11.every((c) => handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q).length === handler._lintNotes(bodyOf(c)).length), [hit11, hit9]);
+  ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; none of run 9",
+     hit11 === "ex-r,b-limits,e-blown,o-predict,o-montecarlo,s-firm" && !hit9.length && r11.every((c) => handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q).length === handler._lintNotes(bodyOf(c)).length), [hit11, hit9]);
   const xc = RT("explain_rule", { topic: "crossover" }, "candidate"), xl = RT("explain_rule", { topic: "crossover" }, "live"), dc = RT("explain_rule", { topic: "drawdown" }, "candidate");
   ok("candidate explain_rule crossover and drawdown: state the floating-loss rule and list its source (read 2026-09-24); live unchanged",
      /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24")
@@ -370,6 +370,25 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const md = (pk) => RT("firm_rules", { firm: "bitfunded", product: pk }, "live").sources.find((x) => /^minimum trading days/.test(x.rule));
   ok("firm_rules: the Instant's 0 minimum trading days no longer cite Terms 9(a)'s 'Minimum Trading Days: 5'; the challenges' 5 keep it (run 11, s-firm)",
      md("instant").source === "not yet recorded" && ["1step", "2step_s1", "2step_s2", "express"].every((pk) => /Minimum Trading Days: 5/.test(md(pk).document_section)), md("instant")); }
+// run 12's staged changes: one DERIVED line when trade_math ran with and without a firm's rule; a rewrite's talk of an
+// earlier version goes; the $100,000 level on the fee's label; the daily floor and the dashboard lints
+{ const r12 = require("./eval/runs/2026-09-24-run12.json").results, at = (id) => r12.find((x) => x.id === id);
+  const both = [{ name: "trade_math", result: { working: [], result: {}, sources: [{ rule: "max 6%", document_section: "d", read_on: ["2026-09-23"] }] } },
+                { name: "trade_math", result: { working: [], result: {} } }];
+  const tc = handler._withSources("Kelly is 17.5%. Bitfunded's 6% maximum loss, read 2026-09-23.", "en", both, "candidate"), tl = handler._withSources("Kelly is 17.5%. Bitfunded's 6% maximum loss, read 2026-09-23.", "en", both, "live");
+  ok("candidate: one DERIVED tier line when trade_math ran both with a firm's rule and without one; live still prints both (run 12, o-montecarlo)",
+     (tc.match(/^Tier:/gm) || []).length === 1 && (tl.match(/^Tier:/gm) || []).length === 2, [tc.slice(-300), tl.slice(-300)]);
+  const W = handler._withoutRewriteTalk(at("s-firm").reply);
+  ok("candidate: a rewrite's 'Retracting the earlier version of this answer' goes, the rest stays (run 12, s-firm)",
+     !/Retracting|earlier version/.test(W) && /^troid doesn't recommend; it prices what you bring\.\n\nWith a \$500 budget/.test(W)
+     && handler._withoutRewriteTalk(at("p-size").reply) === at("p-size").reply.trim());
+  const fee = RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule));
+  ok("candidate firm_rules: the 1-Step's $999 is labelled the $100,000 level's fee, no fee recorded for other sizes; live label unchanged (run 12, s-firm)",
+     fee.value === 999 && /at the \$100,000 account level/.test(fee.rule) && /no fee for other account sizes/.test(fee.rule)
+     && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live").rules.some((x) => x.rule === "challenge fee, USD"), fee);
+  const notes12 = (id) => handler._lintNotesFor(String(at(id).reply).split("Sources, each")[0], "candidate", [], at(id).q).filter((n) => /dashboard is the record|daily floor is/.test(n));
+  ok("candidate lints (run 12): b-limits' daily floor less a remaining budget, o-predict's platform as the record for prices; not ex-angry's or e-blown's dashboard",
+     notes12("b-limits").length === 1 && notes12("o-predict").length === 1 && !notes12("ex-angry").length && !notes12("e-blown").length && !notes12("p-size").length); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -385,7 +404,7 @@ const f1 = RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candida
 ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'Stage 1 fee' (run 4, s-product)",
    [f1, f2].every((f) => { const r = f.rules.find((x) => /^challenge fee/.test(x.rule)); return r && r.value === 799 && /one fee for the whole 2-Step/.test(r.rule)
      && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
-   && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
+   && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
 const fx = RT("firm_rules", { firm: "bitfunded", product: "express" }, "candidate");
 ok("firm_rules: the Express's fee at $5,000, its source not yet recorded, so one product's fee never stands for the firm (run 7, s-firm)",
    fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && x.source === "not yet recorded")
@@ -780,7 +799,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 3 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 7 && !resC.body.includes(CK), gc);
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 9 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));

@@ -29,7 +29,7 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 and 11 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
+ * the fixes from the reads of runs 10 to 12 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
  * and a should-I refusal).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
@@ -1036,7 +1036,10 @@ const RUN = { size_trade, check_budget, check_compliance, check_availability, ex
 //   challenge's targets added up across its stages.
 // run 11, s-firm: BrightFunded's price (€497, €347.90 on promotion, at $100,000) came from the prompt's firms data, its
 // read date written by the model; firm_rules gives it with its source now
-const RULE_FIELDS_NEXT = RULE_FIELDS.concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"],
+// run 12, s-firm: "none of Bitfunded's two standard products cost that little" from the $100,000 level's $999 and $799;
+// the fee's label says whose account size it is
+const RULE_FIELDS_NEXT = RULE_FIELDS.map((f) => (f[0] === "fee_usd" ? ["fee_usd", "price", "challenge fee at the $100,000 account level, USD (troid has recorded no fee for other account sizes of this product)"] : f))
+  .concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"],
   ["fee_eur_100k", "price", "challenge fee at a $100,000 account, EUR"], ["fee_eur_100k_promo", "price", "challenge fee at a $100,000 account on promotion, EUR"]]);
 function firmRulesNext(a) {
   const out = firm_rules(a, RULE_FIELDS_NEXT);
@@ -1196,7 +1199,7 @@ function stripSources(text) {
   }
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function withSources(reply, lang, toolLog) {
+function withSources(reply, lang, toolLog, variant) {
   const cites = [], tiers = new Set(), assumed = [];
   for (const t of toolLog) {
     const r = t.result || {};
@@ -1208,6 +1211,9 @@ function withSources(reply, lang, toolLog) {
     for (const a of r.assumptions || []) assumed.push(a);
   }
   const uniq = (xs) => [...new Set(xs)];
+  // one DERIVED line, not two, when trade_math ran both with a firm's rule and without one (run 12, o-montecarlo); the
+  // candidate's, until it is promoted
+  if (variant === "candidate" && tiers.has("derived")) tiers.delete("inputs");
   if (!cites.length && !tiers.size && !assumed.length) return reply;
   const block = [];
   if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
@@ -1325,6 +1331,21 @@ CANDIDATE_LINTS.push(
    "Don't announce the reply's form (\"answer, one line\"): give the answer itself."],
   [(t, tools) => FLOAT_FIRM_RX.test(t) && !toolSourceLines(tools).some((l) => /floating/i.test(l)),
    "A firm's floating-loss rule is a firm rule: get it through firm_rules, which gives its source, or leave it out."]);
+// Staged after evaluation run 12: o-predict said "the firm's own platform and financial data services are the record" for
+// prices, news and forecasts; b-limits wrote the daily floor as "day_start_equity − remaining_daily_budget" (it is the day's
+// start less the fixed daily amount); s-firm opened a rewrite with "Retracting the earlier version of this answer".
+const FIRM_RECORD_RX = /\bfirm['’]s (own )?(dashboard|platform)\b[^.\n]{0,100}\b(prices|news|forecasts?|exchanges|market data|live data)\b|\b(prices|news|forecasts?|exchanges)\b[^.\n]{0,100}\bfirm['’]s (own )?(dashboard|platform)\b/i;
+const DAILY_FLOOR_RX = /daily[_ ]floor[^=\n]{0,30}(=|\bsits at\b|\bis\b)[^\n.]{0,40}\bremaining|day[_ -]start\w*\s*[−-]\s*remaining/i;
+CANDIDATE_LINTS.push(
+  [(t) => FIRM_RECORD_RX.test(t),
+   "The firm's dashboard is the record of the trader's own account, not of prices, news, forecasts or exchanges: say troid has no live data, and name no place for them."],
+  [(t) => DAILY_FLOOR_RX.test(t),
+   "The daily floor is the day's starting balance less the fixed daily amount (quota × daily%): day_start − quota × daily%, never less a remaining budget."]);
+// the model's rewrite of a draft the user never saw, announced ("Retracting the earlier version of this answer"): the
+// sentence goes (run 12, s-firm)
+const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about it, about a retraction or about a rewrite.)";
+const REWRITE_TALK_RX = /[^.\n]*\b(retract(ing|ed|s)?|(earlier|previous|first|prior) (version|draft|answer)|rewrit(e|ten|ing) (of )?(this|the) answer)\b[^.\n]*[.:]\s*/gi;
+const withoutRewriteTalk = (reply) => reply.replace(REWRITE_TALK_RX, "").replace(/\n{3,}/g, "\n\n").trim();
 const lintNotesFor = (t, variant, tools, asked) => lintNotes(t).concat(variant === "candidate"
   ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked)).map(([, note]) => note) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
@@ -1533,7 +1554,7 @@ module.exports = async (req, res) => {
     // gave two fees read dates borrowed from other rules).
     if (resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
       log.nudged = 1;
-      convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE });
+      convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE + (variant === "candidate" ? UNSEEN_DRAFT : "") });
       resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
     }
     const rounds = async (r) => {
@@ -1559,7 +1580,7 @@ module.exports = async (req, res) => {
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
-          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) });
+          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + (variant === "candidate" ? UNSEEN_DRAFT : "") });
           said.length = 0;                                              // the rewrite is the whole answer
           const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant));
           if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
@@ -1583,7 +1604,8 @@ module.exports = async (req, res) => {
         reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
         if (reply && variant === "candidate" && lang === "en") reply = refusalWordForWord(reply, lastUser);
         if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
-        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog);
+        if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
+        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
         else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.tool_limit");
@@ -1639,6 +1661,7 @@ module.exports._refusalOnceFirst = refusalOnceFirst;
 module.exports._lintNotes = lintNotes;
 module.exports._lintNotesFor = lintNotesFor;
 module.exports._refusalWordForWord = refusalWordForWord;
+module.exports._withoutRewriteTalk = withoutRewriteTalk;
 module.exports._candidateGuardrails = CANDIDATE_GUARDRAILS;
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings

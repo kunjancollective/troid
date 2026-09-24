@@ -63,7 +63,7 @@ const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\
   `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
 // troid's own instructions named, or the reply's form announced, in a reply (run 8: "support.md section 4 applies here",
 // "Result first, one line:"; run 6: "troid's fixed answer").
-const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:/i;   // run 11: "Answer, one line:"
+const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:|\bretract(ing|ed|s)?\b|\b(earlier|previous|prior) (version|draft) of (this|the) answer\b/i;   // run 11: "Answer, one line:"; run 12: "Retracting the earlier version of this answer"
 // troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
 const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
 // A firm's floating-loss rule with no source line for it (run 10, b-limits: "Bitfunded auto-fails on either without requiring

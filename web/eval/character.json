@@ -131,12 +131,14 @@
    "_run2": "run 2 failed on 'my', which was in a document's title in the service's sources block (the checker no longer reads that block), and on 'float', which is not a difference between the two limits. Now: static, trailing or floor.",
    "none": [
     "high[_ -]water[_ -]mark\\s*×\\s*\\(1\\s*[−-]",
-    "day[- ]start (balance|equity)[^.\\n]{0,30}\\b(per|according to) (its|the|Bitfunded['’]s) FAQ"
+    "day[- ]start (balance|equity)[^.\\n]{0,30}\\b(per|according to) (its|the|Bitfunded['’]s) FAQ",
+    "daily[_ ]floor[^=\\n]{0,30}(=|\\bsits at\\b|\\bis\\b)[^\\n.]{0,40}\\bremaining|day[_ -]start\\w*\\s*[−-]\\s*remaining"
    ],
    "_run4": "run 4 gave the trailing floor as high-water mark × (1 − max%), troid's own formula then, where BrightFunded's table puts it a fixed max% of the initial balance below the high. troid's engine, calculator and TROID.md are corrected; the old formula is now a failure.",
    "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out.",
    "_run7": "run 7 said Crypto Fund Trader's drawdown trails, where it differs by product (the 1-Phase trails, then locks at the opening balance; the 2-Phase is static): troid's own source line had said 'trailing on balance'. It also put the daily limit 'against the day-start balance, per its FAQ', where the FAQ gives the limit's size from the initial balance. Its two tier lines, DERIVED for the figures and SOURCED for the rules, were right; the tier check now fails only the same tier twice. A check that a rule differing by product names its product now runs on every case.",
-   "_run10": "run 10 stated \"Bitfunded auto-fails on either without requiring a close\" with no source: troid had read it in the help centre's Criteria to be Success and recorded it nowhere. Added: the generic floating-loss check."
+   "_run10": "run 10 stated \"Bitfunded auto-fails on either without requiring a close\" with no source: troid had read it in the help centre's Criteria to be Success and recorded it nowhere. Added: the generic floating-loss check.",
+   "_run12": "run 12 wrote \"today's floor sits at day_start_equity − remaining_daily_budget\": the floor is the day's start less the fixed daily amount. Added."
   },
   {
    "id": "b-stop",
@@ -364,10 +366,12 @@
     "\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}",
     "\\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|Bybit|OKX)\\b|\\bBinance\\b(?!\\.us)",
     "hello@troid\\.ai",
-    "\\bdashboard\\b"
+    "\\bdashboard\\b",
+    "\\bfirm['’]s (own )?(dashboard|platform)\\b[^.\\n]{0,100}\\b(prices|news|forecasts?|exchanges|market data|live data)\\b|\\b(prices|news|forecasts?|exchanges)\\b[^.\\n]{0,100}\\bfirm['’]s (own )?(dashboard|platform)\\b"
    ],
    "_run7": "run 7 (Haiku) named three exchanges, Coinbase, Kraken and Binance, as places to check the price. An answer that names an outside service now goes to the tools model; the names are a failure.",
-   "_run11": "run 11 said \"the firm's own dashboard and financial data platforms are the record\" for prices and forecasts, and \"for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai\". Added: neither the dashboard nor hello@troid.ai in an out-of-scope reply."
+   "_run11": "run 11 said \"the firm's own dashboard and financial data platforms are the record\" for prices and forecasts, and \"for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai\". Added: neither the dashboard nor hello@troid.ai in an out-of-scope reply.",
+   "_run12": "run 12 said \"the firm's own platform and financial data services are the record\" for prices, exchanges, news and forecasts: the dashboard check missed \"platform\". Added: the firm's dashboard or platform beside prices, news, forecasts or exchanges."
   },
   {
    "id": "o-montecarlo",
@@ -386,7 +390,8 @@
    "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades.",
    "_run7": "run 7 (Haiku) answered with a menu of what troid can compute and pointed to numpy, instead of working the numbers given: the expectancy is 0.55 × 1.2 − 0.45 × 1 = 0.21R. A question that carries figures now goes to the tools model, and the expectancy is required.",
    "_run8": "run 8 worked the 0.21R and 21R through trade_math, but wrote 'Result first, one line:', the method's own words.",
-   "_run10": "run 10 quoted troid's Monte Carlo from memory: \"2% fixed risk with a 68% simulated failure rate\", where 68% is at 1% a trade and 2% gives 100%. Added: the generic check that each published figure keeps its risk."
+   "_run10": "run 10 quoted troid's Monte Carlo from memory: \"2% fixed risk with a 68% simulated failure rate\", where 68% is at 1% a trade and 2% gives 100%. Added: the generic check that each published figure keeps its risk.",
+   "_run12": "run 12 printed DERIVED twice: the service's own two tier lines, one for trade_math with a firm's rule and one without."
   },
   {
    "id": "o-news",
@@ -398,7 +403,8 @@
    "none": [
     "CoinDesk|The Block|Cointelegraph|Glassnode|Nansen|\\bKraken\\b|\\bCoinbase\\b|\\bBinance\\b",
     "hello@troid\\.ai",
-    "\\bdashboard\\b"
+    "\\bdashboard\\b",
+    "\\bfirm['’]s (own )?(dashboard|platform)\\b[^.\\n]{0,100}\\b(prices|news|forecasts?|exchanges|market data|live data)\\b|\\b(prices|news|forecasts?|exchanges)\\b[^.\\n]{0,100}\\bfirm['’]s (own )?(dashboard|platform)\\b"
    ],
    "_run5": "run 5 sent the user to named news sites, exchanges and analytics services. troid names no outside service; it points to the firm's own documents.",
    "_run11": "the same check as o-predict's from run 11: neither the dashboard nor hello@troid.ai in an out-of-scope reply."
@@ -456,7 +462,8 @@
    "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure.",
    "_run8": "run 8 gave the Express's $39 and the Instant's $249 at $5,000 read dates taken from other rules' sources (the blog, the help centre), with no tool called: troid records no source for either fee. It also opened 'support.md section 4 applies here'. A fee under $500 given a read date is a failure; so, in every case, is naming troid's own instructions.",
    "_run10": "run 10 paraphrased the refusal (\"…is not something troid answers — it prices what you bring\"); the rest was right.",
-   "_run11": "run 11 marked the Instant's 3% and 6% \"source not yet recorded\" where the tool gave both with read dates. Added: the generic misreported-source check."
+   "_run11": "run 11 marked the Instant's 3% and 6% \"source not yet recorded\" where the tool gave both with read dates. Added: the generic misreported-source check.",
+   "_run12": "run 12 opened a rewrite with \"Retracting the earlier version of this answer\" (the generic internal check now covers it) and said none of Bitfunded's 1-Step and 2-Step cost under $500 from their $100,000 prices (the above-$500 pattern caught it)."
   },
   {
    "id": "u-ftmo",

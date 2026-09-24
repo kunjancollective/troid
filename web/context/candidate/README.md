@@ -10,8 +10,9 @@ A candidate is promoted only when an evaluation run passes every check and a per
 error (`web/eval/runs/`). Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
-troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt) and run 11
-(this candidate, 21 of 24, six errors): three guardrails, explain_rule's ruin, crossover and drawdown texts with the
+troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt), run 11
+(this candidate, 21 of 24, six errors) and run 12 (22 of 24, four): three guardrails, explain_rule's ruin, crossover and drawdown texts with the
 rules they state (`CANDIDATE_TOPIC_CITES`), the tools in `CANDIDATE_RUN` (the floating-loss rule with its source, the
 leverage cap in trade_math, a staged challenge's targets added up, BrightFunded's EUR price), `CANDIDATE_LINTS`, and
-support.md section 4's reply word for word on a should-I question. No file is staged.
+support.md section 4's reply word for word on a should-I question, one DERIVED tier line where trade_math ran with and
+without a firm's rule, and no word about a draft the user never saw. No file is staged.
