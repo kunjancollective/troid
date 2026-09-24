@@ -256,6 +256,14 @@ index.js.s_fee_pending,per-side fee pending,taxa por lado pendente,,
 index.js.s_tgt,tgt {price},alvo {price},,keep {price} exactly as written
 index.js.s_floor,floor {floor},piso {floor},,keep {floor} exactly as written
 index.js.breakers,breakers,disjuntores,,
+index.js.share_copy,Copy link to this result,,,NEW: translate it in reviewer_edit | 
+index.js.share_copied,"Link copied. Your inputs ride after the # in it, and browsers never send that part to a server.",,,NEW: translate it in reviewer_edit | 
+index.js.share_manual,Copy this link:,,,NEW: translate it in reviewer_edit | 
+index.js.shared,Opened from a shared link. Numbers are the sharer's inputs; rules are as troid reads them today — see the read dates below.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.js.shared_firm,"The link names a firm troid doesn't list now ({firm}), so the desk shows {shown} with the link's numbers.",,,"NEW: translate it in reviewer_edit | keep {firm} {shown} exactly as written; troid stays lowercase, in Latin letters"
+index.js.shared_product,"The link names a challenge troid doesn't list for {firm} now ({product}), so the desk shows {shown}.",,,"NEW: translate it in reviewer_edit | keep {firm} {product} {shown} exactly as written; troid stays lowercase, in Latin letters"
+index.js.shared_bad,Values in the link that couldn't be read ({n}) were left at the desk's defaults.,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
+index.js.shared_long,"The link was too long to read, so the desk shows its defaults.",,,NEW: translate it in reviewer_edit | 
 compare.meta.title,troid's compare,comparador do troid,,"troid stays lowercase, in Latin letters"
 compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"

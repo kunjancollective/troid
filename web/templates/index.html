@@ -56,6 +56,14 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
 .grid{display:grid;gap:10px;margin-bottom:12px}
 .g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
 @media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.shared{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);background:var(--surface2);
+  border:1px solid var(--line);border-inline-start:2px solid var(--signal);border-radius:3px;padding:10px 13px;margin:0 0 16px}
+.shared[hidden]{display:none}
+.linkrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.linkbtn{font-family:var(--mono);font-size:11.5px;color:var(--signal);background:none;border:1px solid var(--line);
+  border-radius:3px;padding:5px 10px;cursor:pointer}
+.linkbtn:hover,.linkbtn:focus-visible{border-color:var(--signal);outline:none}
+.linkmsg{flex:1 1 220px;min-width:0}.linkurl{margin-top:6px;font-size:11.5px;padding:5px 7px}
 .verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
   margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
 .vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
@@ -107,8 +115,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <p class="lede">{{ t("index.hero.lede") }}</p>
 </div>
 
-<div class="panel">
+<div class="panel" id="desk">
   <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
+  <div id="shared" class="shared" role="status" hidden></div>
   <div class="grid g4">
     <div><label>{{ t("index.calc.firm") }}</label><select id="firm"></select></div>
     <div><label>{{ t("index.calc.challenge") }}</label><select id="profile"></select></div>
@@ -182,6 +191,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <!-- profiles:start -->
 {{ profiles_js }}
 <!-- profiles:end -->
+<script src="/desklink.js"></script>
 <script>
 /* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
    a null there is a pending rule and is shown as pending here. Nothing is guessed.
@@ -224,6 +234,8 @@ function provBlock(f,p,used,formula,assumed){
   s.push(PROV_TAIL);
   return '<div class="prov">'+s.join(" ")+' <code>'+formula+'</code></div>';
 }
+/* Under the verdict: the result as a link (desklink.js puts every input in the fragment, never the query string). */
+function linkRow(){return '<div class="linkrow"><button type="button" class="linkbtn" data-copy-link>'+T.share_copy+'</button><span class="linkmsg" role="status"></span></div>'}
 function working(steps,open){
   return '<details class="work"'+(open?" open":"")+'><summary>'+T.show_working+'</summary><div class="wt"><table>'+steps.map(function(x){
     return '<tr><td>'+x[0]+'</td><td><code>'+x[1]+'</code></td><td class="num">'+x[2]+'</td></tr>'}).join("")+'</table></div></details>';
@@ -273,7 +285,7 @@ function render(){
     if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks",F(T.u_locks,{locks:p.locks})]);if(p.hwm!=null)used.push(["hwm",T.u_hwm]);}}
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){
-    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_pending+'</span><span class="vtxt">'+F(T.pending_txt,{firm:f.name,product:p.label})+'</span></div>'+
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_pending+'</span><span class="vtxt">'+F(T.pending_txt,{firm:f.name,product:p.label})+'</span></div>'+linkRow()+
       '<div class="notes"><div>'+T.pending_note+'</div></div>';
     el("result").innerHTML=h;return;
   }
@@ -294,7 +306,7 @@ function render(){
   var reduced=risk<intended-1e-9;
   if(blocks.length){
     steps.push(bindStep);
-    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_block+'</span><span class="vtxt">'+bind+'</span></div><div class="notes">'+
+    h='<div class="verdict vBLOCK"><span class="vtag">'+T.v_block+'</span><span class="vtxt">'+bind+'</span></div>'+linkRow()+'<div class="notes">'+
       blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
     el("result").innerHTML=h;return;
   }
@@ -349,7 +361,7 @@ function render(){
   var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
   var v=reduced?"REDUCE":"OK";
   h='<div class="verdict v'+v+'"><span class="vtag">'+(reduced?T.v_reduce:T.v_ok)+'</span>'+
-    '<span class="vtxt">'+F(T.v_txt,{firm:f.name,product:p.label,bind:bind,room:$(eff)})+'</span></div>'+
+    '<span class="vtxt">'+F(T.v_txt,{firm:f.name,product:p.label,bind:bind,room:$(eff)})+'</span></div>'+linkRow()+
     '<div class="read">'+
     '<div class="cell"><div class="k">'+T.size+'</div><div class="v">'+fx(qty,6)+'</div><div class="s">'+$(notional)+'</div></div>'+
     '<div class="cell"><div class="k">'+T.margin+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
@@ -366,6 +378,7 @@ el("firm").addEventListener("change",fillProfiles);el("profile").addEventListene
 ["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
  .forEach(function(i){el(i).addEventListener("input",render)});
 fillFirms();
+DESKLINK.init({T:T,F:F,esc:esc,firms:FIRMS,live:{{ live|tojson }},lang:"{{ code }}",fillProfiles:fillProfiles,toggleInputs:toggleInputs,render:render});
 </script>
 </body>
 </html>
