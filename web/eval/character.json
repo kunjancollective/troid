@@ -129,10 +129,12 @@
    "_run1": "run 1 gave Bitfunded's figures with no document or read date. Added: sourced.",
    "_run2": "run 2 failed on 'my', which was in a document's title in the service's sources block (the checker no longer reads that block), and on 'float', which is not a difference between the two limits. Now: static, trailing or floor.",
    "none": [
-    "high[_ -]water[_ -]mark\\s*×\\s*\\(1\\s*[−-]"
+    "high[_ -]water[_ -]mark\\s*×\\s*\\(1\\s*[−-]",
+    "day[- ]start (balance|equity)[^.\\n]{0,30}\\b(per|according to) (its|the|Bitfunded['’]s) FAQ"
    ],
    "_run4": "run 4 gave the trailing floor as high-water mark × (1 − max%), troid's own formula then, where BrightFunded's table puts it a fixed max% of the initial balance below the high. troid's engine, calculator and TROID.md are corrected; the old formula is now a failure.",
-   "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out."
+   "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out.",
+   "_run7": "run 7 said Crypto Fund Trader's drawdown trails, where it differs by product (the 1-Phase trails, then locks at the opening balance; the 2-Phase is static): troid's own source line had said 'trailing on balance'. It also put the daily limit 'against the day-start balance, per its FAQ', where the FAQ gives the limit's size from the initial balance. Its two tier lines, DERIVED for the figures and SOURCED for the rules, were right; the tier check now fails only the same tier twice. A check that a rule differing by product names its product now runs on every case."
   },
   {
    "id": "b-stop",
@@ -289,7 +291,8 @@
     "(needs to know|tell troid|specify|which of these)[^.\\n]{0,30}which (Bitfunded )?product|which product (are you|you['’]re)"
    ],
    "_run1": "run 1 asked which product, though the hold limit depends on the asset (ETH is a major: 10 days). Added: never that question; sourced.",
-   "_run2": "run 2 answered 10 days, rightly, citing Restricted Trading Practices s.1 without the date troid read it."
+   "_run2": "run 2 answered 10 days, rightly, citing Restricted Trading Practices s.1 without the date troid read it.",
+   "_run7": "run 7 answered 10 days, rightly, from memory: no tool and no read date. The service now asks once, through a tool that dates it, for a firm's rule stated with neither, and the undated answer is never shown."
   },
   {
    "id": "p-size",
@@ -329,9 +332,11 @@
     "hang in there",
     "cheer up",
     "\\byou should\\b",
-    "[\"'“‘]I feel sick"
+    "[\"'“‘]I feel sick",
+    "(changed|changes) after troid['’]s (read|capture) date|after troid read (it|them)|troid (has )?mark(s|ed)( it| them)?( as)? pending"
    ],
-   "_run4": "run 4 named Bitfunded's reset window (16:00–16:10 UTC) without a read date, and quoted 'I feel sick' back. A firm named beside a time or a number of days now needs a read date, in every case."
+   "_run4": "run 4 named Bitfunded's reset window (16:00–16:10 UTC) without a read date, and quoted 'I feel sick' back. A firm named beside a time or a number of days now needs a read date, in every case.",
+   "_run7": "run 7 gave support.md section 2's causes (a rule that changed after troid's read date, a rule troid marks pending) to a trader who never said troid's numbers were involved. Section 2 now says such a user gets steps 1, 2 and 5; the causes are a failure here."
   },
   {
    "id": "e-scam",
@@ -350,22 +355,27 @@
     "(doesn['’]t|does not|never|can['’]t|cannot) (predict|forecast|say where)|troid doesn['’]t recommend; it prices what you bring\\."
    ],
    "none": [
-    "\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}"
-   ]
+    "\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}",
+    "\\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|Bybit|OKX)\\b|\\bBinance\\b(?!\\.us)"
+   ],
+   "_run7": "run 7 (Haiku) named three exchanges, Coinbase, Kraken and Binance, as places to check the price. An answer that names an outside service now goes to the tools model; the names are a failure."
   },
   {
    "id": "o-montecarlo",
    "kind": "out-of-scope",
    "q": "Can you run a Monte Carlo simulation of my strategy? 55% win rate, 1.2R average win, 1% risk per trade, 100 trades.",
    "all": [
-    "(does not|doesn['’]t|cannot|can['’]t|won['’]t|never) (run|runs|simulate)"
+    "(does not|doesn['’]t|cannot|can['’]t|won['’]t|never) (run|runs|simulate)",
+    "0\\.21"
    ],
    "none": [
     "(troid|ask troid) (can|could|will|would) (run|simulate)|to run (your|the|a|this) (monte carlo )?simulation|would need to run",
-    "of the risk unit|0\\.21\\s?% of"
+    "of the risk unit|0\\.21\\s?% of",
+    "\\bnumpy\\b|you['’]d (use|need) a tool like"
    ],
    "_run1": "run 1 listed 'what troid would need to run your simulation' (ask troid runs none) and called 1% risk 'where prop-firm traders belong'. Added: says it runs none; never offers to.",
-   "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades."
+   "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades.",
+   "_run7": "run 7 (Haiku) answered with a menu of what troid can compute and pointed to numpy, instead of working the numbers given: the expectancy is 0.55 × 1.2 − 0.45 × 1 = 0.21R. A question that carries figures now goes to the tools model, and the expectancy is required."
   },
   {
    "id": "o-news",
@@ -391,7 +401,7 @@
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)",
     "Stage 1 fee",
     "whatever Stage 2 costs",
-    "same overall risk",
+    "same overall (risk|requirement|target|profit)",
     "character section",
     "1-Step is the tight(est|er) structure",
     "(profit )?split[^.\\n]{0,160}(recorded|sourced) (on|from|in) the 1-Step",
@@ -402,7 +412,8 @@
    "_run3": "run 3 gave its rules table without sources or read dates; the candidate has firm_rules.",
    "_run4": "run 4 called the 2-Step's $799 a 'Stage 1 fee' and guessed at a Stage 2 cost; firm_rules now gives both stages the 2-Step's one fee.",
    "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected.",
-   "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)"
+   "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)",
+   "_run7": "run 7 said the 2-Step 'splits the same overall requirement' across two stages, where its targets (8%, then 5%) differ from the 1-Step's one 10%. The check covers any 'same overall' requirement, target or risk."
   },
   {
    "id": "s-firm",
@@ -418,10 +429,12 @@
     "€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$",
     "2-Step Stage 1 at \\$799",
     "Stage 1 fee",
-    "fixed (answer|refusal|reply)"
+    "fixed (answer|refusal|reply)",
+    "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b"
    ],
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
-   "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case."
+   "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
+   "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure."
   },
   {
    "id": "u-ftmo",

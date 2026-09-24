@@ -41,7 +41,7 @@ const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bst
 // Judging the user's numbers instead of stating what they imply (run 1: "which is solid", "where prop-firm traders belong").
 const JUDGE = /\b(solid|healthy|great|excellent|impressive|amazing|fantastic|awesome)\b|where [^.\n]{0,40}\bbelong\b|nowhere to hide/i;
 // A read date beside a rule: "read 2026-09-23", "read 23 Sep 2026", "read on 21 September 2026".
-const READ_DATE = /\bread (on )?(\d{4}-\d{2}-\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
+const READ_DATE = /\bread (on )?(\d{4}[-\u2010\u2011]\d{2}[-\u2010\u2011]\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
 // A firm's rule stated as a percentage: a firm named and a percentage in the same sentence (TROID-CHARACTER.md: "troid
 // states the date every time"; run 2, ex-recovery gave Bitfunded's 10% without one).
 const FIRM_PCT = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,60}?\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/;
@@ -56,6 +56,11 @@ const FIRM_FEE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,80}?(${MONEY})|(${MONEY})
 const TROID_READ_PCT = /troid has read[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,80}?troid has read/;
 // A tool's parameters in a reply (run 5: ex-recovery 'firm "all"', b-stop "stop_pct").
 const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b/;
+// A rule that differs by product stated as the whole firm's (run 7, b-limits: "Crypto Fund Trader's trail the high-water
+// mark"; its 1-Phase trails, its 2-Phase is static; the service's own source line had said "trailing on balance").
+const PH1 = "(1-Phase|1 Phase|one-phase|1phase)";
+const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1}\\b)[^.\\n]{0,60}\\btrail` +
+  `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
@@ -160,7 +165,12 @@ function check(c, r, variant) {
   add("the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",                                      // run 5
       !(/no firm rule was needed/.test(reply) && READ_DATE.test(unquoted(reply))), null);
   { const slips = arithmeticSlips(reply); add("the arithmetic it writes out holds", !slips.length, slips); }                      // run 4
-  add("prints its tier once", (reply.match(/(^|\s)(\*\*|__)?Tier(\*\*|__)?:/g) || []).length <= 1, null);                    // run 4
+  { // run 4: the model's tier line under the service's, the same tier twice. A DERIVED line for the figures and a SOURCED
+    // line for the rules are two tiers, one each (run 7, b-limits)
+    const words = [...reply.matchAll(/(?:^|\s)(?:\*\*|__)?Tier(?:\*\*|__)?:([^\n]*)/g)].flatMap((m) => [...new Set(m[1].match(/\b(DERIVED|SOURCED|MODELLED|MEASURED)\b/g) || [])]);
+    const twice = [...new Set(words.filter((w, i) => words.indexOf(w) !== i))];
+    add("prints each tier once", !twice.length, twice); }
+  { const m = reply.match(BY_PRODUCT); add("a rule that differs by product names its product (Crypto Fund Trader's drawdown)", !m, m && m[0]); }   // run 7
   { const m = reply.match(AGENCY); add("troid never trades: the risk and the trade are the trader's", !m, m && m[0]); }             // run 4
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
     add("troid's tools and defaults are troid's, not a firm's", !m, m && m[0]); }
@@ -175,7 +185,7 @@ function check(c, r, variant) {
     // counted in troid's own text: not the sources block, the tier or the note, and not a date (run 5: the read dates in
     // b-limits' and b-leverage's sources blocks had stood in for a worked example they never gave)
     const body = unquoted(reply).split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b/i.test(l) && !l.includes(NOTE)).join("\n")
-      .replace(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2} [A-Z][a-z]{2,8} \d{4}\b/g, " ");
+      .replace(/\b\d{4}[-\u2010\u2011]\d{2}[-\u2010\u2011]\d{2}\b|\b\d{1,2} [A-Z][a-z]{2,8} \d{4}\b/g, " ");
     add("method: a worked example with numbers", (body.match(/\d[\d,]*(\.\d+)?/g) || []).length >= 3, null);
     add("method: the tier", /\b(DERIVED|SOURCED|MODELLED|MEASURED)\b/.test(reply), null);
   }

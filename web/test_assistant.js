@@ -255,6 +255,13 @@ const rs = RT("explain_rule", { topic: "reset" }, "candidate"), rsLive = RT("exp
 ok("candidate explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
    /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
    && rs.sources.every((x) => x.document_section && x.read_on.length) && /Morning and afternoon sessions draw/.test(rsLive.explanation), rs);
+const dd = RT("explain_rule", { topic: "drawdown" }, "candidate"), ddLive = RT("explain_rule", { topic: "drawdown" }, "live");
+ok("candidate explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits); the live text unchanged",
+   /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation) && !/2-Phase/.test(ddLive.explanation)
+   && dd.sources.some((x) => /^Crypto Fund Trader drawdown, by product \(1-Phase: trails on balance.*2-Phase: static\)$/.test(x.rule) && x.source === "not yet recorded")
+   && !dd.sources.some((x) => /Crypto Fund Trader drawdown \(trailing/.test(x.rule)), dd.sources);
+ok("candidate guardrails: a rule that differs by product is stated with its product; the daily limit's size apart from its reference point (run 7, b-limits)",
+   /stated with its product, never as the whole firm's/.test(candSys[0].text) && /the floor it sets is measured from the day's start/.test(candSys[0].text));
 const ld = RT("explain_rule", { topic: "ladder" }, "candidate"), ac = RT("explain_rule", { topic: "accounts" }, "candidate");
 ok("candidate explain_rule: a topic that states no firm rule lists no sources; a clause no rule field carries cites its document",
    !ld.sources && /^Explanation text/.test(ld.tier) && ac.sources.length === 1 && ac.sources[0].rule === "ToU 6(b)" && /Terms of Use/.test(ac.sources[0].document), [ld, ac]);
@@ -308,6 +315,10 @@ ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'S
    [f1, f2].every((f) => { const r = f.rules.find((x) => /^challenge fee/.test(x.rule)); return r && r.value === 799 && /one fee for the whole 2-Step/.test(r.rule)
      && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
    && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
+const fx = RT("firm_rules", { firm: "bitfunded", product: "express" }, "candidate");
+ok("firm_rules: the Express's fee at $5,000, its source not yet recorded, so one product's fee never stands for the firm (run 7, s-firm)",
+   fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && x.source === "not yet recorded")
+   && /one product's fee never stands for a firm/.test(candSys[0].text), fx);
 ok("candidate guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
    /never leave it out/.test(candSys[0].text) && /no leverage above its 1:5 cap/.test(candSys[0].text) && /gets its fee, reset time/.test(candSys[0].text) && /Never write a tool's parameters/.test(candSys[0].text)
    && /Name no outside service/.test(candSys[0].text) && !/Name no outside service/.test(liveSys[0].text));
@@ -748,6 +759,51 @@ fake.listen(18765, async () => {
     r = await call(hc, [U("Should I size with Kelly? 45%, 2:1.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: a trade_math answer that quotes a dated firm rule itself is not told 'no firm rule was needed' (run 5, ex-kelly)", r.status === 200
        && r.j.reply.includes(handler.EN["ask.tier.inputs_quoted"]) && !r.j.reply.includes(handler.EN["ask.tier.inputs"]), r.j.reply);
+    // run 7's fixes: a firm's rule stated from memory is asked for once through a tool that dates it; an answer that names
+    // an outside service, or leaves the user's own numbers unworked, goes to the tools model
+    const MEMORY = "Bitfunded lets you hold majors for 10 days.";
+    const lastOf = (b) => b.messages[b.messages.length - 1].content;
+    script = (b) => {
+      if (b.model === "claude-haiku-4-5") return msg("end_turn", [{ type: "text", text: MEMORY }]);
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("A note from the service, not the user")) return msg("tool_use", [{ type: "tool_use", id: "er2", name: "explain_rule", input: { topic: "hold_limit" } }]);
+      if (Array.isArray(l) && l[0].type === "tool_result") return msg("end_turn", [{ type: "text", text: "ETH is a major on Bitfunded: 10 days." }]);
+      return msg("end_turn", [{ type: "text", text: MEMORY }]);
+    };
+    before = calls.length;
+    r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    const nudgedLog = JSON.parse(LOGS[LOGS.length - 1]);
+    ok("candidate: a firm's rule stated with no tool and no read date is asked for once through a tool, and the undated answer is never shown (run 7, p-hold)",
+       r.status === 200 && calls.length === before + 4 && /A note from the service, not the user/.test(lastOf(calls[before + 2])) && calls[before + 2].messages[1].role === "assistant"
+       && !r.j.reply.includes(MEMORY) && /Restricted Trading Practices s\.1, read 2026-09-21/.test(r.j.reply) && r.j.tools_used.join() === "explain_rule"
+       && nudgedLog.nudged === 1 && nudgedLog.rerouted === 1, [r.j.reply, calls.slice(before).map((c) => c.model), nudgedLog]);
+    before = calls.length;
+    r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true });
+    ok("live, beside it: the answer from memory stands (one call, no nudge)", r.status === 200 && calls.length === before + 1 && r.j.reply === MEMORY, r.j.reply);
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: MEMORY }])
+      : msg("end_turn", [{ type: "text", text: "Bitfunded lets you hold majors for 10 days (SOURCED, Restricted Trading Practices s.1, read 2026\u201109\u201121)." }]);
+    before = calls.length;
+    r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a firm's rule that carries its read date is not nudged, a date written with non-breaking hyphens too (run 7's p-size wrote them)",
+       r.status === 200 && calls.length === before + 2 && /read 2026\u201109\u201121/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid has no live data. Check CoinDesk or Binance's announcements for news." }])
+      : msg("end_turn", [{ type: "text", text: "troid does not browse and has no live data; the firm's own documents are what troid has read." }]);
+    before = calls.length;
+    r = await call(hc, [U("Where is BTC going this week?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: an answer that names an outside service as a place to look is rerun on the tools model (run 7, o-predict)", r.status === 200 && calls.length === before + 2
+       && calls[before + 1].model === "claude-sonnet-5" && !/CoinDesk|Binance/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    before = calls.length;
+    r = await call(hc, [U("Where is BTC going this week?")], { disclosed: true });
+    ok("live, beside it: that answer stands", r.status === 200 && calls.length === before + 1 && /CoinDesk/.test(r.j.reply), r.j.reply);
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid can work that through. Which would help: a simulation, or the expectancy?" }])
+      : msg("end_turn", [{ type: "text", text: "Expectancy works out through trade_math." }]);
+    before = calls.length;
+    r = await call(hc, [U("I win 55% of trades at 1.2R and lose 1R. Run a Monte Carlo on it.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: an answer that leaves the user's own numbers unworked is rerun on the tools model (run 7, o-montecarlo)", r.status === 200 && calls.length === before + 2
+       && calls[before + 1].model === "claude-sonnet-5" && /trade_math/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    before = calls.length;
+    r = await call(hc, [U("I win 55% of trades at 1.2R and lose 1R. Run a Monte Carlo on it.")], { disclosed: true });
+    ok("live, beside it: Haiku's menu stands", r.status === 200 && calls.length === before + 1 && /a simulation, or the expectancy/.test(r.j.reply), r.j.reply);
     delete process.env.TROID_CANDIDATE_KEY;
   } catch (e) { console.log = log0; ok("no exception in the handler tests", false, String(e && e.stack)); }
   fake.close(); kv.close();

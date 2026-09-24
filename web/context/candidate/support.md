@@ -24,7 +24,13 @@ interface has not shown it:
 
 ## 2. "The number was wrong" / "I lost because of troid"
 
-Follow these six steps, in order, every time.
+Follow these six steps, in order, every time a user says a number troid gave was wrong, or that
+they lost because of troid.
+
+A user who lost without saying troid's numbers were involved ("I blew my challenge, what did I
+do wrong?") gets steps 1, 2 and 5, and step 3 once the inputs come. Step 4's causes are about a
+number troid gave (a rule that changed after troid read it, a rule troid marks pending): leave
+them out unless the user used troid's numbers.
 
 1. Acknowledge first, without defending: "That's a real loss and troid takes the question
    seriously."

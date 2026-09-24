@@ -152,11 +152,11 @@ const GUARDRAILS = [
 const CANDIDATE_GUARDRAILS = [
   "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. Every teaching answer works its example with numbers through a tool; never leave it out. Arithmetic (R, a position size, leverage and margin, expectancy, Kelly, a drawdown) is worked through trade_math with numbers troid chooses; set beside a firm's rule, trade_math takes the firm and product. A firm's rule (the daily and maximum loss, the crossover, the reset) is worked on troid's reference account, a $100,000 Bitfunded 1-Step, through check_budget or explain_rule, so its rules come with their dates. An example on a firm's account keeps to that account's rules: no leverage above its 1:5 cap. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
   "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, the best of k configurations by chance, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. Copy every intermediate value from the tool's working as it is; never work one out from a tool's result yourself (a multiplier, a square root, a ratio). A figure the user gave, repeated back, needs no tool.",
-  "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it, in any reply: a list of things worth knowing, or a reply to someone who has just lost, gets its fee, reset time, loss limit or floating-loss rule through firm_rules or explain_rule too. When a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation. Never write a tool's parameters in a reply (firm \"all\", stop_pct).",
+  "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it, in any reply: a list of things worth knowing, or a reply to someone who has just lost, gets its fee, reset time, loss limit or floating-loss rule through firm_rules or explain_rule too. When a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation. Never write a tool's parameters in a reply (firm \"all\", stop_pct). A rule that differs by product (a drawdown type, a daily limit) is stated with its product, never as the whole firm's. Keep a rule's size and its reference point apart: Bitfunded's FAQ gives the daily limit's size, a fixed amount from the initial balance; the floor it sets is measured from the day's start.",
   "When troid's own strategy comes up, even in passing (its search over about 30 configurations, say), its out-of-sample result comes first: +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero. The in-sample figure is the best of about 30 configurations and never stands alone.",
   "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block. Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's. troid never trades: the risk, the position, the stop and the trade are always the trader's, and troid prices them.",
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
-  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, without announcing it. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
+  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, without announcing it. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
@@ -629,6 +629,8 @@ function explain_rule(a, rules) {
 // noon in New York only in summer, and the old "morning and afternoon are separate daily budgets" read as a rule of
 // the firm's (run 1 of the evaluation, p-reset); it is a consequence of the reset's hour for a trader in New York.
 const CANDIDATE_RULES = {
+  // a drawdown type belongs to a product (run 7, b-limits: "Crypto Fund Trader's trail the high-water mark"; its 2-Phase is static)
+  drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's 1-Phase trails on balance. CFT's 2-Phase is static from the initial balance. A drawdown type belongs to a product, not a firm: name the product with it.",
   // the majors named, from the set check_compliance classes by (run 1, p-hold: asked for the product instead)
   hold_limit: "Bitfunded: majors (" + [...MAJORS].join(", ") + ") 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). The limit follows the asset, not the product. Profits from a breaching trade can be removed from payout eligibility.",
   reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC: noon in New York in summer (EDT), 11:00 in winter (EST). Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
@@ -645,7 +647,7 @@ const TOPIC_CITES = {
   leverage: [["bitfunded", "max_leverage", "1step", "leverage cap 5×"]],
   cross: [["bitfunded", "max_leverage", "1step", "leverage cap 5×"], ["bitfunded", "daily_pct", "1step", "daily 4% (1-Step)"], ["bitfunded", "max_pct", "1step", "max 6% (1-Step)"]],
   drawdown: [["bitfunded", "drawdown_type", null, "drawdown type (static)"], ["brightfunded", "drawdown_type", null, "BrightFunded drawdown (trailing on equity)"],
-             ["crypto_fund_trader", "drawdown_type", null, "Crypto Fund Trader drawdown (trailing on balance)"]],
+             ["crypto_fund_trader", "drawdown_type", null, "Crypto Fund Trader drawdown, by product (1-Phase: trails on balance, static at the opening balance after +6%; 2-Phase: static)"]],
   min_days: [["bitfunded", "min_days", null, "minimum 5 trading days"]],
   hold_limit: [["bitfunded", "hold_cap", null, "hold limit: majors 10 days, other crypto 7, TradFi 5"]],
   funded_stage: [["bitfunded", "trader_stage_rule", null, "Trader Stage limits by path"]],
@@ -673,7 +675,8 @@ function explainRuleSourced(a) {
 // troid's compare, for ask troid. A rule troid hasn't recorded is pending, never filled in (run 3, s-product: a rules
 // table with no read dates). [value key, provenance key, rule]
 const RULE_FIELDS = [["daily_pct", "daily_pct", "daily loss limit %"], ["max_pct", "max_pct", "maximum loss %"], ["target_pct", "target_pct", "profit target %"],
-  ["min_days", "min_days", "minimum trading days"], ["fee_usd", "price", "challenge fee, USD"], ["split", "split", "profit split"],
+  ["min_days", "min_days", "minimum trading days"], ["fee_usd", "price", "challenge fee, USD"],
+  ["fee_usd_5k", "price", "challenge fee at a $5,000 account, USD"], ["split", "split", "profit split"],
   ["drawdown_type", "drawdown_type", "drawdown type"], ["daily_basis", "daily_basis", "daily limit basis"],
   ["fee_per_side_pct", "fee_per_side_pct", "trading fee per side %"], ["max_leverage", "max_leverage", "leverage cap"]];
 function firm_rules(a) {
@@ -1133,7 +1136,13 @@ function withSources(reply, lang, toolLog, variant) {
 // With the candidate, a reply that opens support.md section 2 ("That's a real loss and troid takes the question
 // seriously") and leaves out step 5 gets it from the service: the firm's dashboard and hello@troid.ai (run 4, ex-angry).
 const SUPPORT_OPENER = /That['’]s a real loss,? and troid takes the question seriously/i;
-const READ_DATE_RX = /\bread (on )?(\d{4}-\d{2}-\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
+const READ_DATE_RX = /\bread (on )?(\d{4}[-\u2010\u2011]\d{2}[-\u2010\u2011]\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
+// An outside service named as a place to look (the candidate's guardrails name none).
+const OUTSIDE_SERVICE = /\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|numpy)\b|\b(check|use|visit|see|try)\b[^.\n]{0,60}\bBinance\b/i;
+// A firm's rule stated in a reply: a firm named beside a percentage, a time, a number of days or a fee.
+const FIRM_RULE_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,80}?(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b|\$\d)|(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b)[^.\n]{0,60}?\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/;
+const RULE_NUDGE = "(A note from the service, not the user: the answer above states a firm's rule without the date troid read it and without a tool behind it. " +
+  "Get each rule through firm_rules or explain_rule so it carries its read date, then write the whole answer again.)";
 function withSupportStep5(reply, lang) {
   if (!SUPPORT_OPENER.test(reply) || (/hello@troid\.ai/i.test(reply) && /dashboard/i.test(reply))) return reply;
   return reply + "\n\n" + S(lang, "ask.support_step5");
@@ -1295,13 +1304,25 @@ module.exports = async (req, res) => {
     // A turn that wants a tool is rerun on the tools model; with the candidate, so is an answer that states a figure,
     // because every figure comes from a tool (TROID-CHARACTER.md) and Haiku's own arithmetic failed the first
     // evaluation run. Haiku's turn is discarded, never replayed.
-    // So is a reply that opens support.md section 2: its steps need the tools, and Haiku left out steps 4 and 5 (runs 4, 5).
-    const figured = NEXT(variant) && !wantsTool(resp) && resp.stop_reason !== "refusal" && (hasFigure(textOf(resp)) || SUPPORT_OPENER.test(textOf(resp)));
+    // So is a reply that opens support.md section 2: its steps need the tools, and Haiku left out steps 4 and 5 (runs 4, 5);
+    // one that names an outside service as a place to look (run 7, o-predict); and one that leaves the numbers the user gave
+    // unworked (run 7, o-montecarlo: a menu instead of the expectancy).
+    const lastUser = String((messages[messages.length - 1] || {}).content || "");
+    const figured = NEXT(variant) && !wantsTool(resp) && resp.stop_reason !== "refusal" && (hasFigure(textOf(resp)) || SUPPORT_OPENER.test(textOf(resp))
+      || OUTSIDE_SERVICE.test(textOf(resp)) || hasFigure(lastUser));
     if ((wantsTool(resp) || figured) && MODEL_LOOKUP !== MODEL_TOOLS) {
       if (figured) log.rerouted = 1;
       route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
     }
     const convo = messages.slice(), said = [];                         // with the candidate: what troid wrote before each tool call
+    // With the candidate, an answer that states a firm's rule with no read date and no tool behind it is asked once for
+    // the rule through a tool that dates it; the first answer is discarded, never shown (run 7, p-hold from memory).
+    if (NEXT(variant) && resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && !READ_DATE_RX.test(textOf(resp))
+        && Date.now() < deadlineAt - MIN_CALL_MS) {
+      log.nudged = 1;
+      convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE });
+      resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
+    }
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
       if (NEXT(variant) && textOf(resp)) said.push(textOf(resp));     // run 3, ex-r: the definition before a tool call was lost
