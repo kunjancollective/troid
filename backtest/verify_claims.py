@@ -354,6 +354,30 @@ for _pg in ("compare", "ledger", "faq", "dashboard", "chat", "terms", "tearsheet
     _t = _read(f"web/public/{_pg}.html")
     check("DERIVED", f"{_pg}: previews as itself (its own og:title)", float(f'<meta property="og:title" content="{_html.escape(_en[_pg + ".og.title"], quote=True).replace("&#x27;", chr(39))}">' in _t), 1.0)
 
+# 11. troid's character (TROID-CHARACTER.md): every figure its worked examples state, re-derived. Its method says
+# "check it"; the examples are held to the same rule.
+print()
+print("="*76)
+print("  11. troid's character - the worked examples reproduce")
+print("="*76)
+_ch = " ".join(_read("TROID-CHARACTER.md").split())
+_one_r = (77872 - 76580) * 0.3862
+check("DERIVED", "example R: 1R = 1,292 x 0.3862 is about $499", _one_r, 498.97, 1e-4, "")
+check("DERIVED", "example R: $998 is +2R", 998 / _one_r, 2.0, 1e-3, "R")
+check("DERIVED", "example R: the round-trip fee at 0.04% a side is about $24, the desk's 1R about $523", _one_r + 77872 * 0.0004 * 2 * 0.3862, 523.03, 1e-4, "")
+check("DERIVED", "example R: eight $500 losses use up Bitfunded 1-Step's $4,000 daily limit", 0.04 * 100_000 / 500, 8.0, 0)
+_kelly = 0.45 - 0.55 / 2
+check("DERIVED", "example Kelly: p = 0.45, b = 2 gives 17.5%", _kelly * 100, 17.5, 1e-9, "%")
+check("DERIVED", "example Kelly: a full-Kelly loss is nearly three times the 6% maximum loss", _kelly / 0.06, 2.9167, 1e-3, "x")
+check("DERIVED", "example Kelly: half-Kelly (8.75%) is over the 6% maximum loss in one trade", float(_kelly / 2 > 0.06), 1.0)
+check("DERIVED", "example recovery: down 20% needs 25%", 0.2 / 0.8 * 100, 25.0, 1e-9, "%")
+check("DERIVED", "example recovery: down 50% needs 100%", 0.5 / 0.5 * 100, 100.0, 1e-9, "%")
+_maxes = [p.get("max_pct") for f in _GC.FIRMS.values() if isinstance(f, dict) for p in (f.get("products") or {}).values() if isinstance(p, dict) and p.get("max_pct") is not None]
+check("SOURCED", "example recovery: the largest maximum loss troid has read is 10%", max(_maxes), 10.0, 0, "%")
+for _t in ("1R = 1,292 × 0.3862 ≈ $499", "about $24", "about $523", "($4,000 ÷ $500)", "f* = 0.45 − 0.55/2 = 0.175", "Half-Kelly is 8.75%",
+           "nearly three times", "25% of $80,000", "At 50% down the recovery is 100%", "the largest troid has read is 10%"):
+    check("DERIVED", f"TROID-CHARACTER.md states it: {_t}", float(_t in _ch), 1.0)
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

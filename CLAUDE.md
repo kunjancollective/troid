@@ -47,6 +47,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
+  ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
+  the candidate (`web/context/candidate/`, `CANDIDATE_*` in `web/api/troid.js`) and runs `web/eval_character.js` against
+  the live model with the candidate key before it is promoted. Never promote a candidate that fails a check.
 - ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
   never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
   written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.

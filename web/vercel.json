@@ -22,7 +22,7 @@
   ],
   "functions": {
     "api/troid.js": {
-      "includeFiles": "{context,public,i18n}/*.{json,md}",
+      "includeFiles": "{context,context/candidate,public,i18n}/*.{json,md}",
       "maxDuration": 60
     },
     "api/digest.js": {

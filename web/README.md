@@ -55,6 +55,7 @@ Switched on by the owner in Vercel → Project → Environment Variables. Withou
 | `ANTHROPIC_API_KEY` | the key. Never in the repo. Put it in its own Anthropic Console workspace with a monthly spend limit: that limit is the only hard wall on cost. |
 | `TROID_TURN_KEY` | 32 random bytes or more. Signs troid's side of each conversation so a client cannot forge it; a change to the guardrails also invalidates older conversations. Required: without it, or with a shorter key, the function answers 503. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the conversation store: Upstash Redis, added from the Vercel Marketplace (Upstash's own `UPSTASH_REDIS_REST_URL` / `_TOKEN` also work). Required: the disclosure promises a 30-day record, so without a store ask troid stays off. |
+| `TROID_CANDIDATE_KEY` | 32 characters or more. Selects the candidate prompt for a request that carries it in `x-troid-candidate`: the evaluation runner, below. Unset, there is no candidate. |
 | `CRON_SECRET` | 16 characters or more (`openssl rand -hex 32`). Vercel Cron sends it to `/api/digest` each Monday; without it the digest route answers 503 and counts nothing. |
 | `TROID_MODEL_LOOKUP` | model for answers that call no tool (default Haiku 4.5) |
 | `TROID_MODEL_TOOLS` | model for any turn that calls a tool (default Sonnet 5) |
@@ -100,6 +101,20 @@ the store held it; a second delete finds nothing. With `KV_REST_API_URL` / `KV_R
 environment it also reads the store (two entries, a 30-day TTL, no address or user agent). Without them,
 `--keep` leaves the refusal conversation in the store and prints its key and delete token, so the owner can
 read it in the Upstash console (`TTL conv:<id>`, `LRANGE conv:<id> 0 -1`) and delete it afterwards.
+
+**troid's character and the evaluation gate.** `TROID-CHARACTER.md` (repo root) defines how troid speaks and teaches;
+its first sections are in `TROID.md`, and the rest (what ask troid is current on, the worked examples) goes into ask
+troid's prompt after TROID.md and before `support.md`. The mathematics it teaches goes through the `trade_math` tool
+(R-multiples, position size, expectancy, Kelly, recovery, fee share, losses to a limit, capped budgets, standard
+errors, ATR scaling, effective bets), each result with its formula and every step. Every prompt change runs against
+the live model before it reaches anyone: stage it as the candidate (the changed files in `context/candidate/`, new
+guardrails and tools in `CANDIDATE_GUARDRAILS` and `CANDIDATE_TOOLS` in `api/troid.js`), deploy, and run
+`EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-candidate`. Only requests
+with the key get the candidate; they are not stored and not held to a visitor's limit. The set is
+`eval/character.json`: the character's four examples and twenty more questions across every kind of user. When every
+automated check passes and a person has read the report, promote: move the files into place and fold the candidate
+constants into the live ones, in one commit. Without the key the runner evaluates the live prompt, one case every
+185 seconds, deleting each conversation after reading it.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.

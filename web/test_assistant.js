@@ -166,6 +166,62 @@ for (const v of ["troid doesn't recommend; it prices what you bring.",
   ok("support.md quotes the owner's reply: " + v.slice(0, 40), quoted.includes(v));
 ok("the disclosure is the owner's wording: the 30-day sentence and the weekly topic counts", F0.DISCLOSURE === "This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.");
 
+// --- trade_math: trading arithmetic that needs no firm rule (TROID-CHARACTER.md, "compute through the tools")
+const M = (a) => T.trade_math(a);
+r = M({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04, result: 998 });
+ok("trade_math r_multiple: the character's example — 1R $498.97, $523.03 with the round-trip fee", r.result.one_r === 498.97 && r.result.one_r_with_fees === 523.03
+   && r.result.r_multiple === 1.908 && /DERIVED from the numbers given; no firm rule/.test(r.tier) && r.working.length === 5, r);
+r = M({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, fee_per_side_pct: 0.04 });
+ok("trade_math position_size: reference case 2's quantity (1.622095) and notional", r.result.quantity === 1.622095 && r.result.notional === 126315.79, r.result);
+r = M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 });
+ok("trade_math expectancy: 40% at 1.5R is 0R; break-even 40%", r.result.expectancy === 0 && r.result.breakeven_win_rate_pct === 40 && r.result.payoff_ratio === 1.5, r.result);
+r = M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2 });
+ok("trade_math kelly: 17.5%, half 8.75%, no firm", r.result.kelly_pct === 17.5 && r.result.half_kelly_pct === 8.75 && !r.sources, r);
+r = M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "bitfunded", product: "1step" });
+ok("trade_math kelly beside Bitfunded 1-Step: 2.92× the 6% max, 1.46× at half, the limits cited with their read dates",
+   r.result.full_kelly_vs_max === 2.92 && r.result.half_kelly_vs_max === 1.46 && r.sources.length === 2
+   && r.sources.every((x) => /Challenge & Trader Stage/.test(x.cite) && /read 2026-09-23/.test(x.cite)) && /firm rules listed/.test(r.tier), r);
+ok("trade_math kelly: no edge says so", /No positive edge/.test(M({ calc: "kelly", win_rate_pct: 30, payoff_ratio: 2 }).note));
+r = M({ calc: "recovery", drawdown_pct: 20, balance: 100000 });
+ok("trade_math recovery: 20% down needs 25%; $80,000 after, $20,000 to recover", r.result.gain_needed_pct === 25 && r.result.balance_after === 80000 && r.result.amount_to_recover === 20000, r.result);
+ok("trade_math recovery: 50% down needs 100%", M({ calc: "recovery", drawdown_pct: 50 }).result.gain_needed_pct === 100);
+ok("trade_math fee_share: TROID.md's table — 2.01% at a 3.9% stop, 21.05% at 0.3%",
+   M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 3.9 }).result.fee_share_pct === 2.01 && M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 0.3 }).result.fee_share_pct === 21.05);
+r = M({ calc: "losses_to_limit", budget: 4000, risk: 500 });
+ok("trade_math losses_to_limit: eight $500 losses use up $4,000; the eighth reaches it", r.result.losses_that_fit === 8 && r.result.left_after === 0 && r.result.loss_that_reaches_limit === 8, r.result);
+r = M({ calc: "losses_to_limit", budget: 4000, risk: 450 });
+ok("trade_math losses_to_limit: at $450, eight fit with $400 left; the ninth reaches it", r.result.losses_that_fit === 8 && r.result.left_after === 400 && r.result.loss_that_reaches_limit === 9, r.result);
+ok("trade_math capped_budget: $2,000 under a 35% cap after 3 losses is $549.25", M({ calc: "capped_budget", budget: 2000, cap_pct: 35, losses: 3 }).result.budget_after === 549.25);
+r = M({ calc: "stats", mean: 0.033, sd: 0.40, n: 78, configs: 30 });
+ok("trade_math stats: SE 0.0453, t 0.729, the interval contains zero, best of 30 by chance 0.1181", r.result.standard_error === 0.0453 && r.result.t === 0.729
+   && r.result.ci_contains_zero === true && r.result.best_of_configs_by_chance === 0.1181, r.result);
+ok("trade_math atr_scale: 600 on 1h is about 1,200 on 4h, with the caveat", M({ calc: "atr_scale", atr: 600, from_minutes: 60, to_minutes: 240 }).result.atr === 1200
+   && /approximation/.test(M({ calc: "atr_scale", atr: 600, from_minutes: 60, to_minutes: 240 }).note));
+ok("trade_math effective_bets: four positions at 0.6 are about 1.43 bets", M({ calc: "effective_bets", positions: 4, correlation: 0.6 }).result.effective_bets === 1.43);
+ok("trade_math refuses what it can't compute: unknown calc, a missing input, out of range, an impossible correlation",
+   /unknown calc/.test(M({ calc: "monte_carlo" }).error) && /needs avg_loss/.test(M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1 }).error)
+   && /out of range/.test(M({ calc: "recovery", drawdown_pct: 100 }).error) && /impossible/.test(M({ calc: "effective_bets", positions: 4, correlation: -0.5 }).error)
+   && /same price/.test(M({ calc: "r_multiple", entry: 5, stop: 5, quantity: 1 }).error) && /unknown firm/.test(M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "ftmo", product: "x" }).error));
+
+// --- troid's character: staged as the candidate prompt; the live prompt unchanged until it is promoted
+const fs0 = require("fs"), path0 = require("path");
+const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
+ok("TROID-CHARACTER.md: the repo root copy and the staged copy are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "candidate", "TROID-CHARACTER.md"), "utf8"));
+const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBlocks("en", "candidate");
+const candText = candSys.map((b) => b.text).join("\n");
+ok("live prompt: four blocks, no character, five tools", liveSys.length === 4 && !/## Who troid is/.test(liveSys.map((b) => b.text).join("\n")) && handler._toolsFor("live").length === 5);
+ok("candidate prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; six tools",
+   candSys.length === 5 && /^# Guardrails/.test(candSys[0].text) && /## Who troid is/.test(candSys[0].text) && /^# troid's character/.test(candSys[1].text)
+   && /^# support\.md/.test(candSys[2].text) && candSys[4].cache_control && handler._toolsFor("candidate").map((t) => t.name).join() === "size_trade,check_budget,check_compliance,check_availability,explain_rule,trade_math",
+   candSys.map((b) => b.text.slice(0, 40)));
+const charSecs = CHAR.split(/\n(?=## )/).slice(1).map((x) => x.trim()).filter((x) => !x.startsWith("## Where this plugs in"));
+ok("candidate prompt: every section of the character appears exactly once (TROID.md or the character block)",
+   charSecs.length === 8 && charSecs.every((x) => candText.split(x).length === 2), charSecs.map((x) => [x.slice(0, 30), candText.split(x).length - 1]));
+ok("candidate prompt: its guardrails add the teaching method, trade_math and no browsing", /answer first, in one line/.test(candSys[0].text)
+   && /goes through trade_math/.test(candSys[0].text) && /does not browse/.test(candSys[0].text) && !/goes through trade_math/.test(liveSys[0].text));
+ok("candidate support.md: section 4 keeps the refusal word for word, then teaches", /> troid doesn't recommend; it prices what you bring\./.test(candSys[2].text)
+   && /as troid's character teaches it/.test(candSys[2].text) && !/as troid's character teaches it/.test(liveSys[1].text));
+
 // --- handler end to end: the real SDK against a local fake of the Messages API
 const http = require("http");
 const calls = [];
@@ -514,6 +570,43 @@ fake.listen(18765, async () => {
     res4 = fakeRes(); await h({ method: "GET", headers: {} }, res4);
     ok("no store configured → off: 503, no upstream call, GET says enabled false", r.status === 503 && r.j.enabled === false && calls.length === before && JSON.parse(res4.body).enabled === false, r);
     process.env.KV_REST_API_URL = KVU;
+
+    // 9. the candidate prompt: only with the key; not limited per address, not stored; signed apart from the live prompt
+    before = calls.length;
+    r = await post([U("hi")], { disclosed: true }, { headers: { "x-troid-candidate": "x".repeat(40) } });
+    ok("candidate: no key configured → 403 before the model", r.status === 403 && /candidate key/.test(r.j.error) && calls.length === before, r);
+    const CK = "candidate-key-" + "0123456789abcdef0123456789abcdef";
+    const hc = fresh({ TROID_CANDIDATE_KEY: CK });
+    r = await call(hc, [U("hi")], { disclosed: true }, { headers: { "x-troid-candidate": CK.replace(/.$/, "x") } });
+    ok("candidate: a wrong key → 403", r.status === 403, r);
+    script = () => msg("end_turn", [{ type: "text", text: "R is the amount risked on one trade. Not financial advice. Verify with the firm before acting." }]);
+    KV_CALLS.length = 0; before = calls.length;
+    let cs;
+    for (let i = 0; i < 22; i++) cs = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK }, ip: "198.51.100.200" });
+    ok("candidate: 22 messages from one address in an hour, all answered (the operator's runs are not held to a visitor's limit)", cs.status === 200 && calls.length === before + 22, cs.status);
+    ok("candidate: the reply says so, and nothing is stored or checked in the store", cs.j.variant === "candidate" && !KV_CALLS.length && ![...KV.keys()].includes("conv:" + cs.j.session), [cs.j.variant, KV_CALLS]);
+    const cc = calls[calls.length - 1];
+    ok("candidate: the model gets the candidate prompt and trade_math", cc.system.length === 5 && /## Who troid is/.test(cc.system[0].text) && /^# troid's character/.test(cc.system[1].text)
+       && cc.tools.some((t) => t.name === "trade_math"), cc.system.map((b) => b.text.slice(0, 30)));
+    const hist = [U("What does R mean?"), A(cs.j.reply), U("and 2R?")];
+    r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: its signed history continues under the candidate", r.status === 200 && r.j.variant === "candidate", r);
+    r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true });
+    ok("candidate: the same history can't continue under the live prompt", r.status === 400 && r.j.restart === true, r);
+    r = await call(hc, [U("What does R mean?")], { disclosed: true });
+    ok("live, beside a configured candidate: the live prompt, five tools, stored", r.status === 200 && r.j.variant === "live" && calls[calls.length - 1].system.length === 4
+       && calls[calls.length - 1].tools.length === 5 && KV.has("conv:" + r.j.session), r.j.variant);
+    let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
+    const gc = JSON.parse(resC.body).candidate;
+    ok("GET: the candidate is staged (files, guardrails, tools) and a key is set, never shown", gc.key === true && gc.staged.join() === "TROID.md,TROID-CHARACTER.md,support.md"
+       && gc.guardrails === 3 && gc.tools.join() === "trade_math" && !resC.body.includes(CK), gc);
+    let step = 0;
+    script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "recovery", drawdown_pct: 20 } }])
+      : msg("end_turn", [{ type: "text", text: "25%. Not financial advice. Verify with the firm before acting." }]));
+    r = await call(hc, [U("I'm down 20%. How much do I need to get back?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a trade_math answer carries the tier for the numbers given, not a firm-rule tier", r.status === 200 && r.j.reply.includes(handler.EN["ask.tier.inputs"])
+       && !r.j.reply.includes(handler.EN["ask.tier.derived"]) && r.j.tools_used.join() === "trade_math" && r.j.reply.endsWith(handler.EN["ask.note"]), r.j.reply);
+    delete process.env.TROID_CANDIDATE_KEY;
   } catch (e) { console.log = log0; ok("no exception in the handler tests", false, String(e && e.stack)); }
   fake.close(); kv.close();
   console.log(`RESULT: ${process.exitCode ? "FAILED" : "0 failed"} (${n} checks)`);

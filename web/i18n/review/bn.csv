@@ -851,6 +851,7 @@ ask.err.session,This conversation has no valid session ID. Reloading the page st
 ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
+ask.tier.inputs,Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly

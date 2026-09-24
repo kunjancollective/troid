@@ -21,6 +21,14 @@
  * service never reads a conversation back (it keeps one, below, but answers only from what the page sends),
  * so a client that rewinds to an earlier signed turn, or reloads, starts over; the rate limit is the brake on that.
  *
+ * Candidate prompt: every prompt change runs against the live model before it reaches users (TROID-CHARACTER.md,
+ * "Where this plugs in"). It is staged as the candidate — the files in context/candidate/ that exist, plus
+ * CANDIDATE_GUARDRAILS and CANDIDATE_TOOLS below — and only a request carrying TROID_CANDIDATE_KEY in the
+ * x-troid-candidate header gets it: the evaluation runner, web/eval_character.js. Everyone else gets the live prompt.
+ * A candidate request is the operator's own: it is not held to the per-address limit and is not stored (the
+ * per-instance call ceiling still applies). Promoting a candidate is one commit: its files move into place and
+ * CANDIDATE_GUARDRAILS and CANDIDATE_TOOLS fold into GUARDRAILS and TOOLS.
+ *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
  * and spends nothing, so the disclosure never promises a log that is not being kept. No key ever leaves
@@ -53,6 +61,7 @@ const Anthropic = require("@anthropic-ai/sdk").default;
 const ENABLED = process.env.TROID_ASSISTANT === "on";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // signs troid's side of the history
+const CANDIDATE_KEY = process.env.TROID_CANDIDATE_KEY || "";                 // selects the candidate prompt (32+ bytes); unset: none
 // The 30-day conversation store: Upstash Redis over its REST API (the Vercel Marketplace integration sets
 // KV_REST_API_URL / KV_REST_API_TOKEN; Upstash's own names are accepted too).
 const STORE_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, "");
@@ -107,6 +116,7 @@ const EN = {
   "ask.sources": "Sources, each with the date troid read it:",
   "ask.tier.derived": "Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.",
   "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
+  "ask.tier.inputs": "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.",
   "ask.assumed": "troid's assumptions, not the firm's rules: {list}.",
 };
 // A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
@@ -136,6 +146,14 @@ const GUARDRAILS = [
   "When a user mentions their country, call check_availability for each firm before you discuss that firm. If the firm's terms exclude the country, say so and do not discuss buying its challenge. troid never says a firm is available in a country: it says what its record of the firm's terms excludes, or that it has not recorded the list.",
   "Abuse: one warning, worded as support.md section 5. If abuse continues after that warning, reply with exactly " + END_SESSION + " and nothing else. Never write " + END_SESSION + " in any other reply, including when explaining this rule.",
 ].join("\n- ").replace(/^/, "- ");
+// The candidate's guardrails: the live ones plus these (TROID-CHARACTER.md). Folded into GUARDRAILS when promoted.
+const CANDIDATE_GUARDRAILS = [
+  "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Under an answer that used a tool, the service writes the tier and the sources; write them yourself only when no tool was used. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
+  "Trading arithmetic that needs no firm rule goes through trade_math: an R-multiple, a position size, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets. A firm's own limits go through check_budget or size_trade. When a question needs arithmetic no tool computes, such as a new simulation, say troid can't compute it exactly here and what it would need; troid's published simulations can be quoted with their assumptions and tier.",
+  "ask troid does not browse and has no live data. For news, prices, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents.",
+];
+const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
+  ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 
 // ---------------------------------------------------------------- context
 // ---------------------------------------------------------------- languages (web/i18n)
@@ -165,7 +183,8 @@ function S(lang, key, vars) {
   return v;
 }
 
-let CTX = null;
+let CTX = null, CTX_CANDIDATE = null;
+function readOptional(rels) { try { return readFirst(rels); } catch (e) { return null; } }
 function readFirst(rels) {
   for (const rel of rels) {
     for (const base of [process.cwd(), path.join(__dirname, "..")]) {
@@ -174,11 +193,23 @@ function readFirst(rels) {
   }
   throw new Error("context file missing: " + rels[0]);
 }
-function context() {
+function context(variant) {
+  if (variant === "candidate") {                                          // the staged files that exist; the live ones otherwise
+    if (!CTX_CANDIDATE) {
+      const live = context();
+      CTX_CANDIDATE = Object.assign({}, live, {
+        troid: readOptional(["context/candidate/TROID.md"]) || live.troid,
+        support: readOptional(["context/candidate/support.md"]) || live.support,
+        character: readOptional(["context/candidate/TROID-CHARACTER.md"]) || live.character,
+      });
+    }
+    return CTX_CANDIDATE;
+  }
   if (!CTX) {
     CTX = {
       troid: readFirst(["public/TROID.md"]),
       support: readFirst(["context/support.md"]),
+      character: readOptional(["context/TROID-CHARACTER.md"]),            // troid's character, once promoted
       firms: readFirst(["context/firms.json"]),
       method: readFirst(["public/METHODOLOGY.md"]),
     };
@@ -221,11 +252,20 @@ function verifiedLine(pf) {                                  // from the data, s
   const v = Object.values(pf).filter((f) => f.verified === true).map((f) => f.name);
   return v.length ? v.join(", ") + (v.length > 1 ? " are" : " is") + " marked verified; the others are not" : "No firm is marked verified";
 }
-function systemBlocks(lang) {
-  const c = context(), names = Object.values(c.prompt_firms).map((f) => f.name);
+// The parts of TROID-CHARACTER.md that TROID.md does not carry: what ask troid is current on, and the worked examples.
+// They go after TROID.md and before support.md; the other sections are in TROID.md already, so none appears twice.
+const CHARACTER_IN_PROMPT = ["What troid is current on", "Examples"];
+function characterBlock(md) {
+  if (!md) return null;
+  const parts = String(md).split(/\n(?=## )/).filter((x) => CHARACTER_IN_PROMPT.some((h) => x.startsWith("## " + h)));
+  return parts.length ? parts.map((x) => x.trim()).join("\n\n") : null;
+}
+function systemBlocks(lang, variant) {
+  const c = context(variant), names = Object.values(c.prompt_firms).map((f) => f.name), ch = characterBlock(c.character);
   const blocks = [
-    { type: "text", text: "# Guardrails\n\n" + GUARDRAILS + "\n- You may speak only about these firms: " + names.join(", ") +
+    { type: "text", text: "# Guardrails\n\n" + guardrailsFor(variant) + "\n- You may speak only about these firms: " + names.join(", ") +
       ". For any other firm, say troid does not cover it and has not read its rules, and stop.\n- " + verifiedLine(c.prompt_firms) + ".\n\n" + c.troid },
+    ...(ch ? [{ type: "text", text: "# troid's character — what ask troid is current on, and worked examples of its teaching (TROID-CHARACTER.md)\n\n" + ch }] : []),
     { type: "text", text: "# support.md — fixed wording for the hard conversations\n\n" + c.support },
     { type: "text", text: "# Firm rules — the rule data behind troid's compare and troid's desk. Each rule has its source and read date under provenance, " +
       "or no recorded source yet; a null is pending. " + verifiedLine(c.prompt_firms) + ".\n\n" + JSON.stringify(c.prompt_firms) },
@@ -571,6 +611,185 @@ function check_availability(a) {
   return res;
 }
 
+// ---------------------------------------------------------------- trade_math
+// Trading arithmetic that needs no firm rule, so the model never does arithmetic itself (TROID-CHARACTER.md: compute
+// through the tools, never in its head). Every result carries the formula, each step with its value, and its tier:
+// DERIVED from the numbers given. kelly can set its result beside a firm product's loss limits, with their sources.
+// Percentages come in as percent (45 means 45%). A result troid can only approximate says so in its note.
+const MATH_FORMULAS = {
+  r_multiple: "1R = |entry − stop| × quantity (troid's desk adds the round-trip fee: + entry × fee × 2 × quantity); R of a result = result ÷ 1R",
+  position_size: "quantity = risk ÷ (|entry − stop| + entry × fee × 2); notional = quantity × entry",
+  expectancy: "E = p × W − (1 − p) × L; break-even win rate = L ÷ (W + L) = 1 ÷ (1 + W/L)",
+  kelly: "f* = p − (1 − p) ÷ b, where b = average win ÷ average loss",
+  recovery: "gain needed = d ÷ (1 − d)",
+  fee_share: "fee share of risk = 2f ÷ (s + 2f), f = fee per side, s = stop distance as a fraction of price",
+  losses_to_limit: "losses = budget ÷ risk per loss",
+  capped_budget: "budget after n losses = B × (1 − c)^n",
+  stats: "SE = sd ÷ √n; t = mean ÷ SE; 95% CI = mean ± 1.96 × SE",
+  atr_scale: "ATR(T2) ≈ ATR(T1) × √(T2 ÷ T1)",
+  effective_bets: "effective bets = n ÷ (1 + (n − 1) × ρ)",
+};
+class MathInputError extends Error {}
+const rd = (v, d) => (Number.isFinite(v) ? +v.toFixed(d == null ? 6 : d) : v);
+const MATH = {
+  r_multiple(x) {
+    const entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 }), q = x("quantity", { gt: 0 });
+    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true }), res = x("result", { optional: true });
+    const dist = Math.abs(entry - stop);
+    if (!(dist > 0)) throw new MathInputError("entry and stop are the same price, so 1R is zero");
+    const w = [{ step: "stop distance", formula: "|entry − stop|", value: rd(dist) }, { step: "1R", formula: "stop distance × quantity", value: rd(dist * q, 2) }];
+    const out = { one_r: rd(dist * q, 2) };
+    let base = dist * q;
+    if (fee != null) {
+      const rt = entry * fee / 100 * 2 * q;
+      base += rt;
+      w.push({ step: "round-trip fee", formula: "entry × " + fee + "% × 2 × quantity", value: rd(rt, 2) },
+             { step: "1R with fees", formula: "1R + round-trip fee (troid's desk counts it in the risk)", value: rd(base, 2) });
+      out.one_r_with_fees = rd(base, 2);
+    }
+    if (res != null) { w.push({ step: "R of the result", formula: "result ÷ " + (fee != null ? "1R with fees" : "1R"), value: rd(res / base, 3) }); out.r_multiple = rd(res / base, 3); }
+    return { working: w, result: out };
+  },
+  position_size(x) {
+    const risk = x("risk", { gt: 0 }), entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 });
+    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true });
+    const dist = Math.abs(entry - stop);
+    if (!(dist > 0)) throw new MathInputError("entry and stop are the same price");
+    const fu = entry * (fee || 0) / 100 * 2, q = risk / (dist + fu);
+    const w = [{ step: "stop distance", formula: "|entry − stop|", value: rd(dist) },
+               { step: "fee per unit", formula: fee == null ? "no fee given: 0" : "entry × " + fee + "% × 2", value: rd(fu) },
+               { step: "quantity", formula: "risk ÷ (stop distance + fee per unit)", value: rd(q) },
+               { step: "notional", formula: "quantity × entry", value: rd(q * entry, 2) }];
+    return { working: w, result: { quantity: rd(q), notional: rd(q * entry, 2) },
+             note: fee == null ? "No fee was given, so none is counted; a firm's fee makes the quantity smaller." : undefined };
+  },
+  expectancy(x) {
+    const p = x("win_rate_pct", { min: 0, max: 100 }) / 100, W = x("avg_win", { min: 0 }), L = x("avg_loss", { gt: 0 });
+    const E = p * W - (1 - p) * L, be = L / (W + L);
+    return { working: [{ step: "p", formula: "win rate ÷ 100", value: rd(p) },
+                       { step: "expectancy", formula: `${rd(p)} × ${W} − ${rd(1 - p)} × ${L}`, value: rd(E, 4) },
+                       { step: "payoff ratio", formula: "W ÷ L", value: rd(W / L, 4) },
+                       { step: "break-even win rate", formula: `${L} ÷ (${W} + ${L})`, value: rd(be * 100, 2) + "%" }],
+             result: { expectancy: rd(E, 4), breakeven_win_rate_pct: rd(be * 100, 2), payoff_ratio: rd(W / L, 4) },
+             note: "Expectancy is in the unit of the averages: R if they are in R, dollars if in dollars." };
+  },
+  kelly(x, a) {
+    const p = x("win_rate_pct", { gt: 0, lt: 100 }) / 100, b = x("payoff_ratio", { gt: 0 });
+    const f = p - (1 - p) / b;
+    const w = [{ step: "p", formula: "win rate ÷ 100", value: rd(p) }, { step: "b", formula: "average win ÷ average loss", value: b },
+               { step: "full Kelly", formula: `${rd(p)} − ${rd(1 - p)} ÷ ${b}`, value: rd(f * 100, 2) + "%" },
+               { step: "half Kelly", formula: "full Kelly ÷ 2", value: rd(f * 50, 2) + "%" }];
+    const out = { working: w, result: { kelly_pct: rd(f * 100, 2), half_kelly_pct: rd(f * 50, 2) },
+                  note: f <= 0 ? "No positive edge at these numbers: Kelly risks nothing." : "Kelly maximises long-run growth only if p and b are known exactly, which they never are." };
+    if (a.firm != null || a.product != null) {
+      const g = profile(String(a.firm || ""), String(a.product || ""));
+      if (g.error) throw new MathInputError(g.error);
+      const P = g.p;
+      w.push({ step: "full Kelly ÷ max loss", formula: `${rd(f * 100, 2)}% ÷ ${P.m}%`, value: rd(f * 100 / P.m, 2) + "×" },
+             { step: "half Kelly ÷ max loss", formula: `${rd(f * 50, 2)}% ÷ ${P.m}%`, value: rd(f * 50 / P.m, 2) + "×" },
+             { step: "full Kelly ÷ daily limit", formula: `${rd(f * 100, 2)}% ÷ ${P.d}%`, value: rd(f * 100 / P.d, 2) + "×" });
+      Object.assign(out.result, { firm: g.f.name, product: P.label, daily_pct: P.d, max_pct: P.m,
+                                  full_kelly_vs_max: rd(f * 100 / P.m, 2), half_kelly_vs_max: rd(f * 50 / P.m, 2) });
+      out.sources = sourcesFor(P, [["d", "daily " + P.d + "%"], ["m", "max " + P.m + "%"]]);
+    }
+    return out;
+  },
+  recovery(x) {
+    const d = x("drawdown_pct", { min: 0, lt: 100 }) / 100, bal = x("balance", { gt: 0, optional: true });
+    const g = d / (1 - d);
+    const w = [{ step: "d", formula: "drawdown ÷ 100", value: rd(d) }, { step: "gain needed", formula: `${rd(d)} ÷ (1 − ${rd(d)})`, value: rd(g * 100, 2) + "%" }];
+    const out = { gain_needed_pct: rd(g * 100, 2) };
+    if (bal != null) {
+      w.push({ step: "balance after the drawdown", formula: "balance × (1 − d)", value: rd(bal * (1 - d), 2) },
+             { step: "amount to recover", formula: "balance − balance after", value: rd(bal * d, 2) });
+      Object.assign(out, { balance_after: rd(bal * (1 - d), 2), amount_to_recover: rd(bal * d, 2) });
+    }
+    return { working: w, result: out };
+  },
+  fee_share(x) {
+    const f = x("fee_per_side_pct", { gt: 0, max: 5 }) / 100, st = x("stop_pct", { gt: 0, lt: 100 }) / 100;
+    const sh = 2 * f / (st + 2 * f);
+    return { working: [{ step: "fee share of risk", formula: `2 × ${rd(f * 100, 4)}% ÷ (${rd(st * 100, 4)}% + 2 × ${rd(f * 100, 4)}%)`, value: rd(sh * 100, 2) + "%" }],
+             result: { fee_share_pct: rd(sh * 100, 2) }, note: "Depends only on the stop distance and the fee: not the asset, not leverage." };
+  },
+  losses_to_limit(x) {
+    const B = x("budget", { gt: 0 }), r = x("risk", { gt: 0 });
+    const whole = Math.floor(B / r + 1e-9), reach = Math.ceil(B / r - 1e-9);
+    return { working: [{ step: "budget ÷ risk", formula: `${B} ÷ ${r}`, value: rd(B / r, 4) },
+                       { step: "losses that fit", formula: "floor(budget ÷ risk)", value: whole },
+                       { step: "left after them", formula: "budget − losses × risk", value: rd(B - whole * r, 2) },
+                       { step: "the loss that reaches the limit", formula: "ceil(budget ÷ risk)", value: reach }],
+             result: { losses_that_fit: whole, left_after: rd(B - whole * r, 2), loss_that_reaches_limit: reach } };
+  },
+  capped_budget(x) {
+    const B = x("budget", { gt: 0 }), c = x("cap_pct", { gt: 0, lt: 100 }) / 100, n = x("losses", { min: 1, max: 50, int: true });
+    const w = [];
+    for (let i = 1; i <= n; i++) w.push({ step: "after loss " + i, formula: `${B} × ${rd(1 - c)}^${i}`, value: rd(B * Math.pow(1 - c, i), 2) });
+    return { working: w, result: { budget_after: rd(B * Math.pow(1 - c, n), 2), share_left_pct: rd(Math.pow(1 - c, n) * 100, 2) },
+             note: "Under a proportional cap the budget approaches zero without reaching it: realized losses alone cannot empty it." };
+  },
+  stats(x) {
+    const m = x("mean"), sd = x("sd", { gt: 0 }), n = x("n", { min: 2, int: true }), k = x("configs", { min: 2, int: true, optional: true });
+    const se = sd / Math.sqrt(n), lo = m - 1.96 * se, hi = m + 1.96 * se;
+    const w = [{ step: "standard error", formula: `${sd} ÷ √${n}`, value: rd(se, 4) }, { step: "t", formula: "mean ÷ SE", value: rd(m / se, 3) },
+               { step: "95% confidence interval", formula: "mean ± 1.96 × SE", value: "[" + rd(lo, 4) + ", " + rd(hi, 4) + "]" }];
+    const out = { standard_error: rd(se, 4), t: rd(m / se, 3), ci95_low: rd(lo, 4), ci95_high: rd(hi, 4), ci_contains_zero: lo < 0 && hi > 0 };
+    if (k != null) {
+      const best = se * Math.sqrt(2 * Math.log(k));
+      w.push({ step: "best of " + k + " configurations under a zero edge", formula: "SE × √(2 ln k)", value: rd(best, 4) });
+      out.best_of_configs_by_chance = rd(best, 4);
+    }
+    return { working: w, result: out, note: "Normal approximation. An interval that contains zero means the mean is not distinguishable from zero on this sample." };
+  },
+  atr_scale(x) {
+    const atr = x("atr", { gt: 0 }), t1 = x("from_minutes", { gt: 0 }), t2 = x("to_minutes", { gt: 0 });
+    const v = atr * Math.sqrt(t2 / t1);
+    return { working: [{ step: "scale", formula: `√(${t2} ÷ ${t1})`, value: rd(Math.sqrt(t2 / t1), 4) }, { step: "ATR on the new timeframe", formula: `${atr} × scale`, value: rd(v, 2) }],
+             result: { atr: rd(v, 2) }, note: "An approximation: it assumes returns are independent from bar to bar. Real ATR often differs." };
+  },
+  effective_bets(x) {
+    const n = x("positions", { min: 1, max: 100, int: true }), rho = x("correlation", { max: 1 });
+    if (n > 1 && rho <= -1 / (n - 1)) throw new MathInputError("that correlation is impossible for " + n + " positions that all share it");
+    const e = n / (1 + (n - 1) * rho);
+    return { working: [{ step: "effective bets", formula: `${n} ÷ (1 + ${n - 1} × ${rho})`, value: rd(e, 2) }],
+             result: { effective_bets: rd(e, 2) }, note: "Assumes equal risk on each position and the same correlation between every pair." };
+  },
+};
+function trade_math(a) {
+  const calc = String(a.calc || "");
+  if (!Object.hasOwn(MATH, calc)) return { error: "unknown calc. options: " + Object.keys(MATH).join(", ") };
+  const x = (k, o) => {
+    o = o || {};
+    const v = a[k];
+    if (v === undefined || v === null || v === "") { if (o.optional) return null; throw new MathInputError(calc + " needs " + k); }
+    const n = typeof v === "number" ? v : Number(v);
+    if (!Number.isFinite(n)) throw new MathInputError(k + " must be a number");
+    if ((o.min != null && n < o.min) || (o.max != null && n > o.max) || (o.gt != null && !(n > o.gt)) || (o.lt != null && !(n < o.lt)) || (o.int && !Number.isInteger(n)))
+      throw new MathInputError(k + " is out of range");
+    return n;
+  };
+  try {
+    const r = MATH[calc](x, a);
+    return Object.assign({ calc, formula: MATH_FORMULAS[calc] }, r, {
+      tier: r.sources ? "DERIVED from the numbers given and the firm rules listed" : "DERIVED from the numbers given; no firm rule used" });
+  } catch (e) {
+    if (e instanceof MathInputError) return { error: e.message };
+    throw e;
+  }
+}
+const TRADE_MATH_TOOL = { name: "trade_math",
+  description: "Trading arithmetic that needs no firm rule, returned with the formula and every step. calc and its inputs: r_multiple (entry, stop, quantity; optional result, fee_per_side_pct); position_size (risk, entry, stop; optional fee_per_side_pct); expectancy (win_rate_pct, avg_win, avg_loss); kelly (win_rate_pct, payoff_ratio; optional firm and product to set it beside that product's loss limits, with their sources); recovery (drawdown_pct; optional balance); fee_share (fee_per_side_pct, stop_pct); losses_to_limit (budget, risk); capped_budget (budget, cap_pct, losses); stats (mean, sd, n; optional configs); atr_scale (atr, from_minutes, to_minutes); effective_bets (positions, correlation). Percentages are in percent: 45 means 45%. Never call it to suggest a trade.",
+  input_schema: { type: "object", properties: {
+    calc: { type: "string", enum: Object.keys(MATH_FORMULAS) },
+    entry: { type: "number" }, stop: { type: "number" }, quantity: { type: "number" }, result: { type: "number", description: "a trade's profit or loss, for its R-multiple" },
+    risk: { type: "number", description: "dollars risked per trade" }, fee_per_side_pct: { type: "number" },
+    win_rate_pct: { type: "number" }, avg_win: { type: "number" }, avg_loss: { type: "number" }, payoff_ratio: { type: "number" },
+    firm: { type: "string" }, product: { type: "string" }, drawdown_pct: { type: "number" }, balance: { type: "number" },
+    stop_pct: { type: "number", description: "stop distance as a percent of price" }, budget: { type: "number" }, cap_pct: { type: "number" },
+    losses: { type: "integer" }, mean: { type: "number" }, sd: { type: "number" }, n: { type: "integer" }, configs: { type: "integer" },
+    atr: { type: "number" }, from_minutes: { type: "number" }, to_minutes: { type: "number" }, positions: { type: "integer" }, correlation: { type: "number" } },
+    required: ["calc"] } };
+
 const TOOLS = [
   { name: "size_trade", description: "Size a trade the user brings against a firm product troid covers: both loss ceilings, the binding one, quantity net of fees, margin, fee share of risk, losses left, circuit-breaker order, every formula and intermediate value (working), and the source and read date of each rule used. Pending fields are reported as pending. Never call this to suggest a trade.",
     input_schema: { type: "object", properties: {
@@ -601,7 +820,10 @@ const TOOLS = [
   { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies, strategy_switching, opposite_positions, funded_stage.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
 ];
-const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule };
+// The candidate's tools: the live ones plus these (TROID-CHARACTER.md). Folded into TOOLS when promoted.
+const CANDIDATE_TOOLS = [TRADE_MATH_TOOL];
+const toolsFor = (variant) => (variant === "candidate" ? TOOLS.concat(CANDIDATE_TOOLS) : TOOLS);
+const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math };
 function runTool(name, input) {
   try { return Object.hasOwn(RUN, name) ? RUN[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
@@ -652,14 +874,14 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Every call gets only the time left before the message's deadline; the abort signal is the hard wall.
 // The SDK does not retry (it would honour any retry-after, however long). One retry happens here, after a
 // fast failure only (rate limit, overload, connection), and only if the wait and a call still fit.
-async function callModel(route, messages, deadlineAt, onSend, lang) {
+async function callModel(route, messages, deadlineAt, onSend, lang, variant) {
   const R = ROUTE[route];
   for (let attempt = 0; ; attempt++) {
     const left = deadlineAt - Date.now();
     if (left < MIN_CALL_MS) { const e = new Error("deadline"); e.deadline = true; throw e; }
     spend();
     const params = { model: R.model, max_tokens: R.max_tokens, cache_control: { type: "ephemeral" },   // + the tail of the conversation
-                     system: systemBlocks(lang), tools: TOOLS, messages };
+                     system: systemBlocks(lang, variant), tools: toolsFor(variant), messages };
     if (route === "tools" && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
     onSend(R.model);
     try {
@@ -703,7 +925,8 @@ function withSources(reply, lang, toolLog) {
     const r = t.result || {};
     for (const s of r.sources || []) cites.push(citeOf(s, s.rule));
     for (const f of r.findings || []) for (const s of f.sources || []) cites.push(citeOf(s, f.rule));
-    if (/^DERIVED/.test(r.tier || "")) tiers.add("derived");
+    if (t.name === "trade_math") tiers.add((r.sources || []).length ? "derived" : "inputs");
+    else if (/^DERIVED/.test(r.tier || "")) tiers.add("derived");
     if (/^SOURCED/.test(r.tier || "") || (t.name === "check_availability" && r.sources)) tiers.add("sourced");
     for (const a of r.assumptions || []) assumed.push(a);
   }
@@ -711,7 +934,7 @@ function withSources(reply, lang, toolLog) {
   if (!cites.length && !tiers.size && !assumed.length) return reply;
   const block = [];
   if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
-  for (const k of ["derived", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + k));
+  for (const k of ["derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + k));
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
   const note = S(lang, "ask.note"), at = body.lastIndexOf(note);
@@ -725,12 +948,15 @@ const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason
 // troid's side of the history is signed: each reply carries an HMAC over the whole conversation up to and
 // including it, and the next message must bring it back. The signing itself keeps no state (the conversation store is separate). The HMAC input starts
 // with a hash of the guardrails, so a history signed under older guardrails no longer verifies.
-const VERSION = crypto.createHash("sha256").update(GUARDRAILS).digest("hex").slice(0, 16);
-// The session ID is inside the signature, so a conversation cannot move to another session mid-way.
-const sign = (msgs, session) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([VERSION, String(session || ""), ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
-function signedOk(msgs, sig, session) {
+const versionOf = (variant) => crypto.createHash("sha256").update(guardrailsFor(variant)).digest("hex").slice(0, 16);
+const VERSION = versionOf("live"), VERSION_CANDIDATE = versionOf("candidate");
+// The session ID is inside the signature, so a conversation cannot move to another session mid-way; the version is
+// the prompt's, so it cannot move between the live prompt and the candidate either.
+const sign = (msgs, session, variant) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([variant === "candidate" ? VERSION_CANDIDATE : VERSION,
+  String(session || ""), ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
+function signedOk(msgs, sig, session, variant) {
   if (msgs.length === 1) return true;
-  const want = Buffer.from(sign(msgs.slice(0, -1), session)), got = Buffer.from(String(sig || ""));
+  const want = Buffer.from(sign(msgs.slice(0, -1), session, variant)), got = Buffer.from(String(sig || ""));
   return got.length === want.length && crypto.timingSafeEqual(got, want);
 }
 // What the page must show to delete its own conversation: an HMAC of the session ID under the turn key. It
@@ -788,6 +1014,16 @@ function json(res, code, obj) { res.statusCode = code; res.setHeader("content-ty
 const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32 && storeOn();
 const querySession = (req) => { try { return (req.query && req.query.session) || new URL(req.url || "/", "http://x").searchParams.get("session") || ""; } catch (e) { return ""; } };
 
+// The prompt a request gets: "live" for everyone; "candidate" only with the candidate key (the evaluation runner);
+// null for a request that asks for the candidate without the right key, which is refused.
+function variantOf(req) {
+  const h = req.headers["x-troid-candidate"];
+  if (h === undefined) return "live";
+  if (Buffer.byteLength(CANDIDATE_KEY) < 32) return null;
+  const want = Buffer.from(CANDIDATE_KEY), got = Buffer.from(String(h));
+  return got.length === want.length && crypto.timingSafeEqual(got, want) ? "candidate" : null;
+}
+const STAGED = ["TROID.md", "TROID-CHARACTER.md", "support.md"];
 function queryLang(req) {
   try { return (req.query && req.query.lang) || new URL(req.url || "/", "http://x").searchParams.get("lang"); } catch (e) { return null; }
 }
@@ -797,11 +1033,14 @@ module.exports = async (req, res) => {
   let lang = liveLang(queryLang(req));                                   // the page's language, if it is live; else English
   if (req.method === "GET") {
     let ctx = null;
-    try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
+    try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, character_md: c.character ? c.character.length : 0,
+                                     firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
+    const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readOptional(["context/candidate/" + f]) != null),
+                        guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name) };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
-                            disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx });
+                            disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
   }
   if (req.method === "DELETE") {                                        // the page's own conversation, at once
     if (!storeOn() || Buffer.byteLength(TURN_KEY) < 32) return json(res, 503, { error: S(lang, "ask.err.not_configured") });
@@ -821,8 +1060,11 @@ module.exports = async (req, res) => {
   if (!/^application\/json\b/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "Send application/json." });
   const site = req.headers["sec-fetch-site"];
   if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
+  const variant = variantOf(req);
+  if (!variant) return json(res, 403, { error: "unknown candidate key" });
   if (!spendable()) return json(res, 503, { enabled: true, error: S(lang, "ask.err.busy") });   // turned away before the model: not logged, costs no hourly message
-  if (!allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
+  // the operator's evaluation runs are not held to a visitor's hourly limit; the per-instance call ceiling above still applies
+  if (variant === "live" && !allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
   let body;
   try { body = req.body; if (typeof body === "string") body = JSON.parse(body); } catch (e) { body = null; }
   if (body && body.lang) lang = liveLang(body.lang);
@@ -831,16 +1073,17 @@ module.exports = async (req, res) => {
   if (!messages) return json(res, 400, { restart: true, error: S(lang, "ask.err.restart", { n: MAX_MESSAGES - 1 }) });
   const session = String(body.session || "");
   if (!SESSION_RE.test(session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.session") });
-  if (!signedOk(messages, body.sig, session)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
+  if (!signedOk(messages, body.sig, session, variant)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
   // A first message may start a session, never join one: a session already in the store takes its own delete
   // token, so knowing a session ID is not enough to add to that conversation or to be handed its token.
-  if (messages.length === 1) {
+  if (messages.length === 1 && variant === "live") {                  // a candidate conversation is never stored
     let taken;
     try { [taken] = await store([["EXISTS", "conv:" + session]]); }
     catch (e) { return json(res, 503, { enabled: true, error: S(lang, "ask.err.error") }); }
     if (taken && !tokenOk(session, req.headers["x-troid-token"])) return json(res, 409, { restart: true, error: S(lang, "ask.err.session") });
   }
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
+  if (variant === "candidate") log.candidate = 1;
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));
   const deadlineAt = Date.now() + DEADLINE_MS;
@@ -848,8 +1091,8 @@ module.exports = async (req, res) => {
   const toolLog = [];                                                   // each tool call with its inputs and result, for the store
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
-    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang);
-    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang); }   // Haiku's turn is discarded, never replayed
+    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
+    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant); }   // Haiku's turn is discarded, never replayed
     const convo = messages.slice();
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
@@ -860,7 +1103,7 @@ module.exports = async (req, res) => {
         toolLog.push({ name: u.name, input: u.input, result: out });
         return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
       }) });
-      resp = await callModel("tools", convo, deadlineAt, onSend, lang);
+      resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
     }
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
@@ -886,13 +1129,16 @@ module.exports = async (req, res) => {
     if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
     Object.assign(log, { tool_calls: toolCalls, model: sent });
     const user = messages[messages.length - 1].content;
-    try { await keep(session, entry(lang, user, reply, sent, toolLog, ended ? { ended: 1 } : log.refusal ? { refusal: 1 } : null)); log.stored = 1; }
-    catch (e) { log.store_error = 1; }
+    if (variant === "live") {
+      try { await keep(session, entry(lang, user, reply, sent, toolLog, ended ? { ended: 1 } : log.refusal ? { refusal: 1 } : null)); log.stored = 1; }
+      catch (e) { log.store_error = 1; }
+    }
     console.log(JSON.stringify(log));
     const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note"),
-                  session, delete_token: deleteToken(session) };
+                  session, delete_token: deleteToken(session), variant };
+    if (variant === "candidate") out.tools_used = toolLog.map((t) => t.name);   // for the evaluation report
     if (!ended) {
-      out.sig = sign([...messages, { role: "assistant", content: reply }], session);
+      out.sig = sign([...messages, { role: "assistant", content: reply }], session, variant);
       const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
       if (messages.length + 2 > MAX_MESSAGES || total + MAX_CHARS > MAX_TOTAL_CHARS) out.full = true;   // the next message could not fit
     }
@@ -900,10 +1146,12 @@ module.exports = async (req, res) => {
   } catch (e) {
     Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent });
     if (e && typeof e.status === "number") log.status = e.status;
-    try {                                                               // the message is kept even when no answer came back
-      await keep(session, entry(lang, messages[messages.length - 1].content, null, sent, toolLog, { error: log.status || 1 }));
-      log.stored = 1;
-    } catch (e2) { log.store_error = 1; }
+    if (variant === "live") {
+      try {                                                             // the message is kept even when no answer came back
+        await keep(session, entry(lang, messages[messages.length - 1].content, null, sent, toolLog, { error: log.status || 1 }));
+        log.stored = 1;
+      } catch (e2) { log.store_error = 1; }
+    }
     console.log(JSON.stringify(log));
     const E = (code, obj) => json(res, code, Object.assign(obj, { session, delete_token: deleteToken(session) }));   // stored: deletable
     // most specific first: APIConnectionTimeoutError extends APIConnectionError, which extends APIError. A body
@@ -921,7 +1169,10 @@ module.exports = async (req, res) => {
 module.exports.tools = RUN;   // for tests
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
-module.exports._sign = (msgs, session) => sign(msgs, session);   // for tests
+module.exports._sign = (msgs, session, variant) => sign(msgs, session, variant);   // for tests
+module.exports._systemBlocks = systemBlocks;                         // for tests
+module.exports._toolsFor = toolsFor;
+module.exports._characterBlock = characterBlock;
 module.exports._deleteToken = deleteToken;                         // for tests
 module.exports._clientKey = clientKey;
 module.exports._promptFirms = () => context().prompt_firms;   // for tests
