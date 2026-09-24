@@ -306,14 +306,16 @@ def explain_rule(topic: str) -> dict:
         "4% daily limit is not the constraint that day; above it, the daily limit binds. "
         "Intraday, which ceiling binds depends on that day's starting balance, not on equity "
         "alone. Size against the smaller of the two, always.",
-      "reset": "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in "
-        "New York. Not midnight. Because of the platform's settlement process the reset can "
-        "take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be "
-        "Success): 16:00-16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh "
-        "daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily "
-        "budgets. The trap: a floating loss that survives the reset counts in full against "
-        "the new day, because the prior day's profit does not carry over. A position inside "
-        "the limit at 11:59 can breach at 12:01 without price moving.",
+      "reset": "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC: noon in "
+        "New York in summer (EDT), 11:00 in winter (EST). Not midnight. Because of the "
+        "platform's settlement process the reset can take effect any time between 00:00 and "
+        "00:10 UTC+8 (help centre, Criteria to be Success): 16:00-16:10 UTC. Those ten minutes "
+        "are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in "
+        "New York the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall "
+        "on different trading days and draw on different daily budgets. The trap: a floating "
+        "loss that survives the reset counts in full against the new day, because the prior "
+        "day's profit does not carry over, so a position inside the limit just before the "
+        "reset can breach just after it without price moving.",
       "fees": "0.04% per side on notional, 0.08% round trip. Notional scales inversely with "
         "stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). "
         "At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%.",
@@ -327,8 +329,8 @@ def explain_rule(topic: str) -> dict:
         "breached long before exchange liquidation. troid models cross margin by default; it "
         "has no recorded source for which margin modes Bitfunded offers. See 'cross'.",
       "cross": "Under cross margin, troid's default model (troid has no recorded source for "
-        "Bitfunded's margin modes; the 5x leverage cap is from the help centre, Criteria to be "
-        "Success), every position is backed by the entire account balance. Consequence one: exchange liquidation never binds — even at the 65% "
+        "Bitfunded's margin modes; the 5x leverage cap is from the help centre, Challenge & "
+        "Trader Stage, and Terms 9(a)), every position is backed by the entire account balance. Consequence one: exchange liquidation never binds — even at the 65% "
         "margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's "
         "floors ARE your liquidation model. Consequence two: nothing cuts a runaway position "
         "before the firm fails you. Under isolated, the exchange would liquidate at ~20% for "
@@ -341,7 +343,10 @@ def explain_rule(topic: str) -> dict:
         "high-water mark. So profit permanently widens the buffer: up $3,000 and the floor "
         "is unchanged while your room grows. The opening stretch is the dangerous one, and "
         "the account gets structurally safer the further ahead it gets. Trailing drawdown "
-        "at other firms works the opposite way.",
+        "(BrightFunded 1-Step, Crypto Fund Trader 1-Phase) works the opposite way: the floor "
+        "follows the high-water mark up until it locks at the initial balance after +6%. "
+        "Crypto Fund Trader's 2-Phase is static from the initial balance. A drawdown type "
+        "belongs to a product, not a firm.",
       "ladder": "Scaling in does not increase position size at fixed risk — it decreases it. "
         "With the stop anchored to the first entry's structure, later tranches sit further "
         "from the stop and earn less quantity. Five strength tranches hold about 34% LESS "
@@ -356,8 +361,10 @@ def explain_rule(topic: str) -> dict:
       "min_days": "Five trading days minimum to clear a stage (ToU 9(a)). The challenge page "
         "displays 0. The contract governs. The bad failure mode is hitting your profit target "
         "in three days and being unable to clear the stage.",
-      "hold_limit": "No position may stay open more than 10 consecutive calendar days "
-        "(ToU 14(d)(x)). Profits from a breaching trade can be removed from payout eligibility.",
+      "hold_limit": "The hold limit is tiered by asset (help centre, Restricted Trading "
+        "Practices s.1): majors (" + ", ".join(sorted(MAJORS)) + ") 10 days, other crypto 7, "
+        "TradFi 5. The limit follows the asset, not the product. Profits from a breaching "
+        "trade can be removed from payout eligibility.",
       "accounts": "One active account per challenge level without written consent (ToU 6(b)). "
         "Across all seven levels that caps simultaneous capital at $355,000 — not ten copies "
         "of the largest account, which is what most multi-account plans assume.",

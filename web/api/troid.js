@@ -23,11 +23,13 @@
  *
  * Candidate prompt: every prompt change runs against the live model before it reaches users (TROID-CHARACTER.md,
  * "Where this plugs in"). It is staged as the candidate — the files in context/candidate/ that exist, plus
- * CANDIDATE_GUARDRAILS and CANDIDATE_TOOLS below — and only a request carrying TROID_CANDIDATE_KEY in the
- * x-troid-candidate header gets it: the evaluation runner, web/eval_character.js. Everyone else gets the live prompt.
- * A candidate request is the operator's own: it is not held to the per-address limit and is not stored (the
- * per-instance call ceiling still applies). Promoting a candidate is one commit: its files move into place and
- * CANDIDATE_GUARDRAILS and CANDIDATE_TOOLS fold into GUARDRAILS and TOOLS.
+ * CANDIDATE_GUARDRAILS, CANDIDATE_RULES, CANDIDATE_TOOLS and CANDIDATE_RUN below, and any service change gated on
+ * variant === "candidate" — and only a request carrying TROID_CANDIDATE_KEY in the x-troid-candidate header gets it:
+ * the evaluation runner, web/eval_character.js. Everyone else gets the live prompt. A candidate request is the
+ * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
+ * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
+ * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
+ * nothing is staged now.
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -62,6 +64,7 @@ const ENABLED = process.env.TROID_ASSISTANT === "on";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // signs troid's side of the history
 const CANDIDATE_KEY = process.env.TROID_CANDIDATE_KEY || "";                 // selects the candidate prompt (32+ bytes); unset: none
+const CANDIDATE_DIR = process.env.TROID_CANDIDATE_DIR || "";                 // tests stage files in a scratch directory; unset: context/candidate/
 // The 30-day conversation store: Upstash Redis over its REST API (the Vercel Marketplace integration sets
 // KV_REST_API_URL / KV_REST_API_TOKEN; Upstash's own names are accepted too).
 const STORE_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, "");
@@ -147,9 +150,7 @@ const GUARDRAILS = [
   "Answer in the language the user writes in; when that is unclear, in the page's language (named at the end of this prompt). Keep every number, ticker, formula and rule citation exactly as the tools return them, in Latin digits. Keep troid lowercase, in Latin script. In another language a fixed reply from support.md keeps its meaning exactly; troid's English terms govern, and you say so if asked about the terms.",
   "When a user mentions their country, call check_availability for each firm before you discuss that firm. If the firm's terms exclude the country, say so and do not discuss buying its challenge. troid never says a firm is available in a country: it says what its record of the firm's terms excludes, or that it has not recorded the list.",
   "Abuse: one warning, worded as support.md section 5. If abuse continues after that warning, reply with exactly " + END_SESSION + " and nothing else. Never write " + END_SESSION + " in any other reply, including when explaining this rule.",
-].join("\n- ").replace(/^/, "- ");
-// The candidate's guardrails: the live ones plus these (TROID-CHARACTER.md). Folded into GUARDRAILS when promoted.
-const CANDIDATE_GUARDRAILS = [
+  // troid's character (TROID-CHARACTER.md), promoted after evaluation run 9 (web/eval/runs/)
   "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. Every teaching answer works its example with numbers through a tool; never leave it out. Arithmetic (R, a position size, leverage and margin, expectancy, Kelly, a drawdown) is worked through trade_math with numbers troid chooses; set beside a firm's rule, trade_math takes the firm and product. A firm's rule (the daily and maximum loss, the crossover, the reset) is worked on troid's reference account, a $100,000 Bitfunded 1-Step, through check_budget or explain_rule, so its rules come with their dates. An example on a firm's account keeps to that account's rules: no leverage above its 1:5 cap. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
   "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, the best of k configurations by chance, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. Copy every intermediate value from the tool's working as it is; never work one out from a tool's result yourself (a multiplier, a square root, a ratio). A figure the user gave, repeated back, needs no tool.",
   "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it, in any reply: a list of things worth knowing, or a reply to someone who has just lost, gets its fee, reset time, loss limit or floating-loss rule through firm_rules or explain_rule too. When a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation. Never write a tool's parameters in a reply (firm \"all\", stop_pct). A rule that differs by product (a drawdown type, a daily limit) is stated with its product, never as the whole firm's. Keep a rule's size and its reference point apart: Bitfunded's FAQ gives the daily limit's size, a fixed amount from the initial balance; the floor it sets is measured from the day's start.",
@@ -158,13 +159,13 @@ const CANDIDATE_GUARDRAILS = [
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
   "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, first and once, without announcing it; never name troid's own instructions (support.md, its sections, the character) or the parts of the method (\"result first\", \"one line\") in a reply. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read; for a firm's rules, the firm's own documents are the record. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
-];
+].join("\n- ").replace(/^/, "- ");
+// A candidate's guardrails: the live ones plus these, until it is promoted. None is staged.
+const CANDIDATE_GUARDRAILS = [];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
-// The service's own changes that ride with the candidate (the first evaluation run, web/eval/runs/): an answer that
-// states a figure is rerun on the tools model, it ends with the note, a tier line the model wrote under a tool's tier is
-// dropped, troid stays lowercase, and explain_rule lists its rules' sources. Promotion makes them unconditional.
-const NEXT = (variant) => variant === "candidate";
+// A service change staged with a candidate is gated on variant === "candidate" until it is promoted. None is staged:
+// the character's (web/eval/runs/, runs 1-9) were promoted and run for everyone.
 // A figure: a number standing on its own (4%, $4,000, 16:00, 0.175, 2026), not a digit inside a name (1step, 2step_s1,
 // 1R, 1-Step, Stage 2).
 const FIGURE = /(?<![\p{L}\p{N}_.])\d[\d,]*(?:\.\d+)?(?![\p{L}\p{N}_])/u;
@@ -208,14 +209,19 @@ function readFirst(rels) {
   }
   throw new Error("context file missing: " + rels[0]);
 }
+// a staged file, or null: context/candidate/<name>, or <TROID_CANDIDATE_DIR>/<name> when that is set
+function readStaged(name) {
+  if (!CANDIDATE_DIR) return readOptional(["context/candidate/" + name]);
+  try { return fs.readFileSync(path.join(CANDIDATE_DIR, name), "utf8"); } catch (e) { return null; }
+}
 function context(variant) {
   if (variant === "candidate") {                                          // the staged files that exist; the live ones otherwise
     if (!CTX_CANDIDATE) {
       const live = context();
       CTX_CANDIDATE = Object.assign({}, live, {
-        troid: readOptional(["context/candidate/TROID.md"]) || live.troid,
-        support: readOptional(["context/candidate/support.md"]) || live.support,
-        character: readOptional(["context/candidate/TROID-CHARACTER.md"]) || live.character,
+        troid: readStaged("TROID.md") || live.troid,
+        support: readStaged("support.md") || live.support,
+        character: readStaged("TROID-CHARACTER.md") || live.character,
       });
     }
     return CTX_CANDIDATE;
@@ -602,15 +608,19 @@ function check_compliance(a) {
 
 const RULES = {
   crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. A day that starts below $98,000 is bound by the max-loss floor, and the 4% daily limit is not the constraint that day; above it, the daily limit binds. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover.",
-  reset: "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in New York. Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over. A position inside the limit at 11:59 can breach at 12:01 without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
+  // 16:00 UTC is noon in New York only in summer; "morning and afternoon are separate daily budgets" read as a rule of the
+  // firm's (run 1 of the evaluation, p-reset): it is a consequence of the reset's hour for a trader in New York
+  reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC: noon in New York in summer (EDT), 11:00 in winter (EST). Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
   fees: "Bitfunded: 0.04% per side on notional, 0.08% round trip. Notional scales inversely with stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%. Other firms' fees are in firms.json; a null is pending.",
   leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin a long is liquidated near entry × (1 − 1/leverage) and a short near entry × (1 + 1/leverage): a distance of about entry ÷ leverage, ~20% at 5x, a little less after the exchange's maintenance margin. Under CROSS margin the whole account backs the position, so at any size a 5× cap allows the firm's own floors are breached long before exchange liquidation. troid models cross margin by default; it has no recorded source for which margin modes Bitfunded offers.",
   cross: "Under cross margin, troid's default model (troid has no recorded source for Bitfunded's margin modes; the 5× leverage cap is from the help centre, Challenge & Trader Stage, and Terms 9(a)), every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
-  drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's trails on balance.",
+  // a drawdown type belongs to a product (run 7, b-limits: "Crypto Fund Trader's trail the high-water mark"; its 2-Phase is static)
+  drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's 1-Phase trails on balance. CFT's 2-Phase is static from the initial balance. A drawdown type belongs to a product, not a firm: name the product with it.",
   ladder: "Scaling in does not increase position size at fixed risk — it decreases it. With the stop anchored to the first entry's structure, later tranches sit further from the stop and earn less quantity. Five strength tranches hold about 34% LESS than a single entry at the same risk. The benefit is conditionality: you fill more on trades that work than on trades that don't.",
   ruin: "Under a proportional cap (risk at most c of the REMAINING budget), budget after n losses is B(1−c)^n — it approaches zero without reaching it, so ruin by realized losses is unreachable and the real failure mode is a stalled account. Uncapped, a fixed fraction f of quota reaches the floor in floor(maxloss/f) losses: 12 at 0.5%, 6 at 1%, 3 at 2%. At a professional +0.35R edge, 1% uncapped blows up 68% of the time within a year (MODELLED); under a cap, zero.",
   min_days: "Bitfunded: five trading days minimum to clear a stage (ToU 9(a)). The challenge page displays 0. The contract governs. The bad failure mode is hitting the profit target in three days and being unable to clear the stage.",
-  hold_limit: "Bitfunded: majors 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). Profits from a breaching trade can be removed from payout eligibility.",
+  // the majors named, from the set check_compliance classes by (run 1, p-hold: asked for the product instead)
+  hold_limit: "Bitfunded: majors (" + [...MAJORS].join(", ") + ") 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). The limit follows the asset, not the product. Profits from a breaching trade can be removed from payout eligibility.",
   accounts: "Bitfunded: one active account per challenge level without written consent (ToU 6(b)). Across all seven levels that caps simultaneous capital at $355,000.",
   marketed_strategies: "Bitfunded ToU 14(d)(v) prohibits using third-party or marketed strategies to pass an evaluation. This is why troid evaluates trades rather than generating them.",
   strategy_switching: "Bitfunded ToU 14(d)(ix) prohibits switching strategies between assessment and funded accounts. troid cannot see this from a trade plan, so it cannot check it; it is a rule about how the account is traded over time, not about one trade.",
@@ -625,16 +635,8 @@ function explain_rule(a, rules) {
                  "Its formulas are DERIVED; a rule it cites is SOURCED from the section named, and the firm's own documents govern. For a rule's read date, " +
                  "use the sources in size_trade or check_budget, or troid's compare." };
 }
-// The candidate's explanations where they differ from RULES. Folded into RULES when promoted. The reset: 16:00 UTC is
-// noon in New York only in summer, and the old "morning and afternoon are separate daily budgets" read as a rule of
-// the firm's (run 1 of the evaluation, p-reset); it is a consequence of the reset's hour for a trader in New York.
-const CANDIDATE_RULES = {
-  // a drawdown type belongs to a product (run 7, b-limits: "Crypto Fund Trader's trail the high-water mark"; its 2-Phase is static)
-  drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's 1-Phase trails on balance. CFT's 2-Phase is static from the initial balance. A drawdown type belongs to a product, not a firm: name the product with it.",
-  // the majors named, from the set check_compliance classes by (run 1, p-hold: asked for the product instead)
-  hold_limit: "Bitfunded: majors (" + [...MAJORS].join(", ") + ") 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). The limit follows the asset, not the product. Profits from a breaching trade can be removed from payout eligibility.",
-  reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC: noon in New York in summer (EDT), 11:00 in winter (EST). Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
-};
+// A candidate's explanations where they differ from RULES, until it is promoted. None is staged.
+const CANDIDATE_RULES = {};
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -954,6 +956,10 @@ const TRADE_MATH_TOOL = { name: "trade_math",
     trades: { type: "integer", description: "for expectancy: the number of trades to total it over" } },
     required: ["calc"] } };
 
+const FIRM_RULES_TOOL = { name: "firm_rules",
+  description: "A firm product's rules as troid has recorded them — daily and maximum loss, profit target, minimum trading days, the challenge fee, split, drawdown type, daily limit basis, trading fee, leverage cap — each with the document and the date troid read it, or marked pending. Use it to state or compare a product's rules; never state one from memory.",
+  input_schema: { type: "object", properties: { firm: { type: "string", description: "bitfunded | brightfunded | crypto_fund_trader" },
+    product: { type: "string", description: "product key, e.g. 1step, 2step_s1, 2step_s2, express, instant, 1phase, 2phase" } }, required: ["firm", "product"] } };
 const TOOLS = [
   { name: "size_trade", description: "Size a trade the user brings against a firm product troid covers: both loss ceilings, the binding one, quantity net of fees, margin, fee share of risk, losses left, circuit-breaker order, every formula and intermediate value (working), and the source and read date of each rule used. Pending fields are reported as pending. Never call this to suggest a trade.",
     input_schema: { type: "object", properties: {
@@ -962,11 +968,12 @@ const TOOLS = [
       quota: { type: "number" }, equity: { type: "number" }, day_start: { type: "number", description: "balance at the last daily reset; defaults to equity" },
       high_water_mark: { type: "number", description: "trailing products only; defaults to max(equity, quota)" },
       high_at_rollover: { type: "number", description: "BrightFunded only: max(balance, equity) at the last rollover; defaults to day_start" },
-      side: { type: "string", enum: ["long", "short"] }, entry: { type: "number" }, stop: { type: "number" },
+      side: { type: "string", enum: ["long", "short"] }, entry: { type: "number" }, stop: { type: "number", description: "stop price; or give stop_pct" },
       target_r: { type: "number" }, risk_pct: { type: "number", description: "percent of equity, default 0.5" },
       budget_cap_pct: { type: "number", description: "cap as percent of the binding budget, default 35" },
-      leverage: { type: "number" }, margin_mode: { type: "string", enum: ["cross", "isolated"] } },
-      required: ["firm", "product", "quota", "equity", "side", "entry", "stop"] } },
+      leverage: { type: "number" }, margin_mode: { type: "string", enum: ["cross", "isolated"] },
+      stop_pct: { type: "number", description: "the stop as a percent of entry, when the user gives it that way (0.3 means 0.3%): troid prices the stop from entry and side" } },
+      required: ["firm", "product", "quota", "equity", "side", "entry"] } },
   { name: "check_budget", description: "Room left under each loss ceiling for a firm product troid covers, which one binds, and the crossover equity, with the formulas (working) and the source and read date of each rule used.",
     input_schema: { type: "object", properties: {
       firm: { type: "string" }, product: { type: "string" }, quota: { type: "number" }, equity: { type: "number" },
@@ -983,27 +990,17 @@ const TOOLS = [
       country: { type: "string", description: "ISO 3166-1 alpha-2 code, e.g. US, IN, NG, BR" } }, required: ["firm", "country"] } },
   { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies, strategy_switching, opposite_positions, funded_stage.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
+  TRADE_MATH_TOOL, FIRM_RULES_TOOL,
 ];
-const FIRM_RULES_TOOL = { name: "firm_rules",
-  description: "A firm product's rules as troid has recorded them — daily and maximum loss, profit target, minimum trading days, the challenge fee, split, drawdown type, daily limit basis, trading fee, leverage cap — each with the document and the date troid read it, or marked pending. Use it to state or compare a product's rules; never state one from memory.",
-  input_schema: { type: "object", properties: { firm: { type: "string", description: "bitfunded | brightfunded | crypto_fund_trader" },
-    product: { type: "string", description: "product key, e.g. 1step, 2step_s1, 2step_s2, express, instant, 1phase, 2phase" } }, required: ["firm", "product"] } };
-// The candidate's tools: the live ones plus these (TROID-CHARACTER.md), and size_trade taking a stop as a percent of
-// entry, so the model never works out a stop price itself (run 2, p-size). Folded into TOOLS when promoted.
-const CANDIDATE_TOOLS = [TRADE_MATH_TOOL, FIRM_RULES_TOOL];
-const TOOLS_NEXT = TOOLS.map((t) => {
-  if (t.name !== "size_trade") return t;
-  const c = JSON.parse(JSON.stringify(t)), pr = c.input_schema.properties;
-  pr.stop = { type: "number", description: "stop price; or give stop_pct" };
-  pr.stop_pct = { type: "number", description: "the stop as a percent of entry, when the user gives it that way (0.3 means 0.3%): troid prices the stop from entry and side" };
-  c.input_schema.required = c.input_schema.required.filter((k) => k !== "stop");
-  return c;
-}).concat(CANDIDATE_TOOLS);
+// A candidate's tools: the live ones plus these, until it is promoted. None is staged.
+const CANDIDATE_TOOLS = [];
+const TOOLS_NEXT = TOOLS.concat(CANDIDATE_TOOLS);
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
-const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math, firm_rules };
-const RUN_NEXT = Object.assign({}, RUN, { explain_rule: explainRuleSourced });   // the candidate's; RUN when promoted
+const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: explainRuleSourced, trade_math, firm_rules };
+const CANDIDATE_RUN = {};                                                // a candidate's tool implementations, until promoted
+const RUN_NEXT = Object.assign({}, RUN, CANDIDATE_RUN);
 function runTool(name, input, variant) {
-  const run = NEXT(variant) ? RUN_NEXT : RUN;
+  const run = variant === "candidate" ? RUN_NEXT : RUN;
   try { return Object.hasOwn(run, name) ? run[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
@@ -1098,7 +1095,7 @@ function stripSources(text) {
   }
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function withSources(reply, lang, toolLog, variant) {
+function withSources(reply, lang, toolLog) {
   const cites = [], tiers = new Set(), assumed = [];
   for (const t of toolLog) {
     const r = t.result || {};
@@ -1113,14 +1110,14 @@ function withSources(reply, lang, toolLog, variant) {
   if (!cites.length && !tiers.size && !assumed.length) return reply;
   const block = [];
   if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
-  // with the candidate, a reply that quotes a firm's rule with its read date itself is not told "no firm rule was needed" (run 5, ex-kelly)
-  const quoted = NEXT(variant) && READ_DATE_RX.test(stripSources(reply));
+  // a reply that quotes a firm's rule with its read date itself is not told "no firm rule was needed" (run 5, ex-kelly)
+  const quoted = READ_DATE_RX.test(stripSources(reply));
   for (const k of ["derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + (k === "inputs" && quoted ? "inputs_quoted" : k)));
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
-  // with the candidate, a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
+  // a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
   // and so does one written at the end of a paragraph, when it names a tier the service writes (run 4, q-stats)
-  if (NEXT(variant) && tiers.size) {
+  if (tiers.size) {
     const words = new Set([...tiers].map((k) => (k === "sourced" ? "SOURCED" : "DERIVED")));
     body = body.split("\n").filter((l) => !/^\s*(\*\*|__)?\s*tier\b/i.test(l))
       .map((l) => l.replace(/\s*(\*\*|__)?\bTier(\*\*|__)?:\s*(\*\*|__)?(DERIVED|SOURCED|MEASURED|MODELLED)\b[^\n]*$/i, (m, a, b, c, w) => (words.has(w.toUpperCase()) ? "" : m)))
@@ -1131,13 +1128,13 @@ function withSources(reply, lang, toolLog, variant) {
   if (tail) body = body.slice(0, at).trim();
   return [body, block.join("\n\n"), tail].filter(Boolean).join("\n\n");
 }
-// With the candidate, an answer that states a figure ends with the note even when the model left it out or wrote
+// An answer that states a figure ends with the note even when the model left it out or wrote
 // something after it (run 1: five answers didn't end with it). An answer with no figure is left as it is.
-// With the candidate, a reply that opens support.md section 2 ("That's a real loss and troid takes the question
+// A reply that opens support.md section 2 ("That's a real loss and troid takes the question
 // seriously") and leaves out step 5 gets it from the service: the firm's dashboard and hello@troid.ai (run 4, ex-angry).
 const SUPPORT_OPENER = /That['’]s a real loss,? and troid takes the question seriously/i;
 const READ_DATE_RX = /\bread (on )?(\d{4}[-\u2010\u2011]\d{2}[-\u2010\u2011]\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
-// An outside service named as a place to look (the candidate's guardrails name none).
+// An outside service named as a place to look (the guardrails name none).
 const OUTSIDE_SERVICE = /\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|numpy)\b|\b(check|use|visit|see|try)\b[^.\n]{0,60}\bBinance\b/i;
 // A firm's rule stated in a reply: a firm named beside a percentage, a time, a number of days or a fee.
 const FIRM_RULE_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,80}?(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b|\$\d)|(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b)[^.\n]{0,60}?\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/;
@@ -1184,11 +1181,14 @@ const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason
 // troid's side of the history is signed: each reply carries an HMAC over the whole conversation up to and
 // including it, and the next message must bring it back. The signing itself keeps no state (the conversation store is separate). The HMAC input starts
 // with a hash of the guardrails, so a history signed under older guardrails no longer verifies.
-const versionOf = (variant) => crypto.createHash("sha256").update(guardrailsFor(variant)).digest("hex").slice(0, 16);
-const VERSION = versionOf("live"), VERSION_CANDIDATE = versionOf("candidate");
+// The prompt's version: the variant, its guardrails and the files it loads. Worked out on first use, so a missing
+// context file answers 503 like everywhere else instead of failing the function at load.
+const VERSIONS = {};
+const versionOf = (variant) => VERSIONS[variant] || (VERSIONS[variant] = crypto.createHash("sha256").update(JSON.stringify([variant,
+  guardrailsFor(variant), ...["troid", "support", "character"].map((k) => context(variant)[k] || "")])).digest("hex").slice(0, 16));
 // The session ID is inside the signature, so a conversation cannot move to another session mid-way; the version is
-// the prompt's, so it cannot move between the live prompt and the candidate either.
-const sign = (msgs, session, variant) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([variant === "candidate" ? VERSION_CANDIDATE : VERSION,
+// the prompt's, so it cannot move between the live prompt and the candidate either, even when nothing is staged.
+const sign = (msgs, session, variant) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([versionOf(variant === "candidate" ? "candidate" : "live"),
   String(session || ""), ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
 function signedOk(msgs, sig, session, variant) {
   if (msgs.length === 1) return true;
@@ -1272,7 +1272,7 @@ module.exports = async (req, res) => {
     try { const c = context(); ctx = { troid_md: c.troid.length, support_md: c.support.length, character_md: c.character ? c.character.length : 0,
                                      firms_json: c.firms.length, prompt_firms: JSON.stringify(c.prompt_firms).length,
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
-    const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readOptional(["context/candidate/" + f]) != null),
+    const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name) };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
@@ -1328,24 +1328,24 @@ module.exports = async (req, res) => {
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
     let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
-    // A turn that wants a tool is rerun on the tools model; with the candidate, so is an answer that states a figure,
+    // A turn that wants a tool is rerun on the tools model; so is an answer that states a figure,
     // because every figure comes from a tool (TROID-CHARACTER.md) and Haiku's own arithmetic failed the first
     // evaluation run. Haiku's turn is discarded, never replayed.
     // So is a reply that opens support.md section 2: its steps need the tools, and Haiku left out steps 4 and 5 (runs 4, 5);
     // one that names an outside service as a place to look (run 7, o-predict); and one that leaves the numbers the user gave
     // unworked (run 7, o-montecarlo: a menu instead of the expectancy).
     const lastUser = String((messages[messages.length - 1] || {}).content || "");
-    const figured = NEXT(variant) && !wantsTool(resp) && resp.stop_reason !== "refusal" && (hasFigure(textOf(resp)) || SUPPORT_OPENER.test(textOf(resp))
+    const figured = !wantsTool(resp) && resp.stop_reason !== "refusal" && (hasFigure(textOf(resp)) || SUPPORT_OPENER.test(textOf(resp))
       || OUTSIDE_SERVICE.test(textOf(resp)) || hasFigure(lastUser));
     if ((wantsTool(resp) || figured) && MODEL_LOOKUP !== MODEL_TOOLS) {
       if (figured) log.rerouted = 1;
       route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
     }
-    const convo = messages.slice(), said = [];                         // with the candidate: what troid wrote before each tool call
-    // With the candidate, an answer that states a firm's rule with no tool behind it is asked once for the rule through a
+    const convo = messages.slice(), said = [];                         // what troid wrote before each tool call
+    // An answer that states a firm's rule with no tool behind it is asked once for the rule through a
     // tool that carries its source; the first answer is discarded, never shown (run 7, p-hold from memory; run 8, s-firm
     // gave two fees read dates borrowed from other rules).
-    if (NEXT(variant) && resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
+    if (resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
       log.nudged = 1;
       convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE });
       resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
@@ -1353,7 +1353,7 @@ module.exports = async (req, res) => {
     const rounds = async (r) => {
       for (let round = 0; round < MAX_TOOL_ROUNDS && r.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
         const uses = r.content.filter((b) => b.type === "tool_use");
-        if (NEXT(variant) && textOf(r)) said.push(textOf(r));           // run 3, ex-r: the definition before a tool call was lost
+        if (textOf(r)) said.push(textOf(r));           // run 3, ex-r: the definition before a tool call was lost
         toolCalls += uses.length;
         convo.push({ role: "assistant", content: r.content });         // unchanged, thinking blocks included
         convo.push({ role: "user", content: uses.map((u) => {
@@ -1366,9 +1366,9 @@ module.exports = async (req, res) => {
       return r;
     };
     resp = await rounds(resp);
-    // With the candidate, a finished draft that trips one of LINTS is sent back once to be written again, with a note for
+    // A finished draft that trips one of LINTS is sent back once to be written again, with a note for
     // each. If the rewrite can't finish in time, or fails, the draft stands.
-    if (NEXT(variant) && resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
+    if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
       const notes = lintNotes([...said, textOf(resp)].join("\n\n"));
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
@@ -1394,10 +1394,10 @@ module.exports = async (req, res) => {
         else reply = S(lang, "ask.warning");
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
-        if (NEXT(variant)) reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
-        if (reply && NEXT(variant)) reply = refusalOnceFirst(withSupportStep5(reply, lang));
-        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
-        if (reply && NEXT(variant)) reply = closeWithNote(reply, lang);
+        reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
+        if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
+        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog);
+        if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
         else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.tool_limit");
       }

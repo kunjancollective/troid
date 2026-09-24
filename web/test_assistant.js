@@ -216,28 +216,29 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
    && /out of range/.test(M({ calc: "recovery", drawdown_pct: 100 }).error) && /impossible/.test(M({ calc: "effective_bets", positions: 4, correlation: -0.5 }).error)
    && /same price/.test(M({ calc: "r_multiple", entry: 5, stop: 5, quantity: 1 }).error) && /unknown firm/.test(M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "ftmo", product: "x" }).error));
 
-// --- troid's character: staged as the candidate prompt; the live prompt unchanged until it is promoted
+// --- troid's character: promoted after evaluation run 9 (web/eval/runs/); nothing is staged, so the candidate is the live prompt
 const fs0 = require("fs"), path0 = require("path");
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
-ok("TROID-CHARACTER.md: the repo root copy and the staged copy are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "candidate", "TROID-CHARACTER.md"), "utf8"));
+ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
+ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
 const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBlocks("en", "candidate");
-const candText = candSys.map((b) => b.text).join("\n");
-ok("live prompt: four blocks, no character, five tools", liveSys.length === 4 && !/## Who troid is/.test(liveSys.map((b) => b.text).join("\n")) && handler._toolsFor("live").length === 5);
-ok("candidate prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
-   candSys.length === 5 && /^# Guardrails/.test(candSys[0].text) && /## Who troid is/.test(candSys[0].text) && /^# troid's character/.test(candSys[1].text)
-   && /^# support\.md/.test(candSys[2].text) && candSys[4].cache_control && handler._toolsFor("candidate").map((t) => t.name).join() === "size_trade,check_budget,check_compliance,check_availability,explain_rule,trade_math,firm_rules",
-   candSys.map((b) => b.text.slice(0, 40)));
+const candText = liveSys.map((b) => b.text).join("\n");
+ok("nothing staged: the candidate prompt and tools are the live ones", JSON.stringify(candSys) === JSON.stringify(liveSys)
+   && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
+ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
+   liveSys.length === 5 && /^# Guardrails/.test(liveSys[0].text) && /## Who troid is/.test(liveSys[0].text) && /^# troid's character/.test(liveSys[1].text)
+   && /^# support\.md/.test(liveSys[2].text) && liveSys[4].cache_control && handler._toolsFor("live").map((t) => t.name).join() === "size_trade,check_budget,check_compliance,check_availability,explain_rule,trade_math,firm_rules",
+   liveSys.map((b) => b.text.slice(0, 40)));
 const charSecs = CHAR.split(/\n(?=## )/).slice(1).map((x) => x.trim()).filter((x) => !x.startsWith("## Where this plugs in"));
-ok("candidate prompt: every section of the character appears exactly once (TROID.md or the character block)",
+ok("live prompt: every section of the character appears exactly once (TROID.md or the character block)",
    charSecs.length === 8 && charSecs.every((x) => candText.split(x).length === 2), charSecs.map((x) => [x.slice(0, 30), candText.split(x).length - 1]));
-ok("candidate prompt: its guardrails add the teaching method, a tool for every figure, no simulations, no judging the numbers, no browsing",
-   /answer first, in one line/.test(candSys[0].text) && /Compute every figure through a tool/.test(candSys[0].text) && /does not run simulations/.test(candSys[0].text)
-   && /never whether they are good or bad/.test(candSys[0].text) && /does not browse/.test(candSys[0].text) && !/Compute every figure through a tool/.test(liveSys[0].text));
-ok("candidate TROID.md: the reset is noon in New York only in summer, and a New York morning and afternoon can fall on different days",
-   /noon in New York in summer, 11:00 in winter/.test(candSys[0].text) && !/Morning and afternoon\s+are separate daily budgets/.test(candSys[0].text)
-   && /Morning and afternoon\s+are separate daily budgets/.test(liveSys[0].text));
+ok("live guardrails: the teaching method, a tool for every figure, no simulations, no judging the numbers, no browsing",
+   /answer first, in one line/.test(liveSys[0].text) && /Compute every figure through a tool/.test(liveSys[0].text) && /does not run simulations/.test(liveSys[0].text)
+   && /never whether they are good or bad/.test(liveSys[0].text) && /does not browse/.test(liveSys[0].text));
+ok("TROID.md: the reset is noon in New York only in summer, and a New York morning and afternoon can fall on different days",
+   /noon in New York in summer, 11:00 in winter/.test(liveSys[0].text) && !/Morning and afternoon\s+are separate daily budgets/.test(liveSys[0].text));
 
-// --- the service's changes that ride with the candidate (evaluation run 1); the live service unchanged until promotion
+// --- the service's own guarantees (evaluation runs 1-9), for everyone since the promotion
 const HF = handler._hasFigure;
 ok("a figure: 4%, $4,000, 16:00, 0.175 and a year are figures; 1step, 2step_s1, 1R, the 1-Step and Stage 2 are names",
    ["4%", "$4,000", "at 16:00 UTC", "f* = 0.175", "read 23 Sep 2026"].every((t) => HF(t))
@@ -247,39 +248,37 @@ ok("the note closes an answer with a figure, moved last when the model wrote som
    CN("25%.") === "25%.\n\n" + NOTE && CN("16:00 UTC.\n\n" + NOTE + "\n\nSOURCED · Criteria to be Success") === "16:00 UTC.\n\nSOURCED · Criteria to be Success\n\n" + NOTE
    && CN("25%.\n\n" + NOTE) === "25%.\n\n" + NOTE && CN("troid does not cover FTMO.") === "troid does not cover FTMO.");
 const RT = handler._runTool;
-const hl = RT("explain_rule", { topic: "hold_limit" }, "candidate"), hlLive = RT("explain_rule", { topic: "hold_limit" }, "live");
-ok("candidate explain_rule: the rule it states carries its document and read date, SOURCED; the live tool unchanged",
-   hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21" && /^SOURCED/.test(hl.tier)
-   && !hlLive.sources && /^Explanation text/.test(hlLive.tier), [hl, hlLive]);
-const rs = RT("explain_rule", { topic: "reset" }, "candidate"), rsLive = RT("explain_rule", { topic: "reset" }, "live");
-ok("candidate explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
+const hl = RT("explain_rule", { topic: "hold_limit" }, "live");
+ok("explain_rule: the rule it states carries its document and read date, SOURCED",
+   hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21" && /^SOURCED/.test(hl.tier), hl);
+const rs = RT("explain_rule", { topic: "reset" }, "live");
+ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
    /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
-   && rs.sources.every((x) => x.document_section && x.read_on.length) && /Morning and afternoon sessions draw/.test(rsLive.explanation), rs);
-const dd = RT("explain_rule", { topic: "drawdown" }, "candidate"), ddLive = RT("explain_rule", { topic: "drawdown" }, "live");
-ok("candidate explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits); the live text unchanged",
-   /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation) && !/2-Phase/.test(ddLive.explanation)
+   && rs.sources.every((x) => x.document_section && x.read_on.length), rs);
+const dd = RT("explain_rule", { topic: "drawdown" }, "live");
+ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
+   /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)
    && dd.sources.some((x) => /^Crypto Fund Trader drawdown, by product \(1-Phase: trails on balance.*2-Phase: static\)$/.test(x.rule) && x.source === "not yet recorded")
    && !dd.sources.some((x) => /Crypto Fund Trader drawdown \(trailing/.test(x.rule)), dd.sources);
-ok("candidate guardrails: a rule that differs by product is stated with its product; the daily limit's size apart from its reference point (run 7, b-limits)",
-   /stated with its product, never as the whole firm's/.test(candSys[0].text) && /the floor it sets is measured from the day's start/.test(candSys[0].text));
-const ld = RT("explain_rule", { topic: "ladder" }, "candidate"), ac = RT("explain_rule", { topic: "accounts" }, "candidate");
-ok("candidate explain_rule: a topic that states no firm rule lists no sources; a clause no rule field carries cites its document",
+ok("guardrails: a rule that differs by product is stated with its product; the daily limit's size apart from its reference point (run 7, b-limits)",
+   /stated with its product, never as the whole firm's/.test(liveSys[0].text) && /the floor it sets is measured from the day's start/.test(liveSys[0].text));
+const ld = RT("explain_rule", { topic: "ladder" }, "live"), ac = RT("explain_rule", { topic: "accounts" }, "live");
+ok("explain_rule: a topic that states no firm rule lists no sources; a clause no rule field carries cites its document",
    !ld.sources && /^Explanation text/.test(ld.tier) && ac.sources.length === 1 && ac.sources[0].rule === "ToU 6(b)" && /Terms of Use/.test(ac.sources[0].document), [ld, ac]);
-ok("candidate TROID.md: troid's own strategy, out of sample first; the in-sample figure a best cell that never stands alone",
-   /Out of sample first: on data from\s+1 January 2021/.test(candSys[0].text) && /never\s+stands alone/.test(candSys[0].text)
-   && candSys[0].text.indexOf("+0.008R per trade on BTC") < candSys[0].text.indexOf("+0.033R per trade"));
-ok("candidate guardrails: rule questions through a tool that dates them; a stop given as a percent goes to size_trade as stop_pct; out of sample first",
-   /Answer a question about a firm's rule through firm_rules, explain_rule/.test(candSys[0].text) && /never type a firm's rule into a calculation/.test(candSys[0].text) && /stop_pct/.test(candSys[0].text) && /out-of-sample result comes first/.test(candSys[0].text));
-const stC = handler._toolsFor("candidate").find((t) => t.name === "size_trade"), stL = handler._toolsFor("live").find((t) => t.name === "size_trade");
-ok("candidate size_trade takes stop or stop_pct; the live schema unchanged", stC.input_schema.properties.stop_pct && !stC.input_schema.required.includes("stop")
-   && !stL.input_schema.properties.stop_pct && stL.input_schema.required.includes("stop"), [stC.input_schema.required, stL.input_schema.required]);
+ok("TROID.md: troid's own strategy, out of sample first; the in-sample figure a best cell that never stands alone",
+   /Out of sample first: on data from\s+1 January 2021/.test(liveSys[0].text) && /never\s+stands alone/.test(liveSys[0].text)
+   && liveSys[0].text.indexOf("+0.008R per trade on BTC") < liveSys[0].text.indexOf("+0.033R per trade"));
+ok("guardrails: rule questions through a tool that dates them; a stop given as a percent goes to size_trade as stop_pct; out of sample first",
+   /Answer a question about a firm's rule through firm_rules, explain_rule/.test(liveSys[0].text) && /never type a firm's rule into a calculation/.test(liveSys[0].text) && /stop_pct/.test(liveSys[0].text) && /out-of-sample result comes first/.test(liveSys[0].text));
+const stL = handler._toolsFor("live").find((t) => t.name === "size_trade");
+ok("size_trade takes stop or stop_pct (run 2, p-size)", stL.input_schema.properties.stop_pct && !stL.input_schema.required.includes("stop"), stL.input_schema.required);
 const sp1 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop_pct: 0.3, risk_pct: 0.5 }),
       sp2 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.616, risk_pct: 0.5 });
 ok("size_trade stop_pct: 0.3% above 77,872 on a short is 78,105.616, the same quantity as that stop price (run 2 worked it out as 78,106.616)",
    sp1.quantity === sp2.quantity && sp1.quantity === 1.622095 && sp1.working.some((w) => w.step === "stop" && w.value === 78105.616), [sp1.quantity, sp2.quantity]);
 ok("trade_math expectancy over n trades: 100 × 0.21R = 21R, a mean, not one run's outcome", (() => { const e = M({ calc: "expectancy", win_rate_pct: 55, avg_win: 1.2, avg_loss: 1, trades: 100 });
    return e.result.expected_total === 21 && /not what one run will do/.test(e.note); })());
-ok("candidate guardrails: say whose each thing is (a firm's rule the firm's; a tool, default or assumption troid's)", /Say whose each thing is/.test(candSys[0].text) && !/Say whose each thing is/.test(liveSys[0].text));
+ok("guardrails: say whose each thing is (a firm's rule the firm's; a tool, default or assumption troid's)", /Say whose each thing is/.test(liveSys[0].text));
 ok("a figure: list numbering (1. 2.) is not one", !HF("1. an input that differed\n2. a rule the firm changed") && HF("1. a loss of $500"));
 const fr = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
 ok("firm_rules: a product's rules, each with its document and read date, pending or not yet recorded where troid has none",
@@ -295,22 +294,22 @@ ok("trade_math takes a firm's rule with its source: the largest maximum loss tro
 const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
 ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, not the quantity", ps2.result.quantity === ps10.result.quantity
    && Math.abs(ps2.result.margin - ps2.result.notional / 2) < 0.01 && Math.abs(ps10.result.margin - ps10.result.notional / 10) < 0.01 && /same at any leverage/.test(ps2.note), [ps2, ps10]);
-ok("candidate support.md: section 4 keeps the refusal word for word, then teaches", /> troid doesn't recommend; it prices what you bring\./.test(candSys[2].text)
-   && /as troid's character teaches it/.test(candSys[2].text) && !/as troid's character teaches it/.test(liveSys[1].text));
+ok("support.md: section 4 keeps the refusal word for word, then teaches", /> troid doesn't recommend; it prices what you bring\./.test(liveSys[2].text)
+   && /as troid's character teaches it/.test(liveSys[2].text));
 
-// --- run 4's fixes, candidate only
+// --- run 4's fixes and later
 // run 8's lints, on the saved replies: they flag exactly the five that a person read as those errors in run 8, and none of
 // run 7's 24 replies
 { const R = (n) => require("./eval/runs/2026-09-24-run" + n + ".json").results, L = handler._lintNotes;
   const hit8 = R(8).filter((x) => L(x.reply).length).map((x) => x.id).sort().join(), hit7 = R(7).filter((x) => L(x.reply).length).map((x) => x.id);
   ok("lints: run 8's b-stop, o-montecarlo, q-stats, s-firm and s-product, none of run 7", hit8 === "b-stop,o-montecarlo,q-stats,s-firm,s-product" && !hit7.length, [hit8, hit7]); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
-ok("candidate support.md quotes the service's step-5 line verbatim (section 2)", candSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
+ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
    W5("That's a real loss and troid takes the question seriously.\n\nWhat are the inputs?") === "That's a real loss and troid takes the question seriously.\n\nWhat are the inputs?\n\n" + S5
    && W5("That's a real loss, and troid takes the question seriously. The firm's dashboard is the record; hello@troid.ai reaches a person.") === "That's a real loss, and troid takes the question seriously. The firm's dashboard is the record; hello@troid.ai reaches a person."
    && W5("25%.") === "25%.");
-const WS = (t) => handler._withSources(t, "en", [{ name: "trade_math", result: { working: [], result: {} } }], "candidate");
+const WS = (t) => handler._withSources(t, "en", [{ name: "trade_math", result: { working: [], result: {} } }]);
 ok("tier: a model-written tier at the end of a paragraph goes when the service writes the same tier; another tier stays (run 4, q-stats)",
    (() => { const o = WS("**What it means:** no edge on this sample. Tier: DERIVED from the numbers given, no firm rule used.");
             return o.split("Tier:").length === 2 && /^\*\*What it means:\*\* no edge on this sample\.\n\nTier: the figures above are DERIVED/.test(o); })()
@@ -323,13 +322,13 @@ ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'S
 const fx = RT("firm_rules", { firm: "bitfunded", product: "express" }, "candidate");
 ok("firm_rules: the Express's fee at $5,000, its source not yet recorded, so one product's fee never stands for the firm (run 7, s-firm)",
    fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && x.source === "not yet recorded")
-   && /one product's fee never stands for a firm/.test(candSys[0].text), fx);
-ok("candidate guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
-   /never leave it out/.test(candSys[0].text) && /no leverage above its 1:5 cap/.test(candSys[0].text) && /gets its fee, reset time/.test(candSys[0].text) && /Never write a tool's parameters/.test(candSys[0].text)
-   && /Name no outside service/.test(candSys[0].text) && !/Name no outside service/.test(liveSys[0].text));
-ok("candidate guardrails: troid never trades; troid's own strategy out of sample first even in passing; every firm rule dated in any reply; intermediate values copied from the tool",
-   /troid never trades/.test(candSys[0].text) && /even in passing/.test(candSys[0].text) && /\+0\.008R per trade on BTC \(504 trades\)/.test(candSys[0].text)
-   && /in any reply/.test(candSys[0].text) && /Copy every intermediate value from the tool's working/.test(candSys[0].text) && !/troid never trades/.test(liveSys[0].text));
+   && /one product's fee never stands for a firm/.test(liveSys[0].text), fx);
+ok("guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
+   /never leave it out/.test(liveSys[0].text) && /no leverage above its 1:5 cap/.test(liveSys[0].text) && /gets its fee, reset time/.test(liveSys[0].text) && /Never write a tool's parameters/.test(liveSys[0].text)
+   && /Name no outside service/.test(liveSys[0].text));
+ok("guardrails: troid never trades; troid's own strategy out of sample first even in passing; every firm rule dated in any reply; intermediate values copied from the tool",
+   /troid never trades/.test(liveSys[0].text) && /even in passing/.test(liveSys[0].text) && /\+0\.008R per trade on BTC \(504 trades\)/.test(liveSys[0].text)
+   && /in any reply/.test(liveSys[0].text) && /Copy every intermediate value from the tool's working/.test(liveSys[0].text));
 
 // --- handler end to end: the real SDK against a local fake of the Messages API
 const http = require("http");
@@ -394,14 +393,15 @@ fake.listen(18765, async () => {
     let r = await post([U("what is the crossover?")]);
     ok("lookup: one Haiku call, disclosure first, a signature back", r.status === 200 && calls.length === 1 && calls[0].model === "claude-haiku-4-5" && r.j.reply.startsWith(F.DISCLOSURE) && r.j.sig, r.j);
     const sys = calls[0].system.map((b) => b.text).join("\n");
-    ok("request: support.md in the system prompt, cache breakpoint on the last block plus the tail, 5 tools, no effort on Haiku", calls[0].system.length === 4 && /support\.md/.test(calls[0].system[1].text)
-       && calls[0].system[3].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 5 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
+    ok("request: the character and support.md in the system prompt, cache breakpoint on the last block plus the tail, 7 tools, no effort on Haiku", calls[0].system.length === 5
+       && /^# troid's character/.test(calls[0].system[1].text) && /support\.md/.test(calls[0].system[2].text)
+       && calls[0].system[4].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 7 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
     ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "section 4, word for word", F.END_SESSION, "opening disclosure", "affiliate link"].every((k) => calls[0].system[0].text.includes(k)));
     ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader\./.test(calls[0].system[0].text));
     const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_code", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
     ok("the prompt carries rule data only: no internal notes, rankings, affiliate terms or correspondence",
        banned.every((k) => !sys.includes(k)) && /"provenance"/.test(sys) && /"lev_bands"/.test(sys), banned.filter((k) => sys.includes(k)));
-    const firmsBlock = calls[0].system[2].text;
+    const firmsBlock = calls[0].system[3].text;
     const BAD = /"_[a-z]|propfirmmatch|trustpilot|affiliate agreement|references\/|firms_evidence|; verify\)|Unusually explicit|third-party/gi;
     ok("no note at any depth, no directory-sourced value, no affiliate term, no editorial", !(firmsBlock.match(BAD) || []).length, (firmsBlock.match(BAD) || []).slice(0, 8));
     ok("which firm is verified comes from the data", /Bitfunded is marked verified; the others are not/.test(calls[0].system[0].text) && /Bitfunded is marked verified/.test(firmsBlock)
@@ -590,7 +590,7 @@ fake.listen(18765, async () => {
       script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
       const n0 = calls.length;
       r = await call(hz, [U("hi")], { lang: "zh", disclosed: true });
-      ok("zh: the page language goes to the model after the cached prefix", calls[n0].system.length === 5 && /Chinese|中文|\(zh\)/.test(calls[n0].system[4].text) && !calls[n0].system[4].cache_control, calls[n0].system.map((b) => b.text.slice(0, 30)));
+      ok("zh: the page language goes to the model after the cached prefix", calls[n0].system.length === 6 && /Chinese|中文|\(zh\)/.test(calls[n0].system[5].text) && !calls[n0].system[5].cache_control, calls[n0].system.map((b) => b.text.slice(0, 30)));
       r = await call(hz, [U("hi")], { lang: "xx", disclosed: true });
       ok("an unknown language falls back to English", r.j.lang === "en" && r.j.note === "Not financial advice. Verify with the firm before acting.", r.j);
       delete process.env.TROID_I18N_DIR;
@@ -685,7 +685,10 @@ fake.listen(18765, async () => {
     r = await post([U("hi")], { disclosed: true }, { headers: { "x-troid-candidate": "x".repeat(40) } });
     ok("candidate: no key configured → 403 before the model", r.status === 403 && /candidate key/.test(r.j.error) && calls.length === before, r);
     const CK = "candidate-key-" + "0123456789abcdef0123456789abcdef";
-    const hc = fresh({ TROID_CANDIDATE_KEY: CK });
+    // nothing is staged in the repo since the promotion: the test stages a marked TROID.md in a scratch directory
+    const STAGE = fs0.mkdtempSync(path0.join(require("os").tmpdir(), "troid-stage-")), MARK = "STAGED FOR THE TEST ONLY";
+    fs0.writeFileSync(path0.join(STAGE, "TROID.md"), fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8") + "\n\n" + MARK);
+    const hc = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE });
     r = await call(hc, [U("hi")], { disclosed: true }, { headers: { "x-troid-candidate": CK.replace(/.$/, "x") } });
     ok("candidate: a wrong key → 403", r.status === 403, r);
     script = () => msg("end_turn", [{ type: "text", text: "R is the amount risked on one trade. Not financial advice. Verify with the firm before acting." }]);
@@ -695,7 +698,7 @@ fake.listen(18765, async () => {
     ok("candidate: 22 messages from one address in an hour, all answered (the operator's runs are not held to a visitor's limit)", cs.status === 200 && calls.length === before + 22, cs.status);
     ok("candidate: the reply says so, and nothing is stored or checked in the store", cs.j.variant === "candidate" && !KV_CALLS.length && ![...KV.keys()].includes("conv:" + cs.j.session), [cs.j.variant, KV_CALLS]);
     const cc = calls[calls.length - 1];
-    ok("candidate: the model gets the candidate prompt and trade_math", cc.system.length === 5 && /## Who troid is/.test(cc.system[0].text) && /^# troid's character/.test(cc.system[1].text)
+    ok("candidate: the model gets the staged file (and trade_math, live since the promotion)", cc.system.length === 5 && cc.system[0].text.includes(MARK) && /^# troid's character/.test(cc.system[1].text)
        && cc.tools.some((t) => t.name === "trade_math"), cc.system.map((b) => b.text.slice(0, 30)));
     const hist = [U("What does R mean?"), A(cs.j.reply), U("and 2R?")];
     r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true }, { headers: { "x-troid-candidate": CK } });
@@ -703,12 +706,13 @@ fake.listen(18765, async () => {
     r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true });
     ok("candidate: the same history can't continue under the live prompt", r.status === 400 && r.j.restart === true, r);
     r = await call(hc, [U("What does R mean?")], { disclosed: true });
-    ok("live, beside a configured candidate: the live prompt, five tools, stored", r.status === 200 && r.j.variant === "live" && calls[calls.length - 1].system.length === 4
-       && calls[calls.length - 1].tools.length === 5 && KV.has("conv:" + r.j.session), r.j.variant);
+    ok("live, beside a configured candidate: the live prompt without the staged file, the character and seven tools, stored", r.status === 200 && r.j.variant === "live"
+       && calls[calls.length - 1].system.length === 5 && !calls[calls.length - 1].system[0].text.includes(MARK) && calls[calls.length - 1].tools.length === 7
+       && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: the candidate is staged (files, guardrails, tools) and a key is set, never shown", gc.key === true && gc.staged.join() === "TROID.md,TROID-CHARACTER.md,support.md"
-       && gc.guardrails === 8 && gc.tools.join() === "trade_math,firm_rules" && !resC.body.includes(CK), gc);
+    ok("GET: what the candidate stages (here the test's TROID.md; no guardrails or tools since the promotion) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 0 && !gc.tools.length && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));
@@ -725,8 +729,8 @@ fake.listen(18765, async () => {
        && r.j.model === "claude-sonnet-5" && r.j.reply.startsWith("troid: the reset") && r.j.reply.endsWith(NOTE), [r.j.reply, calls.slice(before).map((c) => c.model)]);
     before = calls.length;
     r = await call(hc, [U("When does Bitfunded reset?")], { disclosed: true });
-    ok("live, beside it: the same Haiku answer stands (one call, no note added)", r.status === 200 && calls.length === before + 1
-       && r.j.reply === "Troid says the reset is at 16:00 UTC.", r.j.reply);
+    ok("live, beside it: the same since the promotion (rerun on the tools model, lowercase, the note)", r.status === 200 && calls.length === before + 2
+       && r.j.reply.startsWith("troid: the reset") && r.j.reply.endsWith(NOTE), r.j.reply);
     script = () => msg("end_turn", [{ type: "text", text: "troid does not cover FTMO and has not read its rules." }]);
     before = calls.length;
     r = await call(hc, [U("FTMO's daily limit?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
@@ -747,7 +751,7 @@ fake.listen(18765, async () => {
        && r.j.reply.indexOf("R is the amount risked") === 0 && r.j.reply.indexOf("R is the amount risked") < r.j.reply.indexOf("Working it through"), r.j.reply);
     step = 0;
     r = await call(hc, [U("What does R mean?")], { disclosed: true });
-    ok("live, beside it: only the text after the last tool call, as before", r.status === 200 && !r.j.reply.includes("R is the amount risked") && r.j.reply.includes("Working it through"), r.j.reply);
+    ok("live, beside it: the same since the promotion (the text before the tool call kept)", r.status === 200 && r.j.reply.indexOf("R is the amount risked") === 0 && r.j.reply.includes("Working it through"), r.j.reply);
     // run 5's fixes: a section-2 reply goes to the tools model; the tier line agrees with a reply that quotes a dated rule
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "That's a real loss and troid takes the question seriously. What were the inputs?" }])
       : msg("end_turn", [{ type: "text", text: "That's a real loss and troid takes the question seriously. Firm, product, quota, equity, entry, stop? Usually an input differed, a rule changed after troid read it, or troid marks the rule pending. The firm's dashboard is the record; hello@troid.ai reaches a person." }]);
@@ -757,7 +761,7 @@ fake.listen(18765, async () => {
        && calls[before + 1].model === "claude-sonnet-5" && /rule changed after troid read it/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
     before = calls.length;
     r = await call(hc, [U("Your calculator is wrong. I failed because of troid.")], { disclosed: true });
-    ok("live, beside it: Haiku's section-2 reply stands", r.status === 200 && calls.length === before + 1 && r.j.reply === "That's a real loss and troid takes the question seriously. What were the inputs?", r.j.reply);
+    ok("live, beside it: the same since the promotion (rerun on the tools model)", r.status === 200 && calls.length === before + 2 && /rule changed after troid read it/.test(r.j.reply), r.j.reply);
     step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm3", name: "trade_math", input: { calc: "kelly", win_rate_pct: 45, payoff_ratio: 2 } }])
       : msg("end_turn", [{ type: "text", text: "Full Kelly is 17.5%, past Bitfunded's 2-Step Stage 1 maximum loss of 10% (Terms 9(a), read 23 Sep 2026)." }]));
@@ -784,7 +788,8 @@ fake.listen(18765, async () => {
        && nudgedLog.nudged === 1 && nudgedLog.rerouted === 1, [r.j.reply, calls.slice(before).map((c) => c.model), nudgedLog]);
     before = calls.length;
     r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true });
-    ok("live, beside it: the answer from memory stands (one call, no nudge)", r.status === 200 && calls.length === before + 1 && r.j.reply === MEMORY, r.j.reply);
+    ok("live, beside it: the same since the promotion (asked for through a tool)", r.status === 200 && calls.length === before + 4 && !r.j.reply.includes(MEMORY)
+       && /Restricted Trading Practices s\.1, read 2026-09-21/.test(r.j.reply), r.j.reply);
     const DATED = "Bitfunded's Express is $39 at $5,000 (Bitfunded blog, read 2026\u201109\u201121).";
     script = (b) => {
       if (b.model === "claude-haiku-4-5") return msg("end_turn", [{ type: "text", text: DATED }]);
@@ -813,7 +818,7 @@ fake.listen(18765, async () => {
        && lintLog.linted === 1, [r.j.reply, calls.slice(before).map((c) => c.model), lintLog]);
     before = calls.length;
     r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true });
-    ok("live, beside it: no rewrite", r.status === 200 && calls.length === before + 1 && r.j.reply === DRAFT, r.j.reply);
+    ok("live, beside it: the same since the promotion (written again once)", r.status === 200 && calls.length === before + 3 && /the trader risks/.test(r.j.reply), r.j.reply);
     script = (b) => {
       const l = lastOf(b);
       if (typeof l === "string" && l.includes("write the whole answer again")) return msg("max_tokens", [{ type: "text", text: "Risk is the dollar am" }]);
@@ -834,7 +839,7 @@ fake.listen(18765, async () => {
        && calls[before + 1].model === "claude-sonnet-5" && !/CoinDesk|Binance/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
     before = calls.length;
     r = await call(hc, [U("Where is BTC going this week?")], { disclosed: true });
-    ok("live, beside it: that answer stands", r.status === 200 && calls.length === before + 1 && /CoinDesk/.test(r.j.reply), r.j.reply);
+    ok("live, beside it: the same since the promotion (rerun on the tools model)", r.status === 200 && calls.length === before + 2 && !/CoinDesk/.test(r.j.reply), r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid can work that through. Which would help: a simulation, or the expectancy?" }])
       : msg("end_turn", [{ type: "text", text: "Expectancy works out through trade_math." }]);
     before = calls.length;
@@ -843,8 +848,8 @@ fake.listen(18765, async () => {
        && calls[before + 1].model === "claude-sonnet-5" && /trade_math/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
     before = calls.length;
     r = await call(hc, [U("I win 55% of trades at 1.2R and lose 1R. Run a Monte Carlo on it.")], { disclosed: true });
-    ok("live, beside it: Haiku's menu stands", r.status === 200 && calls.length === before + 1 && /a simulation, or the expectancy/.test(r.j.reply), r.j.reply);
-    delete process.env.TROID_CANDIDATE_KEY;
+    ok("live, beside it: the same since the promotion (rerun on the tools model)", r.status === 200 && calls.length === before + 2 && /trade_math/.test(r.j.reply), r.j.reply);
+    delete process.env.TROID_CANDIDATE_KEY; delete process.env.TROID_CANDIDATE_DIR; fs0.rmSync(STAGE, { recursive: true, force: true });
   } catch (e) { console.log = log0; ok("no exception in the handler tests", false, String(e && e.stack)); }
   fake.close(); kv.close();
   console.log(`RESULT: ${process.exitCode ? "FAILED" : "0 failed"} (${n} checks)`);

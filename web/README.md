@@ -108,13 +108,17 @@ troid's prompt after TROID.md and before `support.md`. The mathematics it teache
 (R-multiples, position size, expectancy, Kelly, recovery, fee share, losses to a limit, capped budgets, standard
 errors, ATR scaling, effective bets), each result with its formula and every step. Every prompt change runs against
 the live model before it reaches anyone: stage it as the candidate (the changed files in `context/candidate/`, new
-guardrails and tools in `CANDIDATE_GUARDRAILS` and `CANDIDATE_TOOLS` in `api/troid.js`), deploy, and run
+guardrails, rule explanations, tools and tool code in `CANDIDATE_GUARDRAILS`, `CANDIDATE_RULES`, `CANDIDATE_TOOLS` and
+`CANDIDATE_RUN` in `api/troid.js`, and any service change gated on `variant === "candidate"`), deploy, and run
 `EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-candidate`. Only requests
 with the key get the candidate; they are not stored and not held to a visitor's limit. The set is
-`eval/character.json`: the character's four examples and twenty more questions across every kind of user. When every
-automated check passes and a person has read the report, promote: move the files into place and fold the candidate
-constants into the live ones, in one commit. Without the key the runner evaluates the live prompt, one case every
-185 seconds, deleting each conversation after reading it.
+`eval/character.json`: the character's four examples and twenty more questions across every kind of user. A person
+reads every reply and records what they find beside the run (`<run>.read.json`); `--report <run>.json --read
+<run>.read.json --recheck` writes the report again under the current checks. Promote only when a run passes every
+automated check and the read finds no error: move the files into place and fold the candidate constants into the live
+ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; nothing is staged. With
+the key and nothing staged the runner evaluates the live prompt at full speed; without it, one case every 185 seconds,
+deleting each conversation after reading it.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.
