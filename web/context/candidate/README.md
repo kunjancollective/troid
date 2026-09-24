@@ -25,7 +25,13 @@ number in an answer from a tool, the user or troid's published figures (`web/api
 once for a rewrite), a teaching answer's formula written out, and `TROID-CHARACTER.md` staged here with its examples'
 read dates replaced by "(read date from the tool)", so the prompt teaches no date from memory, and every number in
 its examples from the question, a tool or a step shown on the page (the owner's wording for the R and recovery
-examples: "2,584 × 0.3862 = $998, which is 2 × 1R = +2R"; "0.20 ÷ (1 − 0.20) = 0.25, so 25%").
+examples: "2,584 × 0.3862 = $998, which is 2 × 1R = +2R"; "0.20 ÷ (1 − 0.20) = 0.25, so 25%"). After the subset run of
+2026-09-24 (the eight cases those changes touch; 7 of 8 automatically, four errors on a read, none critical): a lint
+rewrite stands only when it trips fewer notes than its draft and fixes at least one (o-montecarlo's rewrite had lost
+its answer); a formula line carries an equals sign (b-stop's formula in words read as risk ÷ distance + fee); a reply
+never opens on a result the reader never saw ("That result …"); the tier line says MODELLED when a reply quotes
+troid's Monte Carlo (`ask.tier.modelled`); and troid's assumptions are listed once, by the service (p-size listed them
+twice).
 
 Run 14's read also found that run 9's ex-r, the reply the promotion rested on, stated the 1-Step's 4% daily limit with
 no tool behind it and no read date; the read of run 9 missed it, and the check added after run 14 finds it (run 9 is

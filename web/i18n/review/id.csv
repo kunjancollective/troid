@@ -1018,6 +1018,7 @@ ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed 
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.tier.inputs,Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.inputs_quoted,"Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; each firm rule quoted beside them is SOURCED, with the date troid read it.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.tier.modelled,"Tier: troid's Monte Carlo figures above are MODELLED — a simulation, true under the assumptions stated beside them only; any other figure is DERIVED — troid's tools computed it.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
 ask.support_step5,"The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly

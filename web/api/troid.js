@@ -33,8 +33,10 @@
  * their inputs and results (tool_numbers), for the evaluation's check that each figure came from a tool. Promoting a
  * candidate follows the owner's rule in CLAUDE.md, and is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 16 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
- * a should-I refusal and support.md section 2's three causes).
+ * the fixes from the reads of runs 10 to 16 and of the subset run of 2026-09-24 are staged now (the CANDIDATE_* entries,
+ * CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES, a should-I refusal, support.md section 2's three causes, a MODELLED tier line
+ * for troid's quoted Monte Carlo, troid's assumptions listed once, and a lint rewrite that stands only when it fixes more
+ * than it breaks).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -128,6 +130,7 @@ const EN = {
   "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
   "ask.tier.inputs": "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.",
   "ask.tier.inputs_quoted": "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; each firm rule quoted beside them is SOURCED, with the date troid read it.",
+  "ask.tier.modelled": "Tier: troid's Monte Carlo figures above are MODELLED — a simulation, true under the assumptions stated beside them only; any other figure is DERIVED — troid's tools computed it.",
   "ask.assumed": "troid's assumptions, not the firm's rules: {list}.",
   "ask.support_step5": "The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai.",
 };
@@ -1248,18 +1251,26 @@ function withSources(reply, lang, toolLog, variant) {
   // one DERIVED line, not two, when trade_math ran both with a firm's rule and without one (run 12, o-montecarlo); the
   // candidate's, until it is promoted
   if (variant === "candidate" && tiers.has("derived")) tiers.delete("inputs");
+  // troid's published Monte Carlo, quoted from explain_rule's ruin topic, is MODELLED, not DERIVED; one line says both
+  // (subset run 1, o-montecarlo: its simulated years were printed under "the figures above are DERIVED")
+  if (variant === "candidate" && MC_QUOTED_RX.test(reply) && toolLog.some((t) => t.name === "explain_rule" && (t.result || {}).topic === "ruin")) {
+    tiers.delete("derived"); tiers.delete("inputs"); tiers.add("modelled");
+  }
   if (!cites.length && !tiers.size && !assumed.length) return reply;
   const block = [];
   if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
   // a reply that quotes a firm's rule with its read date itself is not told "no firm rule was needed" (run 5, ex-kelly)
   const quoted = READ_DATE_RX.test(stripSources(reply));
-  for (const k of ["derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + (k === "inputs" && quoted ? "inputs_quoted" : k)));
+  for (const k of ["modelled", "derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + (k === "inputs" && quoted ? "inputs_quoted" : k)));
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
+  // the service lists troid's assumptions, so the reply's own list of them goes (subset run 1, p-size: listed twice, the
+  // reply's copy saying the budget cap and the target "affect margin and liquidation distance")
+  if (variant === "candidate" && assumed.length) body = body.split(/\n\s*\n/).filter((p) => !ASSUMED_PARA_RX.test(p)).join("\n\n");
   // a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
   // and so does one written at the end of a paragraph, when it names a tier the service writes (run 4, q-stats)
   if (tiers.size) {
-    const words = new Set([...tiers].map((k) => (k === "sourced" ? "SOURCED" : "DERIVED")));
+    const words = new Set([...tiers].flatMap((k) => (k === "sourced" ? ["SOURCED"] : k === "modelled" ? ["MODELLED", "DERIVED"] : ["DERIVED"])));
     body = body.split("\n").filter((l) => !/^\s*(\*\*|__)?\s*tier\b/i.test(l))
       .map((l) => l.replace(/\s*(\*\*|__)?\bTier(\*\*|__)?:\s*(\*\*|__)?(DERIVED|SOURCED|MEASURED|MODELLED)\b[^\n]*$/i, (m, a, b, c, w) => (words.has(w.toUpperCase()) ? "" : m)))
       .join("\n").replace(/\n{3,}/g, "\n\n").trim();
@@ -1299,6 +1310,9 @@ const lintNotes = (t) => LINTS.filter(([test]) => test(t)).map(([, note]) => not
 // of its table sourced ("all SOURCED with their read dates") where the split and the 2-Step's trading fee had none.
 const ALL_SOURCED_RX = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sourced|dated)\b|\b(all|every) (rules?|figures?)\b[^.\n]{0,40}\b(with|carr(y|ies)) (its|their) (sources?|read dates?)\b|\ball\b[^.\n]{0,20}\bwith their read dates\b/;
 const MC_68_RX = /\b68\s?%[^.\n]{0,80}\b(simulat|years?\b|blow|ruin|fail)|\b(simulat|Monte Carlo|blow|ruin)[^.\n]{0,90}\b68\s?%/i;   // the Monte Carlo's figure, not a win rate
+const MC_QUOTED_RX = new RegExp(MC_68_RX.source + "|\\bsimulated years?\\b", "i");                // a reply that quotes it
+// a paragraph listing troid's own defaults, which the service lists under the answer (ask.assumed)
+const ASSUMED_PARA_RX = /^\s*(?:\*\*|__)?\s*(?:assumptions|troid['’]s (?:assumptions|defaults)|defaults)\b[^\n]{0,60}\b(?:troid|not given|supplied|defaults?|assumed)\b/i;
 const CANDIDATE_LINTS = [
   [(t, tools) => MC_68_RX.test(t) && !tools.some((x) => x.name === "explain_rule" && String((x.input || {}).topic || "").toLowerCase().trim() === "ruin"),
    "troid's published Monte Carlo comes from explain_rule, topic ruin: get it there, then quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED."],
@@ -1442,6 +1456,27 @@ CANDIDATE_LINTS.push(
      unsupportedIn(t, tools, asked).slice(0, 8).join(", ") + ". Get each one through a tool (trade_math takes numbers troid chooses), or leave it out."],
   [(t, tools) => tools.some((x) => x.name === "trade_math") && !/=/.test(t) && !/\bFormula\b/i.test(t),
    "A teaching answer writes its formula out, with an equals sign (risk = |entry − stop| × quantity, say), and says why it works."]);
+// Staged after the subset run of 2026-09-24: b-stop wrote its formula in words ("quantity equals the risk divided by the
+// distance between entry and stop, plus a fee amount per unit", which reads as risk ÷ distance + fee); o-montecarlo's
+// rewrite opened "That result models …", pointing at a tool's result the reader never saw.
+function formulaInWords(t) {                     // a "Formula:" line whose formula has no equals sign
+  const lines = String(t).split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^\s*(?:[-*]\s+)?(?:\*\*|__)?Formula(?:\*\*|__)?\s*:\s*(?:\*\*|__)?(.*)$/i.exec(lines[i]);
+    if (!m) continue;
+    let f = m[1].trim(), j = i + 1;
+    while (!f && j < lines.length) f = lines[j++].trim();
+    if (/^(?:none|n\/a|not applicable|no formula)\b/i.test(f)) continue;   // a part that doesn't apply, said so (run 9, p-hold)
+    if (!/[=≈]/.test(f)) return true;
+  }
+  return false;
+}
+const DANGLING_OPEN_RX = /^\s*(?:\*\*|__)?(?:That|This|Those|These) (?:result|figure|output|simulation|number|table|calculation)s?\b/i;
+CANDIDATE_LINTS.push(
+  [(t) => formulaInWords(t),
+   "Write the formula in symbols, with an equals sign and its brackets, on its own line: quantity = risk ÷ (stop distance + fee per unit), say."],
+  [(t) => DANGLING_OPEN_RX.test(t),
+   "The answer opens by pointing at a result the reader never saw (\"That result …\"): open with the answer to the question, then say where each figure comes from."]);
 // support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
 // leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
 const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;
@@ -1722,6 +1757,12 @@ module.exports = async (req, res) => {
           said.length = 0;                                              // the rewrite is the whole answer
           const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator));
           if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
+          // the candidate's: a rewrite that trips more notes than the draft, or fixes none of them, doesn't replace it
+          // (subset run of 2026-09-24, o-montecarlo: the rewrite lost the draft's answer and still wrote no formula)
+          if (variant === "candidate") {
+            const key = (n) => String(n).slice(0, 60), again = lintNotesFor([...said, textOf(r2)].join("\n\n"), variant, toolLog, asked).map(key);
+            if (again.length > notes.length || notes.every((n) => again.includes(key(n)))) throw new Error("rewrite no better");
+          }
           resp = r2; log.linted = 1;
         } catch (e) {
           resp = keep.resp; said.splice(0, said.length, ...keep.said); toolLog.length = keep.tools; toolCalls = keep.toolCalls;

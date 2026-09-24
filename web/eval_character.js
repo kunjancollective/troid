@@ -99,6 +99,24 @@ const ALL_SOURCED = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sour
 // troid's published Monte Carlo with a figure beside the wrong risk (run 10, o-montecarlo: "2% fixed risk with a 68% simulated
 // failure rate"; 68% is at 1% a trade, 100% at 2%).
 const RUIN_MIX = /\b2(\.0)?\s?%[^.\n;,]{0,50}\b68\s?%|\b68\s?%[^.\n;]{0,30}\bat 2\s?%|\b1(\.0)?\s?%[^.\n;,]{0,50}\b100\s?%\s?(of|blow|fail|ruin)/i;
+// the subset run of 2026-09-24: troid's Monte Carlo quoted; a reply opening on a result the reader never saw; troid's
+// assumptions, which the service lists under the answer (its line) and a reply may list again (a paragraph of its own)
+const MC_QUOTED = /\bsimulated years?\b|\b68\s?%[^.\n]{0,80}\b(simulat|blow|ruin)/i;
+const DANGLING_OPEN = /^\s*(?:\*\*|__)?(?:That|This|Those|These) (?:result|figure|output|simulation|number|table|calculation)s?\b/i;
+const ASSUMED_LINE = /^troid['’]s assumptions, not the firm['’]s rules:/m;
+const ASSUMED_PARA = /^\s*(?:\*\*|__)?\s*(?:assumptions|troid['’]s (?:assumptions|defaults)|defaults)\b[^\n]{0,60}\b(?:troid|not given|supplied|defaults?|assumed)\b/i;
+function formulaInWords(t) {                     // a "Formula:" line whose formula has no equals sign: that line, or null
+  const lines = String(t).split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const m = /^\s*(?:[-*]\s+)?(?:\*\*|__)?Formula(?:\*\*|__)?\s*:\s*(?:\*\*|__)?(.*)$/i.exec(lines[i]);
+    if (!m) continue;
+    let f = m[1].trim(), j = i + 1;
+    while (!f && j < lines.length) f = lines[j++].trim();
+    if (/^(?:none|n\/a|not applicable|no formula)\b/i.test(f)) continue;   // a part that doesn't apply, said so (run 9, p-hold)
+    if (!/[=≈]/.test(f)) return lines[i].trim().slice(0, 100);
+  }
+  return null;
+}
 // A worked example on a firm's product at leverage above its cap, the cap unsaid (run 10, b-leverage: 10x "on a Bitfunded
 // 1-Step account"; run 6: on the reference account). A paragraph naming Bitfunded, leverage above 5x, and no cap.
 function levOverCap(t) {
@@ -259,6 +277,14 @@ function check(c, r, variant) {
   { const m = levOverCap(reply); add("an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it", !m, m); }   // runs 6, 10
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
     add("troid's tools and defaults are troid's, not a firm's", !m, m && m[0]); }
+  // the subset run of 2026-09-24: b-stop wrote its formula in words; o-montecarlo's rewrite opened on a result the reader
+  // never saw, and its simulated years sat under a DERIVED tier line; p-size listed troid's assumptions twice
+  { const m = formulaInWords(splitSources(reply).body); add("a formula line writes its formula in symbols, with an equals sign", !m, m); }
+  { const m = reply.match(DANGLING_OPEN); add("opens with the answer, never with a result the reader never saw (\"That result …\")", !m, m && m[0]); }
+  if (MC_QUOTED.test(splitSources(reply).body)) add("troid's quoted Monte Carlo carries the tier MODELLED", /Tier:[^\n]*\bMODELLED\b/.test(reply), null);
+  if (ASSUMED_LINE.test(reply)) {
+    const m = reply.split(/\n\s*\n/).find((p) => !ASSUMED_LINE.test(p) && ASSUMED_PARA.test(p));
+    add("lists troid's assumptions once (the service lists them under the answer)", !m, m && m.slice(0, 90)); }
   for (const rx of c.all || []) add("says: /" + rx + "/", new RegExp(rx, "i").test(reply), null);
   for (const rx of c.none || []) { const m = reply.match(new RegExp(rx, "i")); add("never says: /" + rx + "/", !m, m && m[0]); }
   if (c.refusal) add("gives support.md section 4 word for word", REFUSAL.test(reply), null);

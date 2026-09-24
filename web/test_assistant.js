@@ -220,7 +220,7 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
 const fs0 = require("fs"), path0 = require("path");
 // run 16's number and formula lints read the tools' real results, which the older tests' emulated tools don't carry:
 // those tests leave them out, and the number lint is tested on its own below
-const NEW16 = /^Every number in the answer comes from|^A teaching answer writes its formula/;
+const NEW16 = /^Every number in the answer comes from|^A teaching answer writes its formula|^Write the formula in symbols|^The answer opens by pointing/;   // run 16 and the subset run of 2026-09-24
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -489,14 +489,38 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      notes16("b-leverage").some((n) => /writes its formula out/.test(n)) && !notes16("q-atr").some((n) => /writes its formula/.test(n)), notes16("b-leverage"));
   // the owner's promotion rule, applied to the reads' _errors (CLAUDE.md, "Promoting a candidate")
   const pr = require("child_process").spawnSync(process.execPath, [path0.join(__dirname, "eval_character.js"), "--promotion", "--candidate", "14,15,16", "--live", "9,10"], { encoding: "utf8" });
-  ok("promotion rule on runs 14–16 against the live prompt's runs 9 and 10: run 15's s-firm critical (the owner's reading), 5.33 failing cases per run against 4.50, three kinds the live runs don't have — hold",
-     pr.status === 1 && /\(a\)[^\n]*run 15 s-firm — NOT met/.test(pr.stdout) && /candidate 5\.33, live 4\.50 — NOT met/.test(pr.stdout)
+  ok("promotion rule on runs 14–16 against the live prompt's runs 9 and 10: run 15's s-firm critical (the owner's reading), 5.67 failing cases per run against 4.50 (run 15's p-size, found by the subset read's checks), three kinds the live runs don't have — hold",
+     pr.status === 1 && /\(a\)[^\n]*run 15 s-firm — NOT met/.test(pr.stdout) && /candidate 5\.67, live 4\.50 — NOT met/.test(pr.stdout)
      && /\(c\)[^\n]*incomplete method; repeated text; recommendation — NOT met/.test(pr.stdout) && /HOLD/.test(pr.stdout), pr.stdout.slice(-600));
   const U0 = (t, texts, nums) => N.unsupportedNumbers(t, texts || [], nums || []);
   ok("numbers: dates, times, clauses, sections, product names and list numbers are not figures; 4,000 is one number; min(480,700) two",
      !U0("read 2026-09-23, 21 Sep 2026; 16:00–16:10 UTC (UTC+8); Terms 9(a), 14(d)(v); RTP s.3; T&C 8.i; the 1-Step and 2-Phase; Stage 2; Step 4\n1. first").length
      && U0("the limit is $4,000", [], ["4"]).join() === "4,000" && !U0("min(480,700) = 480", [], ["480", "700"]).length && U0("roughly 3.5 times", [], []).join() === "3.5"
      && !U0("17.5% and 0.175", [], ["0.175"]).length && !U0("$499", [], ["498.97"]).length, U0("the limit is $4,000", [], ["4"])); }
+// the subset run of 2026-09-24's staged changes, on its own replies
+{ const sub = require("./eval/runs/2026-09-24-subset1.json").results, atS = (id) => sub.find((c) => c.id === id);
+  const bodyS = (c) => String(c.reply).split(/\n+Sources, each with the date troid read it:/)[0].split(/\n+Tier: /)[0];
+  const notesS = (id, v) => handler._lintNotesFor(bodyS(atS(id)), v || "candidate", [], atS(id).q);
+  const has = (ns, head) => ns.some((n) => String(n).startsWith(head)), FW = "Write the formula in symbols", DO = "The answer opens by pointing";
+  ok("candidate lints: b-stop's formula in words and o-montecarlo's 'That result …' opening are each asked to be written again; the six other replies and live are not",
+     has(notesS("b-stop"), FW) && has(notesS("o-montecarlo"), DO) && !has(notesS("b-stop", "live"), FW) && !has(notesS("o-montecarlo", "live"), DO)
+     && ["ex-r", "ex-kelly", "ex-recovery", "b-leverage", "q-expectancy", "p-size"].every((id) => !has(notesS(id), FW) && !has(notesS(id), DO)),
+     sub.map((c) => [c.id, notesS(c.id).filter((n) => /^(Write the formula|The answer opens)/.test(n))]));
+  const LF2 = (t) => handler._lintNotesFor(t, "candidate", [], "");
+  ok("formula lint: 'Formula: none — a fixed limit' and a formula on the line below its heading pass; 'The result is 25%' opens with the answer",
+     !has(LF2("Formula: none — this is a fixed limit per asset tier, not a calculation."), FW) && !has(LF2("**Formula:**\n`E = p × W − (1 − p) × L`"), FW)
+     && has(LF2("**Formula:**\nquantity equals risk over distance"), FW) && !has(LF2("The result is 25%."), DO) && has(LF2("**This figure** is troid's."), DO));
+  const mc = atS("o-montecarlo"), ruin = [{ name: "trade_math", input: {}, result: {} }, { name: "explain_rule", input: { topic: "ruin" }, result: { topic: "ruin", explanation: "x" } }];
+  const mcC = handler._withSources(bodyS(mc), "en", ruin, "candidate"), mcL = handler._withSources(bodyS(mc), "en", ruin, "live");
+  ok("candidate tier: troid's quoted Monte Carlo is MODELLED, in one line that says any other figure is DERIVED; live keeps its DERIVED line",
+     mcC.endsWith(handler.EN["ask.tier.modelled"]) && !mcC.includes(handler.EN["ask.tier.inputs"]) && mcL.endsWith(handler.EN["ask.tier.inputs"]) && !mcL.includes("MODELLED — a simulation"), [mcC.slice(-300), mcL.slice(-200)]);
+  const noMc = handler._withSources("Expectancy = 0.55 × 1.2 − 0.45 = 0.21R.", "en", ruin, "candidate");
+  ok("candidate tier: explain_rule's ruin called but no Monte Carlo figure quoted keeps the DERIVED line", noMc.endsWith(handler.EN["ask.tier.inputs"]), noMc);
+  const ps = atS("p-size"), sized = [{ name: "size_trade", input: {}, result: { assumptions: ["margin mode cross — troid's default"], sources: [] } }];
+  const psC = handler._withSources(bodyS(ps), "en", sized, "candidate"), psL = handler._withSources(bodyS(ps), "en", sized, "live");
+  ok("candidate: troid's assumptions are listed once, by the service (p-size's own list of them goes); live keeps both",
+     !/Assumptions troid supplied/.test(psC) && /troid's assumptions, not the firm's rules: margin mode cross/.test(psC) && /Circuit-breaker order/.test(psC)
+     && /Assumptions troid supplied/.test(psL), psC.slice(-500)); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -911,7 +935,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 22 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 24 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
@@ -1060,6 +1084,29 @@ fake.listen(18765, async () => {
     };
     r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: a rewrite that doesn't finish leaves the draft, whole", r.status === 200 && r.j.reply.startsWith(DRAFT) && !/Risk is the dollar am$/.test(r.j.reply), r.j.reply);
+    // the subset run of 2026-09-24 (o-montecarlo): a rewrite that trips more notes than its draft, or fixes none of them,
+    // leaves the draft; the live prompt's rewrite stands as before
+    const WORSE = "That result: risk is the dollar amount the trader risks on the trade.\n\n**Formula:** risk equals the stop distance times the quantity.";
+    script = (b) => {
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("write the whole answer again")) return msg("end_turn", [{ type: "text", text: WORSE }]);
+      return msg("end_turn", [{ type: "text", text: DRAFT }]);
+    };
+    before = calls.length;
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    const worseLog = JSON.parse(LOGS[LOGS.length - 1]);
+    ok("candidate: a rewrite that trips more notes than its draft (an unseen result, a formula in words) leaves the draft (subset run, o-montecarlo)",
+       r.status === 200 && calls.length === before + 3 && r.j.reply.startsWith(DRAFT) && !/That result/.test(r.j.reply) && !worseLog.linted, [r.j.reply, worseLog]);
+    before = calls.length;
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true });
+    ok("live, beside it: the rewrite stands, as before", r.status === 200 && calls.length === before + 3 && /^That result/.test(r.j.reply), r.j.reply);
+    script = (b) => {
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("write the whole answer again")) return msg("end_turn", [{ type: "text", text: "Risk is the dollar amount troid is willing to lose: $500 on this trade." }]);
+      return msg("end_turn", [{ type: "text", text: DRAFT }]);
+    };
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a rewrite that fixes none of its draft's notes leaves the draft", r.status === 200 && r.j.reply.startsWith(DRAFT) && !/on this trade\./.test(r.j.reply), r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "x" }])
       : msg("end_turn", [{ type: "text", text: "support.md section 4 applies here:\n\ntroid doesn't recommend; it prices what you bring.\n\nThe fees differ by product.\n\ntroid doesn't recommend; it prices what you bring. Name a product." }]);
     r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });

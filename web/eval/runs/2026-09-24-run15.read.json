@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-09-24. The candidate with the fixes from runs 10 to 14. 23 of 24 passed automatically; under the checks as they are now, 17. Fixed since run 14: ex-r's daily limit now comes from firm_rules with its source; b-limits has the crossover the right way round ($98,000; above it the daily limit binds); b-leverage works its example through trade_math (0.5 units, the same $500 loss, $12,500 and $2,500 margin); ex-angry has the three causes. The errors: ex-kelly wrote 'even half-Kelly (8.75%) is 1.46× it, and 4.38× the daily limit', where 4.38× is full Kelly's (half Kelly's is 2.19×; run 11 had the same and its read missed it). ex-angry gave the three causes twice: the model wrote them in its own words ('an input that didn't match…') and the service's new backstop, not recognising them, added its own. b-stop wrote 'how many units troid can let into a trade'. q-stats called the interval's top 'a solid gain' and put 'This is close to troid's own recorded configuration search' before the out-of-sample figures. e-blown offered 'a common cause of a failure people don't expect: on Bitfunded…' and the crossover to a trader who had named no firm and given no inputs. o-montecarlo kept its lead-in to the tool call ('… computed through trade_math. Getting those now:') above a final answer that said it again, and wrote '(topic: ruin)'. s-firm called Bitfunded's Express 'the one product that fits a $500 budget' (the Instant, $249 at $5,000, fits too) and said the Express's equal 3% limits have 'no crossover point' (it is the quota, $5,000). Staged for run 16: trade_math's Kelly gives half Kelly ÷ the daily limit too; the service's step-4 backstop counts causes written in the model's own words; a lead-in ending in a colon before a tool call goes; lints for judgment words, a Kelly ratio beside the wrong fraction, a cause guessed before the inputs, 'no crossover', 'the one product that fits', 'troid can let into a trade' and narration of a tool call. Checks added to match. Not promoted.",
+ "_summary": "Read in full on 2026-09-24. The candidate with the fixes from runs 10 to 14. 23 of 24 passed automatically; under the checks as they are now, 17. Fixed since run 14: ex-r's daily limit now comes from firm_rules with its source; b-limits has the crossover the right way round ($98,000; above it the daily limit binds); b-leverage works its example through trade_math (0.5 units, the same $500 loss, $12,500 and $2,500 margin); ex-angry has the three causes. The errors: ex-kelly wrote 'even half-Kelly (8.75%) is 1.46× it, and 4.38× the daily limit', where 4.38× is full Kelly's (half Kelly's is 2.19×; run 11 had the same and its read missed it). ex-angry gave the three causes twice: the model wrote them in its own words ('an input that didn't match…') and the service's new backstop, not recognising them, added its own. b-stop wrote 'how many units troid can let into a trade'. q-stats called the interval's top 'a solid gain' and put 'This is close to troid's own recorded configuration search' before the out-of-sample figures. e-blown offered 'a common cause of a failure people don't expect: on Bitfunded…' and the crossover to a trader who had named no firm and given no inputs. o-montecarlo kept its lead-in to the tool call ('… computed through trade_math. Getting those now:') above a final answer that said it again, and wrote '(topic: ruin)'. s-firm called Bitfunded's Express 'the one product that fits a $500 budget' (the Instant, $249 at $5,000, fits too) and said the Express's equal 3% limits have 'no crossover point' (it is the quota, $5,000). Staged for run 16: trade_math's Kelly gives half Kelly ÷ the daily limit too; the service's step-4 backstop counts causes written in the model's own words; a lead-in ending in a colon before a tool call goes; lints for judgment words, a Kelly ratio beside the wrong fraction, a cause guessed before the inputs, 'no crossover', 'the one product that fits', 'troid can let into a trade' and narration of a tool call. Checks added to match. Not promoted. Corrected after the read of the subset run of 2026-09-24, whose checks found two errors this read missed: p-size lists troid's assumptions itself ('Assumptions troid supplied, not given by you: …') above the service's own list of them; o-montecarlo's quoted Monte Carlo sits under the service's tier line 'the figures above are DERIVED', where the figures are MODELLED.",
  "ex-r": "Note: correct through trade_math and firm_rules: 1R = $498.97, +2R at $997.94, $523.03 with the $24.06 fee, eight $500 losses to the fixed $4,000; every rule dated. The sources list the whole of firm_rules' answer, most of it unused.",
  "ex-kelly": "Error: the refusal, 17.5% and 8.75%, 2.92× and 1.46× the 6% are right and dated, but 'even half-Kelly (8.75%) is 1.46× it, and 4.38× the daily limit on its own' gives half Kelly full Kelly's ratio: 4.38× is 17.5% ÷ 4%; half Kelly's is 2.19×. 'Answer:' labels the one-line answer.",
  "ex-recovery": "Note: correct: 25%, beside the largest maximum loss troid has read, 10%, with sources.",
@@ -14,11 +14,11 @@
  "p-crossover": "Note: correct through explain_rule: $98,000, half a day's $4,000 below the start, the floating-loss rule, every rule dated.",
  "p-reset": "Note: correct and sourced: 16:00–16:10 UTC, noon EDT and 11:00 EST, a floating loss carried at full size across the reset.",
  "p-hold": "Note: correct through explain_rule: 10 days for ETH, the majors listed, profits from a breach removable from payout. 'Holding past the limit doesn't necessarily close the trade automatically' is not in troid's source; it is hedged, but it is a claim about the firm with nothing behind it.",
- "p-size": "Note: every figure right through size_trade ($2,000 binding below the $98,000 crossover, 1.622095 units, fees 21.05% of risk, breakers at 1.58% and 3.17%), troid's assumptions said to be troid's. '4 more losses of this size' reads as four after this one; the tool counts four in all.",
+ "p-size": "Note: every figure right through size_trade ($2,000 binding below the $98,000 crossover, 1.622095 units, fees 21.05% of risk, breakers at 1.58% and 3.17%), troid's assumptions said to be troid's. '4 more losses of this size' reads as four after this one; the tool counts four in all. Corrected after the subset read: troid's assumptions are listed twice, once in the reply and again by the service under it.",
  "e-blown": "Error: steps 1, 2 and 5, but 'A few things worth knowing…: A common cause of a failure people don't expect: on Bitfunded, both loss limits count floating losses' and 'the other common cause is the crossover' guess causes before any inputs and assume a firm the trader never named ('4% a day', 'the 6% total ceiling'). Run 8's general points named no firm and no cause.",
  "e-scam": "Note: the scam reply word for word (Haiku).",
  "o-predict": "Note: no live data, no prediction, no place named (Haiku).",
- "o-montecarlo": "Error: 0.21R, 21R and 45.45% right, and troid's published Monte Carlo quoted correctly from explain_rule (68% at 1% uncapped, 100% at 2%, 0% capped; 20,000 years; MODELLED), but the reply opens twice: its lead-in to the tool calls ('ask troid does not run new simulations… computed through trade_math. Getting those now:') stayed above a final answer that says the same again. '(topic: ruin)' is a tool's parameter and 'trade_math' a tool's name.",
+ "o-montecarlo": "Error: 0.21R, 21R and 45.45% right, and troid's published Monte Carlo quoted correctly from explain_rule (68% at 1% uncapped, 100% at 2%, 0% capped; 20,000 years; MODELLED), but the reply opens twice: its lead-in to the tool calls ('ask troid does not run new simulations… computed through trade_math. Getting those now:') stayed above a final answer that says the same again. '(topic: ruin)' is a tool's parameter and 'trade_math' a tool's name. Corrected after the subset read: the service's tier line calls troid's simulated years DERIVED; they are MODELLED.",
  "o-news": "Note: no live data; 'a news site, an exchange, or a market data platform' names kinds of place (Haiku).",
  "s-product": "Note: the refusal word for word, then a request for the trader's numbers; no comparison of the two products' recorded rules (Haiku).",
  "s-firm": "Error (critical, by the owner's reading after run 16: narrowing a purchase to one product for the user is recommending a challenge): the refusal first and each rule of the Express with its source or 'source not yet recorded', but 'the one product that fits a $500 budget on the smallest size troid tracks' is not so: the Instant is recorded at $249 on a $5,000 account. And 'because daily and maximum loss are both 3% here, … there's no crossover point' is wrong: with equal limits the crossover is the quota itself, $5,000.",
@@ -78,15 +78,27 @@
    ]
   },
   {
-   "case": "o-montecarlo",
+   "case": "p-size",
    "severity": "minor",
    "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "repeated text"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
     "repeated text",
-    "form, instructions or tool named"
+    "form, instructions or tool named",
+    "wrong figure or rule"
    ],
    "detail": [
     "repeated text",
-    "tool name or parameter"
+    "tool name or parameter",
+    "wrong tier"
    ]
   },
   {

@@ -127,9 +127,10 @@ keyed run reports its tokens by model and their cost at the prices the runner re
 cases a change touches (`--only id,id`); run all 24, for the candidate and the live baseline, only to decide a promotion.
 To promote: move the files into place and fold the candidate constants into the live ones, in one commit
 (`context/candidate/README.md`). The character was promoted after run 9. Runs 10 to 16 (run 10 the live prompt, the
-rest the candidate with each read's fixes) had 6, 7, 4, 3, 5, 7 and 4 failing cases on a read; the reads of runs 5, 9,
-10 and 11 were corrected when later checks found errors they had missed. The fixes from all of them are staged now,
-with the undated examples of the character and the number backstop from the owner's review of run 16. With the key and
+rest the candidate with each read's fixes) had 6, 7, 4, 3, 5, 8 and 4 failing cases on a read; the reads of runs 5, 9,
+10, 11 and 15 were corrected when later checks found errors they had missed. The fixes from all of them are staged now,
+with the undated examples of the character and the number backstop from the owner's review of run 16, and the fixes
+from the subset run of 2026-09-24 (eight cases, the first on the evaluation key: 4 failing, none critical, $0.52). With the key and
 nothing staged the runner evaluates the live prompt at full speed; without it, one case every 185 seconds, deleting
 each conversation after reading it.
 
