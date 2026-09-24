@@ -47,6 +47,10 @@ kv.listen(18776, async () => {
     c = D.classify({ user: "¿cuánto puedo arriesgar?", lang: "es", tool_calls: [{ name: "check_budget", input: { firm: "crypto_fund_trader" } }] });
     ok("classify: a tool call names the topic and firm in any language", c.topics[0] === "room left under the loss ceilings" && c.firms[0] === "Crypto Fund Trader" && c.lang === "es", c);
     ok("classify: nothing matched is 'other'", D.classify({ user: "hmm" }).topics.join() === "other");
+    // the desk's "Want another firm? Ask troid." hands over this question (en.json index.why3.ask_q)
+    const add = D.classify({ user: "Can troid add another firm to its compare? The one I'd like is FTMO" });
+    ok("classify: a request for another firm is counted, with the firm asked for", add.topics.includes("asked troid to add another firm")
+       && add.firms.includes("not covered: FTMO") && !D.classify({ user: "which firm has the lowest fee?" }).topics.includes("asked troid to add another firm"), add);
 
     // weeks
     ok("ISO week of 24 Sep 2026 is 2026-W39, Monday 21 to Monday 28", D.isoWeek(new Date("2026-09-24T12:00Z")) === "2026-W39"

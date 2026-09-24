@@ -57,6 +57,11 @@ index.hero.lede,"Most funded accounts fail on position size, not entries. troid 
   ट्रेड का साइज़ तय करता है।",,"troid stays lowercase, in Latin letters"
 index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">troid डेस्क</span> · ट्रेड का साइज़ तय करें",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.calc.firm,Firm,फ़र्म,,
+index.why3.link,why these {n}?,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
+index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
+index.why3.how,How firms are chosen →,,,NEW: translate it in reviewer_edit | 
+index.why3.ask,"Want another firm? <a href=""{href}"">Ask troid.</a>",,,"NEW: translate it in reviewer_edit | keep {href} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.why3.ask_q,Can troid add another firm to its compare? The one I'd like is ,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.challenge,Challenge,चैलेंज,,
 index.calc.quota,Quota,कोटा,,
 index.calc.equity,Equity,इक्विटी,,
@@ -72,6 +77,12 @@ index.calc.target_r,Target R,टारगेट R,,
 index.calc.risk_pct,Risk %,रिस्क %,,
 index.calc.cap_pct,Budget cap %,बजट कैप %,,
 index.calc.leverage,Leverage,लीवरेज,,
+index.lev.q,Why 5× by default?,,,NEW: translate it in reviewer_edit | keep every number exactly
+index.lev.first_one,"5× is the most {firms} allows on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.first_many,"5× is the most {firms} allow on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.pending,troid has no recorded cap for {firms} yet.,,,"NEW: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
+index.lev.firm_product,{firm}'s {product},,,NEW: translate it in reviewer_edit | keep {firm} {product} exactly as written
+index.lev.why,"Leverage doesn't change what you lose at your stop — position size does. It changes how much margin the position ties up, and under isolated margin, where liquidation sits. troid caps this at the selected firm's maximum.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.mode,Margin mode,मार्जिन मोड,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","फ़र्में · वर्णानुक्रम में · <span style=""text-transform:none"">troid</span> की सूची की हर फ़र्म, कोई सीमा नहीं",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
@@ -182,6 +193,11 @@ index.js.v_pending,PENDING,लंबित,,CHECK FIRST: index.js.v_block/v_redu
 index.js.v_block,BLOCK,रोकें,,CHECK FIRST: index.js.v_block/v_reduce/v_ok/v_pending: verdict badges rendered as 'रोकें' / 'घटाएँ' / 'ठीक' / 'लंबित'. 'ब्लॉक' may read more naturally than 'रोकें' for BLOCK.
 index.js.v_reduce,REDUCE,घटाएँ,,CHECK FIRST: index.js.v_block/v_reduce/v_ok/v_pending: verdict badges rendered as 'रोकें' / 'घटाएँ' / 'ठीक' / 'लंबित'. 'ब्लॉक' may read more naturally than 'रोकें' for BLOCK.
 index.js.v_ok,OK,ठीक,,CHECK FIRST: index.js.v_block/v_reduce/v_ok/v_pending: verdict badges rendered as 'रोकें' / 'घटाएँ' / 'ठीक' / 'लंबित'. 'ब्लॉक' may read more naturally than 'रोकें' for BLOCK.
+index.js.vs_ok,"Fits. This trade risks {risk}, within troid's cap of {cap}% of the {room} left before your {bind}.",,,"NEW: translate it in reviewer_edit | keep {bind} {cap} {risk} {room} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_reduce,"Cut to fit. Your {pct}% would risk {intended}; troid sized it down to {risk}, {cap}% of the room left.",,,"NEW: translate it in reviewer_edit | keep {cap} {intended} {pct} {risk} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_block,Can't be sized: {reasons}.,,,NEW: translate it in reviewer_edit | keep {reasons} exactly as written
+index.js.vs_pending,Can't be sized yet: troid has not recorded the rules this needs.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.js.q_verdict,What the verdict means,,,NEW: translate it in reviewer_edit | 
 index.js.pending_txt,{firm} · {product} · troid has no daily basis or drawdown type recorded for this product,{firm} · {product} · troid के पास इस प्रोडक्ट के लिए डेली लिमिट का आधार या ड्रॉडाउन प्रकार दर्ज नहीं है,,"keep {firm} {product} exactly as written; troid stays lowercase, in Latin letters"
 index.js.pending_note,There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.,"जब तक ये नियम दर्ज नहीं होते, साइज़ तय करने का कोई आधार नहीं है। troid तुलना दिखाती है कि इस फ़र्म के लिए क्या लंबित है।",,"troid stays lowercase, in Latin letters"
 index.js.bind_daily,daily loss limit,डेली लॉस लिमिट,,
@@ -648,17 +664,13 @@ dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 
       four correlated accounts running one strategy aren't four independent bets anyway.","<strong>Bitfunded का स्केलिंग प्लान</strong> — लगातार 4 महीने 10% नेट, 2
       निकासी — चार अकाउंट ख़रीदने के बजाय एक ही अकाउंट को बढ़ाता है। सस्ता, संभालने में कम, और
       वैसे भी एक ही रणनीति चलाने वाले चार सहसंबद्ध अकाउंट चार स्वतंत्र दाँव नहीं होते।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.order.h2,Order of work,काम का क्रम,,
-dashboard.order.li1,"Push the scratch copy to the repo and apply the six verified patches
-      as the merged reset block. <em>Done.</em>","स्क्रैच कॉपी को रिपॉज़िटरी में पुश करें और छह सत्यापित पैच को
-      मर्ज किए गए रीसेट ब्लॉक के रूप में लागू करें। <em>हो गया।</em>",,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li2,"Rewrite <code>RESULTS.md</code> with corrected numbers; revise
-      <code>bitfunded.md</code>'s rollover section to the measured condition.","<code>RESULTS.md</code> को सुधरे हुए आँकड़ों के साथ दोबारा लिखें;
-      <code>bitfunded.md</code> के रोलओवर सेक्शन को मापी गई शर्त के अनुसार संशोधित करें।",,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li3,"Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
-      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em>","2021 से अब तक का BTCUSDT 4h डेटा लें और <code>HANDOFF.md</code> के अनुसार वॉक-फ़ॉरवर्ड चलाएँ।
-      <em>बेसलाइन के लिए हो गया: नॉइज़ के भीतर। अगला है <code>troid-shadow-2</code>।</em>",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
-dashboard.order.li4,"Only then: challenge purchase, or not.","उसके बाद ही: चैलेंज की ख़रीद, या नहीं।",,
+dashboard.next.h2,What troid is testing next,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.p,"troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li1,"A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.next.li2,"Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.",,,NEW: translate it in reviewer_edit | keep every number exactly
+dashboard.next.li3,"The same walk-forward test for both, reported side by side. If neither survives it, that is the finding, and troid says so.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li4,Whether troid ever trades a challenge with its own strategy waits on that result.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.src,"Source: the work order, <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md""><code>backtest/HANDOFF.md</code></a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","सैंपल आँकड़े 1,539 4h कैंडल से, 8 जनवरी – 21 सितंबर 2026, api.binance.us — एक
@@ -986,6 +998,7 @@ terms.hero.lede,"troid is a free informational tool. It is not advice, it places
   documents govern. The full terms follow.","troid एक मुफ़्त सूचनात्मक टूल है। यह सलाह नहीं है, यह कोई ऑर्डर नहीं लगाता, और फ़र्म के अपने दस्तावेज़ ही मान्य हैं। पूरी शर्तें नीचे हैं।",,"troid stays lowercase, in Latin letters"
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,विषय-सूची,,
+glossary.verdict,"OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.",,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,‘troid से पूछें’ प्रॉप-फ़र्म के नियमों और साइज़िंग से जुड़े सवालों के जवाब देता है। अपमानजनक संदेश सत्र को समाप्त कर देते हैं।,,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,यह सत्र समाप्त हो गया है। ‘troid से पूछें’ प्रॉप-फ़र्म के नियमों और साइज़िंग से जुड़े सवालों के जवाब देता है।,,"troid stays lowercase, in Latin letters"

@@ -125,6 +125,21 @@ geometric centre; do not "correct" it. The site header carries the same nudge in
 (`.dot` has a larger left margin than right). Web assets: favicon.ico,
 apple-touch-icon.png, og-image.png in web/public/.
 
+## Components
+
+**Verdict.** A badge (OK, REDUCE, BLOCK; PENDING while a rule it needs is unrecorded) and a plain sentence beside it,
+never a badge alone. The sentence is built from the result's own figures and adds none: "Fits. This trade risks $X,
+within troid's cap of 35% of the $Y left before your daily loss limit." / "Cut to fit. Your X% would risk $A; troid sized
+it down to $B, 35% of the room left." / "Can't be sized: the reason." The firm, product and room sit under both, in mono.
+A "?" beside the badge says what the three verdicts mean.
+
+**Term and popover.** A "?" (16 px, a 44 px touch target) beside a term opens one or two plain sentences, then the formula
+where there is one, in troid's voice. A tooltip shows after 300 ms of hover and at once on keyboard focus, and toggles on
+a tap; a note with links (the desk's "why these 3?") opens on a click or tap only. Esc or a click elsewhere closes it;
+at most one is open. Max 280 px, `--surface2` with a `--line` border, no shadow, `--z-popover`. Its text is in
+`web/i18n` (firm names from firms.json), and a screen reader hears a tooltip through `aria-describedby` without opening
+it. `web/public/pop.js`.
+
 ## Implementation rule
 
 Every page carries the identical `<style>` block from `web/public/index.html`, verbatim.

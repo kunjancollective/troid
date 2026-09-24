@@ -73,20 +73,15 @@ def _english(T):
 
 def footer_html(T=None):
     """Inline HTML (no block elements), so it fits both <footer><div> and <p class="foot"> containers.
-    English is the owner's line verbatim. A translated page carries the line in its language; each firm's
-    required sentence stays in English (the firm's own words), after a one-line summary and the governing line."""
+    English is the owner's line verbatim; a translated page carries the line in its language. The footer names no
+    firm: a firm's required sentence sits beside that firm's link and in the terms' affiliate notices
+    (regions.required_span; design handoff 2026-09-24, 2d)."""
     if _english(T):
         links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS)
-        extra = " ".join(html.escape(t) for t in required_sentences())
-        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}" + (f" {extra}" if extra else "") + f"<br><br>{COPYRIGHT}"
+        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}<br><br>{COPYRIGHT}"
     links = " · ".join(f'<a href="{(T.H if u == "/" else T.L + u) if u.startswith("/") else u}">{html.escape(T(LINK_KEYS[u]))}</a>'
                        for u, _ in LINKS)
-    req = required_sentences()
-    extra = ""
-    if req:
-        extra = (f' <span class="gov-sum">{T("legal.summary.required")}</span> <span class="gov-line">{T("legal.governs")}</span> '
-                 + " ".join(f'<span lang="en">{html.escape(t)}</span>' for t in req))
-    return f"{links}<br><br>{T('footer.text')}" + extra + f'<br><br><span translate="no">{COPYRIGHT}</span>'
+    return f"{links}<br><br>{T('footer.text')}" + f'<br><br><span translate="no">{COPYRIGHT}</span>'
 
 
 def no_edge_html(T=None):

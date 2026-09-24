@@ -56,6 +56,11 @@ index.hero.lede,"Most funded accounts fail on position size, not entries. troid 
   of fees.","A maioria das contas financiadas falha pelo tamanho da posição, não pelas entradas. O troid calcula os seus dois tetos de perda, informa qual deles de fato limita e dimensiona a operação com as taxas já descontadas.",,"troid stays lowercase, in Latin letters"
 index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">desk do troid</span> · dimensionar uma operação",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.calc.firm,Firm,Empresa,,
+index.why3.link,why these {n}?,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
+index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
+index.why3.how,How firms are chosen →,,,NEW: translate it in reviewer_edit | 
+index.why3.ask,"Want another firm? <a href=""{href}"">Ask troid.</a>",,,"NEW: translate it in reviewer_edit | keep {href} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.why3.ask_q,Can troid add another firm to its compare? The one I'd like is ,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.challenge,Challenge,Desafio,,
 index.calc.quota,Quota,Quota,,
 index.calc.equity,Equity,Equity,,
@@ -71,6 +76,12 @@ index.calc.target_r,Target R,Alvo em R,,
 index.calc.risk_pct,Risk %,Risco %,,
 index.calc.cap_pct,Budget cap %,Teto do orçamento %,,
 index.calc.leverage,Leverage,Alavancagem,,
+index.lev.q,Why 5× by default?,,,NEW: translate it in reviewer_edit | keep every number exactly
+index.lev.first_one,"5× is the most {firms} allows on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.first_many,"5× is the most {firms} allow on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.pending,troid has no recorded cap for {firms} yet.,,,"NEW: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
+index.lev.firm_product,{firm}'s {product},,,NEW: translate it in reviewer_edit | keep {firm} {product} exactly as written
+index.lev.why,"Leverage doesn't change what you lose at your stop — position size does. It changes how much margin the position ties up, and under isolated margin, where liquidation sits. troid caps this at the selected firm's maximum.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.mode,Margin mode,Modo de margem,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","Empresas · ordem alfabética · todas as empresas que o <span style=""text-transform:none"">troid</span> lista, sem limite",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
@@ -172,6 +183,11 @@ index.js.v_pending,PENDING,PENDENTE,,
 index.js.v_block,BLOCK,BLOQUEAR,,
 index.js.v_reduce,REDUCE,REDUZIR,,
 index.js.v_ok,OK,OK,,
+index.js.vs_ok,"Fits. This trade risks {risk}, within troid's cap of {cap}% of the {room} left before your {bind}.",,,"NEW: translate it in reviewer_edit | keep {bind} {cap} {risk} {room} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_reduce,"Cut to fit. Your {pct}% would risk {intended}; troid sized it down to {risk}, {cap}% of the room left.",,,"NEW: translate it in reviewer_edit | keep {cap} {intended} {pct} {risk} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_block,Can't be sized: {reasons}.,,,NEW: translate it in reviewer_edit | keep {reasons} exactly as written
+index.js.vs_pending,Can't be sized yet: troid has not recorded the rules this needs.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.js.q_verdict,What the verdict means,,,NEW: translate it in reviewer_edit | 
 index.js.pending_txt,{firm} · {product} · troid has no daily basis or drawdown type recorded for this product,{firm} · {product} · o troid não tem base do diário nem tipo de drawdown registrados para este produto,,"keep {firm} {product} exactly as written; troid stays lowercase, in Latin letters"
 index.js.pending_note,There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.,Não há base para dimensionar até que essas regras sejam registradas. O comparador do troid mostra o que está pendente para esta empresa.,,"troid stays lowercase, in Latin letters"
 index.js.bind_daily,daily loss limit,limite de perda diária,,
@@ -581,14 +597,13 @@ dashboard.change.li3,"<strong>Reverse moves to TP2 or stop-out</strong> so the e
 dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
       withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
       four correlated accounts running one strategy aren't four independent bets anyway.","<strong>O plano de escalonamento da Bitfunded</strong> — 10% líquidos por 4 meses consecutivos, 2 saques — faz uma conta crescer em vez de comprar quatro. Mais barato, menos coisa para gerenciar, e quatro contas correlacionadas rodando uma estratégia não são quatro apostas independentes, de qualquer forma.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.order.h2,Order of work,Ordem de trabalho,,
-dashboard.order.li1,"Push the scratch copy to the repo and apply the six verified patches
-      as the merged reset block. <em>Done.</em>",Fazer push da cópia de rascunho para o repositório e aplicar os seis patches verificados como o bloco de reset unificado. <em>Feito.</em>,,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li2,"Rewrite <code>RESULTS.md</code> with corrected numbers; revise
-      <code>bitfunded.md</code>'s rollover section to the measured condition.",Reescrever o <code>RESULTS.md</code> com os números corrigidos; revisar a seção de rollover do <code>bitfunded.md</code> para a condição medida.,,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li3,"Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
-      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em>",Baixar BTCUSDT 4h de 2021 até hoje e rodar o walk-forward conforme o <code>HANDOFF.md</code>. <em>Feito para a linha de base: dentro do ruído. O próximo é o <code>troid-shadow-2</code>.</em>,,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
-dashboard.order.li4,"Only then: challenge purchase, or not.","Só então: comprar o desafio, ou não.",,
+dashboard.next.h2,What troid is testing next,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.p,"troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li1,"A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.next.li2,"Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.",,,NEW: translate it in reviewer_edit | keep every number exactly
+dashboard.next.li3,"The same walk-forward test for both, reported side by side. If neither survives it, that is the finding, and troid says so.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li4,Whether troid ever trades a challenge with its own strategy waits on that result.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.src,"Source: the work order, <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md""><code>backtest/HANDOFF.md</code></a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","Números da amostra: 1.539 candles de 4h, de 8 de jan. a 21 de set. de 2026, api.binance.us — um ativo, um regime. A amostra de validação, de 1º de janeiro de 2021 a 7 de janeiro de 2026 (<code>backtest/WALKFORWARD.md</code>), deu resultado dentro do ruído em BTC e ETH.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
@@ -830,6 +845,7 @@ terms.hero.lede,"troid is a free informational tool. It is not advice, it places
   documents govern. The full terms follow.","O troid é uma ferramenta informativa gratuita. Não é aconselhamento, não envia nenhuma ordem, e os documentos da própria empresa prevalecem. Os termos completos vêm a seguir.",,"troid stays lowercase, in Latin letters"
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,Sumário,,
+glossary.verdict,"OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.",,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: ask.disclosure: 'computed math' became 'cálculos feitos por computador'. Check that it neither adds nor loses a claim. | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento. Mensagens abusivas encerram a sessão.,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Esta sessão foi encerrada. O pergunte ao troid responde a perguntas sobre regras de prop firms e dimensionamento.,,"troid stays lowercase, in Latin letters"

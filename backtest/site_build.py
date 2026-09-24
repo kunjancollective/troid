@@ -185,12 +185,15 @@ def status_now(now=None):
 def mark(T):
     """The tr●id wordmark, the same on every page. "tr" and "id" link home; the dot is troid's status light and
     links to troid's ledger. It ripples while the last shadow run and the last bar sit inside the windows
-    /status.json states, and holds still otherwise: written here from status.json at build time (status_now), then
-    checked by /live.js, which fades any change. The letters are SVG paths (_letters). Pinned left to right on a
+    /status.json states, and holds still otherwise: the state is written here from status.json at build time
+    (status_now), then checked by /live.js, which fades any change and writes the label with its time (neutral until
+    then). The letters are SVG paths (_letters). Pinned left to right on a
     translated page (.mark is inline-flex, so a right-to-left page would otherwise read id·tr)."""
     ltr = "" if T.code == "en" else ' dir="ltr"'
-    state, when = status_now()
-    label = T.attr("common.mark." + state, time=when) if when else T.attr("common.mark.unknown")
+    # only the state is baked in, never its time: live.js writes the label, so a shadow run that leaves the state as it
+    # was leaves every page's bytes as they were (the owner, after the first build carried the run's minute)
+    state, _ = status_now()
+    label = T.attr("common.mark.ledger")
     return (f'<span class="mark"{ltr} translate="no"><a class="wm" href="{T.H}" aria-label="{T.attr("common.mark.home")}">'
             f'{_letters(WORDMARK["tr"])}</a>'
             f'<a class="dot{" live" if state == "live" else ""}" href="{T.L}/ledger" aria-label="{label}" title="{label}"'

@@ -10,7 +10,9 @@ External requests (fonts, the chart library) are blocked in both, so the compari
 With --design (a change to presentation only, design handoff 2026-09-24 section 8: "the redesign changes presentation,
 never numbers"): every page's visible text, less the wordmark (its letters are paths), and every desk and compare
 state's visible text, figures included, must be identical; markup and pixels may differ, and differing pixels are
-reported, not failed.
+reported, not failed. An element marked data-x explains a result (the verdict's sentence, a "?"): it is set aside for
+the comparison, and every number in it must already be in that state's result or inputs, so an explanation can quote
+a figure but never add one.
 
   python i18n_equiv.py                 # against HEAD
   python i18n_equiv.py --rev bfedbdb   # against another revision
@@ -89,11 +91,31 @@ def physical(html_text):
 
 
 def same_state(x, y):
-    return x[:-1] == y[:-1] and physical(x[-1]) == physical(y[-1])
+    a, b = x[-1], y[-1]
+    if isinstance(a, dict):                          # --design: the result's text with its explanations set aside
+        return x[:-1] == y[:-1] and " ".join(a["base"].split()) == " ".join(b["base"].split())
+    return x[:-1] == y[:-1] and physical(a) == physical(b)
 
 
 TEXT = "()=>{const m=[...document.querySelectorAll('.mark')];m.forEach(e=>e.style.display='none');" \
        "const t=document.body.innerText;m.forEach(e=>e.style.display='');return t}"
+
+
+DESK_DESIGN = """()=>{const r=document.getElementById('result'),x=[...r.querySelectorAll('[data-x]')];
+  const said=x.map(e=>e.innerText).join(' ');x.forEach(e=>e.style.display='none');
+  const base=r.innerText;x.forEach(e=>e.style.display='');
+  const inputs=[...document.querySelectorAll('#desk input')].map(i=>i.value).join(' ');
+  return {base, said, inputs}}"""
+NUM = __import__("re").compile(r"\d[\d,]*(?:\.\d+)?")
+
+
+def _nums(s):
+    return {float(x.replace(",", "")) for x in NUM.findall(s)}
+
+
+def explained_ok(st):
+    """A design state's explanation quotes only numbers its result or inputs already show."""
+    return _nums(st["said"]) <= _nums(st["base"]) | _nums(st["inputs"])
 
 
 def desk_states(page, design=False):
@@ -107,10 +129,10 @@ def desk_states(page, design=False):
                 page.evaluate("""g=>{for(const k of ['quota','equity','daystart','entry','stop','lev']){const e=document.getElementById(k);e.value=g[k];}
                   document.getElementById('side').value=g.side;document.getElementById('mode').value=g.mode;
                   document.getElementById('quota').dispatchEvent(new Event('input'));}""", g)
-                out.append((f, p, str(g), page.inner_text("#result") if design else page.inner_html("#result")))
+                out.append((f, p, str(g), page.evaluate(DESK_DESIGN) if design else page.inner_html("#result")))
             page.evaluate("()=>{const d=document.querySelector('#result details.work');if(d){d.open=true;}"
                           "document.getElementById('quota').dispatchEvent(new Event('input'))}")
-            out.append((f, p, "working open", page.inner_text("#result") if design else page.inner_html("#result")))
+            out.append((f, p, "working open", page.evaluate(DESK_DESIGN) if design else page.inner_html("#result")))
     return out
 
 
@@ -120,7 +142,10 @@ def compare_states(page, design=False):
         page.evaluate("""a=>{const [q,r,s,l]=a;document.getElementById('quota').value=q;document.getElementById('risk').value=r;
           document.getElementById('stop').value=s;document.getElementById('lev').value=l;
           document.getElementById('quota').dispatchEvent(new Event('input'));}""", [q, r, s, lev])
-        out.append((q, r, s, lev, page.inner_text(".cols") if design else page.inner_html(".cols")))
+        # --design: a firm's required sentence beside its link (.req, 2d) is set aside with the explanations
+        out.append((q, r, s, lev, page.evaluate("""()=>{const c=document.querySelector('.cols'),x=[...c.querySelectorAll('[data-x],.req')];
+          x.forEach(e=>e.style.display='none');const t=c.innerText;x.forEach(e=>e.style.display='');return t}""")
+                    if design else page.inner_html(".cols")))
     return out
 
 
@@ -190,6 +215,14 @@ def main():
                                     fails.append(f"desk: {len(bad)} of {len(st)} states differ, first {bad[:3]}")
                                 else:
                                     print(f"ok   desk: {len(st)} result states identical")
+                                if a.design:
+                                    extra = [(x[:3], sorted(_nums(x[-1]["said"]) - _nums(x[-1]["base"]) - _nums(x[-1]["inputs"])))
+                                             for x in st if not explained_ok(x[-1])]
+                                    said = sum(1 for x in st if x[-1]["said"].strip())
+                                    if extra:
+                                        fails.append(f"desk: {len(extra)} explanations add a number, first {extra[:3]}")
+                                    else:
+                                        print(f"ok   desk: {said} of {len(st)} states explained, every number in the explanation already in the result or inputs")
                         if w == WIDTHS[-1] and page_name == "compare":
                             st = compare_states(pg, a.design)
                             if u == u_old:
@@ -205,6 +238,11 @@ def main():
                         fails.append(f"{page_name} {w}px: page errors differ: {errs[0]} vs {errs[1]}")
                     if texts[0] != texts[1]:
                         fails.append(f"{page_name} {w}px: visible text differs")
+                        if a.design and w == WIDTHS[-1]:     # the lines that changed, for a person to read
+                            import difflib
+                            for ln in difflib.unified_diff(texts[0].splitlines(), texts[1].splitlines(), lineterm="", n=0):
+                                if ln[:1] in "+-" and not ln.startswith(("+++", "---")):
+                                    print(f"     {page_name} {ln[:230]}")
                     if shots[0].size != shots[1].size or ImageChops.difference(shots[0], shots[1]).getbbox():
                         bbox = None if shots[0].size != shots[1].size else ImageChops.difference(shots[0], shots[1]).getbbox()
                         msg = f"{page_name} {w}px: pixels differ (size {shots[0].size} vs {shots[1].size}, box {bbox})"

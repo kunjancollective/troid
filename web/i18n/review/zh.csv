@@ -53,6 +53,11 @@ index.hero.lede,"Most funded accounts fail on position size, not entries. troid 
   of fees.",大多数注资账户败在仓位大小，而不是入场点。troid 计算你的两条亏损上限，指出实际起约束作用的是哪一条，并在扣除手续费后计算交易仓位。,,"CHECK FIRST: Funded account = 注资账户, payout = 出金 (faq.pass.p1, faq.cost.q, faq.disc.*, index.hero.lede): there is no single settled Chinese term in the prop-firm community. 资金账户 and 利润分成 are common alternatives. | troid stays lowercase, in Latin letters"
 index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">troid 风控台</span> · 计算交易仓位",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.calc.firm,Firm,公司,,
+index.why3.link,why these {n}?,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
+index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
+index.why3.how,How firms are chosen →,,,NEW: translate it in reviewer_edit | 
+index.why3.ask,"Want another firm? <a href=""{href}"">Ask troid.</a>",,,"NEW: translate it in reviewer_edit | keep {href} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.why3.ask_q,Can troid add another firm to its compare? The one I'd like is ,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.challenge,Challenge,挑战,,
 index.calc.quota,Quota,额度,,
 index.calc.equity,Equity,净值,,
@@ -68,6 +73,12 @@ index.calc.target_r,Target R,目标 R,,
 index.calc.risk_pct,Risk %,风险 %,,
 index.calc.cap_pct,Budget cap %,预算上限 %,,
 index.calc.leverage,Leverage,杠杆,,
+index.lev.q,Why 5× by default?,,,NEW: translate it in reviewer_edit | keep every number exactly
+index.lev.first_one,"5× is the most {firms} allows on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.first_many,"5× is the most {firms} allow on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.pending,troid has no recorded cap for {firms} yet.,,,"NEW: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
+index.lev.firm_product,{firm}'s {product},,,NEW: translate it in reviewer_edit | keep {firm} {product} exactly as written
+index.lev.why,"Leverage doesn't change what you lose at your stop — position size does. It changes how much margin the position ties up, and under isolated margin, where liquidation sits. troid caps this at the selected firm's maximum.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.calc.mode,Margin mode,保证金模式,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","公司 · 按字母顺序 · <span style=""text-transform:none"">troid</span> 列出的每一家公司，不设数量上限",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
@@ -169,6 +180,11 @@ index.js.v_pending,PENDING,待定,,
 index.js.v_block,BLOCK,拦截,,"CHECK FIRST: index.js.v_block / v_reduce / v_ok: the desk verdict tags are rendered 拦截 / 缩减 / 可行. BLOCK means 'do not take this trade', not that troid blocks anything; 禁止 or 不可行 are options. REDUCE means shrink the planned size (减仓 would imply cutting an existing position)."
 index.js.v_reduce,REDUCE,缩减,,
 index.js.v_ok,OK,可行,,
+index.js.vs_ok,"Fits. This trade risks {risk}, within troid's cap of {cap}% of the {room} left before your {bind}.",,,"NEW: translate it in reviewer_edit | keep {bind} {cap} {risk} {room} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_reduce,"Cut to fit. Your {pct}% would risk {intended}; troid sized it down to {risk}, {cap}% of the room left.",,,"NEW: translate it in reviewer_edit | keep {cap} {intended} {pct} {risk} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_block,Can't be sized: {reasons}.,,,NEW: translate it in reviewer_edit | keep {reasons} exactly as written
+index.js.vs_pending,Can't be sized yet: troid has not recorded the rules this needs.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.js.q_verdict,What the verdict means,,,NEW: translate it in reviewer_edit | 
 index.js.pending_txt,{firm} · {product} · troid has no daily basis or drawdown type recorded for this product,{firm} · {product} · troid 尚未记录该产品的每日基准或回撤类型,,"keep {firm} {product} exactly as written; troid stays lowercase, in Latin letters"
 index.js.pending_note,There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.,在这些规则记录下来之前，没有可据以计算仓位的依据。troid 对比会显示该公司哪些规则仍待定。,,"troid stays lowercase, in Latin letters"
 index.js.bind_daily,daily loss limit,每日亏损限额,,
@@ -578,14 +594,13 @@ dashboard.change.li3,"<strong>Reverse moves to TP2 or stop-out</strong> so the e
 dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
       withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
       four correlated accounts running one strategy aren't four independent bets anyway.",<strong>Bitfunded 的扩容计划</strong>——连续 4 个月净盈利 10%、2 次出金——让一个账户成长，而不是买四个账户。更便宜，要管理的更少；而且，运行同一策略的四个相关账户本来也不是四个独立的赌注。,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.order.h2,Order of work,工作顺序,,
-dashboard.order.li1,"Push the scratch copy to the repo and apply the six verified patches
-      as the merged reset block. <em>Done.</em>",把草稿副本推送到仓库，并将六个已核实的补丁作为合并后的重置模块应用。<em>已完成。</em>,,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li2,"Rewrite <code>RESULTS.md</code> with corrected numbers; revise
-      <code>bitfunded.md</code>'s rollover section to the measured condition.",用更正后的数字重写 <code>RESULTS.md</code>；把 <code>bitfunded.md</code> 的换日部分修订为实测条件。,,keep the <…> tags and links as they are; translate only the words
-dashboard.order.li3,"Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
-      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em>",拉取 2021 年至今的 BTCUSDT 4h 数据，并按 <code>HANDOFF.md</code> 运行前向滚动检验。<em>基线已完成：处于噪声范围内。下一步是 <code>troid-shadow-2</code>。</em>,,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
-dashboard.order.li4,"Only then: challenge purchase, or not.",只有到那时：购买挑战，或者不买。,,
+dashboard.next.h2,What troid is testing next,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.p,"troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li1,"A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.next.li2,"Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.",,,NEW: translate it in reviewer_edit | keep every number exactly
+dashboard.next.li3,"The same walk-forward test for both, reported side by side. If neither survives it, that is the finding, and troid says so.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.li4,Whether troid ever trades a challenge with its own strategy waits on that result.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.src,"Source: the work order, <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md""><code>backtest/HANDOFF.md</code></a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","样本数据来自 1,539 根 4h K 线（2026 年 1 月 8 日至 9 月 21 日，api.binance.us）——一种资产，一种市场状态。留出样本（2021 年 1 月 1 日至 2026 年 1 月 7 日，<code>backtest/WALKFORWARD.md</code>）在 BTC 和 ETH 上的结果均处于噪声范围内。",,"CHECK FIRST: Dates now use the standard all-Arabic form (2021 年 1 月 1 日, 2026 年 9 月 23 日), and dashboard.foot gives the sample range as 2026 年 1 月 8 日至 9 月 21 日 with the measure word (1,539 根 4h K 线). Please confirm '4h K 线' reads naturally, or whether '4 小时 K 线' is preferred. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
@@ -827,6 +842,7 @@ terms.hero.lede,"troid is a free informational tool. It is not advice, it places
   documents govern. The full terms follow.",troid 是一个免费的信息工具。它不构成建议，不下任何订单，以公司自己的文件为准。完整条款如下。,,"troid stays lowercase, in Latin letters"
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,目录,,
+glossary.verdict,"OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.",,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,troid 问答回答关于自营交易公司规则和仓位计算的问题。辱骂性消息将导致会话结束。,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,本次会话已结束。troid 问答回答关于自营交易公司规则和仓位计算的问题。,,"troid stays lowercase, in Latin letters"

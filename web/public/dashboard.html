@@ -62,6 +62,7 @@ h1{font-size:clamp(26px,4.6vw,38px);line-height:1.1;letter-spacing:-.03em;font-w
 .meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
 h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
 h3{font-size:16px;margin:0 0 6px;font-weight:600}
+.src{font-family:var(--mono);font-size:11px;color:var(--dim)}
 h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);margin:34px 0 12px;font-weight:500}
 p{margin:0 0 11px}p:last-child{margin-bottom:0}
@@ -114,7 +115,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <body>
 <div class="wrap">
 <div class="bar">
-  <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger is live: last shadow run 2026-09-24 17:18 UTC" title="troid's ledger is live: last shadow run 2026-09-24 17:18 UTC" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
+  <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
   <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>
@@ -296,22 +297,21 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 </section>
 
 <section>
-  <h2>Order of work</h2>
+  <h2>What troid is testing next</h2>
+  <p>troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:</p>
   <ol>
-    <li>Push the scratch copy to the repo and apply the six verified patches
-      as the merged reset block. <em>Done.</em></li>
-    <li>Rewrite <code>RESULTS.md</code> with corrected numbers; revise
-      <code>bitfunded.md</code>'s rollover section to the measured condition.</li>
-    <li>Pull 2021–now BTCUSDT 4h and run the walk-forward per <code>HANDOFF.md</code>.
-      <em>Done for the baseline: inside noise. Next is <code>troid-shadow-2</code>.</em></li>
-    <li>Only then: challenge purchase, or not.</li>
+    <li>A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.</li>
+    <li>Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.</li>
+    <li>The same walk-forward test for both, reported side by side. If neither survives it, that is the finding, and troid says so.</li>
+    <li>Whether troid ever trades a challenge with its own strategy waits on that result.</li>
   </ol>
+  <p class="src">Source: the work order, <a href="https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md"><code>backtest/HANDOFF.md</code></a>.</p>
 </section>
 
 <p class="foot">Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.<br><!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.<br><br>© 2026 Kunjan Patel
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end --></p>
 
 </div>

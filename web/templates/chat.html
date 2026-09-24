@@ -214,6 +214,10 @@ el("del").addEventListener("click",del);
 el("copy").addEventListener("click",copy);
 el("send").addEventListener("click",send);
 el("q").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+/* A question another page hands over in the fragment, as the desk's "Want another firm? Ask troid." does: it goes in
+   the box, never sent, and the fragment is cleared so a reload doesn't bring it back. */
+(function(){var m=/^#q=(.*)$/.exec(location.hash),q;if(!m)return;try{q=decodeURIComponent(m[1])}catch(e){return}
+  el("q").value=q.slice(0,el("q").maxLength>0?el("q").maxLength:2000);history.replaceState(null,"",location.pathname+location.search)})();
 </script>
 </body>
 </html>

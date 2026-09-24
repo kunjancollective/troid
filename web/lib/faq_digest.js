@@ -25,6 +25,7 @@ const TOPICS = [
   ["challenge prices and discounts", /\bprice|\bcost|expensive|cheap|discount|coupon|promo/i],
   ["country availability", /countr|available in|resident|citizen|restricted/i],
   ["restricted practices (hedging, copy trading, bots)", /hedg|copy.?trad|news trad|\bbots?\b|\bea\b|martingale|allowed|prohibited|banned/i],
+  ["asked troid to add another firm", /\b(add|cover|include|compare)\b[^.?!]{0,20}\b(another|a new|more|other|one more) (firm|prop)|\banother firm\b|\bmore firms\b|why (only|just|these) (3|three)\b/i],
   ["asked for a recommendation", /should i|which (firm|one|prop)|best (firm|prop)|recommend|will i pass|worth it/i],
   ["asked for signals or entries", /signal|what (should i|to) trade|buy or sell|long or short|entry point|where (do|should) i enter/i],
   ["is it legit", /scam|legit|trust(worthy)?|fraud/i],

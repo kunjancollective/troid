@@ -90,6 +90,7 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
   color:var(--signal);line-height:1}
 .stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
 h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+h3{font-size:15px;margin:18px 0 6px;font-weight:600}
 p{margin:0 0 11px}
 a{color:var(--signal);text-decoration:none;border-bottom:1px solid
   color-mix(in srgb,var(--signal) 30%,transparent)}
@@ -135,7 +136,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 {{ governs_for("legal.summary.terms") }}
 {%- endif %}
 
-<div class="panel"><p class="eyebrow">{{ t("terms.toc.h") }}</p><ul class="toc"{{ en_body }}><li><a href="#acceptance">1. Acceptance of these terms</a></li><li><a href="#service">2. Description of the service</a></li><li><a href="#not-advice">3. Not advice</a></li><li><a href="#rule-data">4. Accuracy of third-party rule data</a></li><li><a href="#verify">5. Your obligation to verify</a></li><li><a href="#hypothetical">6. Hypothetical results</a></li><li><a href="#no-guarantee">7. No guarantee of passing any challenge</a></li><li><a href="#prop-challenges">8. What a prop challenge is</a></li><li><a href="#affiliate">9. Affiliate disclosure</a></li><li><a href="#ask-troid">10. ask troid, the AI assistant</a></li><li><a href="#as-is">11. Provided &ldquo;as is&rdquo;, with no warranty</a></li><li><a href="#liability">12. Limitation of liability</a></li><li><a href="#indemnification">13. Indemnification</a></li><li><a href="#governing-law">14. Governing law</a></li><li><a href="#changes">15. Changes to these terms</a></li><li><a href="#contact">16. Contact</a></li></ul></div>
+<div class="panel"><p class="eyebrow">{{ t("terms.toc.h") }}</p><ul class="toc"{{ en_body }}><li><a href="#acceptance">1. Acceptance of these terms</a></li><li><a href="#service">2. Description of the service</a></li><li><a href="#not-advice">3. Not advice</a></li><li><a href="#rule-data">4. Accuracy of third-party rule data</a></li><li><a href="#verify">5. Your obligation to verify</a></li><li><a href="#hypothetical">6. Hypothetical results</a></li><li><a href="#no-guarantee">7. No guarantee of passing any challenge</a></li><li><a href="#prop-challenges">8. What a prop challenge is</a></li><li><a href="#affiliate">9. Affiliate disclosure</a> (<a href="#affiliate-notices">affiliate notices</a>)</li><li><a href="#ask-troid">10. ask troid, the AI assistant</a></li><li><a href="#as-is">11. Provided &ldquo;as is&rdquo;, with no warranty</a></li><li><a href="#liability">12. Limitation of liability</a></li><li><a href="#indemnification">13. Indemnification</a></li><li><a href="#governing-law">14. Governing law</a></li><li><a href="#changes">15. Changes to these terms</a></li><li><a href="#contact">16. Contact</a></li></ul></div>
 
 <div class="panel terms"{{ en_body }}>
 <section id="acceptance">
@@ -219,6 +220,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <p>The commission is paid on the purchase, not on your result, so troid is paid whether you pass or fail. Some firms also pay troid a smaller commission when you buy again, including after a failed challenge. That is a conflict of interest, and you should weigh everything troid publishes with it in mind.</p>
 <p>Commissions do not affect the calculations, the rules troid shows, or the order in which firms appear, which is alphabetical. troid does not rank or score firms itself, and does not recommend one. Where a page repeats a third-party figure about a firm, such as a review count or an outside ranking, it names the source. troid is not an employee, agent or representative of any firm. No firm owns or operates troid, and no firm is responsible for its content.</p>
 <p>The current firms, and the criterion for choosing them, are on <a href="{{ L }}/compare">troid's compare</a>.</p>
+<h3 id="affiliate-notices">Affiliate notices</h3>
+<p>Some firms' affiliate terms require troid to publish a sentence in the firm's own words. Each appears beside that firm's links wherever troid shows them, and here, verbatim:</p>
+{{ affiliate_notices }}
 </section>
 
 <section id="ask-troid">

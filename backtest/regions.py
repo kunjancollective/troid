@@ -13,7 +13,7 @@ import json
 import i18n
 import site_build
 import site_text
-from gen_compare import FIRMS, ORDER, FIELDS, RANK, cite, sourced, link_live   # noqa: F401
+from gen_compare import FIRMS, ORDER, FIELDS, RANK, cite, sourced, link_live, required_span   # noqa: F401
 
 
 def _strings(T):
@@ -62,6 +62,8 @@ def panel_cell(k, f, T=None):
         if f.get("_promo_note"): bits.append(T("index.firms.promos"))
         hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
         link = f'\n      <div class="s" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
+        if (f.get("required_disclaimer") or "").strip():                # the firm's own wording, beside its link (2d)
+            link += f'\n      <div class="s req"{hold}>{required_span(T, f)}</div>'
     return f'    <div class="cell"{site_build.avail_attr(T)(k)}>\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
 
 
@@ -140,8 +142,61 @@ def crossover_html(T=None):
             f'    <div class="prov">{pv}</div></div>')
 
 
+def affiliate_notices_html(T=None):
+    """/terms, "Affiliate notices": each listed firm's required sentence with the firm's name, generated so that a firm
+    leaving the list takes its notice with it."""
+    T = _strings(T)
+    return "\n".join(f'<p><b>{html.escape(FIRMS[k]["name"])}</b>: {required_span(T, FIRMS[k])}</p>'
+                     for k in ORDER if (FIRMS[k].get("required_disclaimer") or "").strip())
+
+
+def why_these(T=None):
+    """The desk's "why these 3?" note (2a): how many firms troid compares and which is the reference, from firms.json."""
+    T = _strings(T)
+    return T("index.why3.p", n=len(ORDER), firm=html.escape(reference_firm()["name"]), others=len(ORDER) - 1)
+
+
+def _lev_caps(f, T):
+    """(product label, cap) for each product the desk offers: the product's own cap, or the highest of the firm's
+    bands; None where no cap, or no source for it, is recorded."""
+    c = f.get("calc") or {}; prods = f.get("products") or {}; caps = []
+    for pk, pc in (c.get("products") or {}).items():
+        src = prods.get(pk) or {}
+        if pc.get("daily_pct", src.get("daily_pct")) is None or pc.get("max_pct", src.get("max_pct")) is None:
+            continue                                   # not offered on the desk (profiles_js)
+        label = T.data(pc["label"]) if "label" in pc else pk
+        bands = c.get("lev_bands") or []
+        if "max_leverage" in pc or not bands:
+            lev = pc.get("max_leverage", c.get("max_leverage"))
+            caps.append((label, lev if lev is not None and cite(f, "max_leverage", pk, fallback="max_leverage" not in pc) else None))
+        else:
+            caps.append((label, max(b["lev"] for b in bands) if all(cite(f, b["cite"]) for b in bands) else None))
+    return caps
+
+
+def lev_first(T=None):
+    """The leverage note's first sentence (2c): the firms whose every recorded cap is 5×, which is why 5× is the default
+    (min(5, the product's cap)); then each firm, or product, with no recorded cap. Only caps firms.json records with a
+    source, never one from memory: a firm with some products unrecorded is named with them."""
+    T = _strings(T)
+    five, pend = [], []
+    for k in ORDER:
+        name = html.escape(FIRMS[k]["name"]); caps = _lev_caps(FIRMS[k], T)
+        known = [c for _, c in caps if c is not None]
+        missing = [html.escape(lab) for lab, c in caps if c is None]
+        if known and max(known) == 5:
+            five.append(name)
+        if missing:
+            pend.append(name if not known else T("index.lev.firm_product", firm=name, product=_join(T, "index.js.list_and", missing)))
+    out = [T("index.lev.first_one" if len(five) == 1 else "index.lev.first_many", firms=_join(T, "index.js.list_and", five))] if five else []
+    if pend:
+        out.append(T("index.lev.pending", firms=_join(T, "index.js.list_and", pend)))
+    return " ".join(out)
+
+
 def template_context(T):
     """The generated fragments the static page templates embed, in T's language (site_build.py), and the reference
     firm's name for the sentence under the firms panel (a firm's name comes from firms.json, never from en.json)."""
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
-            "reference_firm": html.escape(reference_firm()["name"])}
+            "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
+            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER)}

@@ -17,6 +17,7 @@
    4px radius. No shadows, no emoji. One gradient: the page background. */
 :root{
   --dur-fast:120ms; --dur:240ms; --dur-slow:480ms; --ease-out:cubic-bezier(.2,.7,.3,1); --ease-inout:cubic-bezier(.65,0,.35,1);
+  --z-popover:40;
   --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
   --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -98,6 +99,24 @@ input,select{min-width:0;max-width:100%}
 .vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
 .vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
 .vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+/* the verdict is a badge and a plain sentence, never a badge alone (design handoff 2026-09-24, 2b): the sentence beside
+   the badge, the firm, product and room under both */
+.verdict .vsent{flex:1 1 240px;margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
+.verdict .vtxt{flex-basis:100%}
+/* a term's "?" and the note it opens (web/public/pop.js): no shadow, --surface2 with a --line border (BRAND.md) */
+.qm{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;padding:0;
+  margin-inline-start:6px;border:1px solid var(--line);border-radius:50%;background:none;color:var(--dim);
+  font:600 10px/1 var(--mono);letter-spacing:0;text-transform:none;vertical-align:middle;cursor:help}
+.qm::after{content:"";position:absolute;inset:-14px}
+.qm:hover,.qm:focus-visible{color:var(--signal);border-color:var(--signal);outline:none}
+.why3{margin-inline-start:6px;padding:0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--signal);
+  font:inherit;letter-spacing:.04em;text-transform:none;cursor:pointer;position:relative}
+.why3::after{content:"";position:absolute;inset:-14px -4px}
+.why3:hover,.why3:focus-visible,.why3[aria-expanded="true"]{color:var(--ink);outline:none}
+.pop{position:absolute;z-index:var(--z-popover);max-width:280px;padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
+.pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
+.cell .req{margin-top:6px}
 .read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
   gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
 .cell{background:var(--surface);padding:13px}
@@ -149,7 +168,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <meta property="og:url" content="https://troid.ai/ledger">
 </head><body><div class="wrap">
 <div class="bar">
-  <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger is live: last shadow run 2026-09-24 17:18 UTC" title="troid's ledger is live: last shadow run 2026-09-24 17:18 UTC" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
+  <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
   <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>
@@ -350,5 +369,5 @@ function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m
 })();</script>
 
 <p class="foot">A week of trades is n≈2 with a standard error of ~0.26R. The weekly line above is a
-ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.<br><br>© 2026 Kunjan Patel</p>
+ledger entry, not a claim. Read it that way. · Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar. · <a href="https://github.com/kunjancollective/troid">journal.csv in the repo</a><br><a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel</p>
 </div></body></html>

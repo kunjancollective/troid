@@ -132,6 +132,14 @@ def required_sentences():
             for k in ORDER if (FIRMS[k].get("required_disclaimer") or "").strip()]
 
 
+def required_span(T, f):
+    """A firm's required sentence (firms.json required_disclaimer), verbatim: the firm's own words, so in English on
+    every page. It sits beside the firm's link wherever troid shows one (this page's column foot, the desk's firms
+    panel) and in the terms' affiliate notices; the site-wide footer names no firm (design handoff 2026-09-24, 2d)."""
+    lang = "" if site_text._english(T) else ' lang="en"'
+    return f'<span{lang}>{html.escape(f["required_disclaimer"].strip())}</span>'
+
+
 def required_html(inline=False):
     items = required_sentences()
     if inline:
@@ -209,7 +217,8 @@ def js(k, f, T):
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": code if link_ok else None,
-        "promo": T.data(f.get("_promo_note")) if link_ok else None}, ensure_ascii=site_text._english(T))
+        "promo": T.data(f.get("_promo_note")) if link_ok else None,
+        "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}, ensure_ascii=site_text._english(T))
 
 
 def column(k, f, T):
@@ -243,6 +252,7 @@ def render_compare(T, live):
 .r.sec{{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}}
 .pend{{color:var(--dim);font-style:italic}}
 .colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}}
+.colfoot .req{{margin-top:8px;color:var(--dim);font-size:10.5px;line-height:1.6}}
 .inputs{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}}
 @media(max-width:640px){{.inputs{{grid-template-columns:1fr 1fr}}}}
 /* a value that doesn't fit beside its label takes the next line, and nothing is wider than a phone (design handoff
@@ -263,7 +273,7 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="5"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
-<p class="s" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
+<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
 {conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_disclosure")}</p>
@@ -364,7 +374,8 @@ function render(){{
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
       if(f.code)foot+='<br>'+F(T.foot_code,{{code:f.code}});
-      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
+      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';
+      if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
     if(f.open_n)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'+F(f.open_n>1?T.foot_open_n:T.foot_open_1,{{n:f.open_n,first:f.open1}})+'</div>';
     document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;
