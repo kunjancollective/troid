@@ -11,7 +11,7 @@ numbers you give it.
 Across 300,000+ prop accounts, roughly 14% reach a funded account and about 7% ever get
 paid. Around 70% of failures are loss-limit breaches, most in the first week — failures
 trace to position size, not to strategy selection (SOURCED, source not yet recorded: troid has not
-yet traced the 70% to a document and a read date). Almost everything sold in this niche
+yet traced these figures to a document and a read date). Almost everything sold in this niche
 is entry signals. This is the other thing.
 
 ## Check troid's numbers before trusting any of them

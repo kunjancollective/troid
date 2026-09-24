@@ -502,11 +502,8 @@ dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
   यह एक अच्छी तरह बनी गाड़ी है जिसमें इंजन ही नहीं है।",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
   of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.","<strong>क्यों नहीं:</strong> $999 का चैलेंज एक नॉइज़ भरा, हाँ-या-ना वाला नतीजा ख़रीदता है। पाँच साल
-  के होल्डआउट ने अभी-अभी बताया है कि एंट्री लॉजिक में कोई मापने लायक एज नहीं है। इंडस्ट्री के 14% बेस
-  रेट पर, एक बार पास हो जाना इस बारे में बहुत कम बताता है कि आपके पास एज है या नहीं — बहुत से बिना एज वाले ट्रेडर
-  भी पास हो जाते हैं।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.h2,Cross-reference — things that don't add up,क्रॉस-रेफ़रेंस — जो बातें मेल नहीं खातीं,,
 dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. “बड़ी पोज़िशन के लिए 5x स्केल-इन” उल्टा करता है,,keep every number exactly
 dashboard.xref.f1.tag,design assumption inverted,डिज़ाइन की धारणा उल्टी निकली,,
@@ -744,7 +741,7 @@ a challenge ever got paid.","सबसे बड़ा स्वतंत्र 
 फ़ंडेड अकाउंट तक पहुँचे। चैलेंज ख़रीदने वाले सभी लोगों में से सिर्फ़ लगभग <span class=""stat"">7%</span> को
 कभी भुगतान मिला।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,ज़्यादातर फ़र्में ख़ुद 5–10% की रेंज में पास रेट बताती हैं।,,keep every number exactly
-faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,स्रोत: FPFX Technology का समेकित डेटा; अलग-अलग फ़र्मों के खुलासे।,,
+faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.cost.q,What does it really cost to get funded?,फ़ंडेड होने में असल में कितना ख़र्च आता है?,,
 faq.cost.p1,"The average trader needs about three attempts, spending over
 <span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","औसत ट्रेडर को लगभग तीन कोशिशें लगती हैं, और $100,000 के चैलेंज के लिए फ़ीस में
@@ -754,6 +751,7 @@ fee is <span class=""flag"">negative</span>. That is not a controversial claim, 
 the pass-rate data implies arithmetically.","दोनों संख्याओं को साथ रखें: ज़्यादातर प्रतिभागियों के लिए चैलेंज फ़ीस का अपेक्षित मूल्य
 <span class=""flag"">ऋणात्मक</span> है। यह कोई विवादित दावा नहीं है, पास-रेट डेटा से गणित के हिसाब से
 यही निकलता है।",,keep the <…> tags and links as they are; translate only the words
+faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fail.q,Why do people fail?,लोग फ़ेल क्यों होते हैं?,,
 faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
 or maximum drawdown. Most happen in the first week. Very few people fail by reaching the

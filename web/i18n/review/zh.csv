@@ -472,8 +472,8 @@ dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
   That is a well-built vehicle with no engine in it.","在所有测试过的方案中，它的回撤最低（<strong>&minus;$1,058</strong>，单次入场为 &minus;$7,295），在 72 个滚动起点开始的挑战中，失败账户为零，僵尸账户为零，期末余额中位数为 $100,409。它在据以选出它的样本上仍是 <strong>+0.03R</strong>，在它从未见过的 2021 年 1 月 1 日至 2026 年 1 月 7 日的 504 笔 BTC 交易上为 <strong>+0.008R</strong>（<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>）。这是一辆造得很好、却没有装发动机的车。",,"CHECK FIRST: faq.worth.p1 and chat.hero.lede: 'it prices what you bring' became 它为你带来的东西/交易算账 (colloquial 'does the accounting for'). dashboard.verdict.p1: 'It is also still +0.03R' was left neutral (仍是) rather than choosing the deflating reading (只是). | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
   of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.",<strong>为什么不：</strong>一个 $999 的挑战买到的是一次充满噪声的二元结果。五年的留出样本刚刚表明，入场逻辑没有可测量的优势。在 14% 的行业基础比率下，通过一次几乎不会改变你对自己是否有优势的判断——很多没有优势的交易员也能通过。,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.h2,Cross-reference — things that don't add up,交叉核对——对不上的地方,,
 dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. “为了更大仓位而 5x 分批加仓”的效果恰恰相反,,keep every number exactly
 dashboard.xref.f1.tag,design assumption inverted,设计假设被颠倒,,
@@ -660,13 +660,14 @@ traders across 10 firms. About <span class=""stat"">14%</span> passed a challeng
 reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
 a challenge ever got paid.","规模最大的独立数据集涵盖 10 家公司约 100,000 名交易员的 300,000 多个账户。约 <span class=""stat"">14%</span> 通过了挑战并拿到了注资账户。在所有购买过挑战的人中，只有约 <span class=""stat"">7%</span> 真正拿到过出金。",,"CHECK FIRST: Funded account = 注资账户, payout = 出金 (faq.pass.p1, faq.cost.q, faq.disc.*, index.hero.lede): there is no single settled Chinese term in the prop-firm community. 资金账户 and 利润分成 are common alternatives. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
 faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,大多数公司自报的通过率在 5–10% 之间。,,keep every number exactly
-faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,来源：FPFX Technology 汇总数据；各公司自行披露的信息。,,
+faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.cost.q,What does it really cost to get funded?,拿到注资账户实际要花多少钱？,,"CHECK FIRST: Funded account = 注资账户, payout = 出金 (faq.pass.p1, faq.cost.q, faq.disc.*, index.hero.lede): there is no single settled Chinese term in the prop-firm community. 资金账户 and 利润分成 are common alternatives."
 faq.cost.p1,"The average trader needs about three attempts, spending over
 <span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","平均每位交易员需要尝试约三次，为一个 $100,000 的挑战支付超过 <span class=""stat"">$1,600</span> 的费用。",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
 fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
 the pass-rate data implies arithmetically.","把这两个数字放在一起看：对大多数参与者来说，挑战费用的期望值是<span class=""flag"">负的</span>。这不是一个有争议的说法，而是通过率数据在算术上的推论。",,keep the <…> tags and links as they are; translate only the words
+faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fail.q,Why do people fail?,人们为什么会失败？,,
 faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
 or maximum drawdown. Most happen in the first week. Very few people fail by reaching the

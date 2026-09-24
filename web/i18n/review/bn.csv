@@ -474,8 +474,8 @@ dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
   That is a well-built vehicle with no engine in it.","যা কিছু পরীক্ষা করা হয়েছে, তার মধ্যে এর ড্রডাউন সবচেয়ে কম (<strong>&minus;$1,058</strong>, যেখানে সিঙ্গেল এন্ট্রিতে &minus;$7,295), 72টি রোলিং চ্যালেঞ্জ শুরুর মধ্যে শূন্য ব্যর্থ ও শূন্য জম্বি অ্যাকাউন্ট, মিডিয়ান শেষ ব্যালান্স $100,409। যে স্যাম্পলে এটি বাছাই করা হয়েছিল, সেখানে এটি এখনো <strong>+0.03R</strong>, আর 1 জানুয়ারি 2021 থেকে 7 জানুয়ারি 2026 পর্যন্ত যে 504টি BTC ট্রেড এটি কখনো দেখেনি, সেগুলোতে <strong>+0.008R</strong> (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>)। এটি ভালোভাবে তৈরি একটি গাড়ি, যার ভেতরে কোনো ইঞ্জিন নেই।",,"CHECK FIRST: Idioms to check: faq.daily.p2 'fiction' = 'কল্পকাহিনি'; dashboard.verdict.p1 'vehicle with no engine' = 'গাড়ি, যার ভেতরে কোনো ইঞ্জিন নেই'; dashboard.xref.f4.p1 'dead twice over' = 'দু'দিক থেকেই অচল'; dashboard.xref.f1.p2 'ruin math' = 'রুইন-সম্ভাবনার হিসাব'; index.js.n_cross 'runaway' = 'লাগামছাড়া লস'. | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
   of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.","<strong>কেন নয়:</strong> $999-এর একটি চ্যালেঞ্জ দিয়ে কেনা যায় একটিমাত্র নয়েজপূর্ণ বাইনারি ফলাফল। পাঁচ বছরের হোল্ডআউট এইমাত্র জানিয়েছে, এন্ট্রি লজিকের কোনো পরিমাপযোগ্য এজ নেই। শিল্পের 14% বেস রেটে, একবার পাস করা আপনার এজ আছে কি না, সেই ধারণা সামান্যই বদলায় — এজ ছাড়াই অনেক ট্রেডার পাস করে।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.h2,Cross-reference — things that don't add up,ক্রস-রেফারেন্স — যেসব হিসাব মেলে না,,
 dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite","1. ""বড় পজিশনের জন্য 5x স্কেল-ইন"" উল্টো কাজ করে",,keep every number exactly
 dashboard.xref.f1.tag,design assumption inverted,ডিজাইনের অনুমান উল্টে গেছে,,
@@ -662,13 +662,14 @@ traders across 10 firms. About <span class=""stat"">14%</span> passed a challeng
 reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
 a challenge ever got paid.","সবচেয়ে বড় স্বাধীন ডেটাসেটে 10টি ফার্মের প্রায় 100,000 ট্রেডারের 300,000-এর বেশি অ্যাকাউন্ট রয়েছে। প্রায় <span class=""stat"">14%</span> একটি চ্যালেঞ্জ পাস করে ফান্ডেড অ্যাকাউন্টে পৌঁছেছে। যারা চ্যালেঞ্জ কিনেছে, তাদের মধ্যে মাত্র প্রায় <span class=""stat"">7%</span> কখনো পেআউট পেয়েছে।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,"বেশিরভাগ ফার্ম নিজেরা যে পাস রেট জানায়, তা 5–10% সীমার মধ্যে।",,keep every number exactly
-faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,উৎস: FPFX Technology-র সমষ্টিগত ডেটা; পৃথক ফার্মের প্রকাশিত তথ্য।,,
+faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.cost.q,What does it really cost to get funded?,ফান্ডেড হতে আসলে কত খরচ হয়?,,
 faq.cost.p1,"The average trader needs about three attempts, spending over
 <span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","গড় ট্রেডারের প্রায় তিনটি চেষ্টা লাগে, এবং $100,000 চ্যালেঞ্জের জন্য ফি বাবদ <span class=""stat"">$1,600</span>-এর বেশি খরচ হয়।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
 fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
 the pass-rate data implies arithmetically.","দুটি সংখ্যা একসাথে রাখুন: বেশিরভাগ অংশগ্রহণকারীর জন্য চ্যালেঞ্জ ফি-র প্রত্যাশিত মান <span class=""flag"">ঋণাত্মক</span>। এটি কোনো বিতর্কিত দাবি নয়; পাস-রেটের ডেটা থেকে গাণিতিকভাবে এটাই দাঁড়ায়।",,keep the <…> tags and links as they are; translate only the words
+faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fail.q,Why do people fail?,মানুষ কেন ফেল করে?,,
 faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
 or maximum drawdown. Most happen in the first week. Very few people fail by reaching the

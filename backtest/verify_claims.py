@@ -201,9 +201,9 @@ print("="*76)
 print("  6. SOURCED CLAIMS - cite, never re-derive")
 print("="*76)
 for claim, src in [
-    ("~14% reach a funded account; ~7% ever get paid", "FPFX Technology, 300k+ accounts"),
+    ("~14% reach a funded account; ~7% ever get paid", "source not yet recorded: attributed to FPFX Technology aggregate data (300k+ accounts); no document or read date in the repo"),
     ("~70% of failures are loss-limit breaches", "source not yet recorded: no document or read date in the repo; published with that label"),
-    ("average 3 attempts, $1,600+ in fees per $100k", "published industry analysis"),
+    ("average 3 attempts, $1,600+ in fees per $100k", "source not yet recorded: no document or read date in the repo"),
     ("0.04% fee per side on notional", "Bitfunded help centre"),
     ("reset 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (16:00-16:10 UTC)", "Bitfunded help centre, Criteria to be Success"),
     ("max loss is STATIC, measured from account quota", "Bitfunded help centre"),
@@ -323,6 +323,9 @@ _index = " ".join(_html.unescape(_read("web/public/index.html")).split())
 _faqs = " ".join(_faq.split())
 check("DERIVED", "landing: the ~70% tile says SOURCED, source not yet recorded", float(_en["index.stats.failures.prov"] in _index and _en["index.stats.failures.prov"].startswith("SOURCED · source not yet recorded")), 1.0)
 check("DERIVED", "FAQ: the 70% says SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.fail.src"]).split()) in _faqs), 1.0)
+check("DERIVED", "FAQ: the 14% / 7% say SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.pass.src"]).split()) in _faqs and _en["faq.pass.src"].startswith("SOURCED · source not yet recorded")), 1.0)
+check("DERIVED", "FAQ: the $1,600 says SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.cost.src"]).split()) in _faqs), 1.0)
+check("DERIVED", "research page: the 14% base rate carries its tier", float("14% industry base rate (SOURCED, source not yet recorded)" in " ".join(_html.unescape(_read("web/public/dashboard.html")).split())), 1.0)
 check("DERIVED", "landing: the 68% tile says MODELLED with its assumptions and the script", float(all(x in _index for x in ("MODELLED. 20,000 simulated years", "+0.35R a trade", "30 trades a month for 12 months", "1% of balance risked a trade with no cap on remaining budget", "income_math.py"))), 1.0)
 check("DERIVED", "FAQ: the ruin figures say MODELLED and name the script", float("MODELLED: 20,000 simulated years" in _faqs and "income_math.py" in _faqs), 1.0)
 check("DERIVED", "no page still publishes the pre-correction 98%", float(not any("98%" in _html.unescape(pg.read_text()) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
@@ -343,9 +346,9 @@ for _k in _GC.ORDER:
     _n = sum(1 for x in _GC.FIELDS if _p.get(x) is not None); _m = sum(1 for x in _GC.FIELDS if _GC.sourced(_f, x, _p))
     check("DERIVED", f"landing panel: {_f['name']} shows '{_n} of {len(_GC.FIELDS)} rules filled · {_m} sourced'", float(f"{_n} of {len(_GC.FIELDS)} rules filled · {_m} sourced" in _panel), 1.0)
 _P1 = _GC.FIRMS["bitfunded"]["provenance"]
-for _x in ("daily_pct", "max_pct", "target_pct", "max_leverage"):
-    _c = _GC.cite(_GC.FIRMS["bitfunded"], _x, "1step")
-    check("SOURCED", f"Bitfunded 1-Step {_x}: Challenge & Trader Stage and Terms 9(a), not Criteria to be Success",
+for _pk, _x in [(p, x) for p in ("1step", "2step_s1", "2step_s2") for x in ("daily_pct", "max_pct", "target_pct", "max_leverage")]:
+    _c = _GC.cite(_GC.FIRMS["bitfunded"], _x, _pk)
+    check("SOURCED", f"Bitfunded {_pk} {_x}: Challenge & Trader Stage and Terms 9(a), not Criteria to be Success",
           float(bool(_c) and "Challenge & Trader Stage" in _c["c"] and "9(a)" in _c["c"] and "Criteria" not in _c["c"]), 1.0)
 for _pg in ("compare", "ledger", "faq", "dashboard", "chat", "terms", "tearsheet"):
     _t = _read(f"web/public/{_pg}.html")

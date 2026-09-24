@@ -503,11 +503,8 @@ dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
   Itu adalah kendaraan yang dibangun dengan baik tanpa mesin di dalamnya.",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
   of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.","<strong>Mengapa tidak:</strong> challenge seharga $999 membeli satu hasil biner yang penuh noise. Lima tahun
-  data holdout baru saja menunjukkan bahwa logika entry tidak memiliki edge yang terukur. Dengan tingkat dasar industri
-  14%, lulus satu kali nyaris tidak mengubah penilaian tentang apakah Anda memiliki edge — banyak trader tanpa edge
-  yang lulus.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.h2,Cross-reference — things that don't add up,Referensi silang — hal-hal yang tidak cocok,,
 dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite","1. ""Scale-in 5x untuk posisi yang lebih besar"" justru menghasilkan kebalikannya",,keep every number exactly
 dashboard.xref.f1.tag,design assumption inverted,asumsi desain terbalik,,
@@ -749,7 +746,7 @@ trader di 10 perusahaan. Sekitar <span class=""stat"">14%</span> lulus challenge
 mencapai akun funded. Hanya sekitar <span class=""stat"">7%</span> dari semua orang yang membeli
 challenge yang pernah menerima pembayaran.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,Sebagian besar perusahaan melaporkan sendiri tingkat kelulusan di kisaran 5–10%.,,keep every number exactly
-faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,Sumber: data agregat FPFX Technology; pengungkapan masing-masing perusahaan.,,
+faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.cost.q,What does it really cost to get funded?,Berapa biaya sebenarnya untuk mendapatkan akun funded?,,
 faq.cost.p1,"The average trader needs about three attempts, spending over
 <span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","Rata-rata trader membutuhkan sekitar tiga kali percobaan, dengan biaya lebih dari
@@ -759,6 +756,7 @@ fee is <span class=""flag"">negative</span>. That is not a controversial claim, 
 the pass-rate data implies arithmetically.","Gabungkan kedua angka itu: bagi sebagian besar peserta, nilai harapan (expected value) dari biaya
 challenge adalah <span class=""flag"">negatif</span>. Itu bukan klaim yang kontroversial; itulah yang
 secara aritmetis tersirat dari data tingkat kelulusan.",,"CHECK FIRST: Statistics terms with no settled Indonesian form: 'standard error' is kept in English (hypo.no_edge_tail, ledger.warn.*, ledger.foot.week) rather than 'galat baku'. Also 'noise' and 'holdout'. Translated: 'hasil nihil' for null result (ledger.warn.published), 'lingkungan parameter' for parameter neighbourhood (dashboard.change.li1), 'nilai harapan (expected value)' (faq.cost.p2), 'ekspektansi' (tearsheet.head.box), 'interval kepercayaan' (ledger.warn.*). | keep the <…> tags and links as they are; translate only the words"
+faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fail.q,Why do people fail?,Mengapa orang gagal?,,
 faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
 or maximum drawdown. Most happen in the first week. Very few people fail by reaching the

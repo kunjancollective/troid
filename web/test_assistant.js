@@ -68,9 +68,10 @@ ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 
    && /Challenge & Trader Stage/.test(r.sources[0].document_section) && /9\(a\)/.test(r.sources[0].document_section) && !/Criteria/.test(r.sources[0].document_section) && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("2-Step S1: limits cite the Terms of Use; fee and leverage still say not yet recorded",
-   ["daily 5%", "max 10%"].every((k) => /Terms of Use/.test(r.sources.find((x) => x.rule === k).document_section || ""))
-   && ["fee 0.04% per side", "leverage cap 5×"].every((k) => r.sources.find((x) => x.rule === k).source === "not yet recorded"), r.sources);
+ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee still says not yet recorded",
+   ["daily 5%", "max 10%", "leverage cap 5×"].every((k) => { const s = r.sources.find((x) => x.rule === k).document_section || "";
+     return /Two Steps Evaluation table/.test(s) && /Terms of Use 9\(a\), 2 Steps Challenges/.test(s) && !/clause not recorded/.test(s); })
+   && r.sources.find((x) => x.rule === "fee 0.04% per side").source === "not yet recorded", r.sources);
 r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
 ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
 for (const [pk, d, m] of [["trader_1step", 4, 6], ["trader_express", 3, 3], ["trader_2step", 5, 8]]) {

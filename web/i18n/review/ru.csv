@@ -473,8 +473,8 @@ dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
   That is a well-built vehicle with no engine in it.","Из всего протестированного у неё наименьшая просадка (<strong>&minus;$1 058</strong> против &minus;$7 295 при одном входе), ноль проваленных и ноль «зомби»-счетов на 72 скользящих стартах челленджа, медианный итоговый баланс $100 409. Кроме того, она по-прежнему даёт <strong>+0,03R</strong> на выборке, по которой её выбирали, и <strong>+0,008R</strong> на 504 сделках по BTC с 1 января 2021 года по 7 января 2026 года, которых она никогда не видела (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>). Это хорошо собранная машина без двигателя.",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
   of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate, passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.","<strong>Почему нет:</strong> челлендж за $999 покупает один шумный бинарный исход. Пять лет отложенной выборки только что показали, что у логики входа нет измеримого преимущества. При базовой доле прохождения по отрасли 14% однократное прохождение почти ничего не говорит о том, есть ли у вас преимущество, — челленджи проходят и многие трейдеры без преимущества.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
+  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.h2,Cross-reference — things that don't add up,Сверка — что не сходится,,
 dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. «Набор позиции 5x ради большего размера» даёт обратный результат,,keep every number exactly
 dashboard.xref.f1.tag,design assumption inverted,исходное допущение перевёрнуто,,
@@ -661,13 +661,14 @@ traders across 10 firms. About <span class=""stat"">14%</span> passed a challeng
 reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
 a challenge ever got paid.","Крупнейший независимый набор данных охватывает более 300 000 счетов примерно 100 000 трейдеров в 10 фирмах. Около <span class=""stat"">14%</span> прошли челлендж и получили финансируемый счёт. Лишь около <span class=""stat"">7%</span> всех, кто купил челлендж, когда-либо получили выплату.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,Большинство фирм сами сообщают о доле прохождения в диапазоне 5–10%.,,keep every number exactly
-faq.pass.src,Source: FPFX Technology aggregate data; individual firm disclosures.,Источник: агрегированные данные FPFX Technology; раскрытия отдельных фирм.,,
+faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.cost.q,What does it really cost to get funded?,Сколько на самом деле стоит получить финансирование?,,
 faq.cost.p1,"The average trader needs about three attempts, spending over
 <span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","Среднему трейдеру нужно около трёх попыток, и на оплату челленджа на $100 000 он тратит более <span class=""stat"">$1 600</span>.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
 fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
 the pass-rate data implies arithmetically.","Сложите эти два числа: для большинства участников математическое ожидание от оплаты челленджа <span class=""flag"">отрицательное</span>. Это не спорное утверждение — это то, что арифметически следует из данных о доле прохождения.",,keep the <…> tags and links as they are; translate only the words
+faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fail.q,Why do people fail?,Почему люди проваливаются?,,
 faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
 or maximum drawdown. Most happen in the first week. Very few people fail by reaching the

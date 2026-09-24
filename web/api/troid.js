@@ -183,6 +183,9 @@ function context() {
       method: readFirst(["public/METHODOLOGY.md"]),
     };
     CTX.prompt_firms = promptFirms(CTX.firms);
+    // every document Bitfunded's entry records, cited by a rule field or not: the compliance findings cite clauses
+    // (ToU 14(d)(x), say) that no rule field does, so they can't use the prompt's filtered list
+    CTX.bitfunded_sources = (((JSON.parse(CTX.firms).bitfunded || {}).provenance) || {}).sources || {};
   }
   return CTX;
 }
@@ -481,7 +484,7 @@ function asset_class(symbol) {
 // The Terms clauses troid's owner read again on 2026-09-23 (Terms modified 2026-03-24) cite that reading.
 const TOU_0923 = /9\(a\)|9\(b\)|4\(b\)|5\(b\)|13\(c\)\(v\)|14\(d\)\(ix\)|14\(d\)\(xi\)/;
 function refSources(ref) {
-  const S = (((context().prompt_firms.bitfunded || {}).provenance) || {}).sources || {};
+  const S = context().bitfunded_sources;
   const ids = [];
   if (/RTP/.test(ref)) ids.push("rtp");
   if (/ToU/.test(ref)) ids.push(TOU_0923.test(ref) && S.tou_0923 ? "tou_0923" : "tou");

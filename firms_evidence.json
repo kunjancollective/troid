@@ -184,7 +184,8 @@
     "tou"
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
-   "was_unmapped": "The calculator uses products.2step_s1.daily_pct = 5 via the fallback. The only records are config.example.json profile 2step_s1 and the TROID.md table, and neither cites a source. references/bitfunded.md covers only the 1-Step figures. The blog is recorded as read for 2-Step minimum days only (rule_changes[2]), not for limits. Fetch corroboration was not possible: the egress proxy blocks bitfunded.com and bitfunded.gitbook.io."
+   "was_unmapped": "The calculator uses products.2step_s1.daily_pct = 5 via the fallback. The only records are config.example.json profile 2step_s1 and the TROID.md table, and neither cites a source. references/bitfunded.md covers only the 1-Step figures. The blog is recorded as read for 2-Step minimum days only (rule_changes[2]), not for limits. Fetch corroboration was not possible: the egress proxy blocks bitfunded.com and bitfunded.gitbook.io.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' 2-Step entry below (owner decision 24 Sep)."
   },
   {
    "field": "max_pct",
@@ -193,7 +194,8 @@
     "tou"
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
-   "was_unmapped": "products.2step_s1.max_pct = 10. Same situation as daily_pct: no recorded document or section."
+   "was_unmapped": "products.2step_s1.max_pct = 10. Same situation as daily_pct: no recorded document or section.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' 2-Step entry below (owner decision 24 Sep)."
   },
   {
    "field": "daily_pct",
@@ -202,7 +204,8 @@
     "tou"
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
-   "was_unmapped": "products.2step_s2.daily_pct = 5. Same situation as 2step_s1: no recorded document or section."
+   "was_unmapped": "products.2step_s2.daily_pct = 5. Same situation as 2step_s1: no recorded document or section.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' 2-Step entry below (owner decision 24 Sep)."
   },
   {
    "field": "max_pct",
@@ -211,7 +214,8 @@
     "tou"
    ],
    "evidence": "Mapped on the statement of troid's owner, 2026-09-23: the 2-Step limits come from Bitfunded's Terms of Use (https://www.bitfunded.com/terms-of-use/, in verified_from, read 2026-09-21). The clause is not recorded, and troid's egress proxy blocks bitfunded.com, so it was not re-read from here.",
-   "was_unmapped": "products.2step_s2.max_pct = 8. No recorded document or section."
+   "was_unmapped": "products.2step_s2.max_pct = 8. No recorded document or section.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' 2-Step entry below (owner decision 24 Sep)."
   },
   {
    "field": "daily_pct",
@@ -371,6 +375,15 @@
    "product": "*",
    "src": [],
    "evidence": "2026-09-24: the firm-level daily, max and target cites are the 1-Step's (the compare product), so they are added to provenance.product_only: another product never borrows them. products.1step.target_pct now carries its own cite. Products without their own cite for these show 'source not yet recorded'."
+  },
+  {
+   "field": "daily_pct / max_pct / target_pct / max_leverage",
+   "product": "2step_s1 and 2step_s2",
+   "src": [
+    "trader_stage",
+    "tou_0923"
+   ],
+   "evidence": "Owner decision, 24 Sep 2026: close the 2-Step limits with Terms 9(a). Checked by troid on 2026-09-24 from a Vercel sandbox (this build environment cannot open bitfunded.gitbook.io or bitfunded.com): Terms of Use 9(a), '2 Steps Challenges': Features 'Up To 1:5 Leverage'; Objectives 'Step 1: Max Daily Drawdown: 5%, Max Drawdown: 10%, Profit Target: 8%, Minimum Trading Days: 5' and 'Step 2: Max Daily Drawdown: 5%, Max Drawdown: 8%, Profit Target: 5%, Minimum Trading Days: 5'. The page's dateModified is 2026-03-24T12:44:15Z, the same version as tou_0923 (read 2026-09-23). Help centre Challenge & Trader Stage (the page's .md), 'Two steps Evaluation' table: Stage 1 Max. Daily Loss 5%, Max. Loss 10%, Profit Target 8%; Stage 2 5%, 8%, 5%; Leverage Ratio 1:5 in both; Min. Trading Days '-' (the minimum-days conflict is logged). Every value matches products.2step_s1 and 2step_s2. The cited read dates stay the 23 Sep reads; the 24 Sep check is corroboration. The earlier cite ('tou', read 2026-09-21, clause not recorded) is replaced."
   }
  ],
  "bitfunded_unmapped": [

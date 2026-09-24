@@ -524,35 +524,67 @@
         "2step_s1": {
           "daily_pct": {
             "src": [
-              "tou"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
           },
           "max_pct": {
             "src": [
-              "tou"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
           },
           "price": {
             "src": [
               "tou_0923"
             ],
             "section": "Bitfunded Terms of Use 9(a), 2 Step Challenges, Expert Level (fee $799)"
+          },
+          "target_pct": {
+            "src": [
+              "trader_stage",
+              "tou_0923"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage",
+              "tou_0923"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
           }
         },
         "2step_s2": {
           "daily_pct": {
             "src": [
-              "tou"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
           },
           "max_pct": {
             "src": [
-              "tou"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded Terms of Use \u2014 2-Step limits (clause not recorded)"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
+          },
+          "target_pct": {
+            "src": [
+              "trader_stage",
+              "tou_0923"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage",
+              "tou_0923"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
           }
         },
         "express": {
