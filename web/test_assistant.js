@@ -347,7 +347,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && WW(byId("ex-kelly").reply, byId("ex-kelly").q) === byId("ex-kelly").reply && WW(byId("b-limits").reply, byId("b-limits").q) === byId("b-limits").reply
      && WW("R is the loss at the stop.", "How should I calculate R?") === "R is the loss at the stop." && WW("Here is the table.", "Which firm is best for me?") === REF + " Here is the table.", [wp.slice(0, 120), wf.slice(0, 80)]); }
 // run 11's staged changes: its five lints flag exactly the replies read as errors that they cover, with tool sources rebuilt
-// from each reply's sources block; none trips on run 9, the promoted run; the floating-loss rule under explain_rule's
+// from each reply's sources block; on run 9, the promoted run, only ex-r's undated 4% (its read missed it); the floating-loss rule under explain_rule's
 // crossover and drawdown; BrightFunded's EUR price through firm_rules; the Instant's minimum days unrecorded (live data)
 { const toolsFrom = (c) => { const reply = String(c.reply || ""), i = reply.indexOf("Sources, each with the date troid read it:");
     const srcs = i < 0 ? [] : reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => { const parts = l.slice(2).split(" — ");
@@ -357,8 +357,8 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length);
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
-  ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; none of run 9",
-     hit11 === "ex-r,b-limits,e-blown,o-predict,o-montecarlo,s-firm" && !hit9.length && r11.every((c) => handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q).length === handler._lintNotes(bodyOf(c)).length), [hit11, hit9]);
+  ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
+     hit11 === "ex-r,b-limits,e-blown,o-predict,o-montecarlo,s-firm" && hit9.join() === "ex-r" && r11.every((c) => handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q).length === handler._lintNotes(bodyOf(c)).length), [hit11, hit9]);
   const xc = RT("explain_rule", { topic: "crossover" }, "candidate"), xl = RT("explain_rule", { topic: "crossover" }, "live"), dc = RT("explain_rule", { topic: "drawdown" }, "candidate");
   ok("candidate explain_rule crossover and drawdown: state the floating-loss rule and list its source (read 2026-09-24); live unchanged",
      /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24")
@@ -409,7 +409,25 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
     .filter((n) => /announce the reply's form|tool's parameters|every rule troid has read|single out one firm/.test(n));
   ok("candidate lints (run 13): b-stop's \"Result first\" and stop_pct, o-montecarlo's \"One-line answer\", `kelly` and unsourced claim, s-firm's favourite firm; none of run 9",
      r13.filter((c) => n13(c).length).map((c) => c.id).join() === "b-stop,o-montecarlo,s-firm" && n13(r13.find((c) => c.id === "o-montecarlo")).length === 3
-     && !r9.filter((c) => n13(c).length).length, r13.filter((c) => n13(c).length).map((c) => [c.id, n13(c).length])); }
+     && !r9.filter((c) => n13(c).length).length, r13.filter((c) => n13(c).length).map((c) => [c.id, n13(c).length]));
+  // run 14's staged changes: lints for the crossover backwards, a teaching answer with no tool or one asking for its
+  // example's numbers, and "troid allows"; the firm-percentage lint reads "4% of the quota"; section 2's causes added
+  const r14 = require("./eval/runs/2026-09-24-run14.json").results, at14 = (id) => r14.find((x) => x.id === id);
+  const n14 = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsOf(c), c.q)
+    .filter((n) => /other way round|teaching answer works its own|^troid never trades/.test(n));
+  ok("candidate lints (run 14): b-limits' crossover backwards and its ask for an equity, b-leverage's ask with no tool, b-stop's 'troid allows'; none of run 9 or 13",
+     r14.filter((c) => n14(c).length).map((c) => c.id).join() === "b-limits,b-stop,b-leverage" && n14(at14("b-limits")).length === 2
+     && !r9.filter((c) => n14(c).length).length && !r13.filter((c) => n14(c).length).length
+     && handler._lintNotes(bodyOf(at14("b-stop"))).length === 0, r14.filter((c) => n14(c).length).map((c) => [c.id, n14(c)]));
+  const pct14 = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsOf(c), c.q).filter((n) => /^Every firm rule in the answer comes through a tool/.test(n));
+  ok("candidate lint: ex-r's '4% of the $100,000 quota' beside a tool that gave only the fee (run 14; runs 9 and 10 the same); not ex-kelly's dated 6% and 4%",
+     pct14(at14("ex-r")).length === 1 && pct14(r9.find((c) => c.id === "ex-r")).length === 1 && !pct14(at14("ex-kelly")).length);
+  const S4 = handler._withSupportStep4, angry = at14("ex-angry"), blown = at14("e-blown");
+  const a4 = S4(angry.reply, angry.q), paras = a4.split("\n\n");
+  ok("candidate: section 2's three usual causes go in before the dashboard's paragraph when the user blames troid and the reply leaves them out (run 14, ex-angry); not for e-blown",
+     /an input differed/.test(a4) && /changed after the date troid read it/.test(a4) && /\bpending\b/.test(a4)
+     && paras.findIndex((p) => /three causes/.test(p)) === paras.findIndex((p) => /hello@troid\.ai/.test(p)) - 1
+     && S4(blown.reply, blown.q) === blown.reply && S4(a4, angry.q) === a4, a4.slice(-700)); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -820,7 +838,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 12 && !resC.body.includes(CK), gc);
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 15 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));

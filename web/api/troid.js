@@ -29,8 +29,8 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 13 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
- * and a should-I refusal).
+ * the fixes from the reads of runs 10 to 14 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
+ * a should-I refusal and support.md section 2's three causes).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -1293,6 +1293,8 @@ const LINT_FIRM = /\b(Bitfunded|BrightFunded|Crypto Fund Trader|CFT)\b/;
 const LINT_WORD = "(daily|max(?:imum)?|loss|limit|target|drawdown|fee|split|floor)";
 const PCT_AFTER = new RegExp(`(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%\\s?(?:[\\w'’()-]+\\s){0,3}?${LINT_WORD}`, "gi");
 const PCT_BEFORE = new RegExp(`${LINT_WORD}\\b((?:(?!share|÷|×|=|≈)[^.\\n%$,]){0,25}?)(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%`, "gi");
+// "4% of the $100,000 quota" (run 14, ex-r: the rule in brackets after its dollar amount)
+const PCT_OF = /(?<![\d.,])(\d+(?:\.\d+)?)\s?%\s+of\s+(?:the\s+|its\s+|an?\s+)?(?:[$€]\s?[\d,]+(?:\.\d+)?\s+)?(?:account['’]s\s+|account\s+)?(quota|initial balance|starting balance|opening balance)\b/gi;
 // a firm's rule as a percentage, in a sentence naming the firm; not a percentage the user gave
 function firmRulePcts(text, asked) {
   const given = new Set([...String(asked || "").matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map((m) => m[1])), out = [];
@@ -1300,6 +1302,7 @@ function firmRulePcts(text, asked) {
     if (!LINT_FIRM.test(sent)) continue;
     for (const m of sent.matchAll(PCT_AFTER)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
     for (const m of sent.matchAll(PCT_BEFORE)) if (!given.has(m[3])) out.push({ n: m[3], s: m[0] });
+    for (const m of sent.matchAll(PCT_OF)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
   }
   return out;
 }
@@ -1367,6 +1370,30 @@ CANDIDATE_LINTS.push(
    "The firm's dashboard is the record of the trader's own account, not of prices, news, forecasts or exchanges: say troid has no live data, and name no place for them."],
   [(t) => DAILY_FLOOR_RX.test(t),
    "The daily floor is the day's starting balance less the fixed daily amount (quota × daily%): day_start − quota × daily%, never less a remaining budget."]);
+// Staged after evaluation run 14: b-limits had the crossover backwards ("after a loss, the daily limit is usually tighter
+// and binds"), worked no example and asked the user for an equity; b-leverage called no tool and asked for an entry, a
+// stop and a quantity; b-stop wrote "the dollar amount troid allows on the trade".
+const XOVER_BACKWARDS_RX = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
+const ASK_NUMBERS_RX = /\b(if you give|give (troid )?(a |the )?(specific|your)|provide (a |the |your )|share (a |the |your ))\b[^.\n]{0,80}\b(entry|stop|equity|quota|numbers|balance|quantity)\b|\b(takes|needs) an? (equity|entry)\b[^.\n]{0,60}\bif you\b/i;
+const ALLOWS_RX = /\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b/i;
+CANDIDATE_LINTS.push(
+  [(t) => XOVER_BACKWARDS_RX.test(t),
+   "Which limit binds is the other way round: above the crossover equity the daily limit binds; below it, after losses, the maximum loss binds. On the 1-Step the crossover is quota × (1 − 6% + 4%) = $98,000: get it through explain_rule (topic crossover) or check_budget."],
+  [(t, tools) => /\bFormula\b/i.test(t) && !SUPPORT_OPENER.test(t) && (!tools.length || ASK_NUMBERS_RX.test(t)),
+   "A teaching answer works its own example through a tool with numbers troid chooses: arithmetic through trade_math, a firm's rule on troid's reference account (a $100,000 Bitfunded 1-Step) through check_budget. Never ask the user for numbers to finish it."],
+  [(t) => ALLOWS_RX.test(t), "troid never trades: the risk, the position, the stop and the trade are the trader's, and troid prices them."]);
+// support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
+// leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
+const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;
+const SUPPORT_STEP4 = "When troid's number and the account disagree, it is usually one of three causes: an input differed from the account's real state; " +
+  "the firm's rule changed after the date troid read it; or the firm applied a rule troid marks pending. The reconstruction shows which one, or that it can't tell.";
+function withSupportStep4(reply, lastUser) {
+  if (!SUPPORT_OPENER.test(reply) || !BLAMES_TROID_RX.test(String(lastUser || ""))
+      || (/\binputs?\b[^.\n]{0,40}\b(differ|different|wrong|mismatch)/i.test(reply) && /\bpending\b/i.test(reply))) return reply;
+  const paras = reply.split(/\n\s*\n/), at = paras.findLastIndex((p) => /hello@troid\.ai/i.test(p));
+  paras.splice(at < 0 ? paras.length : at, 0, SUPPORT_STEP4);
+  return paras.join("\n\n");
+}
 // what troid wrote before a tool call, less a block whose method sections the final answer gives again (run 13, b-stop:
 // the formula and why it works, twice)
 const METHOD_RX = /\b(Formula|Why it works|Worked example|What it means|In practice)\b/gi;
@@ -1637,6 +1664,7 @@ module.exports = async (req, res) => {
         reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
         if (reply && variant === "candidate" && lang === "en") reply = refusalWordForWord(reply, lastUser);
         if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
+        if (reply && variant === "candidate" && lang === "en") reply = withSupportStep4(reply, lastUser);
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
@@ -1696,6 +1724,7 @@ module.exports._lintNotesFor = lintNotesFor;
 module.exports._refusalWordForWord = refusalWordForWord;
 module.exports._withoutRewriteTalk = withoutRewriteTalk;
 module.exports._saidNotRepeated = saidNotRepeated;
+module.exports._withSupportStep4 = withSupportStep4;
 module.exports._candidateGuardrails = CANDIDATE_GUARDRAILS;
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings

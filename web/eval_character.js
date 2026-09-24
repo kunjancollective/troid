@@ -94,12 +94,15 @@ const LINT_FIRM = /\b(Bitfunded|BrightFunded|Crypto Fund Trader|CFT)\b/;
 const LINT_WORD = "(daily|max(?:imum)?|loss|limit|target|drawdown|fee|split|floor)";
 const PCT_AFTER = new RegExp(`(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%\\s?(?:[\\w'’()-]+\\s){0,3}?${LINT_WORD}`, "gi");
 const PCT_BEFORE = new RegExp(`${LINT_WORD}\\b((?:(?!share|÷|×|=|≈)[^.\\n%$,]){0,25}?)(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%`, "gi");
+// "4% of the $100,000 quota" (run 14, ex-r: the rule in brackets after its dollar amount)
+const PCT_OF = /(?<![\d.,])(\d+(?:\.\d+)?)\s?%\s+of\s+(?:the\s+|its\s+|an?\s+)?(?:[$€]\s?[\d,]+(?:\.\d+)?\s+)?(?:account['’]s\s+|account\s+)?(quota|initial balance|starting balance|opening balance)\b/gi;
 function firmRulePcts(text, asked) {
   const given = new Set([...String(asked || "").matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map((m) => m[1])), out = [];
   for (const sent of String(text).split(/(?<=[.!?])\s+|\n+/)) {
     if (!LINT_FIRM.test(sent)) continue;
     for (const m of sent.matchAll(PCT_AFTER)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
     for (const m of sent.matchAll(PCT_BEFORE)) if (!given.has(m[3])) out.push({ n: m[3], s: m[0] });
+    for (const m of sent.matchAll(PCT_OF)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
   }
   return out;
 }
@@ -125,7 +128,13 @@ const SOURCES_HEAD = "Sources, each with the date troid read it:";
 const splitSources = (reply) => { const i = reply.indexOf(SOURCES_HEAD);
   return i < 0 ? { body: reply, lines: [] } : { body: reply.slice(0, i), lines: reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => l.slice(2)) }; };
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
-const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
+const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b|\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b/i;   // run 14: "the dollar amount troid allows on the trade"
+// Which limit binds, the wrong way round (run 14, b-limits: "after a loss, the daily limit is usually tighter and binds;
+// well above the account's starting balance, the maximum loss usually binds"). Above the crossover the daily limit binds.
+const XOVER_BACKWARDS = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
+// A teaching answer that asks the user for the numbers its example needs (run 14: b-limits "troid can work it through
+// check_budget if you give those", b-leverage "give a specific entry, stop and quantity"; runs 2 to 4, b-limits).
+const ASK_NUMBERS = /\b(if you give|give (troid )?(a |the )?(specific|your)|provide (a |the |your )|share (a |the |your ))\b[^.\n]{0,80}\b(entry|stop|equity|quota|numbers|balance|quantity)\b|\b(takes|needs) an? (equity|entry)\b[^.\n]{0,60}\bif you\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
 // q-stats: "0.0453 × 3.28 ≈ 0.1181", where √(2 ln 30) is 2.61). A word, a symbol it doesn't read, or a ± ends an expression;
 // a result is allowed the rounding its own decimals show, or half a percent.
@@ -249,6 +258,10 @@ function check(c, r, variant) {
     if (m) add("a claim about every rule troid has read has a tool's sources behind it", sp.lines.length > 0, m[0]); }
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
+  { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
+  if (/\bFormula\b/i.test(reply) && !/That['’]s a real loss,? and troid takes the question seriously/i.test(reply)) {                       // run 14
+    const m = unquoted(splitSources(reply).body).match(ASK_NUMBERS);
+    add("a teaching answer works its own example; it never asks the user for the numbers", !m, m && m[0]); }
   { const m = reply.match(RUIN_MIX); add("troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)", !m, m && m[0]); }   // run 10
   { const m = levOverCap(reply); add("an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it", !m, m); }   // runs 6, 10
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3

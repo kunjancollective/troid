@@ -118,7 +118,9 @@ reads every reply and records what they find beside the run (`<run>.read.json`);
 automated check and the read finds no error: move the files into place and fold the candidate constants into the live
 ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; run 10, the live prompt,
 passed 22 of 24 and its read found five errors; run 11, the candidate with their fixes, passed 21 of 24 and its read
-found six; run 12 passed 22 of 24, four errors; run 13, 22 of 24, three. The fixes from all four are staged now (`CANDIDATE_LINTS`, `CANDIDATE_TOPIC_CITES` and a should-I refusal gated
+found six; run 12 passed 22 of 24, four errors; run 13, 22 of 24, three; run 14, 22 of 24, five, and a check it prompted
+found one run 9's read had missed (ex-r's undated 4% daily limit; run 9 is 23 of 24 under the checks now). The fixes
+from all five are staged now (`CANDIDATE_LINTS`, `CANDIDATE_TOPIC_CITES`, a should-I refusal and section 2's three causes gated
 on the candidate besides the constants above). With the key and nothing staged the runner evaluates the live
 prompt at full speed; without it, one case every 185 seconds, deleting each conversation after reading it.
 

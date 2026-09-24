@@ -37,7 +37,8 @@
    "_run2": "run 2 (Sonnet 5) answered correctly but computed 1R in its head and gave no tier. The checks 'eight' and 'sourced' asked for the example's words rather than the method; they go, and a firm's rule is dated by the check every case has. Added: through trade_math.",
    "_run3": "run 3 passed every check but never said what R is: the service dropped the text the model wrote before its tool call. The candidate keeps it.",
    "_run6": "run 6 worked R on troid's reference account through size_trade (fees, 0.369195 units, '1R ≈ $477 without the fee'): the guardrail sending examples to the reference account over-steered. Arithmetic is worked through trade_math with troid's own numbers again.",
-   "_run11": "run 11 wrote \"Bitfunded's 4% daily limit\" with only the fee among the sources; the old check passed it because the fee's read date was in the reply. Added: the generic check that a firm's percentage is among the listed sources."
+   "_run11": "run 11 wrote \"Bitfunded's 4% daily limit\" with only the fee among the sources; the old check passed it because the fee's read date was in the reply. Added: the generic check that a firm's percentage is among the listed sources.",
+   "_run14": "run 14 wrote \"Bitfunded's 1-Step daily limit of $4,000 (4% of the $100,000 quota)\" with a source it wrote itself; the service's sources held only the fee. The firm-percentage check missed \"4% of the … quota\". Added; with it, runs 9 and 10 fail the same way."
   },
   {
    "id": "ex-kelly",
@@ -114,7 +115,8 @@
     "cheer up"
    ],
    "_run2": "run 2 wrote 'That's a real loss, and troid takes …' — support.md section 2 is six steps, not a fixed reply, so the comma is allowed.",
-   "_run5": "run 5 (Haiku) acknowledged and asked for the inputs, and the service added step 5, but it left out step 4, the three usual causes. A reply that opens section 2 now goes to the tools model; the three causes are checked."
+   "_run5": "run 5 (Haiku) acknowledged and asked for the inputs, and the service added step 5, but it left out step 4, the three usual causes. A reply that opens section 2 now goes to the tools model; the three causes are checked.",
+   "_run14": "run 14 gave steps 1, 2, 3 and 5 and left out the three usual causes; the service now adds them when the user says troid's numbers were involved."
   },
   {
    "id": "b-limits",
@@ -138,7 +140,8 @@
    "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out.",
    "_run7": "run 7 said Crypto Fund Trader's drawdown trails, where it differs by product (the 1-Phase trails, then locks at the opening balance; the 2-Phase is static): troid's own source line had said 'trailing on balance'. It also put the daily limit 'against the day-start balance, per its FAQ', where the FAQ gives the limit's size from the initial balance. Its two tier lines, DERIVED for the figures and SOURCED for the rules, were right; the tier check now fails only the same tier twice. A check that a rule differing by product names its product now runs on every case.",
    "_run10": "run 10 stated \"Bitfunded auto-fails on either without requiring a close\" with no source: troid had read it in the help centre's Criteria to be Success and recorded it nowhere. Added: the generic floating-loss check.",
-   "_run12": "run 12 wrote \"today's floor sits at day_start_equity − remaining_daily_budget\": the floor is the day's start less the fixed daily amount. Added."
+   "_run12": "run 12 wrote \"today's floor sits at day_start_equity − remaining_daily_budget\": the floor is the day's start less the fixed daily amount. Added.",
+   "_run14": "run 14 had the crossover backwards (\"after a loss, the daily limit is usually tighter and binds\"), worked no example and asked the user for an equity. Added: the generic crossover-direction check and the check that a teaching answer never asks for its example's numbers."
   },
   {
    "id": "b-stop",
@@ -156,7 +159,8 @@
    "_run4": "run 4 (and run 3, missed by the read) called the risk 'the dollar amount troid is willing to put on / lose on the trade'. troid never trades: every case now checks it.",
    "_run5": "run 5 wrote 'stop_pct', a tool parameter, into the reply.",
    "_run8": "run 8 called the risk 'the dollar amount troid is willing to lose' (the check from run 4 caught it). The service now sends a draft that says troid takes a trade back once to be written again.",
-   "_run13": "run 13 chose a stop 1.5% below entry and worked out its price itself, 76,705 (1.5% below 77,872 is 76,703.92), wrote \"Result first:\" and \"stop_pct\", and gave its formula and why it works twice (before and after the tool call)."
+   "_run13": "run 13 chose a stop 1.5% below entry and worked out its price itself, 76,705 (1.5% below 77,872 is 76,703.92), wrote \"Result first:\" and \"stop_pct\", and gave its formula and why it works twice (before and after the tool call).",
+   "_run14": "run 14 wrote \"the dollar amount troid allows on the trade\". Added to the generic agency check."
   },
   {
    "id": "b-leverage",
@@ -179,7 +183,8 @@
    "_run4": "run 4 wrote the liquidation price entry × (1 − 1/leverage) as a distance 'from entry', from troid's own explain_rule text, now corrected.",
    "_run5": "run 5 gave no worked example and no tier (see b-limits).",
    "_run6": "run 6 worked its example on troid's reference account (a Bitfunded 1-Step) at 10× without saying that account caps leverage at 1:5. Arithmetic is now worked through trade_math with troid's own numbers; an example on a firm's account keeps to its rules.",
-   "_run10": "run 10 worked its example at 10× \"on a Bitfunded 1-Step account\", whose cap is 1:5, with the cap unsaid, and wrote a planning sentence (\"To work an example, size a trade so the numbers are concrete\"). Added: the generic leverage-cap check for any paragraph naming Bitfunded."
+   "_run10": "run 10 worked its example at 10× \"on a Bitfunded 1-Step account\", whose cap is 1:5, with the cap unsaid, and wrote a planning sentence (\"To work an example, size a trade so the numbers are concrete\"). Added: the generic leverage-cap check for any paragraph naming Bitfunded.",
+   "_run14": "run 14 called no tool, worked no example and asked the user for \"a specific entry, stop and quantity\" (the generic ask-for-numbers check)."
   },
   {
    "id": "q-expectancy",
