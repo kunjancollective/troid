@@ -63,6 +63,17 @@ async function call(method = "GET", url = "/api/ticker") { const r = res(); awai
   const page = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
   ok("the desk's strip carries the five symbols and names the source", T.SYMBOLS.every(([s]) => page.includes(`data-sym="${s}"`)) && page.includes('data-source="Binance.US"')
      && page.includes(en["ticker.label"].replace("{source}", "Binance.US")));
+
+  // troid charts only what a firm lists (firms.json _asset_universe): every symbol names a firm and a source it recorded
+  const F = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "firms.json"), "utf8")), U = F._asset_universe;
+  const listed = new Map(U.groups.flatMap((g) => g.symbols.map((s) => [s.sym, s.listed_by])));
+  const unsourced = [...listed].filter(([, by]) => !Object.keys(by).length || Object.entries(by).some(([f, x]) => {
+    const src = (((F[f] || {}).provenance || {}).sources || {})[x.src];
+    return !src || !/^https:\/\//.test(src.url) || !/^\d{4}-\d{2}-\d{2}$/.test(src.read_on) || !x.as_listed;
+  })).map(([s]) => s);
+  ok("every symbol in the asset universe names a firm, its page, the read date and the firm's own name for it", !unsourced.length, unsourced);
+  ok("the strip shows only symbols a firm lists", T.SYMBOLS.every(([s]) => listed.has(s)), T.SYMBOLS.map(([s]) => s).filter((s) => !listed.has(s)));
+  ok("a dropped symbol is nowhere in the universe", Object.keys(U.dropped).every((s) => !listed.has(s)));
   console.log(`RESULT: ${fails} failed (${n} checks)`);
   process.exit(fails ? 1 : 0);
 })();

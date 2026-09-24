@@ -354,6 +354,13 @@
           "read_on": "2026-09-24",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page 2baa8b6a49510d16): 1. Maximum Daily Loss and 2. Maximum Loss each say the account fails automatically when an open position reaches the limit, floating losses being in the calculation"
+        },
+        "rtp_0924": {
+          "doc": "Bitfunded help centre: Restricted Trading Practices",
+          "url": "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+          "read_on": "2026-09-24",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page 31f940cb9324e1d1): s.1, Maximum holding duration by asset type: 'Every 10 days: Major Crypto Assets: BTC, ETH, BNB, XRP, SOL, TRX, HYPE, ZEC, DOGE, ADA.' 'Every 7 days: Minor Crypto Assets (all other cryptocurrencies available on the platform)' 'Every 5 days: Traditional Trading Pairs (XAU, XAG, TSLA)'. The only instrument list Bitfunded publishes outside its platform."
         }
       },
       "fields": {
@@ -1056,6 +1063,13 @@
           "url": null,
           "read_on": "2026-09-21",
           "doc_dated": null
+        },
+        "instruments_0924": {
+          "doc": "BrightFunded Trading Instruments",
+          "url": "https://brightfunded.com/trading-instruments",
+          "read_on": "2026-09-24",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page eff06cb81b59f8d4): the page draws its Crypto, Commodities and Indices tabs from its site's instrument collection (framerusercontent.com module p8UkBIvqr, sha256 c1a879942176d01d), read the same day: 95 symbols, among them BTC/USD 'Bitcoin vs United States dollar', ETH/USD, SOL/USD, XRP/USD, BNB/USD, XAU/USD 'Gold vs US Dollar', WTI/USD 'Oil - US Crude Vs US Dollar', BRN/USD; no single stock. The page's own summary: 'over 100 Trading Instruments ... across Forex, Metals, Indices, Commodities, and Crypto'."
         }
       },
       "fields": {
@@ -1476,6 +1490,13 @@
           "url": "https://cryptofundtrader.com/terms-and-conditions/",
           "read_on": "2026-09-21",
           "doc_dated": "2026-03-30"
+        },
+        "faq_0924": {
+          "doc": "Crypto Fund Trader FAQ: What instruments can I trade?",
+          "url": "https://cryptofundtrader.com/faq/",
+          "read_on": "2026-09-24",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page f863bf97c5603f85): 'On Bybit you can currently trade more than 550 crypto futures pairs. On Match-Trader and MetaTrader 5 we have more than 720 instruments ... 556 Cryptocurrencies, 106 Forex, 15 Indices, 22 Commodities, 25 Stocks.' It names no symbol."
         }
       },
       "fields": {
@@ -1676,5 +1697,131 @@
   "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one.",
   "_provenance_rule": "Every rule field that feeds a number on the site carries provenance: the document, the section, and the date troid read it. Where the repo records no source for a field, the site says 'source not yet recorded' beside it; it never invents one. The evidence for each mapping is in firms_evidence.json.",
   "_availability_rule": "availability: the countries each firm's own terms exclude, as ISO 3166-1 alpha-2 codes. 'excluded' is the firm-wide list, 'platform' lists exclusions that apply to one platform only, 'not_from_terms' records countries a third party lists that troid has not read in the firm's terms (never used to exclude). recorded:false means troid has not extracted the firm's list: the country selector and ask troid say so instead of implying the firm is available. troid never states that a firm is available in a country, only what its record of the firm's terms excludes.",
-  "_link_rule_impl": "backtest/gen_compare.py link_live(): the entry's link_live is true (set by a human once the affiliate terms exist and their conditions for linking are met) AND compare_product daily_pct, max_pct, target_pct and price each cite a recorded source in provenance. Not printed on the site."
+  "_link_rule_impl": "backtest/gen_compare.py link_live(): the entry's link_live is true (set by a human once the affiliate terms exist and their conditions for linking are met) AND compare_product daily_pct, max_pct, target_pct and price each cite a recorded source in provenance. Not printed on the site.",
+  "_asset_universe": {
+    "_rule": "troid charts only what at least one of its firms lets people trade, read from that firm's own page with a read date (ticker v2 handoff, section A). A symbol no firm's page names is dropped, not shown. Each symbol records the firms that list it, the source (an id in that firm's provenance.sources) and the firm's own name for it. The price strip (web/api/ticker.js) shows only symbols recorded here.",
+    "groups": [
+      {
+        "group": "crypto",
+        "symbols": [
+          {
+            "sym": "BTC",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "BTC (Major Crypto Assets)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "BTC/USD"
+              }
+            }
+          },
+          {
+            "sym": "ETH",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "ETH (Major Crypto Assets)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "ETH/USD"
+              }
+            }
+          },
+          {
+            "sym": "SOL",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "SOL (Major Crypto Assets)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "SOL/USD"
+              }
+            }
+          },
+          {
+            "sym": "XRP",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "XRP (Major Crypto Assets)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "XRP/USD"
+              }
+            }
+          },
+          {
+            "sym": "BNB",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "BNB (Major Crypto Assets)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "BNB/USD"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "group": "commodities",
+        "symbols": [
+          {
+            "sym": "XAU",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "XAU (Traditional Trading Pairs)"
+              },
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "XAU/USD, Gold vs US Dollar"
+              }
+            }
+          },
+          {
+            "sym": "WTI",
+            "listed_by": {
+              "brightfunded": {
+                "src": "instruments_0924",
+                "as_listed": "WTI/USD, Oil - US Crude Vs US Dollar"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "group": "stocks",
+        "symbols": [
+          {
+            "sym": "TSLA",
+            "listed_by": {
+              "bitfunded": {
+                "src": "rtp_0924",
+                "as_listed": "TSLA (Traditional Trading Pairs)"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "dropped": {
+      "NVDA": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
+      "AAPL": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
+      "MSFT": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
+      "META": "proposed in the handoff; no firm's own page names it (read 2026-09-24)"
+    },
+    "_unnamed": {
+      "crypto_fund_trader": "Its FAQ (faq_0924) counts 25 stocks and 22 commodities on Match-Trader and MetaTrader 5 and names none; the symbol list is shown only inside the platform, behind a login troid does not use. Nothing is recorded for Crypto Fund Trader until a page of its own names the symbols.",
+      "bitfunded": "Its help centre names three traditional pairs, XAU, XAG and TSLA; no other stock appears on a Bitfunded page."
+    }
+  }
 }
