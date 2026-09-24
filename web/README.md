@@ -121,7 +121,10 @@ failures in `_errors`; `node web/eval_character.js --promotion --candidate 14,15
 `EVAL_LIVE=1` with the key evaluates the live prompt as that baseline, at full speed and unstored. Every reply to the key
 lists the numbers in its tools' inputs and results, and the runner checks that each number in the reply came from one
 of them, the question, or troid's published figures (`api/_numbers.js`, which the service's own backstop uses too).
-Operator requests go out on `ANTHROPIC_API_KEY_EVAL` when it is set, so evaluation never spends the key visitors use.
+Operator requests go out on `ANTHROPIC_API_KEY_EVAL` (its own workspace, `troid-eval`, with its own limit), so
+evaluation never spends the key visitors use; the runner refuses a keyed run while the deployment reports none. Each
+keyed run reports its tokens by model and their cost at the prices the runner records. Between changes, run only the
+cases a change touches (`--only id,id`); run all 24, for the candidate and the live baseline, only to decide a promotion.
 To promote: move the files into place and fold the candidate constants into the live ones, in one commit
 (`context/candidate/README.md`). The character was promoted after run 9. Runs 10 to 16 (run 10 the live prompt, the
 rest the candidate with each read's fixes) had 6, 7, 4, 3, 5, 7 and 4 failing cases on a read; the reads of runs 5, 9,

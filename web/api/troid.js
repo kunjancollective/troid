@@ -1197,7 +1197,9 @@ async function callModel(route, messages, deadlineAt, onSend, lang, variant, ope
     if (route === "tools" && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
     onSend(R.model);
     try {
-      return await client(operator).messages.create(params, { timeout: left, maxRetries: 0, signal: AbortSignal.timeout(left) });
+      const out = await client(operator).messages.create(params, { timeout: left, maxRetries: 0, signal: AbortSignal.timeout(left) });
+      onSend(R.model, out.usage);                                     // the tokens it took, for the log and the operator's report
+      return out;
     } catch (e) {
       const fast = e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError
         || (e instanceof Anthropic.APIConnectionError && !(e instanceof Anthropic.APIConnectionTimeoutError));
@@ -1660,7 +1662,14 @@ module.exports = async (req, res) => {
   const deadlineAt = Date.now() + DEADLINE_MS;
   let sent = null, toolCalls = 0;
   const toolLog = [];                                                   // each tool call with its inputs and result, for the store
-  const onSend = (m) => { sent = m; };                                  // the model a request actually went to
+  const usage = {};                                                     // tokens by model: counts only, like the rest of the log
+  const onSend = (m, u) => {                                            // the model a request actually went to, and what it took
+    sent = m;
+    if (!u) return;
+    const x = usage[m] || (usage[m] = { calls: 0, input: 0, cache_write: 0, cache_read: 0, output: 0 });
+    x.calls++; x.input += u.input_tokens || 0; x.cache_write += u.cache_creation_input_tokens || 0;
+    x.cache_read += u.cache_read_input_tokens || 0; x.output += u.output_tokens || 0;
+  };
   try {
     let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant, operator);
     // A turn that wants a tool is rerun on the tools model; so is an answer that states a figure,
@@ -1747,7 +1756,7 @@ module.exports = async (req, res) => {
     reply = reply.trim();
     const CUT = "\n\n" + S(lang, "ask.cut");
     if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
-    Object.assign(log, { tool_calls: toolCalls, model: sent });
+    Object.assign(log, { tool_calls: toolCalls, model: sent, usage });
     const user = messages[messages.length - 1].content;
     if (!operator) {
       try { await keep(session, entry(lang, user, reply, sent, toolLog, ended ? { ended: 1 } : log.refusal ? { refusal: 1 } : null)); log.stored = 1; }
@@ -1756,7 +1765,7 @@ module.exports = async (req, res) => {
     console.log(JSON.stringify(log));
     const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note"),
                   session, delete_token: deleteToken(session), variant };
-    if (operator) Object.assign(out, { tools_used: toolLog.map((t) => t.name), tool_numbers: NUMBERS.toolNumbers(toolLog) });   // for the evaluation report
+    if (operator) Object.assign(out, { tools_used: toolLog.map((t) => t.name), tool_numbers: NUMBERS.toolNumbers(toolLog), usage });   // for the evaluation report
     if (!ended) {
       out.sig = sign([...messages, { role: "assistant", content: reply }], session, variant);
       const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
@@ -1764,7 +1773,7 @@ module.exports = async (req, res) => {
     }
     return json(res, 200, out);
   } catch (e) {
-    Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent });
+    Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent, usage });
     if (e && typeof e.status === "number") log.status = e.status;
     if (!operator) {
       try {                                                             // the message is kept even when no answer came back

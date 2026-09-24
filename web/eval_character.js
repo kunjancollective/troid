@@ -35,6 +35,24 @@ const KEY = process.env.EVAL_CANDIDATE_KEY || "";
 // EVAL_LIVE=1 with the key: the live prompt as the operator's baseline, unstored and unthrottled (the promotion rule
 // compares a candidate with it on the same questions, CLAUDE.md)
 const LIVE_OP = !!KEY && process.env.EVAL_LIVE === "1";
+// Per million tokens, from Anthropic's pricing page (platform.claude.com/docs/en/about-claude/pricing), read 2026-09-24:
+// input, a cache write (5 minutes), a cache read, output. What a keyed run cost is its tokens at these prices.
+const PRICES = { "claude-sonnet-5": { input: 2, cache_write: 2.5, cache_read: 0.2, output: 10 },
+                 "claude-haiku-4-5": { input: 1, cache_write: 1.25, cache_read: 0.1, output: 5 } };
+function runUsage(results) {                       // tokens by model over a run, and their cost where the price is recorded
+  const by = {};
+  for (const x of results) for (const [m, u] of Object.entries(x.usage || {})) {
+    const t = by[m] || (by[m] = { calls: 0, input: 0, cache_write: 0, cache_read: 0, output: 0 });
+    for (const k of Object.keys(t)) t[k] += u[k] || 0;
+  }
+  let usd = 0, priced = true;
+  for (const [m, t] of Object.entries(by)) {
+    const p = PRICES[m]; if (!p) { priced = false; continue; }
+    t.usd = +((t.input * p.input + t.cache_write * p.cache_write + t.cache_read * p.cache_read + t.output * p.output) / 1e6).toFixed(4);
+    usd += t.usd;
+  }
+  return { by_model: by, usd: +usd.toFixed(4), priced };
+}
 const PACE_MS = PACE != null ? +PACE : KEY ? 0 : 185_000;
 const SET = JSON.parse(fs.readFileSync(path.join(__dirname, "eval", "character.json"), "utf8"));
 const NOTE = "Not financial advice. Verify with the firm before acting.";
@@ -268,6 +286,7 @@ function writeReport(record, out, notes) {
   const md = [`# troid's character — evaluation run, ${record.started_utc.slice(0, 16).replace("T", " ")} UTC`, "",
     `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : record.operator_live ? " (the baseline, through the operator key)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
     line.replace("RESULT: ", "**Result:** "), "",
+    ...(record.usage ? [`**Tokens:** ${Object.entries(record.usage.by_model).map(([m, t]) => `${m} ${t.calls} calls, ${t.input} input, ${t.cache_write} cache-write, ${t.cache_read} cache-read, ${t.output} output`).join("; ")} — $${record.usage.usd} at the prices the runner records.`, ""] : []),
     ...(record.rechecked ? [`**Checked again** on ${record.rechecked.slice(0, 10)} under the case set as it is now: ${n - failed} of ${n} pass. ` +
         "The replies are the run's own; a check added after the run shows what the run would have failed. The table and the checks below are the new ones.", ""] : []),
     ...(read._summary ? ["**Read by a person:** " + read._summary, ""] : []),
@@ -339,6 +358,10 @@ if (REPORT) {                                                      // a saved ru
                    set: { cases: cases.length, kinds: SET.kinds }, results: [] };
   if (!g.j.enabled) { console.log("ask troid is not on at " + BASE); process.exit(1); }
   if (KEY && !(g.j.candidate && g.j.candidate.key)) { console.log("no candidate key set at " + BASE, g.j.candidate); process.exit(1); }
+  // evaluation spends its own budget (CLAUDE.md): a keyed run needs the deployment's ANTHROPIC_API_KEY_EVAL
+  if (KEY && !(g.j.candidate && g.j.candidate.eval_key) && process.env.EVAL_SHARED_KEY !== "1") {
+    console.log("the deployment reports no evaluation key (ANTHROPIC_API_KEY_EVAL): a keyed run would spend the key visitors use. " +
+                "Set it in the troid-eval workspace and redeploy, or EVAL_SHARED_KEY=1 to override."); process.exit(1); }
   // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
   // prompt at full speed, unstored and not held to a visitor's limit.
   const cd = g.j.candidate || {};
@@ -356,13 +379,15 @@ if (REPORT) {                                                      // a saved ru
     if (VARIANT === "live" && !LIVE_OP && r.j.delete_token) await api("DELETE", "/api/troid?session=" + (r.j.session || session), null, { "x-troid-token": r.j.delete_token });
     const checks = check(c, r, VARIANT), pass = checks.every((x) => x.pass);
     if (!pass) failed++;
-    record.results.push({ id: c.id, kind: c.kind, example: !!c.example, q: c.q, status: r.status, ms, model: r.j.model, tools_used: r.j.tools_used, tool_numbers: r.j.tool_numbers,
+    record.results.push({ id: c.id, kind: c.kind, example: !!c.example, q: c.q, status: r.status, ms, model: r.j.model, tools_used: r.j.tools_used, tool_numbers: r.j.tool_numbers, usage: r.j.usage,
                           tool_calls: r.j.tool_calls, reply: r.j.reply || null, error: r.j.error || null, pass, checks });
     console.log(`${pass ? "ok  " : "FAIL"} ${c.id} (${c.kind}, ${(ms / 1000).toFixed(1)} s, ${r.j.model || "-"}, tools: ${(r.j.tools_used || []).join(",") || "-"})`
                 + (pass ? "" : "\n     " + checks.filter((x) => !x.pass).map((x) => x.name + (x.detail ? " " + JSON.stringify(x.detail).slice(0, 160) : "")).join("\n     ")));
   }
   record.finished_utc = new Date().toISOString();
   record.passed = cases.length - failed; record.failed = failed;
+  record.usage = runUsage(record.results);
+  console.log("tokens by model: " + JSON.stringify(record.usage.by_model) + ` — $${record.usage.usd} at the recorded prices` + (record.usage.priced ? "" : " (a model without a recorded price left out)"));
   if (OUT) {
     fs.mkdirSync(path.dirname(OUT), { recursive: true });
     fs.writeFileSync(OUT + ".json", JSON.stringify(record, null, 1) + "\n");

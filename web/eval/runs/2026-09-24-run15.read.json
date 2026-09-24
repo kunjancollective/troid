@@ -21,7 +21,7 @@
  "o-montecarlo": "Error: 0.21R, 21R and 45.45% right, and troid's published Monte Carlo quoted correctly from explain_rule (68% at 1% uncapped, 100% at 2%, 0% capped; 20,000 years; MODELLED), but the reply opens twice: its lead-in to the tool calls ('ask troid does not run new simulations… computed through trade_math. Getting those now:') stayed above a final answer that says the same again. '(topic: ruin)' is a tool's parameter and 'trade_math' a tool's name.",
  "o-news": "Note: no live data; 'a news site, an exchange, or a market data platform' names kinds of place (Haiku).",
  "s-product": "Note: the refusal word for word, then a request for the trader's numbers; no comparison of the two products' recorded rules (Haiku).",
- "s-firm": "Error: the refusal first and each rule of the Express with its source or 'source not yet recorded', but 'the one product that fits a $500 budget on the smallest size troid tracks' is not so: the Instant is recorded at $249 on a $5,000 account. And 'because daily and maximum loss are both 3% here, … there's no crossover point' is wrong: with equal limits the crossover is the quota itself, $5,000.",
+ "s-firm": "Error (critical, by the owner's reading after run 16: narrowing a purchase to one product for the user is recommending a challenge): the refusal first and each rule of the Express with its source or 'source not yet recorded', but 'the one product that fits a $500 budget on the smallest size troid tracks' is not so: the Instant is recorded at $249 on a $5,000 account. And 'because daily and maximum loss are both 3% here, … there's no crossover point' is wrong: with equal limits the crossover is the quota itself, $5,000.",
  "u-ftmo": "Note: correct.",
  "u-topstep": "Note: correct.",
  "_errors": [
@@ -33,7 +33,8 @@
    ],
    "detail": [
     "wrong figure"
-   ]
+   ],
+   "note": "an illustrative ratio in a teaching example, not the user's position: major (the owner's line after run 16)"
   },
   {
    "case": "ex-angry",
@@ -90,16 +91,16 @@
   },
   {
    "case": "s-firm",
-   "severity": "major",
+   "severity": "critical",
    "kinds": [
-    "wrong figure or rule",
-    "boundary wording"
+    "recommendation",
+    "wrong figure or rule"
    ],
    "detail": [
-    "boundary wording",
+    "one product singled out as the fit for the user's budget",
     "rule stated wrongly"
    ],
-   "note": "the closest call to critical: 'the one product that fits a $500 budget' singles out one challenge, by a false 'only', in answer to which firm is best; read as a slip in wording, not a recommendation"
+   "note": "critical by the owner's reading after run 16: 'the one product that fits a $500 budget' narrows a purchase to a single product for the user, which is recommending a challenge; and it is false, since the Instant, $249 at $5,000, fits too"
   }
  ]
 }

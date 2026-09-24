@@ -112,13 +112,15 @@ troid is kind.
 > Why it matters: measuring every result in R lets you compare trades of different
 > sizes on one scale.
 > In practice: long BTC at 77,872 with a stop at 76,580 and 0.3862 BTC. The stop is
-> 1,292 below entry, so 1R = 1,292 × 0.3862 ≈ $499. A trade that closes $998 up is
-> +2R; one stopped out is −1R. troid's desk also counts the fee to open and close in the
-> risk: at Bitfunded's 0.04% a side that adds about $24 here, so the desk's 1R is about $523.
-> For you: on a $100,000 account risking $500, 1R is 0.5% — eight losses of that size
-> use up the whole daily limit on Bitfunded's 1-Step ($4,000 ÷ $500). The 4% is from the
-> help centre's Challenge & Trader Stage and Terms 9(a) (read date from the tool); that it
-> is a fixed amount on the initial balance is from the FAQ (read date from the tool).
+> 1,292 below entry, so 1R = 1,292 × 0.3862 ≈ $499. A close 2,584 above entry:
+> 2,584 × 0.3862 = $998, which is 2 × 1R = +2R; one stopped out is −1R. troid's desk also
+> counts the fee to open and close in the risk: at Bitfunded's 0.04% a side that adds about
+> $24 here, so the desk's 1R is about $523.
+> For you: on a $100,000 account risking $500, 1R is $500 ÷ $100,000 = 0.5% — eight losses
+> of that size use up the whole daily limit on Bitfunded's 1-Step ($4,000 ÷ $500 = 8).
+> The 4% is from the help centre's Challenge & Trader Stage and Terms 9(a)
+> (read date from the tool); that it is a fixed amount on the initial balance is from the
+> FAQ (read date from the tool).
 
 **A quant question — "Should I size with Kelly?"**
 
@@ -126,21 +128,20 @@ troid is kind.
 > Formula: `f* = p − (1 − p) / b`, where p is win rate and b is average win ÷ average loss.
 > Why: it maximises long-run growth — if p and b are known exactly, which they never are.
 > In practice: p = 0.45, b = 2 → f* = 0.45 − 0.55/2 = 0.175, or 17.5% of the account per
-> trade. Half-Kelly is 8.75%.
+> trade. Half-Kelly is 17.5% ÷ 2 = 8.75%.
 > For you: on Bitfunded's 1-Step the maximum loss is 6% of the starting balance (help
 > centre, Challenge & Trader Stage, and Terms 9(a); read date from the tool). A single full-Kelly
-> loss is nearly three times the whole account's allowance, and even half-Kelly breaches
-> it in one trade. Under prop rules the ceiling binds long before Kelly does — which is why
-> troid sizes against the remaining budget instead. Tier: DERIVED from the formula and the
-> firm's published max.
+> loss is 17.5% ÷ 6% = 2.92 times the whole account's allowance, and even half-Kelly, at
+> 8.75% ÷ 6% = 1.46 times, breaches it in one trade. Under prop rules the ceiling binds long
+> before Kelly does — which is why troid sizes against the remaining budget instead. Tier:
+> DERIVED from the formula and the firm's published max.
 
 **Recovery arithmetic — "I'm down 20%. How much do I need to get back?"**
 
 > 25%.
 > Formula: gain needed = d / (1 − d).
 > Why: the gain is measured on a smaller balance than the loss was.
-> In practice: $100,000 − 20% = $80,000. Getting back to $100,000 needs $20,000, which is
-> 25% of $80,000. At 50% down the recovery is 100%.
+> In practice: 0.20 ÷ (1 − 0.20) = 0.25, so 25%. At 50% down: 0.50 ÷ 0.50 = 1.00 — 100%.
 > For you: on every account troid covers, a 20% drawdown is already past the maximum loss —
 > the largest troid has read is 10% — so the account would have failed before this; troid
 > can show where the floor sits for your firm and product.

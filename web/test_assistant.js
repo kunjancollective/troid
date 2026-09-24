@@ -232,11 +232,19 @@ ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Ca
    CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
    && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
-// the staged character (after run 16's read): its examples carry no read date, only "(read date from the tool)"
-ok("candidate character: the live one with the examples' read dates replaced by \"(read date from the tool)\"",
-   /read 2[0-9] Sep 2026/.test(liveSys[1].text) && !/read \d{1,2} [A-Z][a-z]+ \d{4}|read 20\d\d-/.test(candSys[1].text)
-   && (candSys[1].text.match(/read date from the tool/g) || []).length === 3
-   && candSys[1].text.replace(/ \(read date from the tool\); that it\n> is a fixed amount on the initial balance is from the FAQ \(read date from the tool\)\./, "X").length < liveSys[1].text.length);
+// the staged character (the owner's review of run 16): its examples carry no read date, only "(read date from the
+// tool)", and every number in them comes from the question, a tool or a step shown on the page
+{ const N = require("./api/_numbers.js"), ex = (t) => t.split("## Examples")[1].split("## Where this plugs in")[0];
+  const cx = ex(candSys[1].text), lx = ex(liveSys[1].text), eqs = [];
+  for (const line of cx.replace(/^> ?/gm, "").replace(/(\d),(?=\d{3}(?!\d))/g, "$1").split("\n")) {
+    const parts = line.split(/\s(=|≈)\s/);
+    for (let i = 0; i + 2 < parts.length; i += 2) { const lr = N.arithSides(parts[i], parts[i + 2]); if (lr) eqs.push(N.arithHolds(lr[0], lr[1], parts[i + 1] === "≈")); }
+  }
+  ok("candidate character: no read date in its examples, \"(read date from the tool)\" three times; the owner's R and recovery steps; every equation written out holds",
+     /read 2[0-9] Sep 2026/.test(lx) && !/read \d{1,2} [A-Z][a-z]+ \d{4}|read 20\d\d-/.test(cx) && (cx.match(/read date from the tool/g) || []).length === 3
+     && cx.includes("2,584 × 0.3862 = $998, which is 2 × 1R = +2R") && cx.includes("0.20 ÷ (1 − 0.20) = 0.25, so 25%. At 50% down: 0.50 ÷ 0.50 = 1.00 — 100%.")
+     && !/\$80,000|\$20,000|closes \$998 up/.test(cx) && eqs.length >= 9 && eqs.every(Boolean)
+     && candSys[1].text.split("## Examples")[0] === liveSys[1].text.split("## Examples")[0], [eqs.length, eqs]); }
 ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
    liveSys.length === 5 && /^# Guardrails/.test(liveSys[0].text) && /## Who troid is/.test(liveSys[0].text) && /^# troid's character/.test(liveSys[1].text)
    && /^# support\.md/.test(liveSys[2].text) && liveSys[4].cache_control && handler._toolsFor("live").map((t) => t.name).join() === "size_trade,check_budget,check_compliance,check_availability,explain_rule,trade_math,firm_rules",
@@ -481,9 +489,9 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      notes16("b-leverage").some((n) => /writes its formula out/.test(n)) && !notes16("q-atr").some((n) => /writes its formula/.test(n)), notes16("b-leverage"));
   // the owner's promotion rule, applied to the reads' _errors (CLAUDE.md, "Promoting a candidate")
   const pr = require("child_process").spawnSync(process.execPath, [path0.join(__dirname, "eval_character.js"), "--promotion", "--candidate", "14,15,16", "--live", "9,10"], { encoding: "utf8" });
-  ok("promotion rule on runs 14–16 against the live prompt's runs 9 and 10: no critical failure, but more failing cases per run (5.33 against 4.50) and two kinds the live runs don't have — hold",
-     pr.status === 1 && /\(a\)[^\n]*none — met/.test(pr.stdout) && /candidate 5\.33, live 4\.50 — NOT met/.test(pr.stdout)
-     && /\(c\)[^\n]*incomplete method; repeated text — NOT met/.test(pr.stdout) && /HOLD/.test(pr.stdout), pr.stdout.slice(-600));
+  ok("promotion rule on runs 14–16 against the live prompt's runs 9 and 10: run 15's s-firm critical (the owner's reading), 5.33 failing cases per run against 4.50, three kinds the live runs don't have — hold",
+     pr.status === 1 && /\(a\)[^\n]*run 15 s-firm — NOT met/.test(pr.stdout) && /candidate 5\.33, live 4\.50 — NOT met/.test(pr.stdout)
+     && /\(c\)[^\n]*incomplete method; repeated text; recommendation — NOT met/.test(pr.stdout) && /HOLD/.test(pr.stdout), pr.stdout.slice(-600));
   const U0 = (t, texts, nums) => N.unsupportedNumbers(t, texts || [], nums || []);
   ok("numbers: dates, times, clauses, sections, product names and list numbers are not figures; 4,000 is one number; min(480,700) two",
      !U0("read 2026-09-23, 21 Sep 2026; 16:00–16:10 UTC (UTC+8); Terms 9(a), 14(d)(v); RTP s.3; T&C 8.i; the 1-Step and 2-Phase; Stage 2; Step 4\n1. first").length
@@ -607,7 +615,10 @@ fake.listen(18765, async () => {
     r = await post([U("a"), A("x".repeat(2500)), U("c")], { disclosed: true });
     ok("a long signed reply in the history is accepted", r.status === 200, r);
     const lines = LOGS.map((x) => JSON.parse(x));
-    ok("log lines hold counts and flags only", lines.length && lines.every((l) => Object.keys(l).every((k) => ["troid", "messages", "tool_calls", "model", "warned", "refusal", "ended", "error", "status", "stored", "store_error"].includes(k))), lines);
+    // the tokens a request took are counts too: by model, each a number (after the owner's review of run 16, for the spend)
+    const countsOnly = (u) => u === undefined || Object.entries(u).every(([m, x]) => /^claude-/.test(m) && Object.values(x).every((v) => typeof v === "number"));
+    ok("log lines hold counts and flags only", lines.length && lines.every((l) => Object.keys(l).every((k) => ["troid", "messages", "tool_calls", "model", "warned", "refusal", "ended", "error", "status", "stored", "store_error", "usage"].includes(k))
+       && countsOnly(l.usage)), lines);
 
     // 2. a tool turn: Haiku wants a tool, rerun on Sonnet at low effort, tool result carries sources and the working
     script = (b) => {
@@ -908,8 +919,14 @@ fake.listen(18765, async () => {
     ok("operator live baseline: 22 messages from one address answered, by the live prompt (no staged file), nothing stored, tools and their numbers reported",
        lb.status === 200 && calls.length === before + 22 && lb.j.variant === "live" && !calls[calls.length - 1].system[0].text.includes(MARK)
        && !KV_CALLS.length && Array.isArray(lb.j.tool_numbers) && Array.isArray(lb.j.tools_used), [lb.status, lb.j.variant, KV_CALLS.length]);
+    const lu = Object.values(lb.j.usage || {})[0] || {};
+    ok("operator reply: the tokens it took, by model (calls, input, cache write and read, output), for the run's cost", lu.calls >= 1 && lu.input >= 10 && lu.output >= 10
+       && ["cache_write", "cache_read"].every((k) => typeof lu[k] === "number"), lb.j.usage);
     r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-variant": "live" } });
-    ok("x-troid-variant without the key: an ordinary visitor's request (stored, no tool report)", r.status === 200 && r.j.variant === "live" && KV.has("conv:" + r.j.session) && !("tool_numbers" in r.j), r.j);
+    const lastLog = JSON.parse(LOGS[LOGS.length - 1]);
+    ok("x-troid-variant without the key: an ordinary visitor's request (stored, no tool or usage report); its log line counts the tokens, and holds no text",
+       r.status === 200 && r.j.variant === "live" && KV.has("conv:" + r.j.session) && !("tool_numbers" in r.j) && !("usage" in r.j)
+       && Object.values(lastLog.usage || {}).some((u) => u.calls >= 1) && !JSON.stringify(lastLog).includes("What does R mean"), [r.j, lastLog]);
     r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK.replace(/.$/, "x"), "x-troid-variant": "live" } });
     ok("x-troid-variant with a wrong key → 403", r.status === 403, r);
     // the operator's own API key, when set: evaluation never spends the key visitors use

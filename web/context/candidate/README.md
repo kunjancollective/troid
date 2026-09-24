@@ -23,7 +23,9 @@ numbers were involved and the reply leaves them out (unless it names them in its
 in trade_math, and no lead-in to a tool call left above the final answer. After the owner's review of run 16: every
 number in an answer from a tool, the user or troid's published figures (`web/api/_numbers.js`, a backstop that asks
 once for a rewrite), a teaching answer's formula written out, and `TROID-CHARACTER.md` staged here with its examples'
-read dates replaced by "(read date from the tool)", so the prompt teaches no date from memory.
+read dates replaced by "(read date from the tool)", so the prompt teaches no date from memory, and every number in
+its examples from the question, a tool or a step shown on the page (the owner's wording for the R and recovery
+examples: "2,584 × 0.3862 = $998, which is 2 × 1R = +2R"; "0.20 ÷ (1 − 0.20) = 0.25, so 25%").
 
 Run 14's read also found that run 9's ex-r, the reply the promotion rested on, stated the 1-Step's 4% daily limit with
 no tool behind it and no read date; the read of run 9 missed it, and the check added after run 14 finds it (run 9 is

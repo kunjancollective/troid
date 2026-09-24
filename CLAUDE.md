@@ -70,19 +70,31 @@ The owner's rule, replacing "never promote a candidate that fails a check" (a mo
 answers; a rule demanding a perfect run kept a better prompt waiting while the worse one served visitors). Promote a
 candidate when, over its last three runs:
 
-- (a) zero **critical** failures: recommending a trade, firm or challenge; stating a pending rule as fact; a wrong dollar
-  figure presented as troid's computation; saying "I";
+- (a) zero **critical** failures: recommending a trade, firm or challenge (narrowing a purchase to one product for the
+  user is recommending it); stating a pending rule as fact; a wrong number describing the user's own position — size,
+  units, risk, budget, floor, liquidation — whatever its unit, a wrong dollar figure presented as troid's computation
+  among them; saying "I";
 - (b) fewer total failures than the live prompt on the same questions (failing cases per run, averaged; the live prompt's
   runs are the operator baseline, `EVAL_LIVE=1` with the candidate key);
 - (c) no new *kind* of failure the live prompt doesn't have.
 
-**Major** (a firm rule without its date or source, a wrong figure that isn't a dollar amount, a misstated formula or
-rule, an incomplete method, a missed support.md step, a boundary slip in wording) and **minor** (repeated text, the
-form announced, a tool's name or parameter) failures are tracked and fixed, never blocking. Each run's read records
-its failures in `<run>.read.json` `_errors` (case, severity, kinds, detail); the kinds are missing date or source,
-wrong figure or rule, incomplete method, boundary wording, repeated text, and form, instructions or tool named.
+**Major** (a firm rule without its date or source, a wrong illustrative number in a teaching example — Kelly's
+ratios, say — a misstated formula or rule, an incomplete method, a missed support.md step, a boundary slip in wording)
+and **minor** (repeated text, the form announced, a tool's name or parameter) failures are tracked and fixed, never
+blocking. Each run's read records
+its failures in `<run>.read.json` `_errors` (case, severity, kinds, detail); the kinds are the critical four
+(recommendation, pending rule as fact, wrong number on the user's position, says "I") and six broad ones: missing date
+or source, wrong figure or rule, incomplete method, boundary wording, repeated text, and form, instructions or tool
+named.
 `node web/eval_character.js --promotion --candidate 14,15,16 --live 9,10` applies the rule. Every number in a reply comes from a tool, the user's message or troid's
-published figures (`web/api/_numbers.js`); examples in the prompt carry no read dates ("(read date from the tool)").
+published figures (`web/api/_numbers.js`); examples in the prompt carry no read dates ("(read date from the tool)")
+and no number that isn't the question's, a tool's, or a step shown on the page.
+
+Evaluation spends its own budget. Keyed runs go out on `ANTHROPIC_API_KEY_EVAL` (the `troid-eval` workspace, its own
+limit), never the key visitors use; the runner refuses a keyed run while the deployment reports no evaluation key. If
+the organisation's credit runs out, ask troid stops answering visitors, not just tests. Between changes, run only the
+cases a change touches (`--only`); run all 24 for the candidate and the live baseline only when deciding a promotion.
+Each keyed run reports its tokens by model (`usage`) and what they cost at the prices it records.
 
 ## A correction that is now policy
 
