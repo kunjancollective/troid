@@ -307,6 +307,9 @@ ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'S
    [f1, f2].every((f) => { const r = f.rules.find((x) => /^challenge fee/.test(x.rule)); return r && r.value === 799 && /one fee for the whole 2-Step/.test(r.rule)
      && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
    && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
+ok("candidate guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
+   /Never leave the example out/.test(candSys[0].text) && /gets its fee, reset time/.test(candSys[0].text) && /Never write a tool's parameters/.test(candSys[0].text)
+   && /Name no outside service/.test(candSys[0].text) && !/Name no outside service/.test(liveSys[0].text));
 ok("candidate guardrails: troid never trades; troid's own strategy out of sample first even in passing; every firm rule dated in any reply; intermediate values copied from the tool",
    /troid never trades/.test(candSys[0].text) && /even in passing/.test(candSys[0].text) && /\+0\.008R per trade on BTC \(504 trades\)/.test(candSys[0].text)
    && /in any reply/.test(candSys[0].text) && /Copy every intermediate value from the tool's working/.test(candSys[0].text) && !/troid never trades/.test(liveSys[0].text));
@@ -728,6 +731,22 @@ fake.listen(18765, async () => {
     step = 0;
     r = await call(hc, [U("What does R mean?")], { disclosed: true });
     ok("live, beside it: only the text after the last tool call, as before", r.status === 200 && !r.j.reply.includes("R is the amount risked") && r.j.reply.includes("Working it through"), r.j.reply);
+    // run 5's fixes: a section-2 reply goes to the tools model; the tier line agrees with a reply that quotes a dated rule
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "That's a real loss and troid takes the question seriously. What were the inputs?" }])
+      : msg("end_turn", [{ type: "text", text: "That's a real loss and troid takes the question seriously. Firm, product, quota, equity, entry, stop? Usually an input differed, a rule changed after troid read it, or troid marks the rule pending. The firm's dashboard is the record; hello@troid.ai reaches a person." }]);
+    before = calls.length;
+    r = await call(hc, [U("Your calculator is wrong. I failed because of troid.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a reply that opens support.md section 2 is rerun on the tools model (run 5: Haiku left out step 4)", r.status === 200 && calls.length === before + 2
+       && calls[before + 1].model === "claude-sonnet-5" && /rule changed after troid read it/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    before = calls.length;
+    r = await call(hc, [U("Your calculator is wrong. I failed because of troid.")], { disclosed: true });
+    ok("live, beside it: Haiku's section-2 reply stands", r.status === 200 && calls.length === before + 1 && r.j.reply === "That's a real loss and troid takes the question seriously. What were the inputs?", r.j.reply);
+    step = 0;
+    script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm3", name: "trade_math", input: { calc: "kelly", win_rate_pct: 45, payoff_ratio: 2 } }])
+      : msg("end_turn", [{ type: "text", text: "Full Kelly is 17.5%, past Bitfunded's 2-Step Stage 1 maximum loss of 10% (Terms 9(a), read 23 Sep 2026)." }]));
+    r = await call(hc, [U("Should I size with Kelly? 45%, 2:1.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a trade_math answer that quotes a dated firm rule itself is not told 'no firm rule was needed' (run 5, ex-kelly)", r.status === 200
+       && r.j.reply.includes(handler.EN["ask.tier.inputs_quoted"]) && !r.j.reply.includes(handler.EN["ask.tier.inputs"]), r.j.reply);
     delete process.env.TROID_CANDIDATE_KEY;
   } catch (e) { console.log = log0; ok("no exception in the handler tests", false, String(e && e.stack)); }
   fake.close(); kv.close();

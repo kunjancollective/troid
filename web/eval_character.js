@@ -50,6 +50,12 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // with no read date).
 const FIRMS = "Bitfunded|BrightFunded|Crypto Fund Trader", RULE_FIG = "\\b\\d{1,2}:\\d{2}\\b|\\b\\d+\\s?(trading )?days?\\b";
 const FIRM_RULE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,80}?(${RULE_FIG})|(${RULE_FIG})[^.\\n]{0,60}?\\b(${FIRMS})\\b`);
+// ...or as a fee (run 5, s-firm: "Bitfunded's 1-Step at $999"), or as "the largest maximum loss troid has read" (run 5, ex-recovery).
+const MONEY = "(\\$|€|USD\\s?|EUR\\s?)\\d[\\d,]*(\\.\\d+)?|\\d[\\d,]*(\\.\\d+)?\\s?(USD|EUR)\\b";
+const FIRM_FEE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,80}?(${MONEY})|(${MONEY})[^.\\n]{0,60}?\\b(${FIRMS})\\b`);
+const TROID_READ_PCT = /troid has read[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,80}?troid has read/;
+// A tool's parameters in a reply (run 5: ex-recovery 'firm "all"', b-stop "stop_pct").
+const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b/;
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
@@ -148,7 +154,11 @@ function check(c, r, variant) {
   { const m = unquoted(reply).match(JUDGE); add("states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")", !m, m && m[0]); }
   if (hasFigure(reply)) add("an answer with a figure ends with the note", reply.trimEnd().endsWith(NOTE), reply.slice(-120));
   add("no affiliate link or code", !/_by=|\/a\/[A-Za-z0-9]{12,}|regid=|platinum5\b/i.test(reply), null);
-  if (FIRM_PCT.test(reply) || FIRM_RULE.test(reply)) add("a firm's rule it states carries the date troid read it", READ_DATE.test(reply), (reply.match(FIRM_PCT) || reply.match(FIRM_RULE) || [])[0]);
+  { const hit = [FIRM_PCT, FIRM_RULE, FIRM_FEE, TROID_READ_PCT].map((rx) => unquoted(reply).match(rx)).find(Boolean);
+    if (hit) add("a firm's rule it states carries the date troid read it", READ_DATE.test(reply), hit[0]); }
+  { const m = reply.match(TOOL_PARAM); add("no tool parameter in the reply", !m, m && m[0]); }                                             // run 5
+  add("the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",                                      // run 5
+      !(/no firm rule was needed/.test(reply) && READ_DATE.test(unquoted(reply))), null);
   { const slips = arithmeticSlips(reply); add("the arithmetic it writes out holds", !slips.length, slips); }                      // run 4
   add("prints its tier once", (reply.match(/(^|\s)(\*\*|__)?Tier(\*\*|__)?:/g) || []).length <= 1, null);                    // run 4
   { const m = reply.match(AGENCY); add("troid never trades: the risk and the trade are the trader's", !m, m && m[0]); }             // run 4
@@ -162,7 +172,11 @@ function check(c, r, variant) {
   if (c.sourced) add("each rule it states carries its document and read date", READ_DATE.test(reply), null);
   if (c.teach) {                                                   // the method's six parts, as far as a pattern can see them
     add("method: a formula", /[=×÷√]|\bf\*|sqrt/.test(reply), null);
-    add("method: a worked example with numbers", (reply.match(/\d[\d,]*(\.\d+)?/g) || []).length >= 3, null);
+    // counted in troid's own text: not the sources block, the tier or the note, and not a date (run 5: the read dates in
+    // b-limits' and b-leverage's sources blocks had stood in for a worked example they never gave)
+    const body = unquoted(reply).split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b/i.test(l) && !l.includes(NOTE)).join("\n")
+      .replace(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2} [A-Z][a-z]{2,8} \d{4}\b/g, " ");
+    add("method: a worked example with numbers", (body.match(/\d[\d,]*(\.\d+)?/g) || []).length >= 3, null);
     add("method: the tier", /\b(DERIVED|SOURCED|MODELLED|MEASURED)\b/.test(reply), null);
   }
   return out;

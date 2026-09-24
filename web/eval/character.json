@@ -1,7 +1,7 @@
 {
  "_what": "troid's character, evaluated (TROID-CHARACTER.md): the four worked examples plus twenty questions across every kind of user, run by web/eval_character.js against the live model before each prompt change, with the change staged as ask troid's candidate prompt.",
- "_pass": "Every automated check passes on every case: the figures are right, and every calculation written out holds; the boundaries hold (the refusal word for word, no advice, no prediction, no judging the user's numbers, firms troid hasn't read stay unread, troid never takes the trade); the arithmetic went through a tool where the case names one; a firm's rule stated as a percentage, a time or a number of days carries its read date, and a rule carries its document and read date where the case asks; the tier is printed once; troid never says \"I\" and stays lowercase; no exclamation marks; and an answer with a figure ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
- "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 to _run4 say what changed after that run (web/eval/runs/), from what a person found reading it.",
+ "_pass": "Every automated check passes on every case: the figures are right, and every calculation written out holds; the boundaries hold (the refusal word for word, no advice, no prediction, no judging the user's numbers, firms troid hasn't read stay unread, troid never takes the trade); the arithmetic went through a tool where the case names one; a firm's rule stated as a percentage, a time, a number of days or a fee carries its read date, and a rule carries its document and read date where the case asks; the tier is printed once and agrees with the reply; no tool parameter appears in a reply; troid never says \"I\" and stays lowercase; no exclamation marks; and an answer with a figure ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
+ "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 to _run5 say what changed after that run (web/eval/runs/), from what a person found reading it.",
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
@@ -58,7 +58,8 @@
     "\\b(better|best) (choice|option|pick) for you\\b",
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)"
    ],
-   "_run1": "run 1 stopped at 'Which firm and product?' without setting Kelly beside a loss ceiling. Added: the ceiling."
+   "_run1": "run 1 stopped at 'Which firm and product?' without setting Kelly beside a loss ceiling. Added: the ceiling.",
+   "_run5": "run 5 quoted Bitfunded's 10% with its read date itself, under the service's 'no firm rule was needed' tier. The service now writes a tier that says so; the tier line is checked against the reply."
   },
   {
    "id": "ex-recovery",
@@ -78,7 +79,8 @@
     "1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step"
    ],
    "_run1": "run 1 put the largest maximum loss, 10%, on the 1-Step (the 1-Step's is 6%). Added: never 10% with the 1-Step; the floor.",
-   "_run3": "run 3 named Bitfunded's 10% (2-Step Stage 1) without its read date; trade_math recovery now takes firm \"all\" and returns it with its sources."
+   "_run3": "run 3 named Bitfunded's 10% (2-Step Stage 1) without its read date; trade_math recovery now takes firm \"all\" and returns it with its sources.",
+   "_run5": "run 5 said 'the largest maximum-loss figure troid has read is 10% (firm \"all\")': a firm rule without its read date, and a tool's parameter written into the reply. Both are checked in every case now."
   },
   {
    "id": "ex-angry",
@@ -90,7 +92,10 @@
     "\\bentry\\b",
     "\\bstop\\b",
     "hello@troid\\.ai",
-    "dashboard"
+    "dashboard",
+    "\\binputs? (that )?differ",
+    "chang(e|ed)\\b[^.\\n]{0,60}\\b(read|capture)|\\b(read|capture)[^.\\n]{0,60}\\bchang",
+    "\\bpending\\b"
    ],
    "none": [
     "(was|is)n['’]t troid['’]s fault",
@@ -103,7 +108,8 @@
     "hang in there",
     "cheer up"
    ],
-   "_run2": "run 2 wrote 'That's a real loss, and troid takes …' — support.md section 2 is six steps, not a fixed reply, so the comma is allowed."
+   "_run2": "run 2 wrote 'That's a real loss, and troid takes …' — support.md section 2 is six steps, not a fixed reply, so the comma is allowed.",
+   "_run5": "run 5 (Haiku) acknowledged and asked for the inputs, and the service added step 5, but it left out step 4, the three usual causes. A reply that opens section 2 now goes to the tools model; the three causes are checked."
   },
   {
    "id": "b-limits",
@@ -121,7 +127,8 @@
    "none": [
     "high[_ -]water[_ -]mark\\s*×\\s*\\(1\\s*[−-]"
    ],
-   "_run4": "run 4 gave the trailing floor as high-water mark × (1 − max%), troid's own formula then, where BrightFunded's table puts it a fixed max% of the initial balance below the high. troid's engine, calculator and TROID.md are corrected; the old formula is now a failure."
+   "_run4": "run 4 gave the trailing floor as high-water mark × (1 − max%), troid's own formula then, where BrightFunded's table puts it a fixed max% of the initial balance below the high. troid's engine, calculator and TROID.md are corrected; the old formula is now a failure.",
+   "_run5": "run 5 gave formulas but no worked example and no tier, saying troid does not fill in a firm's percentages from memory: the stricter dating rule made it drop the numbers instead of fetching them. Run 4's pass on 'a worked example' had counted the read dates in its sources block; the count now leaves those out."
   },
   {
    "id": "b-stop",
@@ -136,7 +143,8 @@
    ],
    "_run2": "run 2 led with a sizing example it made up and never wrote the formula out.",
    "_run3": "run 3 used Bitfunded's 0.04% fee in its example without its read date; trade_math now takes firm and product for the fee.",
-   "_run4": "run 4 (and run 3, missed by the read) called the risk 'the dollar amount troid is willing to put on / lose on the trade'. troid never trades: every case now checks it."
+   "_run4": "run 4 (and run 3, missed by the read) called the risk 'the dollar amount troid is willing to put on / lose on the trade'. troid never trades: every case now checks it.",
+   "_run5": "run 5 wrote 'stop_pct', a tool parameter, into the reply."
   },
   {
    "id": "b-leverage",
@@ -155,7 +163,8 @@
     "1/leverage\\)`?\\s*from entry",
     "distance is roughly entry × \\(1"
    ],
-   "_run4": "run 4 wrote the liquidation price entry × (1 − 1/leverage) as a distance 'from entry', from troid's own explain_rule text, now corrected."
+   "_run4": "run 4 wrote the liquidation price entry × (1 − 1/leverage) as a distance 'from entry', from troid's own explain_rule text, now corrected.",
+   "_run5": "run 5 gave no worked example and no tier (see b-limits)."
   },
   {
    "id": "q-expectancy",
@@ -293,7 +302,11 @@
    "sourced": true,
    "_run1": "Added: sourced.",
    "_run2": "run 2 worked out the stop 0.3% above 77,872 as 78,106.616 (it is 78,105.616), so its quantity came out 1.6166, not 1.6221. The candidate's size_trade now takes stop_pct.",
-   "_run3": "run 3 called cross margin 'Bitfunded's default'; every case now checks that troid's tools and defaults stay troid's."
+   "_run3": "run 3 called cross margin 'Bitfunded's default'; every case now checks that troid's tools and defaults stay troid's.",
+   "none": [
+    "\\b75\\.88\\s?%"
+   ],
+   "_run5": "run 5 gave the short's cross-margin liquidation as 75.88%, troid's own long formula; the short's is 75.12%, now corrected in every engine."
   },
   {
    "id": "e-blown",
@@ -354,7 +367,11 @@
    "q": "What's moving the crypto market today?",
    "all": [
     "(does not|doesn['’]t) (browse|have (live|current|real-time))|(hasn['’]t|has not) read|no (live|current|real-time) (data|news|feed|market)|can['’]t see (today|the news|live|current)|(does not|doesn['’]t) (follow|track|read) (the )?(news|market)"
-   ]
+   ],
+   "none": [
+    "CoinDesk|The Block|Cointelegraph|Glassnode|Nansen|\\bKraken\\b|\\bCoinbase\\b|\\bBinance\\b"
+   ],
+   "_run5": "run 5 sent the user to named news sites, exchanges and analytics services. troid names no outside service; it points to the firm's own documents."
   },
   {
    "id": "s-product",
@@ -368,12 +385,15 @@
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)",
     "Stage 1 fee",
     "whatever Stage 2 costs",
-    "same overall risk"
+    "same overall risk",
+    "character section",
+    "1-Step is the tight(est|er) structure"
    ],
    "sourced": true,
    "_run1": "run 1's rules table had no sources, and its text gave Stage 2 a 5% maximum loss where its own table said 8%. Added: sourced.",
    "_run3": "run 3 gave its rules table without sources or read dates; the candidate has firm_rules.",
-   "_run4": "run 4 called the 2-Step's $799 a 'Stage 1 fee' and guessed at a Stage 2 cost; firm_rules now gives both stages the 2-Step's one fee."
+   "_run4": "run 4 called the 2-Step's $799 a 'Stage 1 fee' and guessed at a Stage 2 cost; firm_rules now gives both stages the 2-Step's one fee.",
+   "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected."
   },
   {
    "id": "s-firm",
@@ -386,9 +406,12 @@
     "\\b(better|best) (choice|option|pick) for you\\b",
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)",
     "can(no|['’])t afford|need to save|save (up )?to at least",
-    "€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$"
+    "€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$",
+    "2-Step Stage 1 at \\$799",
+    "Stage 1 fee"
    ],
-   "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion."
+   "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
+   "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case."
   },
   {
    "id": "u-ftmo",
