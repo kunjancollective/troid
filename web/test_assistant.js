@@ -217,8 +217,37 @@ ok("candidate prompt: guardrails and TROID.md, the character block, then support
 const charSecs = CHAR.split(/\n(?=## )/).slice(1).map((x) => x.trim()).filter((x) => !x.startsWith("## Where this plugs in"));
 ok("candidate prompt: every section of the character appears exactly once (TROID.md or the character block)",
    charSecs.length === 8 && charSecs.every((x) => candText.split(x).length === 2), charSecs.map((x) => [x.slice(0, 30), candText.split(x).length - 1]));
-ok("candidate prompt: its guardrails add the teaching method, trade_math and no browsing", /answer first, in one line/.test(candSys[0].text)
-   && /goes through trade_math/.test(candSys[0].text) && /does not browse/.test(candSys[0].text) && !/goes through trade_math/.test(liveSys[0].text));
+ok("candidate prompt: its guardrails add the teaching method, a tool for every figure, no simulations, no judging the numbers, no browsing",
+   /answer first, in one line/.test(candSys[0].text) && /Compute every figure through a tool/.test(candSys[0].text) && /does not run simulations/.test(candSys[0].text)
+   && /never whether they are good or bad/.test(candSys[0].text) && /does not browse/.test(candSys[0].text) && !/Compute every figure through a tool/.test(liveSys[0].text));
+ok("candidate TROID.md: the reset is noon in New York only in summer, and a New York morning and afternoon can fall on different days",
+   /noon in New York in summer, 11:00 in winter/.test(candSys[0].text) && !/Morning and afternoon\s+are separate daily budgets/.test(candSys[0].text)
+   && /Morning and afternoon\s+are separate daily budgets/.test(liveSys[0].text));
+
+// --- the service's changes that ride with the candidate (evaluation run 1); the live service unchanged until promotion
+const HF = handler._hasFigure;
+ok("a figure: 4%, $4,000, 16:00, 0.175 and a year are figures; 1step, 2step_s1, 1R, the 1-Step and Stage 2 are names",
+   ["4%", "$4,000", "at 16:00 UTC", "f* = 0.175", "read 23 Sep 2026"].every((t) => HF(t))
+   && !["the 1step product", "2step_s1", "+2R and −1R", "Bitfunded's 1-Step or 2-Step", "2-Step Stage 2", "hello@troid.ai"].some((t) => HF(t)));
+const NOTE = handler.EN["ask.note"], CN = (t) => handler._closeWithNote(t, "en");
+ok("the note closes an answer with a figure, moved last when the model wrote something after it; an answer without one is left alone",
+   CN("25%.") === "25%.\n\n" + NOTE && CN("16:00 UTC.\n\n" + NOTE + "\n\nSOURCED · Criteria to be Success") === "16:00 UTC.\n\nSOURCED · Criteria to be Success\n\n" + NOTE
+   && CN("25%.\n\n" + NOTE) === "25%.\n\n" + NOTE && CN("troid does not cover FTMO.") === "troid does not cover FTMO.");
+const RT = handler._runTool;
+const hl = RT("explain_rule", { topic: "hold_limit" }, "candidate"), hlLive = RT("explain_rule", { topic: "hold_limit" }, "live");
+ok("candidate explain_rule: the rule it states carries its document and read date, SOURCED; the live tool unchanged",
+   hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21" && /^SOURCED/.test(hl.tier)
+   && !hlLive.sources && /^Explanation text/.test(hlLive.tier), [hl, hlLive]);
+const rs = RT("explain_rule", { topic: "reset" }, "candidate"), rsLive = RT("explain_rule", { topic: "reset" }, "live");
+ok("candidate explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
+   /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
+   && rs.sources.every((x) => x.document_section && x.read_on.length) && /Morning and afternoon sessions draw/.test(rsLive.explanation), rs);
+const ld = RT("explain_rule", { topic: "ladder" }, "candidate"), ac = RT("explain_rule", { topic: "accounts" }, "candidate");
+ok("candidate explain_rule: a topic that states no firm rule lists no sources; a clause no rule field carries cites its document",
+   !ld.sources && /^Explanation text/.test(ld.tier) && ac.sources.length === 1 && ac.sources[0].rule === "ToU 6(b)" && /Terms of Use/.test(ac.sources[0].document), [ld, ac]);
+const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
+ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, not the quantity", ps2.result.quantity === ps10.result.quantity
+   && Math.abs(ps2.result.margin - ps2.result.notional / 2) < 0.01 && Math.abs(ps10.result.margin - ps10.result.notional / 10) < 0.01 && /same at any leverage/.test(ps2.note), [ps2, ps10]);
 ok("candidate support.md: section 4 keeps the refusal word for word, then teaches", /> troid doesn't recommend; it prices what you bring\./.test(candSys[2].text)
    && /as troid's character teaches it/.test(candSys[2].text) && !/as troid's character teaches it/.test(liveSys[1].text));
 
@@ -599,13 +628,36 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: the candidate is staged (files, guardrails, tools) and a key is set, never shown", gc.key === true && gc.staged.join() === "TROID.md,TROID-CHARACTER.md,support.md"
-       && gc.guardrails === 3 && gc.tools.join() === "trade_math" && !resC.body.includes(CK), gc);
+       && gc.guardrails === 6 && gc.tools.join() === "trade_math" && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "recovery", drawdown_pct: 20 } }])
       : msg("end_turn", [{ type: "text", text: "25%. Not financial advice. Verify with the firm before acting." }]));
     r = await call(hc, [U("I'm down 20%. How much do I need to get back?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: a trade_math answer carries the tier for the numbers given, not a firm-rule tier", r.status === 200 && r.j.reply.includes(handler.EN["ask.tier.inputs"])
        && !r.j.reply.includes(handler.EN["ask.tier.derived"]) && r.j.tools_used.join() === "trade_math" && r.j.reply.endsWith(handler.EN["ask.note"]), r.j.reply);
+    // the candidate's service changes, end to end
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "Troid says the reset is at 16:00 UTC." }])
+      : msg("end_turn", [{ type: "text", text: "Troid: the reset is at 16:00 UTC (SOURCED, Criteria to be Success, read 2026-09-23)." }]);
+    before = calls.length;
+    r = await call(hc, [U("When does Bitfunded reset?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: an answer from Haiku that states a figure is rerun on the tools model, kept lowercase and closed with the note",
+       r.status === 200 && calls.length === before + 2 && calls[before].model === "claude-haiku-4-5" && calls[before + 1].model === "claude-sonnet-5"
+       && r.j.model === "claude-sonnet-5" && r.j.reply.startsWith("troid: the reset") && r.j.reply.endsWith(NOTE), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    before = calls.length;
+    r = await call(hc, [U("When does Bitfunded reset?")], { disclosed: true });
+    ok("live, beside it: the same Haiku answer stands (one call, no note added)", r.status === 200 && calls.length === before + 1
+       && r.j.reply === "Troid says the reset is at 16:00 UTC.", r.j.reply);
+    script = () => msg("end_turn", [{ type: "text", text: "troid does not cover FTMO and has not read its rules." }]);
+    before = calls.length;
+    r = await call(hc, [U("FTMO's daily limit?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: an answer with no figure stays with Haiku and gets no note", calls.length === before + 1 && r.j.reply === "troid does not cover FTMO and has not read its rules.", r.j.reply);
+    step = 0;
+    script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "er1", name: "explain_rule", input: { topic: "hold_limit" } }])
+      : msg("end_turn", [{ type: "text", text: "ETH is a major: 10 days.\n\nTier: SOURCED, Restricted Trading Practices s.1, read 2026-09-21.\n\nNot financial advice. Verify with the firm before acting." }]));
+    r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: an explain_rule answer gets its rule's source and read date and the SOURCED tier from the service, and the model's own tier line goes",
+       r.status === 200 && r.j.reply.includes(handler.EN["ask.sources"]) && /hold limit: majors 10 days, other crypto 7, TradFi 5 — Bitfunded help centre — Restricted Trading Practices s\.1, read 2026-09-21/.test(r.j.reply)
+       && r.j.reply.includes(handler.EN["ask.tier.sourced"]) && !/^Tier: SOURCED, Restricted/m.test(r.j.reply) && r.j.reply.endsWith(NOTE), r.j.reply);
     delete process.env.TROID_CANDIDATE_KEY;
   } catch (e) { console.log = log0; ok("no exception in the handler tests", false, String(e && e.stack)); }
   fake.close(); kv.close();

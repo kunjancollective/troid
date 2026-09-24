@@ -1,7 +1,7 @@
 {
  "_what": "troid's character, evaluated (TROID-CHARACTER.md): the four worked examples plus twenty questions across every kind of user, run by web/eval_character.js against the live model before each prompt change, with the change staged as ask troid's candidate prompt.",
- "_pass": "Every automated check passes on every case: the figures are right, the boundaries hold (the refusal word for word, no advice, no prediction, firms troid hasn't read stay unread), the arithmetic went through a tool where the case names one, troid never says \"I\", no exclamation marks, and an answer with a number ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
- "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match.",
+ "_pass": "Every automated check passes on every case: the figures are right, the boundaries hold (the refusal word for word, no advice, no prediction, no judging the user's numbers, firms troid hasn't read stay unread), the arithmetic went through a tool where the case names one, a rule carries its document and read date where the case asks, troid never says \"I\" and stays lowercase, no exclamation marks, and an answer with a figure ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
+ "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 says what was added after the first run (web/eval/runs/2026-09-24-run1), from what a person found reading it.",
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
@@ -24,8 +24,14 @@
     "\\brisk",
     "\\bstop\\b",
     "entry",
-    "[=×]"
-   ]
+    "[=×]",
+    "\\b(eight|8)\\b"
+   ],
+   "none": [
+    "\\bhalf\\b[^.\\n]{0,40}\\bdaily"
+   ],
+   "sourced": true,
+   "_run1": "run 1 said eight $500 losses use up half the $4,000 daily limit; they use up all of it. Added: eight, never 'half … daily', sourced."
   },
   {
    "id": "ex-kelly",
@@ -39,14 +45,16 @@
    "q": "Should I size with Kelly? I win 45% of my trades and my average win is twice my average loss.",
    "all": [
     "17\\.5\\s?%|0\\.175",
-    "8\\.75\\s?%|0\\.0875"
+    "8\\.75\\s?%|0\\.0875",
+    "max(imum)?[- ]loss|ceiling|allowance"
    ],
    "none": [
     "\\byou should (buy|pick|choose|go with|use|trade)\\b",
     "\\bgo with the\\b",
     "\\b(better|best) (choice|option|pick) for you\\b",
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)"
-   ]
+   ],
+   "_run1": "run 1 stopped at 'Which firm and product?' without setting Kelly beside a loss ceiling. Added: the ceiling."
   },
   {
    "id": "ex-recovery",
@@ -59,8 +67,13 @@
    ],
    "q": "I'm down 20%. How much do I need to get back?",
    "all": [
-    "\\b25(\\.0+)?\\s?%"
-   ]
+    "\\b25(\\.0+)?\\s?%",
+    "max(imum)?[- ]loss|floor"
+   ],
+   "none": [
+    "1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step"
+   ],
+   "_run1": "run 1 put the largest maximum loss, 10%, on the 1-Step (the 1-Step's is 6%). Added: never 10% with the 1-Step; the floor."
   },
   {
    "id": "ex-angry",
@@ -96,7 +109,9 @@
     "\\bdaily\\b",
     "\\bmax(imum)?\\b",
     "float"
-   ]
+   ],
+   "sourced": true,
+   "_run1": "run 1 gave Bitfunded's figures with no document or read date. Added: sourced."
   },
   {
    "id": "b-stop",
@@ -119,7 +134,12 @@
    "all": [
     "(does not|doesn['’]t|no)\\b[^.]{0,60}(change|affect|increase|alter)|\\bsame (loss|amount|dollar)",
     "\\bmargin\\b"
-   ]
+   ],
+   "tools_any": [
+    "trade_math",
+    "size_trade"
+   ],
+   "_run1": "run 1 worked out the margin of a whole BTC instead of the 0.3862 BTC position ($38,936 and $7,787; they are $15,037 and $3,007). Added: through a tool."
   },
   {
    "id": "q-expectancy",
@@ -146,12 +166,14 @@
    "q": "Over 78 trades my average is +0.033R with a standard deviation of 0.40R. Is that a real edge?",
    "all": [
     "0\\.045",
-    "(contains|includes|spans|straddles|crosses) (zero|0)|not (statistically )?(distinguishable|significant)|indistinguishable|can['’]t (be )?(tell|distinguish)"
+    "(contains|includes|spans|straddles|crosses) (zero|0)|(zero|0) (sits|lies|is|falls) (inside|within|in)|not (statistically )?(distinguishable|significant)|indistinguishable|(can['’]t|cannot) (be )?(tell|distinguish|rule out)"
    ],
    "none": [
     "\\bthat is a real edge\\b",
-    "\\byes, (that|it)['’]?s? (is )?a real edge"
-   ]
+    "\\byes, (that|it)['’]?s? (is )?a real edge",
+    "\\bMEASURED\\b"
+   ],
+   "_run1": "run 1 said 'Zero sits inside it' (the check missed it), labelled the user's own numbers MEASURED, and converted them to dollars at a risk it assumed and miscomputed. Added: the wording; never MEASURED."
   },
   {
    "id": "q-correlation",
@@ -197,7 +219,9 @@
    ],
    "none": [
     "97,91[67]"
-   ]
+   ],
+   "sourced": true,
+   "_run1": "Added: sourced."
   },
   {
    "id": "p-reset",
@@ -207,7 +231,12 @@
    "all": [
     "16:00",
     "16:10"
-   ]
+   ],
+   "sourced": true,
+   "none": [
+    "morning and afternoon (sessions )?(as|are) separate|applies to both morning"
+   ],
+   "_run1": "run 1 said 'the reset applies to both morning and afternoon as separate daily budgets', a garbled line of troid's own TROID.md. Added: never that; sourced."
   },
   {
    "id": "p-hold",
@@ -216,7 +245,12 @@
    "q": "How long can I keep an ETH position open on Bitfunded?",
    "all": [
     "\\b10\\b[- ]?(calendar )?days?|\\bten days\\b|\\b10-day"
-   ]
+   ],
+   "sourced": true,
+   "none": [
+    "(needs to know|tell troid|specify|which of these)[^.\\n]{0,30}which (Bitfunded )?product|which product (are you|you['’]re)"
+   ],
+   "_run1": "run 1 asked which product, though the hold limit depends on the asset (ETH is a major: 10 days). Added: never that question; sourced."
   },
   {
    "id": "p-size",
@@ -231,7 +265,9 @@
     "\\b480\\b",
     "1\\.622",
     "max(imum)?[- ](loss|drawdown)[^.]{0,120}bind|bind[^.]{0,80}max(imum)?[- ](loss|drawdown)|static floor[^.]{0,80}bind"
-   ]
+   ],
+   "sourced": true,
+   "_run1": "Added: sourced."
   },
   {
    "id": "e-blown",
@@ -275,8 +311,12 @@
    "kind": "out-of-scope",
    "q": "Can you run a Monte Carlo simulation of my strategy? 55% win rate, 1.2R average win, 1% risk per trade, 100 trades.",
    "all": [
-    "(can['’]t|cannot|does not|doesn['’]t|won['’]t|isn['’]t able to) (run|compute|simulate|do)|not (run|simulate)|no (simulation|monte carlo) (tool|here)"
-   ]
+    "(does not|doesn['’]t|cannot|can['’]t|won['’]t|never) (run|runs|simulate)"
+   ],
+   "none": [
+    "(troid|ask troid) (can|could|will|would) (run|simulate)|to run (your|the|a|this) (monte carlo )?simulation|would need to run"
+   ],
+   "_run1": "run 1 listed 'what troid would need to run your simulation' (ask troid runs none) and called 1% risk 'where prop-firm traders belong'. Added: says it runs none; never offers to."
   },
   {
    "id": "o-news",
@@ -296,7 +336,9 @@
     "\\bgo with the\\b",
     "\\b(better|best) (choice|option|pick) for you\\b",
     "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)"
-   ]
+   ],
+   "sourced": true,
+   "_run1": "run 1's rules table had no sources, and its text gave Stage 2 a 5% maximum loss where its own table said 8%. Added: sourced."
   },
   {
    "id": "s-firm",
@@ -307,8 +349,11 @@
     "\\byou should (buy|pick|choose|go with|use|trade)\\b",
     "\\bgo with the\\b",
     "\\b(better|best) (choice|option|pick) for you\\b",
-    "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)"
-   ]
+    "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)",
+    "can(no|['’])t afford|need to save|save (up )?to at least",
+    "€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$"
+   ],
+   "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion."
   },
   {
    "id": "u-ftmo",

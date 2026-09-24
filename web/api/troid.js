@@ -148,12 +148,23 @@ const GUARDRAILS = [
 ].join("\n- ").replace(/^/, "- ");
 // The candidate's guardrails: the live ones plus these (TROID-CHARACTER.md). Folded into GUARDRAILS when promoted.
 const CANDIDATE_GUARDRAILS = [
-  "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Under an answer that used a tool, the service writes the tier and the sources; write them yourself only when no tool was used. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
-  "Trading arithmetic that needs no firm rule goes through trade_math: an R-multiple, a position size, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets. A firm's own limits go through check_budget or size_trade. When a question needs arithmetic no tool computes, such as a new simulation, say troid can't compute it exactly here and what it would need; troid's published simulations can be quoted with their assumptions and tier.",
-  "ask troid does not browse and has no live data. For news, prices, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents.",
+  "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
+  "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A figure the user gave, repeated back, needs no tool. So does a rule's value quoted with its source.",
+  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block.",
+  "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
+  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\".",
+  "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents. Never convert a currency from memory.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
+// The service's own changes that ride with the candidate (the first evaluation run, web/eval/runs/): an answer that
+// states a figure is rerun on the tools model, it ends with the note, a tier line the model wrote under a tool's tier is
+// dropped, troid stays lowercase, and explain_rule lists its rules' sources. Promotion makes them unconditional.
+const NEXT = (variant) => variant === "candidate";
+// A figure: a number standing on its own (4%, $4,000, 16:00, 0.175, 2026), not a digit inside a name (1step, 2step_s1,
+// 1R, 1-Step, Stage 2).
+const FIGURE = /(?<![\p{L}\p{N}_.])\d[\d,]*(?:\.\d+)?(?![\p{L}\p{N}_])/u;
+const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bstage \d\b/gi, " "));
 
 // ---------------------------------------------------------------- context
 // ---------------------------------------------------------------- languages (web/i18n)
@@ -580,13 +591,56 @@ const RULES = {
   opposite_positions: "Bitfunded ToU 13(c)(v) prohibits opposite positions across connected accounts: a long on one account and a short on the same asset on another. Hedged pairs cancel each other's market risk while each account keeps its own chance of passing, which is why firms prohibit them. troid cannot see connected accounts, so it cannot check this.",
   funded_stage: "Bitfunded's Trader Stage limits depend on the path (help centre, Challenge & Trader Stage): after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the 2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader Stage breach disqualifies the account, and a new challenge is required.",
 };
-function explain_rule(a) {
-  const t = String(a.topic || "").toLowerCase().trim().replace(/\s+/g, "_");
-  if (!Object.hasOwn(RULES, t)) return { error: "unknown topic. options: " + Object.keys(RULES).sort().join(", ") };
-  return { topic: t, explanation: RULES[t],
+function explain_rule(a, rules) {
+  const R = rules || RULES, t = String(a.topic || "").toLowerCase().trim().replace(/\s+/g, "_");
+  if (!Object.hasOwn(R, t)) return { error: "unknown topic. options: " + Object.keys(R).sort().join(", ") };
+  return { topic: t, explanation: R[t],
            tier: "Explanation text written by troid for ask troid, not generated from firms.json, so it can fall out of step with troid's compare. " +
                  "Its formulas are DERIVED; a rule it cites is SOURCED from the section named, and the firm's own documents govern. For a rule's read date, " +
                  "use the sources in size_trade or check_budget, or troid's compare." };
+}
+// The candidate's explanations where they differ from RULES. Folded into RULES when promoted. The reset: 16:00 UTC is
+// noon in New York only in summer, and the old "morning and afternoon are separate daily budgets" read as a rule of
+// the firm's (run 1 of the evaluation, p-reset); it is a consequence of the reset's hour for a trader in New York.
+const CANDIDATE_RULES = {
+  // the majors named, from the set check_compliance classes by (run 1, p-hold: asked for the product instead)
+  hold_limit: "Bitfunded: majors (" + [...MAJORS].join(", ") + ") 10 days, other crypto 7, TradFi 5 (Restricted Trading Practices s.1). The limit follows the asset, not the product. Profits from a breaching trade can be removed from payout eligibility.",
+  reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC: noon in New York in summer (EDT), 11:00 in winter (EST). Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
+};
+// The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
+// A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
+// cite their document through refSources.
+const TOPIC_CITES = {
+  crossover: [["bitfunded", "daily_pct", "1step", "daily 4% (1-Step)"], ["bitfunded", "max_pct", "1step", "max 6% (1-Step)"], ["bitfunded", "daily_basis", null, "daily basis (initial balance)"],
+              ["crypto_fund_trader", "daily_basis", null, "Crypto Fund Trader daily basis (day-start balance)"], ["brightfunded", "daily_basis", null, "BrightFunded daily basis (high at rollover)"]],
+  reset: [["bitfunded", "reset_utc", null, "reset 00:00 UTC+8, effective by 00:10"], ["brightfunded", "reset_utc", null, "BrightFunded rollover 23:30–23:59 CET"],
+          ["crypto_fund_trader", "reset_utc", null, "Crypto Fund Trader reset 00:05 UTC"]],
+  fees: [["bitfunded", "fee_per_side_pct", "1step", "fee 0.04% per side"]],
+  leverage: [["bitfunded", "max_leverage", "1step", "leverage cap 5×"]],
+  cross: [["bitfunded", "max_leverage", "1step", "leverage cap 5×"], ["bitfunded", "daily_pct", "1step", "daily 4% (1-Step)"], ["bitfunded", "max_pct", "1step", "max 6% (1-Step)"]],
+  drawdown: [["bitfunded", "drawdown_type", null, "drawdown type (static)"], ["brightfunded", "drawdown_type", null, "BrightFunded drawdown (trailing on equity)"],
+             ["crypto_fund_trader", "drawdown_type", null, "Crypto Fund Trader drawdown (trailing on balance)"]],
+  min_days: [["bitfunded", "min_days", null, "minimum 5 trading days"]],
+  hold_limit: [["bitfunded", "hold_cap", null, "hold limit: majors 10 days, other crypto 7, TradFi 5"]],
+  funded_stage: [["bitfunded", "trader_stage_rule", null, "Trader Stage limits by path"]],
+};
+const TOPIC_REFS = { cross: "RTP s.2", accounts: "ToU 6(b)", marketed_strategies: "ToU 14(d)(v)", strategy_switching: "ToU 14(d)(ix)", opposite_positions: "ToU 13(c)(v)" };
+// explain_rule for the candidate: its explanations, and the sources of the rules they state, so the service writes each
+// rule's document and read date under the answer and the tier (SOURCED) with them. Topics that state no firm rule
+// (ladder, ruin) are unchanged: their tier stays with the model.
+function explainRuleSourced(a) {
+  const out = explain_rule(a, Object.assign({}, RULES, CANDIDATE_RULES));
+  if (out.error) return out;
+  const F = JSON.parse(context().firms), sources = [];
+  for (const [firm, field, product, rule] of TOPIC_CITES[out.topic] || []) {
+    const c = F[firm] ? cite(F[firm], field, product, !product) : null;
+    sources.push(c ? { rule, document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls } : { rule, source: "not yet recorded" });
+  }
+  const ref = TOPIC_REFS[out.topic];
+  if (ref) for (const s of refSources(ref)) sources.push(Object.assign({ rule: ref }, s));
+  if (!sources.length) return out;
+  return Object.assign(out, { sources, tier: "SOURCED — each rule this explanation states is under sources, with its document and the date troid read it. " +
+    "The explanation text is troid's own, not generated from firms.json; its formulas are DERIVED, and the firm's own documents govern." });
 }
 
 // What each firm's own terms exclude, by country (firms.json availability). troid never says a firm is available
@@ -618,7 +672,7 @@ function check_availability(a) {
 // Percentages come in as percent (45 means 45%). A result troid can only approximate says so in its note.
 const MATH_FORMULAS = {
   r_multiple: "1R = |entry − stop| × quantity (troid's desk adds the round-trip fee: + entry × fee × 2 × quantity); R of a result = result ÷ 1R",
-  position_size: "quantity = risk ÷ (|entry − stop| + entry × fee × 2); notional = quantity × entry",
+  position_size: "quantity = risk ÷ (|entry − stop| + entry × fee × 2); notional = quantity × entry; margin = notional ÷ leverage",
   expectancy: "E = p × W − (1 − p) × L; break-even win rate = L ÷ (W + L) = 1 ÷ (1 + W/L)",
   kelly: "f* = p − (1 − p) ÷ b, where b = average win ÷ average loss",
   recovery: "gain needed = d ÷ (1 − d)",
@@ -652,7 +706,7 @@ const MATH = {
   },
   position_size(x) {
     const risk = x("risk", { gt: 0 }), entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 });
-    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true });
+    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true }), lev = x("leverage", { gt: 0, max: 200, optional: true });
     const dist = Math.abs(entry - stop);
     if (!(dist > 0)) throw new MathInputError("entry and stop are the same price");
     const fu = entry * (fee || 0) / 100 * 2, q = risk / (dist + fu);
@@ -660,8 +714,11 @@ const MATH = {
                { step: "fee per unit", formula: fee == null ? "no fee given: 0" : "entry × " + fee + "% × 2", value: rd(fu) },
                { step: "quantity", formula: "risk ÷ (stop distance + fee per unit)", value: rd(q) },
                { step: "notional", formula: "quantity × entry", value: rd(q * entry, 2) }];
-    return { working: w, result: { quantity: rd(q), notional: rd(q * entry, 2) },
-             note: fee == null ? "No fee was given, so none is counted; a firm's fee makes the quantity smaller." : undefined };
+    const result = { quantity: rd(q), notional: rd(q * entry, 2) };
+    if (lev != null) { w.push({ step: "margin", formula: "notional ÷ " + lev, value: rd(q * entry / lev, 2) }); result.margin = rd(q * entry / lev, 2); }
+    return { working: w, result,
+             note: [fee == null ? "No fee was given, so none is counted; a firm's fee makes the quantity smaller." : "",
+                    lev != null ? "Leverage sets the margin posted, not the quantity: the loss at the stop is the same at any leverage." : ""].filter(Boolean).join(" ") || undefined };
   },
   expectancy(x) {
     const p = x("win_rate_pct", { min: 0, max: 100 }) / 100, W = x("avg_win", { min: 0 }), L = x("avg_loss", { gt: 0 });
@@ -778,7 +835,7 @@ function trade_math(a) {
   }
 }
 const TRADE_MATH_TOOL = { name: "trade_math",
-  description: "Trading arithmetic that needs no firm rule, returned with the formula and every step. calc and its inputs: r_multiple (entry, stop, quantity; optional result, fee_per_side_pct); position_size (risk, entry, stop; optional fee_per_side_pct); expectancy (win_rate_pct, avg_win, avg_loss); kelly (win_rate_pct, payoff_ratio; optional firm and product to set it beside that product's loss limits, with their sources); recovery (drawdown_pct; optional balance); fee_share (fee_per_side_pct, stop_pct); losses_to_limit (budget, risk); capped_budget (budget, cap_pct, losses); stats (mean, sd, n; optional configs); atr_scale (atr, from_minutes, to_minutes); effective_bets (positions, correlation). Percentages are in percent: 45 means 45%. Never call it to suggest a trade.",
+  description: "Trading arithmetic that needs no firm rule, returned with the formula and every step. calc and its inputs: r_multiple (entry, stop, quantity; optional result, fee_per_side_pct); position_size (risk, entry, stop; optional fee_per_side_pct, leverage for the margin); expectancy (win_rate_pct, avg_win, avg_loss); kelly (win_rate_pct, payoff_ratio; optional firm and product to set it beside that product's loss limits, with their sources); recovery (drawdown_pct; optional balance); fee_share (fee_per_side_pct, stop_pct); losses_to_limit (budget, risk); capped_budget (budget, cap_pct, losses); stats (mean, sd, n; optional configs); atr_scale (atr, from_minutes, to_minutes); effective_bets (positions, correlation). Percentages are in percent: 45 means 45%. Never call it to suggest a trade.",
   input_schema: { type: "object", properties: {
     calc: { type: "string", enum: Object.keys(MATH_FORMULAS) },
     entry: { type: "number" }, stop: { type: "number" }, quantity: { type: "number" }, result: { type: "number", description: "a trade's profit or loss, for its R-multiple" },
@@ -787,7 +844,8 @@ const TRADE_MATH_TOOL = { name: "trade_math",
     firm: { type: "string" }, product: { type: "string" }, drawdown_pct: { type: "number" }, balance: { type: "number" },
     stop_pct: { type: "number", description: "stop distance as a percent of price" }, budget: { type: "number" }, cap_pct: { type: "number" },
     losses: { type: "integer" }, mean: { type: "number" }, sd: { type: "number" }, n: { type: "integer" }, configs: { type: "integer" },
-    atr: { type: "number" }, from_minutes: { type: "number" }, to_minutes: { type: "number" }, positions: { type: "integer" }, correlation: { type: "number" } },
+    atr: { type: "number" }, from_minutes: { type: "number" }, to_minutes: { type: "number" }, positions: { type: "integer" }, correlation: { type: "number" },
+    leverage: { type: "number", description: "for position_size: the margin posted is notional ÷ leverage" } },
     required: ["calc"] } };
 
 const TOOLS = [
@@ -824,8 +882,10 @@ const TOOLS = [
 const CANDIDATE_TOOLS = [TRADE_MATH_TOOL];
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS.concat(CANDIDATE_TOOLS) : TOOLS);
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math };
-function runTool(name, input) {
-  try { return Object.hasOwn(RUN, name) ? RUN[name](input || {}) : { error: "unknown tool " + name }; }
+const RUN_NEXT = Object.assign({}, RUN, { explain_rule: explainRuleSourced });   // the candidate's; RUN when promoted
+function runTool(name, input, variant) {
+  const run = NEXT(variant) ? RUN_NEXT : RUN;
+  try { return Object.hasOwn(run, name) ? run[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
 
@@ -919,7 +979,7 @@ function stripSources(text) {
   }
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
-function withSources(reply, lang, toolLog) {
+function withSources(reply, lang, toolLog, variant) {
   const cites = [], tiers = new Set(), assumed = [];
   for (const t of toolLog) {
     const r = t.result || {};
@@ -937,10 +997,18 @@ function withSources(reply, lang, toolLog) {
   for (const k of ["derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + k));
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
+  // with the candidate, a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
+  if (NEXT(variant) && tiers.size) body = body.split("\n").filter((l) => !/^\s*(\*\*|__)?\s*tier\b/i.test(l)).join("\n").replace(/\n{3,}/g, "\n\n").trim();
   const note = S(lang, "ask.note"), at = body.lastIndexOf(note);
   const tail = at >= 0 && body.slice(at + note.length).trim() === "" ? note : "";
   if (tail) body = body.slice(0, at).trim();
   return [body, block.join("\n\n"), tail].filter(Boolean).join("\n\n");
+}
+// With the candidate, an answer that states a figure ends with the note even when the model left it out or wrote
+// something after it (run 1: five answers didn't end with it). An answer with no figure is left as it is.
+function closeWithNote(reply, lang) {
+  const note = S(lang, "ask.note"), body = String(reply).split(note).join("").replace(/\n{3,}/g, "\n\n").trim();
+  return hasFigure(body) ? body + "\n\n" + note : reply;
 }
 const textOf = (resp) => (resp.content || []).filter((b) => b.type === "text").map((b) => b.text).join("\n").trim();
 const wantsTool = (resp) => resp.stop_reason === "tool_use" || (resp.stop_reason === "max_tokens" && (resp.content || []).some((b) => b.type === "tool_use"));
@@ -1092,14 +1160,21 @@ module.exports = async (req, res) => {
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
     let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
-    if (wantsTool(resp) && MODEL_LOOKUP !== MODEL_TOOLS) { route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant); }   // Haiku's turn is discarded, never replayed
+    // A turn that wants a tool is rerun on the tools model; with the candidate, so is an answer that states a figure,
+    // because every figure comes from a tool (TROID-CHARACTER.md) and Haiku's own arithmetic failed the first
+    // evaluation run. Haiku's turn is discarded, never replayed.
+    const figured = NEXT(variant) && !wantsTool(resp) && resp.stop_reason !== "refusal" && hasFigure(textOf(resp));
+    if ((wantsTool(resp) || figured) && MODEL_LOOKUP !== MODEL_TOOLS) {
+      if (figured) log.rerouted = 1;
+      route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
+    }
     const convo = messages.slice();
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
       toolCalls += uses.length;
       convo.push({ role: "assistant", content: resp.content });        // unchanged, thinking blocks included
       convo.push({ role: "user", content: uses.map((u) => {
-        const out = runTool(u.name, u.input);
+        const out = runTool(u.name, u.input, variant);
         toolLog.push({ name: u.name, input: u.input, result: out });
         return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
       }) });
@@ -1116,7 +1191,9 @@ module.exports = async (req, res) => {
         else reply = S(lang, "ask.warning");
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
-        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog);
+        if (NEXT(variant)) reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
+        if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
+        if (reply && NEXT(variant)) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
         else if (resp.stop_reason === "tool_use") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.tool_limit");
       }
@@ -1176,3 +1253,6 @@ module.exports._characterBlock = characterBlock;
 module.exports._deleteToken = deleteToken;                         // for tests
 module.exports._clientKey = clientKey;
 module.exports._promptFirms = () => context().prompt_firms;   // for tests
+module.exports._hasFigure = hasFigure;                             // for tests: the candidate's service changes
+module.exports._closeWithNote = closeWithNote;
+module.exports._runTool = runTool;
