@@ -31,7 +31,8 @@ rewrite stands only when it trips fewer notes than its draft and fixes at least 
 its answer); a formula line carries an equals sign (b-stop's formula in words read as risk ÷ distance + fee); a reply
 never opens on a result the reader never saw ("That result …"); the tier line says MODELLED when a reply quotes
 troid's Monte Carlo (`ask.tier.modelled`); and troid's assumptions are listed once, by the service (p-size listed them
-twice).
+twice). The second subset run (those three cases) read with no critical or major error: o-montecarlo and
+p-size fixed; b-stop's formula right, still in words.
 
 Run 14's read also found that run 9's ex-r, the reply the promotion rested on, stated the 1-Step's 4% daily limit with
 no tool behind it and no read date; the read of run 9 missed it, and the check added after run 14 finds it (run 9 is
