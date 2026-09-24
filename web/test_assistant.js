@@ -283,7 +283,8 @@ const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ 
 ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
    rvAll.result.largest_max_loss_pct === 10 && rvAll.result.past_every_max_loss === true && rvAll.sources.length === 2 && rvAll.sources.every((x) => x.read_on.length)
    && psF.result.quantity === 0.369195 && /^fee 0\.04% per side/.test(psF.sources[0].rule) && /firm rules listed/.test(psF.tier)
-   && !M({ calc: "recovery", drawdown_pct: 20 }).sources && /no firm rule used/.test(M({ calc: "recovery", drawdown_pct: 20 }).tier), [rvAll, psF]);
+   && M({ calc: "recovery", drawdown_pct: 20 }).result.largest_max_loss_pct === 10 && M({ calc: "recovery", drawdown_pct: 20 }).sources.length === 2
+   && !M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 }).sources, [rvAll, psF]);   // run 6: recovery sits beside the largest maximum loss by default
 const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
 ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, not the quantity", ps2.result.quantity === ps10.result.quantity
    && Math.abs(ps2.result.margin - ps2.result.notional / 2) < 0.01 && Math.abs(ps10.result.margin - ps10.result.notional / 10) < 0.01 && /same at any leverage/.test(ps2.note), [ps2, ps10]);
@@ -308,7 +309,7 @@ ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'S
      && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
    && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
 ok("candidate guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
-   /Never leave the example out/.test(candSys[0].text) && /gets its fee, reset time/.test(candSys[0].text) && /Never write a tool's parameters/.test(candSys[0].text)
+   /never leave it out/.test(candSys[0].text) && /no leverage above its 1:5 cap/.test(candSys[0].text) && /gets its fee, reset time/.test(candSys[0].text) && /Never write a tool's parameters/.test(candSys[0].text)
    && /Name no outside service/.test(candSys[0].text) && !/Name no outside service/.test(liveSys[0].text));
 ok("candidate guardrails: troid never trades; troid's own strategy out of sample first even in passing; every firm rule dated in any reply; intermediate values copied from the tool",
    /troid never trades/.test(candSys[0].text) && /even in passing/.test(candSys[0].text) && /\+0\.008R per trade on BTC \(504 trades\)/.test(candSys[0].text)
@@ -693,9 +694,9 @@ fake.listen(18765, async () => {
     ok("GET: the candidate is staged (files, guardrails, tools) and a key is set, never shown", gc.key === true && gc.staged.join() === "TROID.md,TROID-CHARACTER.md,support.md"
        && gc.guardrails === 8 && gc.tools.join() === "trade_math,firm_rules" && !resC.body.includes(CK), gc);
     let step = 0;
-    script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "recovery", drawdown_pct: 20 } }])
-      : msg("end_turn", [{ type: "text", text: "25%. Not financial advice. Verify with the firm before acting." }]));
-    r = await call(hc, [U("I'm down 20%. How much do I need to get back?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
+      : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));
+    r = await call(hc, [U("40% win rate, 1.5R wins, 1R losses: expectancy?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: a trade_math answer carries the tier for the numbers given, not a firm-rule tier", r.status === 200 && r.j.reply.includes(handler.EN["ask.tier.inputs"])
        && !r.j.reply.includes(handler.EN["ask.tier.derived"]) && r.j.tools_used.join() === "trade_math" && r.j.reply.endsWith(handler.EN["ask.note"]), r.j.reply);
     // the candidate's service changes, end to end

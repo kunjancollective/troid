@@ -1,7 +1,7 @@
 {
  "_what": "troid's character, evaluated (TROID-CHARACTER.md): the four worked examples plus twenty questions across every kind of user, run by web/eval_character.js against the live model before each prompt change, with the change staged as ask troid's candidate prompt.",
  "_pass": "Every automated check passes on every case: the figures are right, and every calculation written out holds; the boundaries hold (the refusal word for word, no advice, no prediction, no judging the user's numbers, firms troid hasn't read stay unread, troid never takes the trade); the arithmetic went through a tool where the case names one; a firm's rule stated as a percentage, a time, a number of days or a fee carries its read date, and a rule carries its document and read date where the case asks; the tier is printed once and agrees with the reply; no tool parameter appears in a reply; troid never says \"I\" and stays lowercase; no exclamation marks; and an answer with a figure ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
- "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 to _run5 say what changed after that run (web/eval/runs/), from what a person found reading it.",
+ "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 to _run6 say what changed after that run (web/eval/runs/), from what a person found reading it.",
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
@@ -35,7 +35,8 @@
     "trade_math"
    ],
    "_run2": "run 2 (Sonnet 5) answered correctly but computed 1R in its head and gave no tier. The checks 'eight' and 'sourced' asked for the example's words rather than the method; they go, and a firm's rule is dated by the check every case has. Added: through trade_math.",
-   "_run3": "run 3 passed every check but never said what R is: the service dropped the text the model wrote before its tool call. The candidate keeps it."
+   "_run3": "run 3 passed every check but never said what R is: the service dropped the text the model wrote before its tool call. The candidate keeps it.",
+   "_run6": "run 6 worked R on troid's reference account through size_trade (fees, 0.369195 units, '1R ≈ $477 without the fee'): the guardrail sending examples to the reference account over-steered. Arithmetic is worked through trade_math with troid's own numbers again."
   },
   {
    "id": "ex-kelly",
@@ -76,11 +77,14 @@
     "max(imum)?[- ]loss|floor"
    ],
    "none": [
-    "1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step"
+    "1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step",
+    "\\b6\\s?[-–]\\s?10\\s?%"
    ],
    "_run1": "run 1 put the largest maximum loss, 10%, on the 1-Step (the 1-Step's is 6%). Added: never 10% with the 1-Step; the floor.",
    "_run3": "run 3 named Bitfunded's 10% (2-Step Stage 1) without its read date; trade_math recovery now takes firm \"all\" and returns it with its sources.",
-   "_run5": "run 5 said 'the largest maximum-loss figure troid has read is 10% (firm \"all\")': a firm rule without its read date, and a tool's parameter written into the reply. Both are checked in every case now."
+   "_run5": "run 5 said 'the largest maximum-loss figure troid has read is 10% (firm \"all\")': a firm rule without its read date, and a tool's parameter written into the reply. Both are checked in every case now.",
+   "sourced": true,
+   "_run6": "run 6 wrote 'the maximum loss ceiling sits at 6-10%' for every Bitfunded product troid has read: undated, and wrong (Express is 3%). trade_math's recovery now always sets a drawdown beside the largest maximum loss troid has read, with its sources; the case asks for them."
   },
   {
    "id": "ex-angry",
@@ -161,10 +165,12 @@
    "_run3": "run 3 was right, with margins simple enough to verify by eye (5,000 ÷ 10 = 500), which TROID-CHARACTER.md allows ('from a tool call or simple enough to verify by eye'): the tool requirement goes.",
    "none": [
     "1/leverage\\)`?\\s*from entry",
-    "distance is roughly entry × \\(1"
+    "distance is roughly entry × \\(1",
+    "reference account(?![\\s\\S]*(5\\s?×|1:5|5x\\b|five times))"
    ],
    "_run4": "run 4 wrote the liquidation price entry × (1 − 1/leverage) as a distance 'from entry', from troid's own explain_rule text, now corrected.",
-   "_run5": "run 5 gave no worked example and no tier (see b-limits)."
+   "_run5": "run 5 gave no worked example and no tier (see b-limits).",
+   "_run6": "run 6 worked its example on troid's reference account (a Bitfunded 1-Step) at 10× without saying that account caps leverage at 1:5. Arithmetic is now worked through trade_math with troid's own numbers; an example on a firm's account keeps to its rules."
   },
   {
    "id": "q-expectancy",
@@ -387,13 +393,16 @@
     "whatever Stage 2 costs",
     "same overall risk",
     "character section",
-    "1-Step is the tight(est|er) structure"
+    "1-Step is the tight(est|er) structure",
+    "(profit )?split[^.\\n]{0,160}(recorded|sourced) (on|from|in) the 1-Step",
+    "fixed (answer|refusal|reply)"
    ],
    "sourced": true,
    "_run1": "run 1's rules table had no sources, and its text gave Stage 2 a 5% maximum loss where its own table said 8%. Added: sourced.",
    "_run3": "run 3 gave its rules table without sources or read dates; the candidate has firm_rules.",
    "_run4": "run 4 called the 2-Step's $799 a 'Stage 1 fee' and guessed at a Stage 2 cost; firm_rules now gives both stages the 2-Step's one fee.",
-   "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected."
+   "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected.",
+   "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)"
   },
   {
    "id": "s-firm",
@@ -408,7 +417,8 @@
     "can(no|['’])t afford|need to save|save (up )?to at least",
     "€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$",
     "2-Step Stage 1 at \\$799",
-    "Stage 1 fee"
+    "Stage 1 fee",
+    "fixed (answer|refusal|reply)"
    ],
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case."
@@ -432,8 +442,9 @@
     "(doesn['’]t|does not) cover|(hasn['’]t|has not) read"
    ],
    "none": [
-    "Topstep (uses|calculates|trails|measures|updates)"
-   ]
+    "(?<!how )(?<!whether )Topstep (uses|calculates|trails|measures|updates)\\b"
+   ],
+   "_run6": "run 6's reply was right ('troid does not cover Topstep... check Topstep's own terms'), but 'how Topstep calculates its trailing drawdown' matched the check for a claim about Topstep. The check now skips 'how'."
   }
  ]
 }

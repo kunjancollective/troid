@@ -135,7 +135,7 @@ function unquoted(t) {
     .replace(/"[^"\n]{0,400}"|“[^”\n]{0,400}”/g, " ").split("\n").filter((l) => !/^\s*>/.test(l)).join("\n");
 }
 function firstPerson(t) {
-  const u = unquoted(t), hits = [];
+  const u = unquoted(t).replace(/\bshould[- ]I\b/gi, "should-question"), hits = [];   // "a should-I question" names a kind of question (run 6)
   for (const re of [/\bI\b/g, /\bI['’](m|ve|ll|d)\b/g, /\b(me|my|mine|myself|we|us|our|ours|ourselves)\b/g, /\blet['’]s\b|\blet me\b/gi,
                     /(^|[.?]\s+|\n\s*)(My|We|Our|Us|Me)\b/g])
     for (const m of u.matchAll(re)) hits.push(m[0].trim());
