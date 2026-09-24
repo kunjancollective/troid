@@ -72,11 +72,11 @@ index.calc.cap_pct,Budget cap %,বাজেট ক্যাপ %,,
 index.calc.leverage,Leverage,লিভারেজ,,
 index.calc.mode,Margin mode,মার্জিন মোড,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","ফার্ম · বর্ণানুক্রমে · <span style=""text-transform:none"">troid</span> যত ফার্ম তালিকাভুক্ত করে তার সবগুলো, কোনো সীমা নেই",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-index.firms.why,"{firm} is the reference firm because troid verified it first and most completely, not because it ranks highest.
+index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
     Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
     firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
-    troid computes, you choose.","{firm} রেফারেন্স ফার্ম, কারণ troid এটিকে প্রথমে এবং সবচেয়ে পূর্ণাঙ্গভাবে যাচাই করেছে — র‍্যাঙ্কিংয়ে সবার ওপরে বলে নয়। troid তুলনা পাতার প্রতিটি নিয়মে ফার্মের ডকুমেন্ট ও troid যে তারিখে তা পড়েছে তা দেখানো থাকে, অথবা লেখা থাকে যে এর উৎস এখনো রেকর্ড করা হয়নি। এরপর কোন ফার্ম যাচাই হবে, তা propfirmmatch-এর রিভিউ র‍্যাঙ্কিং অনুসরণ করে; পাতাটিতে ফার্মের সংখ্যার কোনো সীমা নেই। troid যেসব ফার্মের তুলনা করে, সেগুলোর একটি স্বাধীন অ্যাফিলিয়েট; যেখানে কোড দেখানো আছে, সেখানে অ্যাফিলিয়েট লিংকে দাম কম, যেখানে নেই, সেখানে দাম একই। troid হিসাব করে, বেছে নেন আপনি।",,"CHECK FIRST: product.compare 'troid তুলনা': 'troid তুলনায়' would read as 'compared to troid', so every 'on troid's compare' is written 'troid তুলনা পাতায়', which adds the word 'page'. Check index.firms.why, index.js.pending_note, faq.money.p2, faq.worth.p2, faq.disc.affiliate.p, chat.is.p and data.3d74b6357262. | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+    troid computes, you choose.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.compare 'troid তুলনা': 'troid তুলনায়' would read as 'compared to troid', so every 'on troid's compare' is written 'troid তুলনা পাতায়', which adds the word 'page'. Check index.firms.why, index.js.pending_note, faq.money.p2, faq.worth.p2, faq.disc.affiliate.p, chat.is.p and data.3d74b6357262. | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 index.firms.reference,reference,রেফারেন্স,,
 index.firms.rank,#{n} by reviews,রিভিউয়ে #{n},,keep {n} exactly as written
 index.firms.filled,{n} of {total} rules filled · {m} sourced,{total}টি নিয়মের {n}টি পূরণ · {m}টির উৎস আছে,,keep {m} {n} {total} exactly as written
@@ -89,9 +89,11 @@ index.firms.promos,their promos apply here,তাদের প্রোমো �
 index.stats.failures.n,~70%,~70%,,keep every number exactly
 index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
     report failures trace to size, not strategy selection.","প্রপ-ফার্ম ব্যর্থতা ঘটে লস লিমিট ভাঙার কারণে, বেশিরভাগই প্রথম সপ্তাহের মধ্যে। ফার্মগুলো জানায়, ব্যর্থতার মূলে থাকে সাইজ, স্ট্র্যাটেজি বাছাই নয়।",,
+index.stats.failures.prov,SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.stats.blowup.n,68%,68%,,keep every number exactly
 index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
     with no cap on remaining budget. Under a cap, zero.","অ্যাকাউন্ট এক বছরের মধ্যে ব্লো-আপ হয়, প্রফেশনাল মানের +0.35R এজে, অবশিষ্ট বাজেটের ওপর কোনো ক্যাপ ছাড়া 1% ঝুঁকি নিলে। ক্যাপ থাকলে, শূন্য।",,keep every number exactly
+index.stats.blowup.prov,"MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
     daily. That is {gap} from the start — half of one bad day.","{quota} {product} অ্যাকাউন্টে, এই ইকুইটির নিচে {daily}% দৈনিক সীমার বদলে {max}% স্ট্যাটিক ফ্লোর কার্যকর হয়। শুরু থেকে এটি {gap} দূরে — একটি খারাপ দিনের অর্ধেক।",,keep {daily} {gap} {max} {product} {quota} exactly as written
 index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
@@ -106,8 +108,8 @@ index.does.h2,What troid does,troid কী করে,,"troid stays lowercase, in
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
   0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
   5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
+  every asset the firm lists.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 index.doesnt.h2,What it doesn't,যা করে না,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,ট্রেড সিগন্যাল প্রকাশ করে না। অর্ডার দেয় না। আপনার লগইন তথ্যে হাত দেয় না। আপনার কাছে কোনো স্ট্র্যাটেজি বিক্রি করে না।,,"CHECK FIRST: index.doesnt.p: each item is written as its own negation ('…প্রকাশ করে না। অর্ডার দেয় না।…') rather than bare verbs under the heading 'যা করে না', so every item stays a negation when read alone. Confirm that this is acceptable."
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -254,10 +256,16 @@ index.js.s_tgt,tgt {price},টার্গেট {price},,keep {price} exactly a
 index.js.s_floor,floor {floor},ফ্লোর {floor},,keep {floor} exactly as written
 index.js.breakers,breakers,ব্রেকার,,
 compare.meta.title,troid's compare,troid তুলনা,,"troid stays lowercase, in Latin letters"
+compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.hero.h1,"Three firms, your numbers.","তিনটি ফার্ম, আপনার সংখ্যা।",,
 compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.","আপনার সাইজিং একবার দিন। প্রতিটি কলাম দেখায়, সেই ফার্মের নিয়মে ওই সাইজিংয়ের খরচ কত। প্রতিটি ঘরে ফার্মের ডকুমেন্ট ও troid যে তারিখে তা পড়েছে তা দেখানো থাকে, অথবা লেখা থাকে <em>পেন্ডিং</em>, অথবা জানানো থাকে যে এর উৎস এখনো রেকর্ড করা হয়নি। কোনো কিছুকে স্কোর দেওয়া হয় না।",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},বর্ণানুক্রমে · একটি রেফারেন্স ফার্ম + বাইরের র‍্যাঙ্কিং অনুযায়ী দুটি · পর্যালোচনা {date},,keep {date} exactly as written
+compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
+compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
+compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
 compare.sizing.h,Your sizing,আপনার সাইজিং,,
 compare.sizing.quota,Quota,কোটা,,
 compare.sizing.risk,Risk % per trade,প্রতি ট্রেডে ঝুঁকি %,,
@@ -346,6 +354,8 @@ compare.js.foot_held,"Link held until daily, max, target and price each have a r
 compare.js.foot_open_1,open: {n} question — {first},অমীমাংসিত: {n}টি প্রশ্ন — {first},,keep {first} {n} exactly as written
 compare.js.foot_open_n,open: {n} questions — {first} …,অমীমাংসিত: {n}টি প্রশ্ন — {first} …,,keep {first} {n} exactly as written
 ledger.meta.title,troid's ledger,troid লেজার,,"troid stays lowercase, in Latin letters"
+ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.","শ্যাডো অ্যাকাউন্ট। প্রতিটি বন্ধ ট্রেড, কোনো সম্পাদনা ছাড়া, লসের ট্রেডসহ। এটি কোনো অর্ডার দেয় না — দিলে দিত একজন মানুষ।",,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar","{asof} UTC অনুযায়ী · {market} · {profile} নিয়ম · ক্রস 5x · প্রতি 4h-এ রিপ্লে, বার শেষ হওয়ার 20 মিনিট পর",,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,শেষ বার,,
@@ -439,6 +449,8 @@ ledger entry, not a claim. Read it that way.","এক সপ্তাহের �
 ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.","বার api.binance.us থেকে, শুরু থেকে শেষ পর্যন্ত একটিই ফিড; ⚑ এমন ট্রেড চিহ্নিত করে, যা একটি ফরোয়ার্ড-ফিল্ড বারের মধ্য দিয়ে ধরে রাখা হয়েছিল।",,
 ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">রিপোজিটরিতে journal.csv</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.meta.title,troid's research — strategy review,troid গবেষণা — স্ট্র্যাটেজি পর্যালোচনা,,"troid stays lowercase, in Latin letters"
+dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
 dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","troid গবেষণা · স্ট্র্যাটেজি পর্যালোচনা · <a href=""{L}/tearsheet"">টিয়ারশিট</a> · <a href=""/METHODOLOGY.md"">পদ্ধতি</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.hero.h1,Strategy review,স্ট্র্যাটেজি পর্যালোচনা,,
 dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed","Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · ক্রস-রেফারেন্স 21 সেপ্টেম্বর 2026 অনুযায়ী · বার api.binance.us থেকে, একটিই ফিড",,keep every number exactly
@@ -544,7 +556,7 @@ dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
   system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
-  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.","বাজেট ক্যাপ রক্ষণশীলতা নয় — এটিই একমাত্র জিনিস, যা অ্যাকাউন্টকে টিকে থাকার মতো করে। <strong>+0.35R</strong>-এ, অর্থাৎ সত্যিই চমৎকার একটি সিস্টেমে, 1%-এ নেইভ সাইজিং এক বছরের মধ্যে <strong>68%</strong> ক্ষেত্রে অ্যাকাউন্ট ব্লো-আপ করে, আর 2%-এ তা 98%। ক্যাপের অধীনে ওই প্রতিটি ঘরই 0.0%।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.change.h2,What would change the verdict,যা রায় বদলাতে পারে,,
 dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
       parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
@@ -572,6 +584,8 @@ dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.bi
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","স্যাম্পলের সংখ্যাগুলো 1,539টি 4h বার থেকে, 8 জানুয়ারি – 21 সেপ্টেম্বর 2026, api.binance.us — একটি অ্যাসেট, একটি রেজিম। হোল্ডআউট, 1 জানুয়ারি 2021 থেকে 7 জানুয়ারি 2026 (<code>backtest/WALKFORWARD.md</code>), BTC ও ETH-এ নয়েজের মধ্যেই এসেছে।",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 tearsheet.meta.title,troid's research — tearsheet,troid গবেষণা — টিয়ারশিট,,"troid stays lowercase, in Latin letters"
+tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
 tearsheet.head.eyebrow,troid's research · tearsheet,troid গবেষণা · টিয়ারশিট,,"troid stays lowercase, in Latin letters"
 tearsheet.head.box,A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.,"এমন একটি স্ট্র্যাটেজির পূর্ণ টিয়ারশিট, যার হোল্ডআউট এক্সপেক্টেন্সি +0.008R। নিচের প্রতিটি মেট্রিক MEASURED (পরিমাপিত) এবং নয়েজের মধ্যে। প্রকাশ করা হয়েছে, কারণ কেউ পুরোটা দেখালে নয়েজ দেখতে এমনই হয়।",,"CHECK FIRST: Tier labels now stay in English capitals with a Bengali gloss in parentheses: 'DERIVED (নির্ণীত)', 'SOURCED (উৎসভিত্তিক)', 'MODELLED (মডেলকৃত)', 'MEASURED (পরিমাপিত)' in index.crossover.prov, hypo.no_edge_tail, tearsheet.head.box and index.doesnt.verify (where the English has the tiers in lowercase; the Bengali uses the capital labels per STYLE.md, and the closing sentence reads 'MEASURED সংখ্যাকে…'). Please confirm the glosses. | keep every number exactly"
 tearsheet.head.sample,"{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.","{market}-এ {n}টি বন্ধ ট্রেড, {start} থেকে {end}। {quota} কোটার ওপর দৈনিক P&amp;L, যেদিন কোনো এক্সিট নেই সেদিন শূন্য ধরা হয়, বছরে 365টি পিরিয়ড, যোগফল, গুণফল নয়। উৎস: রিপোজিটরির journal.csv। আর্থিক পরামর্শ নয়।",,keep {end} {market} {n} {quota} {start} exactly as written; keep every number exactly
@@ -579,6 +593,8 @@ tearsheet.empty,No closed trades yet.,এখনো কোনো বন্ধ ট
 tearsheet.stub.english,"The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=""/tearsheet"">the full tearsheet</a>.","মূল রিপোর্ট — প্রতিটি মেট্রিক, টেবিল ও চার্ট — quantstats ইংরেজিতে তৈরি করে, এবং সেটি অনুবাদ ছাড়াই একবার প্রকাশিত হয়: <a href=""/tearsheet"">পূর্ণ টিয়ারশিট</a>।",,keep the <…> tags and links as they are; translate only the words
 chat.meta.title,ask troid,আস্ক troid,,"troid stays lowercase, in Latin letters"
 chat.meta.description,"ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.","আস্ক troid। troid-এর নিয়ম-ডেটা, প্রতিটি নিয়মের উৎস ও পড়ার তারিখসহ; টুলের মাধ্যমে হিসাব; প্রতিটি সংখ্যা তার স্তরসহ। আর্থিক পরামর্শ নয়।",,"troid stays lowercase, in Latin letters"
+chat.og.title,ask troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.og.description,"troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.hero.h1,ask troid,আস্ক troid,,"troid stays lowercase, in Latin letters"
 chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic tools. It
   prices the trade you bring. It does not generate one.","আস্ক troid উত্তর দেয় troid-এর নিয়ম-ডেটা আর এর নিজস্ব হিসাবের টুল থেকে। আপনি যে ট্রেড নিয়ে আসেন, এটি সেটির হিসাব কষে। এটি নিজে কোনো ট্রেড তৈরি করে না।",,"troid stays lowercase, in Latin letters"
@@ -626,6 +642,8 @@ chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in
 chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 faq.meta.title,troid — what the numbers actually say,troid — সংখ্যাগুলো আসলে কী বলে,,"troid stays lowercase, in Latin letters"
+faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
 faq.hero.h1,What the numbers actually say,সংখ্যাগুলো আসলে কী বলে,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","বেস রেট, নিয়মের কার্যপ্রণালী এবং troid-এর নিজস্ব স্বার্থের সংঘাত — যেসব বিষয় একটি ল্যান্ডিং পেজ বাদ দিয়ে যায়।",,"troid stays lowercase, in Latin letters"
 faq.hero.updated,Last updated 23 September 2026,সর্বশেষ হালনাগাদ 23 সেপ্টেম্বর 2026,,keep every number exactly
@@ -651,6 +669,7 @@ faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace b
 <strong>size</strong>, not to strategy selection. People do not blow accounts because
 their entries are bad. They blow them because one position was too large on a day that
 went wrong.","একটি ফার্মের নিজস্ব সারসংক্ষেপে বিষয়টি স্পষ্ট করে বলা আছে: প্রায় সব ব্যর্থতার মূলে <strong>সাইজ</strong>, স্ট্র্যাটেজি বাছাই নয়। মানুষ খারাপ এন্ট্রির কারণে অ্যাকাউন্ট ব্লো-আপ করে না। তারা ব্লো-আপ করে, কারণ খারাপ যাওয়া কোনো একদিন একটি পজিশন অতিরিক্ত বড় ছিল।",,keep the <…> tags and links as they are; translate only the words
+faq.fail.src,SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.offer.q,Then what is troid actually offering?,তাহলে troid আসলে কী দিচ্ছে?,,"troid stays lowercase, in Latin letters"
 faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
 a firm's loss ceilings at once, net of fees, and tells you which one is actually
@@ -686,11 +705,12 @@ What it can show you is what the arithmetic does to the wrong one.","সঠি�
 faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
 most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
 trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
-2%, <span class=""stat"">98%</span>. Capping each trade at a fraction of the
+2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
-0%.","troid সত্যিই চমৎকার এজওয়ালা একজন ট্রেডারকে সিমুলেট করেছে — প্রতি ট্রেডে +0.35R, যা বেশিরভাগ পেশাদার ধরে রাখতে পারেন তার চেয়েও ভালো। অবশিষ্ট বাজেটের ওপর কোনো ক্যাপ ছাড়া প্রতি ট্রেডে 1% ঝুঁকি নিয়ে, সেই ট্রেডার বারো মাসের মধ্যে <span class=""stat"">68%</span> ক্ষেত্রে অ্যাকাউন্ট ব্লো-আপ করেছেন। 2%-এ, <span class=""stat"">98%</span>। ব্যালান্সের নির্দিষ্ট একটি অংশের বদলে <em>অবশিষ্ট</em> বাজেটের একটি ভগ্নাংশে প্রতিটি ট্রেড ক্যাপ করায় এগুলোর সবই 0%-এ নেমে এসেছে।",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+0%.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
 whether you survive long enough to use it.","সত্যিকারের এজ একা যথেষ্ট নয়। 4%/6% নিয়মে, এজটি কাজে লাগানোর মতো যথেষ্ট সময় আপনি টিকে থাকবেন কি না, তা ঠিক করে পজিশন সাইজিং।",,keep every number exactly
+faq.risk.src,"MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fees.q,Do fees matter?,ফি কি গুরুত্বপূর্ণ?,,
 faq.fees.p1,"More than most people model. Bitfunded charges 0.04% of position size on entry and
 again on exit, calculated on notional — which at 5× leverage is five times your margin.","বেশিরভাগ মানুষ হিসাবে যতটা ধরে, তার চেয়ে বেশি। Bitfunded এন্ট্রিতে পজিশন সাইজের 0.04% নেয় এবং এক্সিটে আবার নেয়, নোশনালের ওপর হিসাব করে — যা 5× লিভারেজে আপনার মার্জিনের পাঁচ গুণ।",,keep every number exactly
@@ -791,6 +811,8 @@ faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by
 responsibility to confirm you are eligible to participate where you live.","প্রপ ফার্মের সেবার প্রাপ্যতা ও বৈধতা দেশভেদে ভিন্ন। আপনি যেখানে থাকেন, সেখানে অংশ নেওয়ার যোগ্যতা আপনার আছে কি না, তা নিশ্চিত করার দায়িত্ব আপনার।",,
 terms.meta.title,troid — terms of use,troid — ব্যবহারের শর্তাবলি,,"troid stays lowercase, in Latin letters"
 terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.","troid-এর ব্যবহারের শর্তাবলি: একটি বিনামূল্যের তথ্যভিত্তিক টুল, পরামর্শ নয়। ট্রেড করার আগে প্রতিটি সংখ্যা ফার্মের সাথে যাচাই করুন।",,"troid stays lowercase, in Latin letters"
+terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.hero.eyebrow,troid · terms,troid · শর্তাবলি,,"troid stays lowercase, in Latin letters"
 terms.hero.h1,Terms of use,ব্যবহারের শর্তাবলি,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
@@ -821,56 +843,94 @@ ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in
 ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
+data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
+data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.0d92e8c53788,Minimum trading days,,,text from a firm's rules (firms.json)
+data.14d0db894172,"both, and picks neither",,,text from a firm's rules (firms.json)
 data.173bc3120e68,discretionary,ফার্মের বিবেচনাধীন,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.1a4637763178,Express profit target,,,text from a firm's rules (firms.json)
+data.1d3053d3ee7e,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing comes from verification, not directory rank.",,,text from a firm's rules (firms.json); keep every number exactly
 data.1d95103da2c3,Rules go on this page only after they're read from BrightFunded's own documents.,BrightFunded-এর নিজস্ব ডকুমেন্ট থেকে পড়ার পরই কেবল নিয়মগুলো এই পাতায় যোগ হয়।,,text from a firm's rules (firms.json)
+data.1f61f2d86a2b,3%,,,text from a firm's rules (firms.json); keep every number exactly
 data.1f7a32c047e8,none if the evaluation is not completed,মূল্যায়ন সম্পন্ন না হলে নেই,,text from a firm's rules (firms.json)
 data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,23:30–23:59 CET রোলওভার = 21:30 UTC (CEST) / 22:30 UTC (CET); ফার্ম এই সময়ে ট্রেড না করার পরামর্শ দেয়,,text from a firm's rules (firms.json); keep every number exactly
 data.254f81f3de77,up to 90% (add-on); base unconfirmed,সর্বোচ্চ 90% (অ্যাড-অন); বেস নিশ্চিত নয়,,text from a firm's rules (firms.json); keep every number exactly
 data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,Bitfunded নিজস্ব প্রোমো চালায় (একটি কিনলে একটি ফ্রি ও এ ধরনের) এবং সেগুলো এই লিংকেও প্রযোজ্য — কোনো কোড লাগে না।,,text from a firm's rules (firms.json)
+data.32470a1f372d,a blog post of May 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
+data.3a3e0ad3ccb5,"up to $599 for $100,000",,,text from a firm's rules (firms.json); keep every number exactly
 data.3ce26c9516b7,none stated,কিছু উল্লেখ নেই,,text from a firm's rules (firms.json)
 data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,যেখানে troid লেজার চলে। প্রতিটি নিয়মের উৎস ও পড়ার তারিখ troid তুলনা পাতায় আছে।,,"CHECK FIRST: product.compare 'troid তুলনা': 'troid তুলনায়' would read as 'compared to troid', so every 'on troid's compare' is written 'troid তুলনা পাতায়', which adds the word 'page'. Check index.firms.why, index.js.pending_note, faq.money.p2, faq.worth.p2, faq.disc.affiliate.p, chat.is.p and data.3d74b6357262. | text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.443b076a4761,"help centre, Restricted Trading Practices s.1",,,text from a firm's rules (firms.json); keep every number exactly
+data.44652ad36760,9%,,,text from a firm's rules (firms.json); keep every number exactly
 data.44fadd8eb267,80% → 90%,80% → 90%,,text from a firm's rules (firms.json); keep every number exactly
 data.45c9dde99668,day-start balance,দিনের শুরুর ব্যালান্স,,text from a firm's rules (firms.json)
-data.4f6eab8d3b65,"A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.","কোনো ফার্মের লিংক তখনই দেখায়, যখন তার এন্ট্রিতে link_live true থাকে এবং একইসঙ্গে তার দৈনিক, ম্যাক্স, টার্গেট ও দাম — প্রতিটি ঘরের রেকর্ড করা উৎস থাকে: ফার্মের ডকুমেন্ট, অনুচ্ছেদ, এবং troid যে তারিখে তা পড়েছে। ততক্ষণ পর্যন্ত লিংকটি স্থগিত থাকে, অ্যাফিলিয়েট চুক্তি যা-ই অনুমতি দিক। অ্যাফিলিয়েট চুক্তি থাকলে এবং লিংক দেওয়ার শর্ত পূরণ হলে একজন মানুষ link_live সেট করেন। অন্য ঘরগুলো আলাদাভাবে 'পেন্ডিং' দেখায়। যুক্তরাষ্ট্রে প্রাপ্যতা সবসময় আলাদা সারিতে দেখানো হয়।",,"CHECK FIRST: data.4f6eab8d3b65: the emphasised 'AND' is rendered 'এবং একইসঙ্গে'. data.7e554e7062d1 keeps the firm's quoted term 'reverse trading' in English. data.ed4867d9ff50 and faq.disc.eval.p2 keep firm document names in English in parentheses ('শর্তাবলি (Terms and Conditions)', 'ব্যবহারের শর্তাবলি (Terms of Use)'), following the STYLE rule on source names. | CHECK FIRST: 'US' is rendered 'যুক্তরাষ্ট্র' throughout (compare.js.lab_us_available, row_us, data.d7752ffdd846, data.66f1cdf92813, data.4f6eab8d3b65). Check whether a compact column label should keep 'US'. | text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4622b5f5c4b4,5: the help centre is newer and stricter,,,text from a firm's rules (firms.json); keep every number exactly
+data.4d29d0f9361d,"A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4de966a2be8a,Open positions,,,text from a firm's rules (firms.json)
+data.4eddb3859ab9,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",,,"text from a firm's rules (firms.json); keep {conflicts} exactly as written; troid stays lowercase, in Latin letters"
 data.5129c48719a9,5-min restriction,5 মিনিটের নিষেধাজ্ঞা,,text from a firm's rules (firms.json); keep every number exactly
 data.56d9a0cd140e,Funded · after 1-Step,Funded · 1-Step-এর পরে,,text from a firm's rules (firms.json); keep every number exactly
 data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,ক্রিপ্টো কমিশন 0.012%/সাইড - brightfunded.com/trading-instruments-এ যাচাই করুন,,text from a firm's rules (firms.json); keep every number exactly
+data.5bc39b578c6e,Maximum hold,,,text from a firm's rules (firms.json)
 data.601c3530e85e,trailing → static at initial after +6%,ট্রেইলিং → +6%-এর পর প্রাথমিক ব্যালান্সে স্ট্যাটিক,,text from a firm's rules (firms.json); keep every number exactly
+data.62603a2168cf,5: the contract governs,,,text from a firm's rules (firms.json); keep every number exactly
+data.633b319f6929,"$999, from the Terms and the help centre; the $599 is unexplained",,,text from a firm's rules (firms.json); keep every number exactly
 data.64d2206416ad,$10k / day and / trade,$10k / দিন এবং / ট্রেড,,text from a firm's rules (firms.json); keep every number exactly
 data.65de6a9cbafc,$999,$999,,text from a firm's rules (firms.json); keep every number exactly
 data.66f1cdf92813,MT5 barred to US residents; Match-Trader access not yet sourced,MT5 যুক্তরাষ্ট্রের বাসিন্দাদের জন্য নিষিদ্ধ; Match-Trader অ্যাক্সেসের উৎস এখনো পাওয়া যায়নি,,"CHECK FIRST: 'US' is rendered 'যুক্তরাষ্ট্র' throughout (compare.js.lab_us_available, row_us, data.d7752ffdd846, data.66f1cdf92813, data.4f6eab8d3b65). Check whether a compact column label should keep 'US'. | text from a firm's rules (firms.json); keep every number exactly"
 data.71f8e7976e4c,none,নেই,,text from a firm's rules (firms.json)
+data.72b94cc8ae98,Terms of Use 14(d)(x),,,text from a firm's rules (firms.json); keep every number exactly
 data.788bd94c8a8e,"trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%","ট্রেইলিং, ইকুইটির হাই-ওয়াটার মার্কের ওপর রিয়েল-টাইমে (REAL-TIME; ফ্লোটিংও গোনা হয়), +6%-এর পর প্রাথমিক ব্যালান্সে স্ট্যাটিক হয়ে লক হয়",,text from a firm's rules (firms.json); keep every number exactly
+data.78cb8f3d2113,"$999, with the 2-Step Expert at $799",,,text from a firm's rules (firms.json); keep every number exactly
 data.78fc80eb213f,10d / 7d / 5d,10 দিন / 7 দিন / 5 দিন,,text from a firm's rules (firms.json); keep every number exactly
+data.7a6b6437c611,Terms of Use 9(a),,,text from a firm's rules (firms.json); keep every number exactly
+data.7aa03b4e9079,"help centre, Challenge & Trader Stage",,,text from a firm's rules (firms.json)
 data.7b921a3bc2ed,"Conflicting: Terms 9(a) — 100% at first profit split day, all levels. Help centre — 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.","পরস্পরবিরোধী: Terms 9(a) — প্রথম প্রফিট স্প্লিটের দিনে 100%, সব লেভেলে। হেল্প সেন্টার — কেবল 2-Step-এ, 3য় উইথড্রয়ালের সঙ্গে, প্রোমোশনে নয়। রিফান্ডের ওপর নির্ভর করার আগে Bitfunded-এর কাছ থেকে নিশ্চিত হয়ে নিন।",,"CHECK FIRST: data.7b921a3bc2ed (refund conflict): 'Conflicting' is rendered 'পরস্পরবিরোধী:' and the instruction as 'রিফান্ডের ওপর নির্ভর করার আগে Bitfunded-এর কাছ থেকে নিশ্চিত হয়ে নিন' (confirm with Bitfunded before relying on a refund). Both sides are kept. The reviewer should confirm it reads as a conflict to check, not as a refund promise. '3rd withdrawal' is written '3য় উইথড্রয়াল': a Latin digit with a Bengali ordinal suffix. | text from a firm's rules (firms.json); keep every number exactly"
 data.7bf372bece8d,initial balance,প্রাথমিক ব্যালান্স,,text from a firm's rules (firms.json)
 data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,'reverse trading' (7.1 xiv) মানে কি স্টপ-অ্যান্ড-রিভার্স? এই প্রশ্নের কারণে সেখানে shadow-1 চালানো আটকে আছে।,,"CHECK FIRST: data.4f6eab8d3b65: the emphasised 'AND' is rendered 'এবং একইসঙ্গে'. data.7e554e7062d1 keeps the firm's quoted term 'reverse trading' in English. data.ed4867d9ff50 and faq.disc.eval.p2 keep firm document names in English in parentheses ('শর্তাবলি (Terms and Conditions)', 'ব্যবহারের শর্তাবলি (Terms of Use)'), following the STYLE rule on source names. | text from a firm's rules (firms.json); keep every number exactly"
-data.7f8cd7953b97,"One reference firm — Bitfunded, verified first and most completely — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.","একটি রেফারেন্স ফার্ম — Bitfunded, যা প্রথমে এবং সবচেয়ে পূর্ণাঙ্গভাবে যাচাই করা — এবং এরপর propfirmmatch.com/crypto-তে যাচাইকৃত রিভিউয়ের সংখ্যা অনুযায়ী পরের ফার্মগুলো। এটি একটি বাহ্যিক, সর্বজনীন র‍্যাঙ্কিং, যার পদ্ধতি তার অ্যাফিলিয়েট মডেল প্রকাশ করে এবং জানায় যে র‍্যাঙ্কিং কেনা যায় না; এর নিজেরই উল্লেখ করা সীমাবদ্ধতা হলো, বেশি রিভিউ মানেই স্বয়ংক্রিয়ভাবে ভালো নয়। বর্ণানুক্রমে, কোনো সীমা নেই। কোনো ফার্মের অ্যাফিলিয়েট শর্ত তুলনার অনুমতি দিলে তবেই সেটি তালিকাভুক্ত হয়। প্রতিটি নিয়মে ফার্মের ডকুমেন্ট ও troid যে তারিখে তা পড়েছে তা দেখানো থাকে, অথবা লেখা থাকে যে এর উৎস এখনো রেকর্ড করা হয়নি, অথবা troid-এর কাছে কোনো মান না থাকলে পেন্ডিং দেখায়।",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.853ca806d6d6,blog of 28 August 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4% / 6% স্ট্যাটিক · 2-Step 5% / 10%,,text from a firm's rules (firms.json); keep every number exactly
 data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
+data.8b9e2967d124,Expert $799,,,text from a firm's rules (firms.json); keep every number exactly
+data.94934cc00dcb,none for the 2-Step,,,text from a firm's rules (firms.json); keep every number exactly
+data.a0c0cbd0c834,"help centre, Challenge Type, One Step Evaluation table",,,text from a firm's rules (firms.json)
 data.a199f4153a08,Funded · after Express,Funded · Express-এর পরে,,text from a firm's rules (firms.json)
 data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
 data.a381562afa0e,static,স্ট্যাটিক,,text from a firm's rules (firms.json)
 data.a608ee8e8ce6,Funded · after 2-Step,Funded · 2-Step-এর পরে,,text from a firm's rules (firms.json); keep every number exactly
+data.ac3478d69a3c,5,,,text from a firm's rules (firms.json); keep every number exactly
+data.ac5ceff091ef,none shown ('-'),,,text from a firm's rules (firms.json)
 data.ae10eab9c3d7,Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b).,Bitfunded-এর Terms-এ বাদ-পড়া কোনো দেশের তালিকা নেই; Terms অনুযায়ী আপনাকে নিজের দেশের আইন মেনে চলতে হবে (4b)।,,CHECK FIRST: data.ae10eab9c3d7 (country note): 'Bitfunded-এর Terms-এ বাদ-পড়া কোনো দেশের তালিকা নেই; Terms অনুযায়ী আপনাকে নিজের দেশের আইন মেনে চলতে হবে (4b)।' The reviewer should check it cannot be read as 'available everywhere'. 'বাদ-পড়া' follows common.avail.not_excluded. | text from a firm's rules (firms.json); keep every number exactly
+data.aff56c00d8d2,"One reference firm — Bitfunded, verified first — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.b028e9aa495b,the tiers: the help centre is newer and stricter,,,text from a firm's rules (firms.json)
+data.b187ddbf98f5,"help centre, Restricted Trading Practices s.3",,,text from a firm's rules (firms.json); keep every number exactly
+data.b1d5781111d8,10,,,text from a firm's rules (firms.json); keep every number exactly
 data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
+data.b318f061ccfb,Terms of Use 9(a) and 9(b),,,text from a firm's rules (firms.json); keep every number exactly
 data.c07565a92bfd,paid add-on only,কেবল পেইড অ্যাড-অন হিসেবে,,text from a firm's rules (firms.json)
-data.c2eea93a2517,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.","Bitfunded propfirmmatch-এর ক্রিপ্টো ডিরেক্টরিতে তালিকাভুক্ত নয় (যাচাই: 2026-09-21)। রেফারেন্স-ফার্মের অবস্থান যাচাইয়ের গভীরতার বিষয়, ডিরেক্টরির র‍্যাঙ্কের নয়।",,text from a firm's rules (firms.json); keep every number exactly
+data.c1f8219caf61,a blog post of September 2025,,,text from a firm's rules (firms.json); keep every number exactly
 data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
-data.cbbffba007fb,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.","Bitfunded রেফারেন্স ফার্ম, শীর্ষ র‍্যাঙ্কের ফার্ম নয়। এটি সেই ফার্ম, যাকে troid প্রাথমিক ডকুমেন্ট থেকে প্রথমে এবং সবচেয়ে পূর্ণাঙ্গভাবে যাচাই করেছে, যেখানে Terms ও হেল্প সেন্টারের মধ্যে দুটি বৈপরীত্য পাওয়া গেছে এবং নিষ্পত্তি করা হয়েছে, এবং যেখানে troid লেজার চলে। সেই যাচাইই troid-এর প্রোডাক্ট। প্রতিটি নিয়মের উৎস ও পড়ার তারিখ তার পাশে দেখানো থাকে, আর যে নিয়মের উৎস রেকর্ড করা নেই, সেখানে তা বলা থাকে। অন্য কোনো ফার্ম একই গভীরতায় যাচাই হলে সেটিও একই অবস্থান পায়।",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
 data.cc9922ebfa08,€497 (€347.90 promo),€497 (প্রোমোতে €347.90),,text from a firm's rules (firms.json); keep every number exactly
 data.cd51088f5851,16:00–16:10,16:00–16:10,,text from a firm's rules (firms.json); keep every number exactly
 data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.","যেখানে কোড দেখানো আছে, সেখানে অ্যাফিলিয়েট লিংকে দাম কম; যেখানে নেই, সেখানে দাম একই। কমিশনের কাঠামো ভিন্ন ভিন্ন। troid হিসাব করে; বেছে নেন আপনি।",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.cfb7b53e61ea,a flat 10 calendar days,,,text from a firm's rules (firms.json); keep every number exactly
+data.d1cb4218cd2f,"help centre, Challenge & Trader Stage, One Step Express table",,,text from a firm's rules (firms.json)
+data.d2cd691e6d53,"5, for the 1-Step and both 2-Step stages",,,text from a firm's rules (firms.json); keep every number exactly
 data.d4978ed5cbab,none (40% on Break),নেই (Break-এ 40%),,text from a firm's rules (firms.json); keep every number exactly
 data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","নির্দিষ্ট অঙ্ক = মূল (ORIGINAL) সাইজের 3%; ফ্লোর = রোলওভারে max(ব্যালান্স, ইকুইটি) − ওই অঙ্ক",,text from a firm's rules (firms.json); keep every number exactly
 data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 যুক্তরাষ্ট্রের জন্য নিষিদ্ধ; যুক্তরাষ্ট্রের জন্য ক্রিপ্টো প্ল্যাটফর্ম নিশ্চিত নয়,,"CHECK FIRST: 'US' is rendered 'যুক্তরাষ্ট্র' throughout (compare.js.lab_us_available, row_us, data.d7752ffdd846, data.66f1cdf92813, data.4f6eab8d3b65). Check whether a compact column label should keep 'US'. | text from a firm's rules (firms.json); keep every number exactly"
+data.db70dd511d6f,"Terms of Use 14(d)(xi), revision of 24 March 2026",,,text from a firm's rules (firms.json); keep every number exactly
+data.e17c8ad0dc2e,Refund,,,text from a firm's rules (firms.json)
 data.e49a4a29c821,none on 1-Phase,1-Phase-এ নেই,,text from a firm's rules (firms.json); keep every number exactly
 data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
+data.e84af9e146a4,"Price of the $100,000 1-Step",,,text from a firm's rules (firms.json); keep every number exactly
 data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
 data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
 data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.",এর শর্তাবলি (Terms and Conditions) অনুযায়ী Advanced অ্যাকাউন্টে ($50k+) সর্বোচ্চ 100× এবং Student ও Instant অ্যাকাউন্টে 5× লিভারেজ — ব্রেকার মডেল এটিকে ইনপুট হিসেবে নেয়।,,"CHECK FIRST: data.4f6eab8d3b65: the emphasised 'AND' is rendered 'এবং একইসঙ্গে'. data.7e554e7062d1 keeps the firm's quoted term 'reverse trading' in English. data.ed4867d9ff50 and faq.disc.eval.p2 keep firm document names in English in parentheses ('শর্তাবলি (Terms and Conditions)', 'ব্যবহারের শর্তাবলি (Terms of Use)'), following the STYLE rule on source names. | text from a firm's rules (firms.json); keep every number exactly"
 data.f15129262732,up to 90%,সর্বোচ্চ 90%,,text from a firm's rules (firms.json); keep every number exactly
+data.f844ade271f6,"a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases",,,text from a firm's rules (firms.json)
+data.fac9b2e683d7,"10 days for majors, 7 for other crypto, 5 for TradFi",,,text from a firm's rules (firms.json); keep every number exactly
 data.fb360f9c09ac,yes,হ্যাঁ,,text from a firm's rules (firms.json)

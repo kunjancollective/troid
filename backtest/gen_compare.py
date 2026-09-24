@@ -10,7 +10,8 @@ required_disclaimer. The generic text around those regions never names a firm.
 Every cell shows its value with its source and read date, 'source not yet recorded' where troid has a value
 but no source, or 'pending' where it has no value. Derived cells compute only when their inputs exist. The
 same rule applies to every firm. A firm's link shows once its affiliate agreement exists and daily, max,
-target and price each have a recorded source (firms.json _link_rule); until then it is held. Nothing is
+target and price each have a recorded source (firms.json _link_rule, the page's words; _link_rule_impl, the check);
+until then it is held. Nothing is
 scored. Nothing is ranked.
 
 The page renders once per published language (render_compare; site_build.py). Its words come from
@@ -71,11 +72,58 @@ def sourced(f, x, p):
 
 
 def link_live(f):
-    """The contract (firms.json _link_rule): a human set link_live, AND daily, max, target and price each have a
+    """The contract (firms.json _link_rule_impl): a human set link_live, AND daily, max, target and price each have a
     recorded source. Until then the link is held."""
     p = f["compare_product"]
     return (bool(f.get("link_live")) and bool(f.get("affiliate_url"))
             and all(sourced(f, x, p) for x in ("daily_pct", "max_pct", "target_pct", "price")))
+
+
+def last_read():
+    """The most recent date troid read any firm document: every read_on in firms.json. troid's compare shows it as
+    'reviewed', so the date moves when a read is recorded and never by hand."""
+    dates = []
+    def walk(x):
+        if isinstance(x, dict):
+            for k, v in x.items():
+                if k == "read_on" and isinstance(v, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", v):
+                    dates.append(v)
+                else:
+                    walk(v)
+        elif isinstance(x, list):
+            for v in x:
+                walk(v)
+    walk(FIRMS)
+    return max(dates)
+
+
+def reference():
+    """The reference firm's entry (firms.json 'reference')."""
+    return FIRMS[next(k for k in ORDER if FIRMS[k].get("reference"))]
+
+
+def conflicts_html(T, f):
+    """A firm's logged conflicts between its own documents (_conflicts_found), each side with its document, linked, and
+    the date troid read it, then what troid shows. Document labels and wording go through T.data."""
+    S = (f.get("provenance") or {}).get("sources") or {}
+    items = []
+    for c in f.get("_conflicts_found") or []:
+        sides = []
+        for s in c["sides"]:
+            src = S.get(s.get("src")) or {}
+            doc = html.escape(T.data(s["doc"]))
+            if src.get("url"):
+                doc = f'<a href="{html.escape(src["url"])}">{doc}</a>'
+            read = src.get("read_on") or s.get("read_on")
+            when = T("compare.conflicts.read", date=read) if read else T("compare.conflicts.unread")
+            sides.append(f'{doc} ({when}): {html.escape(T.data(s["says"]))}')
+        items.append(f'<li><strong>{html.escape(T.data(c["topic"]))}</strong>. {" · ".join(sides)}. '
+                     f'{T("compare.conflicts.troid", what=html.escape(T.data(c["troid"])))}</li>')
+    if not items:
+        return ""
+    return (f'<div class="s" style="margin:10px 0 0;line-height:1.7"><p style="margin:0">'
+            f'{T("compare.conflicts.h", firm=html.escape(f["name"]), n=len(items))}</p>\n'
+            f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(items)}</ul></div>\n')
 
 
 def required_sentences():
@@ -119,11 +167,9 @@ def _numbers(T):
 
 
 def _style(T):
-    """index.html's icon, og and font links and its stylesheet. English: exactly as index.html has them; another
-    language gets its own og title, description and image."""
-    if T.code == "en":
-        return STYLE
-    og = site_build.og(T)
+    """index.html's icon, og and font links and its stylesheet, with the compare page's own og title and description
+    (a shared /compare link previews as itself) and the language's og image."""
+    og = site_build.og(T, "compare")
     s = STYLE
     for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
         s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)
@@ -181,6 +227,7 @@ def render_compare(T, live):
     language codes. English renders exactly as the page did before it was keyed."""
     gov = site_build.governs_html(T, "legal.summary.citations")
     D = lambda key: html.escape(T.data(FIRMS.get(key, "")))   # noqa: E731
+    ref_text = D("_reference_firm").replace("{conflicts}", str(len(reference().get("_conflicts_found") or [])))
     return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("compare.meta.title")}</title>
 {_style(T)}
@@ -205,7 +252,7 @@ def render_compare(T, live):
 <p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.compare")}</p>
 <h1>{T("compare.hero.h1")}</h1>
 <p class="lede">{T("compare.hero.lede")}</p>
-<p class="meta">{T("compare.hero.meta", date=html.escape(FIRMS.get("_last_review","")))}</p>
+<p class="meta">{T("compare.hero.meta", date=html.escape(last_read()))}</p>
 {gov + chr(10) if gov else ""}<div class="panel"><p class="eyebrow">{T("compare.sizing.h")}</p><div class="inputs">
   <div><label>{T("compare.sizing.quota")}</label><input id="quota" type="number" value="100000"></div>
   <div><label>{T("compare.sizing.risk")}</label><input id="risk" type="number" step="any" value="0.5"></div>
@@ -213,8 +260,8 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="5"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
-<p class="s" style="margin:16px 0 0;line-height:1.7">{D("_reference_firm")} {D("_bitfunded_directory_note")}</p>
-<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
+<p class="s" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
+{conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_disclosure")}</p>
 <p class="foot">{site_text.footer_html(T)}</p>

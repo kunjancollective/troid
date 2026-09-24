@@ -8,8 +8,8 @@
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:image" content="https://troid.ai/og/en.png">
-<meta property="og:title" content="troid — the droid does the prop-firm math. You make the trade.">
-<meta property="og:description" content="Size against both loss ceilings, net of fees. Free. Never places orders.">
+<meta property="og:title" content="troid — what the numbers actually say">
+<meta property="og:description" content="Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,6 +146,7 @@ end of the evaluation period and missing the profit target.</p>
 <strong>size</strong>, not to strategy selection. People do not blow accounts because
 their entries are bad. They blow them because one position was too large on a day that
 went wrong.</p>
+<p class="src">SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.</p>
 </div>
 
 <div class="q">
@@ -197,11 +198,12 @@ What it can show you is what the arithmetic does to the wrong one.</p>
 <p>troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
 most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
 trader blew the account <span class="stat">68%</span> of the time within twelve months. At
-2%, <span class="stat">98%</span>. Capping each trade at a fraction of the
+2%, <span class="stat">100%</span>: every simulated year. Capping each trade at a fraction of the
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
 0%.</p>
 <p>A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
 whether you survive long enough to use it.</p>
+<p class="src">MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href="https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py">income_math.py</a></p>
 </div>
 
 <div class="q">

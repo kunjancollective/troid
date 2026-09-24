@@ -1,8 +1,7 @@
 {
-  "_criterion": "One reference firm \u2014 Bitfunded, verified first and most completely \u2014 and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
+  "_criterion": "One reference firm \u2014 Bitfunded, verified first \u2014 and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
   "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
   "_disclosure": "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
-  "_last_review": "2026-09-21",
   "_rule": "Every rule field carries its provenance (document, section, read date) or the site says its source is not yet recorded. A null field is pending. A firm's verified flag is true only when its rules are traced to its own primary documents (Terms + help centre, checked against each other); today only Bitfunded is marked so, and some of its cells still lack a recorded source.",
   "bitfunded": {
     "name": "Bitfunded",
@@ -115,7 +114,6 @@
     "split": "80% to 90%",
     "payouts_per_30d": 3,
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
-    "_conflicts_found": "ToU says 10 open positions and a flat 10-day hold; help centre says 5 and tiered. Help centre is newer; stricter governs. | Blog 2026-08-28 says 2-Step has NO minimum trading days; ToU 9(a) says 5. Stricter governs. | FAQ says daily limit is from INITIAL balance; earlier troid configs assumed day-start. FAQ governs. | Price of the $100k 1-Step: help centre Challenge Type lists Expert 100,000 USDT at $999 (1-Step and 2-Step in separate tables); a May 2026 blog says up to $599 for $100k; a Sept 2025 blog says Expert $799. The help-centre table governs. | Price: Terms 9(a) (mod. 2026-03-24) list the 1-Step Expert $100,000 at $999 and the 2-Step Expert at $799, which explains the Sept 2025 blog's $799; the May 2026 blog's $599 is unexplained. | Refund: Terms 9(a)/9(b) say 100% at the first profit split day, all levels; the help centre says 2-Step only, with the 3rd withdrawal, not on promotions. troid shows both and picks neither. | Min trading days: Terms 9(a) objectives say 5 for 1-Step and both 2-Step stages; the help centre shows '-'. The contract governs. | Open positions: Terms 14(d)(xi) still say 10 as of the 2026-03-24 revision; the help centre says 5. Stricter stands. | Express target: 9% in the help centre, 3% in the 28 Aug 2026 blog; the Terms are silent on Express. troid shows 9%.",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
     "affiliate_rate_repeat": "3%",
     "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
@@ -354,21 +352,24 @@
       "fields": {
         "daily_pct": {
           "src": [
-            "criteria"
+            "trader_stage",
+            "tou_0923"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "max_pct": {
           "src": [
-            "criteria"
+            "trader_stage",
+            "tou_0923"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "target_pct": {
           "src": [
-            "criteria"
+            "trader_stage",
+            "tou_0923"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "min_days": {
           "src": [
@@ -387,7 +388,7 @@
           "src": [
             "criteria"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Criteria to be Success (the mechanics: a static floor measured from the account quota)"
         },
         "reset_utc": {
           "src": [
@@ -404,9 +405,10 @@
         },
         "max_leverage": {
           "src": [
-            "criteria"
+            "trader_stage",
+            "tou_0923"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage)"
         },
         "hold_cap": {
           "src": [
@@ -424,7 +426,7 @@
           "src": [
             "criteria"
           ],
-          "section": "Bitfunded help centre \u2014 Criteria to be Success"
+          "section": "Bitfunded help centre \u2014 Criteria to be Success (the mechanics: a static floor measured from the account quota)"
         },
         "refund": {
           "src": [
@@ -450,15 +452,17 @@
         "1step": {
           "daily_pct": {
             "src": [
-              "criteria"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           },
           "max_pct": {
             "src": [
-              "criteria"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           },
           "fee_per_side_pct": {
             "src": [
@@ -469,9 +473,10 @@
           },
           "max_leverage": {
             "src": [
-              "criteria"
+              "trader_stage",
+              "tou_0923"
             ],
-            "section": "Bitfunded help centre \u2014 Criteria to be Success"
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage)"
           },
           "price": {
             "src": [
@@ -479,6 +484,13 @@
               "challenge_type"
             ],
             "section": "Bitfunded Terms of Use 9(a), 1 Step Challenges, Expert Level ($100,000 account, fee $999); help centre \u2014 Challenge Type, One Step Evaluation table"
+          },
+          "target_pct": {
+            "src": [
+              "trader_stage",
+              "tou_0923"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           }
         },
         "instant": {
@@ -644,7 +656,10 @@
       },
       "product_only": [
         "fee_per_side_pct",
-        "max_leverage"
+        "max_leverage",
+        "daily_pct",
+        "max_pct",
+        "target_pct"
       ]
     },
     "availability": {
@@ -658,7 +673,127 @@
     "restricted_countries_note": "No list in Terms (mod. 2026-03-24). 4(b): trader must comply with local law.",
     "reset_settles_by_utc": "16:10",
     "free_trial": "mentioned in Terms 5(b); not offered as of 23 Sep 2026 per owner",
-    "trader_stage_rule": "Any Trader Stage breach disqualifies the account; a new challenge is required."
+    "trader_stage_rule": "Any Trader Stage breach disqualifies the account; a new challenge is required.",
+    "_conflicts_found": [
+      {
+        "topic": "Open positions",
+        "logged": "2026-09-21",
+        "sides": [
+          {
+            "src": "tou_0923",
+            "doc": "Terms of Use 14(d)(xi), revision of 24 March 2026",
+            "says": "10"
+          },
+          {
+            "src": "rtp",
+            "doc": "help centre, Restricted Trading Practices s.3",
+            "says": "5"
+          }
+        ],
+        "troid": "5: the help centre is newer and stricter"
+      },
+      {
+        "topic": "Maximum hold",
+        "logged": "2026-09-21",
+        "sides": [
+          {
+            "src": "tou",
+            "doc": "Terms of Use 14(d)(x)",
+            "says": "a flat 10 calendar days"
+          },
+          {
+            "src": "rtp",
+            "doc": "help centre, Restricted Trading Practices s.1",
+            "says": "10 days for majors, 7 for other crypto, 5 for TradFi"
+          }
+        ],
+        "troid": "the tiers: the help centre is newer and stricter"
+      },
+      {
+        "topic": "Minimum trading days",
+        "logged": "2026-09-21",
+        "sides": [
+          {
+            "src": "tou_0923",
+            "doc": "Terms of Use 9(a)",
+            "says": "5, for the 1-Step and both 2-Step stages"
+          },
+          {
+            "src": "trader_stage",
+            "doc": "help centre, Challenge & Trader Stage",
+            "says": "none shown ('-')"
+          },
+          {
+            "src": "blog",
+            "doc": "blog of 28 August 2026",
+            "says": "none for the 2-Step"
+          }
+        ],
+        "troid": "5: the contract governs"
+      },
+      {
+        "topic": "Price of the $100,000 1-Step",
+        "logged": "2026-09-23",
+        "sides": [
+          {
+            "src": "tou_0923",
+            "doc": "Terms of Use 9(a)",
+            "says": "$999, with the 2-Step Expert at $799"
+          },
+          {
+            "src": "challenge_type",
+            "doc": "help centre, Challenge Type, One Step Evaluation table",
+            "says": "$999"
+          },
+          {
+            "doc": "a blog post of May 2026",
+            "says": "up to $599 for $100,000",
+            "read_on": "2026-09-23"
+          },
+          {
+            "doc": "a blog post of September 2025",
+            "says": "Expert $799",
+            "read_on": "2026-09-23"
+          }
+        ],
+        "troid": "$999, from the Terms and the help centre; the $599 is unexplained"
+      },
+      {
+        "topic": "Refund",
+        "logged": "2026-09-23",
+        "sides": [
+          {
+            "src": "tou_0923",
+            "doc": "Terms of Use 9(a) and 9(b)",
+            "says": "a full (100%) refund at every level once the trader completes it and reaches the first profit split day"
+          },
+          {
+            "src": "trader_stage",
+            "doc": "help centre, Challenge & Trader Stage",
+            "says": "a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases"
+          }
+        ],
+        "troid": "both, and picks neither"
+      },
+      {
+        "topic": "Express profit target",
+        "logged": "2026-09-23",
+        "sides": [
+          {
+            "src": "trader_stage",
+            "doc": "help centre, Challenge & Trader Stage, One Step Express table",
+            "says": "9%"
+          },
+          {
+            "src": "blog",
+            "doc": "blog of 28 August 2026",
+            "says": "3%"
+          }
+        ],
+        "troid": "9%, the help centre's figure; the Terms are silent on the Express"
+      }
+    ],
+    "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes."
   },
   "brightfunded": {
     "name": "BrightFunded",
@@ -1010,7 +1145,7 @@
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
   },
-  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",
+  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",
   "_external_ranking_snapshot": {
     "source": "propfirmmatch.com/crypto/prop-firm-reviews",
     "date": "2026-09-21",
@@ -1455,8 +1590,8 @@
     "tradeify_247": "US-based, <10 reviews, <1 year."
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
-  "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",
-  "_link_rule": "A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",
+  "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing comes from verification, not directory rank.",
+  "_link_rule": "A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
   "_troid_social": {
     "x": "https://x.com/tradingdroid",
@@ -1466,5 +1601,6 @@
   "_disclaimer_rule": "Generic disclosure text lives in the pages and never names a firm. Anything firm-specific is generated from this file by gen_compare.py: the firms panel on the landing page, and every listed firm's required_disclaimer in the FAQ disclaimer and both footers. Adding or removing a firm is one edit here and one daily run.",
   "_calc_rule": "calc is the machine-readable form of the verified rule fields, for troid's desk and ask troid: daily_basis in {initial, day_start, max_balance_equity}, drawdown in {static, trailing}, locks_at_initial_after_pct, hwm_basis in {balance, equity}, fee_per_side_pct, max_leverage. A null is pending and troid's desk says so; it never guesses. Products carry only what their pages state; a product-level key overrides the firm-level one.",
   "_provenance_rule": "Every rule field that feeds a number on the site carries provenance: the document, the section, and the date troid read it. Where the repo records no source for a field, the site says 'source not yet recorded' beside it; it never invents one. The evidence for each mapping is in firms_evidence.json.",
-  "_availability_rule": "availability: the countries each firm's own terms exclude, as ISO 3166-1 alpha-2 codes. 'excluded' is the firm-wide list, 'platform' lists exclusions that apply to one platform only, 'not_from_terms' records countries a third party lists that troid has not read in the firm's terms (never used to exclude). recorded:false means troid has not extracted the firm's list: the country selector and ask troid say so instead of implying the firm is available. troid never states that a firm is available in a country, only what its record of the firm's terms excludes."
+  "_availability_rule": "availability: the countries each firm's own terms exclude, as ISO 3166-1 alpha-2 codes. 'excluded' is the firm-wide list, 'platform' lists exclusions that apply to one platform only, 'not_from_terms' records countries a third party lists that troid has not read in the firm's terms (never used to exclude). recorded:false means troid has not extracted the firm's list: the country selector and ask troid say so instead of implying the firm is available. troid never states that a firm is available in a country, only what its record of the firm's terms excludes.",
+  "_link_rule_impl": "backtest/gen_compare.py link_live(): the entry's link_live is true (set by a human once the affiliate terms exist and their conditions for linking are met) AND compare_product daily_pct, max_pct, target_pct and price each cite a recorded source in provenance. Not printed on the site."
 }

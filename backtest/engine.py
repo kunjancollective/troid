@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """4h pullback-continuation on BTCUSDT, backtested under Bitfunded Apex rules.
 
-Rules modelled (from bitfunded.gitbook.io "Criteria to be Success"):
+Rules modelled (the 1-Step figures from the help centre's Challenge & Trader Stage, One Step table, and
+Terms of Use 9(a); the mechanics from the help centre's "Criteria to be Success"):
   - Max daily loss 4%  = realized loss today + floating loss of open positions
   - Max loss 6% STATIC = realized + floating, measured from the initial quota
   - Both auto-fail on FLOATING loss touching the line (no close required)

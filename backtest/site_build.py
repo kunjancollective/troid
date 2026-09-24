@@ -123,11 +123,13 @@ def head_extra(T, page, live):
     return "".join(p + "\n" for p in parts)
 
 
-def og(T):
-    """og:image / og:title / og:description for this language."""
+def og(T, page=None):
+    """og:image / og:title / og:description for this language and page. A page with its own {page}.og.title in en.json
+    previews as itself when shared; the desk, and any page without, uses the site's og.title and og.description."""
     has = (PUB / "og" / f"{T.code}.png").exists()     # gen_og.py renders it (English too; a language when it goes live)
     img = f"{BASE_URL}/og/{T.code}.png" if has else f"{BASE_URL}/og-image.png"
-    return {"image": img, "title": T.attr("og.title"), "description": T.attr("og.description")}
+    key = f"{page}.og" if page and f"{page}.og.title" in T.en else "og"
+    return {"image": img, "title": T.attr(key + ".title"), "description": T.attr(key + ".description")}
 
 
 def switcher(T, page, live):
@@ -165,7 +167,7 @@ def html_attrs(T):
 def common(T, page, live, preview=False):
     """What every template gets."""
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
-            "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T),
+            "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
             "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),

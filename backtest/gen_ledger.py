@@ -42,11 +42,9 @@ def _english(T):
 
 
 def _style(T):
-    """index.html's icon, og and font links and its stylesheet. English: exactly as index.html has them; another
-    language gets its own og title, description and image."""
-    if _english(T):
-        return STYLE
-    og = site_build.og(T)
+    """index.html's icon, og and font links and its stylesheet, with the ledger's own og title and description (a
+    shared /ledger link previews as itself) and the language's og image."""
+    og = site_build.og(T, "ledger")
     s = STYLE
     for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
         s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)

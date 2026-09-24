@@ -1,7 +1,9 @@
 # Bitfunded rules
 
-Sourced from Bitfunded's own docs (help center "Criteria to be Success" and the FAQ).
-Expert $100,000 / Stage 1 (1 Step) figures. Verify against the user's actual tier — the
+Sourced from Bitfunded's own docs: the 1-Step percentages and leverage from the help centre's
+Challenge & Trader Stage (One Step table) and Terms of Use 9(a); the mechanics (static floor,
+floating losses count, the reset) from the help centre's "Criteria to be Success", whose worked
+figures are the 2-Step's; the daily basis from the FAQ. Expert $100,000 / Stage 1 (1 Step) figures. Verify against the user's actual tier — the
 percentages change but the mechanics don't.
 
 ```

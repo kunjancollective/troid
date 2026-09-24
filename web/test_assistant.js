@@ -64,7 +64,8 @@ ok("explain_rule unknown", /unknown topic/.test(T.explain_rule({ topic: "moon" }
 // --- section 4: provenance in tool output, leverage bands, reset text
 r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003 });
 ok("sources: every rule used is listed", r.sources.map((x) => x.rule).join("|") === "daily 4%|daily basis (initial)|max 6%|drawdown type (static)|fee 0.04% per side|leverage cap 5×", r.sources);
-ok("sources: Criteria read 2026-09-18, FAQ read 2026-09-21", r.sources[0].read_on[0] === "2026-09-18" && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
+ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 2026-09-23, FAQ read 2026-09-21", r.sources[0].read_on.join() === "2026-09-23"
+   && /Challenge & Trader Stage/.test(r.sources[0].document_section) && /9\(a\)/.test(r.sources[0].document_section) && !/Criteria/.test(r.sources[0].document_section) && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
 ok("2-Step S1: limits cite the Terms of Use; fee and leverage still say not yet recorded",
@@ -95,8 +96,9 @@ ok("size_trade: working carries every step with its value", ["intended risk", "c
 // --- each rule cited with its own read dates; troid's defaults named as assumptions; the crossover as a day-start threshold
 r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.6, risk_pct: 0.5 });
 const cite = (rule) => (r.sources.find((x) => x.rule === rule) || {}).cite;
-ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Criteria to be Success, read 2026-09-18"
-   && cite("max 6%") === "max 6% — Bitfunded help centre — Criteria to be Success, read 2026-09-18" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Criteria to be Success, read 2026-09-18"
+ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23"
+   && cite("max 6%") === "max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23"
+   && cite("drawdown type (static)") === "drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18"
    && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23"
    && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21", r.sources);
 ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r.assumptions.length === 5 && r.assumptions.some((x) => /^margin mode cross — troid's default.*no recorded source/.test(x))
@@ -111,9 +113,10 @@ ok("explain_rule crossover: the day-start balance decides, not equity alone", /d
    && !/fiction/.test(T.explain_rule({ topic: "crossover" }).explanation));
 ok("explain_rule cross/leverage: no unsourced claim that Bitfunded runs cross margin", !/Bitfunded runs cross|Bitfunded's mode/.test(T.explain_rule({ topic: "cross" }).explanation + T.explain_rule({ topic: "leverage" }).explanation));
 const PF = handler._promptFirms().bitfunded.provenance.sources;
-ok("prompt: each source lists the rules it is cited for; the 23 Sep reading of Criteria covers the fee and the reset only",
+ok("prompt: each source lists the rules it is cited for; Criteria covers the mechanics, fee and reset only; the 1-Step figures cite Challenge & Trader Stage",
    Object.values(PF).every((s) => Array.isArray(s.cited_for) && s.cited_for.length) && PF.criteria_0923.cited_for.every((x) => /fee_per_side_pct|reset_utc/.test(x))
-   && PF.criteria.cited_for.some((x) => /daily_pct/.test(x)), PF.criteria_0923);
+   && PF.criteria.cited_for.every((x) => /drawdown|fee_per_side_pct/.test(x))
+   && ["1step.daily_pct", "1step.max_pct", "1step.target_pct", "1step.max_leverage"].every((x) => PF.trader_stage.cited_for.includes(x) && PF.tou_0923.cited_for.includes(x)), [PF.criteria, PF.criteria_0923]);
 
 r = T.check_compliance({ firm: "bitfunded", product: "1step", symbol: "SOLUSDT", hold_days: 12, open_trades: 6, uses_third_party_strategy: true });
 ok("compliance: every finding names its document and read date", r.findings.every((f) => f.sources.length && f.sources.every((x) => /^2026-/.test(x.read_on) && x.document)), r.findings);
@@ -270,7 +273,7 @@ fake.listen(18765, async () => {
     ok("tool result carries sources, formula, working and the risk", toolResult.risk === 480 && toolResult.sources.length === 6 && /room = min/.test(toolResult.formula) && toolResult.working.length > 15, toolResult);
     ok("a failed tool is marked is_error, a good one is not", toolResults[1].is_error === true && !("is_error" in toolResults[0]), toolResults.map((x) => x.is_error));
     ok("tool turn: the service writes each rule's source with its own dates, the tier and troid's assumptions",
-       r.j.reply.startsWith("Risk $480.00 (DERIVED).\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Criteria to be Success, read 2026-09-18\n")
+       r.j.reply.startsWith("Risk $480.00 (DERIVED).\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n")
        && r.j.reply.includes("- fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23") && r.j.reply.includes(handler.EN["ask.tier.derived"])
        && /troid's assumptions, not the firm's rules: exchange liquidation uses a 0\.5% maintenance margin.*margin mode cross — troid's default/.test(r.j.reply), r.j.reply);
     script = (b) => {
@@ -281,7 +284,7 @@ fake.listen(18765, async () => {
     };
     r = await post([U("budget?")], { disclosed: true });
     ok("a sources paragraph the model wrote is removed; the service's block goes before the closing line",
-       !/2026-09-18\/2026-09-23|Rule basis|read 2026-09-23\n/.test(r.j.reply) && r.j.reply.startsWith("Quantity 1.622183.\n\nSources, each with the date troid read it:")
+       !/2026-09-18\/2026-09-23|Rule basis|- daily 4% read 2026-09-23/.test(r.j.reply) && r.j.reply.startsWith("Quantity 1.622183.\n\nSources, each with the date troid read it:")
        && r.j.reply.endsWith(handler.EN["ask.tier.derived"] + "\n\n" + handler.EN["ask.note"]) && !/assumptions/.test(r.j.reply), r.j.reply);
     script = () => msg("end_turn", [{ type: "text", text: "Sources: none needed (DERIVED)." }]);
     r = await post([U("no tool")], { disclosed: true });

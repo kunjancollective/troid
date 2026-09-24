@@ -99,6 +99,17 @@ for n in (1,3,5,10):
 print("             -> ruin is unreachable by realized losses under a proportional cap.")
 print("             -> the real failure mode is a stalled account, not a blown one.")
 
+# The published ruin figures (landing page, FAQ, dashboard, README, RESULTS.md, the MCP server), re-simulated with
+# income_math.py under the assumptions the landing page states beside them: 45% won at 2:1 (+0.35R), 30 trades a
+# month, 12 months, 20,000 paths, seed 7, a 4% daily limit fixed on the initial balance, a 6% static floor, the cap
+# at 35% of the remaining budget. The 2% figure was published as 98% until 2026-09-24: that is what the model gave
+# under the day-start daily basis it carried before the FAQ correction; under the corrected basis it is 100%.
+import income_math as _IM
+for _rp, _cap, _pub in [(0.01, False, 68.0), (0.02, False, 100.0), (0.01, True, 0.0), (0.02, True, 0.0)]:
+    _pr = _IM.simulate(0.45, 2.0, _rp, 30, 12, capped=_cap)[0] * 100
+    check("MODELLED", f"P(ruin) in a year at {_rp:.0%} risk, {'capped' if _cap else 'no cap'}, +0.35R, 30 trades/mo",
+          round(_pr), _pub, 0, "%")
+
 # Uncapped: fixed fraction f of quota, floor at m. Ruin after ceil(m/f) losses.
 print()
 for f, pub in [(0.005,12),(0.01,6),(0.02,3),(0.025,2)]:
@@ -191,13 +202,13 @@ print("  6. SOURCED CLAIMS - cite, never re-derive")
 print("="*76)
 for claim, src in [
     ("~14% reach a funded account; ~7% ever get paid", "FPFX Technology, 300k+ accounts"),
-    ("~70% of failures are loss-limit breaches", "aggregated firm disclosures"),
+    ("~70% of failures are loss-limit breaches", "source not yet recorded: no document or read date in the repo; published with that label"),
     ("average 3 attempts, $1,600+ in fees per $100k", "published industry analysis"),
     ("0.04% fee per side on notional", "Bitfunded help centre"),
     ("reset 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (16:00-16:10 UTC)", "Bitfunded help centre, Criteria to be Success"),
     ("max loss is STATIC, measured from account quota", "Bitfunded help centre"),
     ("min 5 trading days (site displays 0)", "Bitfunded ToU 9(a) - contract governs"),
-    ("10 calendar day max position hold", "Bitfunded ToU 14(d)(x)"),
+    ("10 calendar day max position hold (help centre RTP s.1 tiers it 10/7/5; stricter governs)", "Bitfunded ToU 14(d)(x)"),
     ("one active account per challenge level", "Bitfunded ToU 6(b)"),
     ("marketed strategies prohibited", "Bitfunded ToU 14(d)(v)"),
     ("no switching strategies between assessment and funded accounts", "Bitfunded ToU 14(d)(ix)"),
@@ -300,6 +311,45 @@ _terms_all = _html.unescape(_read("web/public/terms.html"))
 check("SOURCED", "terms section 1 names the operator: Kunjan Patel (owner decision 2026-09-24)", float("troid is operated by Kunjan Patel (“the Operator”)" in _terms_all and "Company" not in _terms_all), 1.0)
 for page in sorted((_ROOT / "web" / "public").glob("*.html")):
     check("DERIVED", f"footer carries © 2026 Kunjan Patel on {page.name}", float("© 2026 Kunjan Patel" in _html.unescape(page.read_text())), 1.0)
+
+
+# 10. What troid.ai serves (HANDOFF-2026-09-24 section 1): every figure on the landing page and in the FAQ carries its
+# tier; the compare page's claims about troid's own verification are generated, not written.
+print()
+print("="*76)
+print("  10. troid.ai - tiers beside the figures; generated claims on troid's compare")
+print("="*76)
+_index = " ".join(_html.unescape(_read("web/public/index.html")).split())
+_faqs = " ".join(_faq.split())
+check("DERIVED", "landing: the ~70% tile says SOURCED, source not yet recorded", float(_en["index.stats.failures.prov"] in _index and _en["index.stats.failures.prov"].startswith("SOURCED · source not yet recorded")), 1.0)
+check("DERIVED", "FAQ: the 70% says SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.fail.src"]).split()) in _faqs), 1.0)
+check("DERIVED", "landing: the 68% tile says MODELLED with its assumptions and the script", float(all(x in _index for x in ("MODELLED. 20,000 simulated years", "+0.35R a trade", "30 trades a month for 12 months", "1% of balance risked a trade with no cap on remaining budget", "income_math.py"))), 1.0)
+check("DERIVED", "FAQ: the ruin figures say MODELLED and name the script", float("MODELLED: 20,000 simulated years" in _faqs and "income_math.py" in _faqs), 1.0)
+check("DERIVED", "no page still publishes the pre-correction 98%", float(not any("98%" in _html.unescape(pg.read_text()) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
+import gen_compare as _GC
+_cmp = " ".join(_html.unescape(_read("web/public/compare.html")).split())
+_ref = _GC.reference()
+_nconf = len(_ref.get("_conflicts_found") or [])
+check("DERIVED", f"compare: 'reviewed' is the latest read date in firms.json ({_GC.last_read()})", float(f"reviewed {_GC.last_read()}" in _cmp), 1.0)
+check("DERIVED", f"compare: the conflict count is the log's length ({_nconf})", float(f"found and logged {_nconf} conflicts" in _cmp and f"disagree · {_nconf} logged" in _cmp), 1.0)
+check("DERIVED", "compare: every logged conflict is printed with each side's document", float(all(" ".join(_html.unescape(s["doc"]).split()) in _cmp for c in _ref["_conflicts_found"] for s in c["sides"])), 1.0)
+for _pg in ("compare", "index"):
+    _t = _html.unescape(_read(f"web/public/{_pg}.html"))
+    check("DERIVED", f"{_pg}: no 'most completely', no internal field name", float("most completely" not in _t and "link_live" not in _t), 1.0)
+check("DERIVED", "landing: 'the challenge types on troid's compare', not 'every challenge type'", float("challenge types on troid's compare" in _index and "every challenge type" not in _index), 1.0)
+_panel = _read("web/public/index.html").split("<!-- firms:start -->")[1].split("<!-- firms:end -->")[0]
+for _k in _GC.ORDER:
+    _f = _GC.FIRMS[_k]; _p = _f["compare_product"]
+    _n = sum(1 for x in _GC.FIELDS if _p.get(x) is not None); _m = sum(1 for x in _GC.FIELDS if _GC.sourced(_f, x, _p))
+    check("DERIVED", f"landing panel: {_f['name']} shows '{_n} of {len(_GC.FIELDS)} rules filled · {_m} sourced'", float(f"{_n} of {len(_GC.FIELDS)} rules filled · {_m} sourced" in _panel), 1.0)
+_P1 = _GC.FIRMS["bitfunded"]["provenance"]
+for _x in ("daily_pct", "max_pct", "target_pct", "max_leverage"):
+    _c = _GC.cite(_GC.FIRMS["bitfunded"], _x, "1step")
+    check("SOURCED", f"Bitfunded 1-Step {_x}: Challenge & Trader Stage and Terms 9(a), not Criteria to be Success",
+          float(bool(_c) and "Challenge & Trader Stage" in _c["c"] and "9(a)" in _c["c"] and "Criteria" not in _c["c"]), 1.0)
+for _pg in ("compare", "ledger", "faq", "dashboard", "chat", "terms", "tearsheet"):
+    _t = _read(f"web/public/{_pg}.html")
+    check("DERIVED", f"{_pg}: previews as itself (its own og:title)", float(f'<meta property="og:title" content="{_html.escape(_en[_pg + ".og.title"], quote=True).replace("&#x27;", chr(39))}">' in _t), 1.0)
 
 print()
 print("="*76)

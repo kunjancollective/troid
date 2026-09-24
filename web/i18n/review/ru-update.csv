@@ -7,11 +7,44 @@ common.mark.unknown,troid's ledger: its live status can't be read,,,"NEW: transl
 og.title,troid — the droid does the prop-firm math. You make the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.tagline,The droid does the prop-firm math. You make the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
+    Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
+    recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
+    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    troid computes, you choose.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+index.stats.failures.prov,SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.stats.blowup.prov,"MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
   0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
   5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
+  every asset the firm lists.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
+compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
+compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
+ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
+dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
+dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
+  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
+  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
+  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
+faq.fail.src,SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
+most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
+trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
+2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
+<em>remaining</em> budget rather than a fixed slice of the balance took all of those to
+0%.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.risk.src,"MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
 message box, and deleted automatically 30 days after its last message. troid keeps your messages,
@@ -23,7 +56,11 @@ come up most so troid can improve its pages and answers: once a week it counts t
 never quoting a message. Only troid's operator can read a conversation. They are never sold and never used for marketing or to train an AI model. To
 delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
 <a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+chat.og.title,ask troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.og.description,"troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.session.line,Session {id} — quote this if you contact troid about this conversation.,,,"NEW: translate it in reviewer_edit | keep {id} exactly as written; troid stays lowercase, in Latin letters"
 chat.session.copy,copy,,,NEW: translate it in reviewer_edit | 
 chat.session.delete,delete this conversation,,,NEW: translate it in reviewer_edit | 

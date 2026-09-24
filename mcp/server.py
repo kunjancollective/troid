@@ -351,7 +351,7 @@ def explain_rule(topic: str) -> dict:
         "realized losses is unreachable and the real failure mode is a stalled account. "
         "Uncapped, a fixed fraction f of quota reaches the floor in floor(maxloss/f) losses: "
         "12 at 0.5%, 6 at 1%, 3 at 2%. At a professional +0.35R edge, 1% uncapped blows up "
-        "68% of the time within a year; 2% is 98%. Under a cap, zero.",
+        "68% of the time within a year; 2% is 100% (MODELLED: income_math.py). Under a cap, zero.",
       "min_days": "Five trading days minimum to clear a stage (ToU 9(a)). The challenge page "
         "displays 0. The contract governs. The bad failure mode is hitting your profit target "
         "in three days and being unable to clear the stage.",

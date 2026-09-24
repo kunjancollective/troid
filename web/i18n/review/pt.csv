@@ -73,11 +73,11 @@ index.calc.cap_pct,Budget cap %,Teto do orçamento %,,
 index.calc.leverage,Leverage,Alavancagem,,
 index.calc.mode,Margin mode,Modo de margem,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","Empresas · ordem alfabética · todas as empresas que o <span style=""text-transform:none"">troid</span> lista, sem limite",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-index.firms.why,"{firm} is the reference firm because troid verified it first and most completely, not because it ranks highest.
+index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
     Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
     firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
-    troid computes, you choose.","{firm} é a empresa de referência porque o troid a verificou primeiro e de forma mais completa, não porque ela ocupe a melhor posição no ranking. Cada regra no comparador do troid mostra o documento da empresa e a data em que o troid o leu, ou informa que a fonte ainda não foi registrada. A próxima empresa a ser verificada segue o ranking de avaliações do propfirmmatch; a página não tem limite de empresas. O troid é um afiliado independente das empresas que compara; onde há um código, sai mais barato pelo link de afiliado, e onde não há, o preço é o mesmo. O troid calcula, você escolhe.",,"keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+    troid computes, you choose.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 index.firms.reference,reference,referência,,
 index.firms.rank,#{n} by reviews,#{n} em avaliações,,keep {n} exactly as written
 index.firms.filled,{n} of {total} rules filled · {m} sourced,{n} de {total} regras preenchidas · {m} com fonte,,keep {m} {n} {total} exactly as written
@@ -90,9 +90,11 @@ index.firms.promos,their promos apply here,as promoções da própria empresa va
 index.stats.failures.n,~70%,~70%,,keep every number exactly
 index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
     report failures trace to size, not strategy selection.","das reprovações em prop firms são violações de limite de perda, a maioria na primeira semana. As empresas relatam que as reprovações se devem ao tamanho da posição, não à escolha da estratégia.",,
+index.stats.failures.prov,SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.stats.blowup.n,68%,68%,,keep every number exactly
 index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
     with no cap on remaining budget. Under a cap, zero.","das contas quebram em até um ano com uma vantagem de nível profissional de +0,35R, arriscando 1% sem teto sobre o orçamento restante. Com teto, zero.",,keep every number exactly
+index.stats.blowup.prov,"MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
     daily. That is {gap} from the start — half of one bad day.","Em uma conta {product} de {quota}, abaixo deste equity o piso estático de {max}% passa a limitar no lugar do limite diário de {daily}%. Isso fica a {gap} do início — metade de um dia ruim.",,keep {daily} {gap} {max} {product} {quota} exactly as written
 index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
@@ -107,8 +109,8 @@ index.does.h2,What troid does,O que o troid faz,,"troid stays lowercase, in Lati
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
   0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
   5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
+  every asset the firm lists.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 index.doesnt.h2,What it doesn't,O que ele não faz,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,Publicar sinais de trading. Enviar ordens. Mexer nas suas credenciais. Vender uma estratégia para você.,,
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -255,10 +257,16 @@ index.js.s_tgt,tgt {price},alvo {price},,keep {price} exactly as written
 index.js.s_floor,floor {floor},piso {floor},,keep {floor} exactly as written
 index.js.breakers,breakers,disjuntores,,
 compare.meta.title,troid's compare,comparador do troid,,"troid stays lowercase, in Latin letters"
+compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.hero.h1,"Three firms, your numbers.","Três empresas, os seus números.",,
 compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.","Informe o seu dimensionamento uma vez. Cada coluna mostra quanto esse dimensionamento custa sob as regras daquela empresa. Cada célula mostra o documento da empresa e a data em que o troid o leu, diz <em>pendente</em> ou informa que a fonte ainda não foi registrada. Nada recebe nota.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},ordem alfabética · uma empresa de referência + duas por ranking externo · revisado em {date},,keep {date} exactly as written
+compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
+compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
+compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
 compare.sizing.h,Your sizing,Seu dimensionamento,,
 compare.sizing.quota,Quota,Quota,,
 compare.sizing.risk,Risk % per trade,Risco % por operação,,
@@ -347,6 +355,8 @@ compare.js.foot_held,"Link held until daily, max, target and price each have a r
 compare.js.foot_open_1,open: {n} question — {first},em aberto: {n} pergunta — {first},,keep {first} {n} exactly as written
 compare.js.foot_open_n,open: {n} questions — {first} …,em aberto: {n} perguntas — {first} …,,keep {first} {n} exactly as written
 ledger.meta.title,troid's ledger,registro do troid,,"troid stays lowercase, in Latin letters"
+ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.","A conta-sombra. Cada operação encerrada, sem edição, incluindo as perdedoras. Ela não envia nenhuma ordem — quem enviaria seria um humano.",,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar","em {asof} UTC · {market} · regras {profile} · cruzada 5x · reprocessado a cada 4h, 20 min após o candle",,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,último candle,,
@@ -440,6 +450,8 @@ ledger entry, not a claim. Read it that way.","Uma semana de operações é n≈
 ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.","Candles da api.binance.us, um único feed do início ao fim; ⚑ marca uma operação que ficou aberta durante um candle preenchido por forward-fill.",,"CHECK FIRST: Terms with no settled translation: 'high-water mark' (kept in English; 'marca d'água' is used for funds), 'forward-filled bar' ('candle preenchido por forward-fill', ledger.warn.flagged, ledger.flag.title, ledger.foot.feed), 'holdout' ('amostra de validação'), 'base rate' ('taxa-base'), 'hold cap' ('limite de permanência'), 'fee drag' ('peso das taxas'), 'daily basis' ('base do diário')."
 ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">journal.csv no repositório</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.meta.title,troid's research — strategy review,pesquisa do troid — revisão da estratégia,,"troid stays lowercase, in Latin letters"
+dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
 dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","pesquisa do troid · revisão da estratégia · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">metodologia</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.hero.h1,Strategy review,Revisão da estratégia,,
 dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed","Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · referência cruzada em 21 de set. de 2026 · candles da api.binance.us, um único feed",,keep every number exactly
@@ -545,7 +557,7 @@ dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
   system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
-  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.","O teto do orçamento não é conservadorismo — é a única coisa que torna a conta sobrevivível. Com <strong>+0,35R</strong>, um sistema genuinamente excelente, o dimensionamento ingênuo a 1% quebra a conta <strong>68%</strong> das vezes em até um ano, e a 2% são 98%. Todas essas células ficam em 0,0% com o teto.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.change.h2,What would change the verdict,O que mudaria o veredito,,
 dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
       parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
@@ -573,6 +585,8 @@ dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.bi
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","Números da amostra: 1.539 candles de 4h, de 8 de jan. a 21 de set. de 2026, api.binance.us — um ativo, um regime. A amostra de validação, de 1º de janeiro de 2021 a 7 de janeiro de 2026 (<code>backtest/WALKFORWARD.md</code>), deu resultado dentro do ruído em BTC e ETH.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
 tearsheet.meta.title,troid's research — tearsheet,pesquisa do troid — tearsheet,,"troid stays lowercase, in Latin letters"
+tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
 tearsheet.head.eyebrow,troid's research · tearsheet,pesquisa do troid · tearsheet,,"troid stays lowercase, in Latin letters"
 tearsheet.head.box,A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.,"Um tearsheet completo de uma estratégia cuja expectativa na amostra de validação é +0,008R. Todas as métricas abaixo são MEASURED (medidas) e estão dentro do ruído. Publicado porque é assim que o ruído se parece quando alguém mostra tudo a você.",,"CHECK FIRST: Tier labels now stay in English with a gloss on first use: 'MEASURED (medido)' in hypo.no_edge_tail, 'MEASURED (medidas)' in tearsheet.head.box, 'DERIVED (derivado).' in index.crossover.prov. index.doesnt.verify keeps the lowercase Portuguese words 'derivado, com fonte, modelado ou medido' (and 'Um número medido'), because the English there uses lowercase prose words, not the capital labels. Confirm the gloss style, and whether index.doesnt.verify should switch to the capital labels too. | keep every number exactly"
 tearsheet.head.sample,"{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.","{n} operações encerradas em {market}, de {start} a {end}. P&amp;L diário sobre a quota de {quota}, dias sem saída contam como zero, 365 períodos por ano, somas e não produtos. Fonte: journal.csv no repositório. Não é aconselhamento financeiro.",,keep {end} {market} {n} {quota} {start} exactly as written; keep every number exactly
@@ -580,6 +594,8 @@ tearsheet.empty,No closed trades yet.,Nenhuma operação encerrada ainda.,,
 tearsheet.stub.english,"The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=""/tearsheet"">the full tearsheet</a>.","O relatório em si — cada métrica, tabela e gráfico — é gerado em inglês pelo quantstats e publicado uma única vez, sem tradução: <a href=""/tearsheet"">o tearsheet completo</a>.",,keep the <…> tags and links as they are; translate only the words
 chat.meta.title,ask troid,pergunte ao troid,,"troid stays lowercase, in Latin letters"
 chat.meta.description,"ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.","pergunte ao troid. Os dados de regras do troid, com a fonte e a data de leitura de cada regra, cálculos feitos por ferramentas, cada número com o seu nível. Não é aconselhamento financeiro.",,"troid stays lowercase, in Latin letters"
+chat.og.title,ask troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.og.description,"troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.hero.h1,ask troid,pergunte ao troid,,"troid stays lowercase, in Latin letters"
 chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic tools. It
   prices the trade you bring. It does not generate one.",O pergunte ao troid responde com base nos dados de regras do troid e nas próprias ferramentas de cálculo. Ele precifica a operação que você traz. Não gera nenhuma.,,"troid stays lowercase, in Latin letters"
@@ -627,6 +643,8 @@ chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in
 chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 faq.meta.title,troid — what the numbers actually say,troid — o que os números realmente dizem,,"troid stays lowercase, in Latin letters"
+faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
 faq.hero.h1,What the numbers actually say,O que os números realmente dizem,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","Taxas-base, mecânica das regras e os próprios conflitos de interesse do troid — o que uma landing page deixa de fora.",,"troid stays lowercase, in Latin letters"
 faq.hero.updated,Last updated 23 September 2026,Última atualização em 23 de setembro de 2026,,keep every number exactly
@@ -652,6 +670,7 @@ faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace b
 <strong>size</strong>, not to strategy selection. People do not blow accounts because
 their entries are bad. They blow them because one position was too large on a day that
 went wrong.","O resumo de uma das próprias empresas diz isso sem rodeios: quase todas as reprovações se devem ao <strong>tamanho</strong>, não à escolha da estratégia. As pessoas não quebram contas porque as suas entradas são ruins. Elas quebram porque uma posição era grande demais em um dia que deu errado.",,keep the <…> tags and links as they are; translate only the words
+faq.fail.src,SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.offer.q,Then what is troid actually offering?,"Então, o que o troid oferece de fato?",,"troid stays lowercase, in Latin letters"
 faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
 a firm's loss ceilings at once, net of fees, and tells you which one is actually
@@ -687,11 +706,12 @@ What it can show you is what the arithmetic does to the wrong one.","O número c
 faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
 most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
 trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
-2%, <span class=""stat"">98%</span>. Capping each trade at a fraction of the
+2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
-0%.","O troid simulou um trader com uma vantagem genuinamente excelente — +0,35R por operação, melhor do que a maioria dos profissionais sustenta. Arriscando 1% por operação sem teto sobre o orçamento restante, esse trader quebrou a conta <span class=""stat"">68%</span> das vezes em doze meses. A 2%, <span class=""stat"">98%</span>. Limitar cada operação a uma fração do orçamento <em>restante</em>, em vez de uma fatia fixa do saldo, levou todos esses números a 0%.",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+0%.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
 whether you survive long enough to use it.","Uma vantagem real não basta por si só. Com um conjunto de regras de 4%/6%, o dimensionamento da posição decide se você sobrevive tempo suficiente para usá-la.",,keep every number exactly
+faq.risk.src,"MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fees.q,Do fees matter?,As taxas importam?,,
 faq.fees.p1,"More than most people model. Bitfunded charges 0.04% of position size on entry and
 again on exit, calculated on notional — which at 5× leverage is five times your margin.","Mais do que a maioria das pessoas considera. A Bitfunded cobra 0,04% do tamanho da posição na entrada e de novo na saída, calculado sobre o nocional — que, com alavancagem de 5×, é cinco vezes a sua margem.",,keep every number exactly
@@ -792,6 +812,8 @@ faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by
 responsibility to confirm you are eligible to participate where you live.",A disponibilidade e a legalidade dos serviços de prop firms variam de país para país. É sua responsabilidade confirmar que você é elegível para participar no lugar onde mora.,,
 terms.meta.title,troid — terms of use,troid — termos de uso,,"troid stays lowercase, in Latin letters"
 terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.","Termos de uso do troid: uma ferramenta informativa gratuita, não aconselhamento. Confirme cada número com a empresa antes de operar.",,"troid stays lowercase, in Latin letters"
+terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.hero.eyebrow,troid · terms,troid · termos,,"troid stays lowercase, in Latin letters"
 terms.hero.h1,Terms of use,Termos de uso,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
@@ -822,56 +844,94 @@ ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in
 ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
+data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
+data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.0d92e8c53788,Minimum trading days,,,text from a firm's rules (firms.json)
+data.14d0db894172,"both, and picks neither",,,text from a firm's rules (firms.json)
 data.173bc3120e68,discretionary,discricionário,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.1a4637763178,Express profit target,,,text from a firm's rules (firms.json)
+data.1d3053d3ee7e,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing comes from verification, not directory rank.",,,text from a firm's rules (firms.json); keep every number exactly
 data.1d95103da2c3,Rules go on this page only after they're read from BrightFunded's own documents.,As regras só entram nesta página depois de lidas nos próprios documentos da BrightFunded.,,text from a firm's rules (firms.json)
+data.1f61f2d86a2b,3%,,,text from a firm's rules (firms.json); keep every number exactly
 data.1f7a32c047e8,none if the evaluation is not completed,nenhum se a avaliação não for concluída,,text from a firm's rules (firms.json)
 data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,rollover 23:30–23:59 CET = 21:30 UTC (CEST) / 22:30 UTC (CET); a empresa recomenda não operar nessa janela,,text from a firm's rules (firms.json); keep every number exactly
 data.254f81f3de77,up to 90% (add-on); base unconfirmed,até 90% (adicional); base não confirmada,,text from a firm's rules (firms.json); keep every number exactly
 data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,"A Bitfunded faz as próprias promoções (compre um, leve outro e similares), e elas valem por este link — não é preciso código.",,text from a firm's rules (firms.json)
+data.32470a1f372d,a blog post of May 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
+data.3a3e0ad3ccb5,"up to $599 for $100,000",,,text from a firm's rules (firms.json); keep every number exactly
 data.3ce26c9516b7,none stated,nada declarado,,text from a firm's rules (firms.json)
 data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,Onde o registro do troid roda. A fonte e a data de leitura de cada regra estão no comparador do troid.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.443b076a4761,"help centre, Restricted Trading Practices s.1",,,text from a firm's rules (firms.json); keep every number exactly
+data.44652ad36760,9%,,,text from a firm's rules (firms.json); keep every number exactly
 data.44fadd8eb267,80% → 90%,80% → 90%,,text from a firm's rules (firms.json); keep every number exactly
 data.45c9dde99668,day-start balance,saldo no início do dia,,text from a firm's rules (firms.json)
-data.4f6eab8d3b65,"A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.","O link de uma empresa aparece quando link_live é true no cadastro dela E as células de diário, máximo, meta e preço têm, cada uma, uma fonte registrada: o documento da empresa, a seção e a data em que o troid o leu. Até lá, o link fica retido, independentemente do que o contrato de afiliado permita. link_live é definido por um humano quando o contrato de afiliado existe e as condições dele para inserir links são atendidas. As demais células mostram 'pendente' individualmente. A disponibilidade nos EUA é sempre mostrada em uma linha própria.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4622b5f5c4b4,5: the help centre is newer and stricter,,,text from a firm's rules (firms.json); keep every number exactly
+data.4d29d0f9361d,"A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4de966a2be8a,Open positions,,,text from a firm's rules (firms.json)
+data.4eddb3859ab9,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",,,"text from a firm's rules (firms.json); keep {conflicts} exactly as written; troid stays lowercase, in Latin letters"
 data.5129c48719a9,5-min restriction,restrição de 5 min,,text from a firm's rules (firms.json); keep every number exactly
 data.56d9a0cd140e,Funded · after 1-Step,Funded · após 1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,"comissão em cripto 0,012%/lado - confira em brightfunded.com/trading-instruments",,text from a firm's rules (firms.json); keep every number exactly
+data.5bc39b578c6e,Maximum hold,,,text from a firm's rules (firms.json)
 data.601c3530e85e,trailing → static at initial after +6%,móvel → estático no saldo inicial após +6%,,text from a firm's rules (firms.json); keep every number exactly
+data.62603a2168cf,5: the contract governs,,,text from a firm's rules (firms.json); keep every number exactly
+data.633b319f6929,"$999, from the Terms and the help centre; the $599 is unexplained",,,text from a firm's rules (firms.json); keep every number exactly
 data.64d2206416ad,$10k / day and / trade,$10k / dia e / operação,,text from a firm's rules (firms.json); keep every number exactly
 data.65de6a9cbafc,$999,$999,,text from a firm's rules (firms.json); keep every number exactly
 data.66f1cdf92813,MT5 barred to US residents; Match-Trader access not yet sourced,MT5 vedado a residentes nos EUA; acesso ao Match-Trader ainda sem fonte,,text from a firm's rules (firms.json); keep every number exactly
 data.71f8e7976e4c,none,não há,,text from a firm's rules (firms.json)
+data.72b94cc8ae98,Terms of Use 14(d)(x),,,text from a firm's rules (firms.json); keep every number exactly
 data.788bd94c8a8e,"trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%","móvel, em TEMPO REAL sobre o high-water mark do equity (o flutuante conta), trava como estático no saldo inicial após +6%",,text from a firm's rules (firms.json); keep every number exactly
+data.78cb8f3d2113,"$999, with the 2-Step Expert at $799",,,text from a firm's rules (firms.json); keep every number exactly
 data.78fc80eb213f,10d / 7d / 5d,10d / 7d / 5d,,text from a firm's rules (firms.json); keep every number exactly
+data.7a6b6437c611,Terms of Use 9(a),,,text from a firm's rules (firms.json); keep every number exactly
+data.7aa03b4e9079,"help centre, Challenge & Trader Stage",,,text from a firm's rules (firms.json)
 data.7b921a3bc2ed,"Conflicting: Terms 9(a) — 100% at first profit split day, all levels. Help centre — 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.","Conflitante: Terms 9(a) — 100% no dia da primeira divisão de lucros, todos os níveis. Central de ajuda — somente 2-Step, com o 3º saque, não em promoções. Confirme com a Bitfunded antes de contar com um reembolso.",,"CHECK FIRST: data.7b921a3bc2ed: 'profit split day' is 'no dia da primeira divisão de lucros', which matches the old string's 'divisão de lucros'. 'Confirm with Bitfunded before relying on a refund' is 'Confirme com a Bitfunded antes de contar com um reembolso'. Check that 'contar com' reads as an instruction to verify and not as a promise. 'Terms 9(a)' was left in English as instructed, but the same sentence uses 'Central de ajuda', so the English/Portuguese mix is worth a look. | text from a firm's rules (firms.json); keep every number exactly"
 data.7bf372bece8d,initial balance,saldo inicial,,text from a firm's rules (firms.json)
 data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,'Reverse trading' (7.1 xiv) significa stop-and-reverse? Isso impede rodar o shadow-1 lá.,,text from a firm's rules (firms.json); keep every number exactly
-data.7f8cd7953b97,"One reference firm — Bitfunded, verified first and most completely — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.","Uma empresa de referência — a Bitfunded, verificada primeiro e de forma mais completa — e as empresas seguintes por volume de avaliações verificadas no propfirmmatch.com/crypto, um ranking externo e público cuja metodologia divulga o próprio modelo de afiliados e afirma que as posições não podem ser compradas, com a limitação, declarada pelo próprio ranking, de que um volume maior não significa automaticamente algo melhor. Ordem alfabética, sem limite. Uma empresa é listada quando os termos de afiliado dela permitem uma comparação. Cada regra mostra o documento da empresa e a data em que o troid o leu, informa que a fonte ainda não foi registrada ou mostra pendente enquanto o troid não tem um valor.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.853ca806d6d6,blog of 28 August 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4% / 6% estático · 2-Step 5% / 10%,,text from a firm's rules (firms.json); keep every number exactly
 data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
+data.8b9e2967d124,Expert $799,,,text from a firm's rules (firms.json); keep every number exactly
+data.94934cc00dcb,none for the 2-Step,,,text from a firm's rules (firms.json); keep every number exactly
+data.a0c0cbd0c834,"help centre, Challenge Type, One Step Evaluation table",,,text from a firm's rules (firms.json)
 data.a199f4153a08,Funded · after Express,Funded · após Express,,text from a firm's rules (firms.json)
 data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
 data.a381562afa0e,static,estático,,text from a firm's rules (firms.json)
 data.a608ee8e8ce6,Funded · after 2-Step,Funded · após 2-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.ac3478d69a3c,5,,,text from a firm's rules (firms.json); keep every number exactly
+data.ac5ceff091ef,none shown ('-'),,,text from a firm's rules (firms.json)
 data.ae10eab9c3d7,Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b).,Os Termos da Bitfunded não listam países excluídos; eles exigem que você cumpra as leis do seu próprio país (4b).,,"CHECK FIRST: data.ae10eab9c3d7: 'Terms' is 'Os Termos da Bitfunded', matching data.cbbffba007fb. It keeps the English meaning (no excluded countries listed, you must comply with your own laws) and does not say or imply the firm is available anywhere. | text from a firm's rules (firms.json); keep every number exactly"
+data.aff56c00d8d2,"One reference firm — Bitfunded, verified first — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.b028e9aa495b,the tiers: the help centre is newer and stricter,,,text from a firm's rules (firms.json)
+data.b187ddbf98f5,"help centre, Restricted Trading Practices s.3",,,text from a firm's rules (firms.json); keep every number exactly
+data.b1d5781111d8,10,,,text from a firm's rules (firms.json); keep every number exactly
 data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
+data.b318f061ccfb,Terms of Use 9(a) and 9(b),,,text from a firm's rules (firms.json); keep every number exactly
 data.c07565a92bfd,paid add-on only,só como adicional pago,,text from a firm's rules (firms.json)
-data.c2eea93a2517,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.","A Bitfunded não está listada no diretório de cripto do propfirmmatch (verificado em 2026-09-21). A posição de empresa de referência diz respeito à profundidade da verificação, não à colocação no diretório.",,text from a firm's rules (firms.json); keep every number exactly
+data.c1f8219caf61,a blog post of September 2025,,,text from a firm's rules (firms.json); keep every number exactly
 data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
-data.cbbffba007fb,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.","A Bitfunded é a empresa de referência, não a mais bem colocada no ranking. É a empresa que o troid verificou primeiro e de forma mais completa a partir de documentos primários, na qual foram encontradas e resolvidas duas contradições entre os Termos e a central de ajuda, e na qual roda o registro do troid. Essa verificação é o produto do troid. A fonte e a data de leitura de cada regra aparecem ao lado dela, e uma regra sem fonte registrada informa isso. Outra empresa verificada com a mesma profundidade conquista a mesma posição.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
 data.cc9922ebfa08,€497 (€347.90 promo),"€497 (€347,90 na promoção)",,text from a firm's rules (firms.json); keep every number exactly
 data.cd51088f5851,16:00–16:10,16:00–16:10,,text from a firm's rules (firms.json); keep every number exactly
 data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.","Onde um código aparece, sai mais barato pelo link de afiliado; onde não aparece, o preço é o mesmo. As estruturas de comissão variam. O troid calcula; você escolhe.",,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.cfb7b53e61ea,a flat 10 calendar days,,,text from a firm's rules (firms.json); keep every number exactly
+data.d1cb4218cd2f,"help centre, Challenge & Trader Stage, One Step Express table",,,text from a firm's rules (firms.json)
+data.d2cd691e6d53,"5, for the 1-Step and both 2-Step stages",,,text from a firm's rules (firms.json); keep every number exactly
 data.d4978ed5cbab,none (40% on Break),não há (40% no Break),,text from a firm's rules (firms.json); keep every number exactly
 data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","valor fixo = 3% do tamanho ORIGINAL; piso = max(saldo, equity) no rollover − esse valor",,text from a firm's rules (firms.json); keep every number exactly
 data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 vedado aos EUA; plataforma de cripto para os EUA não confirmada,,text from a firm's rules (firms.json); keep every number exactly
+data.db70dd511d6f,"Terms of Use 14(d)(xi), revision of 24 March 2026",,,text from a firm's rules (firms.json); keep every number exactly
+data.e17c8ad0dc2e,Refund,,,text from a firm's rules (firms.json)
 data.e49a4a29c821,none on 1-Phase,não há no 1-Phase,,text from a firm's rules (firms.json); keep every number exactly
 data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
+data.e84af9e146a4,"Price of the $100,000 1-Step",,,text from a firm's rules (firms.json); keep every number exactly
 data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
 data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
 data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.","Alavancagem de até 100× nas contas Advanced ($50k+) e de 5× nas contas Student e Instant, segundo os Termos e Condições da empresa — o modelo de disjuntores usa isso como dado de entrada.",,text from a firm's rules (firms.json); keep every number exactly
 data.f15129262732,up to 90%,até 90%,,text from a firm's rules (firms.json); keep every number exactly
+data.f844ade271f6,"a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases",,,text from a firm's rules (firms.json)
+data.fac9b2e683d7,"10 days for majors, 7 for other crypto, 5 for TradFi",,,text from a firm's rules (firms.json); keep every number exactly
 data.fb360f9c09ac,yes,sim,,text from a firm's rules (firms.json)

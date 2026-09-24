@@ -7,7 +7,7 @@ Three parts:
   2. Monte Carlo: probability of hitting the static floor, under the real rules.
   3. The frontier: expected income vs P(ruin) per risk level, and accounts needed.
 
-Rules modelled: daily loss 4% of day-start balance, static max loss 6% of quota,
+Rules modelled: daily loss 4% of the INITIAL balance, a fixed amount (Bitfunded FAQ), static max loss 6% of quota,
 both on realized + floating; fees 0.04%/side are assumed already inside the R
 multiples (the backtest measures them that way).
 

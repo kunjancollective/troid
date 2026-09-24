@@ -103,7 +103,7 @@ def render_stub(T, live):
                          tail=f'<p style="margin:0 0 14px">{T("tearsheet.stub.english")}</p>')
     else:
         body = head_html(T, live, 0, cfg, None, None, tail=f'<p style="margin:0 0 14px">{T("tearsheet.empty")}</p>')
-    og = site_build.og(T)
+    og = site_build.og(T, "tearsheet")
     return f'''<!DOCTYPE html>
 <html{site_build.html_attrs(T)}>
 <head>
@@ -160,7 +160,7 @@ def main(out=None):
     page = page.replace(' onload="save()"', "", 1)
     page = page.replace("</head>", "<style>#troid-head a{color:#1f6fd1}@media (max-width:760px){body{margin:12px}#left,#right{width:100%;float:none;margin:0}"
                         "#left svg,#right svg{max-width:100%;height:auto}table{width:100%}}</style>\n"
-                        + "".join(f'<meta property="og:{k}" content="{v}">\n' for k, v in site_build.og(T).items())
+                        + "".join(f'<meta property="og:{k}" content="{v}">\n' for k, v in site_build.og(T, "tearsheet").items())
                         + site_build.head_extra(T, "tearsheet", live) + "</head>", 1)
     page = page.replace('</body>', foot_html(T) + '\n</body>', 1)
     dest.write_text(page)

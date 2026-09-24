@@ -10,7 +10,8 @@ numbers you give it.
 
 Across 300,000+ prop accounts, roughly 14% reach a funded account and about 7% ever get
 paid. Around 70% of failures are loss-limit breaches, most in the first week — failures
-trace to position size, not to strategy selection. Almost everything sold in this niche
+trace to position size, not to strategy selection (SOURCED, source not yet recorded: troid has not
+yet traced the 70% to a document and a read date). Almost everything sold in this niche
 is entry signals. This is the other thing.
 
 ## Check troid's numbers before trusting any of them
@@ -82,7 +83,9 @@ through liquidation before reaching your stop.
 
 **Sizing beats edge.** At +0.35R per trade — better than most professionals sustain —
 risking 1% with no cap on remaining budget blows the account 68% of the time within a
-year. At 2%, 98%. Under a proportional cap, 0%.
+year. At 2%, 100%. Under a proportional cap, 0%. MODELLED: 20,000 simulated years of 30 trades
+a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static
+floor ([`backtest/income_math.py`](backtest/income_math.py); `verify_claims.py` reproduces it).
 
 ## On troid's own strategy
 

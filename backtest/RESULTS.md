@@ -51,7 +51,8 @@ hypothesis for the walk-forward, not a result.
 3. **Intraday holding is self-defeating on a 4h chart** — roughly half of all trades get
    force-flattened at the 16:00 UTC reset before they resolve, and pay fees to do it.
 4. **The budget cap is what makes the account survivable.** At +0.35R, naive sizing at
-   1% blows the account 68% of the time in a year; at 2%, 98%. Under the cap, 0%.
+   1% blows the account 68% of the time in a year; at 2%, 100%. Under the cap, 0%
+   (MODELLED: income_math.py, 20,000 simulated years; verify_claims.py reproduces it).
 5. **The rollover trap needs two conditions together**: uncapped risk >= 4% per position
    AND a policy that holds losers through the reset. Desk sizing plus swing_safe kills
    it twice over. Largest floating loss measured into a reset was $3,422 vs the $4,000

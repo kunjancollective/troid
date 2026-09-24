@@ -70,11 +70,11 @@ index.calc.cap_pct,Budget cap %,预算上限 %,,
 index.calc.leverage,Leverage,杠杆,,
 index.calc.mode,Margin mode,保证金模式,,
 index.firms.eyebrow,"Firms · alphabetical · every firm <span style=""text-transform:none"">troid</span> lists, no cap","公司 · 按字母顺序 · <span style=""text-transform:none"">troid</span> 列出的每一家公司，不设数量上限",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-index.firms.why,"{firm} is the reference firm because troid verified it first and most completely, not because it ranks highest.
+index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
     Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
     firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
-    troid computes, you choose.",{firm} 是参照公司，因为 troid 最先、也最完整地核实了它，而不是因为它排名最高。troid 对比上的每条规则都注明公司文件和 troid 读取它的日期，或说明其来源尚未记录。下一家核实哪家公司，依照 propfirmmatch 的评价排名；页面不设数量上限。troid 是其所对比各家公司的独立联盟推广伙伴；显示了优惠码的，通过联盟链接购买更便宜；没有显示的，价格相同。troid 负责计算，由你来选择。,,"CHECK FIRST: Affiliate wording: common.discl, footer.text, index.firms.why, faq.money.p2, faq.disc.affiliate.p, data.ce18773ae94c use '独立联盟推广伙伴' for 'independent affiliate'. A reviewer with a legal or marketing background should confirm this is the settled term, and that 佣金 / 优惠码 / 折扣码 are right. | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+    troid computes, you choose.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Affiliate wording: common.discl, footer.text, index.firms.why, faq.money.p2, faq.disc.affiliate.p, data.ce18773ae94c use '独立联盟推广伙伴' for 'independent affiliate'. A reviewer with a legal or marketing background should confirm this is the settled term, and that 佣金 / 优惠码 / 折扣码 are right. | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 index.firms.reference,reference,参照,,
 index.firms.rank,#{n} by reviews,评价排名 #{n},,keep {n} exactly as written
 index.firms.filled,{n} of {total} rules filled · {m} sourced,{total} 条规则中已填 {n} 条 · {m} 条有来源,,keep {m} {n} {total} exactly as written
@@ -87,9 +87,11 @@ index.firms.promos,their promos apply here,其促销活动在此适用,,
 index.stats.failures.n,~70%,~70%,,keep every number exactly
 index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
     report failures trace to size, not strategy selection.",的自营交易公司挑战失败属于触犯亏损限额，多数发生在第一周内。各公司报告称，失败的根源在于仓位大小，而不是策略选择。,,
+index.stats.failures.prov,SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.stats.blowup.n,68%,68%,,keep every number exactly
 index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
     with no cap on remaining budget. Under a cap, zero.",的账户会在一年内爆仓：条件是专业水准的 +0.35R 优势、每笔风险 1%、剩余预算不设上限。设了上限，则为零。,,keep every number exactly
+index.stats.blowup.prov,"MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
     daily. That is {gap} from the start — half of one bad day.",在 {quota} 的 {product} 账户上，净值低于此值时，起约束作用的是 {max}% 的静态底线，而不是 {daily}% 的每日限额。这距起始余额 {gap}——相当于一个糟糕交易日的一半。,,keep {daily} {gap} {max} {product} {quota} exactly as written
 index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
@@ -104,8 +106,8 @@ index.does.h2,What troid does,troid 做什么,,"troid stays lowercase, in Latin 
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
   0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
   5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across every challenge type and
-  every asset the firm lists.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
+  every asset the firm lists.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 index.doesnt.h2,What it doesn't,它不做什么,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,不发布交易信号。不下单。不接触你的账户凭证。不向你出售策略。,,
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
@@ -252,10 +254,16 @@ index.js.s_tgt,tgt {price},目标 {price},,keep {price} exactly as written
 index.js.s_floor,floor {floor},底线 {floor},,keep {floor} exactly as written
 index.js.breakers,breakers,断路器,,
 compare.meta.title,troid's compare,troid 对比,,"troid stays lowercase, in Latin letters"
+compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.hero.h1,"Three firms, your numbers.",三家公司，你的数字。,,
 compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.",输入一次你的仓位参数。每一列显示这组参数在该公司规则下的代价。每个单元格要么注明公司文件和 troid 读取它的日期，要么标为<em>待定</em>，要么说明其来源尚未记录。不做任何评分。,,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},按字母顺序 · 一家参照公司 + 两家按外部排名选出 · 审核于 {date},,keep {date} exactly as written
+compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
+compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
+compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
 compare.sizing.h,Your sizing,你的仓位参数,,
 compare.sizing.quota,Quota,额度,,
 compare.sizing.risk,Risk % per trade,每笔风险 %,,
@@ -344,6 +352,8 @@ compare.js.foot_held,"Link held until daily, max, target and price each have a r
 compare.js.foot_open_1,open: {n} question — {first},未决：{n} 个问题——{first},,keep {first} {n} exactly as written
 compare.js.foot_open_n,open: {n} questions — {first} …,未决：{n} 个问题——{first} …,,keep {first} {n} exactly as written
 ledger.meta.title,troid's ledger,troid 账本,,"troid stays lowercase, in Latin letters"
+ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.",影子账户。每一笔已平仓交易，未经编辑，亏损交易也在内。它不下任何订单——下单的会是人。,,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar",截至 {asof} UTC · {market} · {profile} 规则 · 全仓 5x · 每 4h 重放一次，在 K 线结束后 20 分钟,,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,最新 K 线,,
@@ -437,6 +447,8 @@ ledger entry, not a claim. Read it that way.",一周的交易量约为 n≈2，�
 ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.",K 线来自 api.binance.us，全程使用同一数据源；⚑ 标记在持仓期间经过前向填充 K 线的交易。,,
 ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">仓库中的 journal.csv</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.meta.title,troid's research — strategy review,troid 研究——策略评估,,"troid stays lowercase, in Latin letters"
+dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
 dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","troid 研究 · 策略评估 · <a href=""{L}/tearsheet"">绩效报告</a> · <a href=""/METHODOLOGY.md"">方法论</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.hero.h1,Strategy review,策略评估,,
 dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed",Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · 交叉核对截至 2026 年 9 月 21 日 · K 线来自 api.binance.us，单一数据源,,keep every number exactly
@@ -542,7 +554,7 @@ dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
   that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
   system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
-  year, and at 2% it's 98%. Every one of those cells is 0.0% under the cap.",预算上限不是保守——它是唯一能让账户存活下来的东西。在 <strong>+0.35R</strong>（一个真正优秀的系统）下，按 1% 朴素计算仓位，一年内爆仓的概率为 <strong>68%</strong>，按 2% 则为 98%。在上限之下，这些单元格全部是 0.0%。,,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.change.h2,What would change the verdict,什么会改变结论,,
 dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
       parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
@@ -570,6 +582,8 @@ dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.bi
 asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
 inside noise on BTC and ETH.","样本数据来自 1,539 根 4h K 线（2026 年 1 月 8 日至 9 月 21 日，api.binance.us）——一种资产，一种市场状态。留出样本（2021 年 1 月 1 日至 2026 年 1 月 7 日，<code>backtest/WALKFORWARD.md</code>）在 BTC 和 ETH 上的结果均处于噪声范围内。",,"CHECK FIRST: Dates now use the standard all-Arabic form (2021 年 1 月 1 日, 2026 年 9 月 23 日), and dashboard.foot gives the sample range as 2026 年 1 月 8 日至 9 月 21 日 with the measure word (1,539 根 4h K 线). Please confirm '4h K 线' reads naturally, or whether '4 小时 K 线' is preferred. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
 tearsheet.meta.title,troid's research — tearsheet,troid 研究——绩效报告,,"troid stays lowercase, in Latin letters"
+tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
 tearsheet.head.eyebrow,troid's research · tearsheet,troid 研究 · 绩效报告,,"troid stays lowercase, in Latin letters"
 tearsheet.head.box,A full tearsheet on a strategy whose holdout expectancy is +0.008R. Every metric below is MEASURED and inside noise. Published because that is what noise looks like when someone shows you all of it.,这是一份完整的绩效报告，所针对策略的留出样本期望值为 +0.008R。下面的每一项指标都是 MEASURED（实测）数字，且都处于噪声范围内。之所以发布，是因为当有人把噪声完整地展示给你看时，它就是这个样子。,,keep every number exactly
 tearsheet.head.sample,"{n} closed trades on {market}, {start} to {end}. Daily P&amp;L on the {quota} quota, days without an exit count as zero, 365 periods a year, sums not products. Source: journal.csv in the repo. Not financial advice.",{market} 上的 {n} 笔已平仓交易，{start} 至 {end}。按 {quota} 额度计算每日盈亏（P&amp;L），没有出场的日子计为零，每年 365 个周期，按求和而非连乘计算。来源：仓库中的 journal.csv。不构成财务建议。,,keep {end} {market} {n} {quota} {start} exactly as written; keep every number exactly
@@ -577,6 +591,8 @@ tearsheet.empty,No closed trades yet.,尚无已平仓交易。,,
 tearsheet.stub.english,"The report itself — every metric, table and chart — is generated in English by quantstats and is published once, untranslated: <a href=""/tearsheet"">the full tearsheet</a>.","报告本身——每一项指标、表格和图表——由 quantstats 以英文生成，只发布一份，不做翻译：<a href=""/tearsheet"">完整绩效报告</a>。",,keep the <…> tags and links as they are; translate only the words
 chat.meta.title,ask troid,troid 问答,,"troid stays lowercase, in Latin letters"
 chat.meta.description,"ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.",troid 问答。troid 的规则数据，附每条规则的来源和读取日期；算术由工具完成；每个数字都标明其可信度层级。不构成财务建议。,,"troid stays lowercase, in Latin letters"
+chat.og.title,ask troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.og.description,"troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.hero.h1,ask troid,troid 问答,,"troid stays lowercase, in Latin letters"
 chat.hero.lede,"ask troid answers from troid's rule data and its own arithmetic tools. It
   prices the trade you bring. It does not generate one.",troid 问答依据 troid 的规则数据和它自己的算术工具作答。它为你带来的交易算账。它不生成交易。,,"CHECK FIRST: faq.worth.p1 and chat.hero.lede: 'it prices what you bring' became 它为你带来的东西/交易算账 (colloquial 'does the accounting for'). dashboard.verdict.p1: 'It is also still +0.03R' was left neutral (仍是) rather than choosing the deflating reading (只是). | troid stays lowercase, in Latin letters"
@@ -624,6 +640,8 @@ chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in
 chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 faq.meta.title,troid — what the numbers actually say,troid——这些数字究竟说明了什么,,"troid stays lowercase, in Latin letters"
+faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
 faq.hero.h1,What the numbers actually say,这些数字究竟说明了什么,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.",基础比率、规则机制，以及 troid 自身的利益冲突——落地页略去不提的那些内容。,,"troid stays lowercase, in Latin letters"
 faq.hero.updated,Last updated 23 September 2026,最后更新：2026 年 9 月 23 日,,keep every number exactly
@@ -649,6 +667,7 @@ faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace b
 <strong>size</strong>, not to strategy selection. People do not blow accounts because
 their entries are bad. They blow them because one position was too large on a day that
 went wrong.",一家公司自己的总结说得很直白：几乎所有失败都可以追溯到<strong>仓位大小</strong>，而不是策略选择。人们爆仓不是因为入场点不好，而是因为在行情不利的某一天，某一个仓位开得太大。,,keep the <…> tags and links as they are; translate only the words
+faq.fail.src,SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 faq.offer.q,Then what is troid actually offering?,那 troid 到底提供什么？,,"troid stays lowercase, in Latin letters"
 faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
 a firm's loss ceilings at once, net of fees, and tells you which one is actually
@@ -684,11 +703,12 @@ What it can show you is what the arithmetic does to the wrong one.",合适的数
 faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
 most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
 trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
-2%, <span class=""stat"">98%</span>. Capping each trade at a fraction of the
+2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
-0%.","troid 模拟了一位拥有真正优秀优势的交易员——每笔 +0.35R，好于大多数专业人士能长期维持的水平。每笔风险 1%、剩余预算不设上限时，这位交易员在十二个月内爆仓的概率为 <span class=""stat"">68%</span>。按 2% 时为 <span class=""stat"">98%</span>。把每笔交易的风险上限设为<em>剩余</em>预算的一部分，而不是余额的固定份额，这些数字全部降到了 0%。",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+0%.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
 whether you survive long enough to use it.",真实的优势本身并不足够。在 4%/6% 的规则下，仓位大小决定你能否存活足够久，从而用上这份优势。,,keep every number exactly
+faq.risk.src,"MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.fees.q,Do fees matter?,手续费重要吗？,,
 faq.fees.p1,"More than most people model. Bitfunded charges 0.04% of position size on entry and
 again on exit, calculated on notional — which at 5× leverage is five times your margin.",比大多数人在模型里考虑的更重要。Bitfunded 在入场时收取仓位规模的 0.04%，出场时再收一次，按名义价值计算——在 5× 杠杆下，名义价值是你保证金的五倍。,,keep every number exactly
@@ -789,6 +809,8 @@ faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by
 responsibility to confirm you are eligible to participate where you live.",自营交易公司服务的可用性与合法性因国家而异。确认你在居住地有资格参与，是你自己的责任。,,"CHECK FIRST: Funded account = 注资账户, payout = 出金 (faq.pass.p1, faq.cost.q, faq.disc.*, index.hero.lede): there is no single settled Chinese term in the prop-firm community. 资金账户 and 利润分成 are common alternatives."
 terms.meta.title,troid — terms of use,troid——使用条款,,"troid stays lowercase, in Latin letters"
 terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.",troid 的使用条款：一个免费的信息工具，不构成建议。交易前请向公司核实每一个数字。,,"troid stays lowercase, in Latin letters"
+terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.hero.eyebrow,troid · terms,troid · 条款,,"troid stays lowercase, in Latin letters"
 terms.hero.h1,Terms of use,使用条款,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
@@ -819,56 +841,94 @@ ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in
 ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.sourced,Tier: the rules above are SOURCED — read from the documents listed.,,,NEW: translate it in reviewer_edit | 
 ask.assumed,"troid's assumptions, not the firm's rules: {list}.",,,"NEW: translate it in reviewer_edit | keep {list} exactly as written; troid stays lowercase, in Latin letters"
+data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
+data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.0d92e8c53788,Minimum trading days,,,text from a firm's rules (firms.json)
+data.14d0db894172,"both, and picks neither",,,text from a firm's rules (firms.json)
 data.173bc3120e68,discretionary,酌情决定,,text from a firm's rules (firms.json)
 data.1a4553349586,1-Phase,1-Phase,,text from a firm's rules (firms.json); keep every number exactly
+data.1a4637763178,Express profit target,,,text from a firm's rules (firms.json)
+data.1d3053d3ee7e,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing comes from verification, not directory rank.",,,text from a firm's rules (firms.json); keep every number exactly
 data.1d95103da2c3,Rules go on this page only after they're read from BrightFunded's own documents.,规则只有在从 BrightFunded 自己的文件中读取之后，才会列入本页。,,text from a firm's rules (firms.json)
+data.1f61f2d86a2b,3%,,,text from a firm's rules (firms.json); keep every number exactly
 data.1f7a32c047e8,none if the evaluation is not completed,未完成考核则无,,text from a firm's rules (firms.json)
 data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,23:30–23:59 CET 换日 = 21:30 UTC（CEST）/ 22:30 UTC（CET）；公司建议在此时段内不要交易,,text from a firm's rules (firms.json); keep every number exactly
 data.254f81f3de77,up to 90% (add-on); base unconfirmed,最高 90%（附加项）；基础比例未确认,,text from a firm's rules (firms.json); keep every number exactly
 data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,Bitfunded 有自己的促销活动（买一送一之类），通过此链接同样适用——无需优惠码。,,text from a firm's rules (firms.json)
+data.32470a1f372d,a blog post of May 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
+data.3a3e0ad3ccb5,"up to $599 for $100,000",,,text from a firm's rules (firms.json); keep every number exactly
 data.3ce26c9516b7,none stated,未说明,,text from a firm's rules (firms.json)
 data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,troid 账本在这家公司运行。每条规则的来源和读取日期见 troid 对比。,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.443b076a4761,"help centre, Restricted Trading Practices s.1",,,text from a firm's rules (firms.json); keep every number exactly
+data.44652ad36760,9%,,,text from a firm's rules (firms.json); keep every number exactly
 data.44fadd8eb267,80% → 90%,80% → 90%,,text from a firm's rules (firms.json); keep every number exactly
 data.45c9dde99668,day-start balance,日初余额,,text from a firm's rules (firms.json)
-data.4f6eab8d3b65,"A firm's link shows when link_live is true in its entry AND its daily, max, target and price cells each have a recorded source: the firm document, the section and the date troid read it. Until then the link is held, whatever the affiliate agreement allows. link_live is set by a human when the affiliate agreement exists and its conditions for linking are met. Other cells show 'pending' individually. US availability is always shown as its own row.",只有当某公司条目中的 link_live 为 true，并且（AND）它的每日、最大、目标和价格单元格都各有已记录的来源（公司文件、章节以及 troid 读取它的日期）时，该公司的链接才会显示。在此之前，无论联盟协议允许什么，链接都暂不显示。link_live 由人工设置，前提是联盟协议已经存在且其链接条件已经满足。其他单元格各自单独显示“待定”。美国可用性始终单独占一行显示。,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4622b5f5c4b4,5: the help centre is newer and stricter,,,text from a firm's rules (firms.json); keep every number exactly
+data.4d29d0f9361d,"A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.4de966a2be8a,Open positions,,,text from a firm's rules (firms.json)
+data.4eddb3859ab9,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",,,"text from a firm's rules (firms.json); keep {conflicts} exactly as written; troid stays lowercase, in Latin letters"
 data.5129c48719a9,5-min restriction,5 分钟限制,,text from a firm's rules (firms.json); keep every number exactly
 data.56d9a0cd140e,Funded · after 1-Step,Funded · 1-Step 之后,,text from a firm's rules (firms.json); keep every number exactly
 data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,加密货币佣金 0.012%/单边——请在 brightfunded.com/trading-instruments 上核实,,text from a firm's rules (firms.json); keep every number exactly
+data.5bc39b578c6e,Maximum hold,,,text from a firm's rules (firms.json)
 data.601c3530e85e,trailing → static at initial after +6%,追踪式 → +6% 后在初始余额处转为静态,,text from a firm's rules (firms.json); keep every number exactly
+data.62603a2168cf,5: the contract governs,,,text from a firm's rules (firms.json); keep every number exactly
+data.633b319f6929,"$999, from the Terms and the help centre; the $599 is unexplained",,,text from a firm's rules (firms.json); keep every number exactly
 data.64d2206416ad,$10k / day and / trade,$10k / 每日及每笔交易,,text from a firm's rules (firms.json); keep every number exactly
 data.65de6a9cbafc,$999,$999,,text from a firm's rules (firms.json); keep every number exactly
 data.66f1cdf92813,MT5 barred to US residents; Match-Trader access not yet sourced,MT5 不对美国居民开放；Match-Trader 的准入情况尚无来源,,text from a firm's rules (firms.json); keep every number exactly
 data.71f8e7976e4c,none,无,,text from a firm's rules (firms.json)
+data.72b94cc8ae98,Terms of Use 14(d)(x),,,text from a firm's rules (firms.json); keep every number exactly
 data.788bd94c8a8e,"trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",追踪式，按净值高水位实时（REAL-TIME）计算（浮动盈亏计入），+6% 后在初始余额处锁定为静态,,text from a firm's rules (firms.json); keep every number exactly
+data.78cb8f3d2113,"$999, with the 2-Step Expert at $799",,,text from a firm's rules (firms.json); keep every number exactly
 data.78fc80eb213f,10d / 7d / 5d,10 天 / 7 天 / 5 天,,text from a firm's rules (firms.json); keep every number exactly
+data.7a6b6437c611,Terms of Use 9(a),,,text from a firm's rules (firms.json); keep every number exactly
+data.7aa03b4e9079,"help centre, Challenge & Trader Stage",,,text from a firm's rules (firms.json)
 data.7b921a3bc2ed,"Conflicting: Terms 9(a) — 100% at first profit split day, all levels. Help centre — 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.",存在冲突：Terms 9(a)（条款）——首次利润分成日退还 100%，适用所有级别。帮助中心——仅限 2-Step，随第 3 次出金退还，促销不适用。依赖退款之前，请先向 Bitfunded 确认。,,"CHECK FIRST: data.7b921a3bc2ed: I added the gloss '（条款）' after 'Terms 9(a)', and rendered '100% at first profit split day' as '首次利润分成日退还 100%' and 'with the 3rd withdrawal' as '随第 3 次出金退还'. Confirm it still reads as a conflict with both sides kept, and as an instruction to check, never a promise. | text from a firm's rules (firms.json); keep every number exactly"
 data.7bf372bece8d,initial balance,初始余额,,text from a firm's rules (firms.json)
 data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,“reverse trading”（反向交易，7.1 xiv）是否指止损并反手？这一问题阻碍了在该公司运行 shadow-1。,,text from a firm's rules (firms.json); keep every number exactly
-data.7f8cd7953b97,"One reference firm — Bitfunded, verified first and most completely — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",一家参照公司——Bitfunded，最先、也最完整地完成核实——以及按 propfirmmatch.com/crypto 上已验证评价数量排在其后的公司。这是一个外部的公开排名，其方法论披露了它的联盟推广模式，并声明排名无法用钱买到；它也自行说明了局限：评价数量更多并不自动意味着更好。按字母顺序排列，不设数量上限。一家公司的联盟推广条款允许进行对比后，它才会被列入。每条规则要么注明公司文件和 troid 读取它的日期，要么说明其来源尚未记录，要么在 troid 尚无数值时显示待定。,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.853ca806d6d6,blog of 28 August 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4% / 6% 静态 · 2-Step 5% / 10%,,text from a firm's rules (firms.json); keep every number exactly
 data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
+data.8b9e2967d124,Expert $799,,,text from a firm's rules (firms.json); keep every number exactly
+data.94934cc00dcb,none for the 2-Step,,,text from a firm's rules (firms.json); keep every number exactly
+data.a0c0cbd0c834,"help centre, Challenge Type, One Step Evaluation table",,,text from a firm's rules (firms.json)
 data.a199f4153a08,Funded · after Express,Funded · Express 之后,,text from a firm's rules (firms.json)
 data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
 data.a381562afa0e,static,静态,,text from a firm's rules (firms.json)
 data.a608ee8e8ce6,Funded · after 2-Step,Funded · 2-Step 之后,,text from a firm's rules (firms.json); keep every number exactly
+data.ac3478d69a3c,5,,,text from a firm's rules (firms.json); keep every number exactly
+data.ac5ceff091ef,none shown ('-'),,,text from a firm's rules (firms.json)
 data.ae10eab9c3d7,Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b).,Bitfunded 的条款未列出任何被排除的国家；条款要求你遵守你本国的法律（4b）。,,CHECK FIRST: data.ae10eab9c3d7: '未列出任何被排除的国家' translates 'lists no excluded countries' literally. Confirm a Chinese reader will not take it to mean the firm is available everywhere. | text from a firm's rules (firms.json); keep every number exactly
+data.aff56c00d8d2,"One reference firm — Bitfunded, verified first — and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.b028e9aa495b,the tiers: the help centre is newer and stricter,,,text from a firm's rules (firms.json)
+data.b187ddbf98f5,"help centre, Restricted Trading Practices s.3",,,text from a firm's rules (firms.json); keep every number exactly
+data.b1d5781111d8,10,,,text from a firm's rules (firms.json); keep every number exactly
 data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
+data.b318f061ccfb,Terms of Use 9(a) and 9(b),,,text from a firm's rules (firms.json); keep every number exactly
 data.c07565a92bfd,paid add-on only,仅限付费附加项,,text from a firm's rules (firms.json)
-data.c2eea93a2517,"Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing is about verification depth, not directory rank.",Bitfunded 未列入 propfirmmatch 的加密货币目录（查于 2026-09-21）。参照公司的地位取决于核实深度，而不是目录排名。,,text from a firm's rules (firms.json); keep every number exactly
+data.c1f8219caf61,a blog post of September 2025,,,text from a firm's rules (firms.json); keep every number exactly
 data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
-data.cbbffba007fb,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first and most completely from primary documents, where two contradictions between the Terms and the help centre were found and resolved, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",Bitfunded 是参照公司，而不是排名最高的公司。它是 troid 最先、也最完整地依据一手文件核实的公司：在核实中发现并解决了其条款与帮助中心之间的两处矛盾，troid 账本也在这家公司运行。这种核实就是 troid 的产品。每条规则旁都注明其来源和读取日期，没有记录来源的规则也会注明这一点。其他公司若核实到同样深度，也会获得同样的地位。,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
 data.cc9922ebfa08,€497 (€347.90 promo),€497（促销价 €347.90）,,text from a firm's rules (firms.json); keep every number exactly
 data.cd51088f5851,16:00–16:10,16:00–16:10,,text from a firm's rules (firms.json); keep every number exactly
 data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",显示了优惠码的，通过联盟链接购买更便宜；没有显示的，价格相同。各家的佣金结构不同。troid 负责计算，由你来选择。,,"CHECK FIRST: Affiliate wording: common.discl, footer.text, index.firms.why, faq.money.p2, faq.disc.affiliate.p, data.ce18773ae94c use '独立联盟推广伙伴' for 'independent affiliate'. A reviewer with a legal or marketing background should confirm this is the settled term, and that 佣金 / 优惠码 / 折扣码 are right. | text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
+data.cfb7b53e61ea,a flat 10 calendar days,,,text from a firm's rules (firms.json); keep every number exactly
+data.d1cb4218cd2f,"help centre, Challenge & Trader Stage, One Step Express table",,,text from a firm's rules (firms.json)
+data.d2cd691e6d53,"5, for the 1-Step and both 2-Step stages",,,text from a firm's rules (firms.json); keep every number exactly
 data.d4978ed5cbab,none (40% on Break),无（Break 为 40%）,,text from a firm's rules (firms.json); keep every number exactly
 data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","固定金额 = 原始（ORIGINAL）规模的 3%；底线 = 换日时的 max(余额, 净值) − 该金额",,text from a firm's rules (firms.json); keep every number exactly
 data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 不对美国开放；面向美国的加密货币平台未确认,,text from a firm's rules (firms.json); keep every number exactly
+data.db70dd511d6f,"Terms of Use 14(d)(xi), revision of 24 March 2026",,,text from a firm's rules (firms.json); keep every number exactly
+data.e17c8ad0dc2e,Refund,,,text from a firm's rules (firms.json)
 data.e49a4a29c821,none on 1-Phase,1-Phase 上无,,text from a firm's rules (firms.json); keep every number exactly
 data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
+data.e84af9e146a4,"Price of the $100,000 1-Step",,,text from a firm's rules (firms.json); keep every number exactly
 data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
 data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
 data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.",根据其条款与条件（Terms and Conditions），Advanced 账户（$50k+）杠杆最高 100×，Student 和 Instant 账户为 5×——断路器模型将此作为输入。,,text from a firm's rules (firms.json); keep every number exactly
 data.f15129262732,up to 90%,最高 90%,,text from a firm's rules (firms.json); keep every number exactly
+data.f844ade271f6,"a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases",,,text from a firm's rules (firms.json)
+data.fac9b2e683d7,"10 days for majors, 7 for other crypto, 5 for TradFi",,,text from a firm's rules (firms.json); keep every number exactly
 data.fb360f9c09ac,yes,是,,text from a firm's rules (firms.json)

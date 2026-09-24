@@ -42,17 +42,13 @@ def panel_cell(k, f, T=None):
     rank = RANK.get(f["name"])
     role = T("index.firms.reference") if f.get("reference") else (T("index.firms.rank", n=rank[0]) if rank else "")
     head = f"{name} · {role}" if role else name
-    if f.get("verified"):
-        summary = (T.data(f["panel_summary"]) if f.get("panel_summary") else
-                   f"{T.data(p['label'])} {p['daily_pct']}% / {p['max_pct']}%"
-                   + (f" {T.data(p['drawdown_type'])}" if p.get("drawdown_type") else ""))
-        v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(summary)}</div>'
-    elif link_live(f):
-        n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
-        v = (f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">'
-             f'{T("index.firms.filled", n=n, total=len(FIELDS), m=m)}</div>')
-    else:
-        v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{T("index.firms.pending")}</div>'
+    # One rule for every firm, the reference firm included: how many of the compare's rules are filled and how many
+    # have a recorded source; a firm's own one-line summary (panel_summary), where it has one, sits above the count.
+    n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
+    count = T("index.firms.filled", n=n, total=len(FIELDS), m=m) if n else T("index.firms.pending")
+    v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{count}</div>'
+    if f.get("panel_summary"):
+        v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(T.data(f["panel_summary"]))}</div>\n      ' + v
     notes = []
     if rank: notes.append(T("index.firms.reviews", n=rank[1]["reviews"], rating=rank[1]["rating"]))
     if f.get("panel_note"): notes.append(html.escape(T.data(f["panel_note"])))

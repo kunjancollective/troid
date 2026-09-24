@@ -6,7 +6,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "compare_product cell 4. compare_product.key = 1step; product '*' marks the compare_product cell per the output schema and is kept because the calc 1step entry already holds that key. It is not a firm-wide claim. references/bitfunded.md: 'Sourced from Bitfunded's own docs (help center \"Criteria to be Success\" and the FAQ). Expert $100,000 / Stage 1 (1 Step) figures.' + 'Max daily loss 4% ($4,000) realized + floating'. FAQ dropped from src: the header credits the block jointly, no evidence file attributes the 4% to the FAQ, and the same file's 'Unresolved' says 'The FAQ also describes a two-stage evaluation ... treat the FAQ as stale'. Corroboration only (outside the evidence list): backtest/engine.py docstring 'Rules modelled (from bitfunded.gitbook.io \"Criteria to be Success\"): Max daily loss 4%'."
+   "evidence": "compare_product cell 4. compare_product.key = 1step; product '*' marks the compare_product cell per the output schema and is kept because the calc 1step entry already holds that key. It is not a firm-wide claim. references/bitfunded.md: 'Sourced from Bitfunded's own docs (help center \"Criteria to be Success\" and the FAQ). Expert $100,000 / Stage 1 (1 Step) figures.' + 'Max daily loss 4% ($4,000) realized + floating'. FAQ dropped from src: the header credits the block jointly, no evidence file attributes the 4% to the FAQ, and the same file's 'Unresolved' says 'The FAQ also describes a two-stage evaluation ... treat the FAQ as stale'. Corroboration only (outside the evidence list): backtest/engine.py docstring 'Rules modelled (from bitfunded.gitbook.io \"Criteria to be Success\"): Max daily loss 4%'.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "max_pct",
@@ -14,7 +15,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "compare_product cell 6 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header ('help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures') + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'Max loss 6% STATIC' under 'from bitfunded.gitbook.io \"Criteria to be Success\"'."
+   "evidence": "compare_product cell 6 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header ('help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures') + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'Max loss 6% STATIC' under 'from bitfunded.gitbook.io \"Criteria to be Success\"'.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "target_pct",
@@ -22,7 +24,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "compare_product cell 10 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header + 'Profit target 10% ($10,000) realized only, floating profit doesn't count'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'profit target 10% realized' under the Criteria to be Success header."
+   "evidence": "compare_product cell 10 (key 1step; '*' = compare_product per the output schema). references/bitfunded.md, same header + 'Profit target 10% ($10,000) realized only, floating profit doesn't count'. FAQ dropped: joint credit only, and the file flags the FAQ as stale and two-stage. Corroboration only: engine.py 'profit target 10% realized' under the Criteria to be Success header.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "min_days",
@@ -71,7 +74,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "compare cell 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only. Corroboration only: engine.py 'Max leverage 5x' under the Criteria to be Success header."
+   "evidence": "compare cell 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only. Corroboration only: engine.py 'Max leverage 5x' under the Criteria to be Success header.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "hold_cap",
@@ -95,7 +99,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "calc: calc.products.1step has only a label, so backtest/gen_compare.py profiles_js falls back to products['1step'].daily_pct = 4 (confirmed in code). references/bitfunded.md: 'Sourced from ... help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures' + 'Max daily loss 4%'. The FAQ is dropped for the same reason as the compare cell."
+   "evidence": "calc: calc.products.1step has only a label, so backtest/gen_compare.py profiles_js falls back to products['1step'].daily_pct = 4 (confirmed in code). references/bitfunded.md: 'Sourced from ... help center \"Criteria to be Success\" and the FAQ ... Stage 1 (1 Step) figures' + 'Max daily loss 4%'. The FAQ is dropped for the same reason as the compare cell.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "max_pct",
@@ -103,7 +108,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "calc: products['1step'].max_pct = 6 via the profiles_js fallback. references/bitfunded.md, same header + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the FAQ is flagged stale and two-stage."
+   "evidence": "calc: products['1step'].max_pct = 6 via the profiles_js fallback. references/bitfunded.md, same header + 'Max loss 6% ($6,000) realized + floating, STATIC'. FAQ dropped: joint credit only, and the FAQ is flagged stale and two-stage.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "daily_pct",
@@ -151,7 +157,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "calc.max_leverage = 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only."
+   "evidence": "calc.max_leverage = 5. references/bitfunded.md header + 'Max leverage 5x'. FAQ dropped: joint credit only.",
+   "superseded": "2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "drawdown",
@@ -167,7 +174,8 @@
    "src": [
     "criteria"
    ],
-   "evidence": "references/bitfunded.md ties the Criteria to be Success figures to 'Expert $100,000 / Stage 1 (1 Step)'. No firm-wide statement of fee or leverage is recorded, so the cite applies to the 1-Step only (provenance.product_only); other products say 'source not yet recorded'."
+   "evidence": "references/bitfunded.md ties the Criteria to be Success figures to 'Expert $100,000 / Stage 1 (1 Step)'. No firm-wide statement of fee or leverage is recorded, so the cite applies to the 1-Step only (provenance.product_only); other products say 'source not yet recorded'.",
+   "superseded": "2026-09-24: for max_leverage only; the fee keeps this mapping. 2026-09-24: superseded by the 'daily_pct / max_pct / target_pct / max_leverage' entry below (HANDOFF-2026-09-24 1c)."
   },
   {
    "field": "daily_pct",
@@ -340,6 +348,29 @@
     "trader_stage"
    ],
    "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'Page also states: any Trader Stage breach disqualifies the account; a new challenge is required.'"
+  },
+  {
+   "field": "daily_pct / max_pct / target_pct / max_leverage",
+   "product": "* and 1step",
+   "src": [
+    "trader_stage",
+    "tou_0923"
+   ],
+   "evidence": "HANDOFF-2026-09-24 1c (troid's owner): cite Challenge & Trader Stage (One Step table, read 23 Sep) and Terms 9(a) for the 1-Step percentages; keep Criteria to be Success for the mechanics only (static floor, daily limit as a fixed amount); the same fix wherever that citation was used for 1-Step figures. Checked by troid on 2026-09-24 from a Vercel sandbox (this build environment still cannot open bitfunded.gitbook.io or bitfunded.com): help centre Challenge & Trader Stage (the page's .md), 'One step Evaluation' table, Stage 1 column: Leverage Ratio 1:5, Max. Daily Loss 4%, Max. Loss 6%, Profit Target 10%, Min. Trading Days '-'. Terms of Use 9(a), '1 Step Challenges': Features 'Up To 1:5 Leverage'; Objectives 'Step 1: Max Daily Drawdown: 4%, Max Drawdown: 6%, Profit Target: 10%, Minimum Trading Days: 5'. Criteria to be Success's worked figures are 5,000 USDT daily, 10,000 max and 8,000 target on a 100,000 quota (the 2-Step Stage 1 shape), and it states no leverage, so it was the wrong citation for all four. The cited read dates stay the owner's 23 Sep reads; the 24 Sep check is corroboration, not a new read."
+  },
+  {
+   "field": "drawdown_type / drawdown",
+   "product": "*",
+   "src": [
+    "criteria"
+   ],
+   "evidence": "Unchanged source, narrower section (HANDOFF-2026-09-24 1c): Criteria to be Success is cited for the mechanics only. Its Maximum Loss section measures closed plus floating losses against the account quota for the whole period (a static floor); the percentages in its examples are the 2-Step's. Checked 2026-09-24 as above."
+  },
+  {
+   "field": "product_only: daily_pct, max_pct, target_pct",
+   "product": "*",
+   "src": [],
+   "evidence": "2026-09-24: the firm-level daily, max and target cites are the 1-Step's (the compare product), so they are added to provenance.product_only: another product never borrows them. products.1step.target_pct now carries its own cite. Products without their own cite for these show 'source not yet recorded'."
   }
  ],
  "bitfunded_unmapped": [
