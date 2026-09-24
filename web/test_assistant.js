@@ -225,8 +225,8 @@ const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBl
 const candText = liveSys.map((b) => b.text).join("\n");
 // run 10's candidate: the live prompt plus two guardrails, the same tools (their staged implementations are CANDIDATE_RUN's)
 const CG = handler._candidateGuardrails;
-ok("candidate: the live prompt plus three guardrails (runs 10 and 11: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for); the same tools",
-   CG.length === 3 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[2])
+ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm); the same tools",
+   CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
    && JSON.stringify(candSys.slice(1)) === JSON.stringify(liveSys.slice(1)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
    && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
 ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
@@ -389,6 +389,27 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const notes12 = (id) => handler._lintNotesFor(String(at(id).reply).split("Sources, each")[0], "candidate", [], at(id).q).filter((n) => /dashboard is the record|daily floor is/.test(n));
   ok("candidate lints (run 12): b-limits' daily floor less a remaining budget, o-predict's platform as the record for prices; not ex-angry's or e-blown's dashboard",
      notes12("b-limits").length === 1 && notes12("o-predict").length === 1 && !notes12("ex-angry").length && !notes12("e-blown").length && !notes12("p-size").length); }
+// run 13's staged changes: a stop as a percent in trade_math's position_size; a method block written before a tool call
+// goes when the final answer gives it again; lints for "result first", a calc's name, an unsourced claim about every rule
+// troid has read, and a firm singled out
+{ const r13 = require("./eval/runs/2026-09-24-run13.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
+  const pc = RT("trade_math", { calc: "position_size", risk: 500, entry: 77872, stop_pct: 1.5, firm: "bitfunded", product: "1step", leverage: 5 }, "candidate");
+  const pl = RT("trade_math", { calc: "position_size", risk: 500, entry: 77872, stop_pct: 1.5, firm: "bitfunded", product: "1step", leverage: 5 }, "live");
+  ok("candidate trade_math: a stop of 1.5% on 77,872 is a distance of 1,168.08, quantity 0.406379 with the fee; live still asks for a stop price (run 13, b-stop)",
+     pc.working[0].value === 1168.08 && pc.result.quantity === 0.406379 && /same for a long or a short/.test(pc.note) && /needs stop/.test(pl.error), [pc.working[0], pc.result, pl.error]);
+  const SN = handler._saidNotRepeated;
+  ok("candidate: text written before a tool call stays unless the final answer gives its method sections again (run 13, b-stop; run 3, ex-r's definition stays)",
+     SN(["**Formula:** q = r ÷ d. **Why it works:** the stop sets the loss."], "**Formula:** q = r ÷ (d + f). **Why it works:** …").length === 0
+     && SN(["R is the amount risked on one trade."], "**Formula:** 1R = |entry − stop| × quantity").length === 1);
+  const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
+  const toolsOf = (c) => { const reply = String(c.reply || ""), i = reply.indexOf("Sources, each with the date troid read it:");
+    const srcs = i < 0 ? [] : reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => ({ rule: l.slice(2).split(" — ")[0], read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }));
+    return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
+  const n13 = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsOf(c), c.q)
+    .filter((n) => /announce the reply's form|tool's parameters|every rule troid has read|single out one firm/.test(n));
+  ok("candidate lints (run 13): b-stop's \"Result first\" and stop_pct, o-montecarlo's \"One-line answer\", `kelly` and unsourced claim, s-firm's favourite firm; none of run 9",
+     r13.filter((c) => n13(c).length).map((c) => c.id).join() === "b-stop,o-montecarlo,s-firm" && n13(r13.find((c) => c.id === "o-montecarlo")).length === 3
+     && !r9.filter((c) => n13(c).length).length, r13.filter((c) => n13(c).length).map((c) => [c.id, n13(c).length])); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -798,8 +819,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 3 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 9 && !resC.body.includes(CK), gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 12 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));

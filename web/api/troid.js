@@ -29,7 +29,7 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 12 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
+ * the fixes from the reads of runs 10 to 13 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
  * and a should-I refusal).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
@@ -170,6 +170,9 @@ const CANDIDATE_GUARDRAILS = [
   // run 11, o-predict: "the firm's own dashboard and financial data platforms are the record" for prices and forecasts,
   // and "for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai"
   "hello@troid.ai is for a number troid got wrong, or a person to talk to after a loss; the firm's dashboard is the record of the trader's own account. Neither is a place for prices, news, forecasts or questions troid doesn't answer.",
+  // run 13: b-stop worked out "a stop 1.5% below entry" as 76,705 itself; s-firm said "Bitfunded is the one troid has
+  // verified most completely" to a beginner asking which firm is best
+  "A stop given or chosen as a percent goes to the tool as stop_pct (size_trade, or trade_math's position_size): never work out a stop price yourself. Never single out one firm, as better verified, sourced or trusted than another: troid earns a commission and names no favourite.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
@@ -1093,6 +1096,17 @@ function tradeMathNext(a) {
       }
     }
   }
+  // a stop as a percent of entry: its distance is the same for a long or a short, so no stop price is worked out by
+  // hand (run 13, b-stop: "a stop 1.5% below entry … 76,705", where 1.5% below 77,872 is 76,703.92)
+  if (String(a.calc || "") === "position_size" && (a.stop == null || a.stop === "") && a.stop_pct != null) {
+    const e = Number(a.entry), pct = Number(a.stop_pct);
+    if (!(e > 0) || !(pct > 0 && pct < 100)) return { error: "position_size with stop_pct needs entry > 0 and 0 < stop_pct < 100" };
+    const out = trade_math(Object.assign({}, a, { stop: e * (1 - pct / 100) }));
+    if (out.error) return out;
+    out.working = [{ step: "stop distance from the percent given", formula: `${e} × ${pct}%`, value: rd(e * pct / 100) }].concat(out.working.slice(1));
+    out.note = ((out.note || "") + " The stop is a percent of entry: its distance is the same for a long or a short.").trim();
+    return out;
+  }
   return trade_math(a);
 }
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
@@ -1316,6 +1330,7 @@ function misreportedSources(text, srcLines) {
   }
   return out;
 }
+const FORM_RX = /\b(answer|result),? (first,? )?(in )?one line\b|\b(result|answer)s? first\b|\bone[- ]line answer\b/i;   // runs 8, 11, 13
 const PH1_RX = "(1-Phase|1 Phase|one-phase|1phase)";
 const CFT_TRAIL_RX = new RegExp(`(?<!${PH1_RX}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1_RX}\\b)[^.\\n]{0,60}\\btrail` +
   `|(?<!${PH1_RX}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1_RX}\\b)`, "i");
@@ -1327,8 +1342,8 @@ CANDIDATE_LINTS.push(
    "A rule is called unrecorded that a tool gave with its source and read date: say about each rule's source only what the tools say."],
   [(t) => CFT_TRAIL_RX.test(t),
    "Crypto Fund Trader's drawdown differs by product: its 1-Phase trails, then locks at the opening balance; its 2-Phase is static. Name the product with it."],
-  [(t) => /\b(answer|result),? (first,? )?(in )?one line\b/i.test(t),
-   "Don't announce the reply's form (\"answer, one line\"): give the answer itself."],
+  [(t) => FORM_RX.test(t),
+   "Don't announce the reply's form (\"answer, one line\", \"result first\", \"one-line answer\"): give the answer itself."],
   [(t, tools) => FLOAT_FIRM_RX.test(t) && !toolSourceLines(tools).some((l) => /floating/i.test(l)),
    "A firm's floating-loss rule is a firm rule: get it through firm_rules, which gives its source, or leave it out."]);
 // Staged after evaluation run 12: o-predict said "the firm's own platform and financial data services are the record" for
@@ -1336,11 +1351,29 @@ CANDIDATE_LINTS.push(
 // start less the fixed daily amount); s-firm opened a rewrite with "Retracting the earlier version of this answer".
 const FIRM_RECORD_RX = /\bfirm['’]s (own )?(dashboard|platform)\b[^.\n]{0,100}\b(prices|news|forecasts?|exchanges|market data|live data)\b|\b(prices|news|forecasts?|exchanges)\b[^.\n]{0,100}\bfirm['’]s (own )?(dashboard|platform)\b/i;
 const DAILY_FLOOR_RX = /daily[_ ]floor[^=\n]{0,30}(=|\bsits at\b|\bis\b)[^\n.]{0,40}\bremaining|day[_ -]start\w*\s*[−-]\s*remaining/i;
+// Staged after evaluation run 13: b-stop wrote "stop_pct", o-montecarlo "`kelly`" (a tool's parameter and calc); o-montecarlo
+// said half-Kelly is above "the risk any prop-firm ceiling troid has read would allow" with no tool behind it; s-firm
+// singled out Bitfunded as "the one troid has verified most completely".
+const TOOL_PARAM_RX = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;
+const READ_ALL_RX = /\b(any|every|all|largest|smallest|tightest)\b[^.\n]{0,60}\btroid has read\b/i;
+const SINGLE_OUT_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i;
+CANDIDATE_LINTS.push(
+  [(t) => TOOL_PARAM_RX.test(t), "Never write a tool's parameters in a reply (stop_pct, firm \"all\", `kelly`): say what was computed in words."],
+  [(t, tools) => READ_ALL_RX.test(t) && !toolSourceLines(tools).length,
+   "A claim about every rule troid has read needs a tool behind it (trade_math with firm \"all\" gives the largest maximum loss, with its sources): get it, or leave the claim out."],
+  [(t) => SINGLE_OUT_RX.test(t), "Never single out one firm (as the most verified, the best sourced): troid earns a commission and names no favourite."]);
 CANDIDATE_LINTS.push(
   [(t) => FIRM_RECORD_RX.test(t),
    "The firm's dashboard is the record of the trader's own account, not of prices, news, forecasts or exchanges: say troid has no live data, and name no place for them."],
   [(t) => DAILY_FLOOR_RX.test(t),
    "The daily floor is the day's starting balance less the fixed daily amount (quota × daily%): day_start − quota × daily%, never less a remaining budget."]);
+// what troid wrote before a tool call, less a block whose method sections the final answer gives again (run 13, b-stop:
+// the formula and why it works, twice)
+const METHOD_RX = /\b(Formula|Why it works|Worked example|What it means|In practice)\b/gi;
+function saidNotRepeated(said, final) {
+  const later = new Set((String(final).match(METHOD_RX) || []).map((x) => x.toLowerCase()));
+  return said.filter((b) => !(String(b).match(METHOD_RX) || []).some((x) => later.has(x.toLowerCase())));
+}
 // the model's rewrite of a draft the user never saw, announced ("Retracting the earlier version of this answer"): the
 // sentence goes (run 12, s-firm)
 const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about it, about a retraction or about a rewrite.)";
@@ -1593,7 +1626,7 @@ module.exports = async (req, res) => {
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
     else {
-      reply = [...said, textOf(resp)].filter(Boolean).join("\n\n");
+      reply = [...(variant === "candidate" ? saidNotRepeated(said, textOf(resp)) : said), textOf(resp)].filter(Boolean).join("\n\n");
       // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
       // that is the session-ended text word for word (in any published language) is treated the same way.
       if (isSentinelOnly(reply) || isEnded(reply)) {
@@ -1662,6 +1695,7 @@ module.exports._lintNotes = lintNotes;
 module.exports._lintNotesFor = lintNotesFor;
 module.exports._refusalWordForWord = refusalWordForWord;
 module.exports._withoutRewriteTalk = withoutRewriteTalk;
+module.exports._saidNotRepeated = saidNotRepeated;
 module.exports._candidateGuardrails = CANDIDATE_GUARDRAILS;
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings

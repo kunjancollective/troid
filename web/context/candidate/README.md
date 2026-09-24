@@ -11,8 +11,9 @@ error (`web/eval/runs/`). Promotion is one commit: the files move into place (TR
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
 troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt), run 11
-(this candidate, 21 of 24, six errors) and run 12 (22 of 24, four): three guardrails, explain_rule's ruin, crossover and drawdown texts with the
+(this candidate, 21 of 24, six errors), run 12 (22 of 24, four) and run 13 (22 of 24, three): four guardrails, explain_rule's ruin, crossover and drawdown texts with the
 rules they state (`CANDIDATE_TOPIC_CITES`), the tools in `CANDIDATE_RUN` (the floating-loss rule with its source, the
 leverage cap in trade_math, a staged challenge's targets added up, BrightFunded's EUR price), `CANDIDATE_LINTS`, and
 support.md section 4's reply word for word on a should-I question, one DERIVED tier line where trade_math ran with and
-without a firm's rule, and no word about a draft the user never saw. No file is staged.
+without a firm's rule, no word about a draft the user never saw, a stop as a percent in trade_math, and no method
+section written twice around a tool call. No file is staged.

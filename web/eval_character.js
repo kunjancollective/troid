@@ -55,7 +55,7 @@ const MONEY = "(\\$|€|USD\\s?|EUR\\s?)\\d[\\d,]*(\\.\\d+)?|\\d[\\d,]*(\\.\\d+)
 const FIRM_FEE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,80}?(${MONEY})|(${MONEY})[^.\\n]{0,60}?\\b(${FIRMS})\\b`);
 const TROID_READ_PCT = /troid has read[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,80}?troid has read/;
 // A tool's parameters in a reply (run 5: ex-recovery 'firm "all"', b-stop "stop_pct").
-const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b/;
+const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;   // run 13: "`kelly`"
 // A rule that differs by product stated as the whole firm's (run 7, b-limits: "Crypto Fund Trader's trail the high-water
 // mark"; its 1-Phase trails, its 2-Phase is static; the service's own source line had said "trailing on balance").
 const PH1 = "(1-Phase|1 Phase|one-phase|1phase)";
@@ -63,7 +63,7 @@ const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\
   `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
 // troid's own instructions named, or the reply's form announced, in a reply (run 8: "support.md section 4 applies here",
 // "Result first, one line:"; run 6: "troid's fixed answer").
-const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:|\bretract(ing|ed|s)?\b|\b(earlier|previous|prior) (version|draft) of (this|the) answer\b/i;   // run 11: "Answer, one line:"; run 12: "Retracting the earlier version of this answer"
+const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:|\bretract(ing|ed|s)?\b|\b(earlier|previous|prior) (version|draft) of (this|the) answer\b|\b(result|answer)s? first\b|\bone[- ]line answer\b/i;   // run 13: "Result first:", "One-line answer:"   // run 11: "Answer, one line:"; run 12: "Retracting the earlier version of this answer"
 // troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
 const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
 // A firm's floating-loss rule with no source line for it (run 10, b-limits: "Bitfunded auto-fails on either without requiring
@@ -245,6 +245,10 @@ function check(c, r, variant) {
     add("a firm's rule it states as a percentage is among the sources the service lists", !bad.length, bad.map((x) => x.s)); }
   { const sp = splitSources(reply), bad = misreportedSources(sp.body, sp.lines);                                                            // run 11
     add("never calls a rule unrecorded that the sources list with a read date", !bad.length, bad); }
+  { const sp = splitSources(reply), m = unquoted(sp.body).match(/\b(any|every|all|largest|smallest|tightest)\b[^.\n]{0,60}\btroid has read\b/i);   // run 13
+    if (m) add("a claim about every rule troid has read has a tool's sources behind it", sp.lines.length > 0, m[0]); }
+  { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
+    add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = reply.match(RUIN_MIX); add("troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)", !m, m && m[0]); }   // run 10
   { const m = levOverCap(reply); add("an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it", !m, m); }   // runs 6, 10
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
