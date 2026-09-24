@@ -962,7 +962,7 @@
         "What's New in the BrightFunded Affiliate Program"
       ]
     },
-    "_trailing_trap": "Help-centre Scenario 3, verbatim structure: balance 100k, open trade +4k floating -> limit rises to 98k; trade reverses and closes at -3.5k -> balance 96.5k is below 98k -> breached. An unrealised win can end the account. Model gap: troid's engine tracks the HWM on balance; BrightFunded tracks it on equity intraday. Needs hwm_basis: equity.",
+    "_trailing_trap": "Help centre, 'BrightFunded 1-Step' (article 14284743, updated 2026-05-20; re-read 2026-09-24), the table on a $100,000 account: highest balance/equity 100,000 -> limit 94,000; 102,000 -> 96,000; 104,000 -> 98,000; 106,000 -> 100,000, locks there. The floor is a fixed 6% of the INITIAL balance below the high, not 6% of the high: troid's engine used high x (1 - 6%) until 2026-09-24, which put the floor $240 lower than the firm's at a 104,000 high. The high is on equity, intraday (hwm_basis: equity): an open trade +4k raises the limit to 98k, and if it reverses and closes at -3.5k the balance of 96.5k is below 98k -- breached. An unrealised win can end the account.",
     "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%).",
     "calc": {
       "daily_basis": "max_balance_equity",
@@ -1106,7 +1106,7 @@
             "help_daily_loss",
             "help_1step"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', the $100,000 table: the floor sits 6% of the initial balance below the high"
         },
         "locks_at_initial_after_pct": {
           "src": [

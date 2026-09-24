@@ -270,7 +270,7 @@ function render(){
   // max-loss floor, by the firm's drawdown type
   var ddFloor=null,locked=false;
   if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd=F(T.f_dd_static,{m:p.m});}
-  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm*(1-mpct);
+  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm-quota*mpct;
     fdd=locked?F(T.f_dd_locked,{locks:p.locks}):F(T.f_dd_trailing,{m:p.m});
     steps.push([T.st_hwm,T.f_hwm,$(hwm)]);}
   else pend.push("drawdown type");

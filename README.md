@@ -96,7 +96,7 @@ floor ([`backtest/income_math.py`](backtest/income_math.py); `verify_claims.py` 
 troid backtested a 4h BTCUSDT system across ~30 configurations under Bitfunded's exact
 rules. Best result: +0.033R per trade, n=78, standard error 0.046R, 95% CI
 [−0.056R, +0.123R] — contains zero. Under a *true zero edge*, the best of 30
-configurations would be expected around +0.119R by chance. troid's best is under a third of that.
+configurations would be expected around +0.093R by chance, if they were independent. troid's best is about a third of that.
 
 In 72 simulated challenge runs it passed zero times, and failed zero times.
 

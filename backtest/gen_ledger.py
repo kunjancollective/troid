@@ -23,6 +23,7 @@ sys.path.insert(0, str(HERE))
 import i18n
 import site_build
 import site_text
+from noise_math import expected_max_normal
 JOURNAL, STATE, CFG = HERE/"journal.csv", HERE/"state.json", HERE/"strategy_config.json"
 RUNS = HERE/"runs.csv"
 OUT = HERE.parent/"web"/"public"/"ledger.html"
@@ -235,7 +236,7 @@ def ledger_data():
     rs = [float(r["r"]) for r in rows]
     exp = sum(rs)/n if n else 0
     se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
-    noise30 = se*math.sqrt(2*math.log(30))          # expected best of ~30 configs under a true zero edge
+    noise30 = se*expected_max_normal(30)            # expected best of ~30 independent configs under a true zero edge
     flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
     gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
     gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)

@@ -34,6 +34,12 @@ ok("BF fees pending, gross qty 0.163506", r.fees === null && r.pending.includes(
 ok("BF equity note", r.notes.some((x) => x.includes("trails on equity intraday")), r.notes);
 r = T.check_budget({ firm: "brightfunded", product: "1step", quota: 100000, equity: 106000, day_start: 106000, high_water_mark: 106000, high_at_rollover: 106000 });
 ok("BF locked at +6%", r.trailing_locked === true && r.dd_floor === 100000 && r.daily_budget === 3000, r);
+// BrightFunded's own 1-Step table: the floor sits 6% of the INITIAL balance below the high (102,000 -> 96,000; 104,000 -> 98,000)
+r = T.check_budget({ firm: "brightfunded", product: "1step", quota: 100000, equity: 104000, day_start: 104000, high_water_mark: 104000, high_at_rollover: 104000 });
+ok("BF trailing floor at a 104,000 high is 98,000, not 97,760", r.trailing_locked === false && r.dd_floor === 98000 && r.dd_budget === 6000
+  && r.working.some((w) => w.formula === "high-water mark − quota × 6%"), r);
+r = T.check_budget({ firm: "brightfunded", product: "1step", quota: 100000, equity: 101000, day_start: 101000, high_water_mark: 102000, high_at_rollover: 101000 });
+ok("BF trailing floor at a 102,000 high is 96,000", r.dd_floor === 96000 && r.dd_budget === 5000 && r.notes.some((x) => x.startsWith("trailing floor = high-water mark − quota × 6%")), r);
 
 // --- CFT: day-start basis; Instant has drawdown pending; Instant 5× (Student band), 1-Phase 100× (Advanced)
 r = T.check_budget({ firm: "crypto_fund_trader", product: "1phase", quota: 100000, equity: 96000, day_start: 96000 });
@@ -193,8 +199,11 @@ r = M({ calc: "losses_to_limit", budget: 4000, risk: 450 });
 ok("trade_math losses_to_limit: at $450, eight fit with $400 left; the ninth reaches it", r.result.losses_that_fit === 8 && r.result.left_after === 400 && r.result.loss_that_reaches_limit === 9, r.result);
 ok("trade_math capped_budget: $2,000 under a 35% cap after 3 losses is $549.25", M({ calc: "capped_budget", budget: 2000, cap_pct: 35, losses: 3 }).result.budget_after === 549.25);
 r = M({ calc: "stats", mean: 0.033, sd: 0.40, n: 78, configs: 30 });
-ok("trade_math stats: SE 0.0453, t 0.729, the interval contains zero, best of 30 by chance 0.1181", r.result.standard_error === 0.0453 && r.result.t === 0.729
-   && r.result.ci_contains_zero === true && r.result.best_of_configs_by_chance === 0.1181, r.result);
+ok("trade_math stats: SE 0.0453, t 0.729, the interval contains zero, best of 30 by chance 2.0428 SE = 0.0925 (not √(2 ln 30) = 2.61 SE)",
+   r.result.standard_error === 0.0453 && r.result.t === 0.729 && r.result.ci_contains_zero === true && r.result.expected_best_in_se === 2.0428
+   && r.result.best_of_configs_by_chance === 0.0925 && r.working.some((x) => x.formula === "SE × 2.0428"), r);
+ok("trade_math stats: E[max] of 2 standard normals is 1/√π, of 10 is 1.5388", M({ calc: "stats", mean: 0, sd: 1, n: 4, configs: 2 }).result.expected_best_in_se === 0.5642
+   && M({ calc: "stats", mean: 0, sd: 1, n: 4, configs: 10 }).result.expected_best_in_se === 1.5388);
 ok("trade_math atr_scale: 600 on 1h is about 1,200 on 4h, with the caveat", M({ calc: "atr_scale", atr: 600, from_minutes: 60, to_minutes: 240 }).result.atr === 1200
    && /approximation/.test(M({ calc: "atr_scale", atr: 600, from_minutes: 60, to_minutes: 240 }).note));
 ok("trade_math effective_bets: four positions at 0.6 are about 1.43 bets", M({ calc: "effective_bets", positions: 4, correlation: 0.6 }).result.effective_bets === 1.43);

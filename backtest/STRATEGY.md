@@ -66,7 +66,8 @@ SE 0.046R   t = 0.73   95% CI [−0.056R, +0.123R]   contains zero
 ```
 
 ~30 configurations were searched on this sample. Under a true zero edge the best of 30
-would be expected near +0.12R by chance. This result is below that threshold.
+would be expected near +0.09R by chance (2.04 standard errors, if they were independent).
+This result is below that threshold.
 
 **72 rolling challenge starts: 0 pass, 0 fail, 0 zombie.** Median ending balance
 $100,409. The cap holds the account flat; nothing in the entry logic moves it.

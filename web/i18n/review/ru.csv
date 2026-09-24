@@ -144,7 +144,7 @@ index.js.st_hi,high at rollover,максимум на ролловере,,
 index.js.f_hi,input (defaults to day start),ввод (по умолчанию — начало дня),,
 index.js.f_dd_static,quota × (1 − {m}%),номинал × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),номинал (фиксируется после +{locks}%),,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),пик эквити × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,пик эквити − номинал × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,пик эквити,,
 index.js.f_hwm,"input (defaults to max(equity, quota))","ввод (по умолчанию — max(эквити, номинал))",,
 index.js.daily_floor,daily floor,дневной порог,,
@@ -180,8 +180,8 @@ index.js.st_binding,binding,ограничивающий,,
 index.js.f_binding,"min(daily budget, drawdown budget)","min(дневной бюджет, бюджет просадки)",,
 index.js.f_binding_one,the only budget with its rules recorded,"единственный бюджет, правила которого записаны",,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,трейлинговый порог зафиксирован на начальном балансе ({quota}) после +{locks}%,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),трейлинговый порог {floor} = пик эквити × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,трейлинговый порог {floor} = пик эквити × (1 − {m}%) — внутри дня следует за эквити: нереализованный максимум поднимает порог,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,трейлинговый порог {floor} = пик эквити − номинал × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,трейлинговый порог {floor} = пик эквити − номинал × {m}% — внутри дня следует за эквити: нереализованный максимум поднимает порог,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,дневной порог = максимум на ролловере − {d}% от исходного размера,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,стоп на уровне входа или выше при лонге,,
 index.js.b_short,stop at or below entry on a short,стоп на уровне входа или ниже при шорте,,

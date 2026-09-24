@@ -32,7 +32,7 @@ def baseline(rev, dest):
                            text=True, check=True).stdout.split()
     for n in names:
         p = Path(n)
-        if p.suffix in (".html", ".png", ".ico", ".md", ".css"):
+        if p.suffix in (".html", ".png", ".ico", ".md", ".css", ".js"):       # .js: desklink.js, i18n.js, live.js
             data = subprocess.run(["git", "show", f"{rev}:{n}"], cwd=ROOT, capture_output=True, check=True).stdout
             (dest / p.name).write_bytes(data)
 

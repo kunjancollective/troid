@@ -144,7 +144,7 @@ index.js.st_hi,high at rollover,الأعلى عند التجديد اليومي,
 index.js.f_hi,input (defaults to day start),مُدخَل (افتراضيًا رصيد بداية اليوم),,
 index.js.f_dd_static,quota × (1 − {m}%),حجم الحساب × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),حجم الحساب (يُثبَّت بعد +{locks}%),,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),أعلى قمة × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,أعلى قمة − حجم الحساب × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,أعلى قمة,,
 index.js.f_hwm,"input (defaults to max(equity, quota))",مُدخَل (افتراضيًا max(حقوق الملكية، حجم الحساب)),,
 index.js.daily_floor,daily floor,الأرضية اليومية,,
@@ -180,8 +180,8 @@ index.js.st_binding,binding,المقيِّد,,
 index.js.f_binding,"min(daily budget, drawdown budget)",min(الميزانية اليومية، ميزانية التراجع),,
 index.js.f_binding_one,the only budget with its rules recorded,الميزانية الوحيدة المسجّلة قواعدها,,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,الأرضية المتحركة مثبّتة عند الرصيد الأولي ({quota}) بعد +{locks}%,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),الأرضية المتحركة {floor} = أعلى قمة × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,الأرضية المتحركة {floor} = أعلى قمة × (1 − {m}%) — تتبع حقوق الملكية خلال اليوم: القمة غير المحققة ترفع الأرضية,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,الأرضية المتحركة {floor} = أعلى قمة − حجم الحساب × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,الأرضية المتحركة {floor} = أعلى قمة − حجم الحساب × {m}% — تتبع حقوق الملكية خلال اليوم: القمة غير المحققة ترفع الأرضية,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,الأرضية اليومية = الأعلى عند التجديد اليومي − {d}% من الحجم الأصلي,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,الوقف عند سعر الدخول أو فوقه في صفقة شراء,,
 index.js.b_short,stop at or below entry on a short,الوقف عند سعر الدخول أو تحته في صفقة بيع,,

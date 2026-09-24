@@ -98,13 +98,15 @@ daily limit — most do — use equity, not balance, as `current_equity`.
 
 ```
 static:        floor = initial_balance − (max_dd_pct/100 × initial_balance)
-trailing:      floor = high_water_mark − (max_dd_pct/100 × high_water_mark)
-trailing_eod:  floor = highest_end_of_day_balance − (max_dd_pct/100 × that balance)
+trailing:      floor = high_water_mark − (max_dd_pct/100 × initial_balance)
+trailing_eod:  floor = highest_end_of_day_balance − (max_dd_pct/100 × initial_balance)
 dd_budget      = current_equity − floor
 ```
 
 Trailing drawdown is the one that surprises people. Profit raises the floor, so a
-winning run *tightens* the account rather than loosening it. Many firms stop trailing
+winning run *tightens* the account rather than loosening it. The distance below the mark is
+a fixed dollar amount, max% of the *initial* balance (BrightFunded's own table: high $104,000,
+floor $98,000 on $100,000); confirm it against the firm's worked example. Many firms stop trailing
 once the floor reaches the initial balance — check `trailing_stops_at_initial` in the
 config and honour it.
 

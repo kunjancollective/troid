@@ -79,7 +79,7 @@ daily_limit      = quota × daily_loss%               [FIXED — Bitfunded FAQ: 
 daily_budget     = daily_limit + (equity − day_start)  [today's net P&L offsets it]
 
 dd_floor         = quota × (1 − max_loss%)            [static — Bitfunded]
-                 = high_water_mark × (1 − max_loss%)  [trailing — most other firms]
+                 = high_water_mark − quota × max_loss%  [trailing — BrightFunded; stops at the quota]
 dd_budget        = equity − dd_floor
 
 effective_budget = min(daily_budget, dd_budget)
@@ -243,7 +243,7 @@ standard error 0.016R); both 95% confidence intervals contain zero. On api.binan
 8 January to 21 September 2026, which overlaps the Binance.com sample the parameters were
 chosen on, the best of the ~30 configurations searched measured +0.033R per trade, n=78,
 standard error 0.046R, confidence interval containing zero, and below what chance produces
-across that many configurations (~+0.119R). That in-sample figure is a best cell and never
+across that many configurations (~+0.093R). That in-sample figure is a best cell and never
 stands alone. troid's own strategy shows no statistical edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the

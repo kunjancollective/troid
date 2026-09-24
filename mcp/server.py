@@ -320,8 +320,10 @@ def explain_rule(topic: str) -> dict:
         "At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%.",
       "leverage": "Leverage does not determine your loss — the stop does. risk = "
         "|entry-stop| x quantity, and leverage appears nowhere in it. What leverage changes "
-        "is margin posted and liquidation distance. Under ISOLATED margin that distance is "
-        "roughly entry x (1 - 1/leverage): ~20% at 5x. Under CROSS margin the whole account "
+        "is margin posted and liquidation distance. Under ISOLATED margin a long is liquidated "
+        "near entry x (1 - 1/leverage) and a short near entry x (1 + 1/leverage): a distance of "
+        "about entry / leverage, ~20% at 5x, a little less after the exchange's maintenance "
+        "margin. Under CROSS margin the whole account "
         "backs the position, so at any size a 5x cap allows the firm's own 4%/6% floors are "
         "breached long before exchange liquidation. troid models cross margin by default; it "
         "has no recorded source for which margin modes Bitfunded offers. See 'cross'.",

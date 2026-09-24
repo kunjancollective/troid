@@ -36,7 +36,7 @@ daily_limit      = quota × daily_loss%               [FIXED — Bitfunded FAQ: 
 daily_budget     = daily_limit + (equity − day_start)  [today's net P&L offsets it]
 
 dd_floor         = quota × (1 − max_loss%)            [static — Bitfunded]
-                 = high_water_mark × (1 − max_loss%)  [trailing — most other firms]
+                 = high_water_mark − quota × max_loss%  [trailing — BrightFunded; stops at the quota]
 dd_budget        = equity − dd_floor
 
 effective_budget = min(daily_budget, dd_budget)
@@ -195,7 +195,7 @@ distance; the stop sets the loss.
 21 September 2026, which overlaps the Binance.com sample its parameters were chosen on,
 troid's backtest measured +0.033R per trade, n=78, standard error 0.046R, confidence interval
 containing zero, and below what chance produces across the ~30 configurations searched
-(~+0.119R). On data from 1 January 2021 to 7 January 2026, which the parameters never saw, it
+(~+0.093R). On data from 1 January 2021 to 7 January 2026, which the parameters never saw, it
 measured +0.008R per trade on BTC (504 trades, standard error 0.016R) and +0.008R on ETH (498
 trades, standard error 0.016R); both 95% confidence intervals contain zero. troid's own
 strategy shows no statistical edge. Nothing here claims otherwise.

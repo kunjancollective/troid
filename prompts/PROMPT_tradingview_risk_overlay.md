@@ -64,7 +64,7 @@ daily_limit      = quota × daily_loss_pct/100        [FIXED from initial — Bi
 daily_floor      = day_start − daily_limit
 daily_budget     = equity − daily_floor
 dd_floor         = static:   quota × (1 − max_loss_pct/100)
-                   trailing: hwm × (1 − max_loss_pct/100), capped at quota if trailing_stops_at_initial
+                   trailing: hwm − quota × max_loss_pct/100, capped at quota if trailing_stops_at_initial
 dd_budget        = equity − dd_floor
 effective_budget = min(daily_budget, dd_budget)
 binding          = "daily loss limit" if daily_budget <= dd_budget else "max drawdown"

@@ -145,7 +145,7 @@ index.js.st_hi,high at rollover,রোলওভারে সর্বোচ্�
 index.js.f_hi,input (defaults to day start),ইনপুট (ডিফল্ট: দিনের শুরু),,
 index.js.f_dd_static,quota × (1 − {m}%),কোটা × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),কোটা (+{locks}%-এর পর লক করা),,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),হাই-ওয়াটার মার্ক × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,হাই-ওয়াটার মার্ক − কোটা × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,হাই-ওয়াটার মার্ক,,
 index.js.f_hwm,"input (defaults to max(equity, quota))","ইনপুট (ডিফল্ট: max(ইকুইটি, কোটা))",,
 index.js.daily_floor,daily floor,দৈনিক ফ্লোর,,
@@ -181,8 +181,8 @@ index.js.st_binding,binding,কার্যকর সীমা,,
 index.js.f_binding,"min(daily budget, drawdown budget)","min(দৈনিক বাজেট, ড্রডাউন বাজেট)",,
 index.js.f_binding_one,the only budget with its rules recorded,"একমাত্র বাজেট, যার নিয়ম রেকর্ড করা আছে",,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,+{locks}%-এর পর ট্রেইলিং ফ্লোর প্রাথমিক ব্যালান্সে ({quota}) লক হয়েছে,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),ট্রেইলিং ফ্লোর {floor} = হাই-ওয়াটার মার্ক × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,ট্রেইলিং ফ্লোর {floor} = হাই-ওয়াটার মার্ক × (1 − {m}%) — দিনের মধ্যেই ইকুইটির সাথে সরে: আনরিয়ালাইজড হাইও ফ্লোরকে ওপরে তোলে,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,ট্রেইলিং ফ্লোর {floor} = হাই-ওয়াটার মার্ক − কোটা × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,ট্রেইলিং ফ্লোর {floor} = হাই-ওয়াটার মার্ক − কোটা × {m}% — দিনের মধ্যেই ইকুইটির সাথে সরে: আনরিয়ালাইজড হাইও ফ্লোরকে ওপরে তোলে,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,দৈনিক ফ্লোর = রোলওভারে সর্বোচ্চ − মূল সাইজের {d}%,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,লং পজিশনে স্টপ এন্ট্রির সমান বা ওপরে,,
 index.js.b_short,stop at or below entry on a short,শর্ট পজিশনে স্টপ এন্ট্রির সমান বা নিচে,,

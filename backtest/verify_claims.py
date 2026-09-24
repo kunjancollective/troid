@@ -164,11 +164,14 @@ check("DERIVED", "standard error of the mean", se, 0.0456, 1e-3, "R")
 check("DERIVED", "t statistic", mean/se, 0.7351, 1e-2)
 lo, hi = mean-1.96*se, mean+1.96*se
 print(f"  [DERIVED ] 95% CI [{lo:+.3f}R, {hi:+.3f}R] -> contains zero: {lo < 0 < hi}")
-# Expected maximum of k independent draws from N(0, se) ~ se*sqrt(2 ln k)
+# Expected maximum of k independent draws from N(0, se): se * E[max of k standard normals], integrated
+# (noise_math.py). The asymptotic se*sqrt(2 ln k) overstated it: +0.119R for k = 30, where it is +0.093R.
+from noise_math import expected_max_normal
 for k in (10, 30, 52):
     print(f"  [DERIVED ] best of {k:>2} configs under a TRUE zero edge: "
-          f"~+{se*math.sqrt(2*math.log(k)):.3f}R by chance alone")
-print(f"             -> troid's best ({mean:+.3f}R) is {'BELOW' if mean < se*math.sqrt(2*math.log(30)) else 'ABOVE'} the best-of-30 noise threshold.")
+          f"~+{se*expected_max_normal(k):.3f}R by chance alone ({expected_max_normal(k):.4f} SE)")
+check("DERIVED", "expected best of 30 independent configs under a zero edge, in SE", expected_max_normal(30), 2.0428, 1e-4)
+print(f"             -> troid's best ({mean:+.3f}R) is {'BELOW' if mean < se*expected_max_normal(30) else 'ABOVE'} the best-of-30 noise threshold.")
 print(f"             -> claimable: nothing. This is a hypothesis for out-of-sample testing.")
 
 # Frequency, and what the income target would need at it

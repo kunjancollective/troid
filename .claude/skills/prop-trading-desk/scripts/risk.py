@@ -47,9 +47,11 @@ def drawdown_floor(cfg: dict) -> float:
         return initial - (pct / 100.0) * initial
 
     # trailing / trailing_eod both track a high-water mark; the config supplies
-    # the EOD-only mark when the firm measures it that way.
+    # the EOD-only mark when the firm measures it that way. The floor sits a fixed
+    # amount below the mark, max% of the INITIAL balance (BrightFunded's 1-Step table:
+    # high 104,000 -> floor 98,000 on 100,000), not max% of the mark itself.
     hwm = acct.get("high_water_mark", initial)
-    floor = hwm - (pct / 100.0) * hwm
+    floor = hwm - (pct / 100.0) * initial
     if rules.get("trailing_stops_at_initial", False):
         # Once the floor reaches the starting balance it stops climbing.
         floor = min(floor, initial)

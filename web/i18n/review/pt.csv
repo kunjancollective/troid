@@ -146,7 +146,7 @@ index.js.st_hi,high at rollover,máximo no rollover,,
 index.js.f_hi,input (defaults to day start),informado (padrão: início do dia),,
 index.js.f_dd_static,quota × (1 − {m}%),quota × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),quota (travado após +{locks}%),,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),high-water mark × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,high-water mark − quota × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,high-water mark,,
 index.js.f_hwm,"input (defaults to max(equity, quota))","informado (padrão: max(equity, quota))",,
 index.js.daily_floor,daily floor,piso diário,,
@@ -182,8 +182,8 @@ index.js.st_binding,binding,limitante,,
 index.js.f_binding,"min(daily budget, drawdown budget)","min(orçamento diário, orçamento de drawdown)",,
 index.js.f_binding_one,the only budget with its rules recorded,o único orçamento com as regras registradas,,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,piso móvel travado no saldo inicial ({quota}) após +{locks}%,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),piso móvel {floor} = high-water mark × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,piso móvel {floor} = high-water mark × (1 − {m}%) — acompanha o equity no intradiário: um pico não realizado eleva o piso,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,piso móvel {floor} = high-water mark − quota × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,piso móvel {floor} = high-water mark − quota × {m}% — acompanha o equity no intradiário: um pico não realizado eleva o piso,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,piso diário = máximo no rollover − {d}% do tamanho original,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,stop no preço de entrada ou acima dele em um long,,
 index.js.b_short,stop at or below entry on a short,stop no preço de entrada ou abaixo dele em um short,,

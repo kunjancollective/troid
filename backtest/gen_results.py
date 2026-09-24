@@ -3,6 +3,7 @@
    python gen_results.py > RESULTS.md"""
 import sys, statistics, math, datetime as dt; sys.path.insert(0,'.')
 import engine as E, engine_v2 as V
+from noise_math import expected_max_normal
 
 bars=E.load_bars("data/btc_4h.csv"); e20,e120,atr=E.indicators(bars)
 FIRST=dt.datetime.fromtimestamp(E.T0, dt.timezone.utc); LAST=dt.datetime.fromtimestamp(E.T0+(len(bars)-1)*E.STEP, dt.timezone.utc)
@@ -67,7 +68,7 @@ Best: **{best[0]}** at {m:+.3f}R.
 - n = {len(rs)}, sd = {sd:.2f}R, standard error = **{se:.3f}R**
 - t = {m/se:.2f}, 95% CI **[{m-1.96*se:+.3f}R, {m+1.96*se:+.3f}R]** — contains zero
 - ~30 configurations were tested on this one sample. Under a true zero edge the
-  best of 30 would be expected around **+{1.9*se:.2f}R** by chance. The observed
+  best of 30 would be expected around **+{expected_max_normal(30)*se:.2f}R** by chance. The observed
   {m:+.3f}R is *below* that.
 
 **No configuration in this table is distinguishable from zero.** Every number here is a

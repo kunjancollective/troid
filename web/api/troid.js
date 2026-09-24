@@ -370,8 +370,8 @@ function budgets(a) {
   else pending.push("daily_basis");
   let ddFloor = null, locked = false;
   if (p.dd === "static") { ddFloor = quota * (1 - mpct); fdd = `quota × (1 − ${p.m}%)`; }
-  else if (p.dd === "trailing") { locked = p.locks != null && hwm >= quota * (1 + p.locks / 100); ddFloor = locked ? quota : hwm * (1 - mpct);
-    fdd = locked ? `quota (locked after +${p.locks}%)` : `high-water mark × (1 − ${p.m}%)`;
+  else if (p.dd === "trailing") { locked = p.locks != null && hwm >= quota * (1 + p.locks / 100); ddFloor = locked ? quota : hwm - quota * mpct;
+    fdd = locked ? `quota (locked after +${p.locks}%)` : `high-water mark − quota × ${p.m}%`;
     working.push({ step: "high-water mark", formula: "input (defaults to max(equity, quota))", value: hwm }); }
   else pending.push("drawdown_type");
   const dB = dFloor == null ? null : eq - dFloor, ddB = ddFloor == null ? null : eq - ddFloor;
@@ -387,7 +387,7 @@ function budgets(a) {
   if (binding) working.push({ step: "binding", formula: dB == null || ddB == null ? "the only budget with its rules recorded" : "min(daily budget, drawdown budget)",
                               value: binding + " · " + r2(eff) });
   if (p.dd === "trailing") notes.push(locked ? `trailing floor locked at the initial balance after +${p.locks}%`
-    : `trailing floor = high-water mark × (1 − ${p.m}%)` + (p.hwm === "equity" ? " — trails on equity intraday: an unrealised high raises the floor" : ""));
+    : `trailing floor = high-water mark − quota × ${p.m}%` + (p.hwm === "equity" ? " — trails on equity intraday: an unrealised high raises the floor" : ""));
   if (p.basis === "max_balance_equity") notes.push(`daily floor = high at rollover − ${p.d}% of the original size`);
   let crossover = null, crossoverWork = null;
   if (ddFloor != null && p.basis != null) {
@@ -408,6 +408,20 @@ function budgets(a) {
            crossover_equity: r2(crossover), crossover_working: crossoverWork, formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
 }
 const r2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
+// E[max of k independent standard normals]: the expected best of k configurations under a zero edge, in
+// standard errors. ∫ x·k·φ(x)·Φ(x)^(k−1) dx, with Φ accumulated by the trapezoid rule on the same grid; the
+// same integral as backtest/noise_math.py. (√(2 ln k), used before, overstates it: 2.61 against 2.04 at k = 30.)
+function expectedMaxNormal(k) {
+  const h = 1e-3, lo = -12, n = 24000, phi = (x) => Math.exp(-x * x / 2) / Math.sqrt(2 * Math.PI);
+  let Phi = 0, s = 0, pPrev = phi(lo), fPrev = 0;
+  for (let i = 1; i <= n; i++) {
+    const x = lo + i * h, p = phi(x);
+    Phi = Math.min(1, Phi + (pPrev + p) / 2 * h);
+    const f = x * k * p * Math.pow(Phi, k - 1);
+    s += (fPrev + f) / 2 * h; pPrev = p; fPrev = f;
+  }
+  return s;
+}
 const r4 = (x) => (x == null ? null : Math.round(x * 1e4) / 1e4);
 // The rules a result used, each with where troid read it — the tool-side twin of the provenance block.
 function sourcesFor(p, used) {
@@ -584,7 +598,7 @@ const RULES = {
   crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. A day that starts below $98,000 is bound by the max-loss floor, and the 4% daily limit is not the constraint that day; above it, the daily limit binds. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover.",
   reset: "Bitfunded's trading day resets at 00:00 UTC+8 = 16:00 UTC, which is noon in New York. Not midnight. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous; do not count on a fresh daily budget until 16:10 UTC. Morning and afternoon sessions draw on separate daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over. A position inside the limit at 11:59 can breach at 12:01 without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
   fees: "Bitfunded: 0.04% per side on notional, 0.08% round trip. Notional scales inversely with stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%. Other firms' fees are in firms.json; a null is pending.",
-  leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin that distance is roughly entry × (1 − 1/leverage): ~20% at 5x. Under CROSS margin the whole account backs the position, so at any size a 5× cap allows the firm's own floors are breached long before exchange liquidation. troid models cross margin by default; it has no recorded source for which margin modes Bitfunded offers.",
+  leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin a long is liquidated near entry × (1 − 1/leverage) and a short near entry × (1 + 1/leverage): a distance of about entry ÷ leverage, ~20% at 5x, a little less after the exchange's maintenance margin. Under CROSS margin the whole account backs the position, so at any size a 5× cap allows the firm's own floors are breached long before exchange liquidation. troid models cross margin by default; it has no recorded source for which margin modes Bitfunded offers.",
   cross: "Under cross margin, troid's default model (troid has no recorded source for Bitfunded's margin modes; the 5× leverage cap is from the help centre, Challenge & Trader Stage, and Terms 9(a)), every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
   drawdown: "Bitfunded's max loss is STATIC — measured from the account quota, not a high-water mark — so profit permanently widens the buffer. Trailing drawdown (BrightFunded 1-Step, CFT 1-Phase) works the opposite way: the floor follows the high-water mark up until it locks at the initial balance after +6%. BrightFunded's trails on equity intraday — an unrealised high raises the floor (help centre scenario 3); CFT's trails on balance.",
   ladder: "Scaling in does not increase position size at fixed risk — it decreases it. With the stop anchored to the first entry's structure, later tranches sit further from the stop and earn less quantity. Five strength tranches hold about 34% LESS than a single entry at the same risk. The benefit is conditionality: you fill more on trades that work than on trades that don't.",
@@ -860,11 +874,14 @@ const MATH = {
                { step: "95% confidence interval", formula: "mean ± 1.96 × SE", value: "[" + rd(lo, 4) + ", " + rd(hi, 4) + "]" }];
     const out = { standard_error: rd(se, 4), t: rd(m / se, 3), ci95_low: rd(lo, 4), ci95_high: rd(hi, 4), ci_contains_zero: lo < 0 && hi > 0 };
     if (k != null) {
-      const best = se * Math.sqrt(2 * Math.log(k));
-      w.push({ step: "best of " + k + " configurations under a zero edge", formula: "SE × √(2 ln k)", value: rd(best, 4) });
+      const z = expectedMaxNormal(k), best = se * z;
+      w.push({ step: "expected best of " + k + " independent draws, in standard errors", formula: "E[max of " + k + " standard normals]", value: rd(z, 4) },
+             { step: "best of " + k + " configurations under a zero edge", formula: "SE × " + rd(z, 4), value: rd(best, 4) });
+      out.expected_best_in_se = rd(z, 4);
       out.best_of_configs_by_chance = rd(best, 4);
     }
-    return { working: w, result: out, note: "Normal approximation. An interval that contains zero means the mean is not distinguishable from zero on this sample." };
+    return { working: w, result: out, note: "Normal approximation. An interval that contains zero means the mean is not distinguishable from zero on this sample."
+             + (k != null ? " The best-of-k figure assumes the k configurations are independent; neighbouring settings are correlated, which lowers it." : "") };
   },
   atr_scale(x) {
     const atr = x("atr", { gt: 0 }), t1 = x("from_minutes", { gt: 0 }), t2 = x("to_minutes", { gt: 0 });

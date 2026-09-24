@@ -157,7 +157,7 @@ index.js.st_hi,high at rollover,tertinggi saat rollover,,
 index.js.f_hi,input (defaults to day start),input (default: awal hari),,
 index.js.f_dd_static,quota × (1 − {m}%),kuota × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),kuota (terkunci setelah +{locks}%),,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),high-water mark × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,high-water mark − kuota × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,high-water mark,,
 index.js.f_hwm,"input (defaults to max(equity, quota))","input (default: max(ekuitas, kuota))",,
 index.js.daily_floor,daily floor,batas bawah harian,,
@@ -193,8 +193,8 @@ index.js.st_binding,binding,yang mengikat,,"CHECK FIRST: 'binds' and 'binding' a
 index.js.f_binding,"min(daily budget, drawdown budget)","min(anggaran harian, anggaran drawdown)",,
 index.js.f_binding_one,the only budget with its rules recorded,satu-satunya anggaran yang aturannya tercatat,,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,batas bawah trailing terkunci pada saldo awal akun ({quota}) setelah +{locks}%,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),batas bawah trailing {floor} = high-water mark × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,batas bawah trailing {floor} = high-water mark × (1 − {m}%) — mengikuti ekuitas secara intraday: puncak yang belum terealisasi menaikkan batas bawah,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,batas bawah trailing {floor} = high-water mark − kuota × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,batas bawah trailing {floor} = high-water mark − kuota × {m}% — mengikuti ekuitas secara intraday: puncak yang belum terealisasi menaikkan batas bawah,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,batas bawah harian = tertinggi saat rollover − {d}% dari ukuran awal akun,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,stop di atas atau sama dengan entry pada posisi long,,
 index.js.b_short,stop at or below entry on a short,stop di bawah atau sama dengan entry pada posisi short,,

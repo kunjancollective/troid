@@ -143,7 +143,7 @@ index.js.st_hi,high at rollover,换日时最高值,,
 index.js.f_hi,input (defaults to day start),输入（默认为日初余额）,,
 index.js.f_dd_static,quota × (1 − {m}%),额度 × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
 index.js.f_dd_locked,quota (locked after +{locks}%),额度（+{locks}% 后锁定）,,keep {locks} exactly as written
-index.js.f_dd_trailing,high-water mark × (1 − {m}%),高水位 × (1 − {m}%),,keep {m} exactly as written; keep every number exactly
+index.js.f_dd_trailing,high-water mark − quota × {m}%,高水位 − 额度 × {m}%,,keep {m} exactly as written
 index.js.st_hwm,high-water mark,高水位,,
 index.js.f_hwm,"input (defaults to max(equity, quota))","输入（默认为 max(净值, 额度)）",,
 index.js.daily_floor,daily floor,每日底线,,
@@ -179,8 +179,8 @@ index.js.st_binding,binding,约束项,,
 index.js.f_binding,"min(daily budget, drawdown budget)","min(每日预算, 回撤预算)",,
 index.js.f_binding_one,the only budget with its rules recorded,唯一一个规则已记录的预算,,
 index.js.n_locked,trailing floor locked at the initial balance ({quota}) after +{locks}%,+{locks}% 后，追踪底线锁定在初始余额（{quota}）,,keep {locks} {quota} exactly as written
-index.js.n_trailing,trailing floor {floor} = high-water mark × (1 − {m}%),追踪底线 {floor} = 高水位 × (1 − {m}%),,keep {floor} {m} exactly as written; keep every number exactly
-index.js.n_trailing_equity,trailing floor {floor} = high-water mark × (1 − {m}%) — trails on equity intraday: an unrealised high raises the floor,追踪底线 {floor} = 高水位 × (1 − {m}%)——盘中按净值追踪：未实现的高点会抬高底线,,keep {floor} {m} exactly as written; keep every number exactly
+index.js.n_trailing,trailing floor {floor} = high-water mark − quota × {m}%,追踪底线 {floor} = 高水位 − 额度 × {m}%,,keep {floor} {m} exactly as written
+index.js.n_trailing_equity,trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor,追踪底线 {floor} = 高水位 − 额度 × {m}%——盘中按净值追踪：未实现的高点会抬高底线,,keep {floor} {m} exactly as written
 index.js.n_rollover,daily floor = high at rollover − {d}% of the original size,每日底线 = 换日时最高值 − 原始规模的 {d}%,,keep {d} exactly as written
 index.js.b_long,stop at or above entry on a long,做多时止损位于入场价或其上方,,
 index.js.b_short,stop at or below entry on a short,做空时止损位于入场价或其下方,,
