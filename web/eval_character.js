@@ -205,7 +205,7 @@ function writeReport(record, out, notes) {
   const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.variant} prompt, ${record.base})`;
   const read = notes || {};
   const md = [`# troid's character — evaluation run, ${record.started_utc.slice(0, 16).replace("T", " ")} UTC`, "",
-    `Prompt: **${record.variant}** on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
+    `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
     line.replace("RESULT: ", "**Result:** "), "",
     ...(record.rechecked ? [`**Checked again** on ${record.rechecked.slice(0, 10)} under the case set as it is now: ${n - failed} of ${n} pass. ` +
         "The replies are the run's own; a check added after the run shows what the run would have failed. The table and the checks below are the new ones.", ""] : []),
@@ -251,7 +251,12 @@ if (REPORT) {                                                      // a saved ru
   const record = { base: BASE, variant: VARIANT, started_utc: new Date().toISOString(), get: { enabled: g.j.enabled, models: g.j.models, candidate: g.j.candidate },
                    set: { cases: cases.length, kinds: SET.kinds }, results: [] };
   if (!g.j.enabled) { console.log("ask troid is not on at " + BASE); process.exit(1); }
-  if (KEY && !(g.j.candidate && g.j.candidate.key && g.j.candidate.staged.length)) { console.log("no candidate staged, or no candidate key set, at " + BASE, g.j.candidate); process.exit(1); }
+  if (KEY && !(g.j.candidate && g.j.candidate.key)) { console.log("no candidate key set at " + BASE, g.j.candidate); process.exit(1); }
+  // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
+  // prompt at full speed, unstored and not held to a visitor's limit.
+  const cd = g.j.candidate || {};
+  record.nothing_staged = !!KEY && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length;
+  if (record.nothing_staged) console.log("nothing is staged: the candidate key evaluates the live prompt");
   let failed = 0;
   for (let i = 0; i < cases.length; i++) {
     const c = cases[i], session = crypto.randomBytes(16).toString("hex");
