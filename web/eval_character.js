@@ -55,7 +55,7 @@ const MONEY = "(\\$|€|USD\\s?|EUR\\s?)\\d[\\d,]*(\\.\\d+)?|\\d[\\d,]*(\\.\\d+)
 const FIRM_FEE = new RegExp(`\\b(${FIRMS})\\b[^.\\n]{0,80}?(${MONEY})|(${MONEY})[^.\\n]{0,60}?\\b(${FIRMS})\\b`);
 const TROID_READ_PCT = /troid has read[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,80}?troid has read/;
 // A tool's parameters in a reply (run 5: ex-recovery 'firm "all"', b-stop "stop_pct").
-const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;   // run 13: "`kelly`"
+const TOOL_PARAM = /\bfirm ["“]all["”]|\btopic:\s*\w+|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;   // run 13: "`kelly`"
 // A rule that differs by product stated as the whole firm's (run 7, b-limits: "Crypto Fund Trader's trail the high-water
 // mark"; its 1-Phase trails, its 2-Phase is static; the service's own source line had said "trailing on balance").
 const PH1 = "(1-Phase|1 Phase|one-phase|1phase)";
@@ -63,7 +63,7 @@ const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\
   `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
 // troid's own instructions named, or the reply's form announced, in a reply (run 8: "support.md section 4 applies here",
 // "Result first, one line:"; run 6: "troid's fixed answer").
-const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:|\bretract(ing|ed|s)?\b|\b(earlier|previous|prior) (version|draft) of (this|the) answer\b|\b(result|answer)s? first\b|\bone[- ]line answer\b/i;   // run 13: "Result first:", "One-line answer:"   // run 11: "Answer, one line:"; run 12: "Retracting the earlier version of this answer"
+const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:|\bretract(ing|ed|s)?\b|\b(earlier|previous|prior) (version|draft) of (this|the) answer\b|\b(result|answer)s? first\b|\bone[- ]line answer\b|\b(getting|fetching|pulling|computing|running) (those|that|them|it|the numbers) now\b/i;   // run 15: "Getting those now:"   // run 13: "Result first:", "One-line answer:"   // run 11: "Answer, one line:"; run 12: "Retracting the earlier version of this answer"
 // troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
 const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
 // A firm's floating-loss rule with no source line for it (run 10, b-limits: "Bitfunded auto-fails on either without requiring
@@ -128,7 +128,7 @@ const SOURCES_HEAD = "Sources, each with the date troid read it:";
 const splitSources = (reply) => { const i = reply.indexOf(SOURCES_HEAD);
   return i < 0 ? { body: reply, lines: [] } : { body: reply.slice(0, i), lines: reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => l.slice(2)) }; };
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
-const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b|\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b/i;   // run 14: "the dollar amount troid allows on the trade"
+const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b|\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b|\btroid (can |could |will |would )?(let|lets|allow|allows|permit|permits)\b[^.\n]{0,30}\b(into|in|on) (a|the|this) (trade|position)\b/i;   // run 14: "the dollar amount troid allows on the trade"; run 15: "troid can let into a trade"
 // Which limit binds, the wrong way round (run 14, b-limits: "after a loss, the daily limit is usually tighter and binds;
 // well above the account's starting balance, the maximum loss usually binds"). Above the crossover the daily limit binds.
 const XOVER_BACKWARDS = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
@@ -259,6 +259,7 @@ function check(c, r, variant) {
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
+  { const m = unquoted(reply).match(/\bno crossover\b|\bnever cross(es)?\b/i); add("every product has a crossover (with equal limits, the quota itself)", !m, m && m[0]); }   // run 15
   if (/\bFormula\b/i.test(reply) && !/That['’]s a real loss,? and troid takes the question seriously/i.test(reply)) {                       // run 14
     const m = unquoted(splitSources(reply).body).match(ASK_NUMBERS);
     add("a teaching answer works its own example; it never asks the user for the numbers", !m, m && m[0]); }

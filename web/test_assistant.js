@@ -427,7 +427,30 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("candidate: section 2's three usual causes go in before the dashboard's paragraph when the user blames troid and the reply leaves them out (run 14, ex-angry); not for e-blown",
      /an input differed/.test(a4) && /changed after the date troid read it/.test(a4) && /\bpending\b/.test(a4)
      && paras.findIndex((p) => /three causes/.test(p)) === paras.findIndex((p) => /hello@troid\.ai/.test(p)) - 1
-     && S4(blown.reply, blown.q) === blown.reply && S4(a4, angry.q) === a4, a4.slice(-700)); }
+     && S4(blown.reply, blown.q) === blown.reply && S4(a4, angry.q) === a4, a4.slice(-700));
+  // run 15's staged changes: half Kelly ÷ the daily limit in trade_math; the step-4 backstop counts causes in the model's
+  // own words; a lead-in before a tool call goes; lints for judgment words, a Kelly ratio beside the wrong fraction, a
+  // cause guessed before the inputs, "no crossover", "the one product that fits", "troid can let into a trade"
+  const r15 = require("./eval/runs/2026-09-24-run15.json").results, at15 = (id) => r15.find((x) => x.id === id);
+  const kc = RT("trade_math", { calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "bitfunded", product: "1step" }, "candidate");
+  const kl = RT("trade_math", { calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "bitfunded", product: "1step" }, "live");
+  ok("candidate trade_math kelly: half Kelly ÷ the daily limit is 2.19×, beside full Kelly's 4.38×; live unchanged (run 15, ex-kelly)",
+     kc.working.some((w) => w.step === "half Kelly ÷ daily limit" && w.value === "2.19×") && kc.result.half_kelly_vs_daily === 2.19 && kc.result.full_kelly_vs_daily === 4.38
+     && !kl.working.some((w) => /half Kelly ÷ daily/.test(w.step)), kc.working);
+  const withoutS4 = at15("ex-angry").reply.replace(/\n\nWhen troid's number and the account disagree[^\n]*/, "");
+  ok("candidate: the step-4 backstop leaves a reply that names the causes in its own words ('an input that didn't match'); run 14's still gets them (run 15, ex-angry)",
+     withoutS4 !== at15("ex-angry").reply && S4(withoutS4, at15("ex-angry").q) === withoutS4 && /three causes/.test(S4(angry.reply, angry.q)));
+  ok("candidate: a lead-in that ends in a colon before a tool call goes; a definition stays (run 15, o-montecarlo; run 3, ex-r)",
+     SN(["ask troid does not run new simulations.\n\nWhat troid can give: … Getting those now:"], "**No new Monte Carlo run here.**").length === 0
+     && SN(["R is the amount risked on one trade."], "1R = 498.97").length === 1);
+  const tools15 = (c) => toolsOf(c).map((x) => x.name === "trade_math" && c.id === "ex-kelly" ? Object.assign({}, x, { result: Object.assign({}, kl, { sources: x.result.sources }) }) : x);
+  const n15 = (c) => handler._lintNotesFor(bodyOf(c), "candidate", tools15(c), c.q)
+    .filter((n) => /never whether they are good|Each Kelly ratio|Guess no cause|Every product has a crossover|only one that fits|^troid never trades|announce the reply's form|tool's parameters/.test(n));
+  ok("candidate lints (run 15): ex-kelly's ratio, b-stop's 'troid can let', q-stats' 'solid', e-blown's guessed cause, o-montecarlo's narration and topic, s-firm's 'one product' and 'no crossover'; the new ones on none of runs 9 or 13",
+     r15.filter((c) => n15(c).length).map((c) => c.id).join() === "ex-kelly,b-stop,q-stats,e-blown,o-montecarlo,s-firm" && n15(at15("s-firm")).length === 2
+     && !r13.filter((c) => n15(c).some((n) => !/announce the reply's form|tool's parameters/.test(n))).length   // run 13's own form and parameter errors aside
+     && ["ex-kelly", "q-stats", "e-blown", "s-firm"].every((id) => !n15(r9.find((c) => c.id === id)).length),
+     r15.filter((c) => n15(c).length).map((c) => [c.id, n15(c).map((n) => n.slice(0, 30))])); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -838,7 +861,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 15 && !resC.body.includes(CK), gc);
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 20 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));

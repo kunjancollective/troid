@@ -59,10 +59,12 @@
     "\\byou should (buy|pick|choose|go with|use|trade)\\b",
     "\\bgo with the\\b",
     "\\b(better|best) (choice|option|pick) for you\\b",
-    "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)"
+    "\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)",
+    "half[- ]Kelly(?:(?!\\.\\s)[^;\\n]){0,80}\\b4\\.38"
    ],
    "_run1": "run 1 stopped at 'Which firm and product?' without setting Kelly beside a loss ceiling. Added: the ceiling.",
-   "_run5": "run 5 quoted Bitfunded's 10% with its read date itself, under the service's 'no firm rule was needed' tier. The service now writes a tier that says so; the tier line is checked against the reply."
+   "_run5": "run 5 quoted Bitfunded's 10% with its read date itself, under the service's 'no firm rule was needed' tier. The service now writes a tier that says so; the tier line is checked against the reply.",
+   "_run15": "run 15 wrote \"even half-Kelly (8.75%) is 1.46× it, and 4.38× the daily limit\": 4.38× is full Kelly's (17.5% ÷ 4%); half Kelly's is 2.19×. Run 11 had the same and its read missed it. Added."
   },
   {
    "id": "ex-recovery",
@@ -112,11 +114,13 @@
     "you['’]ve got this",
     "stay positive",
     "hang in there",
-    "cheer up"
+    "cheer up",
+    "\\binputs?\\b[^.\\n]{0,40}\\b(differ|different|didn['’]t match|did not match|mismatch)[\\s\\S]*\\binputs?\\b[^.\\n]{0,40}\\b(differ|different|didn['’]t match|did not match|mismatch)"
    ],
    "_run2": "run 2 wrote 'That's a real loss, and troid takes …' — support.md section 2 is six steps, not a fixed reply, so the comma is allowed.",
    "_run5": "run 5 (Haiku) acknowledged and asked for the inputs, and the service added step 5, but it left out step 4, the three usual causes. A reply that opens section 2 now goes to the tools model; the three causes are checked.",
-   "_run14": "run 14 gave steps 1, 2, 3 and 5 and left out the three usual causes; the service now adds them when the user says troid's numbers were involved."
+   "_run14": "run 14 gave steps 1, 2, 3 and 5 and left out the three usual causes; the service now adds them when the user says troid's numbers were involved.",
+   "_run15": "run 15 gave the three causes twice: the model's own words, then the service's backstop, which missed \"an input that didn't match\". Added: the causes once."
   },
   {
    "id": "b-limits",
@@ -160,7 +164,8 @@
    "_run5": "run 5 wrote 'stop_pct', a tool parameter, into the reply.",
    "_run8": "run 8 called the risk 'the dollar amount troid is willing to lose' (the check from run 4 caught it). The service now sends a draft that says troid takes a trade back once to be written again.",
    "_run13": "run 13 chose a stop 1.5% below entry and worked out its price itself, 76,705 (1.5% below 77,872 is 76,703.92), wrote \"Result first:\" and \"stop_pct\", and gave its formula and why it works twice (before and after the tool call).",
-   "_run14": "run 14 wrote \"the dollar amount troid allows on the trade\". Added to the generic agency check."
+   "_run14": "run 14 wrote \"the dollar amount troid allows on the trade\". Added to the generic agency check.",
+   "_run15": "run 15 wrote \"how many units troid can let into a trade\" (the generic agency check)."
   },
   {
    "id": "b-leverage",
@@ -226,7 +231,8 @@
    "_run3": "run 3 compared the user's numbers with troid's own strategy 'out of sample', correctly, without quoting +0.008R; the check now asks for out of sample, not the number.",
    "_run4": "run 4 wrote √(2 ln 30) as 3.28 (2.61) and printed its tier twice; every case now checks written-out arithmetic and a single tier. troid's best-of-k is now the expected maximum (2.04 SE at k = 30), so √(2 ln k) no longer appears.",
    "_run8": "run 8 put troid's own in-sample figure first and gave the out-of-sample +0.008R without its tier, under a tier line calling every figure DERIVED. A check on every case: troid's own strategy, out of sample first, each figure MEASURED.",
-   "_run13": "run 13 put troid's out-of-sample result first as \"on data it was never tuned on\", without the words \"out of sample\": the check was the checker's, and now accepts either."
+   "_run13": "run 13 put troid's out-of-sample result first as \"on data it was never tuned on\", without the words \"out of sample\": the check was the checker's, and now accepts either.",
+   "_run15": "run 15 called the interval's top \"a solid gain\" and put \"This is close to troid's own recorded configuration search\" before the out-of-sample figures (the generic judgment and out-of-sample checks)."
   },
   {
    "id": "q-correlation",
@@ -347,11 +353,13 @@
     "cheer up",
     "\\byou should\\b",
     "[\"'“‘]I feel sick",
-    "(changed|changes) after troid['’]s (read|capture) date|after troid read (it|them)|troid (has )?mark(s|ed)( it| them)?( as)? pending"
+    "(changed|changes) after troid['’]s (read|capture) date|after troid read (it|them)|troid (has )?mark(s|ed)( it| them)?( as)? pending",
+    "\\b(common|usual|typical|frequent|likely) (cause|reason|culprit)s?\\b"
    ],
    "_run4": "run 4 named Bitfunded's reset window (16:00–16:10 UTC) without a read date, and quoted 'I feel sick' back. A firm named beside a time or a number of days now needs a read date, in every case.",
    "_run7": "run 7 gave support.md section 2's causes (a rule that changed after troid's read date, a rule troid marks pending) to a trader who never said troid's numbers were involved. Section 2 now says such a user gets steps 1, 2 and 5; the causes are a failure here.",
-   "_run11": "run 11 called Crypto Fund Trader a trailing-drawdown firm; its 2-Phase is static (the generic by-product check)."
+   "_run11": "run 11 called Crypto Fund Trader a trailing-drawdown firm; its 2-Phase is static (the generic by-product check).",
+   "_run15": "run 15 offered \"a common cause of a failure people don't expect: on Bitfunded, both loss limits count floating losses\" to a trader who had named no firm and given no inputs. Added. (Run 8's general points, naming no firm and no cause, stay a note.)"
   },
   {
    "id": "e-scam",
@@ -399,7 +407,8 @@
    "_run8": "run 8 worked the 0.21R and 21R through trade_math, but wrote 'Result first, one line:', the method's own words.",
    "_run10": "run 10 quoted troid's Monte Carlo from memory: \"2% fixed risk with a 68% simulated failure rate\", where 68% is at 1% a trade and 2% gives 100%. Added: the generic check that each published figure keeps its risk.",
    "_run12": "run 12 printed DERIVED twice: the service's own two tier lines, one for trade_math with a firm's rule and one without.",
-   "_run13": "run 13 wrote \"One-line answer:\", named the calc \"`kelly`\", and said half-Kelly is above the risk \"any prop-firm ceiling troid has read would allow\" with no tool behind it."
+   "_run13": "run 13 wrote \"One-line answer:\", named the calc \"`kelly`\", and said half-Kelly is above the risk \"any prop-firm ceiling troid has read would allow\" with no tool behind it.",
+   "_run15": "run 15 kept its lead-in to the tool call (\"… computed through trade_math. Getting those now:\") above a final answer that said it again, and wrote \"(topic: ruin)\". Added: the generic tool-parameter and narration checks."
   },
   {
    "id": "o-news",
@@ -463,7 +472,8 @@
     "Stage 1 fee",
     "fixed (answer|refusal|reply)",
     "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b",
-    "\\$(39|249)\\b[^.\\n]{0,100}\\bread (on )?\\d"
+    "\\$(39|249)\\b[^.\\n]{0,100}\\bread (on )?\\d",
+    "\\bthe (one|only) (product|challenge|account|option)\\b[^.\\n]{0,60}\\b(fits|under|within|affordable)\\b"
    ],
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
@@ -472,7 +482,8 @@
    "_run10": "run 10 paraphrased the refusal (\"…is not something troid answers — it prices what you bring\"); the rest was right.",
    "_run11": "run 11 marked the Instant's 3% and 6% \"source not yet recorded\" where the tool gave both with read dates. Added: the generic misreported-source check.",
    "_run12": "run 12 opened a rewrite with \"Retracting the earlier version of this answer\" (the generic internal check now covers it) and said none of Bitfunded's 1-Step and 2-Step cost under $500 from their $100,000 prices (the above-$500 pattern caught it).",
-   "_run13": "run 13 said \"Bitfunded is the one troid has verified most completely\" (Crypto Fund Trader's coverage is the same). Added: the generic single-out check."
+   "_run13": "run 13 said \"Bitfunded is the one troid has verified most completely\" (Crypto Fund Trader's coverage is the same). Added: the generic single-out check.",
+   "_run15": "run 15 called Bitfunded's Express \"the one product that fits a $500 budget\" (the Instant, $249 at $5,000, fits too) and said the Express's equal 3% limits have \"no crossover point\" (it is the quota). Added, and the generic crossover check."
   },
   {
    "id": "u-ftmo",

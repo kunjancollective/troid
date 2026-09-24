@@ -29,7 +29,7 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 14 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
+ * the fixes from the reads of runs 10 to 15 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
  * a should-I refusal and support.md section 2's three causes).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
@@ -1107,6 +1107,17 @@ function tradeMathNext(a) {
     out.note = ((out.note || "") + " The stop is a percent of entry: its distance is the same for a long or a short.").trim();
     return out;
   }
+  // Kelly beside a firm's limits: every fraction against every limit, each ratio labelled with both (run 15, ex-kelly:
+  // "half-Kelly (8.75%) is 1.46× it, and 4.38× the daily limit", where 4.38× is full Kelly's; half Kelly's is 2.19×)
+  if (String(a.calc || "") === "kelly") {
+    const out = trade_math(a), r = out.result || {};
+    if (!out.error && r.daily_pct > 0 && r.half_kelly_pct != null) {
+      const at = out.working.findIndex((w) => w.step === "full Kelly ÷ daily limit");
+      out.working.splice(at + 1, 0, { step: "half Kelly ÷ daily limit", formula: `${r.half_kelly_pct}% ÷ ${r.daily_pct}%`, value: rd(r.half_kelly_pct / r.daily_pct, 2) + "×" });
+      Object.assign(r, { full_kelly_vs_daily: rd(r.kelly_pct / r.daily_pct, 2), half_kelly_vs_daily: rd(r.half_kelly_pct / r.daily_pct, 2) });
+    }
+    return out;
+  }
   return trade_math(a);
 }
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
@@ -1333,7 +1344,7 @@ function misreportedSources(text, srcLines) {
   }
   return out;
 }
-const FORM_RX = /\b(answer|result),? (first,? )?(in )?one line\b|\b(result|answer)s? first\b|\bone[- ]line answer\b/i;   // runs 8, 11, 13
+const FORM_RX = /\b(answer|result),? (first,? )?(in )?one line\b|\b(result|answer)s? first\b|\bone[- ]line answer\b|\b(getting|fetching|pulling|computing|running) (those|that|them|it|the numbers) now\b/i;   // runs 8, 11, 13; run 15: "Getting those now:"
 const PH1_RX = "(1-Phase|1 Phase|one-phase|1phase)";
 const CFT_TRAIL_RX = new RegExp(`(?<!${PH1_RX}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1_RX}\\b)[^.\\n]{0,60}\\btrail` +
   `|(?<!${PH1_RX}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1_RX}\\b)`, "i");
@@ -1357,7 +1368,7 @@ const DAILY_FLOOR_RX = /daily[_ ]floor[^=\n]{0,30}(=|\bsits at\b|\bis\b)[^\n.]{0
 // Staged after evaluation run 13: b-stop wrote "stop_pct", o-montecarlo "`kelly`" (a tool's parameter and calc); o-montecarlo
 // said half-Kelly is above "the risk any prop-firm ceiling troid has read would allow" with no tool behind it; s-firm
 // singled out Bitfunded as "the one troid has verified most completely".
-const TOOL_PARAM_RX = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;
+const TOOL_PARAM_RX = /\bfirm ["“]all["”]|\btopic:\s*\w+|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;
 const READ_ALL_RX = /\b(any|every|all|largest|smallest|tightest)\b[^.\n]{0,60}\btroid has read\b/i;
 const SINGLE_OUT_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i;
 CANDIDATE_LINTS.push(
@@ -1375,21 +1386,54 @@ CANDIDATE_LINTS.push(
 // stop and a quantity; b-stop wrote "the dollar amount troid allows on the trade".
 const XOVER_BACKWARDS_RX = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
 const ASK_NUMBERS_RX = /\b(if you give|give (troid )?(a |the )?(specific|your)|provide (a |the |your )|share (a |the |your ))\b[^.\n]{0,80}\b(entry|stop|equity|quota|numbers|balance|quantity)\b|\b(takes|needs) an? (equity|entry)\b[^.\n]{0,60}\bif you\b/i;
-const ALLOWS_RX = /\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b/i;
+const ALLOWS_RX = /\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b|\btroid (can |could |will |would )?(let|lets|allow|allows|permit|permits)\b[^.\n]{0,30}\b(into|in|on) (a|the|this) (trade|position)\b/i;   // run 15: "how many units troid can let into a trade"
 CANDIDATE_LINTS.push(
   [(t) => XOVER_BACKWARDS_RX.test(t),
    "Which limit binds is the other way round: above the crossover equity the daily limit binds; below it, after losses, the maximum loss binds. On the 1-Step the crossover is quota × (1 − 6% + 4%) = $98,000: get it through explain_rule (topic crossover) or check_budget."],
   [(t, tools) => /\bFormula\b/i.test(t) && !SUPPORT_OPENER.test(t) && (!tools.length || ASK_NUMBERS_RX.test(t)),
    "A teaching answer works its own example through a tool with numbers troid chooses: arithmetic through trade_math, a firm's rule on troid's reference account (a $100,000 Bitfunded 1-Step) through check_budget. Never ask the user for numbers to finish it."],
   [(t) => ALLOWS_RX.test(t), "troid never trades: the risk, the position, the stop and the trade are the trader's, and troid prices them."]);
+// Staged after evaluation run 15: q-stats called the interval's top "a solid gain"; ex-kelly set full Kelly's 4.38× the
+// daily limit beside half Kelly (run 11 had too); e-blown offered "a common cause of a failure" on Bitfunded to a trader
+// who had named no firm and given no inputs.
+const JUDGE_RX = /\b(solid|healthy|great|excellent|impressive|amazing|fantastic|awesome)\b|where [^.\n]{0,40}\bbelong\b|nowhere to hide/i;
+const CAUSE_GUESS_RX = /\b(common|usual|typical|frequent|likely) (cause|reason|culprit)s?\b/i;
+const esc = (x) => String(x).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function kellyMixed(t, tools) {                  // a full-Kelly ratio written beside half Kelly, or the other way round
+  for (const x of tools || []) {
+    if (x.name !== "trade_math" || !x.result || !Array.isArray(x.result.working)) continue;
+    for (const w of x.result.working) {
+      const m = /^(full|half) Kelly ÷/.exec(w.step || ""); if (!m || typeof w.value !== "string") continue;
+      const other = m[1] === "full" ? "half" : "full";
+      if (new RegExp(`\\b${other}[- ]Kelly(?:(?!\\.\\s)[^;\\n]){0,80}(?<![\\d.])${esc(w.value.replace("×", ""))}\\s?×`, "i").test(t)) return true;
+    }
+  }
+  return false;
+}
+// s-firm called Bitfunded's Express "the one product that fits a $500 budget" (the Instant, $249 at $5,000, fits too) and
+// said equal 3% limits have "no crossover point" (it is the quota itself)
+const NO_XOVER_RX = /\bno crossover\b|\bnever cross(es)?\b/i;
+const ONLY_PRODUCT_RX = /\bthe (one|only) (product|challenge|account|option)\b[^.\n]{0,60}\b(fits|under|within|affordable)\b/i;
+CANDIDATE_LINTS.push(
+  [(t) => NO_XOVER_RX.test(t), "Every product has a crossover, quota × (1 − max% + daily%): where the two limits are equal it is the quota itself. Get it through explain_rule (topic crossover) or check_budget."],
+  [(t) => ONLY_PRODUCT_RX.test(t), "Don't call one product the only one that fits: check each product's recorded price through firm_rules, list every one that fits, and say which firms and products troid has no price for."]);
+CANDIDATE_LINTS.push(
+  [(t) => JUDGE_RX.test(t), "State what the numbers imply, never whether they are good: no \"solid\", \"healthy\", \"great\" or the like."],
+  [(t, tools) => kellyMixed(t, tools), "Each Kelly ratio belongs to its own fraction: full Kelly ÷ a limit and half Kelly ÷ a limit are different figures. Use the tool's line for each."],
+  [(t, tools, asked) => SUPPORT_OPENER.test(t) && !BLAMES_TROID_RX.test(String(asked || "")) && CAUSE_GUESS_RX.test(t),
+   "The trader has given no inputs yet: ask for them, and point to the firm's dashboard and hello@troid.ai. Guess no cause and assume no firm until the numbers are in."]);
 // support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
 // leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
 const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;
 const SUPPORT_STEP4 = "When troid's number and the account disagree, it is usually one of three causes: an input differed from the account's real state; " +
   "the firm's rule changed after the date troid read it; or the firm applied a rule troid marks pending. The reconstruction shows which one, or that it can't tell.";
+// a cause the reply already names in its own words counts (run 15, ex-angry: "an input that didn't match the account's
+// actual state … a rule troid has marked pending" was given twice, once by the model and once by the service)
+const CAUSES_RX = [/\binputs?\b[^.\n]{0,40}\b(differ|different|wrong|mismatch|didn['’]t match|did not match|doesn['’]t match)/i,
+  /\bchang(e|ed|es)\b[^.\n]{0,60}\b(read|capture)|\b(read|capture) date\b/i, /\bpending\b/i];
 function withSupportStep4(reply, lastUser) {
   if (!SUPPORT_OPENER.test(reply) || !BLAMES_TROID_RX.test(String(lastUser || ""))
-      || (/\binputs?\b[^.\n]{0,40}\b(differ|different|wrong|mismatch)/i.test(reply) && /\bpending\b/i.test(reply))) return reply;
+      || CAUSES_RX.filter((rx) => rx.test(reply)).length >= 2) return reply;
   const paras = reply.split(/\n\s*\n/), at = paras.findLastIndex((p) => /hello@troid\.ai/i.test(p));
   paras.splice(at < 0 ? paras.length : at, 0, SUPPORT_STEP4);
   return paras.join("\n\n");
@@ -1399,7 +1443,8 @@ function withSupportStep4(reply, lastUser) {
 const METHOD_RX = /\b(Formula|Why it works|Worked example|What it means|In practice)\b/gi;
 function saidNotRepeated(said, final) {
   const later = new Set((String(final).match(METHOD_RX) || []).map((x) => x.toLowerCase()));
-  return said.filter((b) => !(String(b).match(METHOD_RX) || []).some((x) => later.has(x.toLowerCase())));
+  return said.filter((b) => !(String(b).match(METHOD_RX) || []).some((x) => later.has(x.toLowerCase()))
+    && !/:\s*$/.test(String(b)));   // a lead-in to the tool call ("… Getting those now:"): the final answer stands alone (run 15, o-montecarlo)
 }
 // the model's rewrite of a draft the user never saw, announced ("Retracting the earlier version of this answer"): the
 // sentence goes (run 12, s-firm)
