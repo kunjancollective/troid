@@ -57,26 +57,41 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
 @media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
   .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
-/* the price strip under the header (web/public/ticker.js; design handoff 2026-09-24, section 3): spot prices for
-   reference, never a signal, so no green or red. Its space is kept while it loads and when it fails, so nothing moves;
-   a price over 60 s old greys it. The prices in one row (on a phone it scrolls, with snap), the label on its own line
-   under them, so its height never depends on the prices. A symbol that is a
-   button (the desk) has a 44 px target inside the row's padding, which a scrolling row would otherwise clip. */
-.tk{display:flex;flex-wrap:wrap;align-items:center;gap:2px 18px;margin-top:12px;font-family:var(--mono);font-size:11.5px;
-  line-height:22px;color:var(--dim);transition:opacity var(--dur-slow) var(--ease-out)}
-.tk.off{visibility:hidden}.tk.stale{opacity:.55}
-.tkrow{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;margin:-11px 0;overflow-x:auto;
+/* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
+   in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
+   and when the widget fails. The box has one height, the tape's (44 px, or 72 px when the box is 767 px or narrower, as
+   TradingView's script sizes it), set before anything loads; the two labels share one cell and the button holds both
+   words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
+   takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
+   TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
+   crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
+.tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
+.tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
+@container tk (max-width:767px){.tkbox{height:72px}}
+.tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
+.tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
+.tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}
+.tradingview-widget-container{overflow:hidden}.tradingview-widget-container iframe{display:block;border:0}
+.tkrow{align-self:center;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;overflow-x:auto;
   scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
-.tkrow::-webkit-scrollbar{display:none}
+.tkrow::-webkit-scrollbar{display:none}.tk.stale .tkrow{opacity:.55}
+@container tk (min-width:768px){.tkrow{flex-wrap:wrap;padding:0;overflow:visible}.tkrow .tkbr{flex:0 0 100%;height:0;overflow:hidden}}
 .tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
   background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
-.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}.tkx b{font-weight:400;color:var(--dim)}
+.tksep{flex:none;color:var(--line)}
 button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
 button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
 button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
-.tkl{flex:1 1 100%;margin:0;font-size:10.5px;line-height:16px}
+.tkl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0 14px;margin:0;font-size:10.5px;line-height:16px}
+.tkt,.tkp{display:grid;min-width:0}.tkt>*,.tkp>*{grid-area:1/1;min-width:0}
+.tk.still .tkc,.tk:not(.still) .tks,.tk.still.off .tks,.tk.still .tkpp,.tk:not(.still) .tkpl,.tk.fail .tkp{visibility:hidden}
+.tkc a{color:var(--dim);text-decoration:none}.tkc a:hover{color:var(--ink);text-decoration:underline}
 .tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
-@media (prefers-reduced-motion:reduce){.tk{transition:none}}
+.tkp{position:relative;padding:0;border:0;background:none;color:var(--dim);font:inherit;line-height:inherit;cursor:pointer;text-align:end}
+.tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
+.tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
@@ -192,7 +207,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
 </div>
-<div class="tk off" id="tk" role="region" aria-label="Spot prices" data-source="Binance.US" data-up="{sym} {price}, up {chg}% in 24 hours" data-down="{sym} {price}, down {chg}% in 24 hours" data-note="{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours."><div class="tkrow"><span class="tki" data-sym="BTC"><b>BTC</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="ETH"><b>ETH</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="SOL"><b>SOL</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="XRP"><b>XRP</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="BNB"><b>BNB</b> <span class="p">—</span> <span class="c"></span></span></div><p class="tkl">spot in USDT · Binance.US · ~15 s. Firm prices come from their own feeds and may differ. <span class="tkd">delayed</span></p></div><script src="/ticker.js" defer></script>
+<div class="tk off" id="tk" role="region" aria-label="Prices" data-source="Binance.US" data-up="{sym} {price}, up {chg}% in 24 hours" data-down="{sym} {price}, down {chg}% in 24 hours" data-note="{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours." data-tv="{&quot;symbols&quot;:[{&quot;proName&quot;:&quot;BINANCEUS:BTCUSDT&quot;,&quot;description&quot;:&quot;BTC&quot;},{&quot;proName&quot;:&quot;BINANCEUS:ETHUSDT&quot;,&quot;description&quot;:&quot;ETH&quot;},{&quot;proName&quot;:&quot;BINANCEUS:SOLUSDT&quot;,&quot;description&quot;:&quot;SOL&quot;},{&quot;proName&quot;:&quot;BINANCEUS:XRPUSDT&quot;,&quot;description&quot;:&quot;XRP&quot;},{&quot;proName&quot;:&quot;BINANCEUS:BNBUSDT&quot;,&quot;description&quot;:&quot;BNB&quot;},{&quot;proName&quot;:&quot;OANDA:XAUUSD&quot;,&quot;description&quot;:&quot;Gold&quot;},{&quot;proName&quot;:&quot;OANDA:WTICOUSD&quot;,&quot;description&quot;:&quot;WTI oil&quot;},{&quot;proName&quot;:&quot;NASDAQ:NVDA&quot;,&quot;description&quot;:&quot;NVDA&quot;},{&quot;proName&quot;:&quot;NASDAQ:AAPL&quot;,&quot;description&quot;:&quot;AAPL&quot;},{&quot;proName&quot;:&quot;NASDAQ:GOOGL&quot;,&quot;description&quot;:&quot;GOOGL&quot;},{&quot;proName&quot;:&quot;NASDAQ:MSFT&quot;,&quot;description&quot;:&quot;MSFT&quot;},{&quot;proName&quot;:&quot;NASDAQ:AMZN&quot;,&quot;description&quot;:&quot;AMZN&quot;}],&quot;showSymbolLogo&quot;:false,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;adaptive&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;largeChartUrl&quot;:&quot;https://troid.ai/?tvwidgetsymbol={symbolname}#desk&quot;}"><div class="tkbox"><div class="tradingview-widget-container" id="tv"><div class="tradingview-widget-container__widget"></div></div><div class="tkrow"><span class="tki" data-sym="BTC"><b>BTC</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="ETH"><b>ETH</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="SOL"><b>SOL</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="XRP"><b>XRP</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="BNB"><b>BNB</b> <span class="p">—</span> <span class="c"></span></span><span class="tksep tkbr" aria-hidden="true">│</span><span class="tki tkx"><b>Gold</b></span><span class="tki tkx"><b>WTI oil</b></span><span class="tksep" aria-hidden="true">│</span><span class="tki tkx"><b>NVDA</b></span><span class="tki tkx"><b>AAPL</b></span><span class="tki tkx"><b>GOOGL</b></span><span class="tki tkx"><b>MSFT</b></span><span class="tki tkx"><b>AMZN</b></span></div></div><p class="tkl"><span class="tkt"><span class="tkc"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Track all markets on TradingView</a></span><span class="tks">crypto: spot in USDT · Binance.US · ~15 s <span class="tkd">delayed</span></span></span><button type="button" class="tkp" aria-controls="tk" aria-label="Pause the moving price tape" data-pause="Pause the moving price tape" data-play="Play the moving price tape"><span class="tkpp">pause</span><span class="tkpl">play</span></button></p></div><script src="/ticker.js" defer></script>
 <p class="eyebrow" style="margin-top:28px;text-transform:none">troid's ledger</p>
 <h1>troid-shadow-1</h1>
 <p class="lede">The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.</p>

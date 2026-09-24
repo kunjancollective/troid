@@ -1699,7 +1699,7 @@
   "_availability_rule": "availability: the countries each firm's own terms exclude, as ISO 3166-1 alpha-2 codes. 'excluded' is the firm-wide list, 'platform' lists exclusions that apply to one platform only, 'not_from_terms' records countries a third party lists that troid has not read in the firm's terms (never used to exclude). recorded:false means troid has not extracted the firm's list: the country selector and ask troid say so instead of implying the firm is available. troid never states that a firm is available in a country, only what its record of the firm's terms excludes.",
   "_link_rule_impl": "backtest/gen_compare.py link_live(): the entry's link_live is true (set by a human once the affiliate terms exist and their conditions for linking are met) AND compare_product daily_pct, max_pct, target_pct and price each cite a recorded source in provenance. Not printed on the site.",
   "_asset_universe": {
-    "_rule": "troid charts only what at least one of its firms lets people trade, read from that firm's own page with a read date (ticker v2 handoff, section A). A symbol no firm's page names is dropped, not shown. Each symbol records the firms that list it, the source (an id in that firm's provenance.sources) and the firm's own name for it. The price strip (web/api/ticker.js) shows only symbols recorded here.",
+    "_rule": "What troid's desk lets a trader pick as the asset (the Asset field, ticker v2 handoff section E): a symbol goes in only when a firm's own page names it, read with a date (ticker v2 handoff, section A; v3 keeps the rule for crypto and commodities). Each symbol records the firms that list it, the source (an id in that firm's provenance.sources) and the firm's own name for it. The header tape (_ticker_universe) shows these crypto and commodities, and five stocks as market context; a stock joins this list, and the Asset field, only once a firm is verified to offer it.",
     "groups": [
       {
         "group": "crypto",
@@ -1813,15 +1813,122 @@
         ]
       }
     ],
-    "dropped": {
-      "NVDA": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
-      "AAPL": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
-      "MSFT": "proposed in the handoff; no firm's own page names it (read 2026-09-24)",
-      "META": "proposed in the handoff; no firm's own page names it (read 2026-09-24)"
-    },
     "_unnamed": {
       "crypto_fund_trader": "Its FAQ (faq_0924) counts 25 stocks and 22 commodities on Match-Trader and MetaTrader 5 and names none; the symbol list is shown only inside the platform, behind a login troid does not use. Nothing is recorded for Crypto Fund Trader until a page of its own names the symbols.",
       "bitfunded": "Its help centre names three traditional pairs, XAU, XAG and TSLA; no other stock appears on a Bitfunded page."
+    },
+    "not_listed": {
+      "NVDA": "on the header tape as market context (_ticker_universe); no firm's own page names it (read 2026-09-24), so the desk's Asset field leaves it out",
+      "AAPL": "on the header tape as market context (_ticker_universe); no firm's own page names it (read 2026-09-24), so the desk's Asset field leaves it out",
+      "GOOGL": "on the header tape as market context (_ticker_universe); no firm's own page names it (read 2026-09-24), so the desk's Asset field leaves it out",
+      "MSFT": "on the header tape as market context (_ticker_universe); no firm's own page names it (read 2026-09-24), so the desk's Asset field leaves it out",
+      "AMZN": "on the header tape as market context (_ticker_universe); no firm's own page names it (read 2026-09-24), so the desk's Asset field leaves it out"
     }
+  },
+  "_ticker_universe": {
+    "_rule": "What troid's header tape shows, in this order (ticker v3 handoff, section A): crypto, then commodities, then stocks. Crypto and commodities are the ones a firm lists (_asset_universe). The stocks are the five largest US companies by market capitalisation, shown as market context: re-checked quarterly with the firm review, and swapped if the ranking changes. The tape is TradingView's free Ticker Tape widget; each symbol is TradingView's name for a market its widgets carry. 'read' is the date troid read a page that is not a firm's (read_on is kept for firm documents, which date troid's compare).",
+    "widget": {
+      "name": "TradingView Ticker Tape",
+      "docs": "https://www.tradingview.com/widget-docs/widgets/tickers/ticker-tape/",
+      "markets": {
+        "url": "https://www.tradingview.com/widget-docs/markets/worldwide/",
+        "read": "2026-09-24",
+        "as_listed": "Currencies & CFDs: ... ICE Data Services, IC Markets, IG, Interactive Brokers, JFX, Matsui, OANDA, Pepperstone ... : Real-time Forex / Indices / Commodities. Bitcoin and Other Cryptocurrencies: ... Binance, Binance.US ... : Real-time Cryptocurrencies. (North America page: NASDAQ, NASDAQ Stock Market, USA, Cboe One, Delayed Stocks.)"
+      },
+      "data": {
+        "url": "https://www.tradingview.com/widget-docs/faq/data/",
+        "read": "2026-09-24",
+        "as_listed": "Exchanges want each website to pay fees for real-time data. As per their requirements we are only allowed to stream delayed data. ... Forex and crypto data is real-time."
+      },
+      "privacy": {
+        "url": "https://www.tradingview.com/widget-docs/faq/general/",
+        "read": "2026-09-24",
+        "as_listed": "Widgets do not set any cookies. However, TradingView tracks the following data for correct work of the widget: URL of the page embedding the widget, Widget type, Displayed symbol, IP address. Besides that TradingView does not track any user information."
+      },
+      "click_through": {
+        "url": "https://www.tradingview.com/widget-docs/faq/general/",
+        "read": "2026-09-24",
+        "as_listed": "Example - https://yoursite.com/?tvwidgetsymbol={symbolname}"
+      },
+      "symbols_checked": "each symbol below found in TradingView's symbol search (symbol-search.tradingview.com) on 2026-09-24, exchange and name as given"
+    },
+    "groups": [
+      {
+        "group": "crypto",
+        "symbols": [
+          {
+            "sym": "BTC",
+            "tv": "BINANCEUS:BTCUSDT"
+          },
+          {
+            "sym": "ETH",
+            "tv": "BINANCEUS:ETHUSDT"
+          },
+          {
+            "sym": "SOL",
+            "tv": "BINANCEUS:SOLUSDT"
+          },
+          {
+            "sym": "XRP",
+            "tv": "BINANCEUS:XRPUSDT"
+          },
+          {
+            "sym": "BNB",
+            "tv": "BINANCEUS:BNBUSDT"
+          }
+        ],
+        "_note": "Binance.US, the feed troid's ledger and /api/ticker use; TradingView names each 'X / TetherUS', spot, Binance.US."
+      },
+      {
+        "group": "commodities",
+        "symbols": [
+          {
+            "sym": "XAU",
+            "tv": "OANDA:XAUUSD",
+            "tv_name": "Gold"
+          },
+          {
+            "sym": "WTI",
+            "tv": "OANDA:WTICOUSD",
+            "tv_name": "West Texas Oil"
+          }
+        ],
+        "_note": "The handoff's candidates, TVC:GOLD and TVC:USOIL, are in TradingView's symbol search, but TVC is not on the widget markets list; OANDA is (Currencies & CFDs, real-time), so the tape uses OANDA's."
+      },
+      {
+        "group": "stocks",
+        "symbols": [
+          {
+            "sym": "NVDA",
+            "tv": "NASDAQ:NVDA"
+          },
+          {
+            "sym": "AAPL",
+            "tv": "NASDAQ:AAPL"
+          },
+          {
+            "sym": "GOOGL",
+            "tv": "NASDAQ:GOOGL"
+          },
+          {
+            "sym": "MSFT",
+            "tv": "NASDAQ:MSFT"
+          },
+          {
+            "sym": "AMZN",
+            "tv": "NASDAQ:AMZN"
+          }
+        ],
+        "ranking": {
+          "source": "companiesmarketcap.com, largest American companies by market capitalization",
+          "url": "https://companiesmarketcap.com/usa/largest-companies-in-the-usa-by-market-cap/",
+          "read": "2026-09-24",
+          "as_listed": "1 NVIDIA NVDA $5.422 T; 2 Apple AAPL $4.902 T; 3 Alphabet (Google) GOOG $4.146 T; 4 Microsoft MSFT $3.697 T; 5 Amazon AMZN $2.689 T; 6 Meta Platforms META $1.980 T",
+          "handoff_as_of": "2026-09-22",
+          "recheck": "quarterly, with the firm review",
+          "_note": "Alphabet is ranked as GOOG; the tape carries its class A share, NASDAQ:GOOGL, as the handoff names it."
+        }
+      }
+    ]
   }
 }

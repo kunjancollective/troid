@@ -212,23 +212,58 @@ def _ticker_spec():
 
 
 TICKER_SYMBOLS, TICKER_SOURCE = _ticker_spec()
+TAPE = json.loads((ROOT / "firms.json").read_text())["_ticker_universe"]
+# TradingView's widget locales (its Ticker Tape page lists them, read 2026-09-24): Hindi and Bengali are not among them,
+# so those pages get the English tape.
+TV_LOCALE = {"en": "en", "es": "es", "fr": "fr", "ru": "ru", "id": "id", "ar": "ar_AE", "zh": "zh_CN", "pt": "br"}
+TV_CREDIT = "https://www.tradingview.com/"
+
+
+def _tape_name(T, s, group):
+    """A symbol as the tape and the still row name it: crypto and stock tickers as they are, commodities in words."""
+    return T(f"ticker.sym.{s['sym']}") if group == "commodities" else s["sym"]
+
+
+def tape_config(T):
+    """The Ticker Tape widget's settings (ticker v3 handoff, section B). web/public/ticker.js adds colorTheme from the
+    page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site."""
+    return {"symbols": [{"proName": s["tv"], "description": _tape_name(T, s, g["group"])} for g in TAPE["groups"] for s in g["symbols"]],
+            "showSymbolLogo": False, "isTransparent": True, "displayMode": "adaptive", "locale": TV_LOCALE.get(T.code, "en"),
+            "largeChartUrl": f"{BASE_URL}{T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
 
 
 def ticker(T, desk=False):
-    """The price strip under the header (web/public/ticker.js; design handoff 2026-09-24, section 3): the symbols, a
-    label naming the source, hidden (its space kept) until /api/ticker answers. On the desk each symbol is a button
-    that opens a note with "use as entry" (pop.js); elsewhere it is text."""
-    items = []
-    for s in TICKER_SYMBOLS:
-        inner = f'<b>{s}</b> <span class="p">—</span> <span class="c"></span>'
-        items.append(f'<button type="button" class="tki" data-sym="{s}" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use">{inner}</button>'
-                     if desk else f'<span class="tki" data-sym="{s}">{inner}</span>')
+    """The price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape,
+    scrolling, with its attribution under it, and troid's still row of the same symbols in the same reserved space.
+    The still row shows under prefers-reduced-motion, when the visitor pauses the tape, and when the widget fails to
+    load; its crypto prices come from /api/ticker (Binance.US), and on the desk each crypto symbol is a button that opens
+    a note with "use as entry" (pop.js). Gold, oil and the stocks are names there: their quotes are TradingView's, inside
+    its frame, and troid doesn't copy them. Both labels share one cell and the box has one height, so the header is the
+    same height whatever shows."""
+    row = []
+    for i, g in enumerate(TAPE["groups"]):
+        if i:                                   # the first separator is a line break when the row has room for two lines
+            row.append(f'<span class="tksep{" tkbr" if i == 1 else ""}" aria-hidden="true">│</span>')
+        for s in g["symbols"]:
+            if g["group"] == "crypto":
+                inner = f'<b>{s["sym"]}</b> <span class="p">—</span> <span class="c"></span>'
+                row.append(f'<button type="button" class="tki" data-sym="{s["sym"]}" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use">{inner}</button>'
+                           if desk else f'<span class="tki" data-sym="{s["sym"]}">{inner}</span>')
+            else:
+                row.append(f'<span class="tki tkx"><b>{_tape_name(T, s, g["group"])}</b></span>')
     note = (f'<div class="pop" id="tk-use" hidden><p class="tkn"></p><p><button type="button" class="linkbtn">{T("ticker.use")}</button></p></div>'
             if desk else "")
+    cfg = html.escape(json.dumps(tape_config(T), ensure_ascii=False, separators=(",", ":")), quote=True)
     return (f'<div class="tk off" id="tk" role="region" aria-label="{T.attr("ticker.aria")}" data-source="{TICKER_SOURCE}"'
-            f' data-up="{T.attr("ticker.up")}" data-down="{T.attr("ticker.down")}" data-note="{T.attr("ticker.note")}">'
-            f'<div class="tkrow">{"".join(items)}</div><p class="tkl">{T("ticker.label", source=TICKER_SOURCE)} '
-            f'<span class="tkd">{T("ticker.delayed")}</span></p></div>{note}<script src="/ticker.js" defer></script>')
+            f' data-up="{T.attr("ticker.up")}" data-down="{T.attr("ticker.down")}" data-note="{T.attr("ticker.note")}" data-tv="{cfg}">'
+            f'<div class="tkbox"><div class="tradingview-widget-container" id="tv"><div class="tradingview-widget-container__widget"></div></div>'
+            f'<div class="tkrow">{"".join(row)}</div></div>'
+            f'<p class="tkl"><span class="tkt"><span class="tkc"><a href="{TV_CREDIT}" rel="noopener nofollow" target="_blank">{T("ticker.credit")}</a></span>'
+            f'<span class="tks">{T("ticker.still", source=TICKER_SOURCE)} <span class="tkd">{T("ticker.delayed")}</span></span></span>'
+            f'<button type="button" class="tkp" aria-controls="tk" aria-label="{T.attr("ticker.pause_label")}"'
+            f' data-pause="{T.attr("ticker.pause_label")}" data-play="{T.attr("ticker.play_label")}">'
+            f'<span class="tkpp">{T("ticker.pause")}</span><span class="tkpl">{T("ticker.play")}</span></button></p>'
+            f'</div>{note}<script src="/ticker.js" defer></script>')
 
 
 def html_attrs(T):

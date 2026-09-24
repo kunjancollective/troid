@@ -5,7 +5,8 @@ iOS Safari's text size (the aA menu) zooms the page: at 130% a 390 px phone lays
 loaded at the CSS widths a 375 px and a 390 px iPhone give at 100%, 115% and 130%, and on the desk every firm and
 product with its result and its working open. A page fails when it scrolls sideways or when an element's right edge
 passes the viewport's, unless that element sits inside a box that scrolls on its own (the working's table). Form
-controls are sized as WebKit sizes them (WEBKIT_CONTROLS).
+controls are sized as WebKit sizes them (WEBKIT_CONTROLS). The header's price tape is present, laid out as TradingView's
+script lays it out (tv_stub.py).
 
   python phone_check.py                     # every page, web/public as it is
   python phone_check.py --pages index
@@ -17,6 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from i18n_equiv import PUB, serve  # noqa: E402
+from tv_stub import route_tv  # noqa: E402
 
 PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
 # (device width, text size): the CSS width Safari lays out
@@ -83,9 +85,10 @@ def main():
             for w in WIDTHS:
                 ctx = b.new_context(viewport={"width": w, "height": 800}, device_scale_factor=2, is_mobile=True, has_touch=True)
                 ctx.route("**/*", lambda r: r.abort() if not r.request.url.startswith("http://127.0.0.1") else r.continue_())
+                route_tv(ctx)                   # the price tape present, as TradingView's script lays it out
                 pg = ctx.new_page()
                 pg.goto(url + ("/" if name == "index" else f"/{name}"), wait_until="load")
-                pg.wait_for_timeout(150)
+                pg.wait_for_timeout(400)
                 views = desk_views(pg) if name == "index" else iter(["page"])
                 bad = 0
                 for v in views:

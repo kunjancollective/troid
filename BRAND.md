@@ -133,12 +133,18 @@ within troid's cap of 35% of the $Y left before your daily loss limit." / "Cut t
 it down to $B, 35% of the room left." / "Can't be sized: the reason." The firm, product and room sit under both, in mono.
 A "?" beside the badge says what the three verdicts mean.
 
-**Price strip.** Under the header on every page: BTC, ETH, SOL, XRP, BNB, the last spot price in Plex Mono and the
-24-hour change as ▲/▼ with a number in `--dim`, never green or red, which read as buy and sell. A label names the source
-and says firm prices come from their own feeds. Over 60 s old it greys and says "delayed"; when it fails it is hidden
-with its space kept, never an error. One row on a wide screen, a row that scrolls with snap on a phone, no motion. On
-the desk a symbol offers "use as entry", a convenience that fills the entry field; the stop, the size and the trade stay
-the trader's. `web/api/ticker.js`, `web/public/ticker.js`.
+**Price tape.** Under the header on every page: TradingView's free Ticker Tape widget, transparent on troid's background,
+no logos, the page's theme and language, crypto then gold and oil then five stocks (firms.json `_ticker_universe`).
+TradingView's attribution, "Track all markets on TradingView", sits under it in `--dim`. Its green and red are
+TradingView's, accepted for this third-party strip only: everything troid draws itself keeps ▲/▼ in `--dim`, never green or
+red, which read as buy and sell. A tapped symbol opens troid's desk, never TradingView's site. A pause/play button at the
+label's end swaps the tape for troid's still row of the same symbols (WCAG 2.2.2), which is also what shows under reduced
+motion and when the widget fails, fading in where the tape was. The still row prices crypto from `/api/ticker`
+(Binance.US) in Plex Mono with the change in `--dim`, greys and says "delayed" past 60 s, and on the desk offers "use as
+entry", a convenience that fills the entry field; the stop, the size and the trade stay the trader's. Gold, oil and the
+stocks are names there: their quotes are TradingView's and troid doesn't copy them. One box of one height (44 px, 72 px
+when 767 px or narrower, as TradingView sizes its tape) and one label cell, so the header never changes height.
+`web/public/ticker.js`, `web/api/ticker.js`, `backtest/site_build.py` (`ticker`).
 
 **Term and popover.** A "?" (16 px, a 44 px touch target) beside a term opens one or two plain sentences, then the formula
 where there is one, in troid's voice. A tooltip shows after 300 ms of hover and at once on keyboard focus, and toggles on

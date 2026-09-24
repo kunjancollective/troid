@@ -381,6 +381,24 @@ for _t in ("1R = 1,292 × 0.3862 ≈ $499", "about $24", "about $523", "($4,000 
            "nearly three times", "25% of $80,000", "At 50% down the recovery is 100%", "the largest troid has read is 10%"):
     check("DERIVED", f"TROID-CHARACTER.md states it: {_t}", float(_t in _ch), 1.0)
 
+# the price tape (ticker v3): terms and FAQ say TradingView sees the visitor's connection; every page's strip names the
+# sources it was built from (the still row's label, /api/ticker's source; the tape's symbols, firms.json _ticker_universe)
+_terms_txt = " ".join(_re.sub(r"<[^>]+>", "", _terms_all).split())
+check("DERIVED", "terms 2: the TradingView sentence and its privacy link", float(
+    "The price ticker is embedded from TradingView. Your browser connects to TradingView's servers to load it; TradingView's own "
+    "privacy policy applies to that connection." in _terms_txt and 'href="https://www.tradingview.com/privacy-policy/"' in _terms_all), 1.0)
+check("DERIVED", "FAQ: 'Does troid track me?' names TradingView and its privacy policy",
+      float("Does troid track me?" in _faq and "TradingView's privacy policy" in " ".join(_faq.split())), 1.0)
+import site_build as _SB
+_tv = [s["tv"] for g in _SB.TAPE["groups"] for s in g["symbols"]]
+for _pg in [p for p in _SB.PAGES if p != "tearsheet"]:
+    _raw = _read(f"web/public/{_pg}.html")
+    _h, _m = _html.unescape(_raw), _re.search(r'data-tv="([^"]*)"', _raw)
+    _cfg = _json.loads(_html.unescape(_m.group(1))) if _m else {}
+    check("DERIVED", f"{_pg}: the tape carries _ticker_universe's symbols in order; the still row names {_SB.TICKER_SOURCE}; TradingView credited",
+          float(bool(_m) and [x["proName"] for x in _cfg.get("symbols", [])] == _tv and f'data-source="{_SB.TICKER_SOURCE}"' in _raw
+                and f"· {_SB.TICKER_SOURCE} ·" in _h and "Track all markets on TradingView" in _h), 1.0)
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

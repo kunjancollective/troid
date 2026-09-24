@@ -61,8 +61,8 @@ async function call(method = "GET", url = "/api/ticker") { const r = res(); awai
   const fs = require("fs"), path = require("path");
   const en = JSON.parse(fs.readFileSync(path.join(__dirname, "i18n", "en.json"), "utf8"));
   const page = fs.readFileSync(path.join(__dirname, "public", "index.html"), "utf8");
-  ok("the desk's strip carries the five symbols and names the source", T.SYMBOLS.every(([s]) => page.includes(`data-sym="${s}"`)) && page.includes('data-source="Binance.US"')
-     && page.includes(en["ticker.label"].replace("{source}", "Binance.US")));
+  ok("the desk's still row carries the five symbols and names the source", T.SYMBOLS.every(([s]) => page.includes(`data-sym="${s}"`)) && page.includes('data-source="Binance.US"')
+     && page.includes(en["ticker.still"].replace("{source}", "Binance.US")));
 
   // troid charts only what a firm lists (firms.json _asset_universe): every symbol names a firm and a source it recorded
   const F = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "firms.json"), "utf8")), U = F._asset_universe;
@@ -72,8 +72,22 @@ async function call(method = "GET", url = "/api/ticker") { const r = res(); awai
     return !src || !/^https:\/\//.test(src.url) || !/^\d{4}-\d{2}-\d{2}$/.test(src.read_on) || !x.as_listed;
   })).map(([s]) => s);
   ok("every symbol in the asset universe names a firm, its page, the read date and the firm's own name for it", !unsourced.length, unsourced);
-  ok("the strip shows only symbols a firm lists", T.SYMBOLS.every(([s]) => listed.has(s)), T.SYMBOLS.map(([s]) => s).filter((s) => !listed.has(s)));
-  ok("a dropped symbol is nowhere in the universe", Object.keys(U.dropped).every((s) => !listed.has(s)));
+  ok("/api/ticker serves only symbols a firm lists", T.SYMBOLS.every(([s]) => listed.has(s)), T.SYMBOLS.map(([s]) => s).filter((s) => !listed.has(s)));
+  ok("a stock no firm lists stays out of the desk's list", Object.keys(U.not_listed).every((s) => !listed.has(s)));
+
+  // the header tape (firms.json _ticker_universe, ticker v3 section A): crypto and commodities a firm lists, in that order,
+  // then five stocks as market context with the ranking they came from; the static row prices the tape's crypto from /api/ticker
+  const V = F._ticker_universe, G = V.groups.map((g) => g.group), sym = (g) => V.groups.find((x) => x.group === g).symbols;
+  ok("the tape runs crypto, commodities, stocks", G.join() === "crypto,commodities,stocks", G);
+  const unlisted = ["crypto", "commodities"].flatMap((g) => sym(g).map((s) => s.sym)).filter((s) => !listed.has(s));
+  ok("the tape's crypto and commodities are ones a firm lists", !unlisted.length, unlisted);
+  ok("the tape's crypto is /api/ticker's, on Binance.US, so the static row can price it",
+     sym("crypto").map((s) => s.sym).join() === T.SYMBOLS.map(([s]) => s).join() && sym("crypto").every((s) => s.tv === "BINANCEUS:" + s.sym + "USDT"));
+  const rk = V.groups.find((g) => g.group === "stocks").ranking;
+  ok("the stocks carry the ranking they came from, with its page and read date, and are in it",
+     /^https:\/\//.test(rk.url) && /^\d{4}-\d{2}-\d{2}$/.test(rk.read) && sym("stocks").length === 5
+     && sym("stocks").every((s) => rk.as_listed.includes(s.sym === "GOOGL" ? "GOOG" : s.sym)), rk);
+  ok("every tape symbol names an exchange TradingView's widgets carry", V.groups.every((g) => g.symbols.every((s) => /^(BINANCEUS|OANDA|NASDAQ):[A-Z]+$/.test(s.tv))));
   console.log(`RESULT: ${fails} failed (${n} checks)`);
   process.exit(fails ? 1 : 0);
 })();

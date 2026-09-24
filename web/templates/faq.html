@@ -38,26 +38,41 @@ body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg)
 @media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
   .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
-/* the price strip under the header (web/public/ticker.js; design handoff 2026-09-24, section 3): spot prices for
-   reference, never a signal, so no green or red. Its space is kept while it loads and when it fails, so nothing moves;
-   a price over 60 s old greys it. The prices in one row (on a phone it scrolls, with snap), the label on its own line
-   under them, so its height never depends on the prices. A symbol that is a
-   button (the desk) has a 44 px target inside the row's padding, which a scrolling row would otherwise clip. */
-.tk{display:flex;flex-wrap:wrap;align-items:center;gap:2px 18px;margin-top:12px;font-family:var(--mono);font-size:11.5px;
-  line-height:22px;color:var(--dim);transition:opacity var(--dur-slow) var(--ease-out)}
-.tk.off{visibility:hidden}.tk.stale{opacity:.55}
-.tkrow{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;margin:-11px 0;overflow-x:auto;
+/* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
+   in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
+   and when the widget fails. The box has one height, the tape's (44 px, or 72 px when the box is 767 px or narrower, as
+   TradingView's script sizes it), set before anything loads; the two labels share one cell and the button holds both
+   words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
+   takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
+   TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
+   crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
+.tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
+.tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
+@container tk (max-width:767px){.tkbox{height:72px}}
+.tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
+.tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
+.tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}
+.tradingview-widget-container{overflow:hidden}.tradingview-widget-container iframe{display:block;border:0}
+.tkrow{align-self:center;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;overflow-x:auto;
   scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
-.tkrow::-webkit-scrollbar{display:none}
+.tkrow::-webkit-scrollbar{display:none}.tk.stale .tkrow{opacity:.55}
+@container tk (min-width:768px){.tkrow{flex-wrap:wrap;padding:0;overflow:visible}.tkrow .tkbr{flex:0 0 100%;height:0;overflow:hidden}}
 .tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
   background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
-.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}.tkx b{font-weight:400;color:var(--dim)}
+.tksep{flex:none;color:var(--line)}
 button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
 button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
 button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
-.tkl{flex:1 1 100%;margin:0;font-size:10.5px;line-height:16px}
+.tkl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0 14px;margin:0;font-size:10.5px;line-height:16px}
+.tkt,.tkp{display:grid;min-width:0}.tkt>*,.tkp>*{grid-area:1/1;min-width:0}
+.tk.still .tkc,.tk:not(.still) .tks,.tk.still.off .tks,.tk.still .tkpp,.tk:not(.still) .tkpl,.tk.fail .tkp{visibility:hidden}
+.tkc a{color:var(--dim);text-decoration:none}.tkc a:hover{color:var(--ink);text-decoration:underline}
 .tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
-@media (prefers-reduced-motion:reduce){.tk{transition:none}}
+.tkp{position:relative;padding:0;border:0;background:none;color:var(--dim);font:inherit;line-height:inherit;cursor:pointer;text-align:end}
+.tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
+.tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
 /* type */
@@ -209,6 +224,11 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <div class="q" id="ask-troid-conversations">
 <h2>{{ t("faq.keep.q") }}</h2>
 <p>{{ t("faq.keep.p") }}</p>
+</div>
+
+<div class="q" id="tracking">
+<h2>{{ t("faq.track.q") }}</h2>
+<p>{{ t("faq.track.p") }}</p>
 </div>
 
 <div class="q">

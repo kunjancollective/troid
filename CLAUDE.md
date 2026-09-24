@@ -124,4 +124,6 @@ that test. The cross-section and shadow-2 in `HANDOFF.md` are still open.
 ## Feeds
 
 api.binance.com refuses GitHub's runners (451). Everything runs on api.binance.us, one feed
-end to end, the price strip under every page's header (`web/api/ticker.js`) included. Exchange feeds differ on every bar; never mix them, never re-fetch history.
+end to end: the ledger, the desk's live price and the still row under every page's header (`web/api/ticker.js`). The moving
+tape above it is TradingView's widget, its quotes in TradingView's frame: troid displays it, never reads or reuses it.
+Exchange feeds differ on every bar; never mix them, never re-fetch history.
