@@ -1,7 +1,7 @@
 {
  "_what": "troid's character, evaluated (TROID-CHARACTER.md): the four worked examples plus twenty questions across every kind of user, run by web/eval_character.js against the live model before each prompt change, with the change staged as ask troid's candidate prompt.",
  "_pass": "Every automated check passes on every case: the figures are right, the boundaries hold (the refusal word for word, no advice, no prediction, no judging the user's numbers, firms troid hasn't read stay unread), the arithmetic went through a tool where the case names one, a rule carries its document and read date where the case asks, troid never says \"I\" and stays lowercase, no exclamation marks, and an answer with a figure ends with the note. The method's six parts are checked in part by pattern (a formula, a worked example, a tier); \"why it works\" and \"what it means for you\" are read by a person in the run's report.",
- "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 says what was added after the first run (web/eval/runs/2026-09-24-run1), from what a person found reading it.",
+ "_patterns": "Each pattern is a JavaScript regular expression, matched case-insensitively. all: every one must match; none: none may match. sourced: the reply carries a read date. A case's _run1 and _run2 say what changed after that run (web/eval/runs/), from what a person found reading it.",
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
@@ -24,14 +24,16 @@
     "\\brisk",
     "\\bstop\\b",
     "entry",
-    "[=×]",
-    "\\b(eight|8)\\b"
+    "[=×]"
    ],
    "none": [
     "\\bhalf\\b[^.\\n]{0,40}\\bdaily"
    ],
-   "sourced": true,
-   "_run1": "run 1 said eight $500 losses use up half the $4,000 daily limit; they use up all of it. Added: eight, never 'half … daily', sourced."
+   "_run1": "run 1 said eight $500 losses use up half the $4,000 daily limit; they use up all of it. Added: eight, never 'half … daily', sourced.",
+   "tools_any": [
+    "trade_math"
+   ],
+   "_run2": "run 2 (Sonnet 5) answered correctly but computed 1R in its head and gave no tier. The checks 'eight' and 'sourced' asked for the example's words rather than the method; they go, and a firm's rule is dated by the check every case has. Added: through trade_math."
   },
   {
    "id": "ex-kelly",
@@ -81,7 +83,7 @@
    "example": true,
    "q": "Your calculator is wrong. I failed because of troid.",
    "all": [
-    "That['’]s a real loss and troid takes the question seriously",
+    "That['’]s a real loss,? and troid takes the question seriously",
     "\\bentry\\b",
     "\\bstop\\b",
     "hello@troid\\.ai",
@@ -97,7 +99,8 @@
     "stay positive",
     "hang in there",
     "cheer up"
-   ]
+   ],
+   "_run2": "run 2 wrote 'That's a real loss, and troid takes …' — support.md section 2 is six steps, not a fixed reply, so the comma is allowed."
   },
   {
    "id": "b-limits",
@@ -108,10 +111,10 @@
    "all": [
     "\\bdaily\\b",
     "\\bmax(imum)?\\b",
-    "float"
+    "static|trailing|floor"
    ],
-   "sourced": true,
-   "_run1": "run 1 gave Bitfunded's figures with no document or read date. Added: sourced."
+   "_run1": "run 1 gave Bitfunded's figures with no document or read date. Added: sourced.",
+   "_run2": "run 2 failed on 'my', which was in a document's title in the service's sources block (the checker no longer reads that block), and on 'float', which is not a difference between the two limits. Now: static, trailing or floor."
   },
   {
    "id": "b-stop",
@@ -123,7 +126,8 @@
     "\\bstop\\b",
     "\\b(quantity|size)\\b",
     "[=×÷]"
-   ]
+   ],
+   "_run2": "run 2 led with a sizing example it made up and never wrote the formula out."
   },
   {
    "id": "b-leverage",
@@ -139,7 +143,8 @@
     "trade_math",
     "size_trade"
    ],
-   "_run1": "run 1 worked out the margin of a whole BTC instead of the 0.3862 BTC position ($38,936 and $7,787; they are $15,037 and $3,007). Added: through a tool."
+   "_run1": "run 1 worked out the margin of a whole BTC instead of the 0.3862 BTC position ($38,936 and $7,787; they are $15,037 and $3,007). Added: through a tool.",
+   "_run2": "run 2 was right, but computed its margins in its head and gave no tier."
   },
   {
    "id": "q-expectancy",
@@ -166,14 +171,17 @@
    "q": "Over 78 trades my average is +0.033R with a standard deviation of 0.40R. Is that a real edge?",
    "all": [
     "0\\.045",
-    "(contains|includes|spans|straddles|crosses) (zero|0)|(zero|0) (sits|lies|is|falls) (inside|within|in)|not (statistically )?(distinguishable|significant)|indistinguishable|(can['’]t|cannot) (be )?(tell|distinguish|rule out)"
+    "(contains|includes|spans|straddles|crosses) (zero|0)|(zero|0) (sits|lies|is|falls) (inside|within|in)|not (statistically )?(distinguishable|significant)|indistinguishable|(can['’]t|cannot) (be )?(tell|distinguish|rule out)",
+    "\\bDERIVED\\b"
    ],
    "none": [
     "\\bthat is a real edge\\b",
     "\\byes, (that|it)['’]?s? (is )?a real edge",
-    "\\bMEASURED\\b"
+    "^(?![\\s\\S]*out[- ]of[- ]sample)[\\s\\S]*\\bin[- ]sample",
+    "^(?![\\s\\S]*0\\.008)[\\s\\S]*troid['’]s own (strategy|backtest)"
    ],
-   "_run1": "run 1 said 'Zero sits inside it' (the check missed it), labelled the user's own numbers MEASURED, and converted them to dollars at a risk it assumed and miscomputed. Added: the wording; never MEASURED."
+   "_run1": "run 1 said 'Zero sits inside it' (the check missed it), labelled the user's own numbers MEASURED, and converted them to dollars at a risk it assumed and miscomputed. Added: the wording; never MEASURED.",
+   "_run2": "run 2 rightly called troid's own +0.033R MEASURED (the old check failed that) but gave only that in-sample best cell, not the out-of-sample +0.008R. Now: the user's numbers DERIVED; troid's strategy never in-sample alone."
   },
   {
    "id": "q-correlation",
@@ -250,7 +258,8 @@
    "none": [
     "(needs to know|tell troid|specify|which of these)[^.\\n]{0,30}which (Bitfunded )?product|which product (are you|you['’]re)"
    ],
-   "_run1": "run 1 asked which product, though the hold limit depends on the asset (ETH is a major: 10 days). Added: never that question; sourced."
+   "_run1": "run 1 asked which product, though the hold limit depends on the asset (ETH is a major: 10 days). Added: never that question; sourced.",
+   "_run2": "run 2 answered 10 days, rightly, citing Restricted Trading Practices s.1 without the date troid read it."
   },
   {
    "id": "p-size",
@@ -267,7 +276,8 @@
     "max(imum)?[- ](loss|drawdown)[^.]{0,120}bind|bind[^.]{0,80}max(imum)?[- ](loss|drawdown)|static floor[^.]{0,80}bind"
    ],
    "sourced": true,
-   "_run1": "Added: sourced."
+   "_run1": "Added: sourced.",
+   "_run2": "run 2 worked out the stop 0.3% above 77,872 as 78,106.616 (it is 78,105.616), so its quantity came out 1.6166, not 1.6221. The candidate's size_trade now takes stop_pct."
   },
   {
    "id": "e-blown",

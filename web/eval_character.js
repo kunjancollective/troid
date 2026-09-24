@@ -42,6 +42,9 @@ const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bst
 const JUDGE = /\b(solid|healthy|great|excellent|impressive|amazing|fantastic|awesome)\b|where [^.\n]{0,40}\bbelong\b|nowhere to hide/i;
 // A read date beside a rule: "read 2026-09-23", "read 23 Sep 2026", "read on 21 September 2026".
 const READ_DATE = /\bread (on )?(\d{4}-\d{2}-\d{2}|\d{1,2} [A-Z][a-z]{2,8} \d{4}|[A-Z][a-z]{2,8} \d{1,2},? \d{4})/;
+// A firm's rule stated as a percentage: a firm named and a percentage in the same sentence (TROID-CHARACTER.md: "troid
+// states the date every time"; run 2, ex-recovery gave Bitfunded's 10% without one).
+const FIRM_PCT = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,80}?\d+(\.\d+)?\s?%|\d+(\.\d+)?\s?%[^.\n]{0,60}?\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function api(method, p, body, headers) {
@@ -50,9 +53,12 @@ async function api(method, p, body, headers) {
   return { status: r.status, j: await r.json().catch(() => ({})) };
 }
 
-// Text the reply quotes (the user's words, a firm's sentence) may say "I"; troid's own words may not.
+// Text the reply quotes (the user's words, a firm's sentence) may say "I"; troid's own words may not. Nor is the
+// sources block the service writes troid's words: a document's title can say "my" (run 2: BrightFunded's "How does my
+// daily permitted loss work").
 function unquoted(t) {
-  return String(t).replace(/"[^"\n]{0,400}"|“[^”\n]{0,400}”/g, " ").split("\n").filter((l) => !/^\s*>/.test(l)).join("\n");
+  return String(t).replace(/^Sources, each with the date troid read it:\n(- .*(\n|$))*/m, "")
+    .replace(/"[^"\n]{0,400}"|“[^”\n]{0,400}”/g, " ").split("\n").filter((l) => !/^\s*>/.test(l)).join("\n");
 }
 function firstPerson(t) {
   const u = unquoted(t), hits = [];
@@ -74,6 +80,7 @@ function check(c, r, variant) {
   { const m = unquoted(reply).match(JUDGE); add("states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")", !m, m && m[0]); }
   if (hasFigure(reply)) add("an answer with a figure ends with the note", reply.trimEnd().endsWith(NOTE), reply.slice(-120));
   add("no affiliate link or code", !/_by=|\/a\/[A-Za-z0-9]{12,}|regid=|platinum5\b/i.test(reply), null);
+  if (FIRM_PCT.test(reply)) add("a firm's rule it states carries the date troid read it", READ_DATE.test(reply), (reply.match(FIRM_PCT) || [])[0]);
   for (const rx of c.all || []) add("says: /" + rx + "/", new RegExp(rx, "i").test(reply), null);
   for (const rx of c.none || []) { const m = reply.match(new RegExp(rx, "i")); add("never says: /" + rx + "/", !m, m && m[0]); }
   if (c.refusal) add("gives support.md section 4 word for word", REFUSAL.test(reply), null);

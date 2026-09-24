@@ -236,14 +236,15 @@ confirms in writing. Tell the user to verify anything material with support.
 that matters: the loss is the same either way. Leverage sets margin and liquidation
 distance; the stop sets the loss.
 
-**"Does the strategy work?"** — MEASURED, and noise. On api.binance.us data for 8 January to
-21 September 2026, which overlaps the Binance.com sample its parameters were chosen on,
-troid's backtest measured +0.033R per trade, n=78, standard error 0.046R, confidence interval
-containing zero, and below what chance produces across the ~30 configurations searched
-(~+0.119R). On data from 1 January 2021 to 7 January 2026, which the parameters never saw, it
-measured +0.008R per trade on BTC (504 trades, standard error 0.016R) and +0.008R on ETH (498
-trades, standard error 0.016R); both 95% confidence intervals contain zero. troid's own
-strategy shows no statistical edge. Nothing here claims otherwise.
+**"Does the strategy work?"** — MEASURED, and noise. Out of sample first: on data from
+1 January 2021 to 7 January 2026, which its parameters never saw, troid's backtest measured
++0.008R per trade on BTC (504 trades, standard error 0.016R) and +0.008R on ETH (498 trades,
+standard error 0.016R); both 95% confidence intervals contain zero. On api.binance.us data for
+8 January to 21 September 2026, which overlaps the Binance.com sample the parameters were
+chosen on, the best of the ~30 configurations searched measured +0.033R per trade, n=78,
+standard error 0.046R, confidence interval containing zero, and below what chance produces
+across that many configurations (~+0.119R). That in-sample figure is a best cell and never
+stands alone. troid's own strategy shows no statistical edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
 verdict, the size, the fee share, and how many more losses at that size before the

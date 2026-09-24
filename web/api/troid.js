@@ -148,8 +148,10 @@ const GUARDRAILS = [
 ].join("\n- ").replace(/^/, "- ");
 // The candidate's guardrails: the live ones plus these (TROID-CHARACTER.md). Folded into GUARDRAILS when promoted.
 const CANDIDATE_GUARDRAILS = [
-  "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
-  "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A figure the user gave, repeated back, needs no tool. So does a rule's value quoted with its source.",
+  "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
+  "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. A figure the user gave, repeated back, needs no tool.",
+  "Answer a question about a firm's rule through explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it.",
+  "When troid's own strategy comes up, its out-of-sample result comes first; the in-sample figure is the best of about 30 configurations and never stands alone.",
   "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block.",
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
   "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\".",
@@ -432,7 +434,10 @@ function size_trade(a) {
   if (b.error) return b;
   const p = b._p, eq = b._eq;
   const side = String(a.side || "long").toLowerCase().startsWith("l") ? 1 : -1;
-  const entry = +a.entry, stop = +a.stop, tR = a.target_r != null ? +a.target_r : 2;
+  const entry = +a.entry, tR = a.target_r != null ? +a.target_r : 2;
+  // a stop given as a percent of entry: the tool prices it, so no stop price is worked out by hand (run 2, p-size)
+  const pctStop = (a.stop == null || a.stop === "") && a.stop_pct != null ? +a.stop_pct : null;
+  const stop = pctStop != null ? +(entry * (1 - side * pctStop / 100)).toFixed(8) : +a.stop;
   const rpIn = a.risk_pct != null ? +a.risk_pct : 0.5, cpIn = a.budget_cap_pct != null ? +a.budget_cap_pct : 35, rp = rpIn / 100, cp = cpIn / 100;
   const lev = a.leverage != null ? +a.leverage : 5, mode = a.margin_mode === "isolated" ? "isolated" : "cross";
   const { _p, _eq, _used, _quota, ...base } = b;
@@ -445,6 +450,7 @@ function size_trade(a) {
   if (b.effective_budget <= 0) blocks.push("no budget left — " + b.binding + " already breached");
   if (blocks.length) return { verdict: "BLOCK", reasons: blocks, ...base };
   const notes = base.notes.slice(), working = base.working.slice();
+  if (pctStop != null) working.splice(1, 0, { step: "stop", formula: `entry × (1 ${side > 0 ? "−" : "+"} ${pctStop}%)`, value: stop });
   working.splice(1, 0, { step: "inputs", formula: "side · entry · stop · target R", value: [side > 0 ? "long" : "short", entry, stop, tR] },
                        { step: "inputs", formula: "risk % · budget cap % · leverage · margin", value: [rpIn, cpIn, lev, mode] });
   const intended = rp * eq, cap = cp * Math.max(b.effective_budget, 0), risk = Math.min(intended, cap);
@@ -878,9 +884,18 @@ const TOOLS = [
   { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies, strategy_switching, opposite_positions, funded_stage.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
 ];
-// The candidate's tools: the live ones plus these (TROID-CHARACTER.md). Folded into TOOLS when promoted.
+// The candidate's tools: the live ones plus these (TROID-CHARACTER.md), and size_trade taking a stop as a percent of
+// entry, so the model never works out a stop price itself (run 2, p-size). Folded into TOOLS when promoted.
 const CANDIDATE_TOOLS = [TRADE_MATH_TOOL];
-const toolsFor = (variant) => (variant === "candidate" ? TOOLS.concat(CANDIDATE_TOOLS) : TOOLS);
+const TOOLS_NEXT = TOOLS.map((t) => {
+  if (t.name !== "size_trade") return t;
+  const c = JSON.parse(JSON.stringify(t)), pr = c.input_schema.properties;
+  pr.stop = { type: "number", description: "stop price; or give stop_pct" };
+  pr.stop_pct = { type: "number", description: "the stop as a percent of entry, when the user gives it that way (0.3 means 0.3%): troid prices the stop from entry and side" };
+  c.input_schema.required = c.input_schema.required.filter((k) => k !== "stop");
+  return c;
+}).concat(CANDIDATE_TOOLS);
+const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math };
 const RUN_NEXT = Object.assign({}, RUN, { explain_rule: explainRuleSourced });   // the candidate's; RUN when promoted
 function runTool(name, input, variant) {

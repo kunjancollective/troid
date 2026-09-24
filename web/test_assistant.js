@@ -245,6 +245,18 @@ ok("candidate explain_rule reset: noon in New York in summer, 11:00 in winter, n
 const ld = RT("explain_rule", { topic: "ladder" }, "candidate"), ac = RT("explain_rule", { topic: "accounts" }, "candidate");
 ok("candidate explain_rule: a topic that states no firm rule lists no sources; a clause no rule field carries cites its document",
    !ld.sources && /^Explanation text/.test(ld.tier) && ac.sources.length === 1 && ac.sources[0].rule === "ToU 6(b)" && /Terms of Use/.test(ac.sources[0].document), [ld, ac]);
+ok("candidate TROID.md: troid's own strategy, out of sample first; the in-sample figure a best cell that never stands alone",
+   /Out of sample first: on data from\s+1 January 2021/.test(candSys[0].text) && /never\s+stands alone/.test(candSys[0].text)
+   && candSys[0].text.indexOf("+0.008R per trade on BTC") < candSys[0].text.indexOf("+0.033R per trade"));
+ok("candidate guardrails: rule questions through a tool that dates them; a stop given as a percent goes to size_trade as stop_pct; out of sample first",
+   /Answer a question about a firm's rule through explain_rule/.test(candSys[0].text) && /stop_pct/.test(candSys[0].text) && /out-of-sample result comes first/.test(candSys[0].text));
+const stC = handler._toolsFor("candidate").find((t) => t.name === "size_trade"), stL = handler._toolsFor("live").find((t) => t.name === "size_trade");
+ok("candidate size_trade takes stop or stop_pct; the live schema unchanged", stC.input_schema.properties.stop_pct && !stC.input_schema.required.includes("stop")
+   && !stL.input_schema.properties.stop_pct && stL.input_schema.required.includes("stop"), [stC.input_schema.required, stL.input_schema.required]);
+const sp1 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop_pct: 0.3, risk_pct: 0.5 }),
+      sp2 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.616, risk_pct: 0.5 });
+ok("size_trade stop_pct: 0.3% above 77,872 on a short is 78,105.616, the same quantity as that stop price (run 2 worked it out as 78,106.616)",
+   sp1.quantity === sp2.quantity && sp1.quantity === 1.622095 && sp1.working.some((w) => w.step === "stop" && w.value === 78105.616), [sp1.quantity, sp2.quantity]);
 const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
 ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, not the quantity", ps2.result.quantity === ps10.result.quantity
    && Math.abs(ps2.result.margin - ps2.result.notional / 2) < 0.01 && Math.abs(ps10.result.margin - ps10.result.notional / 10) < 0.01 && /same at any leverage/.test(ps2.note), [ps2, ps10]);
@@ -628,7 +640,7 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: the candidate is staged (files, guardrails, tools) and a key is set, never shown", gc.key === true && gc.staged.join() === "TROID.md,TROID-CHARACTER.md,support.md"
-       && gc.guardrails === 6 && gc.tools.join() === "trade_math" && !resC.body.includes(CK), gc);
+       && gc.guardrails === 8 && gc.tools.join() === "trade_math" && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "recovery", drawdown_pct: 20 } }])
       : msg("end_turn", [{ type: "text", text: "25%. Not financial advice. Verify with the firm before acting." }]));
