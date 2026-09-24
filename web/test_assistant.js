@@ -218,6 +218,9 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
 
 // --- troid's character: promoted after evaluation run 9 (web/eval/runs/); nothing is staged, so the candidate is the live prompt
 const fs0 = require("fs"), path0 = require("path");
+// run 16's number and formula lints read the tools' real results, which the older tests' emulated tools don't carry:
+// those tests leave them out, and the number lint is tested on its own below
+const NEW16 = /^Every number in the answer comes from|^A teaching answer writes its formula/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -227,8 +230,13 @@ const candText = liveSys.map((b) => b.text).join("\n");
 const CG = handler._candidateGuardrails;
 ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm); the same tools",
    CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
-   && JSON.stringify(candSys.slice(1)) === JSON.stringify(liveSys.slice(1)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
+   && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
    && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
+// the staged character (after run 16's read): its examples carry no read date, only "(read date from the tool)"
+ok("candidate character: the live one with the examples' read dates replaced by \"(read date from the tool)\"",
+   /read 2[0-9] Sep 2026/.test(liveSys[1].text) && !/read \d{1,2} [A-Z][a-z]+ \d{4}|read 20\d\d-/.test(candSys[1].text)
+   && (candSys[1].text.match(/read date from the tool/g) || []).length === 3
+   && candSys[1].text.replace(/ \(read date from the tool\); that it\n> is a fixed amount on the initial balance is from the FAQ \(read date from the tool\)\./, "X").length < liveSys[1].text.length);
 ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
    liveSys.length === 5 && /^# Guardrails/.test(liveSys[0].text) && /## Who troid is/.test(liveSys[0].text) && /^# troid's character/.test(liveSys[1].text)
    && /^# support\.md/.test(liveSys[2].text) && liveSys[4].cache_control && handler._toolsFor("live").map((t) => t.name).join() === "size_trade,check_budget,check_compliance,check_availability,explain_rule,trade_math,firm_rules",
@@ -339,7 +347,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const extra = (c, v) => LF(c.reply, v, toolsOf(c)).filter((n) => /published Monte Carlo|every rule is sourced/.test(n)).length;   // run 10's two
   ok("candidate lints: run 10's o-montecarlo (the Monte Carlo from memory) and s-product (every rule called sourced); none on live",
      r10.filter((c) => extra(c, "candidate")).map((c) => c.id).join() === "o-montecarlo,s-product" && r10.every((c) => extra(c, "live") === 0)
-     && LF(byId("o-montecarlo").reply, "candidate", [{ name: "explain_rule", input: { topic: "ruin" }, result: {} }]).length === handler._lintNotes(byId("o-montecarlo").reply).length);
+     && LF(byId("o-montecarlo").reply, "candidate", [{ name: "explain_rule", input: { topic: "ruin" }, result: {} }]).filter((n) => !NEW16.test(n)).length === handler._lintNotes(byId("o-montecarlo").reply).length);
   const WW = handler._refusalWordForWord, REF = "troid doesn't recommend; it prices what you bring.";
   const wp = WW(byId("s-product").reply, byId("s-product").q), wf = WW(byId("s-firm").reply, byId("s-firm").q);
   ok("refusal word for word on a should-I question: run 10's paraphrases give way to support.md section 4's reply; a reply that has it, and another question, are left alone",
@@ -354,7 +362,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
       return /not yet recorded/.test(parts.slice(1).join(" — ")) ? { rule: parts[0], source: "not yet recorded" } : { rule: parts[0], read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
     return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
   const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
-  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length);
+  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n));
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
   ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
@@ -451,6 +459,36 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !r13.filter((c) => n15(c).some((n) => !/announce the reply's form|tool's parameters/.test(n))).length   // run 13's own form and parameter errors aside
      && ["ex-kelly", "q-stats", "e-blown", "s-firm"].every((id) => !n15(r9.find((c) => c.id === id)).length),
      r15.filter((c) => n15(c).length).map((c) => [c.id, n15(c).map((n) => n.slice(0, 30))])); }
+// run 16's staged changes (the owner's review): every number from a tool, the user or troid's published figures; a
+// teaching answer writes its formula out. The tools of run 16's replies rebuilt with their real results.
+{ const N = require("./api/_numbers.js"), r16 = require("./eval/runs/2026-09-24-run16.json").results, at16 = (id) => r16.find((x) => x.id === id);
+  const T = (n, a) => ({ name: n, input: a, result: RT(n, a, "candidate") });
+  const tools16 = { "b-stop": [T("trade_math", { calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step", leverage: 5 })],
+    "ex-r": [T("trade_math", { calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, firm: "bitfunded", product: "1step", result: 998 })],
+    "q-expectancy": [T("trade_math", { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 })],
+    "q-correlation": [T("trade_math", { calc: "effective_bets", positions: 4, correlation: 0.6 })],
+    "p-crossover": [T("explain_rule", { topic: "crossover" })],
+    "b-leverage": [T("trade_math", { calc: "position_size", risk: 500, entry: 100, stop: 98, leverage: 2 }), T("trade_math", { calc: "position_size", risk: 500, entry: 100, stop: 98, leverage: 10 })],
+    "q-atr": [T("trade_math", { calc: "atr_scale", atr: 600, from_minutes: 60, to_minutes: 240 })] };
+  const body16 = (c) => String(c.reply).split("Sources, each with the date troid read it:")[0].split("\n").filter((l) => !/^\s*(\*\*)?Tier\b|^Not financial advice/.test(l)).join("\n");
+  const notes16 = (id, v) => handler._lintNotesFor(body16(at16(id)), v || "candidate", tools16[id], at16(id).q).filter((n) => NEW16.test(n));
+  const bs = notes16("b-stop").join();
+  ok("candidate number lint: run 16's b-stop is asked to get 3.5, 372, 77,500 and the 35% cap through a tool; ex-r its $4,000, 8 and 0.5%; not on live",
+     /these don't: .*3\.5/.test(bs) && /372/.test(bs) && /77,500/.test(bs) && /\b35\b/.test(bs) && /4,000/.test(notes16("ex-r").join()) && !notes16("b-stop", "live").length, [bs, notes16("ex-r")]);
+  ok("candidate number lint: arithmetic shown step by step from supported numbers passes (q-expectancy's 1 ÷ 2.5 = 40%, q-correlation's 4 ÷ 2.8 = 1.43, p-crossover's 100,000 × 0.98)",
+     ["q-expectancy", "q-correlation", "p-crossover", "q-atr"].every((id) => !notes16(id).some((n) => /^Every number/.test(n))), ["q-expectancy", "q-correlation", "p-crossover", "q-atr"].map((id) => [id, notes16(id)]));
+  ok("candidate formula lint: run 16's b-leverage, worked through trade_math with no formula, is asked for it; q-atr, which has one, is not",
+     notes16("b-leverage").some((n) => /writes its formula out/.test(n)) && !notes16("q-atr").some((n) => /writes its formula/.test(n)), notes16("b-leverage"));
+  // the owner's promotion rule, applied to the reads' _errors (CLAUDE.md, "Promoting a candidate")
+  const pr = require("child_process").spawnSync(process.execPath, [path0.join(__dirname, "eval_character.js"), "--promotion", "--candidate", "14,15,16", "--live", "9,10"], { encoding: "utf8" });
+  ok("promotion rule on runs 14–16 against the live prompt's runs 9 and 10: no critical failure, but more failing cases per run (5.33 against 4.50) and two kinds the live runs don't have — hold",
+     pr.status === 1 && /\(a\)[^\n]*none — met/.test(pr.stdout) && /candidate 5\.33, live 4\.50 — NOT met/.test(pr.stdout)
+     && /\(c\)[^\n]*incomplete method; repeated text — NOT met/.test(pr.stdout) && /HOLD/.test(pr.stdout), pr.stdout.slice(-600));
+  const U0 = (t, texts, nums) => N.unsupportedNumbers(t, texts || [], nums || []);
+  ok("numbers: dates, times, clauses, sections, product names and list numbers are not figures; 4,000 is one number; min(480,700) two",
+     !U0("read 2026-09-23, 21 Sep 2026; 16:00–16:10 UTC (UTC+8); Terms 9(a), 14(d)(v); RTP s.3; T&C 8.i; the 1-Step and 2-Phase; Stage 2; Step 4\n1. first").length
+     && U0("the limit is $4,000", [], ["4"]).join() === "4,000" && !U0("min(480,700) = 480", [], ["480", "700"]).length && U0("roughly 3.5 times", [], []).join() === "3.5"
+     && !U0("17.5% and 0.175", [], ["0.175"]).length && !U0("$499", [], ["498.97"]).length, U0("the limit is $4,000", [], ["4"])); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -500,9 +538,10 @@ const kv = http.createServer((req, res) => {
     }));
   });
 });
+const CALL_KEYS = [];                                                   // the API key each call went out on
 const fake = http.createServer((req, res) => {
   let raw = ""; req.on("data", (c) => (raw += c)); req.on("end", () => {
-    const body = JSON.parse(raw); calls.push(body);
+    const body = JSON.parse(raw); calls.push(body); CALL_KEYS.push(req.headers["x-api-key"]);
     const out = script(body);
     const send = () => { if (res.destroyed) return; res.writeHead(out.status || 200, Object.assign({ "content-type": "application/json", "request-id": "req_test" }, out.headers || {})); res.end(JSON.stringify(out.json)); };
     if (out.delay) setTimeout(send, out.delay); else send();
@@ -861,7 +900,30 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 20 && !resC.body.includes(CK), gc);
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 22 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+    // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
+    KV_CALLS.length = 0; before = calls.length;
+    let lb;
+    for (let i = 0; i < 22; i++) lb = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK, "x-troid-variant": "live" }, ip: "198.51.100.201" });
+    ok("operator live baseline: 22 messages from one address answered, by the live prompt (no staged file), nothing stored, tools and their numbers reported",
+       lb.status === 200 && calls.length === before + 22 && lb.j.variant === "live" && !calls[calls.length - 1].system[0].text.includes(MARK)
+       && !KV_CALLS.length && Array.isArray(lb.j.tool_numbers) && Array.isArray(lb.j.tools_used), [lb.status, lb.j.variant, KV_CALLS.length]);
+    r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-variant": "live" } });
+    ok("x-troid-variant without the key: an ordinary visitor's request (stored, no tool report)", r.status === 200 && r.j.variant === "live" && KV.has("conv:" + r.j.session) && !("tool_numbers" in r.j), r.j);
+    r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK.replace(/.$/, "x"), "x-troid-variant": "live" } });
+    ok("x-troid-variant with a wrong key → 403", r.status === 403, r);
+    // the operator's own API key, when set: evaluation never spends the key visitors use
+    const he = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE, ANTHROPIC_API_KEY_EVAL: "sk-eval-test" });
+    CALL_KEYS.length = 0;
+    await call(he, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    await call(he, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK, "x-troid-variant": "live" } });
+    const opKeys = CALL_KEYS.slice(); CALL_KEYS.length = 0;
+    await call(he, [U("What does R mean?")], { disclosed: true });
+    let resE = fakeRes(); await he({ method: "GET", headers: {} }, resE);
+    ok("ANTHROPIC_API_KEY_EVAL: the candidate and the live baseline go out on it, a visitor's request on ANTHROPIC_API_KEY; GET says it is set, never what it is",
+       opKeys.length >= 2 && opKeys.every((k) => k === "sk-eval-test") && CALL_KEYS.length >= 1 && CALL_KEYS.every((k) => k && k !== "sk-eval-test")
+       && JSON.parse(resE.body).candidate.eval_key === true && !resE.body.includes("sk-eval-test"), [opKeys, CALL_KEYS]);
+    delete process.env.ANTHROPIC_API_KEY_EVAL;
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));
@@ -900,7 +962,7 @@ fake.listen(18765, async () => {
     step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "text", text: "R is the amount risked on one trade: the loss if the stop is hit." },
                                                   { type: "tool_use", id: "tm2", name: "trade_math", input: { calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862 } }])
-      : msg("end_turn", [{ type: "text", text: "Working it through: 1R ≈ $498.97." }]));
+      : msg("end_turn", [{ type: "text", text: "Working it through: 1R = 1,292 × 0.3862 = $498.97." }]));
     r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: what troid wrote before a tool call is kept, in order (run 3 lost ex-r's definition)", r.status === 200
        && r.j.reply.indexOf("R is the amount risked") === 0 && r.j.reply.indexOf("R is the amount risked") < r.j.reply.indexOf("Working it through"), r.j.reply);

@@ -24,12 +24,17 @@ const args = process.argv.slice(2);
 const opt = (f) => { const i = args.indexOf(f); if (i < 0) return null; const v = args[i + 1]; args.splice(i, 2); return v; };
 const flag = (f) => { const i = args.indexOf(f); if (i < 0) return false; args.splice(i, 1); return true; };
 const OUT = opt("--out"), ONLY = opt("--only"), PACE = opt("--pace"), REPORT = opt("--report"), READ = opt("--read"), RECHECK = flag("--recheck");
+const PROMOTION = flag("--promotion"), CAND_RUNS = opt("--candidate"), LIVE_RUNS = opt("--live");
 if (args.some((x) => x.startsWith("--")) || args.length > 1 || (args[0] && !/^https?:\/\//.test(args[0]))) {
   console.log("usage: [EVAL_CANDIDATE_KEY=…] node web/eval_character.js [https://troid.ai] [--out path] [--only id,id] [--pace ms]\n" +
-              "       node web/eval_character.js --report run.json [--read notes.json] [--recheck] [--out path]"); process.exit(2);
+              "       node web/eval_character.js --report run.json [--read notes.json] [--recheck] [--out path]\n" +
+              "       node web/eval_character.js --promotion --candidate 14,15,16 --live 9,10"); process.exit(2);
 }
 const BASE = (args[0] || "https://troid.ai").replace(/\/+$/, "");
 const KEY = process.env.EVAL_CANDIDATE_KEY || "";
+// EVAL_LIVE=1 with the key: the live prompt as the operator's baseline, unstored and unthrottled (the promotion rule
+// compares a candidate with it on the same questions, CLAUDE.md)
+const LIVE_OP = !!KEY && process.env.EVAL_LIVE === "1";
 const PACE_MS = PACE != null ? +PACE : KEY ? 0 : 185_000;
 const SET = JSON.parse(fs.readFileSync(path.join(__dirname, "eval", "character.json"), "utf8"));
 const NOTE = "Not financial advice. Verify with the firm before acting.";
@@ -138,54 +143,7 @@ const ASK_NUMBERS = /\b(if you give|give (troid )?(a |the )?(specific|your)|prov
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
 // q-stats: "0.0453 × 3.28 ≈ 0.1181", where √(2 ln 30) is 2.61). A word, a symbol it doesn't read, or a ± ends an expression;
 // a result is allowed the rounding its own decimals show, or half a percent.
-function arithTokens(s) {
-  const out = [];
-  for (let i = 0; i < s.length;) {
-    const rest = s.slice(i), c = s[i], prev = out[out.length - 1];
-    if (/\s/.test(c)) { i++; continue; }
-    let m = /^\$?(\d+(?:\.\d+)?)(\s?%)?(R\b|×(?!\s*[\d($√−-]))?/.exec(rest);
-    if (m) { out.push({ t: "n", v: +m[1] * (m[2] ? 0.01 : 1), pct: !!m[2], dec: (m[1].split(".")[1] || "").length, s: m[0] }); i += m[0].length; continue; }
-    const unary = !prev || prev.t === "op" || prev.t === "(";
-    if ("×*÷/+−".includes(c) || (c === "-" && ((/^-\s/.test(rest) && /\s$/.test(s.slice(0, i))) || (unary && /^-\d/.test(rest))))
-        || (c === "x" && /^x\s/.test(rest) && /\s$/.test(s.slice(0, i)))) {
-      out.push({ t: "op", v: c === "*" || c === "x" ? "×" : c === "/" ? "÷" : c === "-" ? "−" : c, s: c }); i++; continue;
-    }
-    if (c === "(" || c === ")" || c === "√") { out.push({ t: c, s: c }); i++; continue; }
-    out.push({ t: "?", s: c }); i++;
-  }
-  return out;
-}
-function arithParse(ts) {                        // the value of ts if it is exactly one expression, with its operator count
-  let i = 0, ops = 0;
-  const at = (t, v) => ts[i] && ts[i].t === t && (v == null || v.includes(ts[i].v));
-  const factor = () => {
-    if (at("op", "−")) { i++; const w = factor(); return w == null ? null : -w; }
-    if (at("√")) { i++; ops++; const w = factor(); return w == null || w < 0 ? null : Math.sqrt(w); }
-    if (at("n")) return ts[i++].v;
-    if (at("(")) { i++; const w = expr(); if (w == null || !at(")")) return null; i++; return w; }
-    return null;
-  };
-  const term = () => { let v = factor(); while (v != null && at("op", "×÷")) { const o = ts[i++].v, w = factor(); ops++; v = w == null ? null : o === "×" ? v * w : v / w; } return v; };
-  const expr = () => { let v = term(); while (v != null && at("op", "+−")) { const o = ts[i++].v, w = term(); ops++; v = w == null ? null : o === "+" ? v + w : v - w; } return v; };
-  const v = expr();
-  return v == null || !isFinite(v) || i !== ts.length ? null : { v, ops, single: ts.length === 1 ? ts[0] : null, s: ts.map((t) => t.s).join(" ") };
-}
-const MATHY = /[±^²³·|≤≥<>√]/;                    // a symbol just outside an expression means it was only part of one
-function arithSides(left, right) {
-  const a = arithTokens(left), b = arithTokens(right);
-  let k = a.length; while (k > 0 && a[k - 1].t !== "?") k--;
-  let e = 0; while (e < b.length && b[e].t !== "?") e++;
-  if ((k > 0 && MATHY.test(a[k - 1].s)) || (e < b.length && MATHY.test(b[e].s))) return null;
-  // the whole run of numbers beside the "=", never a piece of a longer one ("quota×4%" is not "4%")
-  const L = k < a.length ? arithParse(a.slice(k)) : null, R = e > 0 ? arithParse(b.slice(0, e)) : null;
-  return L && R && L.ops ? [L, R] : null;         // "1R = 1,292 × 0.3862" defines a unit; the worked side comes first
-}
-function arithHolds(L, R, approx) {
-  if (L.single && !R.single) [L, R] = [R, L];     // the single number carries the rounding
-  const n = R.single, rel = approx ? 0.01 : 0.005;
-  const cands = n && n.pct ? [[R.v, n.dec + 2], [R.v * 100, n.dec]] : [[R.v, n ? n.dec : 6]];   // 25% may be 0.25 or 25 on the other side
-  return cands.some(([r, d]) => Math.abs(L.v - r) <= Math.max(0.5 * 10 ** -d, Math.abs(r) * rel) + 1e-12);
-}
+const { arithSides, arithHolds, unsupportedNumbers } = require("./api/_numbers.js");   // shared with the service
 function arithmeticSlips(text) {
   const t = unquoted(text).replace(/\*\*|__|`/g, "").replace(/(\d),(?=\d{3}(?!\d))/g, "$1"), slips = [];
   for (const line of t.split("\n")) {
@@ -200,7 +158,8 @@ function arithmeticSlips(text) {
 
 async function api(method, p, body, headers) {
   const r = await fetch(BASE + p, { method, body: body ? JSON.stringify(body) : undefined,
-    headers: Object.assign({ "content-type": "application/json", "user-agent": "troid-eval/1" }, KEY ? { "x-troid-candidate": KEY } : {}, headers || {}) });
+    headers: Object.assign({ "content-type": "application/json", "user-agent": "troid-eval/1" }, KEY ? { "x-troid-candidate": KEY } : {},
+                           LIVE_OP ? { "x-troid-variant": "live" } : {}, headers || {}) });
   return { status: r.status, j: await r.json().catch(() => ({})) };
 }
 
@@ -259,6 +218,12 @@ function check(c, r, variant) {
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
+  if (Array.isArray(r.j.tool_numbers)) {                                                                                                    // run 16
+    // every number from a tool, the user's message or troid's published figures; the service's own blocks (sources,
+    // tier, troid's assumptions, the note) are not troid's prose
+    const prose = splitSources(reply).body.split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b|^troid['’]s assumptions, not the firm['’]s rules|^Not financial advice/.test(l)).join("\n");
+    const bad = unsupportedNumbers(prose, [c.q], r.j.tool_numbers);
+    add("every number comes from a tool, the user's message or troid's published figures", !bad.length, bad); }
   { const m = unquoted(reply).match(/\bno crossover\b|\bnever cross(es)?\b/i); add("every product has a crossover (with equal limits, the quota itself)", !m, m && m[0]); }   // run 15
   { // a firm's daily or maximum loss stated as a figure, with neither a source line for it nor a read date in the sentence
     // (run 16, ex-r: "the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8)", the sources holding only the fee)
@@ -298,10 +263,10 @@ function check(c, r, variant) {
 function writeReport(record, out, notes) {
   const n = record.results.length, failed = record.results.filter((x) => !x.pass).length;
   const passedThen = record.rechecked && record.passed != null ? record.passed : n - failed;
-  const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.nothing_staged ? "live" : record.variant} prompt, ${record.base})`;
+  const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.nothing_staged ? "live" : record.variant}${record.operator_live ? " baseline" : ""} prompt, ${record.base})`;
   const read = notes || {};
   const md = [`# troid's character — evaluation run, ${record.started_utc.slice(0, 16).replace("T", " ")} UTC`, "",
-    `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
+    `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : record.operator_live ? " (the baseline, through the operator key)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
     line.replace("RESULT: ", "**Result:** "), "",
     ...(record.rechecked ? [`**Checked again** on ${record.rechecked.slice(0, 10)} under the case set as it is now: ${n - failed} of ${n} pass. ` +
         "The replies are the run's own; a check added after the run shows what the run would have failed. The table and the checks below are the new ones.", ""] : []),
@@ -323,13 +288,39 @@ function writeReport(record, out, notes) {
   return line;
 }
 
+// The promotion rule (CLAUDE.md, "Promoting a candidate"), applied to the reads' _errors: over the candidate's last three
+// runs, (a) no critical failure, (b) fewer failing cases per run than the live prompt's runs on the same questions,
+// (c) no kind of failure the live prompt's runs don't have.
+if (PROMOTION) {
+  const dir = path.join(__dirname, "eval", "runs"), files = fs.readdirSync(dir);
+  const readOf = (n) => { const f = files.find((x) => new RegExp(`-run${n}\\.read\\.json$`).test(x));
+    if (!f) { console.log(`run ${n}: no read (.read.json)`); process.exit(2); }
+    const o = JSON.parse(fs.readFileSync(path.join(dir, f), "utf8"));
+    if (!Array.isArray(o._errors)) { console.log(`run ${n}: its read records no _errors`); process.exit(2); }
+    return { n, errors: o._errors }; };
+  const cand = String(CAND_RUNS || "").split(",").filter(Boolean).map(readOf), live = String(LIVE_RUNS || "").split(",").filter(Boolean).map(readOf);
+  if (cand.length < 3 || !live.length) { console.log("--candidate needs the last three runs, --live at least one"); process.exit(2); }
+  const mean = (rs) => rs.reduce((a, r) => a + r.errors.length, 0) / rs.length;
+  const kinds = (rs) => new Set(rs.flatMap((r) => r.errors.flatMap((e) => e.kinds)));
+  const critical = cand.flatMap((r) => r.errors.filter((e) => e.severity === "critical").map((e) => `run ${r.n} ${e.case}`));
+  const liveKinds = kinds(live), fresh = [...kinds(cand)].filter((k) => !liveKinds.has(k));
+  const a = !critical.length, b = mean(cand) < mean(live), c = !fresh.length;
+  for (const r of [...cand.map((x) => ["candidate", x]), ...live.map((x) => ["live", x])])
+    console.log(`${r[0].padEnd(9)} run ${String(r[1].n).padEnd(3)} ${r[1].errors.length} failing: ` + r[1].errors.map((e) => `${e.case} (${e.severity}: ${e.kinds.join(", ")})`).join("; "));
+  console.log(`(a) critical failures in the candidate's runs: ${critical.length ? critical.join(", ") : "none"} — ${a ? "met" : "NOT met"}`);
+  console.log(`(b) failing cases per run: candidate ${mean(cand).toFixed(2)}, live ${mean(live).toFixed(2)} — ${b ? "met" : "NOT met"}`);
+  console.log(`(c) kinds the live prompt's runs don't have: ${fresh.length ? fresh.join("; ") : "none"} — ${c ? "met" : "NOT met"}`);
+  console.log(a && b && c ? "PROMOTE: the rule is met." : "HOLD: the rule is not met.");
+  process.exit(a && b && c ? 0 : 1);
+}
+
 if (REPORT) {                                                      // a saved run: its report, again
   const record = JSON.parse(fs.readFileSync(REPORT, "utf8"));
   if (RECHECK) {
     const byId = Object.fromEntries(SET.cases.map((c) => [c.id, c]));
     for (const x of record.results) {
       if (!byId[x.id]) continue;
-      x.checks = check(byId[x.id], { status: x.status, j: { reply: x.reply, variant: record.variant, tools_used: x.tools_used, error: x.error } }, record.variant);
+      x.checks = check(byId[x.id], { status: x.status, j: { reply: x.reply, variant: record.variant, tools_used: x.tools_used, tool_numbers: x.tool_numbers, error: x.error } }, record.variant);
       x.pass = x.checks.every((k) => k.pass);
     }
     record.rechecked = new Date().toISOString();
@@ -341,17 +332,17 @@ if (REPORT) {                                                      // a saved ru
 }
 
 (async () => {
-  const VARIANT = KEY ? "candidate" : "live";
+  const VARIANT = KEY && !LIVE_OP ? "candidate" : "live";
   const cases = SET.cases.filter((c) => !ONLY || ONLY.split(",").includes(c.id));
   const g = await api("GET", "/api/troid");
-  const record = { base: BASE, variant: VARIANT, started_utc: new Date().toISOString(), get: { enabled: g.j.enabled, models: g.j.models, candidate: g.j.candidate },
+  const record = { base: BASE, variant: VARIANT, operator_live: LIVE_OP || undefined, started_utc: new Date().toISOString(), get: { enabled: g.j.enabled, models: g.j.models, candidate: g.j.candidate },
                    set: { cases: cases.length, kinds: SET.kinds }, results: [] };
   if (!g.j.enabled) { console.log("ask troid is not on at " + BASE); process.exit(1); }
   if (KEY && !(g.j.candidate && g.j.candidate.key)) { console.log("no candidate key set at " + BASE, g.j.candidate); process.exit(1); }
   // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
   // prompt at full speed, unstored and not held to a visitor's limit.
   const cd = g.j.candidate || {};
-  record.nothing_staged = !!KEY && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length
+  record.nothing_staged = !!KEY && !LIVE_OP && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length
     && !(cd.rules || []).length && !(cd.run || []).length && !cd.lints;
   if (record.nothing_staged) console.log("nothing is staged: the candidate key evaluates the live prompt");
   let failed = 0;
@@ -362,10 +353,10 @@ if (REPORT) {                                                      // a saved ru
     let r = await api("POST", "/api/troid", { messages: [{ role: "user", content: c.q }], session, disclosed: true, lang: "en" });
     if ([502, 503, 504].includes(r.status)) { await sleep(20_000); r = await api("POST", "/api/troid", { messages: [{ role: "user", content: c.q }], session: crypto.randomBytes(16).toString("hex"), disclosed: true, lang: "en" }); }
     const ms = Date.now() - t0;
-    if (VARIANT === "live" && r.j.delete_token) await api("DELETE", "/api/troid?session=" + (r.j.session || session), null, { "x-troid-token": r.j.delete_token });
+    if (VARIANT === "live" && !LIVE_OP && r.j.delete_token) await api("DELETE", "/api/troid?session=" + (r.j.session || session), null, { "x-troid-token": r.j.delete_token });
     const checks = check(c, r, VARIANT), pass = checks.every((x) => x.pass);
     if (!pass) failed++;
-    record.results.push({ id: c.id, kind: c.kind, example: !!c.example, q: c.q, status: r.status, ms, model: r.j.model, tools_used: r.j.tools_used,
+    record.results.push({ id: c.id, kind: c.kind, example: !!c.example, q: c.q, status: r.status, ms, model: r.j.model, tools_used: r.j.tools_used, tool_numbers: r.j.tool_numbers,
                           tool_calls: r.j.tool_calls, reply: r.j.reply || null, error: r.j.error || null, pass, checks });
     console.log(`${pass ? "ok  " : "FAIL"} ${c.id} (${c.kind}, ${(ms / 1000).toFixed(1)} s, ${r.j.model || "-"}, tools: ${(r.j.tools_used || []).join(",") || "-"})`
                 + (pass ? "" : "\n     " + checks.filter((x) => !x.pass).map((x) => x.name + (x.detail ? " " + JSON.stringify(x.detail).slice(0, 160) : "")).join("\n     ")));

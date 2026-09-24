@@ -114,15 +114,21 @@ guardrails, rule explanations, tools and tool code in `CANDIDATE_GUARDRAILS`, `C
 with the key get the candidate; they are not stored and not held to a visitor's limit. The set is
 `eval/character.json`: the character's four examples and twenty more questions across every kind of user. A person
 reads every reply and records what they find beside the run (`<run>.read.json`); `--report <run>.json --read
-<run>.read.json --recheck` writes the report again under the current checks. Promote only when a run passes every
-automated check and the read finds no error: move the files into place and fold the candidate constants into the live
-ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; run 10, the live prompt,
-passed 22 of 24 and its read found five errors; run 11, the candidate with their fixes, passed 21 of 24 and its read
-found six; run 12 passed 22 of 24, four errors; run 13, 22 of 24, three; run 14, 22 of 24, five, and a check it prompted
-found one run 9's read had missed (ex-r's undated 4% daily limit; run 9 is 23 of 24 under the checks now); run 15, 23 of
-24 and seven errors in the read, one of them caused by run 14's own backstop. The fixes from all six are staged now (`CANDIDATE_LINTS`, `CANDIDATE_TOPIC_CITES`, a should-I refusal and section 2's three causes gated
-on the candidate besides the constants above). With the key and nothing staged the runner evaluates the live
-prompt at full speed; without it, one case every 185 seconds, deleting each conversation after reading it.
+<run>.read.json --recheck` writes the report again under the current checks. Promotion follows the owner's rule in
+CLAUDE.md ("Promoting a candidate"): over the candidate's last three runs, no critical failure, fewer failing cases per
+run than the live prompt's runs on the same questions, and no kind of failure those don't have. Each read records its
+failures in `_errors`; `node web/eval_character.js --promotion --candidate 14,15,16 --live 9,10` applies the rule.
+`EVAL_LIVE=1` with the key evaluates the live prompt as that baseline, at full speed and unstored. Every reply to the key
+lists the numbers in its tools' inputs and results, and the runner checks that each number in the reply came from one
+of them, the question, or troid's published figures (`api/_numbers.js`, which the service's own backstop uses too).
+Operator requests go out on `ANTHROPIC_API_KEY_EVAL` when it is set, so evaluation never spends the key visitors use.
+To promote: move the files into place and fold the candidate constants into the live ones, in one commit
+(`context/candidate/README.md`). The character was promoted after run 9. Runs 10 to 16 (run 10 the live prompt, the
+rest the candidate with each read's fixes) had 6, 7, 4, 3, 5, 7 and 4 failing cases on a read; the reads of runs 5, 9,
+10 and 11 were corrected when later checks found errors they had missed. The fixes from all of them are staged now,
+with the undated examples of the character and the number backstop from the owner's review of run 16. With the key and
+nothing staged the runner evaluates the live prompt at full speed; without it, one case every 185 seconds, deleting
+each conversation after reading it.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.

@@ -6,8 +6,10 @@ evaluation runner, `web/eval_character.js` — together with `CANDIDATE_GUARDRAI
 `CANDIDATE_TOOLS` and `CANDIDATE_RUN` in `web/api/troid.js`, and any service change gated on
 `variant === "candidate"`. Everyone else gets the live prompt.
 
-A candidate is promoted only when an evaluation run passes every check and a person's read of every reply finds no
-error (`web/eval/runs/`). Promotion is one commit: the files move into place (TROID.md into both copies) and the
+A candidate is promoted under the owner's rule in CLAUDE.md ("Promoting a candidate"): over its last three runs, no
+critical failure, fewer failing cases per run than the live prompt's runs on the same questions, and no kind of
+failure the live prompt's runs don't have (`node web/eval_character.js --promotion`). It replaced "every check passes
+and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
 troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt), run 11
@@ -18,9 +20,14 @@ support.md section 4's reply word for word on a should-I question, one DERIVED t
 without a firm's rule, no word about a draft the user never saw, a stop as a percent in trade_math, no method
 section written twice around a tool call, and support.md section 2's three usual causes when a user says troid's
 numbers were involved and the reply leaves them out (unless it names them in its own words), half Kelly ÷ the daily limit
-in trade_math, and no lead-in to a tool call left above the final answer. No file is staged.
+in trade_math, and no lead-in to a tool call left above the final answer. After the owner's review of run 16: every
+number in an answer from a tool, the user or troid's published figures (`web/api/_numbers.js`, a backstop that asks
+once for a rewrite), a teaching answer's formula written out, and `TROID-CHARACTER.md` staged here with its examples'
+read dates replaced by "(read date from the tool)", so the prompt teaches no date from memory.
 
 Run 14's read also found that run 9's ex-r, the reply the promotion rested on, stated the 1-Step's 4% daily limit with
 no tool behind it and no read date; the read of run 9 missed it, and the check added after run 14 finds it (run 9 is
-23 of 24 under the checks now). The live prompt has the fault; the candidate's firm-percentage lint is its fix. Run 15's
-read found the same of run 11's ex-kelly (half Kelly given full Kelly's 4.38× the daily limit).
+23 of 24 under the checks now; re-read after run 16 to the candidate's standard, three of its replies fail). The live
+prompt has the fault, and so did the candidate in run 16, in dollars ("$4,000 ÷ $500 ≈ 8") where the firm-percentage
+lint only reads percentages: the undated examples and the number backstop are staged against it. Run 15's read found
+the same of run 11's ex-kelly (half Kelly given full Kelly's 4.38× the daily limit).

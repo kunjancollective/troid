@@ -27,9 +27,13 @@
  * variant === "candidate" — and only a request carrying TROID_CANDIDATE_KEY in the x-troid-candidate header gets it:
  * the evaluation runner, web/eval_character.js. Everyone else gets the live prompt. A candidate request is the
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
- * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
+ * applies). With the key, x-troid-variant: live asks for the live prompt on the same terms, the baseline the promotion
+ * rule compares a candidate with (CLAUDE.md). An operator request goes out on ANTHROPIC_API_KEY_EVAL when that is set,
+ * so evaluation never spends the key visitors use, and its reply carries the tools it called and every number in
+ * their inputs and results (tool_numbers), for the evaluation's check that each figure came from a tool. Promoting a
+ * candidate follows the owner's rule in CLAUDE.md, and is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 15 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
+ * the fixes from the reads of runs 10 to 16 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES,
  * a should-I refusal and support.md section 2's three causes).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
@@ -60,11 +64,13 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const Anthropic = require("@anthropic-ai/sdk").default;
+const NUMBERS = require("./_numbers.js");                                    // where a reply's numbers come from
 
 const ENABLED = process.env.TROID_ASSISTANT === "on";
 const KEY = process.env.ANTHROPIC_API_KEY || "";
 const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // signs troid's side of the history
 const CANDIDATE_KEY = process.env.TROID_CANDIDATE_KEY || "";                 // selects the candidate prompt (32+ bytes); unset: none
+const EVAL_KEY = process.env.ANTHROPIC_API_KEY_EVAL || "";                  // the operator's evaluation runs, on their own key; unset: KEY
 const CANDIDATE_DIR = process.env.TROID_CANDIDATE_DIR || "";                 // tests stage files in a scratch directory; unset: context/candidate/
 // The 30-day conversation store: Upstash Redis over its REST API (the Vercel Marketplace integration sets
 // KV_REST_API_URL / KV_REST_API_TOKEN; Upstash's own names are accepted too).
@@ -1168,18 +1174,19 @@ function spend() {
 }
 
 // ---------------------------------------------------------------- the call
-let CLIENT = null;
-function client() {
+const CLIENTS = {};
+function client(operator) {
   // logLevel pinned: ANTHROPIC_LOG=debug would otherwise write request bodies (the user's text) to the log.
   // Timeouts and retries are set per call from the message's deadline, below.
-  if (!CLIENT) CLIENT = new Anthropic({ apiKey: KEY, baseURL: BASE_URL, logLevel: "warn" });
-  return CLIENT;
+  const apiKey = operator && EVAL_KEY ? EVAL_KEY : KEY, k = apiKey === KEY ? "main" : "eval";
+  if (!CLIENTS[k]) CLIENTS[k] = new Anthropic({ apiKey, baseURL: BASE_URL, logLevel: "warn" });
+  return CLIENTS[k];
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Every call gets only the time left before the message's deadline; the abort signal is the hard wall.
 // The SDK does not retry (it would honour any retry-after, however long). One retry happens here, after a
 // fast failure only (rate limit, overload, connection), and only if the wait and a call still fit.
-async function callModel(route, messages, deadlineAt, onSend, lang, variant) {
+async function callModel(route, messages, deadlineAt, onSend, lang, variant, operator) {
   const R = ROUTE[route];
   for (let attempt = 0; ; attempt++) {
     const left = deadlineAt - Date.now();
@@ -1190,7 +1197,7 @@ async function callModel(route, messages, deadlineAt, onSend, lang, variant) {
     if (route === "tools" && TOOLS_EFFORT !== "none") params.output_config = { effort: TOOLS_EFFORT };
     onSend(R.model);
     try {
-      return await client().messages.create(params, { timeout: left, maxRetries: 0, signal: AbortSignal.timeout(left) });
+      return await client(operator).messages.create(params, { timeout: left, maxRetries: 0, signal: AbortSignal.timeout(left) });
     } catch (e) {
       const fast = e instanceof Anthropic.RateLimitError || e instanceof Anthropic.InternalServerError
         || (e instanceof Anthropic.APIConnectionError && !(e instanceof Anthropic.APIConnectionTimeoutError));
@@ -1422,6 +1429,17 @@ CANDIDATE_LINTS.push(
   [(t, tools) => kellyMixed(t, tools), "Each Kelly ratio belongs to its own fraction: full Kelly ÷ a limit and half Kelly ÷ a limit are different figures. Use the tool's line for each."],
   [(t, tools, asked) => SUPPORT_OPENER.test(t) && !BLAMES_TROID_RX.test(String(asked || "")) && CAUSE_GUESS_RX.test(t),
    "The trader has given no inputs yet: ask for them, and point to the firm's dashboard and hello@troid.ai. Guess no cause and assume no firm until the numbers are in."]);
+// Staged after evaluation run 16 (the owner's review): every number in an answer comes from a tool's inputs or results,
+// the user's own message or troid's published figures (web/api/_numbers.js); b-stop computed "roughly 3.5 times as many
+// units" in prose (3.1 with its own fee) and ex-r "the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8)".
+// b-leverage worked its example through trade_math and wrote no formula.
+const unsupportedIn = (t, tools, asked) => NUMBERS.unsupportedNumbers(t, [asked], NUMBERS.toolNumbers(tools));
+CANDIDATE_LINTS.push(
+  [(t, tools, asked) => unsupportedIn(t, tools, asked).length > 0,
+   (t, tools, asked) => "Every number in the answer comes from a tool's result or the user's own message; these don't: " +
+     unsupportedIn(t, tools, asked).slice(0, 8).join(", ") + ". Get each one through a tool (trade_math takes numbers troid chooses), or leave it out."],
+  [(t, tools) => tools.some((x) => x.name === "trade_math") && !/=/.test(t) && !/\bFormula\b/i.test(t),
+   "A teaching answer writes its formula out, with an equals sign (risk = |entry − stop| × quantity, say), and says why it works."]);
 // support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
 // leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
 const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;
@@ -1452,7 +1470,7 @@ const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about i
 const REWRITE_TALK_RX = /[^.\n]*\b(retract(ing|ed|s)?|(earlier|previous|first|prior) (version|draft|answer)|rewrit(e|ten|ing) (of )?(this|the) answer)\b[^.\n]*[.:]\s*/gi;
 const withoutRewriteTalk = (reply) => reply.replace(REWRITE_TALK_RX, "").replace(/\n{3,}/g, "\n\n").trim();
 const lintNotesFor = (t, variant, tools, asked) => lintNotes(t).concat(variant === "candidate"
-  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked)).map(([, note]) => note) : []);
+  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked)).map(([, note]) => (typeof note === "function" ? note(t, tools || [], asked) : note)) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
   notes.map((n) => "- " + n).join("\n") + ")";
 const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
@@ -1561,14 +1579,16 @@ function json(res, code, obj) { res.statusCode = code; res.setHeader("content-ty
 const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32 && storeOn();
 const querySession = (req) => { try { return (req.query && req.query.session) || new URL(req.url || "/", "http://x").searchParams.get("session") || ""; } catch (e) { return ""; } };
 
-// The prompt a request gets: "live" for everyone; "candidate" only with the candidate key (the evaluation runner);
-// null for a request that asks for the candidate without the right key, which is refused.
-function variantOf(req) {
+// The prompt a request gets, and whether it is the operator's: "live" for everyone; with the candidate key (the
+// evaluation runner), "candidate", or "live" when x-troid-variant says so — the live baseline, unstored and unthrottled
+// like any operator request. null for a request carrying a wrong key, which is refused.
+function requestOf(req) {
   const h = req.headers["x-troid-candidate"];
-  if (h === undefined) return "live";
+  if (h === undefined) return { variant: "live", operator: false };
   if (Buffer.byteLength(CANDIDATE_KEY) < 32) return null;
   const want = Buffer.from(CANDIDATE_KEY), got = Buffer.from(String(h));
-  return got.length === want.length && crypto.timingSafeEqual(got, want) ? "candidate" : null;
+  if (!(got.length === want.length && crypto.timingSafeEqual(got, want))) return null;
+  return { variant: String(req.headers["x-troid-variant"] || "") === "live" ? "live" : "candidate", operator: true };
 }
 const STAGED = ["TROID.md", "TROID-CHARACTER.md", "support.md"];
 function queryLang(req) {
@@ -1585,7 +1605,8 @@ module.exports = async (req, res) => {
                                      methodology_md: c.method.length, firms: Object.keys(profiles()) }; } catch (e) { ctx = { error: "context missing" }; }
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
-                        rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length };
+                        rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length,
+                        eval_key: EVAL_KEY.length > 0 };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
                             disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
@@ -1608,11 +1629,12 @@ module.exports = async (req, res) => {
   if (!/^application\/json\b/i.test(String(req.headers["content-type"] || ""))) return json(res, 415, { error: "Send application/json." });
   const site = req.headers["sec-fetch-site"];
   if (site && site !== "same-origin") return json(res, 403, { error: "ask troid answers on troid.ai only." });
-  const variant = variantOf(req);
-  if (!variant) return json(res, 403, { error: "unknown candidate key" });
+  const rq = requestOf(req);
+  if (!rq) return json(res, 403, { error: "unknown candidate key" });
+  const { variant, operator } = rq;
   if (!spendable()) return json(res, 503, { enabled: true, error: S(lang, "ask.err.busy") });   // turned away before the model: not logged, costs no hourly message
   // the operator's evaluation runs are not held to a visitor's hourly limit; the per-instance call ceiling above still applies
-  if (variant === "live" && !allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
+  if (!operator && !allow(clientKey(req))) return json(res, 429, { error: S(lang, "ask.err.limit", { n: LIMIT_PER_HOUR }) });
   let body;
   try { body = req.body; if (typeof body === "string") body = JSON.parse(body); } catch (e) { body = null; }
   if (body && body.lang) lang = liveLang(body.lang);
@@ -1624,7 +1646,7 @@ module.exports = async (req, res) => {
   if (!signedOk(messages, body.sig, session, variant)) return json(res, 400, { restart: true, error: S(lang, "ask.err.unverified") });
   // A first message may start a session, never join one: a session already in the store takes its own delete
   // token, so knowing a session ID is not enough to add to that conversation or to be handed its token.
-  if (messages.length === 1 && variant === "live") {                  // a candidate conversation is never stored
+  if (messages.length === 1 && !operator) {                           // an operator's conversation is never stored
     let taken;
     try { [taken] = await store([["EXISTS", "conv:" + session]]); }
     catch (e) { return json(res, 503, { enabled: true, error: S(lang, "ask.err.error") }); }
@@ -1632,6 +1654,7 @@ module.exports = async (req, res) => {
   }
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
   if (variant === "candidate") log.candidate = 1;
+  if (operator) log.operator = 1;
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));
   const deadlineAt = Date.now() + DEADLINE_MS;
@@ -1639,7 +1662,7 @@ module.exports = async (req, res) => {
   const toolLog = [];                                                   // each tool call with its inputs and result, for the store
   const onSend = (m) => { sent = m; };                                  // the model a request actually went to
   try {
-    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
+    let route = "lookup", resp = await callModel(route, messages, deadlineAt, onSend, lang, variant, operator);
     // A turn that wants a tool is rerun on the tools model; so is an answer that states a figure,
     // because every figure comes from a tool (TROID-CHARACTER.md) and Haiku's own arithmetic failed the first
     // evaluation run. Haiku's turn is discarded, never replayed.
@@ -1651,7 +1674,7 @@ module.exports = async (req, res) => {
       || OUTSIDE_SERVICE.test(textOf(resp)) || hasFigure(lastUser));
     if ((wantsTool(resp) || figured) && MODEL_LOOKUP !== MODEL_TOOLS) {
       if (figured) log.rerouted = 1;
-      route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
+      route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant, operator);
     }
     const convo = messages.slice(), said = [];                         // what troid wrote before each tool call
     // An answer that states a firm's rule with no tool behind it is asked once for the rule through a
@@ -1660,7 +1683,7 @@ module.exports = async (req, res) => {
     if (resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
       log.nudged = 1;
       convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE + (variant === "candidate" ? UNSEEN_DRAFT : "") });
-      resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
+      resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator);
     }
     const rounds = async (r) => {
       for (let round = 0; round < MAX_TOOL_ROUNDS && r.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
@@ -1673,7 +1696,7 @@ module.exports = async (req, res) => {
           toolLog.push({ name: u.name, input: u.input, result: out });
           return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
         }) });
-        r = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
+        r = await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator);
       }
       return r;
     };
@@ -1681,13 +1704,14 @@ module.exports = async (req, res) => {
     // A finished draft that trips one of LINTS is sent back once to be written again, with a note for
     // each. If the rewrite can't finish in time, or fails, the draft stands.
     if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
-      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog, lastUser);
+      const asked = messages.filter((m) => m.role === "user").map((m) => m.content).join("\n");   // every number the user gave
+      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog, asked);
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
           convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + (variant === "candidate" ? UNSEEN_DRAFT : "") });
           said.length = 0;                                              // the rewrite is the whole answer
-          const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant));
+          const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator));
           if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
           resp = r2; log.linted = 1;
         } catch (e) {
@@ -1725,14 +1749,14 @@ module.exports = async (req, res) => {
     if (reply.length > MAX_REPLY_CHARS) reply = reply.slice(0, MAX_REPLY_CHARS - CUT.length).trim() + CUT;
     Object.assign(log, { tool_calls: toolCalls, model: sent });
     const user = messages[messages.length - 1].content;
-    if (variant === "live") {
+    if (!operator) {
       try { await keep(session, entry(lang, user, reply, sent, toolLog, ended ? { ended: 1 } : log.refusal ? { refusal: 1 } : null)); log.stored = 1; }
       catch (e) { log.store_error = 1; }
     }
     console.log(JSON.stringify(log));
     const out = { reply, model: sent, tool_calls: toolCalls, ended, disclosed: true, lang, note: S(lang, "ask.note"),
                   session, delete_token: deleteToken(session), variant };
-    if (variant === "candidate") out.tools_used = toolLog.map((t) => t.name);   // for the evaluation report
+    if (operator) Object.assign(out, { tools_used: toolLog.map((t) => t.name), tool_numbers: NUMBERS.toolNumbers(toolLog) });   // for the evaluation report
     if (!ended) {
       out.sig = sign([...messages, { role: "assistant", content: reply }], session, variant);
       const total = messages.reduce((n, m) => n + m.content.length, 0) + reply.length;
@@ -1742,7 +1766,7 @@ module.exports = async (req, res) => {
   } catch (e) {
     Object.assign(log, { error: 1, tool_calls: toolCalls, model: sent });
     if (e && typeof e.status === "number") log.status = e.status;
-    if (variant === "live") {
+    if (!operator) {
       try {                                                             // the message is kept even when no answer came back
         await keep(session, entry(lang, messages[messages.length - 1].content, null, sent, toolLog, { error: log.status || 1 }));
         log.stored = 1;

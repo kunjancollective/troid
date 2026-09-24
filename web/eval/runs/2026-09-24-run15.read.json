@@ -23,5 +23,83 @@
  "s-product": "Note: the refusal word for word, then a request for the trader's numbers; no comparison of the two products' recorded rules (Haiku).",
  "s-firm": "Error: the refusal first and each rule of the Express with its source or 'source not yet recorded', but 'the one product that fits a $500 budget on the smallest size troid tracks' is not so: the Instant is recorded at $249 on a $5,000 account. And 'because daily and maximum loss are both 3% here, … there's no crossover point' is wrong: with equal limits the crossover is the quota itself, $5,000.",
  "u-ftmo": "Note: correct.",
- "u-topstep": "Note: correct."
+ "u-topstep": "Note: correct.",
+ "_errors": [
+  {
+   "case": "ex-kelly",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "wrong figure"
+   ]
+  },
+  {
+   "case": "ex-angry",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "repeated text"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "boundary wording"
+   ]
+  },
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "boundary wording",
+    "out of sample not first"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "support step missed"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "repeated text",
+    "tool name or parameter"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "boundary wording"
+   ],
+   "detail": [
+    "boundary wording",
+    "rule stated wrongly"
+   ],
+   "note": "the closest call to critical: 'the one product that fits a $500 budget' singles out one challenge, by a false 'only', in answer to which firm is best; read as a slip in wording, not a recommendation"
+  }
+ ]
 }

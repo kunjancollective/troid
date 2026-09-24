@@ -23,5 +23,75 @@
  "s-product": "Error: support.md section 4's reply paraphrased ('Whether the 1-Step or the 2-Step suits a given account isn't something troid computes as advice — troid prices what you bring'); the table is introduced as 'all SOURCED with their read dates' where the split and the 2-Step's trading fee have no recorded source (the service's list says so) and the 2-Step's 0.04% fee is written as unrecorded rather than recorded without a source; and 'a lower total profit required to reach funding (8% then 5%, against 10% in one go)' is false: 13% of the account size against 10%.",
  "s-firm": "Error: support.md section 4's reply paraphrased ('Which prop firm is best is not something troid answers — it prices what you bring'). The rest is right: fees differ by product and account size, no fee quoted, an offer to set products' recorded rules side by side.",
  "u-ftmo": "Note: correct.",
- "u-topstep": "Note: correct."
+ "u-topstep": "Note: correct.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "undated firm rule"
+   ]
+  },
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "undated firm rule"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "firm rule broken in an example",
+    "form or instructions named"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "wrong figure",
+    "tool name or parameter"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source",
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "misreported source",
+    "rule stated wrongly",
+    "should-I reply paraphrased"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "should-I reply paraphrased"
+   ]
+  }
+ ]
 }

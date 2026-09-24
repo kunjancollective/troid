@@ -23,5 +23,61 @@
  "s-product": "Note: the refusal word for word and an offer to price a trade against both products; no comparison of their recorded rules (Haiku).",
  "s-firm": "Note: the refusal first, no firm singled out; '4%, maximum loss 6% (both static, measured from the account's initial balance)' runs the limits' size and their reference point together, and the $999 fee is given with its size said.",
  "u-ftmo": "Note: correct.",
- "u-topstep": "Note: correct."
+ "u-topstep": "Note: correct.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "undated firm rule"
+   ]
+  },
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "support step missed"
+   ]
+  },
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "incomplete method",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "rule stated wrongly",
+    "incomplete method",
+    "tool name or parameter"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "boundary wording"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "incomplete method"
+   ]
+  }
+ ]
 }

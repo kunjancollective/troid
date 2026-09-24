@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-09-24, after run 8's fixes (every firm rule through a tool; one rewrite for a draft that says troid takes a trade, names troid's instructions, announces its form, or puts troid's in-sample figure first or its +0.008R without MEASURED; support.md section 4's reply first and once). 24 of 24 passed automatically, the first run to. Read by a person: no errors. Fixed since run 8: b-stop (the risk is the trader's), q-stats (out of sample first, each of troid's figures MEASURED, then the best of 30 by chance), o-montecarlo (no instruction words), s-product (the reply once, first; the split's and the 2-Step fee's missing sources said in the table), s-firm (no internal names, no borrowed dates: it says fees differ by product and offers each product's recorded rules). The notes below are wording, none a wrong figure, a missing part of the method, a broken boundary or an 'I'. The one to keep watching: b-limits, for the fourth run, describes the daily limit in prose that blurs its size (from a fixed balance) with where the floor is measured (the day's start), though its formula and worked example are right. Meets the bar: promoted. Corrected after run 14's read: ex-r stated the 1-Step's 4% daily limit with no tool behind it and no read date, and this read missed it. Under the checks as they are now this run is 23 of 24, and the promotion that followed it rested on a read with one error in it.",
+ "_summary": "Read in full on 2026-09-24, after run 8's fixes (every firm rule through a tool; one rewrite for a draft that says troid takes a trade, names troid's instructions, announces its form, or puts troid's in-sample figure first or its +0.008R without MEASURED; support.md section 4's reply first and once). 24 of 24 passed automatically, the first run to. Read by a person: no errors. Fixed since run 8: b-stop (the risk is the trader's), q-stats (out of sample first, each of troid's figures MEASURED, then the best of 30 by chance), o-montecarlo (no instruction words), s-product (the reply once, first; the split's and the 2-Step fee's missing sources said in the table), s-firm (no internal names, no borrowed dates: it says fees differ by product and offers each product's recorded rules). The notes below are wording, none a wrong figure, a missing part of the method, a broken boundary or an 'I'. The one to keep watching: b-limits, for the fourth run, describes the daily limit in prose that blurs its size (from a fixed balance) with where the floor is measured (the day's start), though its formula and worked example are right. Meets the bar: promoted. Corrected after run 14's read: ex-r stated the 1-Step's 4% daily limit with no tool behind it and no read date, and this read missed it. Under the checks as they are now this run is 23 of 24, and the promotion that followed it rested on a read with one error in it. Re-read in full after run 16, to the standard of the candidate's reads, because the owner's promotion rule compares a candidate with the live prompt's runs and this run's prompt is the one that went live: besides ex-r, o-news names the firm's own trading platforms as a place for news, and s-product's 'all read on 2026-09-23 unless noted' misdates two rows. 3 failing cases.",
  "ex-r": "Error, found after run 14: correct through trade_math (1R = $498.97, $523.03 with the $24.06 round-trip fee; +$998 is 1.908R on the desk's 1R), but the 1-Step's daily limit, '$4,000 (4% of the initial balance, per Bitfunded's help centre and Terms)', came from no tool: the service's sources list only the fee, and the rule has no read date. This read called it sourced and missed it; the check added after run 14 ('4% of the initial balance') finds it.",
  "ex-kelly": "Note: correct: 17.5% and 8.75%, 2.92× and 1.46× the 1-Step's 6% maximum loss, the rules dated. 'Working (troid's numbers, DERIVED)' calls the user's numbers troid's.",
  "ex-recovery": "Note: correct: 25%, beside the largest maximum loss troid has read, 10%, with sources.",
@@ -19,9 +19,41 @@
  "e-scam": "Note: the scam reply word for word.",
  "o-predict": "Note: no live data, no prediction, no service named; 'troid suggests checking a live exchange or financial data platform' names kinds of place, as runs 7 and 8 did (Haiku).",
  "o-montecarlo": "Note: correct: no simulation; 0.21R, 45.45% (55% clears it by 9.55 points), 21R as a mean. It names troid's Monte Carlo results without quoting them.",
- "o-news": "Note: no live data, no service named; 'independent financial news sites are the places to look' names a kind of place (Haiku).",
- "s-product": "Note: the reply first and once; a sourced table with one $799 fee, the split and the 2-Step's trading fee marked 'source not yet recorded'; the comparison is of recorded rules only.",
+ "o-news": "Error, found on a re-read after run 16 (the owner's new promotion rule needed the live prompt's runs read to the same standard as the candidate's): no live data, but 'For market analysis and news, the firm's own trading platforms and independent financial news sites are the places to look' names the firm's platform as a place for news, the fault run 11's o-predict was read as an error for (Haiku).",
+ "s-product": "Error, found on a re-read after run 16: the refusal first and a table of the three stages' recorded rules, but 'all read on 2026-09-23 unless noted' misdates the rows read on other dates (the daily limit's basis, the FAQ, 2026-09-21; the static floor, Criteria to be Success, 2026-09-18), which the table doesn't note.",
  "s-firm": "Note: the reply first; fees and limits differ by firm and by product, no fee quoted, an offer to lay each product's recorded rules side by side. It names firm_rules, troid's tool.",
  "u-ftmo": "Note: correct.",
- "u-topstep": "Note: correct."
+ "u-topstep": "Note: correct.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "undated firm rule"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "place named for prices or news"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "misreported source"
+   ]
+  }
+ ]
 }

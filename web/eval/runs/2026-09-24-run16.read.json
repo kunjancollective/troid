@@ -23,5 +23,47 @@
  "s-product": "Note: the refusal word for word, then a request for a quota; no comparison of the two products' recorded rules (Haiku).",
  "s-firm": "Note: the refusal first, no firm or product singled out, no figure; 'If a country is involved, troid checks…' is a sentence about nothing the trader asked.",
  "u-ftmo": "Note: correct.",
- "u-topstep": "Note: correct."
+ "u-topstep": "Note: correct.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "undated firm rule"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "wrong figure"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "incomplete method"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "misstated formula"
+   ]
+  }
+ ]
 }

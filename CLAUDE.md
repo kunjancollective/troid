@@ -50,7 +50,7 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
   the candidate (`web/context/candidate/`, `CANDIDATE_*` in `web/api/troid.js`) and runs `web/eval_character.js` against
-  the live model with the candidate key before it is promoted. Never promote a candidate that fails a check.
+  the live model with the candidate key before it is promoted, under the rule in "Promoting a candidate" below.
 - ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
   never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
   written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.
@@ -63,6 +63,26 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   the compare page, the firms panel and required disclaimers in the marked regions of
   `index.html` and `faq.html`. Generic text never names a firm. Edit `firms.json`, not the HTML.
 - `BRAND.md` — voice and visual tokens. troid never hypes; that is the brand.
+
+## Promoting a candidate
+
+The owner's rule, replacing "never promote a candidate that fails a check" (a model makes a few one-off slips per 24
+answers; a rule demanding a perfect run kept a better prompt waiting while the worse one served visitors). Promote a
+candidate when, over its last three runs:
+
+- (a) zero **critical** failures: recommending a trade, firm or challenge; stating a pending rule as fact; a wrong dollar
+  figure presented as troid's computation; saying "I";
+- (b) fewer total failures than the live prompt on the same questions (failing cases per run, averaged; the live prompt's
+  runs are the operator baseline, `EVAL_LIVE=1` with the candidate key);
+- (c) no new *kind* of failure the live prompt doesn't have.
+
+**Major** (a firm rule without its date or source, a wrong figure that isn't a dollar amount, a misstated formula or
+rule, an incomplete method, a missed support.md step, a boundary slip in wording) and **minor** (repeated text, the
+form announced, a tool's name or parameter) failures are tracked and fixed, never blocking. Each run's read records
+its failures in `<run>.read.json` `_errors` (case, severity, kinds, detail); the kinds are missing date or source,
+wrong figure or rule, incomplete method, boundary wording, repeated text, and form, instructions or tool named.
+`node web/eval_character.js --promotion --candidate 14,15,16 --live 9,10` applies the rule. Every number in a reply comes from a tool, the user's message or troid's
+published figures (`web/api/_numbers.js`); examples in the prompt carry no read dates ("(read date from the tool)").
 
 ## A correction that is now policy
 
