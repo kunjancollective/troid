@@ -286,6 +286,27 @@ ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, no
 ok("candidate support.md: section 4 keeps the refusal word for word, then teaches", /> troid doesn't recommend; it prices what you bring\./.test(candSys[2].text)
    && /as troid's character teaches it/.test(candSys[2].text) && !/as troid's character teaches it/.test(liveSys[1].text));
 
+// --- run 4's fixes, candidate only
+const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
+ok("candidate support.md quotes the service's step-5 line verbatim (section 2)", candSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
+ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
+   W5("That's a real loss and troid takes the question seriously.\n\nWhat are the inputs?") === "That's a real loss and troid takes the question seriously.\n\nWhat are the inputs?\n\n" + S5
+   && W5("That's a real loss, and troid takes the question seriously. The firm's dashboard is the record; hello@troid.ai reaches a person.") === "That's a real loss, and troid takes the question seriously. The firm's dashboard is the record; hello@troid.ai reaches a person."
+   && W5("25%.") === "25%.");
+const WS = (t) => handler._withSources(t, "en", [{ name: "trade_math", result: { working: [], result: {} } }], "candidate");
+ok("tier: a model-written tier at the end of a paragraph goes when the service writes the same tier; another tier stays (run 4, q-stats)",
+   (() => { const o = WS("**What it means:** no edge on this sample. Tier: DERIVED from the numbers given, no firm rule used.");
+            return o.split("Tier:").length === 2 && /^\*\*What it means:\*\* no edge on this sample\.\n\nTier: the figures above are DERIVED/.test(o); })()
+   && /MEASURED on troid's backtest/.test(WS("troid's own mean was +0.033R. Tier: MEASURED on troid's backtest.")));
+const f1 = RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), f2 = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
+ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'Stage 1 fee' (run 4, s-product)",
+   [f1, f2].every((f) => { const r = f.rules.find((x) => /^challenge fee/.test(x.rule)); return r && r.value === 799 && /one fee for the whole 2-Step/.test(r.rule)
+     && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
+   && RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate").rules.find((x) => /^challenge fee/.test(x.rule)).rule === "challenge fee, USD", [f1.rules, f2.rules]);
+ok("candidate guardrails: troid never trades; troid's own strategy out of sample first even in passing; every firm rule dated in any reply; intermediate values copied from the tool",
+   /troid never trades/.test(candSys[0].text) && /even in passing/.test(candSys[0].text) && /\+0\.008R per trade on BTC \(504 trades\)/.test(candSys[0].text)
+   && /in any reply/.test(candSys[0].text) && /Copy every intermediate value from the tool's working/.test(candSys[0].text) && !/troid never trades/.test(liveSys[0].text));
+
 // --- handler end to end: the real SDK against a local fake of the Messages API
 const http = require("http");
 const calls = [];

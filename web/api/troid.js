@@ -118,6 +118,7 @@ const EN = {
   "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
   "ask.tier.inputs": "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.",
   "ask.assumed": "troid's assumptions, not the firm's rules: {list}.",
+  "ask.support_step5": "The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai.",
 };
 // A warning counts only when a whole reply is the warning (after the disclosure, if it opened the reply) —
 // not a reply that explains the rule. A paraphrased warning earns one more exact warning, never none.
@@ -149,12 +150,12 @@ const GUARDRAILS = [
 // The candidate's guardrails: the live ones plus these (TROID-CHARACTER.md). Folded into GUARDRAILS when promoted.
 const CANDIDATE_GUARDRAILS = [
   "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
-  "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. A figure the user gave, repeated back, needs no tool.",
-  "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it: when a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation.",
-  "When troid's own strategy comes up, its out-of-sample result comes first; the in-sample figure is the best of about 30 configurations and never stands alone.",
-  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block. Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's.",
+  "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, the best of k configurations by chance, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. Copy every intermediate value from the tool's working as it is; never work one out from a tool's result yourself (a multiplier, a square root, a ratio). A figure the user gave, repeated back, needs no tool.",
+  "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it, in any reply: a list of things worth knowing, or a reply to someone who has just lost, gets its reset time, loss limit or floating-loss rule through explain_rule or firm_rules too. When a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation.",
+  "When troid's own strategy comes up, even in passing (its search over about 30 configurations, say), its out-of-sample result comes first: +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero. The in-sample figure is the best of about 30 configurations and never stands alone.",
+  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block. Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's. troid never trades: the risk, the position, the stop and the trade are always the trader's, and troid prices them.",
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
-  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\".",
+  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents. Never convert a currency from memory.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
@@ -676,11 +677,19 @@ function firm_rules(a) {
   const f = F[fk], prods = f.products, live = Object.keys(prods).filter((k) => !k.startsWith("_") && prods[k] && typeof prods[k] === "object");
   if (!live.includes(pk)) return { error: "unknown or pending product for " + f.name + ". options: " + live.join(", ") };
   const pr = prods[pk], rules = [], sources = [];
-  for (const [vk, ck, rule] of RULE_FIELDS) {
-    const v = vk in pr ? pr[vk] : f[vk];
+  // A stage of a staged challenge (2step_s1, 2step_s2) shares the challenge's one fee, which troid records on one
+  // stage: every stage gets it, labelled so (run 4, s-product: "$799 (Stage 1 fee)" and "whatever Stage 2 costs").
+  const stage = /^(.+)_s\d+$/.exec(pk), lab = (k) => (f.calc && f.calc.products && f.calc.products[k] && f.calc.products[k].label) || k;
+  const feeAt = stage ? live.find((k) => k.startsWith(stage[1] + "_s") && prods[k].fee_usd != null) : null;
+  for (const [vk, ck, rule0] of RULE_FIELDS) {
+    let v = vk in pr ? pr[vk] : f[vk], rule = rule0, at = pk;
+    if (vk === "fee_usd" && feeAt) {
+      v = prods[feeAt].fee_usd; at = feeAt;
+      rule = rule0 + " (one fee for the whole " + lab(pk).replace(/\s*·\s*S\d+$/, "") + "; troid records it on " + lab(feeAt) + " and no fee for another stage)";
+    }
     if (v === undefined || (v !== null && typeof v === "object")) continue;
     rules.push({ rule, value: v === null ? "pending" : v });
-    const c = cite(f, ck, pk, true);
+    const c = cite(f, ck, at, true);
     sources.push(c ? { rule: rule + " " + (v === null ? "pending" : v), document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls }
                    : { rule: rule + " " + (v === null ? "pending" : v), source: "not yet recorded" });
   }
@@ -1098,7 +1107,13 @@ function withSources(reply, lang, toolLog, variant) {
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
   // with the candidate, a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
-  if (NEXT(variant) && tiers.size) body = body.split("\n").filter((l) => !/^\s*(\*\*|__)?\s*tier\b/i.test(l)).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  // and so does one written at the end of a paragraph, when it names a tier the service writes (run 4, q-stats)
+  if (NEXT(variant) && tiers.size) {
+    const words = new Set([...tiers].map((k) => (k === "sourced" ? "SOURCED" : "DERIVED")));
+    body = body.split("\n").filter((l) => !/^\s*(\*\*|__)?\s*tier\b/i.test(l))
+      .map((l) => l.replace(/\s*(\*\*|__)?\bTier(\*\*|__)?:\s*(\*\*|__)?(DERIVED|SOURCED|MEASURED|MODELLED)\b[^\n]*$/i, (m, a, b, c, w) => (words.has(w.toUpperCase()) ? "" : m)))
+      .join("\n").replace(/\n{3,}/g, "\n\n").trim();
+  }
   const note = S(lang, "ask.note"), at = body.lastIndexOf(note);
   const tail = at >= 0 && body.slice(at + note.length).trim() === "" ? note : "";
   if (tail) body = body.slice(0, at).trim();
@@ -1106,6 +1121,13 @@ function withSources(reply, lang, toolLog, variant) {
 }
 // With the candidate, an answer that states a figure ends with the note even when the model left it out or wrote
 // something after it (run 1: five answers didn't end with it). An answer with no figure is left as it is.
+// With the candidate, a reply that opens support.md section 2 ("That's a real loss and troid takes the question
+// seriously") and leaves out step 5 gets it from the service: the firm's dashboard and hello@troid.ai (run 4, ex-angry).
+const SUPPORT_OPENER = /That['’]s a real loss,? and troid takes the question seriously/i;
+function withSupportStep5(reply, lang) {
+  if (!SUPPORT_OPENER.test(reply) || (/hello@troid\.ai/i.test(reply) && /dashboard/i.test(reply))) return reply;
+  return reply + "\n\n" + S(lang, "ask.support_step5");
+}
 function closeWithNote(reply, lang) {
   const note = S(lang, "ask.note"), body = String(reply).split(note).join("").replace(/\n{3,}/g, "\n\n").trim();
   return hasFigure(body) ? body + "\n\n" + note : reply;
@@ -1293,6 +1315,7 @@ module.exports = async (req, res) => {
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         if (NEXT(variant)) reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
+        if (reply && NEXT(variant)) reply = withSupportStep5(reply, lang);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply && NEXT(variant)) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -1357,3 +1380,5 @@ module.exports._promptFirms = () => context().prompt_firms;   // for tests
 module.exports._hasFigure = hasFigure;                             // for tests: the candidate's service changes
 module.exports._closeWithNote = closeWithNote;
 module.exports._runTool = runTool;
+module.exports._withSupportStep5 = withSupportStep5;
+module.exports._withSources = withSources;

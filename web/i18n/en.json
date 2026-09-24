@@ -650,5 +650,6 @@
  "ask.tier.derived": "Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.",
  "ask.tier.sourced": "Tier: the rules above are SOURCED — read from the documents listed.",
  "ask.tier.inputs": "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.",
- "ask.assumed": "troid's assumptions, not the firm's rules: {list}."
+ "ask.assumed": "troid's assumptions, not the firm's rules: {list}.",
+ "ask.support_step5": "The firm's own dashboard is the record of what happened on the account. For a person rather than this assistant, write to hello@troid.ai."
 }
