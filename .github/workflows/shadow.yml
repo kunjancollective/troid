@@ -10,9 +10,8 @@ name: shadow — daily forward test
 # that nothing here is backdated.
 
 on:
-  # PAUSED 2026-09-24 for the history rewrite (backtest/HISTORY-REWRITE-2026-09-24.md); restored right after it.
-  # schedule:
-  #   - cron: "20 0,4,8,12,16,20 * * *"   # 20 min after every 4h bar closes; 16:20 is the reset run
+  schedule:
+    - cron: "20 0,4,8,12,16,20 * * *"   # 20 min after every 4h bar closes; 16:20 is the reset run
   workflow_dispatch:            # manual run from the Actions tab
 
 permissions:

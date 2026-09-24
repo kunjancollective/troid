@@ -8,7 +8,7 @@ Compares web/public against a git revision (default HEAD) of the same files:
 External requests (fonts, the chart library) are blocked in both, so the comparison is deterministic.
 
   python i18n_equiv.py                 # against HEAD
-  python i18n_equiv.py --rev abc203b   # against another revision
+  python i18n_equiv.py --rev bfedbdb   # against another revision
   python i18n_equiv.py --pages index,compare
 """
 import argparse
