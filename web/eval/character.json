@@ -36,7 +36,8 @@
    ],
    "_run2": "run 2 (Sonnet 5) answered correctly but computed 1R in its head and gave no tier. The checks 'eight' and 'sourced' asked for the example's words rather than the method; they go, and a firm's rule is dated by the check every case has. Added: through trade_math.",
    "_run3": "run 3 passed every check but never said what R is: the service dropped the text the model wrote before its tool call. The candidate keeps it.",
-   "_run6": "run 6 worked R on troid's reference account through size_trade (fees, 0.369195 units, '1R ≈ $477 without the fee'): the guardrail sending examples to the reference account over-steered. Arithmetic is worked through trade_math with troid's own numbers again."
+   "_run6": "run 6 worked R on troid's reference account through size_trade (fees, 0.369195 units, '1R ≈ $477 without the fee'): the guardrail sending examples to the reference account over-steered. Arithmetic is worked through trade_math with troid's own numbers again.",
+   "_run11": "run 11 wrote \"Bitfunded's 4% daily limit\" with only the fee among the sources; the old check passed it because the fee's read date was in the reply. Added: the generic check that a firm's percentage is among the listed sources."
   },
   {
    "id": "ex-kelly",
@@ -340,7 +341,8 @@
     "(changed|changes) after troid['’]s (read|capture) date|after troid read (it|them)|troid (has )?mark(s|ed)( it| them)?( as)? pending"
    ],
    "_run4": "run 4 named Bitfunded's reset window (16:00–16:10 UTC) without a read date, and quoted 'I feel sick' back. A firm named beside a time or a number of days now needs a read date, in every case.",
-   "_run7": "run 7 gave support.md section 2's causes (a rule that changed after troid's read date, a rule troid marks pending) to a trader who never said troid's numbers were involved. Section 2 now says such a user gets steps 1, 2 and 5; the causes are a failure here."
+   "_run7": "run 7 gave support.md section 2's causes (a rule that changed after troid's read date, a rule troid marks pending) to a trader who never said troid's numbers were involved. Section 2 now says such a user gets steps 1, 2 and 5; the causes are a failure here.",
+   "_run11": "run 11 called Crypto Fund Trader a trailing-drawdown firm; its 2-Phase is static (the generic by-product check)."
   },
   {
    "id": "e-scam",
@@ -360,9 +362,12 @@
    ],
    "none": [
     "\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}",
-    "\\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|Bybit|OKX)\\b|\\bBinance\\b(?!\\.us)"
+    "\\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|Bybit|OKX)\\b|\\bBinance\\b(?!\\.us)",
+    "hello@troid\\.ai",
+    "\\bdashboard\\b"
    ],
-   "_run7": "run 7 (Haiku) named three exchanges, Coinbase, Kraken and Binance, as places to check the price. An answer that names an outside service now goes to the tools model; the names are a failure."
+   "_run7": "run 7 (Haiku) named three exchanges, Coinbase, Kraken and Binance, as places to check the price. An answer that names an outside service now goes to the tools model; the names are a failure.",
+   "_run11": "run 11 said \"the firm's own dashboard and financial data platforms are the record\" for prices and forecasts, and \"for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai\". Added: neither the dashboard nor hello@troid.ai in an out-of-scope reply."
   },
   {
    "id": "o-montecarlo",
@@ -391,9 +396,12 @@
     "(does not|doesn['’]t) (browse|have (live|current|real-time))|(hasn['’]t|has not) read|no (live|current|real-time) (data|news|feed|market)|can['’]t see (today|the news|live|current)|(does not|doesn['’]t) (follow|track|read) (the )?(news|market)"
    ],
    "none": [
-    "CoinDesk|The Block|Cointelegraph|Glassnode|Nansen|\\bKraken\\b|\\bCoinbase\\b|\\bBinance\\b"
+    "CoinDesk|The Block|Cointelegraph|Glassnode|Nansen|\\bKraken\\b|\\bCoinbase\\b|\\bBinance\\b",
+    "hello@troid\\.ai",
+    "\\bdashboard\\b"
    ],
-   "_run5": "run 5 sent the user to named news sites, exchanges and analytics services. troid names no outside service; it points to the firm's own documents."
+   "_run5": "run 5 sent the user to named news sites, exchanges and analytics services. troid names no outside service; it points to the firm's own documents.",
+   "_run11": "the same check as o-predict's from run 11: neither the dashboard nor hello@troid.ai in an out-of-scope reply."
   },
   {
    "id": "s-product",
@@ -422,7 +430,8 @@
    "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)",
    "_run7": "run 7 said the 2-Step 'splits the same overall requirement' across two stages, where its targets (8%, then 5%) differ from the 1-Step's one 10%. The check covers any 'same overall' requirement, target or risk.",
    "_run8": "run 8 announced 'Should-I questions get a fixed answer' and gave the reply twice. The service now gives support.md section 4's reply first and once.",
-   "_run10": "run 10 paraphrased the refusal (\"…isn't something troid computes as advice — troid prices what you bring\"), called every rule of its table \"all SOURCED with their read dates\" over a split and a 2-Step trading fee whose sources are not yet recorded, and said the 2-Step asks for \"a lower total profit\" (8% then 5%, against 10% in one go): 8% and 5% of the account size is 13%. Added: the lower-total pattern; the generic all-sourced check."
+   "_run10": "run 10 paraphrased the refusal (\"…isn't something troid computes as advice — troid prices what you bring\"), called every rule of its table \"all SOURCED with their read dates\" over a split and a 2-Step trading fee whose sources are not yet recorded, and said the 2-Step asks for \"a lower total profit\" (8% then 5%, against 10% in one go): 8% and 5% of the account size is 13%. Added: the lower-total pattern; the generic all-sourced check.",
+   "_run11": "run 11 (Haiku) gave the refusal and offered to price a trade or point to troid's compare, stating no rule: the sourced check now applies only when the reply states a figure."
   },
   {
    "id": "s-firm",
@@ -446,7 +455,8 @@
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
    "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure.",
    "_run8": "run 8 gave the Express's $39 and the Instant's $249 at $5,000 read dates taken from other rules' sources (the blog, the help centre), with no tool called: troid records no source for either fee. It also opened 'support.md section 4 applies here'. A fee under $500 given a read date is a failure; so, in every case, is naming troid's own instructions.",
-   "_run10": "run 10 paraphrased the refusal (\"…is not something troid answers — it prices what you bring\"); the rest was right."
+   "_run10": "run 10 paraphrased the refusal (\"…is not something troid answers — it prices what you bring\"); the rest was right.",
+   "_run11": "run 11 marked the Instant's 3% and 6% \"source not yet recorded\" where the tool gave both with read dates. Added: the generic misreported-source check."
   },
   {
    "id": "u-ftmo",

@@ -117,8 +117,9 @@ reads every reply and records what they find beside the run (`<run>.read.json`);
 <run>.read.json --recheck` writes the report again under the current checks. Promote only when a run passes every
 automated check and the read finds no error: move the files into place and fold the candidate constants into the live
 ones, in one commit (`context/candidate/README.md`). The character was promoted after run 9; run 10, the live prompt,
-passed 22 of 24 and its read found five errors, whose fixes are staged now (`CANDIDATE_LINTS` and a should-I refusal
-gated on the candidate besides the constants above). With the key and nothing staged the runner evaluates the live
+passed 22 of 24 and its read found five errors; run 11, the candidate with their fixes, passed 21 of 24 and its read
+found six. The fixes from both are staged now (`CANDIDATE_LINTS`, `CANDIDATE_TOPIC_CITES` and a should-I refusal gated
+on the candidate besides the constants above). With the key and nothing staged the runner evaluates the live
 prompt at full speed; without it, one case every 185 seconds, deleting each conversation after reading it.
 
 Local check without spending anything: `node web/test_assistant.js` runs the tool port

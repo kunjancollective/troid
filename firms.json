@@ -504,6 +504,13 @@
               "tou_0923"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
+          },
+          "min_days": {
+            "src": [
+              "tou_0923",
+              "faq"
+            ],
+            "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           }
         },
         "instant": {
@@ -568,6 +575,13 @@
               "tou_0923"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
+          },
+          "min_days": {
+            "src": [
+              "tou_0923",
+              "faq"
+            ],
+            "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           }
         },
         "2step_s2": {
@@ -598,6 +612,13 @@
               "tou_0923"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
+          },
+          "min_days": {
+            "src": [
+              "tou_0923",
+              "faq"
+            ],
+            "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           }
         },
         "express": {
@@ -618,6 +639,13 @@
               "trader_stage"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
+          },
+          "min_days": {
+            "src": [
+              "tou_0923",
+              "faq"
+            ],
+            "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           }
         },
         "trader_1step": {
@@ -704,7 +732,8 @@
         "max_leverage",
         "daily_pct",
         "max_pct",
-        "target_pct"
+        "target_pct",
+        "min_days"
       ]
     },
     "availability": {

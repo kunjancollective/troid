@@ -225,9 +225,9 @@ const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBl
 const candText = liveSys.map((b) => b.text).join("\n");
 // run 10's candidate: the live prompt plus two guardrails, the same tools (their staged implementations are CANDIDATE_RUN's)
 const CG = handler._candidateGuardrails;
-ok("candidate: the live prompt plus run 10's two guardrails (the Monte Carlo through explain_rule, arithmetic across products through the tools); the same tools",
-   CG.length === 2 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[1])
-   && JSON.stringify(candSys.slice(1)) === JSON.stringify(liveSys.slice(1)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1])
+ok("candidate: the live prompt plus three guardrails (runs 10 and 11: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for); the same tools",
+   CG.length === 3 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[2])
+   && JSON.stringify(candSys.slice(1)) === JSON.stringify(liveSys.slice(1)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
    && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
 ok("live prompt: guardrails and TROID.md, the character block, then support.md, firms, methodology; seven tools",
    liveSys.length === 5 && /^# Guardrails/.test(liveSys[0].text) && /## Who troid is/.test(liveSys[0].text) && /^# troid's character/.test(liveSys[1].text)
@@ -336,7 +336,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      /Risking 1% of balance a trade with no cap on the remaining budget, 68% of the simulated years blow the account; at 2%, 100%/.test(ruinC) && /20,000 simulated years/.test(ruinC)
      && /\+0\.35R/.test(ruinC) && /MODELLED/.test(ruinC) && !/at 2%, 100%/.test(ruinL) && /1% uncapped blows up 68%/.test(ruinL), ruinC);
   const LF = handler._lintNotesFor, toolsOf = (c) => (c.tools_used || []).map((name) => ({ name, input: {}, result: /not yet recorded/.test(c.reply) ? { s: "not yet recorded" } : {} }));
-  const extra = (c, v) => LF(c.reply, v, toolsOf(c)).length - handler._lintNotes(c.reply).length;
+  const extra = (c, v) => LF(c.reply, v, toolsOf(c)).filter((n) => /published Monte Carlo|every rule is sourced/.test(n)).length;   // run 10's two
   ok("candidate lints: run 10's o-montecarlo (the Monte Carlo from memory) and s-product (every rule called sourced); none on live",
      r10.filter((c) => extra(c, "candidate")).map((c) => c.id).join() === "o-montecarlo,s-product" && r10.every((c) => extra(c, "live") === 0)
      && LF(byId("o-montecarlo").reply, "candidate", [{ name: "explain_rule", input: { topic: "ruin" }, result: {} }]).length === handler._lintNotes(byId("o-montecarlo").reply).length);
@@ -346,6 +346,30 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      wp.startsWith(REF + " What it can do is lay the two products") && !/isn't something troid computes/.test(wp) && wf.startsWith(REF + "\n\nWhether a firm suits you")
      && WW(byId("ex-kelly").reply, byId("ex-kelly").q) === byId("ex-kelly").reply && WW(byId("b-limits").reply, byId("b-limits").q) === byId("b-limits").reply
      && WW("R is the loss at the stop.", "How should I calculate R?") === "R is the loss at the stop." && WW("Here is the table.", "Which firm is best for me?") === REF + " Here is the table.", [wp.slice(0, 120), wf.slice(0, 80)]); }
+// run 11's staged changes: its five lints flag exactly the replies read as errors that they cover, with tool sources rebuilt
+// from each reply's sources block; none trips on run 9, the promoted run; the floating-loss rule under explain_rule's
+// crossover and drawdown; BrightFunded's EUR price through firm_rules; the Instant's minimum days unrecorded (live data)
+{ const toolsFrom = (c) => { const reply = String(c.reply || ""), i = reply.indexOf("Sources, each with the date troid read it:");
+    const srcs = i < 0 ? [] : reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => { const parts = l.slice(2).split(" — ");
+      return /not yet recorded/.test(parts.slice(1).join(" — ")) ? { rule: parts[0], source: "not yet recorded" } : { rule: parts[0], read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
+    return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
+  const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
+  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length);
+  const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
+  const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
+  ok("candidate lints (run 11): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; none of run 9",
+     hit11 === "ex-r,b-limits,e-blown,o-montecarlo,s-firm" && !hit9.length && r11.every((c) => handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q).length === handler._lintNotes(bodyOf(c)).length), [hit11, hit9]);
+  const xc = RT("explain_rule", { topic: "crossover" }, "candidate"), xl = RT("explain_rule", { topic: "crossover" }, "live"), dc = RT("explain_rule", { topic: "drawdown" }, "candidate");
+  ok("candidate explain_rule crossover and drawdown: state the floating-loss rule and list its source (read 2026-09-24); live unchanged",
+     /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24")
+     && dc.sources.some((x) => /^floating losses count/.test(x.rule)) && !/floating/.test(xl.explanation) && !xl.sources.some((x) => /floating/.test(x.rule)));
+  const bfc = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "candidate"), bfl = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "live");
+  ok("candidate firm_rules: BrightFunded's price at $100,000 in EUR (497, 347.9 on promotion) with its source; live unchanged (run 11, s-firm)",
+     bfc.rules.some((x) => /EUR$/.test(x.rule) && x.value === 497) && bfc.rules.some((x) => /promotion, EUR$/.test(x.rule) && x.value === 347.9)
+     && bfc.sources.filter((x) => /EUR/.test(x.rule)).every((x) => x.read_on.join() === "2026-09-21") && !bfl.rules.some((x) => /EUR/.test(x.rule)));
+  const md = (pk) => RT("firm_rules", { firm: "bitfunded", product: pk }, "live").sources.find((x) => /^minimum trading days/.test(x.rule));
+  ok("firm_rules: the Instant's 0 minimum trading days no longer cite Terms 9(a)'s 'Minimum Trading Days: 5'; the challenges' 5 keep it (run 11, s-firm)",
+     md("instant").source === "not yet recorded" && ["1step", "2step_s1", "2step_s2", "express"].every((pk) => /Minimum Trading Days: 5/.test(md(pk).document_section)), md("instant")); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -755,8 +779,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 2 && !gc.tools.length && gc.rules.join() === "ruin"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 2 && !resC.body.includes(CK), gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 3 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
+       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 7 && !resC.body.includes(CK), gc);
     let step = 0;
     script = () => (step++ < 2 ? msg("tool_use", [{ type: "tool_use", id: "tm1", name: "trade_math", input: { calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 } }])
       : msg("end_turn", [{ type: "text", text: "0R. Not financial advice. Verify with the firm before acting." }]));

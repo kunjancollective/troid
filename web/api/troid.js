@@ -29,7 +29,8 @@
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). Promoting a candidate is one commit: its files move into place and the CANDIDATE_* entries fold into
  * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from run 10's read are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS and a should-I refusal).
+ * the fixes from the reads of runs 10 and 11 are staged now (the CANDIDATE_* entries, CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES
+ * and a should-I refusal).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -166,6 +167,9 @@ const GUARDRAILS = [
 const CANDIDATE_GUARDRAILS = [
   "troid's published Monte Carlo results come from explain_rule, topic ruin: quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED, and never one from memory.",
   "Compare products on the figures the tools give, and do arithmetic across them only through the tools: a staged challenge's targets add up across its stages, as firm_rules gives them. Never say every rule is sourced when a tool reports one whose source is not yet recorded.",
+  // run 11, o-predict: "the firm's own dashboard and financial data platforms are the record" for prices and forecasts,
+  // and "for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai"
+  "hello@troid.ai is for a number troid got wrong, or a person to talk to after a loss; the firm's dashboard is the record of the trader's own account. Neither is a place for prices, news, forecasts or questions troid doesn't answer.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
@@ -652,7 +656,14 @@ const CANDIDATE_RULES = {
     "limit fixed on the $100,000 start and a 6% static floor. Risking 1% of balance a trade with no cap on the remaining budget, 68% of the simulated years " +
     "blow the account; at 2%, 100%, every one. Capped at 35% of the remaining budget a trade, 0% at 1% and at 2%. True under these assumptions only: " +
     "they are troid's inputs, not the user's, and the figures do not carry over to other inputs.",
+  // run 11, b-limits: the floating-loss rule, from TROID.md, beside explain_rule's crossover and drawdown with no source
+  // line; both explanations state it now, so the service lists its source under them
+  crossover: RULES.crossover + " Both of Bitfunded's ceilings count floating losses: an open position that reaches either one fails the account, with no close needed.",
+  drawdown: RULES.drawdown + " Bitfunded's floor counts floating losses: an open position that reaches it fails the account, with no close needed.",
 };
+// the rules each candidate explanation states, where they differ from TOPIC_CITES
+const FLOAT_CITE = ["bitfunded", "floating_counts", null, "floating losses count toward the daily and maximum loss (Bitfunded)"];
+const CANDIDATE_TOPIC_CITES = {};
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -670,15 +681,16 @@ const TOPIC_CITES = {
   hold_limit: [["bitfunded", "hold_cap", null, "hold limit: majors 10 days, other crypto 7, TradFi 5"]],
   funded_stage: [["bitfunded", "trader_stage_rule", null, "Trader Stage limits by path"]],
 };
+Object.assign(CANDIDATE_TOPIC_CITES, { crossover: TOPIC_CITES.crossover.concat([FLOAT_CITE]), drawdown: TOPIC_CITES.drawdown.concat([FLOAT_CITE]) });
 const TOPIC_REFS = { cross: "RTP s.2", accounts: "ToU 6(b)", marketed_strategies: "ToU 14(d)(v)", strategy_switching: "ToU 14(d)(ix)", opposite_positions: "ToU 13(c)(v)" };
 // explain_rule for the candidate: its explanations, and the sources of the rules they state, so the service writes each
 // rule's document and read date under the answer and the tier (SOURCED) with them. Topics that state no firm rule
 // (ladder, ruin) are unchanged: their tier stays with the model.
-function explainRuleSourced(a, rules) {
+function explainRuleSourced(a, rules, cites) {
   const out = explain_rule(a, rules || RULES);
   if (out.error) return out;
   const F = JSON.parse(context().firms), sources = [];
-  for (const [firm, field, product, rule] of TOPIC_CITES[out.topic] || []) {
+  for (const [firm, field, product, rule] of (cites || TOPIC_CITES)[out.topic] || []) {
     const c = F[firm] ? cite(F[firm], field, product, !product) : null;
     sources.push(c ? { rule, document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls } : { rule, source: "not yet recorded" });
   }
@@ -1022,7 +1034,10 @@ const RUN = { size_trade, check_budget, check_compliance, check_availability, ex
 //   product's cap, with the cap's source.
 // - s-product called the 2-Step's 8% and 5% "a lower total profit" than the 1-Step's 10%: firm_rules gives a staged
 //   challenge's targets added up across its stages.
-const RULE_FIELDS_NEXT = RULE_FIELDS.concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"]]);
+// run 11, s-firm: BrightFunded's price (€497, €347.90 on promotion, at $100,000) came from the prompt's firms data, its
+// read date written by the model; firm_rules gives it with its source now
+const RULE_FIELDS_NEXT = RULE_FIELDS.concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"],
+  ["fee_eur_100k", "price", "challenge fee at a $100,000 account, EUR"], ["fee_eur_100k_promo", "price", "challenge fee at a $100,000 account on promotion, EUR"]]);
 function firmRulesNext(a) {
   const out = firm_rules(a, RULE_FIELDS_NEXT);
   if (out.error) return out;
@@ -1078,7 +1093,7 @@ function tradeMathNext(a) {
   return trade_math(a);
 }
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
-  explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES)),
+  explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES), Object.assign({}, TOPIC_CITES, CANDIDATE_TOPIC_CITES)),
   firm_rules: firmRulesNext,
   check_budget: (a) => withFloatingSource(check_budget(a), a),
   size_trade: (a) => withFloatingSource(size_trade(a), a),
@@ -1250,8 +1265,68 @@ const CANDIDATE_LINTS = [
   [(t, tools) => ALL_SOURCED_RX.test(t) && tools.some((x) => JSON.stringify(x.result || {}).includes("not yet recorded")),
    "Some rules the tools gave have no recorded source: say so beside each of them (source not yet recorded), and never that every rule is sourced."],
 ];
-const lintNotesFor = (t, variant, tools) => lintNotes(t).concat(variant === "candidate"
-  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [])).map(([, note]) => note) : []);
+// Staged after evaluation run 11: ex-r stated "Bitfunded's 4% daily limit" beside a tool that gave only the fee; s-firm
+// marked the Instant's 3% and 6%, which the tool gave with read dates, "source not yet recorded"; e-blown called Crypto
+// Fund Trader a trailing-drawdown firm (its 2-Phase is static); o-montecarlo wrote "Answer, one line:"; b-limits stated
+// the floating-loss rule beside explain_rule topics that did not carry it.
+const LINT_FIRM = /\b(Bitfunded|BrightFunded|Crypto Fund Trader|CFT)\b/;
+const LINT_WORD = "(daily|max(?:imum)?|loss|limit|target|drawdown|fee|split|floor)";
+const PCT_AFTER = new RegExp(`(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%\\s?(?:[\\w'’()-]+\\s){0,3}?${LINT_WORD}`, "gi");
+const PCT_BEFORE = new RegExp(`${LINT_WORD}\\b((?:(?!share|÷|×|=|≈)[^.\\n%$,]){0,25}?)(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%`, "gi");
+// a firm's rule as a percentage, in a sentence naming the firm; not a percentage the user gave
+function firmRulePcts(text, asked) {
+  const given = new Set([...String(asked || "").matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map((m) => m[1])), out = [];
+  for (const sent of String(text).split(/(?<=[.!?])\s+|\n+/)) {
+    if (!LINT_FIRM.test(sent)) continue;
+    for (const m of sent.matchAll(PCT_AFTER)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
+    for (const m of sent.matchAll(PCT_BEFORE)) if (!given.has(m[3])) out.push({ n: m[3], s: m[0] });
+  }
+  return out;
+}
+const pctIn = (src, n) => { const e = n.replace(".", "\\."); return new RegExp(`(?<![\\d.])${e}(?![\\d])\\s?%|%\\s?${e}(?![\\d.])`).test(src); };
+// every source the turn's tools gave, one line each: "rule — read …" or "rule — source not yet recorded"
+function toolSourceLines(tools) {
+  const out = [];
+  for (const t of tools || []) {
+    const r = t.result || {};
+    for (const x of [...(r.sources || []), ...(r.findings || []).flatMap((f) => f.sources || [])])
+      out.push(String(x.rule || "") + " — " + (x.source === "not yet recorded" ? "source not yet recorded" : "read " + [].concat(x.read_on || []).join(" and ")));
+  }
+  return out;
+}
+const LINT_NUM = /(?<![\w.])(?:[$€]\s?(\d[\d,]*(?:\.\d+)?)(?![\d,]*-?\s?(?:tier|account))|(\d+(?:\.\d+)?)\s?%)/g;
+// a rule the reply calls unrecorded where every source the tools gave for its figure has a read date
+function misreportedSources(text, srcLines) {
+  const out = [];
+  for (const line of String(text).split("\n")) {
+    const at = line.search(/not yet recorded|no recorded source/i);
+    if (at < 0) continue;
+    const head = line.slice(0, at), cut = Math.max(...[...head.matchAll(/[.!?;]\s/g)].map((x) => x.index + 1), 0);
+    for (const m of head.slice(cut).matchAll(LINT_NUM)) {
+      const n = (m[1] || m[2]).replace(/,/g, ""), rx = new RegExp(`(?<![\\d.,])${n.replace(".", "\\.")}(?![\\d]|[.,]\\d)`);
+      const hits = srcLines.filter((l) => rx.test(l.split(" — ")[0].replace(/(\d),(\d{3})/g, "$1$2")));
+      if (hits.length && hits.every((l) => !/not (yet )?recorded|read $/.test(l))) out.push(line.trim());
+    }
+  }
+  return out;
+}
+const PH1_RX = "(1-Phase|1 Phase|one-phase|1phase)";
+const CFT_TRAIL_RX = new RegExp(`(?<!${PH1_RX}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1_RX}\\b)[^.\\n]{0,60}\\btrail` +
+  `|(?<!${PH1_RX}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1_RX}\\b)`, "i");
+const FLOAT_FIRM_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,120}\bfloat|\bfloat[^.\n]{0,120}\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/i;
+CANDIDATE_LINTS.push(
+  [(t, tools, asked) => { const src = toolSourceLines(tools).join("\n"); return firmRulePcts(t, asked).some((x) => !pctIn(src, x.n)); },
+   "Every firm rule in the answer comes through a tool, so the service lists its source and read date: get each one through firm_rules, explain_rule, check_budget or size_trade, or leave it out."],
+  [(t, tools) => misreportedSources(t, toolSourceLines(tools)).length > 0,
+   "A rule is called unrecorded that a tool gave with its source and read date: say about each rule's source only what the tools say."],
+  [(t) => CFT_TRAIL_RX.test(t),
+   "Crypto Fund Trader's drawdown differs by product: its 1-Phase trails, then locks at the opening balance; its 2-Phase is static. Name the product with it."],
+  [(t) => /\b(answer|result),? (first,? )?(in )?one line\b/i.test(t),
+   "Don't announce the reply's form (\"answer, one line\"): give the answer itself."],
+  [(t, tools) => FLOAT_FIRM_RX.test(t) && !toolSourceLines(tools).some((l) => /floating/i.test(l)),
+   "A firm's floating-loss rule is a firm rule: get it through firm_rules, which gives its source, or leave it out."]);
+const lintNotesFor = (t, variant, tools, asked) => lintNotes(t).concat(variant === "candidate"
+  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked)).map(([, note]) => note) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
   notes.map((n) => "- " + n).join("\n") + ")";
 const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
@@ -1480,7 +1555,7 @@ module.exports = async (req, res) => {
     // A finished draft that trips one of LINTS is sent back once to be written again, with a note for
     // each. If the rewrite can't finish in time, or fails, the draft stands.
     if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
-      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog);
+      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog, lastUser);
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {

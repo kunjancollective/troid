@@ -63,7 +63,7 @@ const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\
   `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
 // troid's own instructions named, or the reply's form announced, in a reply (run 8: "support.md section 4 applies here",
 // "Result first, one line:"; run 6: "troid's fixed answer").
-const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer) first,? (in )?one line\b|\bin one line:/i;
+const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer),? (first,? )?(in )?one line\b|\bin one line:/i;   // run 11: "Answer, one line:"
 // troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
 const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
 // A firm's floating-loss rule with no source line for it (run 10, b-limits: "Bitfunded auto-fails on either without requiring
@@ -87,6 +87,43 @@ function levOverCap(t) {
   }
   return null;
 }
+// A firm's rule as a percentage that the service's sources don't list (run 11, ex-r: "Bitfunded's 4% daily limit" under a
+// sources block holding only the fee; before, any read date anywhere in the reply passed it). A percentage the user gave
+// is theirs, not a rule.
+const LINT_FIRM = /\b(Bitfunded|BrightFunded|Crypto Fund Trader|CFT)\b/;
+const LINT_WORD = "(daily|max(?:imum)?|loss|limit|target|drawdown|fee|split|floor)";
+const PCT_AFTER = new RegExp(`(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%\\s?(?:[\\w'’()-]+\\s){0,3}?${LINT_WORD}`, "gi");
+const PCT_BEFORE = new RegExp(`${LINT_WORD}\\b((?:(?!share|÷|×|=|≈)[^.\\n%$,]){0,25}?)(?<![\\d.,])(\\d+(?:\\.\\d+)?)\\s?%`, "gi");
+function firmRulePcts(text, asked) {
+  const given = new Set([...String(asked || "").matchAll(/(\d+(?:\.\d+)?)\s?%/g)].map((m) => m[1])), out = [];
+  for (const sent of String(text).split(/(?<=[.!?])\s+|\n+/)) {
+    if (!LINT_FIRM.test(sent)) continue;
+    for (const m of sent.matchAll(PCT_AFTER)) if (!given.has(m[1])) out.push({ n: m[1], s: m[0] });
+    for (const m of sent.matchAll(PCT_BEFORE)) if (!given.has(m[3])) out.push({ n: m[3], s: m[0] });
+  }
+  return out;
+}
+const pctIn = (src, n) => { const e = n.replace(".", "\\."); return new RegExp(`(?<![\\d.])${e}(?![\\d])\\s?%|%\\s?${e}(?![\\d.])`).test(src); };
+// A rule the reply calls unrecorded where every source the service lists for its figure has a read date (run 11, s-firm:
+// the Instant's 3% and 6%, "source not yet recorded", listed below with their read dates).
+const LINT_NUM = /(?<![\w.])(?:[$€]\s?(\d[\d,]*(?:\.\d+)?)(?![\d,]*-?\s?(?:tier|account))|(\d+(?:\.\d+)?)\s?%)/g;
+function misreportedSources(text, srcLines) {
+  const out = [];
+  for (const line of String(text).split("\n")) {
+    const at = line.search(/not yet recorded|no recorded source/i);
+    if (at < 0) continue;
+    const head = line.slice(0, at), cut = Math.max(...[...head.matchAll(/[.!?;]\s/g)].map((x) => x.index + 1), 0);
+    for (const m of head.slice(cut).matchAll(LINT_NUM)) {
+      const n = (m[1] || m[2]).replace(/,/g, ""), rx = new RegExp(`(?<![\\d.,])${n.replace(".", "\\.")}(?![\\d]|[.,]\\d)`);
+      const hits = srcLines.filter((l) => rx.test(l.split(" — ")[0].replace(/(\d),(\d{3})/g, "$1$2")));
+      if (hits.length && hits.every((l) => !/not (yet )?recorded|read $/.test(l))) out.push(line.trim());
+    }
+  }
+  return out;
+}
+const SOURCES_HEAD = "Sources, each with the date troid read it:";
+const splitSources = (reply) => { const i = reply.indexOf(SOURCES_HEAD);
+  return i < 0 ? { body: reply, lines: [] } : { body: reply.slice(0, i), lines: reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => l.slice(2)) }; };
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
@@ -204,6 +241,10 @@ function check(c, r, variant) {
     if (m) add("a firm's floating-loss rule carries its source, or says it is not yet recorded", FLOAT_SOURCED.test(reply), m[0]); }
   { const m = unquoted(reply).split("\n").filter((l) => !/^\s*(\*\*|__)?Tier\b/i.test(l)).join("\n").match(ALL_SOURCED);                    // run 10
     add("never calls every rule sourced where one has no recorded source", !(m && /source not yet recorded|read date not recorded/.test(reply)), m && m[0]); }
+  { const sp = splitSources(reply), bad = firmRulePcts(unquoted(sp.body), c.q).filter((x) => !pctIn(sp.lines.join("\n"), x.n));                   // run 11
+    add("a firm's rule it states as a percentage is among the sources the service lists", !bad.length, bad.map((x) => x.s)); }
+  { const sp = splitSources(reply), bad = misreportedSources(sp.body, sp.lines);                                                            // run 11
+    add("never calls a rule unrecorded that the sources list with a read date", !bad.length, bad); }
   { const m = reply.match(RUIN_MIX); add("troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)", !m, m && m[0]); }   // run 10
   { const m = levOverCap(reply); add("an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it", !m, m); }   // runs 6, 10
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
@@ -213,7 +254,8 @@ function check(c, r, variant) {
   if (c.refusal) add("gives support.md section 4 word for word", REFUSAL.test(reply), null);
   if (c.no_refusal) add("answers instead of refusing (a question, not a \"should I\")", !REFUSAL.test(reply), null);
   if (c.tools_any) add("computes through a tool (" + c.tools_any.join(" or ") + ")", c.tools_any.some((t) => used.includes(t)), used);
-  if (c.sourced) add("each rule it states carries its document and read date", READ_DATE.test(reply), null);
+  // a reply that states no figure states no rule to date (run 11, s-product: the refusal, then an offer to price a trade)
+  if (c.sourced && hasFigure(splitSources(reply).body.replace(NOTE, ""))) add("each rule it states carries its document and read date", READ_DATE.test(reply), null);
   if (c.teach) {                                                   // the method's six parts, as far as a pattern can see them
     add("method: a formula", /[=×÷√]|\bf\*|sqrt/.test(reply), null);
     // counted in troid's own text: not the sources block, the tier or the note, and not a date (run 5: the read dates in
