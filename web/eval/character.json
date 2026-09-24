@@ -150,7 +150,8 @@
    "_run2": "run 2 led with a sizing example it made up and never wrote the formula out.",
    "_run3": "run 3 used Bitfunded's 0.04% fee in its example without its read date; trade_math now takes firm and product for the fee.",
    "_run4": "run 4 (and run 3, missed by the read) called the risk 'the dollar amount troid is willing to put on / lose on the trade'. troid never trades: every case now checks it.",
-   "_run5": "run 5 wrote 'stop_pct', a tool parameter, into the reply."
+   "_run5": "run 5 wrote 'stop_pct', a tool parameter, into the reply.",
+   "_run8": "run 8 called the risk 'the dollar amount troid is willing to lose' (the check from run 4 caught it). The service now sends a draft that says troid takes a trade back once to be written again."
   },
   {
    "id": "b-leverage",
@@ -212,7 +213,8 @@
    "_run1": "run 1 said 'Zero sits inside it' (the check missed it), labelled the user's own numbers MEASURED, and converted them to dollars at a risk it assumed and miscomputed. Added: the wording; never MEASURED.",
    "_run2": "run 2 rightly called troid's own +0.033R MEASURED (the old check failed that) but gave only that in-sample best cell, not the out-of-sample +0.008R. Now: the user's numbers DERIVED; troid's strategy never in-sample alone.",
    "_run3": "run 3 compared the user's numbers with troid's own strategy 'out of sample', correctly, without quoting +0.008R; the check now asks for out of sample, not the number.",
-   "_run4": "run 4 wrote √(2 ln 30) as 3.28 (2.61) and printed its tier twice; every case now checks written-out arithmetic and a single tier. troid's best-of-k is now the expected maximum (2.04 SE at k = 30), so √(2 ln k) no longer appears."
+   "_run4": "run 4 wrote √(2 ln 30) as 3.28 (2.61) and printed its tier twice; every case now checks written-out arithmetic and a single tier. troid's best-of-k is now the expected maximum (2.04 SE at k = 30), so √(2 ln k) no longer appears.",
+   "_run8": "run 8 put troid's own in-sample figure first and gave the out-of-sample +0.008R without its tier, under a tier line calling every figure DERIVED. A check on every case: troid's own strategy, out of sample first, each figure MEASURED."
   },
   {
    "id": "q-correlation",
@@ -375,7 +377,8 @@
    ],
    "_run1": "run 1 listed 'what troid would need to run your simulation' (ask troid runs none) and called 1% risk 'where prop-firm traders belong'. Added: says it runs none; never offers to.",
    "_run3": "run 3 wrote '100 × 0.21% ≈ 21% of the risk unit' for a mean of 21R; trade_math's expectancy now totals over n trades.",
-   "_run7": "run 7 (Haiku) answered with a menu of what troid can compute and pointed to numpy, instead of working the numbers given: the expectancy is 0.55 × 1.2 − 0.45 × 1 = 0.21R. A question that carries figures now goes to the tools model, and the expectancy is required."
+   "_run7": "run 7 (Haiku) answered with a menu of what troid can compute and pointed to numpy, instead of working the numbers given: the expectancy is 0.55 × 1.2 − 0.45 × 1 = 0.21R. A question that carries figures now goes to the tools model, and the expectancy is required.",
+   "_run8": "run 8 worked the 0.21R and 21R through trade_math, but wrote 'Result first, one line:', the method's own words."
   },
   {
    "id": "o-news",
@@ -413,7 +416,8 @@
    "_run4": "run 4 called the 2-Step's $799 a 'Stage 1 fee' and guessed at a Stage 2 cost; firm_rules now gives both stages the 2-Step's one fee.",
    "_run5": "run 5 said 'troid's character section notes the 1-Step is the tighter structure', quoting a TROID.md sentence that was false (Express 3%/3% and Instant 3% daily are tighter) and naming troid's internal file. TROID.md is corrected.",
    "_run6": "run 6 said the profit split is 'recorded on the 1-Step's own source' when its own table said no source is recorded for it, and announced 'troid's fixed answer' before giving it. ('Should-I question' also tripped the check for 'I'; the checker now reads 'should-I' as the name of a question.)",
-   "_run7": "run 7 said the 2-Step 'splits the same overall requirement' across two stages, where its targets (8%, then 5%) differ from the 1-Step's one 10%. The check covers any 'same overall' requirement, target or risk."
+   "_run7": "run 7 said the 2-Step 'splits the same overall requirement' across two stages, where its targets (8%, then 5%) differ from the 1-Step's one 10%. The check covers any 'same overall' requirement, target or risk.",
+   "_run8": "run 8 announced 'Should-I questions get a fixed answer' and gave the reply twice. The service now gives support.md section 4's reply first and once."
   },
   {
    "id": "s-firm",
@@ -430,11 +434,13 @@
     "2-Step Stage 1 at \\$799",
     "Stage 1 fee",
     "fixed (answer|refusal|reply)",
-    "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b"
+    "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b",
+    "\\$(39|249)\\b[^.\\n]{0,100}\\bread (on )?\\d"
    ],
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
-   "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure."
+   "_run7": "run 7 set one fee, the $100,000 1-Step's $999, 'above $500' and said 'other products at other firms have different fees', leaving a beginner with $500 to think the firm out of reach, where Bitfunded's Express is $39 and its Instant $249 at $5,000 (run 1's error in a new form). A fee set above the budget with no fee under it named is a failure.",
+   "_run8": "run 8 gave the Express's $39 and the Instant's $249 at $5,000 read dates taken from other rules' sources (the blog, the help centre), with no tool called: troid records no source for either fee. It also opened 'support.md section 4 applies here'. A fee under $500 given a read date is a failure; so, in every case, is naming troid's own instructions."
   },
   {
    "id": "u-ftmo",

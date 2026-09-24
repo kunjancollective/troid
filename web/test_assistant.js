@@ -299,6 +299,11 @@ ok("candidate support.md: section 4 keeps the refusal word for word, then teache
    && /as troid's character teaches it/.test(candSys[2].text) && !/as troid's character teaches it/.test(liveSys[1].text));
 
 // --- run 4's fixes, candidate only
+// run 8's lints, on the saved replies: they flag exactly the five that a person read as those errors in run 8, and none of
+// run 7's 24 replies
+{ const R = (n) => require("./eval/runs/2026-09-24-run" + n + ".json").results, L = handler._lintNotes;
+  const hit8 = R(8).filter((x) => L(x.reply).length).map((x) => x.id).sort().join(), hit7 = R(7).filter((x) => L(x.reply).length).map((x) => x.id);
+  ok("lints: run 8's b-stop, o-montecarlo, q-stats, s-firm and s-product, none of run 7", hit8 === "b-stop,o-montecarlo,q-stats,s-firm,s-product" && !hit7.length, [hit8, hit7]); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("candidate support.md quotes the service's step-5 line verbatim (section 2)", candSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -780,12 +785,47 @@ fake.listen(18765, async () => {
     before = calls.length;
     r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true });
     ok("live, beside it: the answer from memory stands (one call, no nudge)", r.status === 200 && calls.length === before + 1 && r.j.reply === MEMORY, r.j.reply);
-    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: MEMORY }])
-      : msg("end_turn", [{ type: "text", text: "Bitfunded lets you hold majors for 10 days (SOURCED, Restricted Trading Practices s.1, read 2026\u201109\u201121)." }]);
+    const DATED = "Bitfunded's Express is $39 at $5,000 (Bitfunded blog, read 2026\u201109\u201121).";
+    script = (b) => {
+      if (b.model === "claude-haiku-4-5") return msg("end_turn", [{ type: "text", text: DATED }]);
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("A note from the service, not the user")) return msg("tool_use", [{ type: "tool_use", id: "fr9", name: "firm_rules", input: { firm: "bitfunded", product: "express" } }]);
+      if (Array.isArray(l) && l[0].type === "tool_result") return msg("end_turn", [{ type: "text", text: "The Express costs $39 at $5,000." }]);
+      return msg("end_turn", [{ type: "text", text: DATED }]);
+    };
     before = calls.length;
-    r = await call(hc, [U("How long can I hold ETH on Bitfunded?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
-    ok("candidate: a firm's rule that carries its read date is not nudged, a date written with non-breaking hyphens too (run 7's p-size wrote them)",
-       r.status === 200 && calls.length === before + 2 && /read 2026\u201109\u201121/.test(r.j.reply), [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    r = await call(hc, [U("What does Bitfunded's Express cost?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a firm's rule with a read date but no tool behind it is nudged too, and the tool says its source is not yet recorded (run 8, s-firm borrowed other rules' dates)",
+       r.status === 200 && calls.length === before + 4 && !r.j.reply.includes("Bitfunded blog, read") && /challenge fee at a \$5,000 account, USD 39 — source not yet recorded/.test(r.j.reply)
+       && r.j.tools_used.join() === "firm_rules", [r.j.reply, calls.slice(before).map((c) => c.model)]);
+    // run 8's lints: a finished draft that trips one is written again once; a rewrite that can't finish leaves the draft
+    const DRAFT = "Risk is the dollar amount troid is willing to lose on the trade: $500 here.";
+    script = (b) => {
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("write the whole answer again")) return msg("end_turn", [{ type: "text", text: "Risk is the dollar amount the trader risks on the trade: $500 here." }]);
+      return msg("end_turn", [{ type: "text", text: DRAFT }]);
+    };
+    before = calls.length;
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    const lintLog = JSON.parse(LOGS[LOGS.length - 1]);
+    ok("candidate: a draft that says troid takes the risk is written again once, with the service's note, and only the rewrite is shown (run 8, b-stop)",
+       r.status === 200 && calls.length === before + 3 && /troid never trades/.test(lastOf(calls[before + 2])) && /the trader risks/.test(r.j.reply) && !/troid is willing/.test(r.j.reply)
+       && lintLog.linted === 1, [r.j.reply, calls.slice(before).map((c) => c.model), lintLog]);
+    before = calls.length;
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true });
+    ok("live, beside it: no rewrite", r.status === 200 && calls.length === before + 1 && r.j.reply === DRAFT, r.j.reply);
+    script = (b) => {
+      const l = lastOf(b);
+      if (typeof l === "string" && l.includes("write the whole answer again")) return msg("max_tokens", [{ type: "text", text: "Risk is the dollar am" }]);
+      return msg("end_turn", [{ type: "text", text: DRAFT }]);
+    };
+    r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: a rewrite that doesn't finish leaves the draft, whole", r.status === 200 && r.j.reply.startsWith(DRAFT) && !/Risk is the dollar am$/.test(r.j.reply), r.j.reply);
+    script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "x" }])
+      : msg("end_turn", [{ type: "text", text: "support.md section 4 applies here:\n\ntroid doesn't recommend; it prices what you bring.\n\nThe fees differ by product.\n\ntroid doesn't recommend; it prices what you bring. Name a product." }]);
+    r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("candidate: support.md section 4's reply comes first and once, whatever the rewrite leaves (run 8, s-product and s-firm)",
+       r.status === 200 && r.j.reply.startsWith("troid doesn't recommend; it prices what you bring.\n\nThe fees differ by product.\n\nName a product.") && !/support\.md/.test(r.j.reply), r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid has no live data. Check CoinDesk or Binance's announcements for news." }])
       : msg("end_turn", [{ type: "text", text: "troid does not browse and has no live data; the firm's own documents are what troid has read." }]);
     before = calls.length;

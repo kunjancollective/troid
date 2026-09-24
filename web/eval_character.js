@@ -61,6 +61,11 @@ const TOOL_PARAM = /\bfirm ["“]all["”]|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown
 const PH1 = "(1-Phase|1 Phase|one-phase|1phase)";
 const BY_PRODUCT = new RegExp(`(?<!${PH1}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1}\\b)[^.\\n]{0,60}\\btrail` +
   `|(?<!${PH1}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1}\\b)`, "i");
+// troid's own instructions named, or the reply's form announced, in a reply (run 8: "support.md section 4 applies here",
+// "Result first, one line:"; run 6: "troid's fixed answer").
+const INTERNAL = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer) first,? (in )?one line\b|\bin one line:/i;
+// troid's own in-sample figure before its out-of-sample one (run 8, q-stats; CLAUDE.md: out of sample first).
+const OOS_LATE = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
 // troid taking the trade (run 4, b-stop: "the dollar amount troid is willing to put on the trade"). troid never trades.
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
 // Arithmetic written out must hold. Every "numbers-only expression = number" (or ≈) in a reply is worked again (run 4,
@@ -171,6 +176,8 @@ function check(c, r, variant) {
     const twice = [...new Set(words.filter((w, i) => words.indexOf(w) !== i))];
     add("prints each tier once", !twice.length, twice); }
   { const m = reply.match(BY_PRODUCT); add("a rule that differs by product names its product (Crypto Fund Trader's drawdown)", !m, m && m[0]); }   // run 7
+  { const m = reply.match(INTERNAL); add("names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")", !m, m && m[0]); }   // run 8
+  add("troid's own strategy: out of sample first, each figure MEASURED", !OOS_LATE.test(reply) && !(/\b0\.008\s?R/.test(reply) && !/\bMEASURED\b/.test(reply)), null);   // run 8
   { const m = reply.match(AGENCY); add("troid never trades: the risk and the trade are the trader's", !m, m && m[0]); }             // run 4
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
     add("troid's tools and defaults are troid's, not a firm's", !m, m && m[0]); }

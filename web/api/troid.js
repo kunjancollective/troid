@@ -153,11 +153,11 @@ const CANDIDATE_GUARDRAILS = [
   "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. Every teaching answer works its example with numbers through a tool; never leave it out. Arithmetic (R, a position size, leverage and margin, expectancy, Kelly, a drawdown) is worked through trade_math with numbers troid chooses; set beside a firm's rule, trade_math takes the firm and product. A firm's rule (the daily and maximum loss, the crossover, the reset) is worked on troid's reference account, a $100,000 Bitfunded 1-Step, through check_budget or explain_rule, so its rules come with their dates. An example on a firm's account keeps to that account's rules: no leverage above its 1:5 cap. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
   "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, the best of k configurations by chance, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. Copy every intermediate value from the tool's working as it is; never work one out from a tool's result yourself (a multiplier, a square root, a ratio). A figure the user gave, repeated back, needs no tool.",
   "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it, in any reply: a list of things worth knowing, or a reply to someone who has just lost, gets its fee, reset time, loss limit or floating-loss rule through firm_rules or explain_rule too. When a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation. Never write a tool's parameters in a reply (firm \"all\", stop_pct). A rule that differs by product (a drawdown type, a daily limit) is stated with its product, never as the whole firm's. Keep a rule's size and its reference point apart: Bitfunded's FAQ gives the daily limit's size, a fixed amount from the initial balance; the floor it sets is measured from the day's start.",
-  "When troid's own strategy comes up, even in passing (its search over about 30 configurations, say), its out-of-sample result comes first: +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero. The in-sample figure is the best of about 30 configurations and never stands alone.",
-  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block. Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's. troid never trades: the risk, the position, the stop and the trade are always the trader's, and troid prices them.",
+  "When troid's own strategy comes up, even in passing (its search over about 30 configurations, say), its out-of-sample result comes first: +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero. The in-sample figure is the best of about 30 configurations and never stands alone. Every figure from troid's own backtest is marked MEASURED beside it.",
+  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write the tier word yourself. A firm's rule always comes through a tool, which carries its source: never write a rule's document or read date yourself, and never give one rule's source to another; a rule troid has no source for is \"source not yet recorded\". Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's. troid never trades: the risk, the position, the stop and the trade are always the trader's, and troid prices them.",
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
-  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, without announcing it. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
-  "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
+  "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, first and once, without announcing it; never name troid's own instructions (support.md, its sections, the character) or the parts of the method (\"result first\", \"one line\") in a reply. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
+  "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read; for a firm's rules, the firm's own documents are the record. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
 ];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
@@ -1141,8 +1141,35 @@ const READ_DATE_RX = /\bread (on )?(\d{4}[-\u2010\u2011]\d{2}[-\u2010\u2011]\d{2
 const OUTSIDE_SERVICE = /\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|numpy)\b|\b(check|use|visit|see|try)\b[^.\n]{0,60}\bBinance\b/i;
 // A firm's rule stated in a reply: a firm named beside a percentage, a time, a number of days or a fee.
 const FIRM_RULE_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,80}?(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b|\$\d)|(\d+(\.\d+)?\s?%|\b\d{1,2}:\d{2}\b|\b\d+\s?(trading )?days?\b)[^.\n]{0,60}?\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/;
-const RULE_NUDGE = "(A note from the service, not the user: the answer above states a firm's rule without the date troid read it and without a tool behind it. " +
-  "Get each rule through firm_rules or explain_rule so it carries its read date, then write the whole answer again.)";
+const RULE_NUDGE = "(A note from the service, not the user: the answer above states a firm's rule with no tool behind it. Get each rule through firm_rules or " +
+  "explain_rule, so it carries the source and read date troid recorded for it, or says its source is not yet recorded; then write the whole answer again.)";
+// A draft the service sends back once to be written again, with a note for each pattern it finds (run 8: "troid is willing
+// to lose", "support.md section 4 applies here", "Result first, one line", troid's in-sample figure before its
+// out-of-sample one and the +0.008R without its tier).
+const AGENCY_RX = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b/i;
+const INTERNAL_RX = /\bsupport\.md\b|\bTROID-CHARACTER\b|\bcharacter section\b|\bfixed (answer|reply|refusal)\b|\b(result|answer) first,? (in )?one line\b|\bin one line:/i;
+const OOS_LATE_RX = /^(?:(?!0\.008\s?R)[\s\S])*\btroid['’]s own\b[^.\n]{0,60}\b(in[- ]sample|search|best of)/i;
+const LINTS = [
+  [(t) => AGENCY_RX.test(t), "troid never trades: the risk, the position, the stop and the trade are the trader's, and troid prices them."],
+  [(t) => INTERNAL_RX.test(t), "Name none of troid's own instructions (support.md, its sections, the character) and don't announce the reply's form (a fixed answer, \"result first, one line\"): give the reply itself."],
+  [(t) => OOS_LATE_RX.test(t) || (/\b0\.008\s?R/.test(t) && !/\bMEASURED\b/.test(t)),
+   "troid's own strategy: its out-of-sample result comes first, +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero, each figure marked MEASURED; the in-sample figure only after it."],
+];
+const lintNotes = (t) => LINTS.filter(([test]) => test(t)).map(([, note]) => note);
+const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
+  notes.map((n) => "- " + n).join("\n") + ")";
+const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
+// support.md section 4's reply, first and once: a short preface that announces it goes (run 8: "Should-I questions get a
+// fixed answer:", "support.md section 4 applies here:"), and so does a second copy. A longer text before it stays.
+const SHOULD_I_RX = /troid doesn['’]t recommend; it prices what you bring\./g;
+function refusalOnceFirst(reply) {
+  const first = reply.search(SHOULD_I_RX);
+  if (first < 0) return reply;
+  const head = reply.slice(0, first), m = reply.slice(first).match(/^troid doesn['’]t recommend; it prices what you bring\./)[0];
+  const rest = reply.slice(first + m.length).replace(SHOULD_I_RX, "").replace(/[ \t]+\n/g, "\n").replace(/\n[ \t]+/g, "\n").replace(/\n{3,}/g, "\n\n");
+  const keepHead = head.trim() && (head.length > 160 || hasFigure(head.replace(/\bsection \d+\b/gi, " ")));
+  return ((keepHead ? head : "") + m + rest).replace(/^\s+/, "").replace(/(^|\n\n) +/g, "$1").replace(/\n{3,}/g, "\n\n");
+}
 function withSupportStep5(reply, lang) {
   if (!SUPPORT_OPENER.test(reply) || (/hello@troid\.ai/i.test(reply) && /dashboard/i.test(reply))) return reply;
   return reply + "\n\n" + S(lang, "ask.support_step5");
@@ -1315,25 +1342,46 @@ module.exports = async (req, res) => {
       route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
     }
     const convo = messages.slice(), said = [];                         // with the candidate: what troid wrote before each tool call
-    // With the candidate, an answer that states a firm's rule with no read date and no tool behind it is asked once for
-    // the rule through a tool that dates it; the first answer is discarded, never shown (run 7, p-hold from memory).
-    if (NEXT(variant) && resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && !READ_DATE_RX.test(textOf(resp))
-        && Date.now() < deadlineAt - MIN_CALL_MS) {
+    // With the candidate, an answer that states a firm's rule with no tool behind it is asked once for the rule through a
+    // tool that carries its source; the first answer is discarded, never shown (run 7, p-hold from memory; run 8, s-firm
+    // gave two fees read dates borrowed from other rules).
+    if (NEXT(variant) && resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
       log.nudged = 1;
       convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE });
       resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
     }
-    for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
-      const uses = resp.content.filter((b) => b.type === "tool_use");
-      if (NEXT(variant) && textOf(resp)) said.push(textOf(resp));     // run 3, ex-r: the definition before a tool call was lost
-      toolCalls += uses.length;
-      convo.push({ role: "assistant", content: resp.content });        // unchanged, thinking blocks included
-      convo.push({ role: "user", content: uses.map((u) => {
-        const out = runTool(u.name, u.input, variant);
-        toolLog.push({ name: u.name, input: u.input, result: out });
-        return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
-      }) });
-      resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
+    const rounds = async (r) => {
+      for (let round = 0; round < MAX_TOOL_ROUNDS && r.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
+        const uses = r.content.filter((b) => b.type === "tool_use");
+        if (NEXT(variant) && textOf(r)) said.push(textOf(r));           // run 3, ex-r: the definition before a tool call was lost
+        toolCalls += uses.length;
+        convo.push({ role: "assistant", content: r.content });         // unchanged, thinking blocks included
+        convo.push({ role: "user", content: uses.map((u) => {
+          const out = runTool(u.name, u.input, variant);
+          toolLog.push({ name: u.name, input: u.input, result: out });
+          return { type: "tool_result", tool_use_id: u.id, content: JSON.stringify(out), ...(out && out.error ? { is_error: true } : {}) };
+        }) });
+        r = await callModel("tools", convo, deadlineAt, onSend, lang, variant);
+      }
+      return r;
+    };
+    resp = await rounds(resp);
+    // With the candidate, a finished draft that trips one of LINTS is sent back once to be written again, with a note for
+    // each. If the rewrite can't finish in time, or fails, the draft stands.
+    if (NEXT(variant) && resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
+      const notes = lintNotes([...said, textOf(resp)].join("\n\n"));
+      if (notes.length) {
+        const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
+        try {
+          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) });
+          said.length = 0;                                              // the rewrite is the whole answer
+          const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant));
+          if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
+          resp = r2; log.linted = 1;
+        } catch (e) {
+          resp = keep.resp; said.splice(0, said.length, ...keep.said); toolLog.length = keep.tools; toolCalls = keep.toolCalls;
+        }
+      }
     }
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
@@ -1347,7 +1395,7 @@ module.exports = async (req, res) => {
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         if (NEXT(variant)) reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
-        if (reply && NEXT(variant)) reply = withSupportStep5(reply, lang);
+        if (reply && NEXT(variant)) reply = refusalOnceFirst(withSupportStep5(reply, lang));
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply && NEXT(variant)) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -1400,6 +1448,8 @@ module.exports = async (req, res) => {
   }
 };
 module.exports.tools = RUN;   // for tests
+module.exports._refusalOnceFirst = refusalOnceFirst;
+module.exports._lintNotes = lintNotes;
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
 module.exports._sign = (msgs, session, variant) => sign(msgs, session, variant);   // for tests
