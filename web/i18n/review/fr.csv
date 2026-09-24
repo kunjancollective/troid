@@ -844,6 +844,13 @@ terms.hero.lede,"troid is a free informational tool. It is not advice, it places
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 terms.toc.h,Contents,Sommaire,,
 glossary.verdict,"OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.",,,NEW: translate it in reviewer_edit | 
+ticker.aria,Spot prices,,,NEW: translate it in reviewer_edit | 
+ticker.label,spot in USDT · {source} · ~15 s. Firm prices come from their own feeds and may differ.,,,NEW: translate it in reviewer_edit | keep {source} exactly as written; keep every number exactly
+ticker.delayed,delayed,,,NEW: translate it in reviewer_edit | 
+ticker.up,"{sym} {price}, up {chg}% in 24 hours",,,NEW: translate it in reviewer_edit | keep {chg} {price} {sym} exactly as written; keep every number exactly
+ticker.down,"{sym} {price}, down {chg}% in 24 hours",,,NEW: translate it in reviewer_edit | keep {chg} {price} {sym} exactly as written; keep every number exactly
+ticker.note,"{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours.",,,NEW: translate it in reviewer_edit | keep {price} {source} {sym} exactly as written
+ticker.use,use as entry,,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.warning,ask troid answers questions about prop-firm rules and sizing. Abusive messages end the session.,« demandez à troid » répond aux questions sur les règles des prop firms et le dimensionnement des positions. Les messages abusifs mettent fin à la session.,,"troid stays lowercase, in Latin letters"
 ask.ended,This session has ended. ask troid answers questions about prop-firm rules and sizing.,Cette session est terminée. « demandez à troid » répond aux questions sur les règles des prop firms et le dimensionnement des positions.,,"troid stays lowercase, in Latin letters"

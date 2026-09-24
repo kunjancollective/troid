@@ -61,6 +61,26 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
 @media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
   .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
+/* the price strip under the header (web/public/ticker.js; design handoff 2026-09-24, section 3): spot prices for
+   reference, never a signal, so no green or red. Its space is kept while it loads and when it fails, so nothing moves;
+   a price over 60 s old greys it. The prices in one row (on a phone it scrolls, with snap), the label on its own line
+   under them, so its height never depends on the prices. A symbol that is a
+   button (the desk) has a 44 px target inside the row's padding, which a scrolling row would otherwise clip. */
+.tk{display:flex;flex-wrap:wrap;align-items:center;gap:2px 18px;margin-top:12px;font-family:var(--mono);font-size:11.5px;
+  line-height:22px;color:var(--dim);transition:opacity var(--dur-slow) var(--ease-out)}
+.tk.off{visibility:hidden}.tk.stale{opacity:.55}
+.tkrow{flex:0 1 auto;min-width:0;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;margin:-11px 0;overflow-x:auto;
+  scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
+.tkrow::-webkit-scrollbar{display:none}
+.tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
+  background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}
+button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
+button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
+button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+.tkl{flex:1 1 100%;margin:0;font-size:10.5px;line-height:16px}
+.tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
+@media (prefers-reduced-motion:reduce){.tk{transition:none}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
@@ -144,6 +164,7 @@ button:disabled{opacity:.45;cursor:default}
   </div>
   <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
     <a href="/compare">compares</a></div>
+  <div class="tk off" id="tk" role="region" aria-label="Spot prices" data-source="Binance.US" data-up="{sym} {price}, up {chg}% in 24 hours" data-down="{sym} {price}, down {chg}% in 24 hours" data-note="{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours."><div class="tkrow"><span class="tki" data-sym="BTC"><b>BTC</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="ETH"><b>ETH</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="SOL"><b>SOL</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="XRP"><b>XRP</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="BNB"><b>BNB</b> <span class="p">—</span> <span class="c"></span></span></div><p class="tkl">spot in USDT · Binance.US · ~15 s. Firm prices come from their own feeds and may differ. <span class="tkd">delayed</span></p></div><script src="/ticker.js" defer></script>
 </div></header>
 
 <div class="wrap">

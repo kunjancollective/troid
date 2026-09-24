@@ -294,6 +294,7 @@ def render_ledger(T, live):
 .tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
 {site_build.head_extra(T, "ledger", live)}</head><body><div class="wrap">
 {header(T, live)}
+{site_build.ticker(T)}
 <p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</p>
 <h1>{code(T, cfg["name"])}</h1>
 <p class="lede">{T("ledger.hero.lede")}</p>

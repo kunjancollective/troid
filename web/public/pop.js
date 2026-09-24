@@ -67,6 +67,7 @@
     hide();
     b.focus();
   });
+  window.troidPop = { hide: hide };   // for a page's own button inside a note (ticker.js, "use as entry")
   // a phone fires resize while scrolling (the address bar collapses): only a new width closes it; otherwise it moves
   var lastW = document.documentElement.clientWidth;
   window.addEventListener("resize", function () {

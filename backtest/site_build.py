@@ -203,6 +203,34 @@ def mark(T):
             f'<script src="/live.js" defer></script>')
 
 
+def _ticker_spec():
+    """The symbols and source web/api/ticker.js serves, read from that file, so the strip and the API can't disagree."""
+    import re
+    js = (ROOT / "web" / "api" / "ticker.js").read_text()
+    syms = re.findall(r'\["([A-Z]+)", "[A-Z]+USDT"\]', js[js.index("const SYMBOLS"):js.index("const SOURCE")])
+    return syms, re.search(r'const SOURCE = "([^"]+)"', js).group(1)
+
+
+TICKER_SYMBOLS, TICKER_SOURCE = _ticker_spec()
+
+
+def ticker(T, desk=False):
+    """The price strip under the header (web/public/ticker.js; design handoff 2026-09-24, section 3): the symbols, a
+    label naming the source, hidden (its space kept) until /api/ticker answers. On the desk each symbol is a button
+    that opens a note with "use as entry" (pop.js); elsewhere it is text."""
+    items = []
+    for s in TICKER_SYMBOLS:
+        inner = f'<b>{s}</b> <span class="p">—</span> <span class="c"></span>'
+        items.append(f'<button type="button" class="tki" data-sym="{s}" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use">{inner}</button>'
+                     if desk else f'<span class="tki" data-sym="{s}">{inner}</span>')
+    note = (f'<div class="pop" id="tk-use" hidden><p class="tkn"></p><p><button type="button" class="linkbtn">{T("ticker.use")}</button></p></div>'
+            if desk else "")
+    return (f'<div class="tk off" id="tk" role="region" aria-label="{T.attr("ticker.aria")}" data-source="{TICKER_SOURCE}"'
+            f' data-up="{T.attr("ticker.up")}" data-down="{T.attr("ticker.down")}" data-note="{T.attr("ticker.note")}">'
+            f'<div class="tkrow">{"".join(items)}</div><p class="tkl">{T("ticker.label", source=TICKER_SOURCE)} '
+            f'<span class="tkd">{T("ticker.delayed")}</span></p></div>{note}<script src="/ticker.js" defer></script>')
+
+
 def html_attrs(T):
     return f' lang="{T.code}"' + ("" if T.code == "en" else f' dir="{T.lang["dir"]}"')
 
@@ -212,6 +240,7 @@ def common(T, page, live, preview=False):
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
             "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
+            "ticker": ticker(T, desk=page == "index"),
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,

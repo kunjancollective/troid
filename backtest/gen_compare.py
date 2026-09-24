@@ -262,6 +262,7 @@ def render_compare(T, live):
 .foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);margin-top:36px;padding-top:20px;line-height:1.8}}
 </style>{site_build.head_extra(T, "compare", live)}</head><body><div class="wrap">
 {header(T, live)}
+{site_build.ticker(T)}
 <p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.compare")}</p>
 <h1>{T("compare.hero.h1")}</h1>
 <p class="lede">{T("compare.hero.lede")}</p>

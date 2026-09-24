@@ -133,6 +133,13 @@ within troid's cap of 35% of the $Y left before your daily loss limit." / "Cut t
 it down to $B, 35% of the room left." / "Can't be sized: the reason." The firm, product and room sit under both, in mono.
 A "?" beside the badge says what the three verdicts mean.
 
+**Price strip.** Under the header on every page: BTC, ETH, SOL, XRP, BNB, the last spot price in Plex Mono and the
+24-hour change as ▲/▼ with a number in `--dim`, never green or red, which read as buy and sell. A label names the source
+and says firm prices come from their own feeds. Over 60 s old it greys and says "delayed"; when it fails it is hidden
+with its space kept, never an error. One row on a wide screen, a row that scrolls with snap on a phone, no motion. On
+the desk a symbol offers "use as entry", a convenience that fills the entry field; the stop, the size and the trade stay
+the trader's. `web/api/ticker.js`, `web/public/ticker.js`.
+
 **Term and popover.** A "?" (16 px, a 44 px touch target) beside a term opens one or two plain sentences, then the formula
 where there is one, in troid's voice. A tooltip shows after 300 ms of hover and at once on keyboard focus, and toggles on
 a tap; a note with links (the desk's "why these 3?") opens on a click or tap only. Esc or a click elsewhere closes it;

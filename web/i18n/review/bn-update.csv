@@ -5,6 +5,13 @@ common.mark.live,troid's ledger is live: last shadow run {time} UTC,,,"NEW: tran
 common.mark.still,troid's ledger has had no new data since {time} UTC; its live data may be down,,,"NEW: translate it in reviewer_edit | keep {time} exactly as written; troid stays lowercase, in Latin letters"
 common.mark.unknown,troid's ledger: its live status can't be read,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 glossary.verdict,"OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.",,,NEW: translate it in reviewer_edit | 
+ticker.aria,Spot prices,,,NEW: translate it in reviewer_edit | 
+ticker.label,spot in USDT · {source} · ~15 s. Firm prices come from their own feeds and may differ.,,,NEW: translate it in reviewer_edit | keep {source} exactly as written; keep every number exactly
+ticker.delayed,delayed,,,NEW: translate it in reviewer_edit | 
+ticker.up,"{sym} {price}, up {chg}% in 24 hours",,,NEW: translate it in reviewer_edit | keep {chg} {price} {sym} exactly as written; keep every number exactly
+ticker.down,"{sym} {price}, down {chg}% in 24 hours",,,NEW: translate it in reviewer_edit | keep {chg} {price} {sym} exactly as written; keep every number exactly
+ticker.note,"{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours.",,,NEW: translate it in reviewer_edit | keep {price} {source} {sym} exactly as written
+ticker.use,use as entry,,,NEW: translate it in reviewer_edit | 
 og.title,troid — the droid does the prop-firm math. You make the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.tagline,The droid does the prop-firm math. You make the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
