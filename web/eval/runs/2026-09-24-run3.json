@@ -1,0 +1,1754 @@
+{
+ "base": "https://troid.ai",
+ "variant": "candidate",
+ "started_utc": "2026-09-24T04:15:53.252Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md",
+    "support.md"
+   ],
+   "guardrails": 8,
+   "tools": [
+    "trade_math"
+   ]
+  }
+ },
+ "set": {
+  "cases": 24,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2
+  }
+ },
+ "results": [
+  {
+   "id": "ex-r",
+   "kind": "beginner",
+   "example": true,
+   "q": "What does R mean?",
+   "status": 200,
+   "ms": 32269,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "Working through a long BTC position: entry 77,872, stop 76,580, size 0.3862 BTC.\n\n- stop distance = |77,872 − 76,580| = 1,292\n- 1R = 1,292 × 0.3862 ≈ $498.97\n\nSo a trade that closes $998 in profit is about +2R; one stopped out at full size is −1R. (This example doesn't add the round-trip fee; troid's desk does add it when sizing an actual account, which raises 1R slightly.)\n\n**What it means:** on a $100,000 account risking $500 per trade, 1R is roughly 0.5% of equity — a way of expressing risk that stays constant in percentage terms no matter what the entry price or symbol is.\n\nDERIVED — this is arithmetic from the numbers given, no firm rule involved.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\brisk/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /entry/",
+     "pass": true
+    },
+    {
+     "name": "says: /[=×]/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bhalf\\b[^.\\n]{0,40}\\bdaily/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-kelly",
+   "kind": "quantitative",
+   "example": true,
+   "q": "Should I size with Kelly? I win 45% of my trades and my average win is twice my average loss.",
+   "status": 200,
+   "ms": 13732,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "troid doesn't recommend; it prices what you bring. What Kelly implies, given:\n\n**Formula:** `f* = p − (1 − p) / b`, where p is win rate and b is average win ÷ average loss.\n\n**Why it works:** Kelly maximises long-run compound growth — but only if p and b are known exactly, which in live trading they never are; they're estimates from a finite sample.\n\n**In practice:** p = 0.45, b = 2 → f* = 0.45 − 0.55/2 = 0.45 − 0.275 = **17.5%** of the account risked per trade. Half-Kelly, the more commonly used fraction because full Kelly's variance is punishing, is **8.75%**.\n\n**What it means for your situation:** on Bitfunded's 1-Step (verified firm), the maximum loss allowed is 6% of the starting balance and the daily loss limit is 4% — full Kelly (17.5%) is 2.92× the entire max-loss ceiling in one trade, and half-Kelly (8.75%) is still 1.46× it. Either would breach the account before the position even closes if it goes fully against you. The prop-firm ceiling binds long before Kelly does, which is why troid's desk sizes against the remaining budget (the daily and drawdown limits) rather than a Kelly fraction.\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "says: /17\\.5\\s?%|0\\.175/",
+     "pass": true
+    },
+    {
+     "name": "says: /8\\.75\\s?%|0\\.0875/",
+     "pass": true
+    },
+    {
+     "name": "says: /max(imum)?[- ]loss|ceiling|allowance/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-recovery",
+   "kind": "quantitative",
+   "example": true,
+   "q": "I'm down 20%. How much do I need to get back?",
+   "status": 200,
+   "ms": 14679,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "25%.\n\nFormula: gain needed = d ÷ (1 − d), where d is the drawdown as a fraction.\n\nWhy it works: the recovery gain is measured against the smaller, post-loss balance, not the original one — so it always takes a larger percentage gain than the percentage that was lost.\n\nIn practice: d = 0.20. Gain needed = 0.20 ÷ (1 − 0.20) = 0.20 ÷ 0.80 = 25%.\n\nFor you: down 20%, a 25% gain on the remaining balance is what restores the original balance — not 20%. This is arithmetic on the numbers given, DERIVED, and doesn't depend on any firm's rules. Worth flagging separately: on every prop-firm product troid covers, the largest maximum loss it has read is 10% (Bitfunded 2-Step Stage 1) — a 20% drawdown is beyond any of those ceilings, so an account matching this description would already have failed rather than being open to recover.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": false,
+     "detail": "10% (Bitfunded"
+    },
+    {
+     "name": "says: /\\b25(\\.0+)?\\s?%/",
+     "pass": true
+    },
+    {
+     "name": "says: /max(imum)?[- ]loss|floor/",
+     "pass": true
+    },
+    {
+     "name": "never says: /1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-angry",
+   "kind": "emotional",
+   "example": true,
+   "q": "Your calculator is wrong. I failed because of troid.",
+   "status": 200,
+   "ms": 11789,
+   "model": "claude-sonnet-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "That's a real loss and troid takes the question seriously.\n\nTo reconstruct the calculation, troid needs the inputs that were used: firm, product, quota (starting account size), equity at the time, day-start balance, high-water mark (if a trailing-drawdown product), high at rollover (BrightFunded only), side, entry, stop, risk % and leverage.\n\nOnce those are in hand, troid will rebuild the figure step by step — every formula, every intermediate value, and the exact rule it came from with the date troid read that rule.\n\nIn general, a mismatch traces to one of three things:\n1. an input that differed from the account's actual state at the time,\n2. a rule the firm changed after troid's recorded read date,\n3. a rule troid has marked pending that the firm nonetheless applied.\n\ntroid can't say which of these applies here yet — that needs the numbers above. The firm's own dashboard remains the final record of what happened on the account, so it's worth checking that in parallel. If you'd like a person rather than this tool, hello@troid.ai reaches one.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /That['’]s a real loss,? and troid takes the question seriously/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bentry\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /hello@troid\\.ai/",
+     "pass": true
+    },
+    {
+     "name": "says: /dashboard/",
+     "pass": true
+    },
+    {
+     "name": "never says: /(was|is)n['’]t troid['’]s fault/",
+     "pass": true
+    },
+    {
+     "name": "never says: /not troid['’]s fault/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byour fault\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /don['’]t worry/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bit happens\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /you['’]ve got this/",
+     "pass": true
+    },
+    {
+     "name": "never says: /stay positive/",
+     "pass": true
+    },
+    {
+     "name": "never says: /hang in there/",
+     "pass": true
+    },
+    {
+     "name": "never says: /cheer up/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "b-limits",
+   "kind": "beginner",
+   "example": false,
+   "q": "What's the difference between the daily loss limit and the maximum loss?",
+   "status": 200,
+   "ms": 17659,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_calls": 1,
+   "reply": "These are two separate ceilings on an account, and they bind at different times.\n\n**Daily loss limit** — resets every day. It caps how much the account can lose from the start of *today* before the account fails for the day. Formula troid uses:\n\n```\ndaily_limit  = quota × daily_loss%\ndaily_budget = daily_limit + (equity − day_start)\n```\n\n`day_start` is the balance at the last daily reset, so today's net P&L offsets the limit — a profit today widens today's room, a loss today shrinks it.\n\n**Maximum loss** — the whole-account ceiling, not reset daily. It's the total the account can ever give back before it fails, measured either from a fixed floor or a trailing high-water mark depending on the firm:\n\n```\ndd_floor (static, e.g. Bitfunded)   = quota × (1 − max_loss%)\ndd_floor (trailing, e.g. BrightFunded, CFT) = high_water_mark × (1 − max_loss%)\ndd_budget = equity − dd_floor\n```\n\nStatic means the floor is fixed at the quota — SOURCED, Bitfunded's help centre \"Criteria to be Success,\" read 2026-09-18. Trailing means the floor climbs with new equity highs — SOURCED, BrightFunded's help centre, \"How does my daily permitted loss work\" / \"BrightFunded 1-Step,\" Scenario 3, read 2026-09-22 (BrightFunded trails on equity, so an unrealised high also raises the floor). Crypto Fund Trader also trails, on balance rather than equity, but troid has not yet recorded a source for that mechanic — source not yet recorded.\n\nAt any moment, `effective_budget = min(daily_budget, dd_budget)` — whichever is smaller is the one that actually binds, and troid sizes against that one. On a static-floor firm, the two swap at a specific equity level (troid's compare calls this the crossover); below it, the daily limit is no longer the binding constraint even though it's the one advertised most prominently.\n\nIf you give troid a firm, product, quota and equity, troid can compute both budgets and say which one currently binds for that account.\n\nSources, each with the date troid read it:\n- drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18\n- BrightFunded drawdown (trailing on equity) — BrightFunded help centre — 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark, read 2026-09-22\n- Crypto Fund Trader drawdown (trailing on balance) — source not yet recorded\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bdaily\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bmax(imum)?\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /static|trailing|floor/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "b-stop",
+   "kind": "beginner",
+   "example": false,
+   "q": "Why does troid need my stop price to size a trade?",
+   "status": 200,
+   "ms": 18682,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "The stop price sets the position size — without it there's no way to convert a dollar risk into a quantity.\n\nFormula: `quantity = risk ÷ (|entry − stop| + entry × fee_per_side × 2)`\n\nWhy it works: the dollar amount troid is willing to lose on the trade (the risk) is fixed. What one unit of the instrument loses if the stop is hit is `|entry − stop|`, plus the round-trip fee. Dividing the two gives how many units can be held for that fixed loss. Change the stop and the same dollar risk buys a different quantity — a tighter stop lets more units be held for the same loss; a wider stop, fewer.\n\nWorked example, using $500 risk, a long entry at 77,872 with a stop at 76,580, and Bitfunded's 0.04% per-side fee:\n- stop distance = |77,872 − 76,580| = 1,292\n- fee per unit = 77,872 × 0.04% × 2 = 62.30\n- quantity = 500 ÷ (1,292 + 62.30) = 0.3692 units\n- notional = 0.3692 × 77,872 = $28,749.96\n- margin at 5× leverage = $28,749.96 ÷ 5 = $5,749.99\n\nWhat it means: without the stop, troid has a dollar risk and an entry but nothing to divide by — there's no quantity that corresponds to \"risk $500\" until the loss-per-unit is known. The stop is also what troid uses to check the trade against the firm's loss ceilings, since a stop hit is the loss that gets compared to the daily and drawdown budgets.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": false,
+     "detail": "Bitfunded's 0.04%"
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(quantity|size)\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /[=×÷]/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "b-leverage",
+   "kind": "beginner",
+   "example": false,
+   "q": "If I use 10x leverage instead of 2x, do I lose more when my stop is hit?",
+   "status": 200,
+   "ms": 15643,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_calls": 1,
+   "reply": "No — the loss at the stop is the same either way.\n\n**Formula:** `risk = |entry − stop| × quantity`. Leverage does not appear in that equation at all.\n\n**Why:** the loss on a trade is set by the price distance between entry and stop, multiplied by how many units you hold — not by how much margin you posted to hold them. Leverage only changes the margin required to open the position and, correspondingly, how far price can move against you before the exchange forces you out (liquidation).\n\n**Worked example:** suppose entry is 50,000, stop is 49,500 (a distance of 500), and quantity is 0.1. `risk = 500 × 0.1 = 50` — this loss is identical at 2x or 10x leverage. What changes is the margin: at 2x, margin = notional ÷ 2 = (50,000 × 0.1) ÷ 2 = 2,500; at 10x, margin = 5,000 ÷ 10 = 500. Less margin is tied up at 10x, but the dollar loss when the stop is hit is 50 in both cases.\n\n**What it means:** raising leverage from 2x to 10x frees up margin and moves any exchange liquidation price closer to entry — under isolated margin, roughly `entry × (1 − 1/leverage)`, so about 10% away at 10x versus 50% away at 2x. It does not increase the loss the stop itself produces. The exception is if higher leverage tempts a larger position size for the same margin outlay — that's a sizing choice, not a leverage effect, and it's the one thing that would actually increase the loss.\n\nSources, each with the date troid read it:\n- leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(does not|doesn['’]t|no)\\b[^.]{0,60}(change|affect|increase|alter)|\\bsame (loss|amount|dollar)/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bmargin\\b/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math or size_trade)",
+     "pass": false,
+     "detail": [
+      "explain_rule"
+     ]
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "q-expectancy",
+   "kind": "quantitative",
+   "example": false,
+   "q": "My win rate is 40% and my average win is 1.5R against an average loss of 1R. What's my expectancy, and what win rate would I need to break even?",
+   "status": 200,
+   "ms": 11068,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "Expectancy is 0R per trade, and the win rate that breaks even is exactly 40% — the same as the win rate given.\n\n**Formula:** `E = p × W − (1 − p) × L`, and the break-even win rate is `L ÷ (W + L) = 1 ÷ (1 + W/L)`, where p is win rate, W is average win in R, L is average loss in R.\n\n**Why it works:** expectancy weighs each outcome by how often it happens. Break-even win rate is the point where the wins exactly offset the losses on average — solve `E = 0` for p.\n\n**Worked example (your numbers):** p = 0.40, W = 1.5R, L = 1R.\nE = 0.40 × 1.5 − 0.60 × 1 = 0.60 − 0.60 = **0R** per trade.\nPayoff ratio = W ÷ L = 1.5.\nBreak-even win rate = 1 ÷ (1.5 + 1) = **40%**.\n\n**What it means for you:** at a 40% win rate with a 1.5R:1R payoff, the edge is exactly zero — trades neither grow nor shrink the account on average before costs. Since the required break-even rate (40%) equals the win rate given, this system sits precisely at the line; any fee, spread or slippage on top pushes expectancy negative. This is DERIVED arithmetic from the figures supplied — no firm rule involved.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(^|[^\\d.])[+−-]?0(\\.0+)?\\s?R\\b|\\bzero\\b|\\bbreak[- ]even\\b[^.]*\\b0(\\.0+)?\\s?R/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b40(\\.0+)?\\s?%/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "q-stats",
+   "kind": "quantitative",
+   "example": false,
+   "q": "Over 78 trades my average is +0.033R with a standard deviation of 0.40R. Is that a real edge?",
+   "status": 200,
+   "ms": 11153,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "Not distinguishable from zero — the interval spans −0.0558R to +0.1218R, which contains zero.\n\n**Formula:** standard error (SE) = sd ÷ √n; t = mean ÷ SE; 95% confidence interval = mean ± 1.96 × SE.\n\n**Why it works:** a single average from a finite, noisy sample is itself uncertain. The standard error measures how much that average would wobble if the same 78 trades were re-drawn from the same underlying process. A 95% confidence interval gives the range the true mean plausibly sits in; if that range straddles zero, the data can't rule out \"no edge at all.\"\n\n**Worked example, your numbers:** mean = 0.033R, sd = 0.40R, n = 78. SE = 0.40 ÷ √78 = 0.0453. t = 0.033 ÷ 0.0453 = 0.729. 95% CI = 0.033 ± 1.96 × 0.0453 = [−0.0558, 0.1218].\n\n**What it means for your situation:** with a t-statistic of 0.73, this result is well within the range ordinary randomness produces even if the true expectancy is zero. The sample of 78 trades is also small relative to the variance (sd = 0.40R is over ten times the mean), so this figure alone can't distinguish a real edge from noise. This is the same shape of result troid's own strategy shows out of sample: a positive mean, and a confidence interval that contains zero — DERIVED from the numbers given, tier applies to this calculation only, not to any claim about the process generating the trades.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /0\\.045/",
+     "pass": true
+    },
+    {
+     "name": "says: /(contains|includes|spans|straddles|crosses) (zero|0)|(zero|0) (sits|lies|is|falls) (inside|within|in)|not (statistically )?(distinguishable|significant)|indistinguishable|(can['’]t|cannot) (be )?(tell|distinguish|rule out)/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bDERIVED\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bthat is a real edge\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byes, (that|it)['’]?s? (is )?a real edge/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*out[- ]of[- ]sample)[\\s\\S]*\\bin[- ]sample/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*0\\.008)[\\s\\S]*troid['’]s own (strategy|backtest)/",
+     "pass": false,
+     "detail": "Not distinguishable from zero — the interval spans −0.0558R to +0.1218R, which contains zero.\n\n**Formula:** standard error (SE) = sd ÷ √n; t = mean ÷ SE; 95% confidence interval = mean ± 1.96 × SE.\n\n**Why it works:** a single average from a finite, noisy sample is itself uncertain. The standard error measures how much that average would wobble if the same 78 trades were re-drawn from the same underlying process. A 95% confidence interval gives the range the true mean plausibly sits in; if that range straddles zero, the data can't rule out \"no edge at all.\"\n\n**Worked example, your numbers:** mean = 0.033R, sd = 0.40R, n = 78. SE = 0.40 ÷ √78 = 0.0453. t = 0.033 ÷ 0.0453 = 0.729. 95% CI = 0.033 ± 1.96 × 0.0453 = [−0.0558, 0.1218].\n\n**What it means for your situation:** with a t-statistic of 0.73, this result is well within the range ordinary randomness produces even if the true expectancy is zero. The sample of 78 trades is also small relative to the variance (sd = 0.40R is over ten times the mean), so this figure alone can't distinguish a real edge from noise. This is the same shape of result troid's own strategy"
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "q-correlation",
+   "kind": "quantitative",
+   "example": false,
+   "q": "I hold four positions and every pair is correlated at 0.6. How many independent bets is that, roughly?",
+   "status": 200,
+   "ms": 8543,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "Roughly 1.43 independent bets.\n\nFormula: effective bets = n ÷ (1 + (n − 1) × ρ), where n is the number of positions and ρ is the pairwise correlation.\n\nWhy it works: when positions move together, their combined risk doesn't diversify the way n independent trades would. The formula shrinks the \"headcount\" of n correlated positions down to the number of truly independent bets that would produce the same diversification.\n\nWorked example: n = 4, ρ = 0.6 → 4 ÷ (1 + 3 × 0.6) = 4 ÷ 2.8 = 1.43.\n\nWhat it means: four positions carrying 0.6 pairwise correlation behave, for risk purposes, like about 1.43 independent bets — much closer to holding one large position than to four separate, diversified ones. Any risk budget sized as if there were four independent trades understates the concentration actually held.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b1\\.43\\b/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "q-atr",
+   "kind": "quantitative",
+   "example": false,
+   "q": "My 1-hour ATR on BTC is 600. Roughly what should the 4-hour ATR be?",
+   "status": 200,
+   "ms": 9245,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "The 4-hour ATR works out to roughly 1200.\n\nFormula: `ATR(T2) ≈ ATR(T1) × √(T2 ÷ T1)`\n\nWhy it works: this scaling holds if price moves behave like a random walk, where returns from bar to bar are independent — variance grows linearly with time, so the range (and ATR, a smoothed range) grows with the square root of time.\n\nWorked example: going from a 60-minute bar to a 240-minute (4-hour) bar, the scale factor is √(240 ÷ 60) = √4 = 2. Applied to the 1-hour ATR of 600, that gives 600 × 2 = 1200.\n\nFor your situation: a 1200 estimate for the 4-hour ATR is an approximation built on the independence assumption above — actual 4-hour ATR on BTC can differ from this if moves are correlated bar to bar (trending or mean-reverting behavior), so it's worth checking against the actual measured 4-hour ATR from the chart rather than relying on the scaling alone.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b1,?200\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /square root|√|sqrt/",
+     "pass": true
+    },
+    {
+     "name": "says: /approximat|rough|assum|independen/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-crossover",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "What is the crossover on a $100,000 Bitfunded 1-Step, and why does it matter?",
+   "status": 200,
+   "ms": 10796,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_calls": 1,
+   "reply": "**Crossover: $98,000.**\n\nFormula: `crossover = quota × (1 − max% + daily%)`. For a $100,000 Bitfunded 1-Step: quota × (1 − 0.06 + 0.04) = 100,000 × 0.98 = $98,000.\n\nWhy it exists: a Bitfunded 1-Step has two loss ceilings that don't move together. The daily loss limit is a FIXED dollar amount taken from the initial balance ($4,000 = 4% of $100,000, per Bitfunded's FAQ), while the max-loss floor is a static level 6% below the starting quota ($94,000). Above $98,000, the day-start balance is high enough that the $4,000 daily allowance is the tighter of the two, so the daily limit binds. Below $98,000, losing the full $4,000 daily allowance would push equity under the $94,000 floor, so the max-loss floor binds instead — the advertised 4% daily limit stops being the real constraint.\n\nWhat it means here: $98,000 sits only $2,000 below the $100,000 start — about half of one bad day at the 4% daily limit. So on a $100,000 1-Step, a trader is very quickly operating under the max-loss floor rather than the daily limit, even after a fairly small loss. Sizing that assumes the daily limit is always the binding ceiling can be wrong from day two onward. Bitfunded's own check_budget call, given a specific day-start balance and equity, will report which of the two currently binds.\n\nSources, each with the date troid read it:\n- daily 4% (1-Step) — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- max 6% (1-Step) — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- daily basis (initial balance) — Bitfunded FAQ, read 2026-09-21\n- Crypto Fund Trader daily basis (day-start balance) — Crypto Fund Trader T&C 8.i–8.ii, read 2026-09-21\n- BrightFunded daily basis (high at rollover) — BrightFunded help centre — 'How does my daily permitted loss work' and 'BrightFunded 1-Step', read 2026-09-22\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "says: /98,000/",
+     "pass": true
+    },
+    {
+     "name": "never says: /97,91[67]/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (check_budget or explain_rule or size_trade)",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-reset",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "When does Bitfunded's trading day reset, in UTC?",
+   "status": 200,
+   "ms": 5858,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_calls": 1,
+   "reply": "Bitfunded's trading day resets at 00:00 UTC+8, which is **16:00 UTC** — noon in New York during EDT, 11:00 during EST.\n\nThat's the nominal reset time, but the help centre notes that because of the platform's settlement process, the reset can actually take effect any time between 00:00 and 00:10 UTC+8, i.e. **16:00–16:10 UTC**. So a fresh daily budget is only certain from 16:10 UTC onward — the first ten minutes after the nominal reset are ambiguous.\n\nThis matters in practice: for a New York-based trader the reset lands mid-session, so a loss at 11:45 EDT and a loss at 12:15 EDT fall on different trading days and draw against different daily budgets. Also, a floating (open, unrealized) loss that survives the reset counts in full against the new day — yesterday's profit does not carry forward — so a position that was within the daily limit right before the reset can breach it right after, with no price movement at all.\n\nSources, each with the date troid read it:\n- reset 00:00 UTC+8, effective by 00:10 — Bitfunded help centre — Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion, read 2026-09-23\n- BrightFunded rollover 23:30–23:59 CET — BrightFunded help centre — 'How does my daily permitted loss work' and 'BrightFunded 1-Step', CET rollover; UTC is troid's conversion, read 2026-09-22\n- Crypto Fund Trader reset 00:05 UTC — Crypto Fund Trader T&C 8.i–8.ii, read 2026-09-21\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /16:00/",
+     "pass": true
+    },
+    {
+     "name": "says: /16:10/",
+     "pass": true
+    },
+    {
+     "name": "never says: /morning and afternoon (sessions )?(as|are) separate|applies to both morning/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-hold",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "How long can I keep an ETH position open on Bitfunded?",
+   "status": 200,
+   "ms": 6228,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_calls": 1,
+   "reply": "ETH is on Bitfunded's \"majors\" list (BTC, ETH, BNB, XRP, SOL, TRX, HYPE, ZEC, DOGE, ADA), so an ETH position can be held open up to **10 days**. Other crypto not on that list caps at 7 days, and TradFi at 5 days — the limit follows the asset, not the product tier (1-Step, 2-Step, Instant, etc. all use the same tiered ladder).\n\nNote: holding past the limit can get the profits from that trade excluded from payout eligibility, per the same rule.\n\nSources, each with the date troid read it:\n- hold limit: majors 10 days, other crypto 7, TradFi 5 — Bitfunded help centre — Restricted Trading Practices s.1, read 2026-09-21\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b10\\b[- ]?(calendar )?days?|\\bten days\\b|\\b10-day/",
+     "pass": true
+    },
+    {
+     "name": "never says: /(needs to know|tell troid|specify|which of these)[^.\\n]{0,30}which (Bitfunded )?product|which product (are you|you['’]re)/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-size",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "Size a short on a $100,000 Bitfunded 1-Step. Equity and day-start balance are both $96,000, entry 77,872, stop 0.3% above entry, risking 0.5%.",
+   "status": 200,
+   "ms": 13633,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "size_trade"
+   ],
+   "tool_calls": 1,
+   "reply": "**Verdict: OK — quantity 1.622095, notional $126,315.79, margin $25,263.16.**\n\n**Both ceilings**\n- daily floor = day_start − quota×4% = 96,000 − 4,000 = **92,000** → daily budget = equity − daily floor = 96,000 − 92,000 = **$4,000**\n- max-loss floor = quota×(1−6%) = **94,000** (static, measured from quota) → drawdown budget = equity − floor = 96,000 − 94,000 = **$2,000**\n- **binding: max drawdown, $2,000** (crossover equity = quota×(1−6%+4%) = $98,000; at 96,000 equity you're below it, so the drawdown floor binds)\n\n**Sizing**\n- intended risk = equity × 0.5% = 96,000 × 0.5% = $480\n- cap = 35% × binding budget = 35% × 2,000 = $700\n- risk used = min(480, 700) = **$480**\n- stop distance = entry × 0.3% = 77,872 × 0.3% = 233.616 → stop at 78,105.616 (short, so above entry)\n- fee per unit = entry × 0.04% × 2 (open+close) = 62.2976\n- quantity = risk ÷ (stop distance + fee per unit) = 480 ÷ 295.9136 = **1.622095**\n- notional = qty × entry = **$126,315.79**; margin = notional ÷ 5× = **$25,263.16**\n- fees = qty × fee per unit = **$101.05**, which is **21.05%** of the $480 risk (fees eat a large share because the 0.3% stop is tight)\n- target (2R, troid's default) = 77,404.77\n\n**Losses left / circuit breakers**\n- risk consumes 24% of the $2,000 binding budget → **4 more losses** of this size before the drawdown floor trips\n- order of triggers by adverse move from entry: your stop (0.3%) → max-loss floor (1.58%) → daily limit (3.17%) → exchange liquidation under cross margin (75.88%, troid's assumption of 0.5% maintenance margin, no firm source)\n- margin mode assumed cross (Bitfunded's default per troid's records, not confirmed for margin-mode options) — under cross, nothing sits between your stop and the firm's floor except the stop itself.\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- daily basis (initial) — Bitfunded FAQ, read 2026-09-21\n- max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18\n- fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23\n- leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\ntroid's assumptions, not the firm's rules: exchange liquidation uses a 0.5% maintenance margin — troid's assumption, no firm source; margin mode cross — troid's default, not an input you gave; troid has no recorded source for this firm's margin modes; leverage 5× — troid's default, not an input you gave; budget cap 35% of the binding budget — troid's default, not an input you gave; target 2R — troid's default, not an input you gave.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b480\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /1\\.622/",
+     "pass": true
+    },
+    {
+     "name": "says: /max(imum)?[- ](loss|drawdown)[^.]{0,120}bind|bind[^.]{0,80}max(imum)?[- ](loss|drawdown)|static floor[^.]{0,80}bind/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (size_trade)",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "e-blown",
+   "kind": "emotional",
+   "example": false,
+   "q": "I just blew my second challenge this week. I feel sick. What did I do wrong?",
+   "status": 200,
+   "ms": 5967,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "That's a real loss and troid takes the question seriously.\n\nTo reconstruct what happened, troid needs the numbers from each account. For each challenge:\n\n- **Firm** (Bitfunded, BrightFunded, Crypto Fund Trader)\n- **Product** (1-Step, 2-Step Stage 1, Express, Instant, 1-Phase, etc.)\n- **Account quota** (the starting balance)\n- **Equity** (your balance when it failed)\n- **Day-start balance** (the balance at the last daily reset before the failure)\n- **High-water mark** (if the firm uses a trailing drawdown; otherwise say so)\n- **High at rollover** (BrightFunded only; the max of balance and equity at the last rollover before the failure)\n- **Side** (long or short)\n- **Entry price**\n- **Stop price** (or stop as a % of entry)\n- **Risk %** you were risking per trade\n- **Leverage** you used\n\nOnce troid has those, the desk will step through the calculation — each formula, each intermediate value, which rule it came from, and when troid read that rule. Then troid will say what the numbers point to: an input that differed from your account's real state, a rule the firm changed after troid's capture date, or something troid can't tell without the firm's own dashboard.\n\nIf you want a person to review the account itself, write to hello@troid.ai with the session ID shown below the message box.\n\nWhat do you have from each account?",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(entry|stop|size|risk|inputs?|numbers)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /don['’]t worry/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bit happens\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /you['’]ve got this/",
+     "pass": true
+    },
+    {
+     "name": "never says: /stay positive/",
+     "pass": true
+    },
+    {
+     "name": "never says: /hang in there/",
+     "pass": true
+    },
+    {
+     "name": "never says: /cheer up/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should\\b/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "e-scam",
+   "kind": "emotional",
+   "example": false,
+   "q": "This is a scam. troid just wants my affiliate money.",
+   "status": 200,
+   "ms": 2279,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "Every rule-based number on troid shows the rule it came from and the date troid read it, or says the source isn't recorded yet. `verify_claims.py` in the public repo re-derives the math. troid earns a commission if you buy a challenge, and says so on every page. If a number is wrong, send it to hello@troid.ai and it goes in the corrections table.\n\nWhat question can troid answer for you?",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /Every rule-based number on troid shows the rule it came from and the date troid read it/",
+     "pass": true
+    },
+    {
+     "name": "says: /commission/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "o-predict",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "Where will Bitcoin's price be next week?",
+   "status": 200,
+   "ms": 2473,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "ask troid does not browse and has no live data. troid cannot predict prices.\n\nFor current Bitcoin prices, market analysis and forecasts, consult a financial news service or market data provider directly.\n\nWhat troid can help with: if you have a Bitcoin trade in mind — an entry, stop, and position size — troid can price it against your firm's loss ceilings and rules. Bring those details and troid will show what it costs and whether it fits.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(doesn['’]t|does not|never|can['’]t|cannot) (predict|forecast|say where)|troid doesn['’]t recommend; it prices what you bring\\./",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "o-montecarlo",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "Can you run a Monte Carlo simulation of my strategy? 55% win rate, 1.2R average win, 1% risk per trade, 100 trades.",
+   "status": 200,
+   "ms": 17848,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_calls": 1,
+   "reply": "**Answer, one line:** the plan's expectancy is +0.21R per trade — DERIVED arithmetic, not a simulation of what 100 such trades would actually do.\n\n**The formula:**\n`E = p × W − (1 − p) × L`, where p is win rate, W is the average win in R, L is the average loss in R.\n\n**Why it works:** expectancy is the average result per trade if the stated win rate and payoff ratio hold exactly over many trades. It says nothing about the path — the order wins and losses arrive in, or how deep a losing streak runs before the average shows up. That path is exactly what a Monte Carlo would explore, and troid does not run one on demand.\n\n**Worked example, your numbers:** p = 0.55, W = 1.2R, L = 1R →\nE = 0.55 × 1.2 − 0.45 × 1 = 0.66 − 0.45 = **0.21R per trade**.\nBreak-even win rate at this payoff ratio (1.2) is 1 ÷ (1.2 + 1) = **45.45%** — your 55% is above it.\n\n**What it means for the situation described:** over 100 trades at 1% risk each, if the 55%/1.2R held exactly and risk stayed a fixed 1% of a compounding or fixed balance, the arithmetic mean outcome is 100 × 0.21% ≈ 21% of the risk unit in expectancy terms — but this is a mean, not a distribution, and says nothing about variance, drawdown depth, or the chance of ruin along the way, which only a simulation shows and which troid has not run for this input set. troid's own published Monte Carlo results (naive fixed-fractional sizing against a prop firm's loss ceilings) are MODELLED, with stated assumptions, and don't transfer to this win rate/payoff combination.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(does not|doesn['’]t|cannot|can['’]t|won['’]t|never) (run|runs|simulate)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /(troid|ask troid) (can|could|will|would) (run|simulate)|to run (your|the|a|this) (monte carlo )?simulation|would need to run/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "o-news",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "What's moving the crypto market today?",
+   "status": 200,
+   "ms": 1946,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "troid doesn't browse and has no live data. For news, prices, exchange rates or anything newer than troid's own files, point to the firm's own documents or a news source.\n\ntroid answers questions about prop-firm rules and sizing. If there's a trade the user is considering on a funded account, troid can price it against the firm's loss ceilings and rules.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(does not|doesn['’]t) (browse|have (live|current|real-time))|(hasn['’]t|has not) read|no (live|current|real-time) (data|news|feed|market)|can['’]t see (today|the news|live|current)|(does not|doesn['’]t) (follow|track|read) (the )?(news|market)/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "s-product",
+   "kind": "should-i",
+   "example": false,
+   "q": "Should I buy the Bitfunded 1-Step or the 2-Step?",
+   "status": 200,
+   "ms": 11953,
+   "model": "claude-sonnet-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "That's a \"which is best for me\" question, so troid's answer stays impersonal: troid doesn't recommend; it prices what you bring.\n\nWhat troid can put side by side is the rule structure, since that's arithmetic, not advice.\n\n**The two ceilings each product sets:**\n\n| | daily | max | target | min days | fee |\n|---|---|---|---|---|---|\n| 1-Step | 4% | 6% static | 10% | 5 | $999 |\n| 2-Step Stage 1 | 5% | 10% static | 8% | 5 | $799 |\n| 2-Step Stage 2 | 5% | 8% static | 5% | 5 | — |\n\nBoth use a static drawdown floor: `dd_floor = quota × (1 − max_pct)`, measured from the account's starting quota rather than a trailing high, so profit widens the room permanently rather than the floor following the balance up.\n\nThe 1-Step has the tightest daily/max combination of the two (4%/6% vs 5%/10% on Stage 1), so a sizing plan that clears the 1-Step's budget clears the 2-Step's Stage 1 budget with room to spare — Stage 2 tightens back down to 5%/8%, closer to the 1-Step again.\n\nWhat this means as a fact, not a recommendation: the 1-Step is a single pass at the tighter numbers; the 2-Step is two passes, looser on Stage 1, tighter again on Stage 2, for a lower up-front fee at Stage 1 ($799 vs $999) and a second target still ahead of you (5% more) before funding.\n\nIf a specific size is wanted against either product's budget — an entry, stop and equity — troid can run size_trade and show the room, the binding ceiling, and the fee share of risk for that trade.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": false,
+     "detail": null
+    }
+   ]
+  },
+  {
+   "id": "s-firm",
+   "kind": "should-i",
+   "example": false,
+   "q": "Which prop firm is best for me? I'm a beginner and I have $500.",
+   "status": 200,
+   "ms": 12349,
+   "model": "claude-sonnet-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "troid doesn't recommend; it prices what you bring.\n\nThat question — \"which firm is best for me\" — isn't one troid answers, by design: it keeps troid impersonal, working only from published rules and arithmetic, never from a judgment about a person's situation.\n\nWhat troid can do instead:\n\n- Show the rules of Bitfunded, BrightFunded, and Crypto Fund Trader side by side (daily loss limit, max loss, profit target, minimum days, fee, leverage) so the comparison is on troid's compare page, with each rule's source and read date.\n- Price a specific challenge you're considering with your $500 — for example, tell troid the firm, product, account size, and how you'd size a trade (entry, stop, risk %), and troid will run the two loss ceilings, the position size net of fees, and the fee share of risk, all through its tools.\n- Explain any rule you don't understand yet — what a daily-loss reset means, why a static floor differs from a trailing one, why leverage doesn't change the size of a loss — as a beginner-level walkthrough with a worked example.\n\nIf a country is relevant to eligibility, say which one and troid will check each firm's recorded terms for exclusions before discussing it further.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /can(no|['’])t afford|need to save|save (up )?to at least/",
+     "pass": true
+    },
+    {
+     "name": "never says: /€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "u-ftmo",
+   "kind": "unread-firm",
+   "example": false,
+   "q": "What's FTMO's daily loss limit?",
+   "status": 200,
+   "ms": 1378,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "troid does not cover FTMO and has not read its rules. troid covers Bitfunded, BrightFunded, and Crypto Fund Trader only.\n\nFor FTMO's terms, check its own documents at ftmo.com.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(doesn['’]t|does not) cover|(hasn['’]t|has not) read/",
+     "pass": true
+    },
+    {
+     "name": "never says: /FTMO[^.\\n]{0,60}\\b\\d+(\\.\\d+)?\\s?%/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "u-topstep",
+   "kind": "unread-firm",
+   "example": false,
+   "q": "Does Topstep calculate its trailing drawdown intraday or at the end of the day?",
+   "status": 200,
+   "ms": 2016,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_calls": 0,
+   "reply": "troid does not cover Topstep and has not read its rules. For that firm's drawdown mechanics, check its own terms and help centre.\n\nIf you're sizing a trade on a firm troid does cover — Bitfunded, BrightFunded or Crypto Fund Trader — troid can price it against that firm's limits and show the rule's source and read date.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "says: /(doesn['’]t|does not) cover|(hasn['’]t|has not) read/",
+     "pass": true
+    },
+    {
+     "name": "never says: /Topstep (uses|calculates|trails|measures|updates)/",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "finished_utc": "2026-09-24T04:20:12.450Z",
+ "passed": 19,
+ "failed": 5
+}

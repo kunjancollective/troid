@@ -37,7 +37,7 @@ const REFUSAL = new RegExp(SET.refusal, "i");
 // A figure, as the service tests for one: a number standing on its own (4%, $4,000, 16:00), not a digit inside a name
 // (1step, 2step_s1, 1R, 1-Step, Stage 2).
 const FIGURE = /(?<![\p{L}\p{N}_.])\d[\d,]*(?:\.\d+)?(?![\p{L}\p{N}_])/u;
-const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bstage \d\b/gi, " "));
+const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bstage \d\b/gi, " ").replace(/^\s*\d+[.)]\s/gm, " "));
 // Judging the user's numbers instead of stating what they imply (run 1: "which is solid", "where prop-firm traders belong").
 const JUDGE = /\b(solid|healthy|great|excellent|impressive|amazing|fantastic|awesome)\b|where [^.\n]{0,40}\bbelong\b|nowhere to hide/i;
 // A read date beside a rule: "read 2026-09-23", "read 23 Sep 2026", "read on 21 September 2026".
@@ -81,6 +81,8 @@ function check(c, r, variant) {
   if (hasFigure(reply)) add("an answer with a figure ends with the note", reply.trimEnd().endsWith(NOTE), reply.slice(-120));
   add("no affiliate link or code", !/_by=|\/a\/[A-Za-z0-9]{12,}|regid=|platinum5\b/i.test(reply), null);
   if (FIRM_PCT.test(reply)) add("a firm's rule it states carries the date troid read it", READ_DATE.test(reply), (reply.match(FIRM_PCT) || [])[0]);
+  { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)['’]s (own )?(check_budget|size_trade|explain_rule|trade_math|firm_rules|default)\b/);   // run 3
+    add("troid's tools and defaults are troid's, not a firm's", !m, m && m[0]); }
   for (const rx of c.all || []) add("says: /" + rx + "/", new RegExp(rx, "i").test(reply), null);
   for (const rx of c.none || []) { const m = reply.match(new RegExp(rx, "i")); add("never says: /" + rx + "/", !m, m && m[0]); }
   if (c.refusal) add("gives support.md section 4 word for word", REFUSAL.test(reply), null);

@@ -150,9 +150,9 @@ const GUARDRAILS = [
 const CANDIDATE_GUARDRAILS = [
   "Teach as troid's character sections in TROID.md say: a mathematical answer gives the answer first, in one line, then the formula, why it works, a worked example with numbers (the user's own where they gave them), and what it means for the user, stated as a fact about their situation and never as advice. Write the formula out every time, even when a tool computed the numbers. For a why or what question, the one-line answer is the idea; its numbers belong in the worked example. A beginner gets every term defined; a professional who asks to skip ahead gets the short form.",
   "Compute every figure through a tool, the one-step ones too: trade_math for arithmetic that needs no firm rule (an R-multiple, a position size and its margin, expectancy and the break-even win rate, Kelly, the gain needed to recover a drawdown, fee share of risk, losses before a limit, a capped budget after n losses, a standard error and confidence interval, ATR on another timeframe, the effective number of independent bets); check_budget or size_trade for a firm's limits on an account; explain_rule for what a firm's rule is and why it matters. A worked example is arithmetic too: compute its figures through trade_math even when troid chooses the numbers. A stop given as a percent goes to size_trade as stop_pct: never work out a stop price yourself. A figure the user gave, repeated back, needs no tool.",
-  "Answer a question about a firm's rule through explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it.",
+  "Answer a question about a firm's rule through firm_rules, explain_rule, check_budget, size_trade or check_compliance, so the service writes the rule's source and the date troid read it under the answer. TROID.md's list of rules is a summary, not their source. Every firm rule stated anywhere carries the date troid read it: when a worked example uses one (a fee, a maximum loss), pass firm and product to trade_math — firm \"all\" for the largest maximum loss troid has read — and never type a firm's rule into a calculation.",
   "When troid's own strategy comes up, its out-of-sample result comes first; the in-sample figure is the best of about 30 configurations and never stands alone.",
-  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block.",
+  "When a tool result carries sources or a tier, the service writes the sources and the tier under the answer: do not write them yourself. When no tool result does, write them yourself: the tier word, and each rule's document and read date from the provenance block. Say whose each thing is: a firm's rule is the firm's, with its source; a tool, a default or an assumption (check_budget, cross margin, the 35% cap) is troid's.",
   "ask troid does not run simulations, with any inputs. For a Monte Carlo question, say so; quote troid's published results in METHODOLOGY with their assumptions and their tier, MODELLED; and compute the closed-form parts through trade_math. For any other arithmetic no tool computes, say troid can't compute it exactly here.",
   "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\".",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read, and point to the firm's own documents. Never convert a currency from memory.",
@@ -166,7 +166,7 @@ const NEXT = (variant) => variant === "candidate";
 // A figure: a number standing on its own (4%, $4,000, 16:00, 0.175, 2026), not a digit inside a name (1step, 2step_s1,
 // 1R, 1-Step, Stage 2).
 const FIGURE = /(?<![\p{L}\p{N}_.])\d[\d,]*(?:\.\d+)?(?![\p{L}\p{N}_])/u;
-const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bstage \d\b/gi, " "));
+const hasFigure = (t) => FIGURE.test(String(t).replace(/\b\d-(step|phase)\b|\bstage \d\b/gi, " ").replace(/^\s*\d+[.)]\s/gm, " "));
 
 // ---------------------------------------------------------------- context
 // ---------------------------------------------------------------- languages (web/i18n)
@@ -649,6 +649,31 @@ function explainRuleSourced(a) {
     "The explanation text is troid's own, not generated from firms.json; its formulas are DERIVED, and the firm's own documents govern." });
 }
 
+// A firm product's rules as troid has recorded them, each with the document and the date troid read it: the cells of
+// troid's compare, for ask troid. A rule troid hasn't recorded is pending, never filled in (run 3, s-product: a rules
+// table with no read dates). [value key, provenance key, rule]
+const RULE_FIELDS = [["daily_pct", "daily_pct", "daily loss limit %"], ["max_pct", "max_pct", "maximum loss %"], ["target_pct", "target_pct", "profit target %"],
+  ["min_days", "min_days", "minimum trading days"], ["fee_usd", "price", "challenge fee, USD"], ["split", "split", "profit split"],
+  ["drawdown_type", "drawdown_type", "drawdown type"], ["daily_basis", "daily_basis", "daily limit basis"],
+  ["fee_per_side_pct", "fee_per_side_pct", "trading fee per side %"], ["max_leverage", "max_leverage", "leverage cap"]];
+function firm_rules(a) {
+  const F = JSON.parse(context().firms), fk = String(a.firm || ""), pk = String(a.product || "");
+  if (!Object.hasOwn(F, fk) || fk.startsWith("_") || !F[fk].products) return { error: "unknown firm. troid covers: " + Object.keys(profiles()).join(", ") };
+  const f = F[fk], prods = f.products, live = Object.keys(prods).filter((k) => !k.startsWith("_") && prods[k] && typeof prods[k] === "object");
+  if (!live.includes(pk)) return { error: "unknown or pending product for " + f.name + ". options: " + live.join(", ") };
+  const pr = prods[pk], rules = [], sources = [];
+  for (const [vk, ck, rule] of RULE_FIELDS) {
+    const v = vk in pr ? pr[vk] : f[vk];
+    if (v === undefined || (v !== null && typeof v === "object")) continue;
+    rules.push({ rule, value: v === null ? "pending" : v });
+    const c = cite(f, ck, pk, true);
+    sources.push(c ? { rule: rule + " " + (v === null ? "pending" : v), document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls }
+                   : { rule: rule + " " + (v === null ? "pending" : v), source: "not yet recorded" });
+  }
+  return { firm: f.name, product: pk, rules, sources,
+           tier: "SOURCED — each rule as troid has recorded it, with the document and the date troid read it; a rule marked pending or not yet recorded is not filled in. The firm's own documents govern." };
+}
+
 // What each firm's own terms exclude, by country (firms.json availability). troid never says a firm is available
 // in a country: it reports what its record of the firm's terms excludes, or that it has not recorded the list.
 function check_availability(a) {
@@ -691,10 +716,24 @@ const MATH_FORMULAS = {
 };
 class MathInputError extends Error {}
 const rd = (v, d) => (Number.isFinite(v) ? +v.toFixed(d == null ? 6 : d) : v);
+// A firm's rule inside a worked example: firm and product supply it with its source, so no firm's rule is typed into a
+// calculation by hand (run 3: b-stop gave Bitfunded's 0.04% and ex-recovery its 10% without the dates troid read them).
+function mathProduct(a) {
+  const g = profile(String(a.firm || ""), String(a.product || ""));
+  if (g.error) throw new MathInputError(g.error);
+  return g;
+}
+function mathFee(x, a) {                                              // { fee, sources } or { fee: null }
+  const given = x("fee_per_side_pct", { min: 0, max: 5, optional: true });
+  if (given != null || (a.firm == null && a.product == null)) return { fee: given };
+  const g = mathProduct(a);
+  if (g.p.fee == null) throw new MathInputError(g.f.name + " " + g.p.label + ": troid has no trading fee recorded for this product (pending)");
+  return { fee: g.p.fee, sources: sourcesFor(g.p, [["fee", "fee " + g.p.fee + "% per side (" + g.f.name + " " + g.p.label + ")"]]) };
+}
 const MATH = {
-  r_multiple(x) {
+  r_multiple(x, a) {
     const entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 }), q = x("quantity", { gt: 0 });
-    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true }), res = x("result", { optional: true });
+    const mf = mathFee(x, a), fee = mf.fee, res = x("result", { optional: true });
     const dist = Math.abs(entry - stop);
     if (!(dist > 0)) throw new MathInputError("entry and stop are the same price, so 1R is zero");
     const w = [{ step: "stop distance", formula: "|entry − stop|", value: rd(dist) }, { step: "1R", formula: "stop distance × quantity", value: rd(dist * q, 2) }];
@@ -708,11 +747,11 @@ const MATH = {
       out.one_r_with_fees = rd(base, 2);
     }
     if (res != null) { w.push({ step: "R of the result", formula: "result ÷ " + (fee != null ? "1R with fees" : "1R"), value: rd(res / base, 3) }); out.r_multiple = rd(res / base, 3); }
-    return { working: w, result: out };
+    return { working: w, result: out, sources: mf.sources };
   },
-  position_size(x) {
+  position_size(x, a) {
     const risk = x("risk", { gt: 0 }), entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 });
-    const fee = x("fee_per_side_pct", { min: 0, max: 5, optional: true }), lev = x("leverage", { gt: 0, max: 200, optional: true });
+    const mf = mathFee(x, a), fee = mf.fee, lev = x("leverage", { gt: 0, max: 200, optional: true });
     const dist = Math.abs(entry - stop);
     if (!(dist > 0)) throw new MathInputError("entry and stop are the same price");
     const fu = entry * (fee || 0) / 100 * 2, q = risk / (dist + fu);
@@ -722,19 +761,22 @@ const MATH = {
                { step: "notional", formula: "quantity × entry", value: rd(q * entry, 2) }];
     const result = { quantity: rd(q), notional: rd(q * entry, 2) };
     if (lev != null) { w.push({ step: "margin", formula: "notional ÷ " + lev, value: rd(q * entry / lev, 2) }); result.margin = rd(q * entry / lev, 2); }
-    return { working: w, result,
+    return { working: w, result, sources: mf.sources,
              note: [fee == null ? "No fee was given, so none is counted; a firm's fee makes the quantity smaller." : "",
                     lev != null ? "Leverage sets the margin posted, not the quantity: the loss at the stop is the same at any leverage." : ""].filter(Boolean).join(" ") || undefined };
   },
   expectancy(x) {
     const p = x("win_rate_pct", { min: 0, max: 100 }) / 100, W = x("avg_win", { min: 0 }), L = x("avg_loss", { gt: 0 });
+    const n = x("trades", { gt: 0, int: true, optional: true });
     const E = p * W - (1 - p) * L, be = L / (W + L);
-    return { working: [{ step: "p", formula: "win rate ÷ 100", value: rd(p) },
-                       { step: "expectancy", formula: `${rd(p)} × ${W} − ${rd(1 - p)} × ${L}`, value: rd(E, 4) },
-                       { step: "payoff ratio", formula: "W ÷ L", value: rd(W / L, 4) },
-                       { step: "break-even win rate", formula: `${L} ÷ (${W} + ${L})`, value: rd(be * 100, 2) + "%" }],
-             result: { expectancy: rd(E, 4), breakeven_win_rate_pct: rd(be * 100, 2), payoff_ratio: rd(W / L, 4) },
-             note: "Expectancy is in the unit of the averages: R if they are in R, dollars if in dollars." };
+    const w = [{ step: "p", formula: "win rate ÷ 100", value: rd(p) },
+               { step: "expectancy", formula: `${rd(p)} × ${W} − ${rd(1 - p)} × ${L}`, value: rd(E, 4) },
+               { step: "payoff ratio", formula: "W ÷ L", value: rd(W / L, 4) },
+               { step: "break-even win rate", formula: `${L} ÷ (${W} + ${L})`, value: rd(be * 100, 2) + "%" }];
+    const result = { expectancy: rd(E, 4), breakeven_win_rate_pct: rd(be * 100, 2), payoff_ratio: rd(W / L, 4) };
+    if (n != null) { w.push({ step: "expected total over " + n + " trades", formula: `${n} × ${rd(E, 4)}`, value: rd(n * E, 4) }); result.expected_total = rd(n * E, 4); }
+    return { working: w, result,
+             note: "Expectancy is in the unit of the averages: R if they are in R, dollars if in dollars." + (n != null ? " The expected total is a mean over many runs of " + n + " trades, not what one run will do." : "") };
   },
   kelly(x, a) {
     const p = x("win_rate_pct", { gt: 0, lt: 100 }) / 100, b = x("payoff_ratio", { gt: 0 });
@@ -757,23 +799,43 @@ const MATH = {
     }
     return out;
   },
-  recovery(x) {
+  recovery(x, a) {
     const d = x("drawdown_pct", { min: 0, lt: 100 }) / 100, bal = x("balance", { gt: 0, optional: true });
     const g = d / (1 - d);
     const w = [{ step: "d", formula: "drawdown ÷ 100", value: rd(d) }, { step: "gain needed", formula: `${rd(d)} ÷ (1 − ${rd(d)})`, value: rd(g * 100, 2) + "%" }];
     const out = { gain_needed_pct: rd(g * 100, 2) };
+    let sources;
     if (bal != null) {
       w.push({ step: "balance after the drawdown", formula: "balance × (1 − d)", value: rd(bal * (1 - d), 2) },
              { step: "amount to recover", formula: "balance − balance after", value: rd(bal * d, 2) });
       Object.assign(out, { balance_after: rd(bal * (1 - d), 2), amount_to_recover: rd(bal * d, 2) });
     }
-    return { working: w, result: out };
+    if (String(a.firm || "") === "all") {                              // the largest maximum loss troid has read, and whose
+      const top = [];
+      let m = -1;
+      for (const f of Object.values(profiles())) for (const p of Object.values(f.products)) {
+        if (p.m > m) { m = p.m; top.length = 0; }
+        if (p.m === m) top.push({ f, p });
+      }
+      w.push({ step: "largest maximum loss troid has read", formula: "the largest max % of every product troid covers", value: m + "%" },
+             { step: "drawdown against it", formula: `${rd(d * 100, 2)}% ≥ ${m}%`, value: d * 100 >= m ? "past every maximum loss troid has read" : "inside at least one" });
+      Object.assign(out, { largest_max_loss_pct: m, products_at_largest: top.map((t) => t.f.name + " " + t.p.label), past_every_max_loss: d * 100 >= m });
+      sources = top.flatMap((t) => sourcesFor(t.p, [["m", "max " + m + "% (" + t.f.name + " " + t.p.label + ")"]]));
+    } else if (a.firm != null || a.product != null) {
+      const t = mathProduct(a);
+      w.push({ step: "drawdown against the maximum loss", formula: `${rd(d * 100, 2)}% vs ${t.p.m}%`, value: d * 100 >= t.p.m ? "past it" : "inside it" });
+      Object.assign(out, { firm: t.f.name, product: t.p.label, max_pct: t.p.m, past_max_loss: d * 100 >= t.p.m });
+      sources = sourcesFor(t.p, [["m", "max " + t.p.m + "% (" + t.f.name + " " + t.p.label + ")"]]);
+    }
+    return { working: w, result: out, sources };
   },
-  fee_share(x) {
-    const f = x("fee_per_side_pct", { gt: 0, max: 5 }) / 100, st = x("stop_pct", { gt: 0, lt: 100 }) / 100;
+  fee_share(x, a) {
+    const mf = mathFee(x, a);
+    if (mf.fee == null || !(mf.fee > 0)) throw new MathInputError("fee_share needs fee_per_side_pct, or firm and product");
+    const f = mf.fee / 100, st = x("stop_pct", { gt: 0, lt: 100 }) / 100;
     const sh = 2 * f / (st + 2 * f);
     return { working: [{ step: "fee share of risk", formula: `2 × ${rd(f * 100, 4)}% ÷ (${rd(st * 100, 4)}% + 2 × ${rd(f * 100, 4)}%)`, value: rd(sh * 100, 2) + "%" }],
-             result: { fee_share_pct: rd(sh * 100, 2) }, note: "Depends only on the stop distance and the fee: not the asset, not leverage." };
+             result: { fee_share_pct: rd(sh * 100, 2) }, sources: mf.sources, note: "Depends only on the stop distance and the fee: not the asset, not leverage." };
   },
   losses_to_limit(x) {
     const B = x("budget", { gt: 0 }), r = x("risk", { gt: 0 });
@@ -833,6 +895,7 @@ function trade_math(a) {
   };
   try {
     const r = MATH[calc](x, a);
+    if (!r.sources || !r.sources.length) delete r.sources;
     return Object.assign({ calc, formula: MATH_FORMULAS[calc] }, r, {
       tier: r.sources ? "DERIVED from the numbers given and the firm rules listed" : "DERIVED from the numbers given; no firm rule used" });
   } catch (e) {
@@ -841,7 +904,7 @@ function trade_math(a) {
   }
 }
 const TRADE_MATH_TOOL = { name: "trade_math",
-  description: "Trading arithmetic that needs no firm rule, returned with the formula and every step. calc and its inputs: r_multiple (entry, stop, quantity; optional result, fee_per_side_pct); position_size (risk, entry, stop; optional fee_per_side_pct, leverage for the margin); expectancy (win_rate_pct, avg_win, avg_loss); kelly (win_rate_pct, payoff_ratio; optional firm and product to set it beside that product's loss limits, with their sources); recovery (drawdown_pct; optional balance); fee_share (fee_per_side_pct, stop_pct); losses_to_limit (budget, risk); capped_budget (budget, cap_pct, losses); stats (mean, sd, n; optional configs); atr_scale (atr, from_minutes, to_minutes); effective_bets (positions, correlation). Percentages are in percent: 45 means 45%. Never call it to suggest a trade.",
+  description: "Trading arithmetic that needs no firm rule, returned with the formula and every step. calc and its inputs: r_multiple (entry, stop, quantity; optional result, fee_per_side_pct or firm and product for that product's fee); position_size (risk, entry, stop; optional fee_per_side_pct or firm and product, leverage for the margin); expectancy (win_rate_pct, avg_win, avg_loss; optional trades for the expected total over that many); kelly (win_rate_pct, payoff_ratio; optional firm and product to set it beside that product's loss limits, with their sources); recovery (drawdown_pct; optional balance; optional firm and product to set it beside that product's maximum loss, or firm \"all\" for the largest maximum loss troid has read); fee_share (stop_pct; fee_per_side_pct, or firm and product); losses_to_limit (budget, risk); capped_budget (budget, cap_pct, losses); stats (mean, sd, n; optional configs); atr_scale (atr, from_minutes, to_minutes); effective_bets (positions, correlation). Percentages are in percent: 45 means 45%. A firm's rule given through firm and product comes back with its source and read date. Never call it to suggest a trade.",
   input_schema: { type: "object", properties: {
     calc: { type: "string", enum: Object.keys(MATH_FORMULAS) },
     entry: { type: "number" }, stop: { type: "number" }, quantity: { type: "number" }, result: { type: "number", description: "a trade's profit or loss, for its R-multiple" },
@@ -851,7 +914,8 @@ const TRADE_MATH_TOOL = { name: "trade_math",
     stop_pct: { type: "number", description: "stop distance as a percent of price" }, budget: { type: "number" }, cap_pct: { type: "number" },
     losses: { type: "integer" }, mean: { type: "number" }, sd: { type: "number" }, n: { type: "integer" }, configs: { type: "integer" },
     atr: { type: "number" }, from_minutes: { type: "number" }, to_minutes: { type: "number" }, positions: { type: "integer" }, correlation: { type: "number" },
-    leverage: { type: "number", description: "for position_size: the margin posted is notional ÷ leverage" } },
+    leverage: { type: "number", description: "for position_size: the margin posted is notional ÷ leverage" },
+    trades: { type: "integer", description: "for expectancy: the number of trades to total it over" } },
     required: ["calc"] } };
 
 const TOOLS = [
@@ -884,9 +948,13 @@ const TOOLS = [
   { name: "explain_rule", description: "Explain a prop-firm rule and why it matters, with the arithmetic. Topics: crossover, reset, fees, leverage, cross, drawdown, ladder, ruin, min_days, hold_limit, accounts, marketed_strategies, strategy_switching, opposite_positions, funded_stage.",
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
 ];
+const FIRM_RULES_TOOL = { name: "firm_rules",
+  description: "A firm product's rules as troid has recorded them — daily and maximum loss, profit target, minimum trading days, the challenge fee, split, drawdown type, daily limit basis, trading fee, leverage cap — each with the document and the date troid read it, or marked pending. Use it to state or compare a product's rules; never state one from memory.",
+  input_schema: { type: "object", properties: { firm: { type: "string", description: "bitfunded | brightfunded | crypto_fund_trader" },
+    product: { type: "string", description: "product key, e.g. 1step, 2step_s1, 2step_s2, express, instant, 1phase, 2phase" } }, required: ["firm", "product"] } };
 // The candidate's tools: the live ones plus these (TROID-CHARACTER.md), and size_trade taking a stop as a percent of
 // entry, so the model never works out a stop price itself (run 2, p-size). Folded into TOOLS when promoted.
-const CANDIDATE_TOOLS = [TRADE_MATH_TOOL];
+const CANDIDATE_TOOLS = [TRADE_MATH_TOOL, FIRM_RULES_TOOL];
 const TOOLS_NEXT = TOOLS.map((t) => {
   if (t.name !== "size_trade") return t;
   const c = JSON.parse(JSON.stringify(t)), pr = c.input_schema.properties;
@@ -896,7 +964,7 @@ const TOOLS_NEXT = TOOLS.map((t) => {
   return c;
 }).concat(CANDIDATE_TOOLS);
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
-const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math };
+const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule, trade_math, firm_rules };
 const RUN_NEXT = Object.assign({}, RUN, { explain_rule: explainRuleSourced });   // the candidate's; RUN when promoted
 function runTool(name, input, variant) {
   const run = NEXT(variant) ? RUN_NEXT : RUN;
@@ -1183,9 +1251,10 @@ module.exports = async (req, res) => {
       if (figured) log.rerouted = 1;
       route = "tools"; resp = await callModel(route, messages, deadlineAt, onSend, lang, variant);
     }
-    const convo = messages.slice();
+    const convo = messages.slice(), said = [];                         // with the candidate: what troid wrote before each tool call
     for (let round = 0; round < MAX_TOOL_ROUNDS && resp.stop_reason === "tool_use" && Date.now() < deadlineAt - MIN_CALL_MS; round++) {
       const uses = resp.content.filter((b) => b.type === "tool_use");
+      if (NEXT(variant) && textOf(resp)) said.push(textOf(resp));     // run 3, ex-r: the definition before a tool call was lost
       toolCalls += uses.length;
       convo.push({ role: "assistant", content: resp.content });        // unchanged, thinking blocks included
       convo.push({ role: "user", content: uses.map((u) => {
@@ -1198,7 +1267,7 @@ module.exports = async (req, res) => {
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
     else {
-      reply = textOf(resp);
+      reply = [...said, textOf(resp)].filter(Boolean).join("\n\n");
       // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
       // that is the session-ended text word for word (in any published language) is treated the same way.
       if (isSentinelOnly(reply) || isEnded(reply)) {
