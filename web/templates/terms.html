@@ -5,6 +5,7 @@
    Inter for prose. IBM Plex Mono for every number and label.
    4px radius. No shadows, no emoji. One gradient: the page background. */
 :root{
+  --dur-fast:120ms;--dur:240ms;--dur-slow:480ms;--ease-out:cubic-bezier(.2,.7,.3,1);--ease-inout:cubic-bezier(.65,0,.35,1);
   --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
   --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -22,17 +23,26 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
 .mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
   display:inline-flex;align-items:baseline;color:var(--ink)}
 .mark a{color:inherit;text-decoration:none;border:0}
+/* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
+   no font to wait for, so nothing moves when the page's fonts arrive */
+.mark .wm{display:inline-block;line-height:0}
+.mark svg{width:1.12em;height:1.6em;vertical-align:-.425em;fill:currentColor}
 .dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
   margin:0 .06em 0 .12em;vertical-align:-.02em;
   box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
-.dot::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;pointer-events:none}
 .dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
   background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
-.dot.live::before{animation:ripple 2.4s cubic-bezier(.2,.7,.3,1) infinite}
-@keyframes ripple{from{inset:0;opacity:.5}to{inset:-.414em;opacity:0}}
-@media (prefers-reduced-motion:reduce){.dot.live::before{animation:none}
+/* the ripple moves only transform and opacity (the compositor's), starts from nothing, and fades in and out with the
+   state over --dur-slow: the build writes the state, live.js confirms it */
+.dot .rp{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;transition:opacity var(--dur-slow) var(--ease-out)}
+.dot.live .rp{opacity:1}
+.dot .rp::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;
+  transform-origin:center;will-change:transform,opacity;animation:ripple 2.4s var(--ease-out) infinite}
+.dot:not(.live) .rp::before{animation-play-state:paused}
+@keyframes ripple{0%{transform:scale(1);opacity:0}15%{opacity:.45}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot .rp::before{animation:none}.dot .rp{transition:none}
   .dot.live{outline:.06em solid var(--signal);outline-offset:.18em}}
-@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot::before{background:LinkText}
+@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
   .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}

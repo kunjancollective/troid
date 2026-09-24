@@ -21,6 +21,7 @@
    Inter for prose. IBM Plex Mono for every number and label.
    4px radius. No shadows, no emoji. One gradient: the page background. */
 :root{
+  --dur-fast:120ms; --dur:240ms; --dur-slow:480ms; --ease-out:cubic-bezier(.2,.7,.3,1); --ease-inout:cubic-bezier(.65,0,.35,1);
   --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
   --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -38,17 +39,26 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
 .mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
   display:inline-flex;align-items:baseline;color:var(--ink)}
 .mark a{color:inherit;text-decoration:none;border:0}
+/* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
+   no font to wait for, so nothing moves when the page's fonts arrive */
+.mark .wm{display:inline-block;line-height:0}
+.mark svg{width:1.12em;height:1.6em;vertical-align:-.425em;fill:currentColor}
 .dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
   margin:0 .06em 0 .12em;vertical-align:-.02em;
   box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
-.dot::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;pointer-events:none}
 .dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
   background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
-.dot.live::before{animation:ripple 2.4s cubic-bezier(.2,.7,.3,1) infinite}
-@keyframes ripple{from{inset:0;opacity:.5}to{inset:-.414em;opacity:0}}
-@media (prefers-reduced-motion:reduce){.dot.live::before{animation:none}
+/* the ripple moves only transform and opacity (the compositor's), starts from nothing, and fades in and out with the
+   state over --dur-slow: the build writes the state, live.js confirms it */
+.dot .rp{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;transition:opacity var(--dur-slow) var(--ease-out)}
+.dot.live .rp{opacity:1}
+.dot .rp::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;
+  transform-origin:center;will-change:transform,opacity;animation:ripple 2.4s var(--ease-out) infinite}
+.dot:not(.live) .rp::before{animation-play-state:paused}
+@keyframes ripple{0%{transform:scale(1);opacity:0}15%{opacity:.45}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot .rp::before{animation:none}.dot .rp{transition:none}
   .dot.live{outline:.06em solid var(--signal);outline-offset:.18em}}
-@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot::before{background:LinkText}
+@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
   .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
@@ -72,6 +82,13 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
 .grid{display:grid;gap:10px;margin-bottom:12px}
 .g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
 @media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+/* nothing on the desk or in its readout may be wider than the phone (design handoff 2026-09-24, 1a): every grid and
+   flex child can shrink, and so can a form control (WebKit sizes a select to its longest option); a mono value breaks
+   anywhere before it runs off the edge; the text size is the reader's, never inflated */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.grid>*,.bar>*,.linkrow>*,.verdict>*,.read>*,.stats>*{min-width:0}
+input,select{min-width:0;max-width:100%}
+.cell .v,.cell .s,.vtxt,.notes,.prov,.shared,.linkmsg{overflow-wrap:anywhere}
 .shared{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);background:var(--surface2);
   border:1px solid var(--line);border-inline-start:2px solid var(--signal);border-radius:3px;padding:10px 13px;margin:0 0 16px}
 .shared[hidden]{display:none}
@@ -97,6 +114,8 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
 .notes div{padding-inline-start:14px;position:relative}
 .notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
+/* the breakers line is its own line, with no arrow over its first word (1b); the breaker ladder replaces it (4c) */
+.notes .brk{padding-inline-start:0;color:var(--ink)}.notes .brk::before{content:none}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
 .stat{background:var(--surface);padding:22px}
@@ -126,7 +145,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 <header><div class="wrap">
   <div class="bar">
-    <span class="mark" translate="no"><a href="/" aria-label="troid, home">tr</a><a class="dot" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"></a><a href="/" tabindex="-1" aria-hidden="true">id</a></span><script src="/live.js" defer></script>
+    <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger is live: last shadow run 2026-09-24 09:22 UTC" title="troid's ledger is live: last shadow run 2026-09-24 09:22 UTC" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
     <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
   </div>
@@ -436,7 +455,7 @@ function render(){
     '<div class="cell"><div class="k">'+T.fees+'</div><div class="v">'+(feeKnown?fx(fshare,1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
     '<div class="cell"><div class="k">'+T.stop+'</div><div class="v">'+fx((dist/entry*100),2)+'%</div><div class="s">'+F(T.s_tgt,{price:fx(target,2)})+'</div></div>'+
     '<div class="cell"><div class="k">'+T.budget_used+'</div><div class="v">'+fx(consumes,0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
-    '<div class="notes"><div style="padding-inline-start:0;color:var(--ink)"><span style="color:var(--dim)">'+T.breakers+'</span> '+brk+'</div>'+
+    '<div class="notes"><div class="brk"><span style="color:var(--dim)">'+T.breakers+'</span> '+brk+'</div>'+
     notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
     provBlock(f,p,used,formula+"; "+sizeF,F(T.prov_mmr,{mmr:MMR*100}))+working(steps,wOpen);
   el("result").innerHTML=h;

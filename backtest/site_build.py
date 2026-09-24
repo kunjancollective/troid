@@ -148,16 +148,56 @@ def switcher(T, page, live):
             + share)
 
 
+WORDMARK = json.loads((HERE / "wordmark_paths.json").read_text())
+
+
+MARK_LINE = 1600     # the page's line height, 1.6, in font units: the line box the text wordmark sat in
+
+
+def _letters(d):
+    """A pair of the wordmark's letters as an SVG (backtest/wordmark.py): no font to wait for, so nothing moves when
+    the page's fonts arrive (design handoff 2026-09-24, 1c). The box is the one the text had: Plex Mono's ascent and
+    descent with half the 1.6 line height's leading on each side, 1.175em above the baseline and .425em below."""
+    lead = (MARK_LINE - WORDMARK["ascent"] - WORDMARK["descent"]) // 2
+    return (f'<svg viewBox="0 -{WORDMARK["ascent"] + lead} {WORDMARK["width"]} {MARK_LINE}" aria-hidden="true" focusable="false">'
+            f'<path d="{d}"/></svg>')
+
+
+def status_now(now=None):
+    """The status light's state as web/public/status.json gives it at build time, by live.js's own rule:
+    ("live" | "still" | "unknown", the minute its label names). The shadow run writes status.json before the pages
+    render, so the dot is right on first paint; live.js only confirms or corrects it."""
+    from datetime import datetime, timedelta, timezone
+    try:
+        s = json.loads((PUB / "status.json").read_text())
+        run = datetime.fromisoformat(s["last_run_utc"])
+        bar = datetime.fromisoformat(s["as_of_bar_utc"]) + timedelta(minutes=float(s.get("bar_minutes") or 0))
+    except (OSError, ValueError, KeyError, TypeError):
+        return "unknown", None
+    now = now or datetime.now(timezone.utc)
+    run_age, bar_age = (now - run).total_seconds() / 60, (now - bar).total_seconds() / 60
+    stale = float(s["stale_after_minutes"])
+    live = -30 < run_age <= stale and bar_age <= float(s.get("bar_stale_after_minutes") or stale)
+    when = run if live else min(run, bar)
+    return ("live" if live else "still"), when.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M")
+
+
 def mark(T):
     """The tr●id wordmark, the same on every page. "tr" and "id" link home; the dot is troid's status light and
-    links to troid's ledger. It holds still until /live.js reads /status.json and finds both the last shadow run and
-    the last bar inside the windows that file states, then it ripples. Its label is neutral until then. Pinned left to right on a translated page (.mark is inline-flex, so a
-    right-to-left page would otherwise read id·tr)."""
+    links to troid's ledger. It ripples while the last shadow run and the last bar sit inside the windows
+    /status.json states, and holds still otherwise: written here from status.json at build time (status_now), then
+    checked by /live.js, which fades any change. The letters are SVG paths (_letters). Pinned left to right on a
+    translated page (.mark is inline-flex, so a right-to-left page would otherwise read id·tr)."""
     ltr = "" if T.code == "en" else ' dir="ltr"'
-    return (f'<span class="mark"{ltr} translate="no"><a href="{T.H}" aria-label="{T.attr("common.mark.home")}">tr</a>'
-            f'<a class="dot" href="{T.L}/ledger" aria-label="{T.attr("common.mark.ledger")}" title="{T.attr("common.mark.ledger")}"'
-            f' data-live="{T.attr("common.mark.live")}" data-still="{T.attr("common.mark.still")}" data-unknown="{T.attr("common.mark.unknown")}"></a>'
-            f'<a href="{T.H}" tabindex="-1" aria-hidden="true">id</a></span><script src="/live.js" defer></script>')
+    state, when = status_now()
+    label = T.attr("common.mark." + state, time=when) if when else T.attr("common.mark.unknown")
+    return (f'<span class="mark"{ltr} translate="no"><a class="wm" href="{T.H}" aria-label="{T.attr("common.mark.home")}">'
+            f'{_letters(WORDMARK["tr"])}</a>'
+            f'<a class="dot{" live" if state == "live" else ""}" href="{T.L}/ledger" aria-label="{label}" title="{label}"'
+            f' data-live="{T.attr("common.mark.live")}" data-still="{T.attr("common.mark.still")}" data-unknown="{T.attr("common.mark.unknown")}">'
+            f'<i class="rp"></i></a>'
+            f'<a class="wm" href="{T.H}" tabindex="-1" aria-hidden="true">{_letters(WORDMARK["id"])}</a></span>'
+            f'<script src="/live.js" defer></script>')
 
 
 def html_attrs(T):

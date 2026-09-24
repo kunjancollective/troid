@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""Nothing on troid's pages runs off a phone's right edge (design handoff 2026-09-24, 1a).
+
+iOS Safari's text size (the aA menu) zooms the page: at 130% a 390 px phone lays out 300 CSS px. So each page is
+loaded at the CSS widths a 375 px and a 390 px iPhone give at 100%, 115% and 130%, and on the desk every firm and
+product with its result and its working open. A page fails when it scrolls sideways or when an element's right edge
+passes the viewport's, unless that element sits inside a box that scrolls on its own (the working's table). Form
+controls are sized as WebKit sizes them (WEBKIT_CONTROLS).
+
+  python phone_check.py                     # every page, web/public as it is
+  python phone_check.py --pages index
+  python phone_check.py --rev HEAD          # the pages as a revision left them
+"""
+import argparse
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from i18n_equiv import PUB, serve  # noqa: E402
+
+PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
+# (device width, text size): the CSS width Safari lays out
+WIDTHS = sorted({round(w / z) for w in (375, 390) for z in (1.0, 1.15, 1.3)})
+
+OVER = """() => {
+  const W = document.documentElement.clientWidth, out = [];
+  const scrolls = (e) => { for (let p = e.parentElement; p && p !== document.body; p = p.parentElement) {
+      const o = getComputedStyle(p).overflowX; if (o === 'auto' || o === 'scroll' || o === 'hidden') return true; } return false; };
+  for (const e of document.body.querySelectorAll('*')) {
+    const r = e.getBoundingClientRect();
+    if (!r.width || r.right <= W + 0.5 || scrolls(e)) continue;
+    const s = getComputedStyle(e); if (s.position === 'fixed' || s.visibility === 'hidden' || s.display === 'none') continue;
+    const id = e.tagName.toLowerCase() + (e.id ? '#' + e.id : '') + (e.className && typeof e.className === 'string' ? '.' + e.className.trim().split(/\\s+/).join('.') : '');
+    out.push(id + ' ' + Math.round(r.right - W) + 'px: ' + (e.textContent || '').trim().slice(0, 50));
+  }
+  const sw = document.documentElement.scrollWidth;
+  return { sideways: sw > W ? sw - W : 0, over: out };
+}"""
+
+
+# WebKit, unlike Chromium, lets a select (and an input) keep its natural width as a grid or flex item's minimum: a select
+# is as wide as its longest option. Chromium can't show that, so it is imitated: every grid or flex item still at
+# min-width:auto that holds a form control gets its content's width as its minimum. An item the page lets shrink
+# (min-width:0) is left alone, as WebKit leaves it.
+WEBKIT_CONTROLS = """() => {
+  for (const e of document.querySelectorAll('select,input')) {
+    for (let p = e; p && p.parentElement && p !== document.body; p = p.parentElement) {
+      const d = getComputedStyle(p.parentElement).display;
+      if (/(grid|flex)/.test(d) && getComputedStyle(p).minWidth === 'auto') p.style.minWidth = 'max-content';
+    }
+  }
+}"""
+
+
+def desk_views(pg):
+    """Every firm and product on the desk, as a visitor leaves it: the default inputs, then the working open."""
+    for f in pg.eval_on_selector_all("#firm option", "e=>e.map(x=>x.value)"):
+        pg.select_option("#firm", f)
+        for p in pg.eval_on_selector_all("#profile option", "e=>e.map(x=>x.value)"):
+            pg.select_option("#profile", p)
+            yield f"{f}/{p}"
+            pg.evaluate("()=>{const d=document.querySelector('#result details.work');if(d)d.open=true}")
+            yield f"{f}/{p} working"
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--pages", default=",".join(PAGES))
+    ap.add_argument("--root", default=str(PUB))
+    ap.add_argument("--rev", help="check a git revision's web/public instead")
+    a = ap.parse_args()
+    if a.rev:
+        import tempfile
+        from i18n_equiv import baseline
+        a.root = tempfile.mkdtemp()
+        baseline(a.rev, Path(a.root))
+    from playwright.sync_api import sync_playwright
+    srv, url = serve(Path(a.root))
+    fails = []
+    with sync_playwright() as p:
+        b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium")
+        for name in a.pages.split(","):
+            for w in WIDTHS:
+                ctx = b.new_context(viewport={"width": w, "height": 800}, device_scale_factor=2, is_mobile=True, has_touch=True)
+                ctx.route("**/*", lambda r: r.abort() if not r.request.url.startswith("http://127.0.0.1") else r.continue_())
+                pg = ctx.new_page()
+                pg.goto(url + ("/" if name == "index" else f"/{name}"), wait_until="load")
+                pg.wait_for_timeout(150)
+                views = desk_views(pg) if name == "index" else iter(["page"])
+                bad = 0
+                for v in views:
+                    pg.evaluate(WEBKIT_CONTROLS)
+                    r = pg.evaluate(OVER)
+                    if r["sideways"] or r["over"]:
+                        bad += 1
+                        if bad <= 3:
+                            fails.append(f"{name} {w}px {v}: scrolls {r['sideways']}px sideways; " + " | ".join(r["over"][:4]))
+                print(("ok  " if not bad else "FAIL") + f" {name} {w}px" + (f" ({bad} views)" if bad else ""))
+                ctx.close()
+        b.close()
+    srv.shutdown()
+    for f in fails:
+        print("FAIL", f)
+    print(f"RESULT: {len(fails)} overflow(s) at {', '.join(map(str, WIDTHS))} CSS px")
+    sys.exit(1 if fails else 0)
+
+
+if __name__ == "__main__":
+    main()

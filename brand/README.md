@@ -23,7 +23,7 @@ the r carries its weight on the right and reads closer than it is.
 | YouTube banner 2560×1440 | banner-youtube-2560x1440.png |
 | Site favicon | favicon.ico (16 and 32 px: mark-2ceilings-16.png, drawn on the pixel grid and larger than the master so the two floors stay apart, and mark-2ceilings-32.png) |
 | Apple touch icon | mark-2ceilings-180.png (web/public/apple-touch-icon.png) |
-| Site header | CSS, not an image: site_build.mark and the shared style block (the dot, its halo, its ripple while live, two floors) |
+| Site header | Inline, not an image: site_build.mark draws the letters as SVG paths (backtest/wordmark.py, from PlexMono-SemiBold.ttf) and the shared style block the dot, its halo, its ripple while live and two floors |
 | Wordmark alone, dark / light / transparent | wordmark-*.png |
 | Two-ceilings variant: the site's favicon, touch icon and share image, and large in-page use | mark-2ceilings-*.png |
 

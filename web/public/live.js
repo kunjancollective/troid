@@ -1,8 +1,9 @@
 /* troid's status light: the dot in the tr●id wordmark (site_build.mark). It ripples while troid's ledger is live,
    meaning status.json (written by backtest/gen_ledger.py on every shadow run) shows the last run and the last bar
-   it processed inside the windows it states, and holds still otherwise. When status.json can't be read the dot
-   holds still and says so. Checked on load, every five minutes while the page is visible, and when it becomes
-   visible again. The dot links to troid's ledger. */
+   it processed inside the windows it states, and holds still otherwise. The build writes that state into the page
+   from the same file (site_build.status_now), so the dot is right on first paint; this confirms or corrects it, and
+   the page's CSS fades any change. When status.json can't be read the dot holds still and says so. Checked on load,
+   every five minutes while the page is visible, and when it becomes visible again. The dot links to troid's ledger. */
 (function () {
   var d = document.querySelector(".mark .dot");
   if (!d || !window.fetch) return;

@@ -110,9 +110,12 @@ The dot is a status light. It ripples while troid's ledger is live (the last sha
 the last bar it processed are inside the windows `web/public/status.json` states: 13 hours
 for the run, one skipped 4-hour run and a late next one; 17 hours for the bar) and holds still
 when they are not, so a still dot says the live data has stopped. It links to troid's ledger.
-The ripple is the site's one motion. Under `prefers-reduced-motion` it stops and a thin solid
-ring in the signal colour, just outside the halo, shows live instead; in forced colours the dot is drawn in LinkText
-with a ring for live.
+The ripple is the site's one motion. It moves only transform and opacity (it grows to 2.8 times the dot, the halo's
+old reach, fading in to 45% and out), so a phone's compositor draws it without re-laying the page. The build writes the
+dot's state into every page from status.json (`site_build.status_now`), so it is right on first paint; `live.js`
+confirms or corrects it, and any change of state fades over `--dur-slow` (480ms), never pops. Under
+`prefers-reduced-motion` it stops and a thin solid ring in the signal colour, just outside the halo, shows live
+instead; in forced colours the dot is drawn in LinkText with a ring for live.
 
 The mark on its own is the dot above its two floors (`brand/mark-2ceilings-*`): the favicon,
 the touch icon, the share image, the social avatars and the banners use it.
@@ -131,4 +134,6 @@ in the same commit.
 
 The header is the same `.bar` markup on every page: the `tr●id` wordmark (`site_build.mark`:
 "tr" and "id" link home, the dot links to troid's ledger), the mono nav links. Nothing else
-goes in it.
+goes in it. The wordmark's letters are SVG paths drawn from `brand/PlexMono-SemiBold.ttf` by
+`backtest/wordmark.py`, in the line box the text had (1.175em above the baseline, .425em below): a phone that has
+not loaded Plex yet draws the same wordmark, so nothing moves when the font arrives. The dot and its floors stay CSS.

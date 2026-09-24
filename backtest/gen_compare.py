@@ -238,13 +238,16 @@ def render_compare(T, live):
 .colhead{{padding:16px 16px 12px;border-bottom:1px solid var(--line)}}
 .rows{{flex:1}}
 .r{{padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}}
-.r .rt{{display:flex;justify-content:space-between;gap:10px}}.r .pv{{font-size:9.5px;line-height:1.5;color:var(--dim);margin-top:4px}}
-.r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim);flex-shrink:0}}.r .v{{font-variant-numeric:tabular-nums;text-align:end}}
+.r .rt{{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 10px}}.r .pv{{font-size:9.5px;line-height:1.5;color:var(--dim);margin-top:4px}}
+.r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim)}}.r .v{{font-variant-numeric:tabular-nums;text-align:end;margin-inline-start:auto;min-width:0;overflow-wrap:break-word}}
 .r.sec{{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}}
 .pend{{color:var(--dim);font-style:italic}}
 .colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}}
 .inputs{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}}
 @media(max-width:640px){{.inputs{{grid-template-columns:1fr 1fr}}}}
+/* a value that doesn't fit beside its label takes the next line, and nothing is wider than a phone (design handoff
+   2026-09-24, 1a) */
+.inputs>*{{min-width:0}}
 .s{{font-family:var(--mono);font-size:10.5px;color:var(--dim)}}
 .foot{{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);margin-top:36px;padding-top:20px;line-height:1.8}}
 </style>{site_build.head_extra(T, "compare", live)}</head><body><div class="wrap">

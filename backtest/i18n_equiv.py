@@ -7,9 +7,15 @@ Compares web/public against a git revision (default HEAD) of the same files:
   3. troid's compare: the three columns' HTML across a grid of sizing inputs.
 External requests (fonts, the chart library) are blocked in both, so the comparison is deterministic.
 
+With --design (a change to presentation only, design handoff 2026-09-24 section 8: "the redesign changes presentation,
+never numbers"): every page's visible text, less the wordmark (its letters are paths), and every desk and compare
+state's visible text, figures included, must be identical; markup and pixels may differ, and differing pixels are
+reported, not failed.
+
   python i18n_equiv.py                 # against HEAD
   python i18n_equiv.py --rev bfedbdb   # against another revision
   python i18n_equiv.py --pages index,compare
+  python i18n_equiv.py --design        # text and figures only
 """
 import argparse
 import http.server
@@ -86,7 +92,11 @@ def same_state(x, y):
     return x[:-1] == y[:-1] and physical(x[-1]) == physical(y[-1])
 
 
-def desk_states(page):
+TEXT = "()=>{const m=[...document.querySelectorAll('.mark')];m.forEach(e=>e.style.display='none');" \
+       "const t=document.body.innerText;m.forEach(e=>e.style.display='');return t}"
+
+
+def desk_states(page, design=False):
     out = []
     firms = page.eval_on_selector_all("#firm option", "e=>e.map(x=>x.value)")
     for f in firms:
@@ -97,20 +107,20 @@ def desk_states(page):
                 page.evaluate("""g=>{for(const k of ['quota','equity','daystart','entry','stop','lev']){const e=document.getElementById(k);e.value=g[k];}
                   document.getElementById('side').value=g.side;document.getElementById('mode').value=g.mode;
                   document.getElementById('quota').dispatchEvent(new Event('input'));}""", g)
-                out.append((f, p, str(g), page.inner_html("#result")))
+                out.append((f, p, str(g), page.inner_text("#result") if design else page.inner_html("#result")))
             page.evaluate("()=>{const d=document.querySelector('#result details.work');if(d){d.open=true;}"
                           "document.getElementById('quota').dispatchEvent(new Event('input'))}")
-            out.append((f, p, "working open", page.inner_html("#result")))
+            out.append((f, p, "working open", page.inner_text("#result") if design else page.inner_html("#result")))
     return out
 
 
-def compare_states(page):
+def compare_states(page, design=False):
     out = []
     for q, r, s, lev in [(100000, 0.5, 1.66, 5), (10000, 1, 0.3, 150), (30000, 2, 4, 20), (50000, 0.25, 1, 100)]:
         page.evaluate("""a=>{const [q,r,s,l]=a;document.getElementById('quota').value=q;document.getElementById('risk').value=r;
           document.getElementById('stop').value=s;document.getElementById('lev').value=l;
           document.getElementById('quota').dispatchEvent(new Event('input'));}""", [q, r, s, lev])
-        out.append((q, r, s, lev, page.inner_html(".cols")))
+        out.append((q, r, s, lev, page.inner_text(".cols") if design else page.inner_html(".cols")))
     return out
 
 
@@ -137,6 +147,7 @@ def main():
     ap.add_argument("--rev", default="HEAD")
     ap.add_argument("--pages", default=",".join(PAGES))
     ap.add_argument("--shots", default="", help="directory to keep differing screenshots in")
+    ap.add_argument("--design", action="store_true", help="presentation changed: compare text and figures, report pixels")
     a = ap.parse_args()
     pages = a.pages.split(",")
     from playwright.sync_api import sync_playwright
@@ -167,10 +178,10 @@ def main():
                         pg.goto(u + path, wait_until="load")
                         pg.wait_for_timeout(250)
                         shots.append(Image.open(io.BytesIO(pg.screenshot(full_page=True))).convert("RGB"))
-                        texts.append(pg.inner_text("body"))
+                        texts.append(pg.evaluate(TEXT) if a.design else pg.inner_text("body"))
                         errs.append(pe)
                         if w == WIDTHS[-1] and page_name == "index":
-                            st = desk_states(pg)
+                            st = desk_states(pg, a.design)
                             if u == u_old:
                                 desk_old = st
                             else:
@@ -180,7 +191,7 @@ def main():
                                 else:
                                     print(f"ok   desk: {len(st)} result states identical")
                         if w == WIDTHS[-1] and page_name == "compare":
-                            st = compare_states(pg)
+                            st = compare_states(pg, a.design)
                             if u == u_old:
                                 cmp_old = st
                             else:
@@ -196,11 +207,15 @@ def main():
                         fails.append(f"{page_name} {w}px: visible text differs")
                     if shots[0].size != shots[1].size or ImageChops.difference(shots[0], shots[1]).getbbox():
                         bbox = None if shots[0].size != shots[1].size else ImageChops.difference(shots[0], shots[1]).getbbox()
-                        fails.append(f"{page_name} {w}px: pixels differ (size {shots[0].size} vs {shots[1].size}, box {bbox})")
+                        msg = f"{page_name} {w}px: pixels differ (size {shots[0].size} vs {shots[1].size}, box {bbox})"
+                        if a.design:
+                            print(("note " if texts[0] == texts[1] else "") + msg)
+                        else:
+                            fails.append(msg)
                         if a.shots:
                             Path(a.shots).mkdir(parents=True, exist_ok=True)
                             shots[0].save(Path(a.shots) / f"{page_name}_{w}_old.png"); shots[1].save(Path(a.shots) / f"{page_name}_{w}_new.png")
-                    else:
+                    elif texts[0] == texts[1]:
                         print(f"ok   {page_name} {w}px: pixel-identical, text identical")
             b.close()
         s_old.shutdown(); s_new.shutdown()
