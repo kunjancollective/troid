@@ -953,6 +953,28 @@ fake.listen(18765, async () => {
        && Object.values(lastLog.usage || {}).some((u) => u.calls >= 1) && !JSON.stringify(lastLog).includes("What does R mean"), [r.j, lastLog]);
     r = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK.replace(/.$/, "x"), "x-troid-variant": "live" } });
     ok("x-troid-variant with a wrong key → 403", r.status === 403, r);
+    // a patch: the live prompt with only context/patch/'s files (one change the owner ships on its own), on the operator's terms
+    const PSTAGE = fs0.mkdtempSync(path0.join(require("os").tmpdir(), "troid-patch-")), PMARK = "PATCHED FOR THE TEST ONLY";
+    fs0.writeFileSync(path0.join(PSTAGE, "support.md"), fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8") + "\n\n" + PMARK);
+    const hp = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE, TROID_PATCH_DIR: PSTAGE });
+    const PH = { "x-troid-candidate": CK, "x-troid-variant": "patch" };
+    KV_CALLS.length = 0;
+    const pr = await call(hp, [U("What does R mean?")], { disclosed: true }, { headers: PH, ip: "198.51.100.202" });
+    const pc = calls[calls.length - 1], psys = pc.system.map((b) => b.text).join("\n");
+    ok("patch: the live prompt with the patch's file and none of the candidate's (its staged file, its guardrails), seven tools, nothing stored, tools reported",
+       pr.status === 200 && pr.j.variant === "patch" && psys.includes(PMARK) && !psys.includes(MARK) && !psys.includes("goes to the tool as stop_pct")
+       && pc.tools.length === 7 && !KV_CALLS.length && Array.isArray(pr.j.tool_numbers), [pr.status, pr.j.variant, KV_CALLS.length]);
+    const ph = [U("What does R mean?"), A(pr.j.reply), U("and 2R?")];
+    r = await call(hp, ph, { session: pr.j.session, sig: pr.j.sig, disclosed: true }, { headers: PH });
+    const pLive = await call(hp, ph, { session: pr.j.session, sig: pr.j.sig, disclosed: true }, { headers: { "x-troid-candidate": CK, "x-troid-variant": "live" } });
+    const pCand = await call(hp, ph, { session: pr.j.session, sig: pr.j.sig, disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    ok("patch: its signed history continues under the patch, and not under the live prompt or the candidate", r.status === 200 && r.j.variant === "patch"
+       && pLive.status === 400 && pCand.status === 400, [r.status, pLive.status, pCand.status]);
+    r = await call(hp, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-variant": "patch" } });
+    ok("x-troid-variant: patch without the key: an ordinary visitor's request, the live prompt", r.status === 200 && r.j.variant === "live"
+       && !calls[calls.length - 1].system.map((b) => b.text).join("\n").includes(PMARK) && KV.has("conv:" + r.j.session), r.j.variant);
+    let resP = fakeRes(); await hp({ method: "GET", headers: {} }, resP);
+    ok("GET: what the patch stages", JSON.parse(resP.body).candidate.patch.join() === "support.md", JSON.parse(resP.body).candidate);
     // the operator's own API key, when set: evaluation never spends the key visitors use
     const he = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE, ANTHROPIC_API_KEY_EVAL: "sk-eval-test" });
     CALL_KEYS.length = 0;

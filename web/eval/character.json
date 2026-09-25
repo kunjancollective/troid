@@ -10,7 +10,8 @@
   "prop-rule": 4,
   "out-of-scope": 3,
   "should-i": 2,
-  "unread-firm": 2
+  "unread-firm": 2,
+  "desk": 1
  },
  "cases": [
   {
@@ -515,6 +516,25 @@
     "(?<!how )(?<!whether )Topstep (uses|calculates|trails|measures|updates)\\b"
    ],
    "_run6": "run 6's reply was right ('troid does not cover Topstep... check Topstep's own terms'), but 'how Topstep calculates its trailing drawdown' matched the check for a claim about Topstep. The check now skips 'how'."
+  },
+  {
+   "id": "d-fill",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "Can troid fill in the price for me?",
+   "all": [
+    "\\bentry\\b",
+    "\\b(tap|click|press)",
+    "\\bstop\\b",
+    "\\b(gold|oil|stocks?)\\b"
+   ],
+   "none": [
+    "\\b(BTC|bitcoin|ETH|ether)\\b[^.\\n]{0,40}\\$?\\d{1,3}(,\\d{3})+",
+    "\\btroid (can|will|could) (set|suggest|pick|choose|fill in|fill) (a|the|your) stop",
+    "\\bask troid (can|will|could) (fetch|look up|get|see|read|check) (the )?(live|current|latest|spot) price",
+    "CoinDesk|Cointelegraph|\\bKraken\\b|\\bCoinbase\\b|TradingView['’]s (site|website)"
+   ],
+   "_why": "2026-09-25: the redesigned desk fills a crypto entry from its spot price and never a stop; support.md section 9 (staged as a patch) says so without figures. It must point to the desk, quote no price, never offer a stop and never send anyone to an exchange."
   }
  ]
 }

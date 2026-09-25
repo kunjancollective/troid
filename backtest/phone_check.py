@@ -9,8 +9,11 @@ controls are sized as WebKit sizes them (WEBKIT_CONTROLS). The header's price ta
 script lays it out (tv_stub.py).
 
 The phone header (the owner's Android check, 2026-09-25) is held too: on every page at every width the nav is one line
-and the wordmark is larger than the page's headline; and at 390 px the desk's first field ends inside the first screen,
-FIRST_SCREEN px, the height a 390 x 844 iPhone shows under Safari's bars.
+and the wordmark is larger than the page's headline; and at 390 px, in the owner's words, "the desk's first field
+visible without scrolling past more than one screenful": the desk starts inside the first screen, FIRST_SCREEN px (the
+height a 390 x 844 iPhone shows under Safari's bars), and Entry, the first field a visitor fills in, is on screen after
+at most one screenful of scrolling. (Until the redesign the check was the firm field inside the first screen; the
+redesigned desk puts the gauge above its cards, and the owner kept that layout and this wording, 2026-09-25.)
 
   python phone_check.py                     # every page, web/public as it is
   python phone_check.py --pages index
@@ -32,9 +35,10 @@ FIRST_SCREEN = 664
 
 HEADER = """() => {
   const q = s => document.querySelector(s), px = e => parseFloat(getComputedStyle(e).fontSize);
-  const nav = q('nav'), mark = q('.mark'), h1 = q('h1'), firm = q('#firm');
+  const nav = q('nav'), mark = q('.mark'), h1 = q('h1'), desk = q('#desk'), entry = q('#entry');
   return { navH: nav ? Math.round(nav.getBoundingClientRect().height) : 0, navLine: nav ? parseFloat(getComputedStyle(nav).lineHeight) || 20 : 0,
-           mark: mark ? px(mark) : 0, h1: h1 ? px(h1) : 0, firm: firm ? Math.round(firm.getBoundingClientRect().bottom + scrollY) : null };
+           mark: mark ? px(mark) : 0, h1: h1 ? px(h1) : 0, desk: desk ? Math.round(desk.getBoundingClientRect().top + scrollY) : null,
+           entry: entry ? Math.round(entry.getBoundingClientRect().bottom + scrollY) : null };
 }"""
 
 OVER = """() => {
@@ -117,8 +121,10 @@ def main():
                     hdr.append(f"the nav is {h['navH']} px tall, more than one line")
                 if h["mark"] and h["h1"] and not h["mark"] > h["h1"]:        # the tearsheet (quantstats) has no troid header
                     hdr.append(f"the headline ({h['h1']:g} px) is not smaller than the wordmark ({h['mark']:g} px)")
-                if name == "index" and w == 390 and not (h["firm"] and h["firm"] <= FIRST_SCREEN):
-                    hdr.append(f"the desk's first field ends at {h['firm']} px, past the first screen ({FIRST_SCREEN} px)")
+                if name == "index" and w == 390 and not (h["desk"] and h["desk"] < FIRST_SCREEN):
+                    hdr.append(f"the desk starts at {h['desk']} px, past the first screen ({FIRST_SCREEN} px)")
+                if name == "index" and w == 390 and not (h["entry"] and h["entry"] <= 2 * FIRST_SCREEN):
+                    hdr.append(f"Entry ends at {h['entry']} px, more than one screenful of scrolling ({2 * FIRST_SCREEN} px)")
                 fails += [f"{name} {w}px header: {x}" for x in hdr]
                 if name == "index":                    # the desk's step cards open, so every field is laid out
                     pg.evaluate("()=>document.querySelectorAll('details.step').forEach(d=>d.open=true)")
@@ -132,7 +138,7 @@ def main():
                         if bad <= 3:
                             fails.append(f"{name} {w}px {v}: scrolls {r['sideways']}px sideways; " + " | ".join(r["over"][:4]))
                 print(("ok  " if not (bad or hdr) else "FAIL") + f" {name} {w}px" + (f" ({bad} views)" if bad else "")
-                      + (f" (header: {'; '.join(hdr)})" if hdr else "") + (f" · first field ends at {h['firm']} px" if name == "index" else ""))
+                      + (f" (header: {'; '.join(hdr)})" if hdr else "") + (f" · desk starts at {h['desk']} px, Entry ends at {h['entry']} px" if name == "index" else ""))
                 ctx.close()
         b.close()
     srv.shutdown()

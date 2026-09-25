@@ -28,7 +28,10 @@
  * the evaluation runner, web/eval_character.js. Everyone else gets the live prompt. A candidate request is the
  * operator's own: it is not held to the per-address limit and is not stored (the per-instance call ceiling still
  * applies). With the key, x-troid-variant: live asks for the live prompt on the same terms, the baseline the promotion
- * rule compares a candidate with (CLAUDE.md). An operator request goes out on ANTHROPIC_API_KEY_EVAL when that is set,
+ * rule compares a candidate with (CLAUDE.md), and x-troid-variant: patch the live prompt with only the files staged in
+ * context/patch/ — one change the owner asked to ship on its own, evaluated on the cases it touches against the live
+ * baseline (the desk's price fill in support.md, 2026-09-25); everything gated on the candidate stays off for it. An
+ * operator request goes out on ANTHROPIC_API_KEY_EVAL when that is set,
  * so evaluation never spends the key visitors use, and its reply carries the tools it called and every number in
  * their inputs and results (tool_numbers), for the evaluation's check that each figure came from a tool. Promoting a
  * candidate follows the owner's rule in CLAUDE.md, and is one commit: its files move into place and the CANDIDATE_* entries fold into
@@ -74,6 +77,7 @@ const TURN_KEY = process.env.TROID_TURN_KEY || "";                           // 
 const CANDIDATE_KEY = process.env.TROID_CANDIDATE_KEY || "";                 // selects the candidate prompt (32+ bytes); unset: none
 const EVAL_KEY = process.env.ANTHROPIC_API_KEY_EVAL || "";                  // the operator's evaluation runs, on their own key; unset: KEY
 const CANDIDATE_DIR = process.env.TROID_CANDIDATE_DIR || "";                 // tests stage files in a scratch directory; unset: context/candidate/
+const PATCH_DIR = process.env.TROID_PATCH_DIR || "";                         // the same for context/patch/
 // The 30-day conversation store: Upstash Redis over its REST API (the Vercel Marketplace integration sets
 // KV_REST_API_URL / KV_REST_API_TOKEN; Upstash's own names are accepted too).
 const STORE_URL = (process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL || "").replace(/\/+$/, "");
@@ -221,7 +225,7 @@ function S(lang, key, vars) {
   return v;
 }
 
-let CTX = null, CTX_CANDIDATE = null;
+let CTX = null, CTX_CANDIDATE = null, CTX_PATCH = null;
 function readOptional(rels) { try { return readFirst(rels); } catch (e) { return null; } }
 function readFirst(rels) {
   for (const rel of rels) {
@@ -236,7 +240,23 @@ function readStaged(name) {
   if (!CANDIDATE_DIR) return readOptional(["context/candidate/" + name]);
   try { return fs.readFileSync(path.join(CANDIDATE_DIR, name), "utf8"); } catch (e) { return null; }
 }
+// a file staged as a patch on the live prompt, or null: context/patch/<name>, or <TROID_PATCH_DIR>/<name>
+function readPatch(name) {
+  if (!PATCH_DIR) return readOptional(["context/patch/" + name]);
+  try { return fs.readFileSync(path.join(PATCH_DIR, name), "utf8"); } catch (e) { return null; }
+}
 function context(variant) {
+  if (variant === "patch") {                                              // the live files, with the patch's in their place
+    if (!CTX_PATCH) {
+      const live = context();
+      CTX_PATCH = Object.assign({}, live, {
+        troid: readPatch("TROID.md") || live.troid,
+        support: readPatch("support.md") || live.support,
+        character: readPatch("TROID-CHARACTER.md") || live.character,
+      });
+    }
+    return CTX_PATCH;
+  }
   if (variant === "candidate") {                                          // the staged files that exist; the live ones otherwise
     if (!CTX_CANDIDATE) {
       const live = context();
@@ -1554,7 +1574,7 @@ const versionOf = (variant) => VERSIONS[variant] || (VERSIONS[variant] = crypto.
   guardrailsFor(variant), ...["troid", "support", "character"].map((k) => context(variant)[k] || "")])).digest("hex").slice(0, 16));
 // The session ID is inside the signature, so a conversation cannot move to another session mid-way; the version is
 // the prompt's, so it cannot move between the live prompt and the candidate either, even when nothing is staged.
-const sign = (msgs, session, variant) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([versionOf(variant === "candidate" ? "candidate" : "live"),
+const sign = (msgs, session, variant) => crypto.createHmac("sha256", TURN_KEY).update(JSON.stringify([versionOf(variant === "candidate" || variant === "patch" ? variant : "live"),
   String(session || ""), ...msgs.map((m) => [m.role, m.content])])).digest("base64url");
 function signedOk(msgs, sig, session, variant) {
   if (msgs.length === 1) return true;
@@ -1617,15 +1637,17 @@ const isOn = () => ENABLED && !!KEY && Buffer.byteLength(TURN_KEY) >= 32 && stor
 const querySession = (req) => { try { return (req.query && req.query.session) || new URL(req.url || "/", "http://x").searchParams.get("session") || ""; } catch (e) { return ""; } };
 
 // The prompt a request gets, and whether it is the operator's: "live" for everyone; with the candidate key (the
-// evaluation runner), "candidate", or "live" when x-troid-variant says so — the live baseline, unstored and unthrottled
-// like any operator request. null for a request carrying a wrong key, which is refused.
+// evaluation runner), "candidate", or "live" or "patch" when x-troid-variant says so — the live baseline, or the live
+// prompt with context/patch/'s files, unstored and unthrottled like any operator request. null for a request carrying a
+// wrong key, which is refused.
 function requestOf(req) {
   const h = req.headers["x-troid-candidate"];
   if (h === undefined) return { variant: "live", operator: false };
   if (Buffer.byteLength(CANDIDATE_KEY) < 32) return null;
   const want = Buffer.from(CANDIDATE_KEY), got = Buffer.from(String(h));
   if (!(got.length === want.length && crypto.timingSafeEqual(got, want))) return null;
-  return { variant: String(req.headers["x-troid-variant"] || "") === "live" ? "live" : "candidate", operator: true };
+  const v = String(req.headers["x-troid-variant"] || "");
+  return { variant: v === "live" || v === "patch" ? v : "candidate", operator: true };
 }
 const STAGED = ["TROID.md", "TROID-CHARACTER.md", "support.md"];
 function queryLang(req) {
@@ -1643,7 +1665,7 @@ module.exports = async (req, res) => {
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
                         rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length,
-                        eval_key: EVAL_KEY.length > 0 };
+                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null) };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
                             disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
@@ -1691,6 +1713,7 @@ module.exports = async (req, res) => {
   }
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
   if (variant === "candidate") log.candidate = 1;
+  if (variant === "patch") log.patch = 1;
   if (operator) log.operator = 1;
   const warned = messages.some((m) => m.role === "assistant" && isWarning(m.content));
   const first = !(body.disclosed === true || messages.some((m) => m.role === "assistant" && hasDisclosure(m.content)));

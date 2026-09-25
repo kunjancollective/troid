@@ -35,6 +35,9 @@ const KEY = process.env.EVAL_CANDIDATE_KEY || "";
 // EVAL_LIVE=1 with the key: the live prompt as the operator's baseline, unstored and unthrottled (the promotion rule
 // compares a candidate with it on the same questions, CLAUDE.md)
 const LIVE_OP = !!KEY && process.env.EVAL_LIVE === "1";
+// EVAL_PATCH=1 with the key: the live prompt with only context/patch/'s files (one change shipped on its own, against the
+// live baseline on the cases it touches); never with EVAL_LIVE
+const PATCH_OP = !!KEY && !LIVE_OP && process.env.EVAL_PATCH === "1";
 // Per million tokens, from Anthropic's pricing page (platform.claude.com/docs/en/about-claude/pricing), read 2026-09-24:
 // input, a cache write (5 minutes), a cache read, output. What a keyed run cost is its tokens at these prices.
 const PRICES = { "claude-sonnet-5": { input: 2, cache_write: 2.5, cache_read: 0.2, output: 10 },
@@ -195,7 +198,7 @@ function arithmeticSlips(text) {
 async function api(method, p, body, headers) {
   const r = await fetch(BASE + p, { method, body: body ? JSON.stringify(body) : undefined,
     headers: Object.assign({ "content-type": "application/json", "user-agent": "troid-eval/1" }, KEY ? { "x-troid-candidate": KEY } : {},
-                           LIVE_OP ? { "x-troid-variant": "live" } : {}, headers || {}) });
+                           LIVE_OP ? { "x-troid-variant": "live" } : PATCH_OP ? { "x-troid-variant": "patch" } : {}, headers || {}) });
   return { status: r.status, j: await r.json().catch(() => ({})) };
 }
 
@@ -310,7 +313,7 @@ function writeReport(record, out, notes) {
   const line = `RESULT: ${passedThen} of ${n} cases pass every automated check (${record.nothing_staged ? "live" : record.variant}${record.operator_live ? " baseline" : ""} prompt, ${record.base})`;
   const read = notes || {};
   const md = [`# troid's character — evaluation run, ${record.started_utc.slice(0, 16).replace("T", " ")} UTC`, "",
-    `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : record.operator_live ? " (the baseline, through the operator key)" : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
+    `Prompt: **${record.nothing_staged ? "live" : record.variant}**${record.nothing_staged ? " (through the candidate key, nothing staged)" : record.operator_live ? " (the baseline, through the operator key)" : record.patch ? ` (the live prompt with context/patch/: ${record.patch.join(", ")})` : ""} on ${record.base} · models: ${JSON.stringify(record.get.models)} · set: web/eval/character.json (${n} cases).`, "",
     line.replace("RESULT: ", "**Result:** "), "",
     ...(record.usage ? [`**Tokens:** ${Object.entries(record.usage.by_model).map(([m, t]) => `${m} ${t.calls} calls, ${t.input} input, ${t.cache_write} cache-write, ${t.cache_read} cache-read, ${t.output} output`).join("; ")} — $${record.usage.usd} at the prices the runner records.`, ""] : []),
     ...(record.rechecked ? [`**Checked again** on ${record.rechecked.slice(0, 10)} under the case set as it is now: ${n - failed} of ${n} pass. ` +
@@ -377,7 +380,7 @@ if (REPORT) {                                                      // a saved ru
 }
 
 (async () => {
-  const VARIANT = KEY && !LIVE_OP ? "candidate" : "live";
+  const VARIANT = PATCH_OP ? "patch" : KEY && !LIVE_OP ? "candidate" : "live";
   const cases = SET.cases.filter((c) => !ONLY || ONLY.split(",").includes(c.id));
   const g = await api("GET", "/api/troid");
   const record = { base: BASE, variant: VARIANT, operator_live: LIVE_OP || undefined, started_utc: new Date().toISOString(), get: { enabled: g.j.enabled, models: g.j.models, candidate: g.j.candidate },
@@ -391,7 +394,11 @@ if (REPORT) {                                                      // a saved ru
   // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
   // prompt at full speed, unstored and not held to a visitor's limit.
   const cd = g.j.candidate || {};
-  record.nothing_staged = !!KEY && !LIVE_OP && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length
+  if (PATCH_OP) {
+    record.patch = cd.patch || [];
+    if (!record.patch.length) { console.log("nothing is staged in context/patch/ at " + BASE); process.exit(1); }
+  }
+  record.nothing_staged = !!KEY && !LIVE_OP && !PATCH_OP && !(cd.staged || []).length && !cd.guardrails && !(cd.tools || []).length
     && !(cd.rules || []).length && !(cd.run || []).length && !cd.lints;
   if (record.nothing_staged) console.log("nothing is staged: the candidate key evaluates the live prompt");
   let failed = 0;
