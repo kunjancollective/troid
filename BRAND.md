@@ -146,12 +146,19 @@ stocks are names there: their quotes are TradingView's and troid doesn't copy th
 when 767 px or narrower, as TradingView sizes its tape) and one label cell, so the header never changes height.
 `web/public/ticker.js`, `web/api/ticker.js`, `backtest/site_build.py` (`ticker`).
 
-**Term and popover.** A "?" (16 px, a 44 px touch target) beside a term opens one or two plain sentences, then the formula
-where there is one, in troid's voice. A tooltip shows after 300 ms of hover and at once on keyboard focus, and toggles on
-a tap; a note with links (the desk's "why these 3?") opens on a click or tap only. Esc or a click elsewhere closes it;
-at most one is open. Max 280 px, `--surface2` with a `--line` border, no shadow, `--z-popover`. Its text is in
-`web/i18n` (firm names from firms.json), and a screen reader hears a tooltip through `aria-describedby` without opening
-it. `web/public/pop.js`.
+**Term and popover.** A term is its own trigger: every field label on the desk and every figure in its readout (the
+verdict's badge, the binding limit and the room, each cell's label, each breaker, the losses left) carries a dotted
+underline in its own ink, is reachable by Tab, and has a target of at least 24 px that stays off the input under it; no
+"?" icons. "Tap any label for what it means." sits above the desk. The note reads, in order: what it is, in one plain
+sentence; "also called", the names other platforms use, generic only and in English on every page (they're the words on
+the firms' dashboards); an example with numbers (a field's is fixed and reproduced in `verify_claims.py`; a readout
+figure's is "Now", this result's own numbers, which `i18n_equiv.py --design` checks are all in the result or the inputs);
+the formula where there is one. A firm-specific example takes the firm, product and figure from firms.json with the date
+troid read it. A tooltip shows after 300 ms of hover and at once on keyboard focus, and toggles on a tap; a note with
+links (the desk's "why these 3?") opens on a click or tap only. Esc or a click elsewhere closes it; at most one is open.
+Max 280 px, `--surface2` with a `--line` border, no shadow, `--z-popover`. Text in `web/i18n` under `glossary.*`, and a
+screen reader hears a note through `aria-describedby` without opening it. `web/public/pop.js`, `backtest/regions.py`
+(`glossary_html`, `term`).
 
 ## Implementation rule
 

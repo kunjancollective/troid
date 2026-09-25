@@ -63,6 +63,15 @@ def desk_views(pg):
             yield f"{f}/{p}"
             pg.evaluate("()=>{const d=document.querySelector('#result details.work');if(d)d.open=true}")
             yield f"{f}/{p} working"
+    # a glossary note open on the rightmost field label and on the readout's rightmost figure (glossary v2)
+    for scope in ("#desk .grid", "#result"):
+        tid = pg.evaluate("""s=>{let b=null,r=-1;for(const e of document.querySelectorAll(s+' .term')){const x=e.getBoundingClientRect();
+          if(x.width&&x.right>r){r=x.right;b=e}}return b&&b.dataset.tip}""", scope)
+        if tid:
+            pg.evaluate("()=>window.troidPop&&window.troidPop.hide()")
+            pg.click(f'{scope} .term[data-tip="{tid}"]')
+            pg.wait_for_timeout(50)
+            yield f"note {tid} open"
 
 
 def main():

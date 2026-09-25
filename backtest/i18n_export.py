@@ -45,6 +45,8 @@ def note_for(key, en):
         tips.append("troid's product name: choose one form here; it is used the same way everywhere")
     if key.startswith("data."):
         tips.append("text from a firm's rules (firms.json)")
+    if key.startswith("glossary.") and key.endswith(".also"):
+        tips.append("shown in English on every page: these are the words on the firms' dashboards; no translation needed")
     if i18n.PH.search(en):
         tips.append("keep " + " ".join(sorted(set(i18n.PH.findall(en)))) + " exactly as written")
     if i18n.TAG.search(en):

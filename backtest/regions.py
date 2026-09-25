@@ -194,9 +194,64 @@ def lev_first(T=None):
     return " ".join(out)
 
 
+# The desk's glossary (glossary v2 handoff): every field label and every readout figure is a term that opens one of
+# these. Fields carry a fixed example; the readout's carry a live line the desk's script writes from its own result
+# (.gx, data-live), whose numbers i18n_equiv.py checks are all in that result or its inputs.
+GLOSS_FIELDS = ["firm", "challenge", "quota", "equity", "daystart", "hirollover", "hwm", "side", "entry", "stop", "target_r",
+                "risk_pct", "cap_pct", "leverage", "mode"]
+GLOSS_READOUT = ["verdict", "binding", "room", "size", "margin", "risk", "fees", "stopd", "budget", "left", "breakers", "daily",
+                 "floor", "liq"]
+
+
+def term(tid, text):
+    """A label or readout figure that opens glossary.{tid}: a dotted underline, reachable by Tab, described by the note."""
+    return (f'<button type="button" class="term" data-tip="g-{tid}" aria-describedby="g-{tid}">{text}</button>')
+
+
+def glossary_html(T=None):
+    """Every glossary note the desk opens, in T's language. "Also called" stays in English in every language: those are
+    the words on the firms' dashboards. A firm-specific example takes its firm, product and figure from firms.json, the
+    reference firm's compare product, with the date troid read the rule."""
+    T = _strings(T)
+    en = i18n.english()
+    f = reference_firm(); p = f["compare_product"]; pk = p["key"]
+    firm = html.escape(f["name"]); product = T.data(p["label"])
+    ct = cite(f, "target_pct", pk)
+    assert ct and ct["o"], f"{f['name']} {pk}: the Challenge example states a target, which has no recorded source"
+    num = lambda x: f"{x:g}"
+    kw = {"firm": {"firm": firm},
+          "challenge": {"firm": firm, "product": product, "target": num(p["target_pct"]), "date": max(ct["o"])},
+          "crossover": {"firm": firm, "product": product, "max": num(p["max_pct"]), "daily": num(p["daily_pct"]),
+                        "x": f"${round(100_000 * (1 - p['max_pct'] / 100 + p['daily_pct'] / 100)):,}"}}
+    label = lambda k: f'<span class="gk">{T(k)}</span> '
+
+    def block(tid):
+        g, out = f"glossary.{tid}", [f"<p>{T(f'glossary.{tid}.what')}</p>"]
+        if tid == "leverage":
+            first = lev_first(T)
+            if first:
+                out.append(f"<p>{first}</p>")
+        if f"{g}.note" in en:
+            out.append(f"<p>{T(f'{g}.note')}</p>")
+        if f"{g}.also" in en:
+            out.append(f'<p>{label("glossary.also_label")}<span lang="en" translate="no">{html.escape(en[f"{g}.also"])}</span></p>')
+        if f"{g}.ex" in en:
+            out.append(f"<p>{label('glossary.ex_label')}{T(f'{g}.ex', **kw.get(tid, {}))}</p>")
+        if f"{g}.live" in en:
+            out.append(f'<p class="gnow" hidden>{label("glossary.now_label")}<span class="gx" id="gx-{tid}" data-live="{T.attr(f"{g}.live")}"'
+                       + (f' data-pending="{T.attr(f"{g}.pending")}"' if f"{g}.pending" in en else "") + "></span></p>")
+        if f"{g}.formula" in en:
+            out.append(f"<p><code>{T(f'{g}.formula')}</code></p>")
+        if tid == "binding":                       # the crossover belongs with the limit it swaps
+            out.append(f"<p>{T('glossary.crossover.what')}</p><p>{label('glossary.ex_label')}{T('glossary.crossover.ex', **kw['crossover'])}</p>"
+                       f"<p><code>{T('glossary.crossover.formula')}</code></p>")
+        return f'<div class="pop gl" id="g-{tid}" role="tooltip" hidden>{"".join(out)}</div>'
+    return "\n  ".join(block(t) for t in GLOSS_FIELDS + GLOSS_READOUT)
+
+
 def template_context(T):
     """The generated fragments the static page templates embed, in T's language (site_build.py), and the reference
     firm's name for the sentence under the firms panel (a firm's name comes from firms.json, never from en.json)."""
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
             "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
-            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER)}
+            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "glossary": glossary_html(T), "term": term}

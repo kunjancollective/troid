@@ -67,7 +67,9 @@
     hide();
     b.focus();
   });
-  window.troidPop = { hide: hide };   // for a page's own button inside a note (ticker.js, "use as entry")
+  // for a page's own button inside a note (ticker.js, "use as entry"), and for a page that is about to replace the
+  // button a note belongs to (the desk's readout, re-rendered on every input)
+  window.troidPop = { hide: hide, owner: function () { return openBtn; } };
   // a phone fires resize while scrolling (the address bar collapses): only a new width closes it; otherwise it moves
   var lastW = document.documentElement.clientWidth;
   window.addEventListener("resize", function () {

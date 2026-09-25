@@ -399,6 +399,40 @@ for _pg in [p for p in _SB.PAGES if p != "tearsheet"]:
           float(bool(_m) and [x["proName"] for x in _cfg.get("symbols", [])] == _tv and f'data-source="{_SB.TICKER_SOURCE}"' in _raw
                 and f"· {_SB.TICKER_SOURCE} ·" in _h and "Track all markets on TradingView" in _h), 1.0)
 
+# glossary v2: every figure in the desk's glossary examples, reproduced from the desk's own formula and the reference
+# firm's recorded rules (its compare product: Bitfunded 1-Step), then found on the desk as published
+_gi = _html.unescape(_read("web/public/index.html"))
+_rf = _GC.reference()
+_cp = _rf["compare_product"]
+_Q, _E0, _EN_, _ST, _TR, _RP, _CP = 100_000, 100_000, 77_872, 74_814, 2, 0.5, 35
+_dist = _EN_ - _ST
+_room = _Q * _cp["daily_pct"] / 100                        # initial-balance daily limit, from a fresh day start
+_risk = _E0 * _RP / 100
+_notional = _risk / (_dist + _EN_ * _cp["fee_per_side_pct"] / 100 * 2) * _EN_
+_mmr = 0.005
+_liq = (_E0 / _notional - _mmr) / (1 - _mmr) * 100
+for _lab, _v, _want, _txt in [
+        ("stop 77,872 − 74,814", _dist, 3058, "3,058"),
+        ("target 77,872 + 2 × 3,058", _EN_ + _TR * _dist, 83988, "83,988"),
+        ("risk 0.5% of 100,000", _risk, 500, "$500"),
+        (f"room: {_rf['name']} {_cp['label']} {_cp['daily_pct']:g}% daily limit on 100,000", _room, 4000, "$4,000"),
+        ("budget cap 35% of $4,000", _room * _CP / 100, 1400, "$1,400"),
+        (f"notional: $500 ÷ (3,058 + 77,872 × {_cp['fee_per_side_pct']:g}% × 2) × 77,872", round(_notional), 12478, "$12,478"),
+        (f"margin at {_cp['max_leverage']:g}× (the firm's cap)", round(_notional / _cp["max_leverage"]), 2496, "$2,496"),
+        ("margin at 2×", round(_notional / 2), 6239, "$6,239"),
+        ("equity 101,200 − 300", 101_200 - 300, 100900, "equity 100,900"),
+        ("day start: the last day's close with nothing open", 101_200 - 300, 100900, "day start 100,900"),
+        ("high at rollover max(100,900, 101,300)", max(100_900, 101_300), 101300, "→ 101,300"),
+        ("high-water mark after 104,000 then 102,500", max(104_000, 102_500), 104000, "still 104,000")]:
+    check("DERIVED", f"glossary example: {_lab} = {_want:,} and the desk says so", float(_v == _want and _txt in _gi), 1.0)
+check("DERIVED", f"glossary example: under cross at {_cp['max_leverage']:g}×, the daily limit ({_room / _notional * 100:.2f}% away) comes long before "
+      f"liquidation ({_liq:.0f}% away)", float(_room / _notional * 100 < _liq / 10), 1.0)
+_tgt = _GC.cite(_rf, "target_pct", _cp["key"])
+check("SOURCED", f"glossary example: {_rf['name']} \"{_cp['label']}\" has a {_cp['target_pct']:g}% target, read {max(_tgt['o'])}",
+      float(f"{_rf['name']} \"{_cp['label']}\" is a single phase with a {_cp['target_pct']:g}% target (read {max(_tgt['o'])})" in _gi), 1.0)
+check("DERIVED", "glossary: every field label and readout figure on the desk opens a note that exists", float(all(
+    f'id="g-{t}"' in _read("web/public/index.html") for t in _re.findall(r'data-tip="g-([a-z_]+)"', _read("web/public/index.html") + _read("web/templates/index.html")))), 1.0)
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

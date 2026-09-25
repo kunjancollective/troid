@@ -138,12 +138,19 @@ input,select{min-width:0;max-width:100%}
    the badge, the firm, product and room under both */
 .verdict .vsent{flex:1 1 240px;margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
 .verdict .vtxt{flex-basis:100%}
-/* a term's "?" and the note it opens (web/public/pop.js): no shadow, --surface2 with a --line border (BRAND.md) */
-.qm{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;padding:0;
-  margin-inline-start:6px;border:1px solid var(--line);border-radius:50%;background:none;color:var(--dim);
-  font:600 10px/1 var(--mono);letter-spacing:0;text-transform:none;vertical-align:middle;cursor:help}
-.qm::after{content:"";position:absolute;inset:-14px}
-.qm:hover,.qm:focus-visible{color:var(--signal);border-color:var(--signal);outline:none}
+/* a term and the note it opens (web/public/pop.js; glossary v2): every field label and readout figure is its own trigger,
+   a dotted underline in the text's own ink, reachable by Tab, with a target of at least 24 px that stays off the input
+   under it. The note: no shadow, --surface2 with a --line border (BRAND.md). */
+.term{position:relative;display:inline;padding:0;margin:0;border:0;border-bottom:1px dotted currentColor;background:none;
+  color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;line-height:inherit;text-align:inherit;cursor:help}
+.term::after{content:"";position:absolute;inset:-6px -4px -3px}
+.term:hover,.term[aria-describedby]:focus-visible{color:var(--ink)}
+.term:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+.term.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .term.vtag:hover{color:var(--signal)}.vREDUCE .term.vtag:hover{color:var(--warn)}.vBLOCK .term.vtag:hover{color:var(--bad)}
+.ghint{margin:-8px 0 14px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.gl .gk{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-inline-end:4px}
+.gl code,.gl .gx{font-family:var(--mono);font-size:12px}.gl code{color:var(--ink);overflow-wrap:anywhere}
 .why3{margin-inline-start:6px;padding:0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--signal);
   font:inherit;letter-spacing:.04em;text-transform:none;cursor:pointer;position:relative}
 .why3::after{content:"";position:absolute;inset:-14px -4px}
@@ -246,7 +253,7 @@ confidence interval that contains zero, and a result below what chance produces 
 </div>
 
 <div class="cells">
-<div class="c"><div class="k">this week</div><div class="v">4 trades · +0.48R</div></div>
+<div class="c"><div class="k">this week</div><div class="v">3 trades · +0.69R</div></div>
 <div class="c"><div class="k">this month</div><div class="v">14 trades · -0.64R</div></div>
 <div class="c"><div class="k">status</div><div class="v">running</div></div>
 </div>

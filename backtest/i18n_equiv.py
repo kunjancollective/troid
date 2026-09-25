@@ -105,7 +105,8 @@ DESK_DESIGN = """()=>{const r=document.getElementById('result'),x=[...r.querySel
   const said=x.map(e=>e.innerText).join(' ');x.forEach(e=>e.style.display='none');
   const base=r.innerText;x.forEach(e=>e.style.display='');
   const inputs=[...document.querySelectorAll('#desk input')].map(i=>i.value).join(' ');
-  return {base, said, inputs}}"""
+  const live=[...document.querySelectorAll('.gx')].map(e=>e.textContent).join(' ');
+  return {base, said, inputs, live, full: r.innerHTML.replace(/<[^>]+>/g,' ')}}"""
 NUM = __import__("re").compile(r"\d[\d,]*(?:\.\d+)?")
 
 
@@ -114,8 +115,10 @@ def _nums(s):
 
 
 def explained_ok(st):
-    """A design state's explanation quotes only numbers its result or inputs already show."""
-    return _nums(st["said"]) <= _nums(st["base"]) | _nums(st["inputs"])
+    """A design state's explanation quotes only numbers its result or inputs already show; the glossary's live lines
+    (glossary v2) only numbers the result computed, its working included, or the inputs."""
+    return (_nums(st["said"]) <= _nums(st["base"]) | _nums(st["inputs"])
+            and _nums(st.get("live", "")) <= _nums(st.get("full", "")) | _nums(st["inputs"]))
 
 
 def desk_states(page, design=False):
@@ -216,13 +219,14 @@ def main():
                                 else:
                                     print(f"ok   desk: {len(st)} result states identical")
                                 if a.design:
-                                    extra = [(x[:3], sorted(_nums(x[-1]["said"]) - _nums(x[-1]["base"]) - _nums(x[-1]["inputs"])))
+                                    extra = [(x[:3], sorted(_nums(x[-1]["said"]) - _nums(x[-1]["base"]) - _nums(x[-1]["inputs"])),
+                                              sorted(_nums(x[-1].get("live", "")) - _nums(x[-1].get("full", "")) - _nums(x[-1]["inputs"])))
                                              for x in st if not explained_ok(x[-1])]
                                     said = sum(1 for x in st if x[-1]["said"].strip())
                                     if extra:
                                         fails.append(f"desk: {len(extra)} explanations add a number, first {extra[:3]}")
                                     else:
-                                        print(f"ok   desk: {said} of {len(st)} states explained, every number in the explanation already in the result or inputs")
+                                        print(f"ok   desk: {said} of {len(st)} states explained, every number in the explanation and the glossary's live lines already in the result or inputs")
                         if w == WIDTHS[-1] and page_name == "compare":
                             st = compare_states(pg, a.design)
                             if u == u_old:

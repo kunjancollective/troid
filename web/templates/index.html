@@ -127,12 +127,19 @@ input,select{min-width:0;max-width:100%}
    the badge, the firm, product and room under both */
 .verdict .vsent{flex:1 1 240px;margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
 .verdict .vtxt{flex-basis:100%}
-/* a term's "?" and the note it opens (web/public/pop.js): no shadow, --surface2 with a --line border (BRAND.md) */
-.qm{position:relative;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;padding:0;
-  margin-inline-start:6px;border:1px solid var(--line);border-radius:50%;background:none;color:var(--dim);
-  font:600 10px/1 var(--mono);letter-spacing:0;text-transform:none;vertical-align:middle;cursor:help}
-.qm::after{content:"";position:absolute;inset:-14px}
-.qm:hover,.qm:focus-visible{color:var(--signal);border-color:var(--signal);outline:none}
+/* a term and the note it opens (web/public/pop.js; glossary v2): every field label and readout figure is its own trigger,
+   a dotted underline in the text's own ink, reachable by Tab, with a target of at least 24 px that stays off the input
+   under it. The note: no shadow, --surface2 with a --line border (BRAND.md). */
+.term{position:relative;display:inline;padding:0;margin:0;border:0;border-bottom:1px dotted currentColor;background:none;
+  color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;line-height:inherit;text-align:inherit;cursor:help}
+.term::after{content:"";position:absolute;inset:-6px -4px -3px}
+.term:hover,.term[aria-describedby]:focus-visible{color:var(--ink)}
+.term:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+.term.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .term.vtag:hover{color:var(--signal)}.vREDUCE .term.vtag:hover{color:var(--warn)}.vBLOCK .term.vtag:hover{color:var(--bad)}
+.ghint{margin:-8px 0 14px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.gl .gk{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-inline-end:4px}
+.gl code,.gl .gx{font-family:var(--mono);font-size:12px}.gl code{color:var(--ink);overflow-wrap:anywhere}
 .why3{margin-inline-start:6px;padding:0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--signal);
   font:inherit;letter-spacing:.04em;text-transform:none;cursor:pointer;position:relative}
 .why3::after{content:"";position:absolute;inset:-14px -4px}
@@ -190,39 +197,39 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 <div class="panel" id="desk">
   <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
+  <p class="ghint">{{ t("glossary.hint") }}</p>
   <div id="shared" class="shared" role="status" hidden></div>
   <div class="grid g4">
-    <div><label>{{ t("index.calc.firm") }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm"></select></div>
-    <div><label>{{ t("index.calc.challenge") }}</label><select id="profile"></select></div>
-    <div><label>{{ t("index.calc.quota") }}</label><input id="quota" type="number" value="100000"></div>
-    <div><label>{{ t("index.calc.equity") }}</label><input id="equity" type="number" value="100000"></div>
+    <div><label for="firm">{{ term("firm", t("index.calc.firm")) }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm" aria-label="{{ t.attr("index.calc.firm") }}"></select></div>
+    <div><label for="profile">{{ term("challenge", t("index.calc.challenge")) }}</label><select id="profile"></select></div>
+    <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" value="100000"></div>
+    <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" value="100000"></div>
   </div>
   <div class="grid g4">
-    <div><label>{{ t("index.calc.daystart") }}</label><input id="daystart" type="number" value="100000"></div>
-    <div id="hiWrap" style="display:none"><label>{{ t("index.calc.hirollover") }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
-    <div id="hwmWrap" style="display:none"><label>{{ t("index.calc.hwm") }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
+    <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" value="100000"></div>
+    <div id="hiWrap" style="display:none"><label for="hirollover">{{ term("hirollover", t("index.calc.hirollover")) }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
+    <div id="hwmWrap" style="display:none"><label for="hwm">{{ term("hwm", t("index.calc.hwm")) }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
   </div>
   <div class="grid g4">
-    <div><label>{{ t("index.calc.side") }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
+    <div><label for="side">{{ term("side", t("index.calc.side")) }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
       <option value="-1">{{ t("index.js.short") }}</option></select></div>
-    <div><label>{{ t("index.calc.entry") }}</label><input id="entry" type="number" step="any" value="77872"></div>
-    <div><label>{{ t("index.calc.stop") }}</label><input id="stop" type="number" step="any" value="74814"></div>
-    <div><label>{{ t("index.calc.target_r") }}</label><input id="targetR" type="number" step="any" value="2"></div>
+    <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><input id="entry" type="number" step="any" value="77872"></div>
+    <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" value="74814"></div>
+    <div><label for="targetR">{{ term("target_r", t("index.calc.target_r")) }}</label><input id="targetR" type="number" step="any" value="2"></div>
   </div>
   <div class="grid g3">
-    <div><label>{{ t("index.calc.risk_pct") }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
-    <div><label>{{ t("index.calc.cap_pct") }}</label><input id="capPct" type="number" step="any" value="35"></div>
-    <div><label>{{ t("index.calc.leverage") }}<button type="button" class="qm" data-tip="t-lev" aria-describedby="t-lev" aria-label="{{ t.attr("index.lev.q") }}">?</button></label><input id="lev" type="number" step="any" value="5"></div>
+    <div><label for="riskPct">{{ term("risk_pct", t("index.calc.risk_pct")) }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
+    <div><label for="capPct">{{ term("cap_pct", t("index.calc.cap_pct")) }}</label><input id="capPct" type="number" step="any" value="35"></div>
+    <div><label for="lev">{{ term("leverage", t("index.calc.leverage")) }}</label><input id="lev" type="number" step="any" value="5"></div>
   </div>
   <div class="grid g3">
-    <div><label>{{ t("index.calc.mode") }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
+    <div><label for="mode">{{ term("mode", t("index.calc.mode")) }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
       <option value="isolated">{{ t("index.js.isolated") }}</option></select></div>
   </div>
   <div id="result"></div>
   <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>
     <p>{{ t("index.why3.ask", href=L + "/chat#q=" + (t("index.why3.ask_q")|urlencode)) }}</p></div>
-  <div class="pop" id="t-lev" role="tooltip" hidden>{% if lev_first %}{{ lev_first }} {% endif %}{{ t("index.lev.why") }}</div>
-  <div class="pop" id="t-verdict" role="tooltip" hidden>{{ t("glossary.verdict") }}</div>
+  {{ glossary }}
 </div>
 
 
@@ -312,13 +319,18 @@ function provBlock(f,p,used,formula,assumed){
   s.push(PROV_TAIL);
   return '<div class="prov">'+s.join(" ")+' <code>'+formula+'</code></div>';
 }
-/* The verdict: its badge, a "?" for what the verdicts mean, and a plain sentence built from this result's own figures
-   (design handoff 2026-09-24, 2b), then the firm, product and room. The "?" and the sentence carry data-x: they explain
-   the result and add no figure of their own (i18n_equiv.py --design checks that against every desk state). */
+/* The verdict: its badge, which opens what the verdicts mean, and a plain sentence built from this result's own figures
+   (design handoff 2026-09-24, 2b), then the firm, product and room. The sentence carries data-x: it explains the result
+   and adds no figure of its own (i18n_equiv.py --design checks that against every desk state). */
 function verdict(v,tag,sent,txt){
-  return '<div class="verdict v'+v+'"><span class="vtag">'+tag+'</span><button type="button" class="qm" data-x data-tip="t-verdict" aria-describedby="t-verdict" aria-label="'+esc(T.q_verdict)+'">?</button>'+
+  return '<div class="verdict v'+v+'">'+term("verdict",tag).replace('class="term"','class="term vtag"')+
     '<p class="vsent" data-x>'+sent+'</p><span class="vtxt">'+txt+'</span></div>';
 }
+/* A term opens its glossary note (regions.glossary_html, web/public/pop.js): a label or a figure, dotted underline. */
+function term(id,text){return '<button type="button" class="term" data-tip="g-'+id+'" aria-describedby="g-'+id+'">'+text+'</button>'}
+/* The readout's notes carry a live line: this result's own numbers in the note's sentence (data-live). Numbers come
+   from the result or the inputs only (i18n_equiv.py --design checks every desk state). */
+function gx(id,o){var e=el("gx-"+id);if(!e)return;e.textContent=o==null?"":F(e.getAttribute(o.pending?"data-pending":"data-live"),o);e.parentNode.hidden=o==null}
 /* The leverage field starts at min(5, the product's recorded cap) (2c) and follows the product while it still holds
    that default; a value the trader typed, or a shared link's, stays. levCapFor gives the cap at this quota. */
 var levAuto="5";
@@ -346,6 +358,8 @@ function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTM
 function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none";levDefault()}
 function render(){
   var wOpen=!!document.querySelector("#result details.work[open]");
+  var ob=window.troidPop&&window.troidPop.owner();if(ob&&el("result").contains(ob))window.troidPop.hide();   // its button is about to go
+  ["binding","room","size","margin","risk","fees","stopd","budget","left","daily","floor","liq"].forEach(function(i){gx(i,null)});
   var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
   var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
   var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
@@ -435,14 +449,14 @@ function render(){
   steps.push([T.st_target,F(side>0?T.f_target_long:T.f_target_short,{r:tR}),tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})]);
   if(feeKnown&&fshare>15)notes.push(F(T.n_fees_high,{pct:fx(fshare,0)}));
   if(reduced)notes.push(F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
-  notes.push(F(T.n_left,{n:left,bind:bind}));
+  notes.push(F(T.n_left,{n:term("left",String(left)),bind:bind}));
   // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
   var sp=dist/entry*100,liq,fl;
   // adverse move = (m − MMR) ÷ (1 − MMR) long, (m − MMR) ÷ (1 + MMR) short; m = 1 ÷ leverage isolated, equity ÷ notional cross
   var mB=mode==="isolated"?1/levUsed:(notional>0?eq/notional:Infinity),sg=side>0?"−":"+";
   liq=isFinite(mB)?(mB-MMR)/(1-side*MMR)*100:Infinity;
   fl=F(mode==="isolated"?T.f_liq_isolated:T.f_liq_cross,{mmr:MMR*100,sign:sg});
-  var ord=[[T.br_stop,sp,"stop"]];                                   // [label, adverse %, which]
+  var ord=[[T.br_stop,sp,"stopd"]];                                  // [label, adverse %, its glossary term]
   if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
   if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
     steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,pc(ddB/notional*100)]);}
@@ -450,25 +464,39 @@ function render(){
   ord.push([liqName,Math.max(liq,0),"liq"]);
   steps.push([liqName,fl,liq<=0?T.v_liq_below:pc(liq)]);
   ord.sort(function(a,b){return a[1]-b[1]});
-  if(ord[0][2]!=="stop")notes.push(F(T.n_danger,{what:ord[0][0],pct:fx(ord[0][1],2)}));
+  if(ord[0][2]!=="stopd")notes.push(F(T.n_danger,{what:ord[0][0],pct:fx(ord[0][1],2)}));
   else if(mode==="cross")notes.push(T.n_cross);
   else notes.push(F(T.n_isolated,{pct:fx(liq,1)}));
-  var brk=ord.map(function(e){return e[0]+" "+(isFinite(e[1])?fx(e[1],2)+"%":"—")}).join("  →  ");
+  var brk=ord.map(function(e){return term(e[2],e[0])+" "+(isFinite(e[1])?fx(e[1],2)+"%":"—")}).join("  →  ");
   var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
   var v=reduced?"REDUCE":"OK";
   var sent=reduced?F(T.vs_reduce,{pct:n("riskPct"),intended:$(intended),risk:$(risk),cap:n("capPct")}):
     F(T.vs_ok,{risk:$(risk),cap:n("capPct"),room:$(eff),bind:bind});
-  h=verdict(v,reduced?T.v_reduce:T.v_ok,sent,F(T.v_txt,{firm:f.name,product:p.label,bind:bind,room:$(eff)}))+linkRow()+
+  h=verdict(v,reduced?T.v_reduce:T.v_ok,sent,F(T.v_txt,{firm:f.name,product:p.label,bind:term("binding",bind),room:term("room",$(eff))}))+linkRow()+
     '<div class="read">'+
-    '<div class="cell"><div class="k">'+T.size+'</div><div class="v">'+fx(qty,6)+'</div><div class="s">'+$(notional)+'</div></div>'+
-    '<div class="cell"><div class="k">'+T.margin+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
-    '<div class="cell"><div class="k">'+T.risk+'</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?F(T.s_incl_fees,{fees:$(fees)}):F(T.s_fees_pending,{pending:PEND}))+'</div></div>'+
-    '<div class="cell"><div class="k">'+T.fees+'</div><div class="v">'+(feeKnown?fx(fshare,1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
-    '<div class="cell"><div class="k">'+T.stop+'</div><div class="v">'+fx((dist/entry*100),2)+'%</div><div class="s">'+F(T.s_tgt,{price:fx(target,2)})+'</div></div>'+
-    '<div class="cell"><div class="k">'+T.budget_used+'</div><div class="v">'+fx(consumes,0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
-    '<div class="notes"><div class="brk"><span style="color:var(--dim)">'+T.breakers+'</span> '+brk+'</div>'+
+    '<div class="cell"><div class="k">'+term("size",T.size)+'</div><div class="v">'+fx(qty,6)+'</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("margin",T.margin)+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("risk",T.risk)+'</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?F(T.s_incl_fees,{fees:$(fees)}):F(T.s_fees_pending,{pending:PEND}))+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("fees",T.fees)+'</div><div class="v">'+(feeKnown?fx(fshare,1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("stopd",T.stop)+'</div><div class="v">'+fx((dist/entry*100),2)+'%</div><div class="s">'+F(T.s_tgt,{price:fx(target,2)})+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("budget",T.budget_used)+'</div><div class="v">'+fx(consumes,0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
+    '<div class="notes"><div class="brk"><span style="color:var(--dim)">'+term("breakers",T.breakers)+'</span> '+brk+'</div>'+
     notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
     provBlock(f,p,used,formula+"; "+sizeF,F(T.prov_mmr,{mmr:MMR*100}))+working(steps,wOpen);
+  // the readout's notes, with this result's own numbers
+  var bFloor=bind===T.bind_daily?dFloor:ddFloor;
+  gx("binding",dB!=null&&ddB!=null?{daily:$(dB),dd:$(ddB),bind:bind}:null);
+  gx("room",{eq:$(eq),floor:$(bFloor),room:$(eff)});
+  gx("size",{risk:$(risk),dist:n4(dist),fu:n4(fu),qty:n4(qty),entry:n4(entry),notional:$(notional)});
+  gx("margin",{notional:$(notional),lev:levUsed,margin:$(margin)});
+  gx("risk",{intended:$(intended),cap:$(cap),risk:$(risk)});
+  gx("fees",feeKnown?{fees:$(fees),risk:$(risk),share:pc(fshare)}:{pending:1});
+  gx("stopd",{entry:n4(entry),stop:n4(stop),dist:n4(dist),pct:pc(dist/entry*100),target:tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})});
+  gx("budget",{risk:$(risk),room:$(eff),pct:fx(consumes,1)+"%"});
+  gx("left",{room:$(eff),risk:$(risk),left:String(left)});
+  gx("daily",dB!=null?{floor:$(dFloor),formula:fd,room:$(dB),pct:pc(dB/notional*100)}:null);
+  gx("floor",ddB!=null?{floor:$(ddFloor),formula:fdd,room:$(ddB),pct:pc(ddB/notional*100)}:null);
+  gx("liq",liq>0&&isFinite(liq)?{pct:pc(liq),formula:fl}:null);
   el("result").innerHTML=h;
 }
 el("firm").addEventListener("change",fillProfiles);el("quota").addEventListener("input",levDefault);el("profile").addEventListener("change",function(){toggleInputs();render()});
