@@ -37,7 +37,7 @@ body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg)
 .wrap{max-width:900px;margin:0 auto;padding:0 20px}
 header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
 .bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.mark{font-family:var(--mono);font-size:21px;font-weight:600;letter-spacing:-.04em;
+.mark{font-family:var(--mono);font-size:32px;font-weight:600;letter-spacing:-.04em;
   display:inline-flex;align-items:baseline;color:var(--ink)}
 .mark a{color:inherit;text-decoration:none;border:0}
 /* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
@@ -124,21 +124,20 @@ nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
 .discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
 .hero{margin-bottom:38px}
-h1{font-size:clamp(24px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
-  font-weight:700;margin:0 0 14px;max-width:16ch}
+/* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
+h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:24ch}
 .lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
-/* the phone header (the owner's Android check, 2026-09-25): the wordmark 1.5x its size, the page's headline clearly
-   under it, the nav on one line that scrolls sideways to the screen's edges (each link a 29 px target), and less space
-   between them, so the desk's first field shows on a 390 px screen. Above 640 px nothing here applies. */
+/* the phone header (the owner's Android check, 2026-09-25): the nav on one line that scrolls sideways to the screen's
+   edges (each link a 29 px target) and less space around it, so the desk's first field shows on a 390 px screen. The
+   wordmark's size and the headline's under it are the same rule at every width (.mark and h1 above). */
 @media (max-width:640px){
   header{padding-top:16px;margin-bottom:26px}
   .bar{row-gap:10px}
-  .mark{font-size:32px}
   nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
     scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
   nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
   .hero{margin-bottom:24px}
-  h1{font-size:clamp(24px,5.2vw,28px);max-width:none}
 }
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
   padding:22px;margin-bottom:14px}
