@@ -9,6 +9,7 @@ from firms.json go through T.data(); firm names and rule-source names stay as th
 from __future__ import annotations
 import html
 import json
+import re
 
 import i18n
 import site_build
@@ -210,10 +211,11 @@ def term(tid, text):
     return (f'<button type="button" class="term" data-tip="g-{tid}" aria-describedby="g-{tid}">{text}</button>')
 
 
-def glossary_html(T=None):
+def glossary_html(T=None, desk2=False):
     """Every glossary note the desk opens, in T's language. "Also called" stays in English in every language: those are
     the words on the firms' dashboards. A firm-specific example takes its firm, product and figure from firms.json, the
-    reference firm's compare product, with the date troid read the rule."""
+    reference firm's compare product, with the date troid read the rule. The desk preview (desk2) adds the Asset field's
+    note, and Entry's example says where the live price is."""
     T = _strings(T)
     en = i18n.english()
     f = reference_firm(); p = f["compare_product"]; pk = p["key"]
@@ -238,7 +240,8 @@ def glossary_html(T=None):
         if f"{g}.also" in en:
             out.append(f'<p>{label("glossary.also_label")}<span lang="en" translate="no">{html.escape(en[f"{g}.also"])}</span></p>')
         if f"{g}.ex" in en:
-            out.append(f"<p>{label('glossary.ex_label')}{T(f'{g}.ex', **kw.get(tid, {}))}</p>")
+            chip = f" {T('glossary.entry.chip')}" if desk2 and tid == "entry" else ""
+            out.append(f"<p>{label('glossary.ex_label')}{T(f'{g}.ex', **kw.get(tid, {}))}{chip}</p>")
         if f"{g}.live" in en:
             out.append(f'<p class="gnow" hidden>{label("glossary.now_label")}<span class="gx" id="gx-{tid}" data-live="{T.attr(f"{g}.live")}"'
                        + (f' data-pending="{T.attr(f"{g}.pending")}"' if f"{g}.pending" in en else "") + "></span></p>")
@@ -248,7 +251,68 @@ def glossary_html(T=None):
             out.append(f"<p>{T('glossary.crossover.what')}</p><p>{label('glossary.ex_label')}{T('glossary.crossover.ex', **kw['crossover'])}</p>"
                        f"<p><code>{T('glossary.crossover.formula')}</code></p>")
         return f'<div class="pop gl" id="g-{tid}" role="tooltip" hidden>{"".join(out)}</div>'
-    return "\n  ".join(block(t) for t in GLOSS_FIELDS + GLOSS_READOUT)
+    return "\n  ".join(block(t) for t in (["asset"] if desk2 else []) + GLOSS_FIELDS + GLOSS_READOUT)
+
+
+TIERS = {"Major Crypto Assets": "major", "Minor Crypto Assets": "minor", "Traditional Trading Pairs": "tradfi"}
+
+
+def _src(f, sid):
+    """A firm's provenance source as the desk preview cites it: the document (without the firm's name in front), its
+    URL and the date troid read it."""
+    s = f["provenance"]["sources"][sid]
+    doc = s["doc"][len(f["name"]) + 1:] if s["doc"].startswith(f["name"] + " ") else s["doc"]
+    return {"doc": doc, "url": s["url"], "date": s["read_on"]}
+
+
+def desk2_context(T):
+    """What the desk preview adds to the desk's template (site_build.desk_preview; ticker v2 handoff, section E): the
+    Asset field's options, grouped as firms.json _asset_universe groups them; DESK2DATA for web/public/desk2.js, which
+    firms list each asset, as what and on which page read when, each firm's hold limit with its source, the tape's
+    symbols (a tapped symbol opens the preview with it selected), and the tape's stocks no firm lists; the glossary with
+    the Asset note."""
+    T = _strings(T)
+    raw = json.loads((site_build.ROOT / "firms.json").read_text())
+    uni, tape = raw["_asset_universe"], raw["_ticker_universe"]
+    tv = {s["sym"]: s["tv"] for g in tape["groups"] for s in g["symbols"]}
+    names = {}
+    assets, opts = {}, []
+    for g in uni["groups"]:
+        o = []
+        for s in g["symbols"]:
+            sym = s["sym"]
+            name = T(f"ticker.sym.{sym}") if g["group"] == "commodities" else sym
+            names[sym] = name
+            listed = {}
+            for fk, l in s["listed_by"].items():
+                f = FIRMS[fk]
+                tier = next((v for k, v in TIERS.items() if f"({k})" in l["as_listed"]), None)
+                listed[fk] = {"as": l["as_listed"], **_src(f, l["src"]), "tier": tier,
+                              "tier_name": next((k for k in TIERS if f"({k})" in l["as_listed"]), None)}
+            assets[sym] = {"name": name, "group": g["group"], "tv": tv.get(sym), "listed": listed}
+            o.append(f'<option value="{sym}">{html.escape(name)}</option>')
+        label = T.attr("desk2.group." + g["group"])
+        opts.append(f'<optgroup label="{label}">' + "".join(o) + "</optgroup>")
+    hold = {}
+    for fk in ORDER:
+        f = FIRMS[fk]
+        fld = f["provenance"].get("fields", {}).get("hold_cap")
+        src = None
+        if fld and fld.get("src"):
+            srcs = [_src(f, s) for s in fld["src"]]
+            sec = fld.get("section") or srcs[0]["doc"]
+            sec = (sec[len(f["name"]) + 1:] if sec.startswith(f["name"] + " ") else sec).replace(" \u2014 ", ": ")
+            src = {"doc": sec, "url": srcs[0]["url"], "date": max(s["date"] for s in srcs)}
+        hold[fk] = {"days": f.get("hold_cap_days"), "src": src}
+    unnamed = {}
+    for fk, note in uni.get("_unnamed", {}).items():
+        m = re.search(r"\((\w+_\d{4})\)", note)
+        if m and m.group(1) in FIRMS[fk]["provenance"]["sources"]:
+            unnamed[fk] = _src(FIRMS[fk], m.group(1))
+    data = {"assets": assets, "hold": hold, "unnamed": unnamed, "names": {k: FIRMS[k]["name"] for k in ORDER},
+            "tape_only": {sym: tv[sym] for sym in uni.get("not_listed", {}) if sym in tv}, "default": "BTC"}
+    return {"asset_options": "".join(opts), "desk2_data": json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/"),
+            "glossary": glossary_html(T, desk2=True)}
 
 
 def template_context(T):

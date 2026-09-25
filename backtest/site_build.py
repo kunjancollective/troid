@@ -224,22 +224,24 @@ def _tape_name(T, s, group):
     return T(f"ticker.sym.{s['sym']}") if group == "commodities" else s["sym"]
 
 
-def tape_config(T):
+def tape_config(T, path=None):
     """The Ticker Tape widget's settings (ticker v3 handoff, section B). web/public/ticker.js adds colorTheme from the
-    page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site."""
+    page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site
+    (on the desk preview, the preview: path)."""
     return {"symbols": [{"proName": s["tv"], "description": _tape_name(T, s, g["group"])} for g in TAPE["groups"] for s in g["symbols"]],
             "showSymbolLogo": False, "isTransparent": True, "displayMode": "regular", "locale": TV_LOCALE.get(T.code, "en"),
-            "largeChartUrl": f"{BASE_URL}{T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
+            "largeChartUrl": f"{BASE_URL}{path or T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
 
 
-def ticker(T, desk=False):
+def ticker(T, desk=False, path=None, hint=False):
     """The price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape,
     scrolling, with its attribution under it, and troid's still row of the same symbols in the same reserved space.
     The still row shows under prefers-reduced-motion, when the visitor pauses the tape, and when the widget fails to
     load; its crypto prices come from /api/ticker (Binance.US), and on the desk each crypto symbol is a button that opens
     a note with "use as entry" (pop.js). Gold, oil and the stocks are names there: their quotes are TradingView's, inside
     its frame, and troid doesn't copy them. Both labels share one cell and the box has one height, so the header is the
-    same height whatever shows."""
+    same height whatever shows. On the desk preview a tapped symbol opens the preview (path), and the credit line ends
+    with how to use the tape there (hint; ticker v3 handoff, section D)."""
     row = []
     for i, g in enumerate(TAPE["groups"]):
         if i:                                   # the first separator is a line break when the row has room for two lines
@@ -253,12 +255,13 @@ def ticker(T, desk=False):
                 row.append(f'<span class="tki tkx"><b>{_tape_name(T, s, g["group"])}</b></span>')
     note = (f'<div class="pop" id="tk-use" hidden><p class="tkn"></p><p><button type="button" class="linkbtn">{T("ticker.use")}</button></p></div>'
             if desk else "")
-    cfg = html.escape(json.dumps(tape_config(T), ensure_ascii=False, separators=(",", ":")), quote=True)
+    cfg = html.escape(json.dumps(tape_config(T, path), ensure_ascii=False, separators=(",", ":")), quote=True)
+    tip = f'<span class="tkh"> · {T("desk2.tape_hint")}</span>' if hint else ""
     return (f'<div class="tk off" id="tk" role="region" aria-label="{T.attr("ticker.aria")}" data-source="{TICKER_SOURCE}"'
             f' data-up="{T.attr("ticker.up")}" data-down="{T.attr("ticker.down")}" data-note="{T.attr("ticker.note")}" data-tv="{cfg}">'
             f'<div class="tkbox"><div class="tradingview-widget-container" id="tv"><div class="tradingview-widget-container__widget"></div></div>'
             f'<div class="tkrow">{"".join(row)}</div></div>'
-            f'<p class="tkl"><span class="tkt"><span class="tkc"><a href="{TV_CREDIT}" rel="noopener nofollow" target="_blank">{T("ticker.credit")}</a></span>'
+            f'<p class="tkl"><span class="tkt"><span class="tkc"><a href="{TV_CREDIT}" rel="noopener nofollow" target="_blank">{T("ticker.credit")}</a>{tip}</span>'
             f'<span class="tks">{T("ticker.still", source=TICKER_SOURCE)} <span class="tkd">{T("ticker.delayed")}</span></span></span>'
             f'<button type="button" class="tkp" aria-controls="tk" aria-label="{T.attr("ticker.pause_label")}"'
             f' data-pause="{T.attr("ticker.pause_label")}" data-play="{T.attr("ticker.play_label")}">'
@@ -296,6 +299,7 @@ def common(T, page, live, preview=False):
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
             "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
+            "desk2": False,                                     # the desk preview turns it on (desk_preview)
             "ticker": ticker(T, desk=page == "index"),
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
@@ -369,9 +373,27 @@ def render_static(codes, out=None, preview=False):
             if not p.exists() or p.read_text() != text:
                 p.write_text(text)
                 written.append(str(p.relative_to(out if out else PUB)))
+        if code == "en" and not preview:
+            p = out_path(code, "desk-preview", out)
+            text = desk_preview(T, live, ctx)
+            if not p.exists() or p.read_text() != text:
+                p.write_text(text)
+                written.append(str(p.relative_to(out if out else PUB)))
         if T.missing:
             print(f"  {code}: {len(T.missing)} string(s) fell back to English (draft preview)")
     return written
+
+
+def desk_preview(T, live, ctx=None):
+    """troid's next desk at /desk-preview (ticker v2 handoff, section F; design handoff 2026-09-24, section 4): the desk's
+    own template with desk2 on, so the sizing is the same code as the live desk's, only the presentation new. English
+    only, noindex, in no sitemap and linked from nowhere, until the owner has tried it on a phone and it replaces the
+    home page. Its tape opens the preview, not the live desk."""
+    import regions
+    c = dict(ctx if ctx is not None else extra_context(T))
+    c.update(regions.desk2_context(T))
+    c.update(desk2=True, ticker=ticker(T, desk=True, path="/desk-preview", hint=True))
+    return render("index.html", T, "desk-preview", live, False, **c)
 
 
 def write_seo(out=None):

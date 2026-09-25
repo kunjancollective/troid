@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>troid's desk · preview</title>
+
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:image" content="https://troid.ai/og/en.png">
+<meta property="og:title" content="troid — the droid does the prop-firm math. You make the trade.">
+<meta property="og:description" content="Size against both loss ceilings, net of fees. Free. Never places orders.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --dur-fast:120ms; --dur:240ms; --dur-slow:480ms; --ease-out:cubic-bezier(.2,.7,.3,1); --ease-inout:cubic-bezier(.65,0,.35,1);
+  --z-popover:40;
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:32px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink)}
+.mark a{color:inherit;text-decoration:none;border:0}
+/* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
+   no font to wait for, so nothing moves when the page's fonts arrive */
+.mark .wm{display:inline-block;line-height:0}
+.mark svg{width:1.12em;height:1.6em;vertical-align:-.425em;fill:currentColor}
+.dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+.dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
+  background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
+/* the ripple moves only transform and opacity (the compositor's), starts from nothing, and fades in and out with the
+   state over --dur-slow: the build writes the state, live.js confirms it */
+.dot .rp{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;transition:opacity var(--dur-slow) var(--ease-out)}
+.dot.live .rp{opacity:1}
+.dot .rp::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;
+  transform-origin:center;will-change:transform,opacity;animation:ripple 2.4s var(--ease-out) infinite}
+.dot:not(.live) .rp::before{animation-play-state:paused}
+@keyframes ripple{0%{transform:scale(1);opacity:0}15%{opacity:.45}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot .rp::before{animation:none}.dot .rp{transition:none}
+  .dot.live{outline:.06em solid var(--signal);outline-offset:.18em}}
+@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
+  .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
+  .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
+/* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
+   in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
+   and when the widget fails. The box has one height, the tape's 44 px (its one-line layout at every width, the
+   smallest TradingView's script draws; the owner's call, 2026-09-25), set before anything loads; the two labels share one cell and the button holds both
+   words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
+   takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
+   TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
+   crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
+.tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
+.tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
+.tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
+.tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
+.tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}
+.tradingview-widget-container{overflow:hidden}.tradingview-widget-container iframe{display:block;border:0}
+.tkrow{align-self:center;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;overflow-x:auto;
+  scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
+.tkrow::-webkit-scrollbar{display:none}.tk.stale .tkrow{opacity:.55}
+@container tk (min-width:768px){.tkrow{flex-wrap:wrap;padding:0;overflow:visible}.tkrow .tkbr{flex:0 0 100%;height:0;overflow:hidden}}
+.tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
+  background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}.tkx b{font-weight:400;color:var(--dim)}
+.tksep{flex:none;color:var(--line)}
+button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
+button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
+button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+.tkl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0 14px;margin:0;font-size:10.5px;line-height:16px}
+.tkt,.tkp{display:grid;min-width:0}.tkt>*,.tkp>*{grid-area:1/1;min-width:0}
+.tk.still .tkc,.tk:not(.still) .tks,.tk.still.off .tks,.tk.still .tkpp,.tk:not(.still) .tkpl,.tk.fail .tkp{visibility:hidden}
+.tkc a{color:var(--dim);text-decoration:none}.tkc a:hover{color:var(--ink);text-decoration:underline}
+.tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
+.tkp{position:relative;padding:0;border:0;background:none;color:var(--dim);font:inherit;line-height:inherit;cursor:pointer;text-align:end}
+.tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
+.tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
+/* the calendar strip under the tape (web/public/calendar.js; ticker v2 handoff, section D): the scheduled US releases of
+   the next 7 days on one line, 32 px tall whatever shows (so every event is a 32 px target, over WCAG's 24), hidden with
+   its space kept until the schedule loads, and when it can't or is over 14 days old. When the events don't fit, the row
+   and a copy of it move by a transform (calendar.js sets --calx and --calt, about 40 px/s) and hold while hovered,
+   touched or open; keyboard focus, the tape's pause and reduced motion make it a still row that swipes. Its note is a
+   .pop (web/public/pop.js), below: no shadow, --surface2 and a --line border (BRAND.md). */
+.cal{height:32px;margin-top:4px;overflow:hidden;font-family:var(--mono);font-size:11px;line-height:32px;color:var(--dim)}
+.cal.off{visibility:hidden}
+.calrow{display:flex;align-items:baseline;gap:0 8px;height:32px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  scrollbar-width:none;white-space:nowrap}
+.calrow::-webkit-scrollbar{display:none}
+.cal.mv .calrow{width:max-content;overflow:visible;scroll-snap-type:none;animation:calmv var(--calt,60s) linear infinite}
+.cal.mv.hold .calrow{animation-play-state:paused}
+@keyframes calmv{to{transform:translateX(var(--calx,0))}}
+.cale{flex:none;scroll-snap-align:start;height:32px;padding:0 3px;border:0;background:none;color:inherit;font:inherit;
+  line-height:inherit;font-variant-numeric:tabular-nums;cursor:pointer}
+.cale b{font-weight:600;color:var(--ink)}.cale:hover b,.cale[aria-expanded="true"] b{color:var(--signal)}
+.cale:focus-visible{outline:1px solid var(--signal);outline-offset:-3px}
+.calsep{flex:none;color:var(--line)}.calempty{flex:none;padding:0 3px}
+@media (prefers-reduced-motion:reduce){.cal.mv .calrow{animation:none}}
+.pop{position:absolute;z-index:var(--z-popover,40);max-width:280px;padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
+.pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+/* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
+h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:24ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+/* the phone header (the owner's Android check, 2026-09-25): the nav on one line that scrolls sideways to the screen's
+   edges (each link a 29 px target) and less space around it, so the desk's first field shows on a 390 px screen. The
+   wordmark's size and the headline's under it are the same rule at every width (.mark and h1 above). */
+@media (max-width:640px){
+  header{padding-top:16px;margin-bottom:26px}
+  .bar{row-gap:10px}
+  nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
+    scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
+  nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
+  .hero{margin-bottom:24px}
+}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+/* nothing on the desk or in its readout may be wider than the phone (design handoff 2026-09-24, 1a): every grid and
+   flex child can shrink, and so can a form control (WebKit sizes a select to its longest option); a mono value breaks
+   anywhere before it runs off the edge; the text size is the reader's, never inflated */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.grid>*,.bar>*,.linkrow>*,.verdict>*,.read>*,.stats>*{min-width:0}
+input,select{min-width:0;max-width:100%}
+.cell .v,.cell .s,.vtxt,.notes,.prov,.shared,.linkmsg{overflow-wrap:anywhere}
+.shared{font-family:var(--mono);font-size:11.5px;line-height:1.7;color:var(--ink);background:var(--surface2);
+  border:1px solid var(--line);border-inline-start:2px solid var(--signal);border-radius:3px;padding:10px 13px;margin:0 0 16px}
+.shared[hidden]{display:none}
+.linkrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:-4px 0 14px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.linkbtn{font-family:var(--mono);font-size:11.5px;color:var(--signal);background:none;border:1px solid var(--line);
+  border-radius:3px;padding:5px 10px;cursor:pointer}
+.linkbtn:hover,.linkbtn:focus-visible{border-color:var(--signal);outline:none}
+.linkmsg{flex:1 1 220px;min-width:0}.linkurl{margin-top:6px;font-size:11.5px;padding:5px 7px}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+/* the verdict is a badge and a plain sentence, never a badge alone (design handoff 2026-09-24, 2b): the sentence beside
+   the badge, the firm, product and room under both */
+.verdict .vsent{flex:1 1 240px;margin:0;font-size:14px;line-height:1.5;color:var(--ink)}
+.verdict .vtxt{flex-basis:100%}
+/* a term and the note it opens (web/public/pop.js; glossary v2): every field label and readout figure is its own trigger,
+   a dotted underline in the text's own ink, reachable by Tab, with a target of at least 24 px that stays off the input
+   under it. The note: no shadow, --surface2 with a --line border (BRAND.md). */
+.term{position:relative;display:inline;padding:0;margin:0;border:0;border-bottom:1px dotted currentColor;background:none;
+  color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;line-height:inherit;text-align:inherit;cursor:help}
+.term::after{content:"";position:absolute;inset:-6px -4px -3px}
+.term:hover,.term[aria-describedby]:focus-visible{color:var(--ink)}
+.term:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+.term.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .term.vtag:hover{color:var(--signal)}.vREDUCE .term.vtag:hover{color:var(--warn)}.vBLOCK .term.vtag:hover{color:var(--bad)}
+.ghint{margin:-8px 0 14px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.gl .gk{font:500 10px/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--dim);margin-inline-end:4px}
+.gl code,.gl .gx{font-family:var(--mono);font-size:12px}.gl code{color:var(--ink);overflow-wrap:anywhere}
+.why3{margin-inline-start:6px;padding:0;border:0;border-bottom:1px dotted currentColor;background:none;color:var(--signal);
+  font:inherit;letter-spacing:.04em;text-transform:none;cursor:pointer;position:relative}
+.why3::after{content:"";position:absolute;inset:-14px -4px}
+.why3:hover,.why3:focus-visible,.why3[aria-expanded="true"]{color:var(--ink);outline:none}
+.cell .req{margin-top:6px}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-inline-start:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
+/* the breakers line is its own line, with no arrow over its first word (1b); the breaker ladder replaces it (4c) */
+.notes .brk{padding-inline-start:0;color:var(--ink)}.notes .brk::before{content:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+/* troid's next desk: the preview at /desk-preview (partials/_desk2.html, web/public/desk2.js; design handoff
+   2026-09-24, section 4). The account gauge (the logo's dot above two floors, grown into the account: the dot is
+   equity, the lines are the floors, the drop from the dot is this trade's loss at its stop, all to scale), the step
+   cards, the breaker ladder, the fee bar and the explainer. Motion: transform and opacity only, from the motion tokens;
+   nothing loops; reduced motion shows the end frame. State colours are named: --ok, --reduce, --block. */
+:root{--ok:var(--signal);--reduce:var(--warn);--block:var(--bad);--z-sticky:30}
+.wrap.wide{max-width:1180px}
+.d2ban{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim);border-inline-start:2px solid var(--signal);
+  padding-inline-start:10px;margin:-6px 0 14px}
+/* step cards: your account, your trade, your risk. Collapsed, a card says what it holds; a card whose input stops the
+   sizing says so in words and in its border */
+.step{border:1px solid var(--line);border-radius:4px;background:var(--surface);margin-bottom:10px}
+.step>summary{list-style:none;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;padding:12px 14px;min-height:44px;
+  cursor:pointer;font-family:var(--mono)}
+.step>summary::-webkit-details-marker{display:none}
+.step>summary::before{content:"";flex:none;align-self:center;width:6px;height:6px;border:solid var(--dim);border-width:0 1.5px 1.5px 0;
+  transform:rotate(-45deg);transition:transform var(--dur) var(--ease-out)}
+.step[open]>summary::before{transform:rotate(45deg)}
+.step>summary:focus-visible{outline:1px solid var(--signal);outline-offset:-2px}
+.sk{font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink);font-weight:500}
+.ss{flex:1 1 180px;min-width:0;font-size:11px;color:var(--dim);overflow-wrap:anywhere}
+.step[open] .ss{display:none}
+.se{display:none;font-size:10.5px;color:var(--block)}
+.step.err{border-color:var(--block)}.step.err .se{display:inline}
+.step>.grid{padding:0 14px 2px;margin-bottom:10px}
+.g2{grid-template-columns:1fr 1fr}.g2 .span2{grid-column:1/-1}
+/* the entry field's live price (crypto, /api/ticker) or, for gold, oil and stocks, where to find one */
+.chip{min-height:36px;margin-top:5px;font-family:var(--mono);font-size:11px;line-height:1.35}
+.chip [hidden]{display:none}
+.chipb{position:relative;min-height:36px;padding:4px 8px;border:1px solid var(--line);border-radius:3px;background:none;color:var(--signal);
+  font:inherit;cursor:pointer;text-align:start;overflow-wrap:anywhere}
+.chipb::after{content:"";position:absolute;inset:-4px 0}                 /* a 44 px target, clear of the field above */
+.chipb:hover,.chipb:focus-visible{border-color:var(--signal);outline:none}.chipb.stale{color:var(--dim)}
+.chipm{color:var(--dim)}
+.anote{margin:0 0 12px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}
+.anote p{margin:0}
+.vSET{border-color:var(--dim)}.vSET .vtag{color:var(--ink)}
+#result .notes .brk{display:none}
+/* the gauge: a bar pinned under the tape while the desk is on screen (a phone, a tablet), low values left; from 1100 px
+   a column between the fields and the readout, the quota at the top. desk2.js sets every position as a transform */
+.gauge{position:sticky;top:0;z-index:var(--z-sticky);margin:0 -22px 12px;padding:8px 22px;background:var(--surface);
+  border-bottom:1px solid var(--line)}
+.gtr{position:relative;height:42px;direction:ltr}
+.gtr>*{position:absolute;left:0;top:0;transition:transform var(--dur-slow) var(--ease-inout),opacity var(--dur) var(--ease-out)}
+.gax{top:13px;width:100%;height:2px;background:var(--line)}
+.gfl{top:5px;width:2px;height:18px;margin-left:-1px;background:var(--dim)}.gfl.bind{background:var(--ink)}
+.gq{top:9px;width:1px;height:10px;background:var(--dim)}
+.gdot{top:8px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--ok);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 18%,transparent)}
+.gseg{top:11px;width:100%;height:6px;transform-origin:100% 50%;background:color-mix(in srgb,var(--ok) 55%,transparent)}
+.gghost{top:11px;width:100%;height:6px;transform-origin:100% 50%;background:color-mix(in srgb,var(--reduce) 22%,transparent);opacity:0}
+.glab{top:26px;font-family:var(--mono);font-size:10px;line-height:1.3;color:var(--dim);white-space:nowrap}
+.glab b{font-weight:500;color:var(--ink)}.glab[data-g="q"],.glab[data-g="r"],.glab[data-g="e"]{display:none}
+.gline{margin:4px 0 0;font-family:var(--mono);font-size:11px;line-height:1.5;color:var(--ink);overflow-wrap:anywhere}
+.gauge.sREDUCE .gdot{background:var(--reduce);box-shadow:0 0 0 3px color-mix(in srgb,var(--reduce) 18%,transparent)}
+.gauge.sREDUCE .gseg{background:color-mix(in srgb,var(--reduce) 60%,transparent)}.gauge.sREDUCE .gghost{opacity:1}
+.gauge.sBLOCK .gdot{background:var(--block);box-shadow:0 0 0 3px color-mix(in srgb,var(--block) 18%,transparent)}
+.gauge.sBLOCK .gseg,.gauge.sSET .gseg,.gauge.sPENDING .gseg{opacity:0}
+.gauge.sPENDING .gdot,.gauge.sPENDING .gfl,.gauge.sPENDING .glab{opacity:0}
+.gseg.over{background:var(--block)}
+.d2in,.d2out{min-width:0}
+@media (min-width:1100px){
+  .d2g{display:grid;grid-template-columns:minmax(0,390px) 214px minmax(0,1fr);gap:0 20px;align-items:start}
+  .d2in{grid-column:1;grid-row:1}.d2out{grid-column:3;grid-row:1}
+  .gauge{grid-column:2;grid-row:1;top:16px;margin:0;padding:0;background:none;border:0}
+  .gtr{height:380px}.gtr>*{top:0}
+  .gax{left:84px;width:2px;height:100%}
+  .gfl{left:68px;width:34px;height:2px;margin:-1px 0 0}
+  .gq{left:75px;width:20px;height:1px}
+  .gdot{left:79px;margin:-6px 0 0}
+  .gseg{left:82px;width:6px;height:100%;transform-origin:50% 0}
+  .gghost{left:82px;width:6px;height:100%;transform-origin:50% 0}
+  .glab{left:110px;width:104px;white-space:normal}.glab[data-g]{display:block}
+  .glab[data-g="q"],.glab[data-g="r"]{left:0;width:72px;text-align:end}
+  .gline{margin-top:12px;color:var(--dim)}
+}
+/* the breaker ladder: one rung per breaker, in the order price would reach them, each as far along as its adverse
+   move; one far beyond the rest (liquidation under cross) is off-scale, stated, not drawn */
+.lad{margin:12px 0 6px;font-family:var(--mono);font-size:11.5px}
+.lad .lh{color:var(--dim);margin-bottom:6px;overflow-wrap:anywhere}
+.lr{display:grid;grid-template-columns:minmax(0,10em) minmax(40px,1fr) auto;align-items:center;gap:4px 10px;min-height:26px}
+.ln{color:var(--dim);overflow-wrap:anywhere}.lx{color:var(--block)}
+.lb{position:relative;height:6px;border-radius:1px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden}
+.lb i{position:absolute;inset:0;transform-origin:0 50%;background:var(--dim)}
+.lv{text-align:end;white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--dim)}
+.lr.first .ln,.lr.first .lv{color:var(--ink)}.lr.first .lb i{background:var(--ink)}
+.lr.bad .ln,.lr.bad .lv{color:var(--block)}.lr.bad .lb i{background:var(--block)}
+.lr.off .lb{background:none}.lr.off .lv{white-space:normal}
+/* the fee bar: the risk split into the price move and the fees, the fee share labelled */
+.feebar{margin:10px 0 4px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.fbar{position:relative;height:8px;border-radius:2px;overflow:hidden;background:color-mix(in srgb,var(--ink) 22%,transparent)}
+.fbar i{position:absolute;inset:0;background:var(--ink);transform-origin:100% 50%}
+.fbl{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 12px;margin-top:5px}.fbl b{font-weight:500;color:var(--ink)}
+/* the explainer: the same numbers, one step at a time; each step rises into view as it scrolls in (animation-timeline),
+   and without that, or under reduced motion, it is simply there */
+.xpl .xl{color:var(--dim);font-size:14px;margin-bottom:16px}
+.xs{list-style:none;margin:0;padding:0;counter-reset:x}
+.xs li{position:relative;counter-increment:x;border-top:1px solid var(--line);padding-block:16px 12px;padding-inline:36px 0}
+.xs li::before{content:counter(x);position:absolute;inset-inline-start:0;top:16px;display:grid;place-items:center;width:22px;height:22px;
+  border:1px solid var(--line);border-radius:50%;font-family:var(--mono);font-size:11px;color:var(--signal)}
+.xs h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.xs p{margin:0 0 8px;color:var(--dim);font-size:14px}
+.xs code{display:block;margin-top:4px;padding:6px 8px;font-size:12px;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+@keyframes xrise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@supports (animation-timeline:view()){@media (prefers-reduced-motion:no-preference){
+  .xs li{animation:xrise linear both;animation-timeline:view();animation-range:entry 0% entry 70%}}}
+@media (prefers-reduced-motion:reduce){.gtr>*,.step>summary::before{transition:none}}
+@media (forced-colors:active){.gdot,.gfl,.gseg,.lb i,.fbar i{forced-color-adjust:none;background:CanvasText}.gax,.lb,.fbar{background:GrayText}}
+</style>
+<link rel="canonical" href="https://troid.ai/desk-preview">
+<meta property="og:url" content="https://troid.ai/desk-preview">
+<meta name="robots" content="noindex,nofollow">
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="bar">
+    <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
+    <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+  </div>
+  <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
+    <a href="/compare">compares</a></div>
+  <div class="tk off" id="tk" role="region" aria-label="Prices" data-source="Binance.US" data-up="{sym} {price}, up {chg}% in 24 hours" data-down="{sym} {price}, down {chg}% in 24 hours" data-note="{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours." data-tv="{&quot;symbols&quot;:[{&quot;proName&quot;:&quot;BINANCEUS:BTCUSDT&quot;,&quot;description&quot;:&quot;BTC&quot;},{&quot;proName&quot;:&quot;BINANCEUS:ETHUSDT&quot;,&quot;description&quot;:&quot;ETH&quot;},{&quot;proName&quot;:&quot;BINANCEUS:SOLUSDT&quot;,&quot;description&quot;:&quot;SOL&quot;},{&quot;proName&quot;:&quot;BINANCEUS:XRPUSDT&quot;,&quot;description&quot;:&quot;XRP&quot;},{&quot;proName&quot;:&quot;BINANCEUS:BNBUSDT&quot;,&quot;description&quot;:&quot;BNB&quot;},{&quot;proName&quot;:&quot;OANDA:XAUUSD&quot;,&quot;description&quot;:&quot;Gold&quot;},{&quot;proName&quot;:&quot;OANDA:WTICOUSD&quot;,&quot;description&quot;:&quot;WTI oil&quot;},{&quot;proName&quot;:&quot;NASDAQ:NVDA&quot;,&quot;description&quot;:&quot;NVDA&quot;},{&quot;proName&quot;:&quot;NASDAQ:AAPL&quot;,&quot;description&quot;:&quot;AAPL&quot;},{&quot;proName&quot;:&quot;NASDAQ:GOOGL&quot;,&quot;description&quot;:&quot;GOOGL&quot;},{&quot;proName&quot;:&quot;NASDAQ:MSFT&quot;,&quot;description&quot;:&quot;MSFT&quot;},{&quot;proName&quot;:&quot;NASDAQ:AMZN&quot;,&quot;description&quot;:&quot;AMZN&quot;}],&quot;showSymbolLogo&quot;:false,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;largeChartUrl&quot;:&quot;https://troid.ai/desk-preview?tvwidgetsymbol={symbolname}#desk&quot;}"><div class="tkbox"><div class="tradingview-widget-container" id="tv"><div class="tradingview-widget-container__widget"></div></div><div class="tkrow"><button type="button" class="tki" data-sym="BTC" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use"><b>BTC</b> <span class="p">—</span> <span class="c"></span></button><button type="button" class="tki" data-sym="ETH" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use"><b>ETH</b> <span class="p">—</span> <span class="c"></span></button><button type="button" class="tki" data-sym="SOL" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use"><b>SOL</b> <span class="p">—</span> <span class="c"></span></button><button type="button" class="tki" data-sym="XRP" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use"><b>XRP</b> <span class="p">—</span> <span class="c"></span></button><button type="button" class="tki" data-sym="BNB" data-pop="tk-use" aria-expanded="false" aria-controls="tk-use"><b>BNB</b> <span class="p">—</span> <span class="c"></span></button><span class="tksep tkbr" aria-hidden="true">│</span><span class="tki tkx"><b>Gold</b></span><span class="tki tkx"><b>WTI oil</b></span><span class="tksep" aria-hidden="true">│</span><span class="tki tkx"><b>NVDA</b></span><span class="tki tkx"><b>AAPL</b></span><span class="tki tkx"><b>GOOGL</b></span><span class="tki tkx"><b>MSFT</b></span><span class="tki tkx"><b>AMZN</b></span></div></div><p class="tkl"><span class="tkt"><span class="tkc"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Track all markets on TradingView</a><span class="tkh"> · tap a symbol on the tape to open it here</span></span><span class="tks">crypto: spot in USDT · Binance.US · ~15 s <span class="tkd">delayed</span></span></span><button type="button" class="tkp" aria-controls="tk" aria-label="Pause the moving strips" data-pause="Pause the moving strips" data-play="Play the moving strips"><span class="tkpp">pause</span><span class="tkpl">play</span></button></p></div><div class="cal off" id="cal" role="region" aria-label="Scheduled US releases" data-t="{&quot;kinds&quot;:{&quot;cpi&quot;:&quot;CPI&quot;,&quot;ppi&quot;:&quot;PPI&quot;,&quot;jobs&quot;:&quot;Jobs report&quot;,&quot;jolts&quot;:&quot;JOLTS&quot;,&quot;gdp&quot;:&quot;GDP&quot;,&quot;pce&quot;:&quot;PCE&quot;,&quot;fomc&quot;:&quot;FOMC statement&quot;,&quot;minutes&quot;:&quot;FOMC minutes&quot;},&quot;longs&quot;:{&quot;cpi&quot;:&quot;the Consumer Price Index&quot;,&quot;ppi&quot;:&quot;the Producer Price Index&quot;,&quot;jobs&quot;:&quot;the Employment Situation&quot;,&quot;jolts&quot;:&quot;the Job Openings and Labor Turnover Survey&quot;,&quot;gdp&quot;:&quot;Gross Domestic Product&quot;,&quot;pce&quot;:&quot;Personal Income and Outlays, with the PCE price index&quot;,&quot;fomc&quot;:&quot;the Federal Open Market Committee&#x27;s statement&quot;,&quot;minutes&quot;:&quot;the minutes of the Federal Open Market Committee&#x27;s last meeting&quot;},&quot;est&quot;:{&quot;advance&quot;:&quot;advance&quot;,&quot;second&quot;:&quot;second&quot;,&quot;third&quot;:&quot;third&quot;},&quot;before&quot;:&quot;{t} before {firm}&#x27;s reset&quot;,&quot;after&quot;:&quot;{t} after {firm}&#x27;s reset&quot;,&quot;h&quot;:&quot;{h} h&quot;,&quot;hm&quot;:&quot;{h} h {m} m&quot;,&quot;m&quot;:&quot;{m} m&quot;,&quot;empty&quot;:&quot;Next 7 days: no US releases scheduled.&quot;,&quot;what&quot;:&quot;{when}: {what}, from {source}.&quot;,&quot;inside&quot;:&quot;This release lands inside that bar.&quot;,&quot;outside&quot;:&quot;This release lands outside that bar.&quot;,&quot;source&quot;:&quot;Source: &lt;a href=\&quot;{url}\&quot;&gt;{source}&#x27;s release schedule&lt;/a&gt;, read {date}. troid shows the schedule only, never a forecast.&quot;}"><div class="calrow"></div></div><div class="pop" id="cal-note" hidden><p class="cn1"></p><p>troid lists it for one measurement. MEASURED: in Binance.US 4h bars from 2021 to 2026, the bar from 12:00 to 16:00 UTC holds 27% of BTC's widest tenth and 25% of ETH's; an even spread would give 17%. troid hasn't tested whether these releases are the reason.</p><p class="cn2"></p><p class="cn3"></p></div><script src="/calendar.js" defer></script><div class="pop" id="tk-use" hidden><p class="tkn"></p><p><button type="button" class="linkbtn">use as entry</button></p></div><script src="/ticker.js" defer></script>
+</div></header>
+
+<div class="wrap">
+
+<div class="hero">
+  <h1>Prop-firm risk, computed.</h1>
+  <p class="lede">Most funded accounts fail on position size, not entries. troid computes
+  both of your loss ceilings, reports which one actually binds, and sizes the trade net
+  of fees.</p>
+</div>
+
+
+</div>
+<div class="wrap wide">
+<div class="panel d2" id="desk">
+  <p class="eyebrow"><span style="text-transform:none">troid's desk</span> · size a trade</p>
+  <p class="d2ban">Preview of troid's next desk. The figures are the live desk's, computed the same way; only the presentation is new.</p>
+  <p class="ghint">Tap any label for what it means.</p>
+  <div id="shared" class="shared" role="status" hidden></div>
+  <div class="d2g">
+    <div class="gauge" id="gauge" role="img" aria-label="">
+      <div class="gtr"><i class="gax"></i><i class="gfl" data-g="d"></i><i class="gfl" data-g="m"></i><i class="gq"></i><i class="gghost"></i><i class="gseg"></i><i class="gdot"></i>
+        <span class="glab" data-g="q"></span><span class="glab" data-g="r"></span><span class="glab" data-g="e"></span><span class="glab" data-g="d"></span><span class="glab" data-g="m"></span></div>
+      <p class="gline"></p>
+    </div>
+    <div class="d2in">
+      <details class="step" id="st-account" open>
+        <summary><span class="sk">your account</span><span class="ss" id="ss-account"></span><span class="se">check this step</span></summary>
+        <div class="grid g2">
+          <div class="span2"><label for="firm"><button type="button" class="term" data-tip="g-firm" aria-describedby="g-firm">Firm</button><button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">why these 3?</button></label><select id="firm" aria-label="Firm"></select></div>
+          <div class="span2"><label for="profile"><button type="button" class="term" data-tip="g-challenge" aria-describedby="g-challenge">Challenge</button></label><select id="profile"></select></div>
+          <div><label for="quota"><button type="button" class="term" data-tip="g-quota" aria-describedby="g-quota">Quota</button></label><input id="quota" type="number" value="100000"></div>
+          <div><label for="equity"><button type="button" class="term" data-tip="g-equity" aria-describedby="g-equity">Equity</button></label><input id="equity" type="number" value="100000"></div>
+          <div><label for="daystart"><button type="button" class="term" data-tip="g-daystart" aria-describedby="g-daystart">Day start</button></label><input id="daystart" type="number" value="100000"></div>
+          <div id="hiWrap" style="display:none"><label for="hirollover"><button type="button" class="term" data-tip="g-hirollover" aria-describedby="g-hirollover">High at rollover</button></label><input id="hirollover" type="number" placeholder="= day start"></div>
+          <div id="hwmWrap" style="display:none"><label for="hwm"><button type="button" class="term" data-tip="g-hwm" aria-describedby="g-hwm">High-water mark</button></label><input id="hwm" type="number" placeholder="= max(equity, quota)"></div>
+        </div>
+      </details>
+      <details class="step" id="st-trade" open>
+        <summary><span class="sk">your trade</span><span class="ss" id="ss-trade"></span><span class="se">check this step</span></summary>
+        <div class="grid g2">
+          <div class="span2"><label for="asset"><button type="button" class="term" data-tip="g-asset" aria-describedby="g-asset">Asset</button></label><select id="asset"><optgroup label="Crypto"><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="SOL">SOL</option><option value="XRP">XRP</option><option value="BNB">BNB</option></optgroup><optgroup label="Commodities"><option value="XAU">Gold</option><option value="WTI">WTI oil</option></optgroup><optgroup label="Stocks"><option value="TSLA">TSLA</option></optgroup></select></div>
+          <div><label for="side"><button type="button" class="term" data-tip="g-side" aria-describedby="g-side">Side</button></label><select id="side"><option value="1">long</option>
+            <option value="-1">short</option></select></div>
+          <div><label for="entry"><button type="button" class="term" data-tip="g-entry" aria-describedby="g-entry">Entry</button></label><input id="entry" type="number" step="any" value="77872">
+            <div class="chip" id="chip"><button type="button" class="chipb" id="chipb" hidden></button><span class="chipm" id="chipm" hidden></span></div></div>
+          <div><label for="stop"><button type="button" class="term" data-tip="g-stop" aria-describedby="g-stop">Stop</button></label><input id="stop" type="number" step="any" value="74814"></div>
+          <div><label for="targetR"><button type="button" class="term" data-tip="g-target_r" aria-describedby="g-target_r">Target R</button></label><input id="targetR" type="number" step="any" value="2"></div>
+        </div>
+      </details>
+      <details class="step" id="st-risk" open>
+        <summary><span class="sk">your risk</span><span class="ss" id="ss-risk"></span><span class="se">check this step</span></summary>
+        <div class="grid g2">
+          <div><label for="riskPct"><button type="button" class="term" data-tip="g-risk_pct" aria-describedby="g-risk_pct">Risk %</button></label><input id="riskPct" type="number" step="any" value="0.5"></div>
+          <div><label for="capPct"><button type="button" class="term" data-tip="g-cap_pct" aria-describedby="g-cap_pct">Budget cap %</button></label><input id="capPct" type="number" step="any" value="35"></div>
+          <div><label for="lev"><button type="button" class="term" data-tip="g-leverage" aria-describedby="g-leverage">Leverage</button></label><input id="lev" type="number" step="any" value="5"></div>
+          <div><label for="mode"><button type="button" class="term" data-tip="g-mode" aria-describedby="g-mode">Margin mode</button></label><select id="mode"><option value="cross">cross</option>
+            <option value="isolated">isolated</option></select></div>
+        </div>
+      </details>
+    </div>
+    <div class="d2out">
+      <div class="anote" id="assetnote"></div>
+      <div id="result"></div>
+    </div>
+  </div>
+  <div class="pop" id="p-why3" hidden><p>troid compares 3 firms: Bitfunded, the reference firm troid verified first, and the 2 crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.</p><p><a href="/compare#chosen">How firms are chosen →</a></p>
+    <p>Want another firm? <a href="/chat#q=Can%20troid%20add%20another%20firm%20to%20its%20compare%3F%20The%20one%20I%27d%20like%20is%20">Ask troid.</a></p></div>
+  <div class="pop gl" id="g-asset" role="tooltip" hidden><p>What you're trading. It sets the firm's hold limit and whether the firm lists it; the size troid computes is the same for every asset.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">symbol, instrument, pair, market</span></p></div>
+  <div class="pop gl" id="g-firm" role="tooltip" hidden><p>The prop firm whose rules troid applies.</p><p><span class="gk">Example</span> choose Bitfunded and every limit below is Bitfunded's.</p></div>
+  <div class="pop gl" id="g-challenge" role="tooltip" hidden><p>The evaluation you bought.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">evaluation, assessment, program, phase, step</span></p><p><span class="gk">Example</span> Bitfunded "1-Step" is a single phase with a 10% target (read 2026-09-23).</p></div>
+  <div class="pop gl" id="g-quota" role="tooltip" hidden><p>The size of the account you bought. Every percentage rule is measured from it.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">account size, initial balance, starting balance, funded amount</span></p><p><span class="gk">Example</span> a $100,000 challenge → enter 100000.</p></div>
+  <div class="pop gl" id="g-equity" role="tooltip" hidden><p>What the account is worth right now, including open trades.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">account equity, current equity, floating balance, NAV</span></p><p><span class="gk">Example</span> balance 101,200 with an open trade down 300 → equity 100,900. Firms count that open loss.</p></div>
+  <div class="pop gl" id="g-daystart" role="tooltip" hidden><p>Your balance when the firm's trading day began. Daily limits are measured from here.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">start-of-day balance, daily starting balance</span></p><p><span class="gk">Example</span> you ended the last trading day at 100,900 with nothing open → day start 100,900. (The reset time is on each firm's column in <a href="/compare">troid's compare</a>.)</p></div>
+  <div class="pop gl" id="g-hirollover" role="tooltip" hidden><p>The higher of your balance and your equity when the firm's trading day rolled over. Where a firm measures the daily limit from it, the daily floor sits a fixed amount below it.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">daily high, max(balance, equity) at the reset</span></p><p><span class="gk">Example</span> balance 100,900 and equity 101,300 at the reset → 101,300.</p><p><code>daily floor = high at rollover − quota × daily %</code></p></div>
+  <div class="pop gl" id="g-hwm" role="tooltip" hidden><p>The highest your account has reached. On trailing-drawdown products the floor follows it up.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">high watermark, peak balance, HWM</span></p><p><span class="gk">Example</span> the account reached 104,000, then fell back to 102,500 → the high-water mark is still 104,000.</p><p><code>trailing floor = high-water mark − quota × max %</code></p></div>
+  <div class="pop gl" id="g-side" role="tooltip" hidden><p>Long: you buy, and profit if price rises. Short: you sell, and profit if it falls.</p><p>Not the same as calls and puts. Those are options: you pay a premium for the right to buy (call) or sell (put) later, and the most you can lose is the premium. troid's desk sizes positions where the loss grows with every move against you until the stop — it doesn't model options.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">buy / sell</span></p></div>
+  <div class="pop gl" id="g-entry" role="tooltip" hidden><p>The price you open at.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">entry price, open price, fill</span></p><p><span class="gk">Example</span> 77,872. For crypto, tap the live price under the field to use it.</p></div>
+  <div class="pop gl" id="g-stop" role="tooltip" hidden><p>The price where you'd close to cap the loss. Below entry for a long, above it for a short.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">stop-loss, SL</span></p><p><span class="gk">Example</span> long at 77,872, stop at 74,814 → 3,058 below entry.</p></div>
+  <div class="pop gl" id="g-target_r" role="tooltip" hidden><p>Your profit target as a multiple of your stop distance.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">take-profit (TP), reward-to-risk, R:R, R-multiple</span></p><p><span class="gk">Example</span> stop 3,058 below 77,872, target 2 → 77,872 + 2 × 3,058 = 83,988.</p><p><code>target = entry ± target R × stop distance</code></p></div>
+  <div class="pop gl" id="g-risk_pct" role="tooltip" hidden><p>How much of your account you'd lose if the stop is hit.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">risk per trade, position risk</span></p><p><span class="gk">Example</span> 0.5 on equity of 100,000 → $500 at the stop.</p><p><code>risk = equity × risk %</code></p></div>
+  <div class="pop gl" id="g-cap_pct" role="tooltip" hidden><p>troid's own safety rule, not a firm's: one trade may use at most this share of the room left before your nearest limit.</p><p><span class="gk">Example</span> $4,000 of room at 35 → no single trade risks more than $1,400. After losses the room shrinks, so each trade shrinks with it instead of breaching the floor.</p><p><code>risk ≤ room × budget cap %</code></p></div>
+  <div class="pop gl" id="g-leverage" role="tooltip" hidden><p>How much position each dollar of margin controls. It changes margin and liquidation distance — not the loss at your stop.</p><p>5× is the most Bitfunded allows on crypto, so it's the starting point. troid has no recorded cap for Bitfunded's Express and BrightFunded yet.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">5x, 1:5, margin multiplier</span></p><p><span class="gk">Example</span> a $12,478 position at 5× ties up $2,496 of margin. At 2× it ties up $6,239 — same loss at the stop either way.</p><p><code>margin = notional ÷ leverage</code></p></div>
+  <div class="pop gl" id="g-mode" role="tooltip" hidden><p>Cross: your whole account backs every position. Isolated: each position has its own margin and can be liquidated on its own.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">cross margin / shared margin; isolated margin / position margin</span></p><p><span class="gk">Example</span> under cross at 5× with a normal stop, the firm's loss floor is reached long before the exchange would liquidate — so the stop is the only thing in front of the floor.</p></div>
+  <div class="pop gl" id="g-verdict" role="tooltip" hidden><p>OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.</p></div>
+  <div class="pop gl" id="g-binding" role="tooltip" hidden><p>Whichever limit is closer right now: the daily limit or the max-loss floor. The one that would stop you first.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">binding limit, nearest limit</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-binding" data-live="{daily} of room before the daily limit, {dd} before the max-loss floor: the {bind} is closer."></span></p><p>Crossover: the equity where the two limits swap which one binds, on products with a static floor and a daily limit fixed from the starting balance.</p><p><span class="gk">Example</span> Bitfunded 1-Step: $100,000 × (1 − 6% + 4%) = $98,000.</p><p><code>quota × (1 − max% + daily%)</code></p></div>
+  <div class="pop gl" id="g-room" role="tooltip" hidden><p>Dollars between your equity and the binding ceiling.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">headroom, remaining drawdown</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-room" data-live="{eq} equity − {floor} floor = {room}."></span></p><p><code>room = equity − floor</code></p></div>
+  <div class="pop gl" id="g-size" role="tooltip" hidden><p>How much of the asset to buy or sell. Under it, the notional: the position's full value.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">position size, quantity, units, lots; notional: position value, exposure</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-size" data-live="{risk} ÷ ({dist} + {fu}) = {qty}; {qty} × {entry} = {notional}."></span></p><p><code>size = risk ÷ (stop distance + round-trip fee per unit)</code></p></div>
+  <div class="pop gl" id="g-margin" role="tooltip" hidden><p>What's set aside for the position while it's open. The notional is its full value.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">initial margin, used margin, collateral</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-margin" data-live="{notional} ÷ {lev}× = {margin}."></span></p><p><code>margin = notional ÷ leverage</code></p></div>
+  <div class="pop gl" id="g-risk" role="tooltip" hidden><p>What you'd lose at the stop, fees included: your risk %, cut to troid's cap when it's above it.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">risk per trade, 1R</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-risk" data-live="the smaller of {intended} and {cap}: {risk}."></span></p><p><code>risk = min(equity × risk %, room × budget cap %)</code></p></div>
+  <div class="pop gl" id="g-fees" role="tooltip" hidden><p>The share of your risk the exchange takes. Tighter stops make it larger.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">commission, trading fees, taker fee</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-fees" data-live="{fees} of {risk} = {share}." data-pending="This product's fee isn't recorded yet, so fees aren't counted."></span></p><p><code>2f ÷ (stop % + 2f)</code></p></div>
+  <div class="pop gl" id="g-stopd" role="tooltip" hidden><p>How far your stop is from entry, as a share of the entry price. Under it, the price your target R reaches.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">stop distance, SL distance</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-stopd" data-live="{entry} to {stop} is {dist}, {pct} of entry; target {target}."></span></p><p><code>stop % = |entry − stop| ÷ entry</code></p></div>
+  <div class="pop gl" id="g-budget" role="tooltip" hidden><p>How much of the room left this one trade would use.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">share of remaining drawdown</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-budget" data-live="{risk} ÷ {room} = {pct}."></span></p><p><code>budget used = risk ÷ room</code></p></div>
+  <div class="pop gl" id="g-left" role="tooltip" hidden><p>How many losses of this size before the binding limit trips.</p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-left" data-live="{room} ÷ {risk} → {left}."></span></p><p><code>floor(room ÷ risk)</code></p></div>
+  <div class="pop gl" id="g-breakers" role="tooltip" hidden><p>Everything that can stop a losing trade, in the order it would happen as price moves against you.</p></div>
+  <div class="pop gl" id="g-daily" role="tooltip" hidden><p>The most the firm lets you lose in one trading day. Cross it and the account fails.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">daily loss limit, daily drawdown</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-daily" data-live="floor {floor} ({formula}), {room} below your equity: a {pct} move against this position."></span></p></div>
+  <div class="pop gl" id="g-floor" role="tooltip" hidden><p>The lowest your equity may ever go. Touch it and the account fails. A static floor stays put; a trailing one follows your high-water mark up.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">max drawdown, maximum loss, overall loss limit</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-floor" data-live="floor {floor} ({formula}), {room} below your equity: a {pct} move against this position."></span></p></div>
+  <div class="pop gl" id="g-liq" role="tooltip" hidden><p>Where the exchange closes the position for lack of margin. Under cross margin at sane sizes the firm's floor comes first.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">liquidation price, liq</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-liq" data-live="a {pct} move against you ({formula})."></span></p></div>
+</div>
+<section class="panel xpl" id="how" aria-labelledby="how-h">
+  <h2 id="how-h">How troid computed this</h2>
+  <p class="xl">The same numbers as the desk above, one step at a time. Change an input and these change with it.</p>
+  <ol class="xs" id="xs"></ol>
+</section>
+</div>
+<div class="wrap">
+
+
+
+<div class="panel" id="firms">
+  <p class="eyebrow">Firms · alphabetical · every firm <span style="text-transform:none">troid</span> lists, no cap</p>
+<!-- firms:start -->
+  <div class="read" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+    <div class="cell">
+      <div class="k">Bitfunded · reference</div>
+      <div class="v" style="font-size:14px;margin:4px 0">1-Step 4% / 6% static · 2-Step 5% / 10%</div>
+      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 13 sourced</div>
+      <div class="s">Where troid&#x27;s ledger runs. Each rule&#x27;s source and read date is on troid&#x27;s compare.</div>
+      <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link · their promos apply here</div>
+    </div>
+    <div class="cell">
+      <div class="k">BrightFunded · #1 by reviews</div>
+      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules filled · 13 sourced</div>
+      <div class="s">128 verified reviews at 4.5 on propfirmmatch. Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
+      <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
+    </div>
+    <div class="cell">
+      <div class="k">Crypto Fund Trader · #2 by reviews</div>
+      <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 13 sourced</div>
+      <div class="s">109 verified reviews at 4.1 on propfirmmatch. Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.</div>
+      <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
+      <div class="s req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></div>
+    </div>
+  </div>
+<!-- firms:end -->
+  <p style="margin:12px 0 0;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.6">
+    Bitfunded is the reference firm because troid verified it first, not because it ranks highest.
+    Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
+    recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
+    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    troid computes, you choose.
+  </p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="n">~70%</div>
+    <p>of prop-firm failures are loss-limit breaches, most inside the first week. Firms
+    report failures trace to size, not strategy selection.</p>
+    <div class="prov">SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.</div></div>
+  <div class="stat"><div class="n">68%</div>
+    <p>of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
+    with no cap on remaining budget. Under a cap, zero.</p>
+    <div class="prov">MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href="https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py">income_math.py</a></div></div>
+<!-- crossover:start -->
+  <div class="stat"><div class="n">$98,000</div>
+    <p>On a $100k 1-Step, below this equity the 6% static floor binds instead of the 4%
+    daily. That is $2,000 from the start — half of one bad day.</p>
+    <div class="prov">DERIVED. Computed from Bitfunded 1-Step rules as published on 2026-09-18 and 2026-09-21 and 2026-09-23 — daily %, max % from help centre: Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives (read 2026-09-23) · static floor from help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota) (read 2026-09-18) · initial-balance daily limit from FAQ (read 2026-09-21). Rules change without notice. Verify with the firm before trading. <code>quota × (1 − max% + daily%) = $100,000 × (1 − 6% + 4%)</code></div></div>
+<!-- crossover:end -->
+</div>
+
+<div class="panel">
+  <h2>What troid does</h2>
+  <p>Computes both loss ceilings and reports the binding one. Sizes positions net of the
+  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
+  5 for TradFi), the
+  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
+  every asset the firm lists.</p>
+  <h2 style="margin-top:20px">What it doesn't</h2>
+  <p>Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.</p>
+  <p><a href="/TROID.md">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
+  assistant as a system prompt. The <a href="https://github.com/kunjancollective/troid/tree/main/mcp">MCP
+  server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.</p>
+  <p style="margin-bottom:0">Every figure here is arithmetic you can check.
+  <code>verify_claims.py</code> in the repo re-derives each published number from first
+  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
+  A measured number is never stated as fact.</p>
+</div>
+
+</div>
+
+<footer><div class="wrap">
+<!-- footer:start -->
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<!-- footer:end -->
+</div></footer>
+
+<!-- profiles:start -->
+<script>var FIRMS={"bitfunded":{"name":"Bitfunded","products":{"1step":{"label":"1-Step","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":{"c":"help centre: Criteria to be Success","o":["2026-09-18","2026-09-23"]},"lev":{"c":"help centre: Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage)","o":["2026-09-23"]}}},"2step_s1":{"label":"2-Step \u00b7 S1","d":5,"m":10,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)","o":["2026-09-23"]}}},"2step_s2":{"label":"2-Step \u00b7 S2","d":5,"m":8,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)","o":["2026-09-23"]}}},"express":{"label":"Express","d":3,"m":3,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"Blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"m":{"c":"Blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":null}},"instant":{"label":"Instant","d":3,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage (Instant); Blog: How to choose the right prop trading challenge","o":["2026-09-21","2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage (Instant); Blog: How to choose the right prop trading challenge","o":["2026-09-21","2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"Blog: How to choose the right prop trading challenge","o":["2026-09-21"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage (Instant)","o":["2026-09-23"]}}},"trader_1step":{"label":"Funded \u00b7 after 1-Step","d":4,"m":6,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 1-Step)","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 1-Step)","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 1-Step)","o":["2026-09-23"]}}},"trader_express":{"label":"Funded \u00b7 after Express","d":3,"m":3,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the Express)","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the Express)","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the Express)","o":["2026-09-23"]}}},"trader_2step":{"label":"Funded \u00b7 after 2-Step","d":5,"m":8,"basis":"initial","dd":"static","locks":null,"hwm":null,"fee":0.04,"lev":5,"levb":null,"pv":{"d":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 2-Step)","o":["2026-09-23"]},"m":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 2-Step)","o":["2026-09-23"]},"basis":{"c":"FAQ","o":["2026-09-21"]},"dd":{"c":"help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota)","o":["2026-09-18"]},"locks":null,"hwm":null,"fee":null,"lev":{"c":"help centre: Challenge & Trader Stage (Trader Stage after the 2-Step)","o":["2026-09-23"]}}}},"reset":{"time":"16:00","tz":"UTC"}},"brightfunded":{"name":"BrightFunded","products":{"1step":{"label":"1-Step","d":3,"m":6,"basis":"max_balance_equity","dd":"trailing","locks":6,"hwm":"equity","fee":null,"lev":null,"levb":null,"pv":{"d":{"c":"1-Step product page and help centre per-plan table, accounts bought from 2025-09-22","o":["2026-09-21","2026-09-22"]},"m":{"c":"1-Step product page","o":["2026-09-21"]},"basis":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step'","o":["2026-09-22"]},"dd":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step', the $100,000 table: the floor sits 6% of the initial balance below the high","o":["2026-09-22"]},"locks":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step'","o":["2026-09-22"]},"hwm":{"c":"help centre: 'How does my daily permitted loss work' and 'BrightFunded 1-Step'","o":["2026-09-22"]},"fee":null,"lev":null}}},"reset":{"time":"23:30","tz":"Europe/Berlin"}},"crypto_fund_trader":{"name":"Crypto Fund Trader","products":{"1phase":{"label":"1-Phase","d":4,"m":6,"basis":"day_start","dd":"trailing","locks":6,"hwm":"balance","fee":0.0325,"lev":100,"levb":[{"max_quota":25000,"lev":5,"pv":{"c":"Terms and Conditions: leverage by account class, Student up to $25k","o":["2026-09-21"]}},{"min_quota":50000,"lev":100,"pv":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}],"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}},"2phase":{"label":"2-Phase","d":5,"m":10,"basis":"day_start","dd":"static","locks":6,"hwm":"balance","fee":0.0325,"lev":100,"levb":[{"max_quota":25000,"lev":5,"pv":{"c":"Terms and Conditions: leverage by account class, Student up to $25k","o":["2026-09-21"]}},{"min_quota":50000,"lev":100,"pv":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}],"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Advanced $50k+","o":["2026-09-21"]}}},"instant":{"label":"Instant","d":4,"m":6,"basis":"day_start","dd":null,"locks":6,"hwm":"balance","fee":0.0325,"lev":5,"levb":null,"pv":{"d":{"c":"Terms and Conditions","o":["2026-09-21"]},"m":{"c":"Terms and Conditions","o":["2026-09-21"]},"basis":{"c":"T&C 8.i\u20138.ii","o":["2026-09-21"]},"dd":null,"locks":null,"hwm":null,"fee":{"c":"T&C 5.8, Match-Trader and MT5","o":["2026-09-21"]},"lev":{"c":"Terms and Conditions: leverage by account class, Student up to $25k","o":["2026-09-21"]}}}},"reset":{"time":"00:05","tz":"UTC"}}};var PROV_TAIL="Rules change without notice. Verify with the firm before trading.";</script>
+<!-- profiles:end -->
+<script src="/desklink.js"></script>
+<script src="/pop.js" defer></script>
+<script>var DESK2DATA={"assets":{"BTC":{"name":"BTC","group":"crypto","tv":"BINANCEUS:BTCUSDT","listed":{"bitfunded":{"as":"BTC (Major Crypto Assets)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"major","tier_name":"Major Crypto Assets"},"brightfunded":{"as":"BTC/USD","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"ETH":{"name":"ETH","group":"crypto","tv":"BINANCEUS:ETHUSDT","listed":{"bitfunded":{"as":"ETH (Major Crypto Assets)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"major","tier_name":"Major Crypto Assets"},"brightfunded":{"as":"ETH/USD","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"SOL":{"name":"SOL","group":"crypto","tv":"BINANCEUS:SOLUSDT","listed":{"bitfunded":{"as":"SOL (Major Crypto Assets)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"major","tier_name":"Major Crypto Assets"},"brightfunded":{"as":"SOL/USD","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"XRP":{"name":"XRP","group":"crypto","tv":"BINANCEUS:XRPUSDT","listed":{"bitfunded":{"as":"XRP (Major Crypto Assets)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"major","tier_name":"Major Crypto Assets"},"brightfunded":{"as":"XRP/USD","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"BNB":{"name":"BNB","group":"crypto","tv":"BINANCEUS:BNBUSDT","listed":{"bitfunded":{"as":"BNB (Major Crypto Assets)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"major","tier_name":"Major Crypto Assets"},"brightfunded":{"as":"BNB/USD","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"XAU":{"name":"Gold","group":"commodities","tv":"OANDA:XAUUSD","listed":{"bitfunded":{"as":"XAU (Traditional Trading Pairs)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"tradfi","tier_name":"Traditional Trading Pairs"},"brightfunded":{"as":"XAU/USD, Gold vs US Dollar","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"WTI":{"name":"WTI oil","group":"commodities","tv":"OANDA:WTICOUSD","listed":{"brightfunded":{"as":"WTI/USD, Oil - US Crude Vs US Dollar","doc":"Trading Instruments","url":"https://brightfunded.com/trading-instruments","date":"2026-09-24","tier":null,"tier_name":null}}},"TSLA":{"name":"TSLA","group":"stocks","tv":null,"listed":{"bitfunded":{"as":"TSLA (Traditional Trading Pairs)","doc":"help centre: Restricted Trading Practices","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-24","tier":"tradfi","tier_name":"Traditional Trading Pairs"}}}},"hold":{"bitfunded":{"days":{"major":10,"minor":7,"tradfi":5},"src":{"doc":"help centre: Restricted Trading Practices s.1","url":"https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md","date":"2026-09-21"}},"brightfunded":{"days":null,"src":null},"crypto_fund_trader":{"days":null,"src":{"doc":"Terms and Conditions","url":"https://cryptofundtrader.com/terms-and-conditions/","date":"2026-09-21"}}},"unnamed":{"crypto_fund_trader":{"doc":"FAQ: What instruments can I trade?","url":"https://cryptofundtrader.com/faq/","date":"2026-09-24"}},"names":{"bitfunded":"Bitfunded","brightfunded":"BrightFunded","crypto_fund_trader":"Crypto Fund Trader"},"tape_only":{"NVDA":"NASDAQ:NVDA","AAPL":"NASDAQ:AAPL","GOOGL":"NASDAQ:GOOGL","MSFT":"NASDAQ:MSFT","AMZN":"NASDAQ:AMZN"},"default":"BTC"};var T2={"avail_listed":"{firm} lists {asset} as “{as}” ({source}, read {date}).","avail_not":"{asset} isn't on the {firm} pages troid has read.","avail_others":"Listed by {firms}.","avail_unnamed":"{firm} names its symbols only inside its platform, which troid doesn't read ({source}, read {date}).","chip_aria":"Use {asset} at {price}, spot on {source}, as your entry","chip_delayed":"delayed {price} · use","chip_live":"live {price} · use","chip_manual":"Enter your price — live quotes on the tape above","f_aria":"Risk {risk}: price move {price}, fees {fees}, {share} of risk.","f_fees":"fees {x} · {share} of risk","f_price":"price move {x}","g_aria":"Account gauge. Equity {eq}. {floors}. {line}.","g_daily":"daily floor","g_equity":"equity","g_line":"room {room} before the {bind} · this trade risks {risk}","g_line_block":"can't be sized: {reason}","g_line_pending":"this product's floors aren't recorded yet","g_line_set":"room {room} before the {bind} · set your stop to size a trade","g_quota":"quota","g_room":"room","hold_days":"Hold limit at {firm}: {days} days for {asset}, one of its {tier} ({source}, read {date}).","hold_none":"Hold limit at {firm}: none found in the pages troid has read.","hold_none_src":"Hold limit at {firm}: none stated in its {source} (read {date}).","l_before":"before your stop","l_head":"adverse move from entry, first to trigger on top","l_off":"→ {pct}, off-scale","set_cleared":"Your new entry left the old stop on the wrong side or more than 25% away, so it was cleared.","set_sent":"troid sizes a trade from its stop. Enter the price where you'd close to cap the loss: below your entry for a long, above it for a short.","set_tag":"Set your stop","stop_ph":"set your stop","sum_account":"{firm} · {product} · {quota} · equity {eq}","sum_risk":"{rp}% · cap {cp}% · {lev}× {mode}","sum_trade":"{asset} · {side} · {entry} → {stop} · {r}R","sum_trade_nostop":"{asset} · {side} · {entry} · no stop yet","tape_only":"{sym} is on the tape as market context. None of troid's firms lists it on the pages troid has read, so the desk can't size it against a firm's rules.","x1_h":"Two floors","x1_p":"The firm fails the account the moment equity touches either of two floors: the daily floor, reset every trading day, and the max-loss floor.","x2_h":"The one that binds","x2_p":"Whichever floor is nearer binds. The dollars between your equity and it are your room: everything a run of losses can spend.","x3_h":"The crossover","x3_none":"On {product} the floors move with your balance, so they don't swap at one fixed equity.","x3_p":"On {product}, on a fresh day, the two floors swap at one equity: above it the daily floor binds, below it the max-loss floor does.","x4_h":"What one trade may risk","x4_p":"Your risk % of equity, cut to troid's cap: at most that share of the room left. After losses the room shrinks, and each trade with it.","x5_h":"Size, net of fees","x5_p":"Fees are paid on the whole position, in and out, so they come out of the same risk. The tighter the stop, the bigger their share.","x6_code":"at 1× the margin would be {notional}; at {lev}× it is {margin}; the loss at the stop is {risk} either way","x6_h":"Why leverage doesn't change the loss","x6_p":"The loss at the stop is size × stop distance: leverage isn't in it. Leverage sets how much margin the position ties up.","x_lede":"The same numbers as the desk above, one step at a time. Change an input and these change with it.","x_title":"How troid computed this","x_wait":"Set a valid stop to see the rest."};</script>
+<script src="/desk2.js"></script>
+<script>
+/* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
+   a null there is a pending rule and is shown as pending here. Nothing is guessed.
+   Every word this script shows comes from T (web/i18n, keys index.js.*); F fills a string's {placeholders}. */
+var T={"b_breached":"no budget left — {bind} already breached","b_long":"stop at or above entry on a long","b_short":"stop at or below entry on a short","b_zero":"stop distance is zero","bind_daily":"daily loss limit","bind_dd":"max drawdown","br_daily":"daily limit","br_liq":"exchange liq ({mode})","br_stop":"your stop","breakers":"breakers","budget_used":"budget used","cross":"cross","daily_floor":"daily floor","dd_floor":"max-loss floor","f_binding":"min(daily budget, drawdown budget)","f_binding_one":"the only budget with its rules recorded","f_cap":"budget × {pct}%","f_daily_budget":"equity − daily floor","f_daily_day_start":"day start × (1 − {d}%)","f_daily_dist":"daily budget ÷ notional","f_daily_initial":"day start − quota × {d}%","f_daily_rollover":"high at rollover − quota × {d}%","f_dd_budget":"equity − max-loss floor","f_dd_dist":"drawdown budget ÷ notional","f_dd_locked":"quota (locked after +{locks}%)","f_dd_static":"quota × (1 − {m}%)","f_dd_trailing":"high-water mark − quota × {m}%","f_dist":"|entry − stop|","f_fees":"quantity × fee per unit","f_fpu":"entry × {fee}% × 2","f_fpu_pending":"fee per side pending: taken as 0, size before fees","f_hi":"input (defaults to day start)","f_hwm":"input (defaults to max(equity, quota))","f_inputs_account":"quota · equity · day start","f_inputs_risk":"risk % · budget cap % · leverage · margin","f_inputs_trade":"side · entry · stop · target R","f_intended":"equity × {pct}%","f_left":"floor(budget ÷ risk)","f_lev_pending":"your leverage; cap pending","f_lev_pending_held":"your leverage; cap pending (held to {lev}×, the highest cap recorded for this firm)","f_lev_used":"min(your {lev}×, cap {cap}×)","f_liq_cross":"(equity ÷ notional − MMR {mmr}%) ÷ (1 {sign} MMR)","f_liq_isolated":"(1 ÷ leverage used − MMR {mmr}%) ÷ (1 {sign} MMR)","f_margin":"notional ÷ leverage used","f_notional":"quantity × entry","f_qty":"risk ÷ (stop distance + fee per unit)","f_qty_nofee":"risk ÷ stop distance","f_risk":"min(intended, cap)","f_room_both":"room = min(equity − ({fd}), equity − {fdd})","f_room_daily":"room = equity − ({fd})","f_room_dd":"room = equity − {fdd}","f_size":"size = min(equity × {risk}%, room × {cap}%) ÷ (stop distance + entry × {fee}% × 2)","f_size_nofee":"size = min(equity × {risk}%, room × {cap}%) ÷ stop distance","f_target_long":"entry + {r} × stop distance","f_target_short":"entry − {r} × stop distance","f_used":"risk ÷ budget","fees":"fees","isolated":"isolated","list_and":"{a} and {b}","list_comma":"{a}, {b}","long":"long","margin":"margin","n_basis_pending":"daily basis pending for this firm — sized against the drawdown ceiling only","n_cross":"cross: nothing cuts a runaway before the firm’s floor — your stop is the only breaker in front of it","n_cut":"cut from {from} to {to} — {bind} budget caps it","n_danger":"DANGER — {what} binds at {pct}% adverse, inside your stop","n_dd_pending":"drawdown type pending for this firm — sized against the daily ceiling only","n_fee_pending":"fee per side pending for this firm — size shown before fees","n_fees_high":"fees are {pct}% of risk — stop tight enough that costs dominate","n_isolated":"isolated: exchange liquidates at {pct}% for the position’s own margin, before the floor","n_left":"{n} more losses at this size before {bind} trips","n_lev_capped":"leverage capped at {lev}× by the firm","n_lev_class":"no leverage class recorded for a {quota} account — cap pending at this size","n_lev_held":"leverage held to {lev}×, the highest cap this firm records","n_locked":"trailing floor locked at the initial balance ({quota}) after +{locks}%","n_rollover":"daily floor = high at rollover − {d}% of the original size","n_trailing":"trailing floor {floor} = high-water mark − quota × {m}%","n_trailing_equity":"trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor","pending":"pending","pending_note":"There is nothing to size against until those rules are recorded. troid’s compare shows what is pending for this firm.","pending_txt":"{firm} · {product} · troid has no daily basis or drawdown type recorded for this product","prov_computed":"Computed from <b>{firm} {product}</b> rules.","prov_missing":"Source not yet recorded for {rules}.","prov_mmr":"Exchange liquidation assumes a {mmr}% maintenance margin, troid's assumption with no firm source.","prov_published":"Computed from <b>{firm} {product}</b> rules as published on <b>{dates}</b> — {sources}.","prov_src":"{rules} from {source}","prov_src_read":"{rules} from {source} (read {dates})","prov_unsourced":"Computed from <b>{firm} {product}</b> rules — Source not yet recorded for {rules}.","risk":"risk","s_fee_pending":"per-side fee pending","s_fees_pending":"fees {pending}","s_floor":"floor {floor}","s_incl_fees":"incl {fees} fees","s_lev":"{lev}x","s_lev_pending":"{lev}x · cap {pending}","s_of_risk":"of risk","s_tgt":"tgt {price}","share_copied":"Link copied. Your inputs ride after the # in it, and browsers never send that part to a server.","share_copy":"Copy link to this result","share_manual":"Copy this link:","shared":"Opened from a shared link. Numbers are the sharer's inputs; rules are as troid reads them today — see the read dates below.","shared_bad":"Values in the link that couldn't be read ({n}) were left at the desk's defaults.","shared_firm":"The link names a firm troid doesn't list now ({firm}), so the desk shows {shown} with the link's numbers.","shared_long":"The link was too long to read, so the desk shows its defaults.","shared_product":"The link names a challenge troid doesn't list for {firm} now ({product}), so the desk shows {shown}.","short":"short","show_working":"show the working","size":"size","st_binding":"binding","st_cap":"cap","st_daily_budget":"daily budget","st_daily_dist":"daily-limit distance","st_dd_budget":"drawdown budget","st_dd_dist":"max-loss floor distance","st_dist":"stop distance","st_fpu":"fee per unit","st_hi":"high at rollover","st_hwm":"high-water mark","st_inputs":"inputs","st_intended":"intended risk","st_left":"losses left","st_lev_used":"leverage used","st_notional":"notional","st_qty":"quantity","st_target":"target","st_trailing_dist":"trailing floor distance","stop":"stop","trailing_floor":"trailing floor","u_basis":"daily basis","u_daily":"daily {d}%","u_dd":"drawdown type","u_fee":"fee {fee}% per side","u_hwm":"high-water-mark basis","u_lev":"leverage cap {lev}×","u_lev_band":"leverage cap {lev}× for a {quota} account","u_locks":"lock at +{locks}%","u_max":"max {m}%","v_block":"BLOCK","v_fees":"{fees} ({share} of risk)","v_liq_below":"0.00% — below maintenance at entry","v_ok":"OK","v_pending":"PENDING","v_reduce":"REDUCE","v_txt":"{firm} · {product} · binding · {bind} · {room} of room","vs_block":"Can't be sized: {reasons}.","vs_ok":"Fits. This trade risks {risk}, within troid's cap of {cap}% of the {room} left before your {bind}.","vs_pending":"Can't be sized yet: troid has not recorded the rules this needs.","vs_reduce":"Cut to fit. Your {pct}% would risk {intended}; troid sized it down to {risk}, {cap}% of the room left."};
+function fx(x,d){return x.toFixed(d)}function tl(x,o){return x.toLocaleString(undefined,o)}
+
+function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
+var MMR=0.005;
+function n(id){return parseFloat(document.getElementById(id).value)||0}
+function el(id){return document.getElementById(id)}
+function $(x){return (x<0?"−$":"$")+tl(Math.abs(x),{minimumFractionDigits:2,maximumFractionDigits:2})}
+var PEND='<span style="color:var(--dim);font-style:italic">'+T.pending+'</span>';
+function esc(x){return String(x).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function n4(x){return tl(x,{maximumFractionDigits:6})}
+function pc(x){return fx(x,2)+"%"}
+function list(a){return a.length?a.reduce(function(x,y){return F(T.list_comma,{a:x,b:y})}):""}
+function andj(a){return a.length<2?a.join(""):F(T.list_and,{a:list(a.slice(0,-1)),b:a[a.length-1]})}
+/* The provenance block under every result: firm, product, the date troid read each rule it used, each rule's section,
+   and the formula. p.pv comes from firms.json provenance via gen_compare.py; a rule without a recorded source says so.
+   PROV_TAIL is the same sentence troid's compare uses, generated alongside FIRMS. Each sentence is one string. */
+function provBlock(f,p,used,formula,assumed){
+  var by={},order=[],dates=[],missing=[];
+  used.forEach(function(u){var c=p.pv&&p.pv[u[0]];
+    if(!c){missing.push(u[1]);return}
+    if(!by[c.c]){by[c.c]={labs:[],o:c.o||[]};order.push(c.c)}by[c.c].labs.push(u[1]);
+    (c.o||[]).forEach(function(d){if(dates.indexOf(d)<0)dates.push(d)})});
+  dates.sort();
+  var o={firm:esc(f.name),product:esc(p.label),rules:list(missing)},s=[];
+  if(order.length){
+    o.dates=andj(dates);
+    o.sources=order.map(function(c){var r={rules:list(by[c].labs),source:esc(c),dates:andj(by[c].o)};
+      return F(dates.length>1&&by[c].o.length?T.prov_src_read:T.prov_src,r)}).join(" · ");
+    s.push(F(T.prov_published,o));
+    if(missing.length)s.push(F(T.prov_missing,o));
+  }
+  else s.push(F(missing.length?T.prov_unsourced:T.prov_computed,o));
+  if(assumed)s.push(assumed);
+  s.push(PROV_TAIL);
+  return '<div class="prov">'+s.join(" ")+' <code>'+formula+'</code></div>';
+}
+/* The verdict: its badge, which opens what the verdicts mean, and a plain sentence built from this result's own figures
+   (design handoff 2026-09-24, 2b), then the firm, product and room. The sentence carries data-x: it explains the result
+   and adds no figure of its own (i18n_equiv.py --design checks that against every desk state). */
+function verdict(v,tag,sent,txt){
+  return '<div class="verdict v'+v+'">'+term("verdict",tag).replace('class="term"','class="term vtag"')+
+    '<p class="vsent" data-x>'+sent+'</p><span class="vtxt">'+txt+'</span></div>';
+}
+/* A term opens its glossary note (regions.glossary_html, web/public/pop.js): a label or a figure, dotted underline. */
+function term(id,text){return '<button type="button" class="term" data-tip="g-'+id+'" aria-describedby="g-'+id+'">'+text+'</button>'}
+/* The readout's notes carry a live line: this result's own numbers in the note's sentence (data-live). Numbers come
+   from the result or the inputs only (i18n_equiv.py --design checks every desk state). */
+function gx(id,o){var e=el("gx-"+id);if(!e)return;e.textContent=o==null?"":F(e.getAttribute(o.pending?"data-pending":"data-live"),o);e.parentNode.hidden=o==null}
+/* The leverage field starts at min(5, the product's recorded cap) (2c) and follows the product while it still holds
+   that default; a value the trader typed, or a shared link's, stays. levCapFor gives the cap at this quota. */
+var levAuto="5";
+function levDefault(){
+  var p=FIRMS[el("firm").value].products[el("profile").value],c=levCapFor(p,n("quota")),i=el("lev");
+  var d=String(c&&c.lev!=null?Math.min(5,c.lev):5);
+  if(i.value===levAuto)i.value=d;
+  levAuto=d;
+}
+/* Under the verdict: the result as a link (desklink.js puts every input in the fragment, never the query string). */
+function linkRow(){return '<div class="linkrow"><button type="button" class="linkbtn" data-copy-link>'+T.share_copy+'</button><span class="linkmsg" role="status"></span></div>'}
+function working(steps,open){
+  return '<details class="work"'+(open?" open":"")+'><summary>'+T.show_working+'</summary><div class="wt"><table>'+steps.map(function(x){
+    return '<tr><td>'+x[0]+'</td><td><code>'+x[1]+'</code></td><td class="num">'+x[2]+'</td></tr>'}).join("")+'</table></div></details>';
+}
+/* A firm whose cap depends on account size (lev_bands in firms.json): the band for this quota, or null when no band covers it. */
+function levCapFor(p,quota){
+  if(!p.levb)return p.lev==null?null:{lev:p.lev,pv:null};
+  for(var i=0;i<p.levb.length;i++){var b=p.levb[i];
+    if((b.max_quota==null||quota<=b.max_quota)&&(b.min_quota==null||quota>=b.min_quota))return {lev:b.lev,pv:b.pv}}
+  return null;
+}
+function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
+function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
+function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none";levDefault()}
+function render(){
+  var wOpen=!!document.querySelector("#result details.work[open]");
+  var ob=window.troidPop&&window.troidPop.owner();if(ob&&el("result").contains(ob))window.troidPop.hide();   // its button is about to go
+  ["binding","room","size","margin","risk","fees","stopd","budget","left","daily","floor","liq"].forEach(function(i){gx(i,null)});
+  var f=FIRMS[el("firm").value],p=f.products[el("profile").value];
+  var quota=n("quota"),eq=n("equity"),ds=n("daystart"),hwm=n("hwm")||Math.max(eq,quota),hi=n("hirollover")||ds;
+  var side=parseFloat(el("side").value),entry=n("entry"),stop=n("stop"),tR=n("targetR");
+  var rp=n("riskPct")/100,cp=n("capPct")/100,lev=n("lev"),mode=el("mode").value,modeT=mode==="isolated"?T.isolated:T.cross;
+  var dpct=p.d/100,mpct=p.m/100,notes=[],pend=[];
+  var steps=[[T.st_inputs,T.f_inputs_account,$(quota)+" · "+$(eq)+" · "+$(ds)],
+             [T.st_inputs,T.f_inputs_trade,(side>0?T.long:T.short)+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
+             [T.st_inputs,T.f_inputs_risk,n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+modeT]];
+  // daily floor, by the firm's basis
+  var dFloor=null,fd="",fdd="";
+  if(p.basis==="initial"){dFloor=ds-quota*dpct;fd=F(T.f_daily_initial,{d:p.d});}                    // fixed amount from the initial balance
+  else if(p.basis==="day_start"){dFloor=ds*(1-dpct);fd=F(T.f_daily_day_start,{d:p.d});}             // percentage of the day-start balance
+  else if(p.basis==="max_balance_equity"){dFloor=hi-quota*dpct;fd=F(T.f_daily_rollover,{d:p.d});
+    steps.push([T.st_hi,T.f_hi,$(hi)]);}                                                               // fixed amount below the high at rollover
+  else pend.push("daily basis");
+  // max-loss floor, by the firm's drawdown type
+  var ddFloor=null,locked=false;
+  if(p.dd==="static"){ddFloor=quota*(1-mpct);fdd=F(T.f_dd_static,{m:p.m});}
+  else if(p.dd==="trailing"){locked=p.locks!=null&&hwm>=quota*(1+p.locks/100);ddFloor=locked?quota:hwm-quota*mpct;
+    fdd=locked?F(T.f_dd_locked,{locks:p.locks}):F(T.f_dd_trailing,{m:p.m});
+    steps.push([T.st_hwm,T.f_hwm,$(hwm)]);}
+  else pend.push("drawdown type");
+  if(dFloor!=null){steps.push([T.daily_floor,fd,$(dFloor)]);steps.push([T.st_daily_budget,T.f_daily_budget,$(eq-dFloor)]);}
+  if(ddFloor!=null){steps.push([T.dd_floor,fdd,$(ddFloor)]);steps.push([T.st_dd_budget,T.f_dd_budget,$(eq-ddFloor)]);}
+  var formula=(dFloor!=null&&ddFloor!=null)?F(T.f_room_both,{fd:fd,fdd:fdd}):
+    (dFloor!=null?F(T.f_room_daily,{fd:fd}):F(T.f_room_dd,{fdd:fdd}));
+  // the rules this result actually used: only rules that have a value (a pending rule is pending, not unsourced)
+  var used=[];
+  if(dFloor!=null){used.push(["d",F(T.u_daily,{d:p.d})]);used.push(["basis",T.u_basis]);}
+  if(ddFloor!=null){used.push(["m",F(T.u_max,{m:p.m})]);used.push(["dd",T.u_dd]);
+    if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks",F(T.u_locks,{locks:p.locks})]);if(p.hwm!=null)used.push(["hwm",T.u_hwm]);}}
+  var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
+  if(dB==null&&ddB==null){
+    h=verdict("BLOCK",T.v_pending,T.vs_pending,F(T.pending_txt,{firm:f.name,product:p.label}))+linkRow()+
+      '<div class="notes"><div>'+T.pending_note+'</div></div>';
+    el("result").innerHTML=h;DESK2.paint({v:"PENDING"});return;
+  }
+  var bind,eff,one=(dB==null||ddB==null);
+  if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
+  else if(ddB==null){bind=T.bind_daily;eff=dB;notes.push(T.n_dd_pending);}
+  else{bind=dB<=ddB?T.bind_daily:T.bind_dd;eff=Math.min(dB,ddB);}
+  var bindStep=[T.st_binding,one?T.f_binding_one:T.f_binding,bind+" · "+$(eff)];
+  if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
+    F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
+  if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
+  // the preview: its gauge and explainer get this result; an empty stop is "Set your stop", never BLOCK (ticker v2 E)
+  var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fdd,eff:eff,bind:bind,locked:locked,
+    ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor};
+  if(!el("stop").value.trim()){steps.push(bindStep);
+    el("result").innerHTML=DESK2.set(f,p,bind,eff)+linkRow()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
+      provBlock(f,p,used,formula)+working(steps,wOpen);
+    DESK2.paint(Object.assign(B,{v:"SET"}));return}
+  var dist=Math.abs(entry-stop),blocks=[];
+  if(side>0&&stop>=entry)blocks.push(T.b_long);
+  if(side<0&&stop<=entry)blocks.push(T.b_short);
+  if(dist<=0)blocks.push(T.b_zero);
+  if(eff<=0)blocks.push(F(T.b_breached,{bind:bind}));
+  var intended=rp*eq,cap=cp*Math.max(eff,0),risk=Math.min(intended,cap);
+  var reduced=risk<intended-1e-9;
+  if(blocks.length){
+    steps.push(bindStep);
+    h=verdict("BLOCK",T.v_block,F(T.vs_block,{reasons:blocks.join("; ")}),bind)+linkRow()+'<div class="notes">'+
+      blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
+    el("result").innerHTML=h;DESK2.paint(Object.assign(B,{v:"BLOCK",blocks:blocks}));return;
+  }
+  var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
+  if(feeKnown)used.push(["fee",F(T.u_fee,{fee:p.fee})]);
+  else{pend.push("fee");notes.push(T.n_fee_pending);}
+  var band=levCapFor(p,quota),levCap=band?band.lev:null,levUsed=lev,held=null;
+  if(levCap!=null){used.push(["lev",F(p.levb?T.u_lev_band:T.u_lev,{lev:levCap,quota:$(quota)})]);
+    if(band.pv)p.pv.lev=band.pv;
+    if(lev>levCap){levUsed=levCap;notes.push(F(T.n_lev_capped,{lev:levCap}));}}
+  else{pend.push("leverage cap");
+    if(p.levb){var top=Math.max.apply(null,p.levb.map(function(b){return b.lev}));
+      notes.push(F(T.n_lev_class,{quota:$(quota)}));
+      if(lev>top){levUsed=top;held=top;notes.push(F(T.n_lev_held,{lev:top}));}}}
+  var fu=entry*fee*2,qty=risk/(dist+fu),notional=qty*entry,margin=notional/levUsed;
+  var fees=qty*fu,fshare=fees/risk*100,target=entry+side*tR*dist;
+  var consumes=risk/eff*100,left=Math.floor(eff/risk+1e-9);
+  steps.push(bindStep);
+  steps.push([T.st_intended,F(T.f_intended,{pct:n("riskPct")}),$(intended)]);
+  steps.push([T.st_cap,F(T.f_cap,{pct:n("capPct")}),$(cap)]);
+  steps.push([T.risk,T.f_risk,$(risk)]);
+  steps.push([T.st_dist,T.f_dist,n4(dist)+" ("+pc(dist/entry*100)+")"]);
+  if(feeKnown)steps.push([T.st_fpu,F(T.f_fpu,{fee:p.fee}),n4(fu)]);
+  else steps.push([T.st_fpu,T.f_fpu_pending,"0"]);
+  steps.push([T.st_qty,feeKnown?T.f_qty:T.f_qty_nofee,n4(qty)]);
+  steps.push([T.st_notional,T.f_notional,$(notional)]);
+  steps.push([T.st_lev_used,levCap==null?(held==null?T.f_lev_pending:F(T.f_lev_pending_held,{lev:held})):F(T.f_lev_used,{lev:lev,cap:levCap}),levUsed+"×"]);
+  steps.push([T.margin,T.f_margin,$(margin)]);
+  if(feeKnown)steps.push([T.fees,T.f_fees,F(T.v_fees,{fees:$(fees),share:pc(fshare)})]);
+  steps.push([T.budget_used,T.f_used,fx(consumes,1)+"%"]);
+  steps.push([T.st_left,T.f_left,String(left)]);
+  steps.push([T.st_target,F(side>0?T.f_target_long:T.f_target_short,{r:tR}),tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})]);
+  if(feeKnown&&fshare>15)notes.push(F(T.n_fees_high,{pct:fx(fshare,0)}));
+  if(reduced)notes.push(F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
+  notes.push(F(T.n_left,{n:term("left",String(left)),bind:bind}));
+  // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
+  var sp=dist/entry*100,liq,fl;
+  // adverse move = (m − MMR) ÷ (1 − MMR) long, (m − MMR) ÷ (1 + MMR) short; m = 1 ÷ leverage isolated, equity ÷ notional cross
+  var mB=mode==="isolated"?1/levUsed:(notional>0?eq/notional:Infinity),sg=side>0?"−":"+";
+  liq=isFinite(mB)?(mB-MMR)/(1-side*MMR)*100:Infinity;
+  fl=F(mode==="isolated"?T.f_liq_isolated:T.f_liq_cross,{mmr:MMR*100,sign:sg});
+  var ord=[[T.br_stop,sp,"stopd"]];                                  // [label, adverse %, its glossary term]
+  if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
+  if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
+    steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,pc(ddB/notional*100)]);}
+  var liqName=F(T.br_liq,{mode:modeT});
+  ord.push([liqName,Math.max(liq,0),"liq"]);
+  steps.push([liqName,fl,liq<=0?T.v_liq_below:pc(liq)]);
+  ord.sort(function(a,b){return a[1]-b[1]});
+  if(ord[0][2]!=="stopd")notes.push(F(T.n_danger,{what:ord[0][0],pct:fx(ord[0][1],2)}));
+  else if(mode==="cross")notes.push(T.n_cross);
+  else notes.push(F(T.n_isolated,{pct:fx(liq,1)}));
+  var brk=ord.map(function(e){return term(e[2],e[0])+" "+(isFinite(e[1])?fx(e[1],2)+"%":"—")}).join("  →  ");
+  var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
+  var v=reduced?"REDUCE":"OK";
+  var sent=reduced?F(T.vs_reduce,{pct:n("riskPct"),intended:$(intended),risk:$(risk),cap:n("capPct")}):
+    F(T.vs_ok,{risk:$(risk),cap:n("capPct"),room:$(eff),bind:bind});
+  h=verdict(v,reduced?T.v_reduce:T.v_ok,sent,F(T.v_txt,{firm:f.name,product:p.label,bind:term("binding",bind),room:term("room",$(eff))}))+linkRow()+
+    '<div class="read">'+
+    '<div class="cell"><div class="k">'+term("size",T.size)+'</div><div class="v">'+fx(qty,6)+'</div><div class="s">'+$(notional)+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("margin",T.margin)+'</div><div class="v">'+$(margin)+'</div><div class="s">'+F(levCap==null?T.s_lev_pending:T.s_lev,{lev:levUsed,pending:PEND})+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("risk",T.risk)+'</div><div class="v">'+$(risk)+'</div><div class="s">'+(feeKnown?F(T.s_incl_fees,{fees:$(fees)}):F(T.s_fees_pending,{pending:PEND}))+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("fees",T.fees)+'</div><div class="v">'+(feeKnown?fx(fshare,1)+"%":PEND)+'</div><div class="s">'+(feeKnown?T.s_of_risk:T.s_fee_pending)+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("stopd",T.stop)+'</div><div class="v">'+fx((dist/entry*100),2)+'%</div><div class="s">'+F(T.s_tgt,{price:fx(target,2)})+'</div></div>'+
+    '<div class="cell"><div class="k">'+term("budget",T.budget_used)+'</div><div class="v">'+fx(consumes,0)+'%</div><div class="s">'+F(T.s_floor,{floor:ddFloor==null?PEND:$(ddFloor)})+'</div></div></div>'+
+    '<div class="notes"><div class="brk"><span style="color:var(--dim)">'+term("breakers",T.breakers)+'</span> '+brk+'</div>'+
+    notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>'+
+    provBlock(f,p,used,formula+"; "+sizeF,F(T.prov_mmr,{mmr:MMR*100}))+working(steps,wOpen);
+  // the readout's notes, with this result's own numbers
+  var bFloor=bind===T.bind_daily?dFloor:ddFloor;
+  gx("binding",dB!=null&&ddB!=null?{daily:$(dB),dd:$(ddB),bind:bind}:null);
+  gx("room",{eq:$(eq),floor:$(bFloor),room:$(eff)});
+  gx("size",{risk:$(risk),dist:n4(dist),fu:n4(fu),qty:n4(qty),entry:n4(entry),notional:$(notional)});
+  gx("margin",{notional:$(notional),lev:levUsed,margin:$(margin)});
+  gx("risk",{intended:$(intended),cap:$(cap),risk:$(risk)});
+  gx("fees",feeKnown?{fees:$(fees),risk:$(risk),share:pc(fshare)}:{pending:1});
+  gx("stopd",{entry:n4(entry),stop:n4(stop),dist:n4(dist),pct:pc(dist/entry*100),target:tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})});
+  gx("budget",{risk:$(risk),room:$(eff),pct:fx(consumes,1)+"%"});
+  gx("left",{room:$(eff),risk:$(risk),left:String(left)});
+  gx("daily",dB!=null?{floor:$(dFloor),formula:fd,room:$(dB),pct:pc(dB/notional*100)}:null);
+  gx("floor",ddB!=null?{floor:$(ddFloor),formula:fdd,room:$(ddB),pct:pc(ddB/notional*100)}:null);
+  gx("liq",liq>0&&isFinite(liq)?{pct:pc(liq),formula:fl}:null);
+  el("result").innerHTML=h;
+  DESK2.paint(Object.assign(B,{v:v,risk:risk,intended:intended,cap:cap,reduced:reduced,feeKnown:feeKnown,fu:fu,qty:qty,notional:notional,
+    margin:margin,levUsed:levUsed,fees:fees,fshare:fshare,dist:dist,entry:entry,stop:stop,side:side,target:target,ord:ord,liq:liq,sp:sp,
+    mode:mode,rp:n("riskPct"),cp:n("capPct")}));
+}
+el("firm").addEventListener("change",fillProfiles);el("quota").addEventListener("input",levDefault);el("profile").addEventListener("change",function(){toggleInputs();render()});
+["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
+ .forEach(function(i){el(i).addEventListener("input",render)});
+fillFirms();
+DESKLINK.init({T:T,F:F,esc:esc,firms:FIRMS,live:["en"],lang:"en",fillProfiles:fillProfiles,toggleInputs:toggleInputs,render:render});
+</script>
+</body>
+</html>

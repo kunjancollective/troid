@@ -1,0 +1,71 @@
+{# troid's next desk (the preview at /desk-preview: site_build.desk_preview, web/public/desk2.js; design handoff 2026-09-24,
+   section 4; ticker v2 handoff, sections E and F). The fields are the live desk's, same ids and defaults, so the desk's
+   own script sizes the trade here exactly as it does there; they sit in three step cards (your account, your trade,
+   your risk). The gauge comes first so a phone can pin it under the tape while the desk is on screen; from 1100 px it
+   stands between the fields and the readout. #/assetnote holds the two lines the Asset field changes: the firm's hold
+   limit and whether it lists the asset. #/how is the explainer, the same numbers step by step. #}
+</div>
+<div class="wrap wide">
+<div class="panel d2" id="desk">
+  <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
+  <p class="d2ban">{{ t("desk2.banner") }}</p>
+  <p class="ghint">{{ t("glossary.hint") }}</p>
+  <div id="shared" class="shared" role="status" hidden></div>
+  <div class="d2g">
+    <div class="gauge" id="gauge" role="img" aria-label="">
+      <div class="gtr"><i class="gax"></i><i class="gfl" data-g="d"></i><i class="gfl" data-g="m"></i><i class="gq"></i><i class="gghost"></i><i class="gseg"></i><i class="gdot"></i>
+        <span class="glab" data-g="q"></span><span class="glab" data-g="r"></span><span class="glab" data-g="e"></span><span class="glab" data-g="d"></span><span class="glab" data-g="m"></span></div>
+      <p class="gline"></p>
+    </div>
+    <div class="d2in">
+      <details class="step" id="st-account" open>
+        <summary><span class="sk">{{ t("desk2.card.account") }}</span><span class="ss" id="ss-account"></span><span class="se">{{ t("desk2.card.error") }}</span></summary>
+        <div class="grid g2">
+          <div class="span2"><label for="firm">{{ term("firm", t("index.calc.firm")) }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm" aria-label="{{ t.attr("index.calc.firm") }}"></select></div>
+          <div class="span2"><label for="profile">{{ term("challenge", t("index.calc.challenge")) }}</label><select id="profile"></select></div>
+          <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" value="100000"></div>
+          <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" value="100000"></div>
+          <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" value="100000"></div>
+          <div id="hiWrap" style="display:none"><label for="hirollover">{{ term("hirollover", t("index.calc.hirollover")) }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
+          <div id="hwmWrap" style="display:none"><label for="hwm">{{ term("hwm", t("index.calc.hwm")) }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
+        </div>
+      </details>
+      <details class="step" id="st-trade" open>
+        <summary><span class="sk">{{ t("desk2.card.trade") }}</span><span class="ss" id="ss-trade"></span><span class="se">{{ t("desk2.card.error") }}</span></summary>
+        <div class="grid g2">
+          <div class="span2"><label for="asset">{{ term("asset", t("desk2.asset")) }}</label><select id="asset">{{ asset_options }}</select></div>
+          <div><label for="side">{{ term("side", t("index.calc.side")) }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
+            <option value="-1">{{ t("index.js.short") }}</option></select></div>
+          <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><input id="entry" type="number" step="any" value="77872">
+            <div class="chip" id="chip"><button type="button" class="chipb" id="chipb" hidden></button><span class="chipm" id="chipm" hidden></span></div></div>
+          <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" value="74814"></div>
+          <div><label for="targetR">{{ term("target_r", t("index.calc.target_r")) }}</label><input id="targetR" type="number" step="any" value="2"></div>
+        </div>
+      </details>
+      <details class="step" id="st-risk" open>
+        <summary><span class="sk">{{ t("desk2.card.risk") }}</span><span class="ss" id="ss-risk"></span><span class="se">{{ t("desk2.card.error") }}</span></summary>
+        <div class="grid g2">
+          <div><label for="riskPct">{{ term("risk_pct", t("index.calc.risk_pct")) }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
+          <div><label for="capPct">{{ term("cap_pct", t("index.calc.cap_pct")) }}</label><input id="capPct" type="number" step="any" value="35"></div>
+          <div><label for="lev">{{ term("leverage", t("index.calc.leverage")) }}</label><input id="lev" type="number" step="any" value="5"></div>
+          <div><label for="mode">{{ term("mode", t("index.calc.mode")) }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
+            <option value="isolated">{{ t("index.js.isolated") }}</option></select></div>
+        </div>
+      </details>
+    </div>
+    <div class="d2out">
+      <div class="anote" id="assetnote"></div>
+      <div id="result"></div>
+    </div>
+  </div>
+  <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>
+    <p>{{ t("index.why3.ask", href=L + "/chat#q=" + (t("index.why3.ask_q")|urlencode)) }}</p></div>
+  {{ glossary }}
+</div>
+<section class="panel xpl" id="how" aria-labelledby="how-h">
+  <h2 id="how-h">{{ t("desk2.js.x_title") }}</h2>
+  <p class="xl">{{ t("desk2.js.x_lede") }}</p>
+  <ol class="xs" id="xs"></ol>
+</section>
+</div>
+<div class="wrap">

@@ -107,8 +107,11 @@
     if (!b || !b.getAttribute("data-last")) return;
     note.querySelector(".tkn").textContent = F(s.getAttribute("data-note"), { sym: b.getAttribute("data-sym"), price: b.getAttribute("data-price"), source: source });
     note.querySelector("button").setAttribute("data-last", b.getAttribute("data-last"));
+    note.querySelector("button").setAttribute("data-sym", b.getAttribute("data-sym"));
   }, true);
   note.querySelector("button").addEventListener("click", function () {
+    // the desk preview (desk2.js) also selects the asset and clears a stop the new entry leaves behind
+    if (window.DESK2) { window.DESK2.use(this.getAttribute("data-last"), this.getAttribute("data-sym")); entry.focus(); return; }
     entry.value = this.getAttribute("data-last");
     entry.dispatchEvent(new Event("input"));
     if (window.troidPop) window.troidPop.hide();

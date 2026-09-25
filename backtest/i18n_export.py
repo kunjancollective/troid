@@ -45,6 +45,8 @@ def note_for(key, en):
         tips.append("troid's product name: choose one form here; it is used the same way everywhere")
     if key.startswith("data."):
         tips.append("text from a firm's rules (firms.json)")
+    if key.startswith(("desk2.", "desk-preview.")) or key in ("glossary.asset.what", "glossary.asset.also", "glossary.entry.chip"):
+        tips.append("the desk preview (/desk-preview), English only until it replaces the desk: no need to translate yet")
     if key.startswith("glossary.") and key.endswith(".also"):
         tips.append("shown in English on every page: these are the words on the firms' dashboards; no translation needed")
     if i18n.PH.search(en):
