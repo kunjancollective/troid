@@ -239,6 +239,48 @@ def main():
         ok("play moves it again", "mv" in pg.evaluate(strip)["cls"])
         ctx.close()
 
+        # a phone (the owner's Android check): a tap is reported as a hover that never ends, so a note opened and closed
+        # by touch must leave the strip moving again within 4 s, however the note is closed
+        moved = """async()=>{const r=document.querySelector('#cal .calrow'),x=()=>new DOMMatrix(getComputedStyle(r).transform).m41;
+          const a=x();await new Promise(f=>setTimeout(f,400));return {held:document.getElementById('cal').classList.contains('hold'),
+          play:getComputedStyle(r).animationPlayState,moved:Math.abs(x()-a)}}"""
+
+        def tap_event(pg):                                    # the middle of an event that is on the screen now
+            return pg.evaluate("""()=>{const c=document.getElementById('cal').getBoundingClientRect();
+              for(const b of document.querySelectorAll('#cal .cale')){const r=b.getBoundingClientRect(),x=Math.max(r.left,c.left)+Math.min(r.right-Math.max(r.left,c.left),c.right-Math.max(r.left,c.left))/2;
+                if(r.right>c.left+20&&r.left<c.right-20)return [x,r.top+r.height/2]}}""")
+        for how in ("the same event again", "somewhere else", "Esc"):
+            ctx, pg, errs = page(cal=doc(MANY), w=390, is_mobile=True, has_touch=True)
+            x, y = tap_event(pg)
+            pg.touchscreen.tap(x, y)
+            pg.wait_for_timeout(250)
+            opened = not pg.evaluate("document.getElementById('cal-note').hidden")
+            held = pg.evaluate("document.getElementById('cal').classList.contains('hold')")
+            pg.wait_for_timeout(3500)
+            still_held = pg.evaluate("document.getElementById('cal').classList.contains('hold')")
+            if how == "the same event again":
+                pg.touchscreen.tap(x, y)
+            elif how == "somewhere else":
+                pg.touchscreen.tap(195, 700)
+            else:
+                pg.keyboard.press("Escape")
+            pg.wait_for_timeout(250)
+            closed = pg.evaluate("document.getElementById('cal-note').hidden")
+            pg.wait_for_timeout(3750)                             # 4 s after the note closed
+            m = pg.evaluate(moved)
+            ok(f"touch: a note opened by a tap holds the strip, and closed by tapping {how} it moves again within 4 s" if how != "Esc"
+               else "touch: a note opened by a tap and closed with Esc: the strip moves again within 4 s",
+               opened and held and still_held and closed and not m["held"] and m["play"] == "running" and m["moved"] > 5,
+               dict(opened=opened, held_open=held, still_held=still_held, closed=closed, after=m))
+            ctx.close()
+        ctx, pg, errs = page(cal=doc(MANY), w=390, is_mobile=True, has_touch=True)
+        x, y = tap_event(pg)
+        pg.touchscreen.tap(x, y)
+        pg.touchscreen.tap(x, y)
+        pg.wait_for_timeout(4000)
+        ok("touch: a tap on the strip with no note left open moves again within 4 s", not pg.evaluate(moved)["held"])
+        ctx.close()
+
         ctx, pg, errs = page(cal=doc(MANY), w=375, reduced_motion="reduce")
         s = pg.evaluate(strip)
         ok("reduced motion: a still row that swipes", "mv" not in s["cls"] and not s["clones"] and s["ov"] == "auto" and s["sw"] > s["cw"], s)

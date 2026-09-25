@@ -7,8 +7,9 @@
    schedule with the date troid read it. A schedule that can't load, or whose newest read is over 14 days old, leaves
    the strip hidden with its space kept.
    When the events don't fit, the row moves at about 40 px/s: a copy of it follows it and a CSS transform moves both by
-   exactly the distance from the first event to its copy, so the loop has no seam. It holds while hovered or touched,
-   while its note is open and while the tab is hidden, and moves again 3 s after the last of those ends. Keyboard focus,
+   exactly the distance from the first event to its copy, so the loop has no seam. It holds while a mouse is over it,
+   while a finger is down on it, while its note is open and while the tab is hidden, and moves again 3 s after the last
+   of those ends (a tap is never a hover: see the pointer handlers). Keyboard focus,
    the tape's pause (the tape's still row) and prefers-reduced-motion each make it a still row that swipes, so a focused
    event is never carried off the screen. */
 (function () {
@@ -107,10 +108,15 @@
     if (Object.keys(why).length) c.classList.add("hold");
     else resume = setTimeout(function () { c.classList.remove("hold"); }, 3000);
   }
-  c.addEventListener("mouseenter", function () { hold("hover", true); });
-  c.addEventListener("mouseleave", function () { hold("hover", false); });
-  c.addEventListener("touchstart", function () { hold("touch", true); }, { passive: true });
-  ["touchend", "touchcancel"].forEach(function (x) { c.addEventListener(x, function () { hold("touch", false); }, { passive: true }); });
+  // Hover holds it for a mouse only. A phone reports a tap as a hover it never ends (Android Chrome keeps :hover and
+  // never sends mouseleave: the owner's Android check), so pointer events decide: a mouse holds it while over it, a
+  // finger or a pen while down. A note's closing clears every hold, so the strip moves again 3 s later however the
+  // note was closed; a mouse still over it holds it again as soon as it moves.
+  function mouse(ev) { return ev.pointerType === "mouse"; }
+  c.addEventListener("pointermove", function (ev) { if (mouse(ev) && !why.hover) hold("hover", true); });
+  c.addEventListener("pointerleave", function (ev) { if (mouse(ev)) hold("hover", false); });
+  c.addEventListener("pointerdown", function (ev) { if (!mouse(ev)) hold("touch", true); });
+  ["pointerup", "pointercancel"].forEach(function (x) { c.addEventListener(x, function (ev) { if (!mouse(ev)) hold("touch", false); }); });
   document.addEventListener("visibilitychange", function () { hold("tab", document.hidden); });
   c.addEventListener("focusin", function (ev) {
     clearTimeout(unpin);
@@ -121,7 +127,11 @@
     unpin = setTimeout(function () { pinned = false; motion(); }, 3000);
   });
   if (window.MutationObserver) {
-    new MutationObserver(function () { var o = window.troidPop && window.troidPop.owner(); hold("note", !note.hidden && !!o && c.contains(o)); })
+    new MutationObserver(function () {
+      var o = window.troidPop && window.troidPop.owner(), open = !note.hidden && !!o && c.contains(o);
+      if (!open) { delete why.hover; delete why.touch; }
+      hold("note", open);
+    })
       .observe(note, { attributes: true, attributeFilter: ["hidden"] });
     if (tk) new MutationObserver(motion).observe(tk, { attributes: true, attributeFilter: ["class"] });
   }
