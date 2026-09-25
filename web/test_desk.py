@@ -18,7 +18,9 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
   on the wrong side or more than 25% away is cleared ("Set your stop"), never BLOCK, never a suggested stop.
 - A tapped tape symbol (?tvwidgetsymbol=…#desk, with whatever TradingView adds after it) selects the asset, brings it into
   view lit, says "ETH selected · live … · use" or that live fill isn't available, fills nothing, shows no shared-link
-  notice and leaves a clean address; a tab the tape opened hands the address to troid's tab and closes.
+  notice and leaves a clean address; a tab the tape opened hands the address to troid's tab and closes. The symbol counts
+  wherever it arrives (the query, or after the #), never an unfilled {symbolname}; one the desk can't read keeps the
+  default asset and says so by the Asset field, never silently.
 - A shared link restores the sharer's numbers and says so; #desk alone doesn't.
 - The gauge, the ladder, the fee bar and the explainer draw the result's own numbers; the step cards; the pinned gauge;
   16 px fields on a phone; nothing sideways.
@@ -264,13 +266,16 @@ def main():
 
         # 5. a tapped tape symbol: TradingView adds its own parameters after #desk
         TV = "&utm_source=troid.ai&utm_medium=widget&utm_campaign=ticker-tape"
+        MISS = EN["desk2.js.tape_miss"]
         for q, want_asset, chip, note in [
                 ("BINANCEUS:ETHUSDT", "ETH", "ETH selected · live 2,692.58 · use", None),
                 ("OANDA:XAUUSD", "XAU", None, None),
                 ("OANDA:WTICOUSD", "WTI", None, None),
                 ("NASDAQ:NVDA", "BTC", None, "NVDA is on the tape as market context"),
-                ("NASDAQ:NOPE", "BTC", None, None)]:
-            ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol={q}#desk{TV}", w=390, is_mobile=True, has_touch=True)
+                ("NASDAQ:NOPE", "BTC", None, MISS),
+                ("{symbolname}", "BTC", None, MISS),                            # a placeholder the widget never filled
+                ("%7Bsymbolname%7D#desk?tvwidgetsymbol=BINANCEUS%3AXRPUSDT", "XRP", "XRP selected · live 1.5385 · use", None)]:  # the real symbol after the #
+            ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol={q}" + ("" if "#" in q else f"#desk{TV}"), w=390, is_mobile=True, has_touch=True)
             t = pg.inner_text("#assetnote")
             got = pg.evaluate("""()=>{const r=e=>{const b=e.getBoundingClientRect();return b.top>=0&&b.bottom<=innerHeight};
               return {asset:document.getElementById('asset').value,entry:document.getElementById('entry').value,shared:document.getElementById('shared').hidden,
@@ -280,16 +285,18 @@ def main():
             label = f"a tape tap on {q}"
             ok(f"{label}: asset {want_asset}, nothing filled, no shared-link notice, a clean address", got["asset"] == want_asset and got["entry"] == ""
                and got["shared"] and got["addr"] == DESK + "#desk" and not errs, (got, errs))
-            if want_asset == "ETH":
+            if note == MISS:
+                ok(f"{label}: never a silent fallback: \"{MISS}\" by the Asset field, in view, nothing lit", t.startswith(MISS) and got["noteview"] and not got["lit"], (t, got))
+                pg.select_option("#asset", "SOL")
+                ok(f"{label}: choosing an asset clears the note", MISS not in pg.inner_text("#assetnote"))
+            elif want_asset in ("ETH", "XRP"):
                 ok(f"{label}: the asset in view and lit; by the entry \"{chip}\"", got["inview"] and got["lit"] and got["chip"] == chip, got)
             elif want_asset in ("XAU", "WTI"):
                 name = EN[f"ticker.sym.{want_asset}"]
                 ok(f"{label}: \"Live fill isn't available for {name} — enter your price from the tape above.\"", got["inview"] and got["lit"]
                    and got["chipm"] == EN["desk2.js.chip_no_fill"].format(asset=name) and got["chip"] is None, got)
             elif note:
-                ok(f"{label}: \"{note}…\", in view", note in t and got["noteview"], (t, got))
-            else:
-                ok(f"{label}: an unknown symbol changes nothing", "market context" not in t and not got["lit"], got)
+                ok(f"{label}: \"{note}…\", in view", note in t and got["noteview"] and MISS not in t, (t, got))
             ctx.close()
         ctx = b.new_context(viewport={"width": 1280, "height": 900})
         ctx, first, errs = page(ctx=ctx)

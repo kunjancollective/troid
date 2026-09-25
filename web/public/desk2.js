@@ -13,7 +13,7 @@
      stop: the desk then says "Set your stop". troid never suggests one.
    - Motion is transform and opacity only, and reduced motion shows the end frame (the CSS). */
 (function () {
-  var D = window.DESK2DATA, S = window.T2, prices = {}, src = "Binance.US", cleared = false, tapeOnly = null, tapeSel = null, last = null;
+  var D = window.DESK2DATA, S = window.T2, prices = {}, src = "Binance.US", cleared = false, tapeOnly = null, tapeSel = null, tapeMiss = false, last = null;
   function $e(id) { return document.getElementById(id); }
   var gauge = $e("gauge"), tr = gauge.querySelector(".gtr"), asset = $e("asset");
   function q(s) { return tr.querySelector(s); }
@@ -108,6 +108,7 @@
   // the two lines the Asset field changes: whether the selected firm lists it, and the firm's hold limit for it
   function paintAsset() {
     var a = D.assets[asset.value], fk = $e("firm").value, firm = esc(D.names[fk] || ""), L = a && a.listed[fk], H = D.hold[fk], out = [];
+    if (tapeMiss) out.push('<span class="tmiss">' + esc(S.tape_miss) + "</span>");   // never a silent fallback to the default
     if (tapeOnly) out.push(esc(F(S.tape_only, { sym: tapeOnly })));
     if (!a) { $e("assetnote").innerHTML = "<p>" + out.join("</p><p>") + "</p>"; return; }
     if (L) out.push(F(S.avail_listed, { firm: firm, asset: esc(a.name), as: esc(L.as), source: link(L), date: L.date }));
@@ -182,7 +183,7 @@
 
   // a new entry from the chip or the tape: a stop now on the wrong side, or more than 25% away, is cleared
   function use(v, sym) {
-    if (sym && D.assets[sym] && asset.value !== sym) { asset.value = sym; tapeOnly = null; }
+    if (sym && D.assets[sym] && asset.value !== sym) { asset.value = sym; tapeOnly = null; tapeMiss = false; }
     var e = $e("entry"), s = $e("stop"), E = parseFloat(v), st = parseFloat(s.value);
     e.value = v;
     if (s.value.trim() !== "" && isFinite(st) && isFinite(E) && E > 0) {
@@ -217,11 +218,23 @@
 
   window.DESK2 = { paint: paint, set: setVerdict, use: use, empty: emptyReadout };
 
-  // a tapped tape symbol: /?tvwidgetsymbol=BINANCEUS:ETHUSDT#desk (or OANDA:XAUUSD, NASDAQ:NVDA). TradingView may open it
-  // in a new tab: when the tab that opened it is troid's, that tab takes the address and this one closes, so one tab
-  // stays; with no opener (or another site's), this tab carries on
-  var tv = (new URLSearchParams(location.search).get("tvwidgetsymbol") || "").toUpperCase();
-  if (tv) {
+  // a tapped tape symbol: /?tvwidgetsymbol=BINANCEUS:ETHUSDT#desk (or OANDA:XAUUSD, NASDAQ:NVDA). Every tvwidgetsymbol
+  // in the address counts, in the query or after the #, decoded, and never an unfilled placeholder ({symbolname}): the
+  // first one the desk knows is the tapped symbol (web/capture_tape.py records what TradingView's tape really sends).
+  // TradingView may open it in a new tab: when the tab that opened it is troid's, that tab takes the address and this
+  // one closes, so one tab stays; with no opener (or another site's), this tab carries on
+  function tapped() {
+    var vals = new URLSearchParams(location.search).getAll("tvwidgetsymbol");
+    location.hash.slice(1).replace(/\?/g, "&").split("&").forEach(function (kv) {
+      if (kv.indexOf("tvwidgetsymbol=") === 0) vals.push(kv.slice(15));
+    });
+    return vals.map(function (v) {
+      for (var i = 0; i < 2 && /%[0-9A-F]{2}/i.test(v); i++) { try { v = decodeURIComponent(v); } catch (e) { break; } }
+      return v.replace(/\+/g, " ").trim().toUpperCase();
+    });
+  }
+  var tvs = tapped();
+  if (tvs.length) {
     try {
       var op = window.opener && window.opener.top;
       if (op && op !== window && op.location.origin === location.origin) { op.location.href = location.href; window.close(); }
@@ -230,19 +243,29 @@
 
   document.addEventListener("DOMContentLoaded", function () {
     $e("stop").addEventListener("input", function () { cleared = false; });
-    var bare = tv.split(":").pop(), land = null;
-    if (tv) {
-      var hit = Object.keys(D.assets).filter(function (k) { var a = D.assets[k]; return k === bare || (a.tv && (a.tv === tv || a.tv.split(":").pop() === bare)); })[0];
+    var land = null;
+    if (tvs.length) {
+      var known = function (map, key) {                  // a listed asset (map: its tv name) or a tape-only stock (map: tv)
+        return function (v) {
+          var bare = v.split(":").pop();
+          return Object.keys(map).filter(function (k) { var t = key(map[k]); return k === bare || (t && (t === v || t.split(":").pop() === bare)); })[0] || null;
+        };
+      };
+      var inAssets = known(D.assets, function (a) { return a.tv; }), inTape = known(D.tape_only, function (t) { return t; });
+      var real = tvs.filter(function (v) { return v && !/[{}]/.test(v); });
+      var hit = real.map(inAssets).filter(Boolean)[0];
       if (hit) { asset.value = hit; tapeSel = hit; land = asset; }
       else {
-        tapeOnly = Object.keys(D.tape_only).filter(function (k) { return k === bare || D.tape_only[k] === tv || D.tape_only[k].split(":").pop() === bare; })[0] || null;
-        if (tapeOnly) land = $e("assetnote");
+        tapeOnly = real.map(inTape).filter(Boolean)[0] || null;
+        // a tap the desk can't read keeps the default asset and says so, by the field
+        tapeMiss = !tapeOnly;
+        land = $e("assetnote");
       }
       // the tape's own parameters (and any TradingView adds after #desk) leave the address: a reload or a copied link
       // starts clean
       if (history.replaceState) history.replaceState(null, "", location.pathname + "#desk");
     }
-    asset.addEventListener("change", function () { tapeOnly = null; tapeSel = null; render(); });
+    asset.addEventListener("change", function () { tapeOnly = null; tapeSel = null; tapeMiss = false; render(); });
     $e("chipb").addEventListener("click", function () { use(this.getAttribute("data-last")); });
     // a phone opens on the trade: the account and the risk cards start folded, their summaries showing
     if (window.matchMedia && window.matchMedia("(max-width:640px)").matches) ["st-account", "st-risk"].forEach(function (id) { $e(id).open = false; });

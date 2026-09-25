@@ -1053,6 +1053,7 @@ desk2.js.avail_not,{asset} isn't on the {firm} pages troid has read.,,,"NEW: tra
 desk2.js.avail_unnamed,"{firm} names its symbols only inside its platform, which troid doesn't read ({source}, read {date}).",,,"NEW: translate it in reviewer_edit | keep {date} {firm} {source} exactly as written; troid stays lowercase, in Latin letters"
 desk2.js.avail_others,Listed by {firms}.,,,NEW: translate it in reviewer_edit | keep {firms} exactly as written
 desk2.js.tape_only,"{sym} is on the tape as market context. None of troid's firms lists it on the pages troid has read, so the desk can't size it against a firm's rules.",,,"NEW: translate it in reviewer_edit | keep {sym} exactly as written; troid stays lowercase, in Latin letters"
+desk2.js.tape_miss,troid couldn't read the tapped symbol — choose the asset here.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 desk2.js.chip_live,live {price} · use,,,NEW: translate it in reviewer_edit | keep {price} exactly as written
 desk2.js.chip_delayed,delayed {price} · use,,,NEW: translate it in reviewer_edit | keep {price} exactly as written
 desk2.js.chip_aria,"Use {asset} at {price}, spot on {source}, as your entry",,,NEW: translate it in reviewer_edit | keep {asset} {price} {source} exactly as written

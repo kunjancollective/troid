@@ -41,7 +41,7 @@
 .d2empty{margin:0 0 14px;padding:14px 16px;border-inline-start:2px solid var(--line);background:var(--surface2);border-radius:3px;
   font-size:14px;color:var(--ink)}
 .anote{margin:0 0 12px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}
-.anote p{margin:0}
+.anote p{margin:0}.anote .tmiss{color:var(--ink)}
 .vSET{border-color:var(--dim)}.vSET .vtag{color:var(--ink)}
 #result .notes .brk{display:none}
 /* the gauge: a bar pinned under the tape while the desk is on screen (a phone, a tablet), low values left; from 1100 px

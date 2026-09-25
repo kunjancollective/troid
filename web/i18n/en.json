@@ -847,6 +847,7 @@
  "desk2.js.avail_unnamed": "{firm} names its symbols only inside its platform, which troid doesn't read ({source}, read {date}).",
  "desk2.js.avail_others": "Listed by {firms}.",
  "desk2.js.tape_only": "{sym} is on the tape as market context. None of troid's firms lists it on the pages troid has read, so the desk can't size it against a firm's rules.",
+ "desk2.js.tape_miss": "troid couldn't read the tapped symbol — choose the asset here.",
  "desk2.js.chip_live": "live {price} · use",
  "desk2.js.chip_delayed": "delayed {price} · use",
  "desk2.js.chip_aria": "Use {asset} at {price}, spot on {source}, as your entry",
