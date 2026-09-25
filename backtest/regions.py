@@ -214,7 +214,7 @@ def term(tid, text):
 def glossary_html(T=None, desk2=False):
     """Every glossary note the desk opens, in T's language. "Also called" stays in English in every language: those are
     the words on the firms' dashboards. A firm-specific example takes its firm, product and figure from firms.json, the
-    reference firm's compare product, with the date troid read the rule. The desk preview (desk2) adds the Asset field's
+    reference firm's compare product, with the date troid read the rule. The redesigned desk (desk2) adds the Asset field's
     note, and Entry's example says where the live price is."""
     T = _strings(T)
     en = i18n.english()
@@ -261,7 +261,7 @@ TIERS = {"Major Crypto Assets": "major", "Minor Crypto Assets": "minor", "Tradit
 
 
 def _src(f, sid):
-    """A firm's provenance source as the desk preview cites it: the document (without the firm's name in front), its
+    """A firm's provenance source as the desk cites it: the document (without the firm's name in front), its
     URL and the date troid read it."""
     s = f["provenance"]["sources"][sid]
     doc = s["doc"][len(f["name"]) + 1:] if s["doc"].startswith(f["name"] + " ") else s["doc"]
@@ -272,7 +272,7 @@ def desk2_context(T):
     """What the desk's template gets for its redesigned parts (partials/_desk2.html; ticker v2 handoff, section E): the
     Asset field's options, grouped as firms.json _asset_universe groups them; DESK2DATA for web/public/desk2.js, which
     firms list each asset, as what and on which page read when, each firm's hold limit with its source, the tape's
-    symbols (a tapped symbol opens the preview with it selected), and the tape's stocks no firm lists; the glossary with
+    symbols (a tapped symbol opens the desk with it selected), and the tape's stocks no firm lists; the glossary with
     the Asset note."""
     T = _strings(T)
     raw = json.loads((site_build.ROOT / "firms.json").read_text())

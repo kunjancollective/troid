@@ -8,8 +8,10 @@ web/public served locally. Spends nothing, calls no one.
   aria-describedby and role="tooltip", so a screen reader announces it. No "?" icons are left.
 - A note reads in order: what it is, also called (in English, marked so), example, formula.
 - Desktop: hover shows it after 300 ms, keyboard focus at once; Esc closes it and keeps focus on the label.
-- Phone: a tap opens it inside the window, a tap outside closes it.
-- The readout's figures open notes whose "Now" line uses the desk's own numbers, and follows the inputs.
+- Phone: a tap opens it inside the window, a tap outside closes it (the account and risk cards opened first: a phone
+  shows them folded).
+- The readout's figures open notes whose "Now" line uses the desk's own numbers, and follows the inputs (a trade typed
+  in first: the desk starts with no entry and no stop).
 """
 import json
 import sys
@@ -52,7 +54,8 @@ def main():
         fields = pg.evaluate("""()=>[...document.querySelectorAll('#desk .grid label')].map(l=>{const b=l.querySelector('.term'),
           n=b&&document.getElementById(b.dataset.tip);return {tid:b&&b.dataset.tip,for:l.htmlFor,input:!!document.getElementById(l.htmlFor),
           desc:b&&b.getAttribute('aria-describedby'),role:n&&n.getAttribute('role'),dotted:b&&getComputedStyle(b).borderBottomStyle}})""")
-        want = [f"g-{t}" for t in regions.GLOSS_FIELDS]
+        fields_in_order = regions.GLOSS_FIELDS[:regions.GLOSS_FIELDS.index("side")] + ["asset"] + regions.GLOSS_FIELDS[regions.GLOSS_FIELDS.index("side"):]
+        want = [f"g-{t}" for t in fields_in_order]                  # the Asset field opens your trade
         ok("every field label is a term for its own field: its note exists, is a tooltip and describes the label",
            [f["tid"] for f in fields] == want and all(f["input"] and f["desc"] == f["tid"] and f["role"] == "tooltip" and f["dotted"] == "dotted"
                                                      for f in fields), fields)
@@ -78,7 +81,7 @@ def main():
             if d and d not in seen:
                 seen.append(d)
             pg.keyboard.press("Tab")
-        visible = [f"g-{t}" for t in regions.GLOSS_FIELDS if t not in ("hirollover", "hwm")]      # shown per product
+        visible = [f"g-{t}" for t in fields_in_order if t not in ("hirollover", "hwm")]      # shown per product
         ok("Tab reaches every visible field label", all(t in seen for t in visible), [t for t in visible if t not in seen])
         pg.focus('#desk .term[data-tip="g-quota"]')
         pg.keyboard.press("Shift+Tab")
@@ -99,6 +102,8 @@ def main():
         pg.wait_for_timeout(100)
 
         # the readout: the size note's Now line uses this result's numbers and follows an input
+        pg.fill("#entry", "77872")
+        pg.fill("#stop", "74814")
         pg.click('#result .term[data-tip="g-size"]')
         now = pg.inner_text("#gx-size")
         ok("size's Now line: this result's risk, stop distance, fee per unit, size and notional",
@@ -118,6 +123,7 @@ def main():
 
         # phone: a tap opens the note inside the window, a tap outside closes it
         ctx, pg, errs = page(w=288, is_mobile=True, has_touch=True, device_scale_factor=2)
+        pg.evaluate("document.getElementById('st-account').open=true;document.getElementById('st-risk').open=true")
         for tid in ("equity", "leverage", "mode"):
             pg.tap(f'#desk .term[data-tip="g-{tid}"]')
             pg.wait_for_timeout(80)
@@ -127,6 +133,14 @@ def main():
             pg.wait_for_timeout(50)
             ok(f"phone: a tap outside closes {tid}'s note", not pg.is_visible(f"#g-{tid}"))
         ok("phone: tapping a label doesn't focus its field (no keyboard pops up)", pg.evaluate("document.activeElement.tagName") != "INPUT")
+        # Safari sends no click for a tap on plain text: the touch ending outside the note closes it; a scroll doesn't
+        pg.tap('#desk .term[data-tip="g-equity"]')
+        pg.wait_for_timeout(50)
+        pg.dispatch_event(".hero .lede", "pointercancel", {"pointerType": "touch"})
+        kept = pg.is_visible("#g-equity")
+        pg.dispatch_event(".hero .lede", "pointerup", {"pointerType": "touch"})
+        ok("phone: a touch ending on plain text closes the note, with no click (Safari's tap); a scroll leaves it open",
+           kept and not pg.is_visible("#g-equity"))
         ok("phone: no script errors", not errs, errs)
         ctx.close()
         b.close()

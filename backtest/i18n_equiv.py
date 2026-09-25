@@ -102,9 +102,11 @@ TEXT = "()=>{const m=[...document.querySelectorAll('.mark')];m.forEach(e=>e.styl
        "const t=document.body.innerText;m.forEach(e=>e.style.display='');return t}"
 
 
-DESK_DESIGN = """()=>{const r=document.getElementById('result'),x=[...r.querySelectorAll('[data-x]')];
-  const said=x.map(e=>e.innerText).join(' ');x.forEach(e=>e.style.display='none');
-  const base=r.innerText;x.forEach(e=>e.style.display='');
+# the redesigned desk (2026-09-25) draws the breakers as a ladder and the fees as a bar (.d2x) where the old desk wrote
+# a breaker line (.brk, still in the result, hidden): the ladder and the bar are set aside, the line is read
+DESK_DESIGN = """()=>{const r=document.getElementById('result'),x=[...r.querySelectorAll('[data-x]')],d=[...r.querySelectorAll('.d2x')],k=[...r.querySelectorAll('.brk')];
+  const said=x.map(e=>e.innerText).join(' ');x.concat(d).forEach(e=>e.style.display='none');k.forEach(e=>e.style.display='revert');
+  const base=r.innerText;x.concat(d,k).forEach(e=>e.style.display='');
   const inputs=[...document.querySelectorAll('#desk input')].map(i=>i.value).join(' ');
   const live=[...document.querySelectorAll('.gx')].map(e=>e.textContent).join(' ');
   return {base, said, inputs, live, full: r.innerHTML.replace(/<[^>]+>/g,' ')}}"""

@@ -7,7 +7,8 @@
   open the copied link in a fresh page: every input and the whole result come back, with the shared-link notice.
 - The link: the inputs are in the fragment only (no query string), and no request to the server carries them.
 - Malformed fragments: bad numbers, an unknown side or margin mode, broken percent-encoding, repeated keys, markup
-  in a value, a fragment over the length cap, a plain anchor. Each bad field keeps its default, nothing throws.
+  in a value, a fragment over the length cap, a plain anchor. Each bad field keeps its default, nothing throws, and the
+  desk still answers: a verdict, or with no entry (the desk starts with none) its first view.
 - A firm or challenge troid no longer lists (rotated out) opens with a notice and a working desk, not a broken page.
 - A language in the link counts only when it is live; the first edit after opening removes the notice and the fragment.
 """
@@ -73,6 +74,19 @@ def result(pg):
 
 def notice(pg):
     return pg.evaluate("() => { const s = document.getElementById('shared'); return s.hidden ? null : s.textContent }")
+
+
+def answers(pg):
+    """The desk answers: a verdict, or, with no entry, "Enter your entry and stop to size a trade." """
+    if pg.input_value("#entry") == "":
+        return pg.is_visible("#result .d2empty") and pg.inner_text("#result .d2empty") == EN["desk2.js.empty"]
+    return pg.is_visible("#result .verdict")
+
+
+def trade(pg):
+    """A trade typed in: the desk starts with no entry and no stop, and a link is offered once a trade is sized."""
+    pg.fill("#entry", "77872")
+    pg.fill("#stop", "74814")
 
 
 def main():
@@ -153,7 +167,7 @@ def main():
                 ok(f"malformed: {name}: no notice", nt is None, nt)
             elif bad:
                 ok(f"malformed: {name}: says {bad} value(s) could not be read", nt is not None and f"({bad})" in nt, nt)
-            ok(f"malformed: {name}: a verdict still renders", q.is_visible("#result .verdict"))
+            ok(f"malformed: {name}: the desk still answers", answers(q))
             q.close()
         q = page(base + "/#" + "q=1&" * 200)
         ok("over the length cap: nothing read, and says so", inputs(q) == defaults and notice(q) == EN["index.js.shared_long"], notice(q))
@@ -181,6 +195,7 @@ def main():
         q = page(base + "/")
         live = q.evaluate("() => DESKLINK.decode('#l=zz&q=1', FIRMS, ['en']).lang === null && DESKLINK.decode('#l=zh&q=1', FIRMS, ['en','zh']).lang === 'zh'")
         ok("l=<lang> counts only when that language is live", live)
+        trade(q)
         q.click("[data-copy-link]")
         q.wait_for_function("() => document.querySelector('.linkmsg').textContent.length > 0")
         ok("an English page's link carries no l=", "l=" not in q.evaluate("() => navigator.clipboard.readText()").split("#", 1)[1])
@@ -195,6 +210,7 @@ def main():
         # --- no clipboard: the link is shown to copy by hand
         q = page(base + "/")
         q.evaluate("() => { Object.defineProperty(navigator, 'clipboard', { value: undefined }) }")
+        trade(q)
         q.click("[data-copy-link]")
         v = q.input_value(".linkurl")
         ok("no clipboard: the link shown, selected, to copy by hand", v.startswith(base + "/#f="), v)

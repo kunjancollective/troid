@@ -42,6 +42,13 @@
     if (b) { e.preventDefault(); if (openBtn === b) hide(); else show(b); return; }
     if (open && !open.contains(e.target)) hide();
   });
+  // a phone sends no click for a tap on plain text (Safari clicks only what it counts as clickable), so a touch that
+  // ends outside the note and its button closes it too. A scroll ends in pointercancel, not pointerup: scrolling past
+  // an open note leaves it open
+  document.addEventListener("pointerup", function (e) {
+    if (e.pointerType === "mouse" || !open || trigger(e.target) || open.contains(e.target)) return;
+    hide();
+  });
   document.addEventListener("mouseover", function (e) {
     var b = trigger(e.target);
     if (!b || !b.hasAttribute("data-tip") || openBtn === b) return;

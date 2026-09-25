@@ -1,4 +1,4 @@
-/* troid's next desk: the preview at /desk-preview (partials/_desk2.html; design handoff 2026-09-24, section 4; ticker v2
+/* troid's desk, the home page's since 2026-09-25 (partials/_desk2.html; design handoff 2026-09-24, section 4; ticker v2
    handoff, sections E and F; v3, section D). The desk's own script sizes the trade, exactly as on the live desk, and
    hands each result to DESK2.paint; everything here draws that result and never computes a figure of its own beyond
    placing it: positions on the gauge and ladder are the result's numbers to scale, and the explainer's lines are its
@@ -80,7 +80,7 @@
   }
 
   // the readout's breakers as a ladder, and its risk as a split bar: put into the result the desk just wrote, marked
-  // d2x (the preview's own, which test_desk_preview.py sets aside to compare the rest with the live desk's)
+  // d2x (the redesign's own, which test_desk.py sets aside to compare the rest with the old desk's)
   function paintReadout(R) {
     var r = $e("result"), notes = r.querySelector(".notes"), read = r.querySelector(".read");
     if (!notes || !read || !R.ord) return;

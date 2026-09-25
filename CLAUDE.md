@@ -59,8 +59,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `backtest/site_build.py` (the generators call it); never hand-edit `web/public/*.html`. A language publishes only
   when `web/i18n/{lang}.json` is `_status: live`, set by `i18n_import.py` from its native reviewer's sheet.
   `i18n_equiv.py` proves English unchanged (`--design`: a presentation change leaves every text and figure, the desk's
-  84 states among them); `/desk-preview` is the next desk, the same template with `desk2` on (noindex, English only,
-  `web/test_desk_preview.py` holds its 84 states to the live desk's); `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
+  84 states among them); the desk is `partials/_desk2.html` + `web/public/desk2.js` (redesigned 2026-09-25, `/desk-preview`
+  now redirects to `/`; `web/test_desk.py` holds its 84 states to the old desk's, served from git, and
+  `web/test_desk_webkit.py` runs it as an iPhone lays it out on GitHub's WebKit, `.github/workflows/webkit.yml`);
+  `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
   sized as WebKit sizes them); `web/i18n/README.md` has the workflow.
 - `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:

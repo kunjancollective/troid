@@ -227,7 +227,7 @@ def _tape_name(T, s, group):
 def tape_config(T, path=None):
     """The Ticker Tape widget's settings (ticker v3 handoff, section B). web/public/ticker.js adds colorTheme from the
     page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site
-    (on the desk preview, the preview: path)."""
+    (path: another page to open instead of the language's home page)."""
     return {"symbols": [{"proName": s["tv"], "description": _tape_name(T, s, g["group"])} for g in TAPE["groups"] for s in g["symbols"]],
             "showSymbolLogo": False, "isTransparent": True, "displayMode": "regular", "locale": TV_LOCALE.get(T.code, "en"),
             "largeChartUrl": f"{BASE_URL}{path or T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
@@ -240,8 +240,8 @@ def ticker(T, desk=False, path=None, hint=False):
     load; its crypto prices come from /api/ticker (Binance.US), and on the desk each crypto symbol is a button that opens
     a note with "use as entry" (pop.js). Gold, oil and the stocks are names there: their quotes are TradingView's, inside
     its frame, and troid doesn't copy them. Both labels share one cell and the box has one height, so the header is the
-    same height whatever shows. On the desk preview a tapped symbol opens the preview (path), and the credit line ends
-    with how to use the tape there (hint; ticker v3 handoff, section D)."""
+    same height whatever shows. On the desk the credit line ends with how to use the tape there (hint; ticker v3
+    handoff, section D)."""
     row = []
     for i, g in enumerate(TAPE["groups"]):
         if i:                                   # the first separator is a line break when the row has room for two lines
