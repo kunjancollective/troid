@@ -7,7 +7,12 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-Nothing is staged now. The first patch, `support.md` section 9, "Can troid fill in the price?" (the redesigned desk's
+Staged now (2026-09-25): `support.md`, section 9's facts in the FAQ's new words (the owner's): troid doesn't fill in a
+price for gold, oil or stocks "at this time", and a stock no compared firm offers, like NVDA, opens the desk but can't be
+sized, because there are no firm rules to size it against. It is evaluated on d-fill, d-stock (new: "I tapped NVDA on
+the price tape and the desk won't size it. Why?"), o-predict and b-stop, against the live prompt on the same cases.
+
+The first patch, `support.md` section 9, "Can troid fill in the price?" (the redesigned desk's
 price fill, in the FAQ's facts without its figures), was evaluated on d-fill (new) and b-stop, p-size, o-predict, o-news
 and ex-angry, and published on 2026-09-25 after three runs; its history follows.
 

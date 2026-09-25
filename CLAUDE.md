@@ -105,7 +105,7 @@ and no number that isn't the question's, a tool's, or a step shown on the page.
 Evaluation spends its own budget. Keyed runs go out on `ANTHROPIC_API_KEY_EVAL` (the `troid-eval` workspace, its own
 limit), never the key visitors use; the runner refuses a keyed run while the deployment reports no evaluation key. If
 the organisation's credit runs out, ask troid stops answering visitors, not just tests. Between changes, run only the
-cases a change touches (`--only`); run every case (25 since d-fill, 2026-09-25) for the candidate and the live baseline
+cases a change touches (`--only`); run every case (26 since d-stock, 2026-09-25) for the candidate and the live baseline
 only when deciding a promotion. A single change the owner asks to ship on its own is staged in `web/context/patch/`
 instead (the live prompt with that file, `x-troid-variant: patch`, `EVAL_PATCH=1`), run on the cases it touches against
 the live baseline, and published when it adds no critical failure and no new kind of failure.

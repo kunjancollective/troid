@@ -249,11 +249,12 @@ TradingView's: your browser loads it from TradingView's servers, which see your 
 it sits on. <a href=""https://www.tradingview.com/privacy-policy/"">TradingView's privacy policy</a> covers that connection. With your device set to reduce motion,
 the tape isn't loaded unless you press play; pausing it takes it off the page.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 faq.fill.q,Can troid fill in the price?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
-faq.fill.p,"For crypto, yes. Under the desk's Entry field troid shows the asset's spot price from Binance.US, asked about every
-15 seconds and marked ""delayed"" once it is over a minute old; tap it and it becomes your entry. A symbol tapped on
-the tape at the top of the page opens the desk with that asset selected. For gold, oil and stocks the tape's prices
-are TradingView's, inside its own frame, and troid can't read them, so you type the entry in. troid never fills in
-a stop: the stop, the size and the trade stay yours.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.fill.p,"For crypto, yes — tap ""use"" under Entry. The price there is the asset's spot price from Binance.US, asked about
+every 15 seconds and marked ""delayed"" once it is over a minute old. A symbol tapped on the tape at the top of the page
+opens the desk with that asset selected. Not for gold, oil or stocks at this time; type the price from the tape. Their
+prices there are TradingView's, inside its own frame, and troid can't read them. A stock no compared firm offers, like
+NVDA, opens the desk but can't be sized, because there are no firm rules to size it against. troid never fills in a
+stop: the stop, the size and the trade stay yours.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly

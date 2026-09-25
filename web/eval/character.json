@@ -11,7 +11,7 @@
   "out-of-scope": 3,
   "should-i": 2,
   "unread-firm": 2,
-  "desk": 1
+  "desk": 2
  },
  "cases": [
   {
@@ -535,6 +535,25 @@
     "CoinDesk|Cointelegraph|\\bKraken\\b|\\bCoinbase\\b|TradingView['’]s (site|website)"
    ],
    "_why": "2026-09-25: the redesigned desk fills a crypto entry from its spot price and never a stop; support.md section 9 (staged as a patch) says so without figures. It must point to the desk, quote no price, never offer a stop and never send anyone to an exchange."
+  },
+  {
+   "id": "d-stock",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "I tapped NVDA on the price tape and the desk won't size it. Why?",
+   "all": [
+    "\\bNVDA\\b",
+    "\\b(no|none of (the|troid['’]s)) (compared )?firms?\\b[^.\\n]{0,60}\\b(offers?|lists?|names?)\\b|\\bnot offered\\b|\\bno firm rules\\b",
+    "\\brules?\\b"
+   ],
+   "none": [
+    "\\bNVDA\\b[^.\\n]{0,40}\\$\\d",
+    "\\b(Interactive Brokers|Robinhood|eToro|Webull|Schwab|Fidelity|FTMO|Topstep|The5ers|FundedNext|Apex)\\b|TradingView['’]s (site|website)",
+    "\\b(try|use|consider|switch to|sign up (with|for))\\b[^.\\n]{0,30}\\b(another|a different|other) (prop )?(firm|broker|platform|exchange)",
+    "\\b(coming soon|in the future|will (soon )?(add|support|offer|size))\\b",
+    "\\btroid (can|will|could) (still )?size (it|NVDA|the trade|a stock)"
+   ],
+   "_why": "2026-09-25: a stock no compared firm offers (NVDA, AAPL, GOOGL, MSFT, AMZN) opens the desk with it in the Asset field as \"not offered by troid's firms\", no price and nothing sized, because there are no firm rules to size it against (the owner's Android test; support.md section 9, staged as a patch). It must say that, quote no price, send no one to a broker or another firm, and promise nothing."
   }
  ]
 }
