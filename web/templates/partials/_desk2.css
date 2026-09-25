@@ -32,6 +32,17 @@
 .chipb::after{content:"";position:absolute;inset:-4px 0}                 /* a 44 px target, clear of the field above */
 .chipb:hover,.chipb:focus-visible{border-color:var(--signal);outline:none}.chipb.stale{color:var(--dim)}
 .chipm{color:var(--dim)}
+/* the price fields start empty: "0.00" is a grey placeholder, never a value. A field the desk filled (use, a tape tap)
+   lights for a moment and keeps no focus: a phone zooms into a focused field whose text is under 16 px, so on a phone
+   every desk field is 16 px (the page stays zoomable: no maximum-scale) */
+#desk input::placeholder{color:var(--dim);opacity:.75}
+.fi{position:relative}
+.flash{position:absolute;inset:0;border:1px solid var(--signal);border-radius:3px;pointer-events:none;opacity:0;
+  background:color-mix(in srgb,var(--signal) 14%,transparent);transition:opacity var(--dur-slow) var(--ease-out)}
+.fi.on .flash{opacity:1;transition-duration:var(--dur-fast)}
+@media (max-width:640px),(pointer:coarse){ #desk input,#desk select{font-size:16px}}
+.d2empty{margin:0 0 14px;padding:14px 16px;border-inline-start:2px solid var(--line);background:var(--surface2);border-radius:3px;
+  font-size:14px;color:var(--ink)}
 .anote{margin:0 0 12px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}
 .anote p{margin:0}
 .vSET{border-color:var(--dim)}.vSET .vtag{color:var(--ink)}
@@ -55,7 +66,7 @@
 .gauge.sREDUCE .gdot{background:var(--reduce);box-shadow:0 0 0 3px color-mix(in srgb,var(--reduce) 18%,transparent)}
 .gauge.sREDUCE .gseg{background:color-mix(in srgb,var(--reduce) 60%,transparent)}.gauge.sREDUCE .gghost{opacity:1}
 .gauge.sBLOCK .gdot{background:var(--block);box-shadow:0 0 0 3px color-mix(in srgb,var(--block) 18%,transparent)}
-.gauge.sBLOCK .gseg,.gauge.sSET .gseg,.gauge.sPENDING .gseg{opacity:0}
+.gauge.sBLOCK .gseg,.gauge.sSET .gseg,.gauge.sEMPTY .gseg,.gauge.sPENDING .gseg{opacity:0}
 .gauge.sPENDING .gdot,.gauge.sPENDING .gfl,.gauge.sPENDING .glab{opacity:0}
 .gseg.over{background:var(--block)}
 .d2in,.d2out{min-width:0}
@@ -104,5 +115,5 @@
 @keyframes xrise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @supports (animation-timeline:view()){@media (prefers-reduced-motion:no-preference){
   .xs li{animation:xrise linear both;animation-timeline:view();animation-range:entry 0% entry 70%}}}
-@media (prefers-reduced-motion:reduce){.gtr>*,.step>summary::before{transition:none}}
+@media (prefers-reduced-motion:reduce){.gtr>*,.step>summary::before,.flash{transition:none}}
 @media (forced-colors:active){.gdot,.gfl,.gseg,.lb i,.fbar i{forced-color-adjust:none;background:CanvasText}.gax,.lb,.fbar{background:GrayText}}

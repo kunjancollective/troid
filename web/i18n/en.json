@@ -29,6 +29,7 @@
  "common.mark.still": "troid's ledger has had no new data since {time} UTC; its live data may be down",
  "common.mark.unknown": "troid's ledger: its live status can't be read",
  "glossary.hint": "Tap any label for what it means.",
+ "glossary.default": "troid's default — change it to yours.",
  "glossary.also_label": "Also called",
  "glossary.ex_label": "Example",
  "glossary.now_label": "Now",
@@ -853,7 +854,6 @@
  "desk2.js.set_tag": "Set your stop",
  "desk2.js.set_sent": "troid sizes a trade from its stop. Enter the price where you'd close to cap the loss: below your entry for a long, above it for a short.",
  "desk2.js.set_cleared": "Your new entry left the old stop on the wrong side or more than 25% away, so it was cleared.",
- "desk2.js.stop_ph": "set your stop",
  "desk2.js.g_quota": "quota",
  "desk2.js.g_equity": "equity",
  "desk2.js.g_daily": "daily floor",
@@ -885,5 +885,12 @@
  "desk2.js.x6_h": "Why leverage doesn't change the loss",
  "desk2.js.x6_p": "The loss at the stop is size × stop distance: leverage isn't in it. Leverage sets how much margin the position ties up.",
  "desk2.js.x6_code": "at 1× the margin would be {notional}; at {lev}× it is {margin}; the loss at the stop is {risk} either way",
- "desk2.js.x_wait": "Set a valid stop to see the rest."
+ "desk2.js.x_wait": "Enter your entry and stop above to see the rest.",
+ "desk2.price_ph": "0.00",
+ "desk2.js.empty": "Enter your entry and stop to size a trade.",
+ "desk2.js.sum_trade_empty": "{asset} · {side} · no entry yet",
+ "desk2.js.g_line_empty": "room {room} before the {bind}",
+ "desk2.js.chip_sel": "{asset} selected",
+ "desk2.js.chip_no_fill": "Live fill isn't available for {asset} — enter your price from the tape above.",
+ "desk2.js.x_wait_block": "Fix the step the desk flags above to see the rest."
 }

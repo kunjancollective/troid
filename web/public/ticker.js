@@ -110,8 +110,9 @@
     note.querySelector("button").setAttribute("data-sym", b.getAttribute("data-sym"));
   }, true);
   note.querySelector("button").addEventListener("click", function () {
-    // the desk preview (desk2.js) also selects the asset and clears a stop the new entry leaves behind
-    if (window.DESK2) { window.DESK2.use(this.getAttribute("data-last"), this.getAttribute("data-sym")); entry.focus(); return; }
+    // the desk (desk2.js) also selects the asset and clears a stop the new entry leaves behind; focus stays put (a phone
+    // zooms into a focused field), the field lights up instead
+    if (window.DESK2) { window.DESK2.use(this.getAttribute("data-last"), this.getAttribute("data-sym")); return; }
     entry.value = this.getAttribute("data-last");
     entry.dispatchEvent(new Event("input"));
     if (window.troidPop) window.troidPop.hide();

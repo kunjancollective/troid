@@ -439,9 +439,14 @@ function render(){
   if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
     F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
   if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
-{% if desk2 %}  // the preview: its gauge and explainer get this result; an empty stop is "Set your stop", never BLOCK (ticker v2 E)
+{% if desk2 %}  // the preview: its gauge and explainer get this result. No entry yet: the account only. An entry with no stop: "Set your
+  // stop", never BLOCK (ticker v2 E); troid never fills a stop in
   var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fdd,eff:eff,bind:bind,locked:locked,
     ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor};
+  if(!el("entry").value.trim()){steps.push(bindStep);                    // no entry yet: the account only, no verdict
+    el("result").innerHTML=DESK2.empty()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
+      provBlock(f,p,used,formula)+working(steps,wOpen);
+    DESK2.paint(Object.assign(B,{v:"EMPTY"}));return}
   if(!el("stop").value.trim()){steps.push(bindStep);
     el("result").innerHTML=DESK2.set(f,p,bind,eff)+linkRow()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
       provBlock(f,p,used,formula)+working(steps,wOpen);

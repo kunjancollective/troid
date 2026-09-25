@@ -33,12 +33,12 @@
       <details class="step" id="st-trade" open>
         <summary><span class="sk">{{ t("desk2.card.trade") }}</span><span class="ss" id="ss-trade"></span><span class="se">{{ t("desk2.card.error") }}</span></summary>
         <div class="grid g2">
-          <div class="span2"><label for="asset">{{ term("asset", t("desk2.asset")) }}</label><select id="asset">{{ asset_options }}</select></div>
+          <div class="span2"><label for="asset">{{ term("asset", t("desk2.asset")) }}</label><div class="fi"><select id="asset">{{ asset_options }}</select><i class="flash" aria-hidden="true"></i></div></div>
           <div><label for="side">{{ term("side", t("index.calc.side")) }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
             <option value="-1">{{ t("index.js.short") }}</option></select></div>
-          <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><input id="entry" type="number" step="any" value="77872">
+          <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><div class="fi"><input id="entry" type="number" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"><i class="flash" aria-hidden="true"></i></div>
             <div class="chip" id="chip"><button type="button" class="chipb" id="chipb" hidden></button><span class="chipm" id="chipm" hidden></span></div></div>
-          <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" value="74814"></div>
+          <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"></div>
           <div><label for="targetR">{{ term("target_r", t("index.calc.target_r")) }}</label><input id="targetR" type="number" step="any" value="2"></div>
         </div>
       </details>

@@ -1,24 +1,26 @@
 #!/usr/bin/env python3
-"""troid's next desk at /desk-preview (partials/_desk2.html, web/public/desk2.js; ticker v2 handoff, sections E and F;
-design handoff 2026-09-24, section 4), in Chromium against web/public served locally. /api/ticker is answered by the
-test and TradingView's script by backtest/tv_stub.py: spends nothing, calls no one.
+"""troid's desk (partials/_desk2.html, web/public/desk2.js; design handoff 2026-09-24, section 4; ticker v2 handoff,
+sections E and F; the owner's iPhone test of the preview), in Chromium against web/public served locally. /api/ticker
+is answered by the test and TradingView's script by backtest/tv_stub.py: spends nothing, calls no one. The same
+behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 
-  python web/test_desk_preview.py
+  python web/test_desk.py
 
-- The same figures as the live desk: the 84 desk states give the same result, byte for byte, once the preview's own
-  additions (the ladder and the fee bar, marked d2x) are set aside; the live desk's page is unchanged by the preview.
-- The Asset field: firms.json's listed symbols, grouped; changing it changes the hold-limit line and the availability
-  note only, each with its source's link and read date.
-- The entry chip: a crypto asset's spot price from /api/ticker, "live … · use", "delayed" past 60 s, gone when the price
-  can't be had; gold, oil and stocks point to the tape. A tap fills the entry; a stop the new entry leaves on the wrong
-  side or more than 25% away is cleared and the desk says "Set your stop", never BLOCK, never a suggested stop.
-- A tapped tape symbol (?tvwidgetsymbol=) selects the asset; a stock no firm lists says so; the still row's "use as
-  entry" selects the asset too. The preview's tape opens the preview, the live desk's the live desk.
-- The gauge draws the result to scale (the dot at equity, the floors, the drop at the stop against the room), in its
-  state's colour, with every figure in its label; the ladder orders the breakers, marks one before the stop and states
-  an off-scale one; the fee bar splits the risk as the readout does; the explainer uses the result's own numbers.
-- Step cards: a phone opens on the trade with the account and risk folded to summaries; a card whose input stops the
-  sizing says so. The gauge pins under the tape on a phone. noindex, in no sitemap, linked from nowhere.
+- The same figures as before the redesign: the 84 desk states give the result the old desk gave, byte for byte, once the
+  desk's own additions (the ladder and the fee bar, marked d2x) are set aside (against BASE, the old desk's page).
+- A first view with no example trade: entry and stop empty with a grey 0.00 placeholder, the account on the gauge and
+  "Enter your entry and stop to size a trade." in the readout; an entry alone is "Set your stop"; a stop alone is the
+  first view. The settings keep their defaults and their notes say whose they are.
+- The Asset field: firms.json's listed symbols, grouped; it changes the hold-limit line and the availability note only.
+- The entry chip: a crypto asset's spot price, "live … · use", "delayed" past 60 s, gone when there is none; gold, oil and
+  stocks point to the tape. A tap fills the entry, lights it and leaves focus where it was; a stop the new entry leaves
+  on the wrong side or more than 25% away is cleared ("Set your stop"), never BLOCK, never a suggested stop.
+- A tapped tape symbol (?tvwidgetsymbol=…#desk, with whatever TradingView adds after it) selects the asset, brings it into
+  view lit, says "ETH selected · live … · use" or that live fill isn't available, fills nothing, shows no shared-link
+  notice and leaves a clean address; a tab the tape opened hands the address to troid's tab and closes.
+- A shared link restores the sharer's numbers and says so; #desk alone doesn't.
+- The gauge, the ladder, the fee bar and the explainer draw the result's own numbers; the step cards; the pinned gauge;
+  16 px fields on a phone; nothing sideways.
 """
 import json
 import re
@@ -36,6 +38,8 @@ ROOT = Path(__file__).resolve().parent.parent
 EN = json.loads((ROOT / "web" / "i18n" / "en.json").read_text())
 FIRMS = json.loads((ROOT / "firms.json").read_text())
 UNI = FIRMS["_asset_universe"]
+DESK = "/desk-preview"          # the redesigned desk
+BASE = "/"                      # the desk it must give the same figures as
 fails, n = [], 0
 
 
@@ -62,13 +66,20 @@ def nums(s):
     return {round(float(x.replace(",", "")), 2) for x in NUM.findall(s)}
 
 
+def trade(pg, entry="77872", stop="74814"):
+    """The example trade the old desk started with, typed in as a trader would."""
+    pg.fill("#entry", entry)
+    pg.fill("#stop", stop)
+    pg.wait_for_timeout(40)
+
+
 def main():
     srv, url = serve(PUB)
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium")
 
-        def page(path="/desk-preview", w=1280, api="ok", age=900, **kw):
-            ctx = b.new_context(viewport={"width": w, "height": 900}, **kw)
+        def page(path=DESK, w=1280, api="ok", age=900, ctx=None, **kw):
+            ctx = ctx or b.new_context(viewport={"width": w, "height": 900}, **kw)
 
             def handler(r):
                 u = r.request.url
@@ -103,21 +114,57 @@ def main():
                                 "document.getElementById('quota').dispatchEvent(new Event('input'))}")
                     out.append((f, pr, "working open", pg.evaluate(clean)))
             return out
+        state = "()=>({cls:document.getElementById('gauge').className,line:document.querySelector('.gline').textContent,res:document.getElementById('result').innerText})"
 
-        # 1. the same figures as the live desk
-        ctx, live, _ = page("/")
-        base = states(live, "()=>document.getElementById('result').innerHTML")
+        # 1. the same figures as the desk before the redesign
+        ctx, old, _ = page(BASE)
+        base = states(old, "()=>document.getElementById('result').innerHTML")
         ctx.close()
         ctx, pg, errs = page()
         mine = states(pg, CLEAN)
         diff = [a[:3] for a, c in zip(base, mine) if a != c]
-        ok(f"the {len(base)} desk states: the preview's result is the live desk's, byte for byte, its own additions aside",
+        ok(f"the {len(base)} desk states: the result the old desk gave, byte for byte, the desk's own additions aside",
            len(base) == len(mine) == 84 and not diff, diff[:3])
         ok("no page error across the 84 states", not errs, errs)
         ctx.close()
 
-        # 2. the Asset field: firms.json's listed symbols, grouped; it changes the two lines only
+        # 2. a first view with no example trade
         ctx, pg, errs = page()
+        f = pg.evaluate("""()=>['entry','stop'].map(i=>{const e=document.getElementById(i);return [e.value,e.placeholder,e.inputMode]})""")
+        ok("entry and stop start empty, 0.00 a grey placeholder, a decimal keypad", f == [["", "0.00", "decimal"]] * 2, f)
+        keep = pg.evaluate("()=>['quota','equity','daystart','targetR','riskPct','capPct','lev','mode'].map(i=>document.getElementById(i).value)")
+        ok("the account keeps 100,000 and the settings their defaults", keep == ["100000", "100000", "100000", "2", "0.5", "35", "5", "cross"], keep)
+        s = pg.evaluate(state)
+        ok("the readout: \"Enter your entry and stop to size a trade.\", no verdict, no size, no ladder",
+           s["res"].startswith(EN["desk2.js.empty"]) and pg.evaluate("!document.querySelector('#result .verdict,#result .read,.lad,.feebar')"), s["res"][:200])
+        ok("the gauge: the account only, the room in dollars", s["cls"] == "gauge sEMPTY" and s["line"] == "room $4,000.00 before the daily loss limit"
+           and pg.evaluate("getComputedStyle(document.querySelector('.gdot')).opacity") == "1"
+           and pg.evaluate("getComputedStyle(document.querySelector('.gseg')).opacity") == "0", s)
+        ok("no card flags an error on a first view", not pg.evaluate("document.querySelector('.step.err')"))
+        pg.fill("#entry", "77872")
+        pg.wait_for_timeout(40)
+        s = pg.evaluate(state)
+        ok("an entry alone: \"Set your stop\", nothing sized, no stop suggested", s["res"].startswith(EN["desk2.js.set_tag"]) and s["cls"] == "gauge sSET"
+           and EN["desk2.js.set_cleared"] not in s["res"] and pg.input_value("#stop") == "", s["res"][:200])
+        pg.fill("#entry", "")
+        pg.fill("#stop", "74814")
+        pg.wait_for_timeout(40)
+        s = pg.evaluate(state)
+        ok("a stop alone: the first view again", s["res"].startswith(EN["desk2.js.empty"]) and s["cls"] == "gauge sEMPTY", s["res"][:120])
+        pg.fill("#entry", "77872")
+        pg.wait_for_timeout(40)
+        ok("both: sized", pg.inner_text("#result .verdict").startswith("OK"))
+        notes = pg.evaluate("()=>Object.fromEntries(['target_r','risk_pct','cap_pct','leverage','mode','entry','stop'].map(t=>[t,document.getElementById('g-'+t).innerText]))")
+        ok("the settings' notes say \"troid's default — change it to yours.\"; entry's and stop's don't",
+           all(EN["glossary.default"] in notes[k] for k in ("target_r", "risk_pct", "cap_pct", "leverage", "mode"))
+           and not any(EN["glossary.default"] in notes[k] for k in ("entry", "stop")), notes)
+        ok("entry's note says where the live price is", EN["glossary.entry.chip"] in notes["entry"])
+        ok("no page error", not errs, errs)
+        ctx.close()
+
+        # 3. the Asset field: firms.json's listed symbols, grouped; it changes the two lines only
+        ctx, pg, errs = page()
+        trade(pg)
         groups = pg.evaluate("()=>[...document.querySelectorAll('#asset optgroup')].map(g=>[g.label,[...g.querySelectorAll('option')].map(o=>o.value)])")
         want = [[EN["desk2.group." + g["group"]], [s["sym"] for s in g["symbols"]]] for g in UNI["groups"]]
         ok("the Asset field lists firms.json's symbols, grouped, and none of the tape's unlisted stocks", groups == want
@@ -142,11 +189,11 @@ def main():
         rtp_url, rtp_date = src("bitfunded", "rtp_0924")
         hold_url, hold_date = src("bitfunded", "rtp")
         pg.select_option("#firm", "bitfunded")
-        cases = [("BTC", [f"{bf} lists BTC as “BTC (Major Crypto Assets)”", f"read {rtp_date}", f"Hold limit at {bf}: {FIRMS['bitfunded']['hold_cap_days']['major']} days for BTC, one of its Major Crypto Assets", f"read {hold_date}"]),
-                 ("XAU", [f"{bf} lists Gold as “XAU (Traditional Trading Pairs)”", f"{FIRMS['bitfunded']['hold_cap_days']['tradfi']} days for Gold, one of its Traditional Trading Pairs"]),
-                 ("TSLA", [f"{FIRMS['bitfunded']['hold_cap_days']['tradfi']} days for TSLA"]),
-                 ("WTI", ["WTI oil isn't on the Bitfunded pages troid has read.", f"Listed by {br}."])]
-        for sym, parts in cases:
+        hd = FIRMS["bitfunded"]["hold_cap_days"]
+        for sym, parts in [("BTC", [f"{bf} lists BTC as “BTC (Major Crypto Assets)”", f"read {rtp_date}", f"Hold limit at {bf}: {hd['major']} days for BTC, one of its Major Crypto Assets", f"read {hold_date}"]),
+                           ("XAU", [f"{bf} lists Gold as “XAU (Traditional Trading Pairs)”", f"{hd['tradfi']} days for Gold, one of its Traditional Trading Pairs"]),
+                           ("TSLA", [f"{hd['tradfi']} days for TSLA"]),
+                           ("WTI", ["WTI oil isn't on the Bitfunded pages troid has read.", f"Listed by {br}."])]:
             pg.select_option("#asset", sym)
             t = pg.inner_text("#assetnote")
             ok(f"{bf}, {sym}: {parts[0]}", all(x in t for x in parts) and (sym != "WTI" or "Hold limit" not in t), t)
@@ -165,13 +212,18 @@ def main():
         ok("no page error", not errs, errs)
         ctx.close()
 
-        # 3. the entry chip and the stale-stop rule
+        # 4. the entry chip, the highlight and the stale-stop rule
         ctx, pg, errs = page()
         ok("the chip: live BTC from /api/ticker", pg.inner_text("#chipb") == "live 84,496.41 · use" and not pg.evaluate("document.getElementById('chipb').hidden"))
+        pg.fill("#stop", "74814")
         pg.click("#chipb")
         pg.wait_for_timeout(50)
-        ok("a tap fills the entry with the price as quoted; a stop within 25% stays; the desk recomputes",
+        ok("a tap fills the entry with the price as quoted; a stop within 25% stays; the desk sizes it",
            pg.input_value("#entry") == "84496.41" and pg.input_value("#stop") == "74814" and "11.46%" in pg.inner_text("#result"), pg.inner_text("#result")[:300])
+        ok("the entry lights up and focus doesn't move into it (a phone would zoom)", pg.evaluate("document.querySelector('#entry').closest('.fi').classList.contains('on')")
+           and pg.evaluate("document.activeElement.id") != "entry", pg.evaluate("document.activeElement.id"))
+        pg.wait_for_timeout(1300)
+        ok("the light goes out", not pg.evaluate("document.querySelector('#entry').closest('.fi').classList.contains('on')"))
         pg.select_option("#asset", "ETH")
         pg.wait_for_timeout(30)
         ok("the chip follows the asset", pg.inner_text("#chipb") == "live 2,692.58 · use")
@@ -179,12 +231,9 @@ def main():
         pg.wait_for_timeout(50)
         v = pg.inner_text("#result .verdict")
         ok("a new entry that leaves the stop on the wrong side clears it: \"Set your stop\", not BLOCK, no stop suggested",
-           pg.input_value("#stop") == "" and v.startswith(EN["desk2.js.set_tag"]) and "BLOCK" not in v and EN["desk2.js.set_cleared"] in v
-           and not re.search(r"\d{3,}", v.split("\n")[1] if "\n" in v else v), v)
-        ok("the empty stop shows its placeholder, and the trade card says the step needs it",
-           pg.get_attribute("#stop", "placeholder") == EN["desk2.js.stop_ph"] and pg.evaluate("document.getElementById('st-trade').classList.contains('err')"))
-        ok("with no stop, the gauge draws no drop and says to set one", pg.evaluate("document.getElementById('gauge').className") == "gauge sSET"
-           and "set your stop" in pg.inner_text(".gline"))
+           pg.input_value("#stop") == "" and v.startswith(EN["desk2.js.set_tag"]) and "BLOCK" not in v and EN["desk2.js.set_cleared"] in v, v)
+        ok("the trade card says the step needs its stop; the gauge draws no drop", pg.evaluate("document.getElementById('st-trade').classList.contains('err')")
+           and pg.evaluate("document.getElementById('gauge').className") == "gauge sSET" and "set your stop" in pg.inner_text(".gline"))
         pg.fill("#stop", "2600")
         pg.wait_for_timeout(50)
         ok("a stop typed in sizes the trade again", pg.inner_text("#result .verdict").startswith(("OK", "REDUCE")) and not pg.evaluate("document.getElementById('st-trade').classList.contains('err')"))
@@ -208,32 +257,59 @@ def main():
         ok("no price: no chip, no error", pg.evaluate("document.getElementById('chipb').hidden") and not errs, errs)
         ctx.close()
 
-        # 4. a tapped tape symbol, and the still row's "use as entry"
-        for q, want_asset, note in [("BINANCEUS:ETHUSDT", "ETH", None), ("OANDA:XAUUSD", "XAU", None), ("OANDA:WTICOUSD", "WTI", None),
-                                    ("NASDAQ:NVDA", "BTC", "NVDA is on the tape as market context"), ("NASDAQ:NOPE", "BTC", None)]:
-            ctx, pg, errs = page(f"/desk-preview?tvwidgetsymbol={q}#desk")
+        # 5. a tapped tape symbol: TradingView adds its own parameters after #desk
+        TV = "&utm_source=troid.ai&utm_medium=widget&utm_campaign=ticker-tape"
+        for q, want_asset, chip, note in [
+                ("BINANCEUS:ETHUSDT", "ETH", "ETH selected · live 2,692.58 · use", None),
+                ("OANDA:XAUUSD", "XAU", None, None),
+                ("OANDA:WTICOUSD", "WTI", None, None),
+                ("NASDAQ:NVDA", "BTC", None, "NVDA is on the tape as market context"),
+                ("NASDAQ:NOPE", "BTC", None, None)]:
+            ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol={q}#desk{TV}", w=390, is_mobile=True, has_touch=True)
             t = pg.inner_text("#assetnote")
-            ok(f"?tvwidgetsymbol={q}: asset {want_asset}" + (f", \"{note}…\"" if note else ""), pg.input_value("#asset") == want_asset
-               and ((note in t) if note else "market context" not in t) and not errs, (pg.input_value("#asset"), t, errs))
+            got = pg.evaluate("""()=>{const r=e=>{const b=e.getBoundingClientRect();return b.top>=0&&b.bottom<=innerHeight};
+              return {asset:document.getElementById('asset').value,entry:document.getElementById('entry').value,shared:document.getElementById('shared').hidden,
+                chip:document.getElementById('chipb').hidden?null:document.getElementById('chipb').innerText,chipm:document.getElementById('chipm').hidden?null:document.getElementById('chipm').innerText,
+                lit:document.querySelector('#asset').closest('.fi').classList.contains('on'),inview:r(document.getElementById('asset')),noteview:r(document.getElementById('assetnote')),
+                addr:location.pathname+location.search+location.hash}}""")
+            label = f"a tape tap on {q}"
+            ok(f"{label}: asset {want_asset}, nothing filled, no shared-link notice, a clean address", got["asset"] == want_asset and got["entry"] == ""
+               and got["shared"] and got["addr"] == DESK + "#desk" and not errs, (got, errs))
+            if want_asset == "ETH":
+                ok(f"{label}: the asset in view and lit; by the entry \"{chip}\"", got["inview"] and got["lit"] and got["chip"] == chip, got)
+            elif want_asset in ("XAU", "WTI"):
+                name = EN[f"ticker.sym.{want_asset}"]
+                ok(f"{label}: \"Live fill isn't available for {name} — enter your price from the tape above.\"", got["inview"] and got["lit"]
+                   and got["chipm"] == EN["desk2.js.chip_no_fill"].format(asset=name) and got["chip"] is None, got)
+            elif note:
+                ok(f"{label}: \"{note}…\", in view", note in t and got["noteview"], (t, got))
+            else:
+                ok(f"{label}: an unknown symbol changes nothing", "market context" not in t and not got["lit"], got)
             ctx.close()
-        tv = lambda pg: json.loads(pg.get_attribute("#tk", "data-tv"))["largeChartUrl"]
-        ctx, pg, _ = page()
-        ok("the preview's tape opens the preview", tv(pg) == "https://troid.ai/desk-preview?tvwidgetsymbol={symbolname}#desk", tv(pg))
-        ok("the preview's tape line says how to use it here", EN["desk2.tape_hint"] in pg.inner_text(".tkc"))
-        ctx.close()
-        ctx, pg, _ = page("/")
-        ok("the live desk's tape still opens the live desk", tv(pg) == "https://troid.ai/?tvwidgetsymbol={symbolname}#desk", tv(pg))
-        ctx.close()
-        ctx, pg, errs = page(reduced_motion="reduce")
-        pg.click('#tk .tki[data-sym="ETH"]')
-        pg.click("#tk-use button")
-        pg.wait_for_timeout(50)
-        ok("the still row's \"use as entry\" selects the asset and applies the stop rule", pg.input_value("#asset") == "ETH"
-           and pg.input_value("#entry") == "2692.58" and pg.input_value("#stop") == "", (pg.input_value("#asset"), pg.input_value("#entry")))
+        ctx = b.new_context(viewport={"width": 1280, "height": 900})
+        ctx, first, errs = page(ctx=ctx)
+        with ctx.expect_page() as info:
+            first.evaluate(f"window.open('{url}{DESK}?tvwidgetsymbol=BINANCEUS:SOLUSDT#desk{TV}')")
+        tab = info.value
+        first.wait_for_timeout(1500)
+        ok("a tab the tape opened hands its address to troid's tab and closes: one tab, SOL selected there",
+           tab.is_closed() and first.input_value("#asset") == "SOL" and first.evaluate("location.hash") == "#desk", (tab.is_closed(), first.url))
         ctx.close()
 
-        # 5. the gauge, the ladder, the fee bar, the explainer
+        # 6. a shared link says so; #desk alone doesn't
+        ctx, pg, errs = page(f"{DESK}#f=bitfunded&p=1step&en=77872&st=74814")
+        ok("a shared link restores the sharer's entry and stop, sizes them and says so", not pg.evaluate("document.getElementById('shared').hidden")
+           and pg.input_value("#entry") == "77872" and pg.input_value("#stop") == "74814" and pg.inner_text("#result .verdict").startswith("OK"))
+        ctx.close()
+        for frag in ("#desk", "#firms"):
+            ctx, pg, errs = page(DESK + frag)
+            ok(f"{frag} alone: no shared-link notice", pg.evaluate("document.getElementById('shared').hidden"))
+            ctx.close()
+
+        # 7. the gauge, the ladder, the fee bar, the explainer
         ctx, pg, errs = page()
+        trade(pg)
+        pg.wait_for_timeout(700)
         g = pg.evaluate("""()=>{const y=s=>{const m=new DOMMatrix(getComputedStyle(document.querySelector(s)).transform);return [m.m42,m.d]};
           return {dot:y('.gdot')[0],d:y('.gfl[data-g=d]')[0],m:y('.gfl[data-g=m]')[0],q:y('.gq')[0],seg:y('.gseg'),L:document.querySelector('.gtr').clientHeight,
             cls:document.getElementById('gauge').className,aria:document.getElementById('gauge').getAttribute('aria-label'),
@@ -258,12 +334,12 @@ def main():
         pg.fill("#equity", "100000")
         pg.fill("#stop", "80000")
         pg.wait_for_timeout(50)
-        ok("BLOCK on a stop the trader typed on the wrong side stays BLOCK (the stale rule is for a new entry only)",
+        ok("a stop the trader typed on the wrong side stays BLOCK (the stale rule is for a new entry only)",
            pg.inner_text("#result .verdict").startswith("BLOCK") and pg.evaluate("document.getElementById('st-trade').classList.contains('err')"))
         pg.fill("#stop", "74814")
         pg.wait_for_timeout(50)
         lad = pg.evaluate("()=>[...document.querySelectorAll('.lad .lr')].map(r=>[r.className,r.querySelector('.ln').innerText,r.querySelector('.lv').innerText])")
-        brk = pg.evaluate("()=>document.querySelector('#result .brk').innerText")
+        brk = pg.evaluate("()=>document.querySelector('#result .brk').textContent")
         ok("the ladder: the readout's breakers in order, the stop first, liquidation under cross off-scale",
            bool(lad) and lad[0][0] == "lr first" and "off" in lad[-1][0] and lad[-1][2] == "→ 804.92%, off-scale"
            and all(x[2].replace("→ ", "").replace(", off-scale", "") in brk for x in lad), (lad, brk))
@@ -281,7 +357,7 @@ def main():
           cell:[...document.querySelectorAll('#result .cell')].find(c=>/fees/i.test(c.querySelector('.k').innerText)).querySelector('.v').innerText})""")
         ok("the fee bar: the fee share the readout states, drawn to scale", fb["cell"] in fb["t"] and abs(fb["k"] - float(fb["cell"].rstrip("%")) / 100) < 0.001, fb)
         how = pg.inner_text("#xs")
-        full = pg.evaluate("()=>document.getElementById('result').innerHTML.replace(/<[^>]+>/g,' ')+' '+[...document.querySelectorAll('#desk input')].map(i=>i.value).join(' ')")   # its working too
+        full = pg.evaluate("()=>document.getElementById('result').innerHTML.replace(/<[^>]+>/g,' ')+' '+[...document.querySelectorAll('#desk input')].map(i=>i.value).join(' ')")
         cross = 100000 * (1 - 6 / 100 + 4 / 100)
         extra = nums(how) - nums(full) - {1.0, round(cross, 2)}
         ok("the explainer quotes only the result's numbers, its inputs and the crossover ($98,000)", not extra and "$98,000.00" in how, extra)
@@ -289,23 +365,26 @@ def main():
         ok("no page error", not errs, errs)
         ctx.close()
 
-        # 6. a phone: the cards, the pinned gauge, noindex and nothing linking here
+        # 8. a phone: the cards, the pinned gauge, 16 px fields, nothing sideways
         ctx, pg, errs = page(w=390, is_mobile=True, has_touch=True)
         cards = pg.evaluate("()=>['st-account','st-trade','st-risk'].map(i=>[document.getElementById(i).open,document.querySelector('#'+i+' .ss').innerText])")
         ok("a phone opens on the trade: account and risk folded, their summaries showing", [c[0] for c in cards] == [False, True, False]
            and cards[0][1].startswith(FIRMS["bitfunded"]["name"]) and "cap 35%" in cards[2][1], cards)
+        sizes = pg.evaluate("()=>[...document.querySelectorAll('#desk input,#desk select')].map(e=>getComputedStyle(e).fontSize)")
+        ok("every desk field is 16 px on a phone, so focusing one doesn't zoom the page", set(sizes) == {"16px"}, set(sizes))
+        ok("the page stays zoomable: no maximum-scale, no user-scalable=no",
+           not re.search(r"maximum-scale|user-scalable", pg.get_attribute('meta[name="viewport"]', "content")))
         pg.evaluate("document.getElementById('st-trade').scrollIntoView()")
         pg.evaluate("scrollBy(0,300)")
         pg.wait_for_timeout(100)
         ok("the gauge pins under the tape while the desk is on screen", abs(pg.evaluate("document.getElementById('gauge').getBoundingClientRect().top")) < 1)
         ok("375 px wide or less, nothing scrolls sideways", pg.evaluate("document.scrollingElement.scrollWidth<=innerWidth"))
-        ok("noindex", pg.get_attribute('meta[name="robots"]', "content") == "noindex,nofollow")
-        ok("the title says it is a preview", pg.title() == EN["desk-preview.meta.title"])
         ctx.close()
-        linked = [f.name for f in PUB.rglob("*.html") if f.name != "desk-preview.html" and "desk-preview" in f.read_text()]
-        ok("no other page links to it, and it is in no sitemap", not linked and "desk-preview" not in (PUB / "sitemap.xml").read_text(), linked)
+        ctx, pg, errs = page(w=1280)
+        ok("on a wide screen the fields keep the desk's 14 px", pg.evaluate("getComputedStyle(document.getElementById('entry')).fontSize") == "14px")
+        ctx.close()
         size = sum((PUB / f).stat().st_size for f in ("ticker.js", "calendar.js", "desk2.js"))
-        ok(f"the header strips' and the preview's scripts: {size / 1024:.1f} KB, under the 40 KB budget", size < 40 * 1024)
+        ok(f"the header strips' and the desk's scripts: {size / 1024:.1f} KB, under the 40 KB budget", size < 40 * 1024)
         b.close()
     srv.shutdown()
     print(f"\n{n - len(fails)}/{n} passed")

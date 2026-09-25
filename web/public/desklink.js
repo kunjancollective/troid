@@ -18,6 +18,7 @@
                 ["m", "mode", "mode"]];
   var SIDE = { "long": "1", "short": "-1" }, SIDE_KEY = { "1": "long", "-1": "short" };
   var MODE = { "cross": 1, "isolated": 1 };
+  var OWN = new RegExp("(?:^|&)(?:f|p|l|" + FIELDS.map(function (x) { return x[0]; }).join("|") + ")=");
   var enc = encodeURIComponent;
 
   // s: {f, p, l, and each input id: its value as a string}. Empty inputs are left out.
@@ -33,11 +34,13 @@
   }
 
   // hash: location.hash. firms: the desk's FIRMS. live: the published language codes.
-  // Returns null when the fragment is not a desk link (empty, or a plain anchor such as #firms), otherwise
+  // Returns null when the fragment is not a desk link: empty, a plain anchor such as #firms or #desk, or one carrying
+  // only someone else's parameters (TradingView adds its own after the tape's #desk: "desk&utm_source=…"). A desk link
+  // names at least one of its own keys (f, p, l or an input's). Otherwise
   // {firm, product, lang, values: {input id: string}, unknownFirm, unknownProduct, bad, tooLong}.
   function decode(hash, firms, live) {
     var h = String(hash || "").replace(/^#/, "");
-    if (h.indexOf("=") < 0) return null;
+    if (!OWN.test(h)) return null;
     var d = { firm: null, product: null, lang: null, values: {}, unknownFirm: null, unknownProduct: null, bad: 0, tooLong: false };
     if (h.length > MAX) { d.tooLong = true; return d; }
     var got = Object.create(null);                                        // no prototype: a key named __proto__ is just a key

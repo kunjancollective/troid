@@ -231,6 +231,8 @@ def glossary_html(T=None, desk2=False):
 
     def block(tid):
         g, out = f"glossary.{tid}", [f"<p>{T(f'glossary.{tid}.what')}</p>"]
+        if desk2 and tid in DEFAULTS:              # a setting the desk starts with a value: say whose value it is
+            out.append(f"<p>{T('glossary.default')}</p>")
         if tid == "leverage":
             first = lev_first(T)
             if first:
@@ -254,6 +256,7 @@ def glossary_html(T=None, desk2=False):
     return "\n  ".join(block(t) for t in (["asset"] if desk2 else []) + GLOSS_FIELDS + GLOSS_READOUT)
 
 
+DEFAULTS = ["target_r", "risk_pct", "cap_pct", "leverage", "mode"]   # settings with a starting value; entry and stop start empty
 TIERS = {"Major Crypto Assets": "major", "Minor Crypto Assets": "minor", "Traditional Trading Pairs": "tradfi"}
 
 

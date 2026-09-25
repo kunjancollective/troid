@@ -13,7 +13,7 @@
      stop: the desk then says "Set your stop". troid never suggests one.
    - Motion is transform and opacity only, and reduced motion shows the end frame (the CSS). */
 (function () {
-  var D = window.DESK2DATA, S = window.T2, prices = {}, src = "Binance.US", cleared = false, tapeOnly = null, last = null;
+  var D = window.DESK2DATA, S = window.T2, prices = {}, src = "Binance.US", cleared = false, tapeOnly = null, tapeSel = null, last = null;
   function $e(id) { return document.getElementById(id); }
   var gauge = $e("gauge"), tr = gauge.querySelector(".gtr"), asset = $e("asset");
   function q(s) { return tr.querySelector(s); }
@@ -69,7 +69,7 @@
         items.forEach(function (it) { mv(it.e, it.p); });
       });
       line = R.v === "BLOCK" ? F(S.g_line_block, { reason: (R.blocks || []).join("; ").replace(/<[^>]+>/g, "") }) :
-        F(R.v === "SET" ? S.g_line_set : S.g_line, { room: $(R.eff), bind: R.bind, risk: R.risk != null ? $(R.risk) : "" });
+        F(R.v === "SET" ? S.g_line_set : R.v === "EMPTY" ? S.g_line_empty : S.g_line, { room: $(R.eff), bind: R.bind, risk: R.risk != null ? $(R.risk) : "" });
       var floors = [];
       if (R.dFloor != null) floors.push(S.g_daily + " " + $(R.dFloor));
       if (R.ddFloor != null) floors.push(R.ddName + " " + $(R.ddFloor));
@@ -125,7 +125,8 @@
   function paintCards(R) {
     var f = FIRMS[$e("firm").value], p = f.products[$e("profile").value], a = D.assets[asset.value], stop = $e("stop").value.trim();
     $e("ss-account").textContent = F(S.sum_account, { firm: f.name, product: p.label, quota: $(n("quota")), eq: $(n("equity")) });
-    $e("ss-trade").textContent = F(stop ? S.sum_trade : S.sum_trade_nostop, { asset: a ? a.name : "", side: n("side") > 0 ? T.long : T.short,
+    var entry = $e("entry").value.trim();
+    $e("ss-trade").textContent = F(!entry ? S.sum_trade_empty : stop ? S.sum_trade : S.sum_trade_nostop, { asset: a ? a.name : "", side: n("side") > 0 ? T.long : T.short,
       entry: n4(n("entry")), stop: n4(n("stop")), r: n("targetR") });
     $e("ss-risk").textContent = F(S.sum_risk, { rp: n("riskPct"), cp: n("capPct"), lev: n("lev"), mode: $e("mode").value === "isolated" ? T.isolated : T.cross });
     var stopBad = R.v === "SET" || (R.v === "BLOCK" && (R.blocks || []).some(function (b) { return b === T.b_long || b === T.b_short || b === T.b_zero; }));
@@ -153,19 +154,20 @@
       st.push([S.x5_h, S.x5_p, code(T.size + " = " + $(R.risk) + " ÷ (" + n4(R.dist) + " + " + n4(R.fu) + ") = " + n4(R.qty)) +
         (R.feeKnown ? code(T.fees + " = " + $(R.fees) + " ÷ " + $(R.risk) + " = " + fx(R.fshare, 1) + "%") : "")]);
       st.push([S.x6_h, S.x6_p, code(F(S.x6_code, { notional: $(R.notional), lev: R.levUsed, margin: $(R.margin), risk: $(R.risk) }))]);
-    } else st.push(["", S.x_wait, ""]);
+    } else st.push(["", R.v === "BLOCK" ? S.x_wait_block : S.x_wait, ""]);
     $e("xs").innerHTML = st.map(function (s) { return "<li>" + (s[0] ? "<h3>" + s[0] + "</h3>" : "") + "<p>" + s[1] + "</p>" + s[2] + "</li>"; }).join("");
   }
 
   // the entry field's live price: crypto from /api/ticker; gold, oil and stocks: the tape above
   function paintChip() {
-    var a = D.assets[asset.value], b = $e("chipb"), m = $e("chipm"), qt = prices[asset.value];
-    m.hidden = !a || a.group === "crypto"; m.textContent = S.chip_manual;
+    var a = D.assets[asset.value], b = $e("chipb"), m = $e("chipm"), qt = prices[asset.value], sel = a && tapeSel === asset.value;
     b.hidden = !a || a.group !== "crypto" || !qt;
+    m.hidden = !a || (a.group === "crypto" && !(sel && !qt));
+    m.textContent = !a ? "" : a.group !== "crypto" ? (sel ? F(S.chip_no_fill, { asset: a.name }) : S.chip_manual) : F(S.chip_sel, { asset: a.name });
     if (b.hidden) return;
     var stale = Date.now() - qt.at > 60000, shown = tl(+qt.last, { maximumFractionDigits: 8 });
     b.classList.toggle("stale", stale);
-    b.textContent = F(stale ? S.chip_delayed : S.chip_live, { price: shown });
+    b.textContent = (sel ? F(S.chip_sel, { asset: a.name }) + " · " : "") + F(stale ? S.chip_delayed : S.chip_live, { price: shown });
     b.setAttribute("aria-label", F(S.chip_aria, { asset: a.name, price: shown, source: src }));
     b.setAttribute("data-last", qt.last);
   }
@@ -187,9 +189,19 @@
       var wrong = n("side") > 0 ? st >= E : st <= E;
       if (wrong || Math.abs(E - st) / E > 0.25) { s.value = ""; cleared = true; }
     }
+    tapeSel = null;
     e.dispatchEvent(new Event("input", { bubbles: true }));
     if (window.troidPop) window.troidPop.hide();
+    flash(e);
   }
+  // a field that changed without the reader typing in it lights up for a moment; focus stays where it was
+  function flash(el) {
+    var w = el.closest(".fi");
+    if (!w) return;
+    w.classList.add("on");
+    clearTimeout(w._t); w._t = setTimeout(function () { w.classList.remove("on"); }, 1200);
+  }
+  function emptyReadout() { return '<p class="d2empty">' + S.empty + "</p>"; }
 
   function setVerdict(f, p, bind, eff) {
     return '<div class="verdict vSET"><span class="vtag">' + S.set_tag + '</span><p class="vsent">' + S.set_sent + (cleared ? " " + S.set_cleared : "") +
@@ -203,19 +215,34 @@
     paintAsset(); paintCards(R); paintHow(R); paintChip();
   }
 
-  window.DESK2 = { paint: paint, set: setVerdict, use: use };
+  window.DESK2 = { paint: paint, set: setVerdict, use: use, empty: emptyReadout };
+
+  // a tapped tape symbol: /?tvwidgetsymbol=BINANCEUS:ETHUSDT#desk (or OANDA:XAUUSD, NASDAQ:NVDA). TradingView may open it
+  // in a new tab: when the tab that opened it is troid's, that tab takes the address and this one closes, so one tab
+  // stays; with no opener (or another site's), this tab carries on
+  var tv = (new URLSearchParams(location.search).get("tvwidgetsymbol") || "").toUpperCase();
+  if (tv) {
+    try {
+      var op = window.opener && window.opener.top;
+      if (op && op !== window && op.location.origin === location.origin) { op.location.href = location.href; window.close(); }
+    } catch (e) { /* another site's window: stay here */ }
+  }
 
   document.addEventListener("DOMContentLoaded", function () {
-    $e("stop").placeholder = S.stop_ph;
     $e("stop").addEventListener("input", function () { cleared = false; });
-    // a tapped tape symbol: /desk-preview?tvwidgetsymbol=BINANCEUS:ETHUSDT (or OANDA:XAUUSD, NASDAQ:NVDA)
-    var t = (new URLSearchParams(location.search).get("tvwidgetsymbol") || "").toUpperCase(), bare = t.split(":").pop();
-    if (t) {
-      var hit = Object.keys(D.assets).filter(function (k) { var a = D.assets[k]; return k === bare || (a.tv && (a.tv === t || a.tv.split(":").pop() === bare)); })[0];
-      if (hit) asset.value = hit;
-      else tapeOnly = Object.keys(D.tape_only).filter(function (k) { return k === bare || D.tape_only[k] === t || D.tape_only[k].split(":").pop() === bare; })[0] || null;
+    var bare = tv.split(":").pop(), land = null;
+    if (tv) {
+      var hit = Object.keys(D.assets).filter(function (k) { var a = D.assets[k]; return k === bare || (a.tv && (a.tv === tv || a.tv.split(":").pop() === bare)); })[0];
+      if (hit) { asset.value = hit; tapeSel = hit; land = asset; }
+      else {
+        tapeOnly = Object.keys(D.tape_only).filter(function (k) { return k === bare || D.tape_only[k] === tv || D.tape_only[k].split(":").pop() === bare; })[0] || null;
+        if (tapeOnly) land = $e("assetnote");
+      }
+      // the tape's own parameters (and any TradingView adds after #desk) leave the address: a reload or a copied link
+      // starts clean
+      if (history.replaceState) history.replaceState(null, "", location.pathname + "#desk");
     }
-    asset.addEventListener("change", function () { tapeOnly = null; render(); });
+    asset.addEventListener("change", function () { tapeOnly = null; tapeSel = null; render(); });
     $e("chipb").addEventListener("click", function () { use(this.getAttribute("data-last")); });
     // a phone opens on the trade: the account and the risk cards start folded, their summaries showing
     if (window.matchMedia && window.matchMedia("(max-width:640px)").matches) ["st-account", "st-risk"].forEach(function (id) { $e(id).open = false; });
@@ -227,5 +254,9 @@
     document.addEventListener("visibilitychange", function () { if (!document.hidden && on) poll(); });
     poll();
     render();
+    if (land) {                                      // a tape tap: the asset in view, lit for a moment, the price by Entry
+      var go = function () { land.scrollIntoView({ block: "center" }); if (land === asset) flash(asset); };
+      if (document.readyState === "complete") setTimeout(go, 50); else window.addEventListener("load", function () { setTimeout(go, 50); });
+    }
   });
 })();

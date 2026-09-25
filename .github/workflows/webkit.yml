@@ -1,0 +1,49 @@
+name: webkit — the desk as an iPhone lays it out
+
+# web/test_desk_webkit.py in Playwright's WebKit with the iPhone 13 profile: the gauge pinned while the desk scrolls, a
+# note closing on a tap outside it, 16 px fields (no zoom), "use" without focus, the first view and a tape tap. The
+# container troid is built in has only Chromium; GitHub's runners install WebKit. Runs when the desk's files change,
+# and by hand from the Actions tab.
+
+on:
+  workflow_dispatch:
+    inputs:
+      path:
+        description: "the desk's path"
+        default: "/"
+  push:
+    paths:
+      - "web/public/index.html"
+      - "web/public/desk2.js"
+      - "web/public/desklink.js"
+      - "web/public/pop.js"
+      - "web/public/ticker.js"
+      - "web/templates/**"
+      - "web/test_desk_webkit.py"
+      - ".github/workflows/webkit.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: webkit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  webkit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Playwright and its WebKit
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps webkit
+
+      - name: The desk in WebKit
+        run: python web/test_desk_webkit.py --path "${{ inputs.path || '/' }}"
