@@ -89,12 +89,15 @@ agreement exists and its daily, max, target and price cells each have a recorded
 | 2026-09-24 | troid said Bitfunded's 16:00 UTC reset is "noon in New York" and that morning and afternoon sessions draw on separate daily budgets: in TROID.md, ask troid's rule explanation, the MCP server, the FAQ and the dashboard. 16:00 UTC is noon in New York only in summer (EDT) and 11:00 in winter (EST), and separate morning and afternoon budgets follow from the reset's hour for a trader in New York; they are not a rule of the firm's. Found by the character evaluation's first run (p-reset). | Noon in summer, 11:00 in winter, everywhere; for a trader in New York, a morning and an afternoon loss can fall on different trading days. The FAQ's "inside the limit at 11:59, breached at 12:01" is now a minute before and after the reset. |
 | 2026-09-24 | TROID.md and ask troid said both of Bitfunded's loss limits count floating losses and fail the account on an open position, with no source: troid had read it in the help centre's Criteria to be Success, but firms.json recorded no document for it (the character evaluation, run 10, b-limits). | Recorded from Criteria to be Success, 1. Maximum Daily Loss and 2. Maximum Loss, read again on 2026-09-24: an open position that reaches either limit fails the account. ask troid's candidate gives the rule with that source; a firm whose rule troid has not sourced says so. |
 | 2026-09-24 | ask troid's firm_rules gave the Instant's 0 minimum trading days a citation to Terms 9(a)'s "Minimum Trading Days: 5": the firm-level source for the challenges' minimum fell through to a product it does not describe (the character evaluation, run 11, s-firm). | The minimum days' source is given per product: the 1-Step, the 2-Step's stages and the Express keep Terms 9(a) and the FAQ; the Instant's 0 says source not yet recorded. |
+| 2026-09-25 | troid's desk opened with an example trade filled in: entry 77,872, stop 74,814, prices that looked like a live BTC trade and read as troid suggesting one (the owner's iPhone test). | Entry and stop now start empty, with 0.00 as a grey placeholder; until both are entered the desk shows the account and its room only. troid never fills in a stop. |
 
 ## Version
 
 **v1.0 — 2026-09-21.** First public version. Material changes to method are logged here with a date.
 
 **2026-09-23.** Launched at troid.ai on 23 September 2026. ask troid switched on; conversations kept 30 days.
+
+**2026-09-25.** Desk redesigned; entry and stop now start empty. The figures are computed as before: the desk's 84 test states give the same results.
 
 ---
 
