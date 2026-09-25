@@ -18,3 +18,11 @@ platform"), and the patch's o-predict named Binance.US unasked and called the pr
 tightened for those two (the feed named only when asked where the desk's price comes from; "delayed" once over a
 minute old; nobody sent elsewhere, by name or by kind) and run again on d-fill, o-predict, o-news and b-stop.
 
+Run 2 (2026-09-25-fill-patch2: d-fill, o-predict, o-news, b-stop on the patch, $0.19): d-fill right again; o-predict
+named Binance.US unasked a second time and sent the reader to "tap the BTC field" (there is none: the price is under
+Entry), never saying troid doesn't predict; o-news pointed outside by kind (as the live prompt does); b-stop named
+`stop_pct` and used 0.5 and 2,584 from no tool (2,584 is the character's example, not section 9's). The fast model that
+answers a price question reads section 9 as an answer to it. Section 9 is scoped to questions about the desk itself,
+says a price question gets the guardrails' answer and nothing from it, and no longer names the feed (the FAQ does); run
+3 takes the patch on the four cases and a second live sample of o-predict and b-stop.
+
