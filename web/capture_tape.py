@@ -25,9 +25,11 @@ PROFILES = {                      # engine, Playwright device (None: a desktop w
     "chromium-pixel7": ("chromium", "Pixel 7"),
 }
 PAUSE = "*,*::before,*::after{animation-play-state:paused!important;animation-duration:0s!important;transition:none!important}"
-DESK = """()=>{const a=document.getElementById('asset'),n=document.getElementById('assetnote'),c=document.getElementById('chipb'),m=document.getElementById('chipm');
-  return a?{asset:a.value,note:n?n.innerText.slice(0,240):null,chip:c&&!c.hidden?c.innerText:null,chipm:m&&!m.hidden?m.innerText:null,
-    shared:!document.getElementById('shared').hidden,addr:location.href}:{addr:location.href}}"""
+DESK = """()=>{const a=document.getElementById('asset'),n=document.getElementById('assetnote'),c=document.getElementById('chipb'),m=document.getElementById('chipm'),
+  r=document.getElementById('result');
+  return a?{asset:a.value,opt:a.selectedOptions[0]?a.selectedOptions[0].textContent:null,note:n?n.innerText.slice(0,240):null,
+    chip:c&&!c.hidden?c.innerText:null,chip_for:c&&!c.hidden?c.getAttribute('data-sym'):null,chipm:m&&!m.hidden?m.innerText:null,
+    readout:r?r.innerText.slice(0,160):null,shared:!document.getElementById('shared').hidden,addr:location.href}:{addr:location.href}}"""
 
 
 def widget_frame(pg, timeout=45):
@@ -125,7 +127,9 @@ def run_profile(p, name, base, symbols):
                     rec["pages"].append({"error": str(e).splitlines()[0][:120]})
             out["taps"].append(rec)
             print(f"TAP {name} {desc}: navigations={rec.get('navigations')} new_tabs={len(rec['new_tabs'])} "
-                  f"(closed {sum(1 for t in rec['new_tabs'] if t['closed'])}) desk={[(x.get('asset'), (x.get('note') or '')[:60]) for x in rec['pages']]}"
+                  f"(closed {sum(1 for t in rec['new_tabs'] if t['closed'])}) desk={[(x.get('opt'), (x.get('note') or '')[:60]) for x in rec['pages']]}"
+                  + f" chip={[(x.get('chip_for'), x.get('chip')) for x in rec['pages'] if x.get('asset')]}"
+                  + f" readout={[(x.get('readout') or '')[:70] for x in rec['pages'] if x.get('asset')]}"
                   + f" tapped={rec.get('tapped_href') or rec.get('tap_note')} tabs={[t['url'] for t in rec['new_tabs']]}"
                   + (f" error={rec.get('tap_error')}" if rec.get("tap_error") else ""), flush=True)
     finally:
