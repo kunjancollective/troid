@@ -1,0 +1,48 @@
+name: tape capture — what TradingView's tape sends when a symbol is tapped
+
+# web/capture_tape.py against the live site with TradingView's real widget (the owner's iPhone: XRP tapped, BTC
+# selected; every earlier test fed the desk a URL written by hand). Desktop Chromium, WebKit as an iPhone 13 and Chromium
+# as a Pixel 7 tap each tape symbol; the log and the artifact hold every link and navigation URL, the tabs, and what the
+# desk selected. By hand only: it loads troid.ai and TradingView's widget about forty times.
+
+on:
+  workflow_dispatch:
+    inputs:
+      base:
+        description: "the site"
+        default: "https://troid.ai"
+      profiles:
+        description: "chromium-desktop,webkit-iphone13,chromium-pixel7"
+        default: "chromium-desktop,webkit-iphone13,chromium-pixel7"
+      symbols:
+        description: "empty for all twelve, or e.g. XRP,XAU,NVDA"
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Playwright, Chromium and WebKit
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium webkit
+
+      - name: Tap each symbol on the live tape
+        run: python web/capture_tape.py --base "${{ inputs.base }}" --profiles "${{ inputs.profiles }}" --symbols "${{ inputs.symbols }}" --out tape-capture.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tape-capture
+          path: tape-capture.json
+          if-no-files-found: ignore
