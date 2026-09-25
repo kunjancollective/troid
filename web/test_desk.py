@@ -7,7 +7,8 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
   python web/test_desk.py
 
 - The same figures as before the redesign: the 84 desk states give the result the old desk gave, byte for byte, once the
-  desk's own additions (the ladder and the fee bar, marked d2x) are set aside (against BASE, the old desk's page).
+  desk's own additions (the ladder and the fee bar, marked d2x) are set aside (against OLD, the last revision whose home
+  page was the old desk, served from git).
 - A first view with no example trade: entry and stop empty with a grey 0.00 placeholder, the account on the gauge and
   "Enter your entry and stop to size a trade." in the readout; an entry alone is "Set your stop"; a stop alone is the
   first view. The settings keep their defaults and their notes say whose they are.
@@ -25,21 +26,22 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 import json
 import re
 import sys
+import tempfile
 import time
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backtest"))
-from i18n_equiv import DESK_GRID, PUB, serve  # noqa: E402
+from i18n_equiv import DESK_GRID, PUB, baseline, serve  # noqa: E402
 from tv_stub import route_tv  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 EN = json.loads((ROOT / "web" / "i18n" / "en.json").read_text())
 FIRMS = json.loads((ROOT / "firms.json").read_text())
 UNI = FIRMS["_asset_universe"]
-DESK = "/desk-preview"          # the redesigned desk
-BASE = "/"                      # the desk it must give the same figures as
+DESK = "/"                      # the redesigned desk, troid's home page since 2026-09-25
+OLD = "1eefe86"                 # the last revision whose home page was the old desk: the figures the new one must give
 fails, n = [], 0
 
 
@@ -75,10 +77,13 @@ def trade(pg, entry="77872", stop="74814"):
 
 def main():
     srv, url = serve(PUB)
+    old_dir = tempfile.TemporaryDirectory()
+    baseline(OLD, Path(old_dir.name))
+    srv0, url0 = serve(old_dir.name)
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium")
 
-        def page(path=DESK, w=1280, api="ok", age=900, ctx=None, **kw):
+        def page(path=DESK, w=1280, api="ok", age=900, ctx=None, root=None, **kw):
             ctx = ctx or b.new_context(viewport={"width": w, "height": 900}, **kw)
 
             def handler(r):
@@ -95,7 +100,7 @@ def main():
             pg = ctx.new_page()
             errs = []
             pg.on("pageerror", lambda e: errs.append(str(e)))
-            pg.goto(url + path, wait_until="load")
+            pg.goto((root or url) + path, wait_until="load")
             pg.wait_for_timeout(700)
             return ctx, pg, errs
 
@@ -117,7 +122,7 @@ def main():
         state = "()=>({cls:document.getElementById('gauge').className,line:document.querySelector('.gline').textContent,res:document.getElementById('result').innerText})"
 
         # 1. the same figures as the desk before the redesign
-        ctx, old, _ = page(BASE)
+        ctx, old, _ = page("/", root=url0)
         base = states(old, "()=>document.getElementById('result').innerHTML")
         ctx.close()
         ctx, pg, errs = page()
@@ -387,6 +392,8 @@ def main():
         ok(f"the header strips' and the desk's scripts: {size / 1024:.1f} KB, under the 40 KB budget", size < 40 * 1024)
         b.close()
     srv.shutdown()
+    srv0.shutdown()
+    old_dir.cleanup()
     print(f"\n{n - len(fails)}/{n} passed")
     sys.exit(1 if fails else 0)
 

@@ -1,14 +1,13 @@
-{# troid's next desk (the preview at /desk-preview: site_build.desk_preview, web/public/desk2.js; design handoff 2026-09-24,
-   section 4; ticker v2 handoff, sections E and F). The fields are the live desk's, same ids and defaults, so the desk's
-   own script sizes the trade here exactly as it does there; they sit in three step cards (your account, your trade,
-   your risk). The gauge comes first so a phone can pin it under the tape while the desk is on screen; from 1100 px it
+{# troid's desk (index.html includes it; web/public/desk2.js; design handoff 2026-09-24, section 4; ticker v2 handoff,
+   sections E and F; the owner's iPhone test). The fields keep the ids the desk's script and its links have always used;
+   entry and stop start empty (0.00 is a placeholder), the settings with their defaults. They sit in three step cards
+   (your account, your trade, your risk). The gauge comes first so a phone can pin it under the tape while the desk is on screen; from 1100 px it
    stands between the fields and the readout. #/assetnote holds the two lines the Asset field changes: the firm's hold
    limit and whether it lists the asset. #/how is the explainer, the same numbers step by step. #}
 </div>
 <div class="wrap wide">
 <div class="panel d2" id="desk">
   <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
-  <p class="d2ban">{{ t("desk2.banner") }}</p>
   <p class="ghint">{{ t("glossary.hint") }}</p>
   <div id="shared" class="shared" role="status" hidden></div>
   <div class="d2g">

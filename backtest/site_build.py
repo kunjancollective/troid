@@ -299,8 +299,7 @@ def common(T, page, live, preview=False):
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
             "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
-            "desk2": False,                                     # the desk preview turns it on (desk_preview)
-            "ticker": ticker(T, desk=page == "index"),
+            "ticker": ticker(T, desk=page == "index", hint=page == "index"),
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
@@ -373,27 +372,9 @@ def render_static(codes, out=None, preview=False):
             if not p.exists() or p.read_text() != text:
                 p.write_text(text)
                 written.append(str(p.relative_to(out if out else PUB)))
-        if code == "en" and not preview:
-            p = out_path(code, "desk-preview", out)
-            text = desk_preview(T, live, ctx)
-            if not p.exists() or p.read_text() != text:
-                p.write_text(text)
-                written.append(str(p.relative_to(out if out else PUB)))
         if T.missing:
             print(f"  {code}: {len(T.missing)} string(s) fell back to English (draft preview)")
     return written
-
-
-def desk_preview(T, live, ctx=None):
-    """troid's next desk at /desk-preview (ticker v2 handoff, section F; design handoff 2026-09-24, section 4): the desk's
-    own template with desk2 on, so the sizing is the same code as the live desk's, only the presentation new. English
-    only, noindex, in no sitemap and linked from nowhere, until the owner has tried it on a phone and it replaces the
-    home page. Its tape opens the preview, not the live desk."""
-    import regions
-    c = dict(ctx if ctx is not None else extra_context(T))
-    c.update(regions.desk2_context(T))
-    c.update(desk2=True, ticker=ticker(T, desk=True, path="/desk-preview", hint=True))
-    return render("index.html", T, "desk-preview", live, False, **c)
 
 
 def write_seo(out=None):

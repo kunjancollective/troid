@@ -5,7 +5,6 @@ desk, with a tap outside a note, or with a field's text size. web/public is serv
 script are answered by the test: spends nothing, calls no one.
 
   python web/test_desk_webkit.py            # needs Playwright's WebKit: python -m playwright install --with-deps webkit
-  python web/test_desk_webkit.py --path /desk-preview
 
 .github/workflows/webkit.yml runs it on GitHub's runners, where WebKit installs; the container troid is built in has only
 Chromium, and there it says it did not run instead of passing.
@@ -45,8 +44,17 @@ def tick():
                        "items": [{"sym": s, "pair": s + "USDT", "last": p, "chg_pct": 0.5, "at": now} for s, p in rows]})
 
 
-GAUGE = """()=>{const g=document.getElementById('gauge').getBoundingClientRect(),d=document.getElementById('desk').getBoundingClientRect();
-  return {top:g.top,bottom:g.bottom,h:g.height,deskTop:d.top,deskBottom:d.bottom,vh:innerHeight}}"""
+# the gauge is sticky inside the desk's grid (.d2g): pinned once the page has scrolled past where it sits, while the grid
+# still has room below it
+GAUGE = """()=>{const g=document.getElementById('gauge').getBoundingClientRect(),d=document.querySelector('#desk .d2g').getBoundingClientRect();
+  return {top:g.top,bottom:g.bottom,h:g.height,boxBottom:d.bottom,vh:innerHeight,y:scrollY}}"""
+# what a tap did: every touch, pointer and click event the document saw, and where the note is (printed on a failure)
+EVENTS = """()=>{window.__ev=[];const d=e=>{const t=e.target;return t&&t.tagName?t.tagName.toLowerCase()+(t.id?'#'+t.id:'')+(t.className&&typeof t.className=='string'?'.'+t.className.split(' ')[0]:''):String(t)};
+  for(const k of ['touchstart','touchend','pointerdown','pointerup','mousedown','mouseup','click'])
+    document.addEventListener(k,e=>window.__ev.push(k+':'+d(e)+(e.defaultPrevented?'!':'')),true)}"""
+NOTE = """()=>{const n=document.getElementById('tk-use'),b=window.troidPop&&window.troidPop.owner();
+  return {hidden:n.hidden,owner:b?b.getAttribute('data-sym'):null,top:n.getBoundingClientRect().top,ev:(window.__ev||[]).splice(0),
+    tk:document.getElementById('tk').className,last:document.querySelector('#tk .tki[data-sym="ETH"]').getAttribute('data-last')}}"""
 
 
 def main():
@@ -87,17 +95,20 @@ def main():
         ctx, pg, errs = page()
         pg.fill("#entry", "77872")
         pg.fill("#stop", "74814")
-        pg.evaluate("document.getElementById('st-account').open=true;document.getElementById('st-risk').open=true")
+        pg.evaluate("document.getElementById('st-account').open=true;document.getElementById('st-risk').open=true;scrollTo(0,0)")
+        rest = pg.evaluate("document.getElementById('gauge').getBoundingClientRect().top+scrollY")   # where it sits
         start = pg.evaluate("document.getElementById('desk').getBoundingClientRect().top+scrollY")
         end = pg.evaluate("document.getElementById('desk').getBoundingClientRect().bottom+scrollY")
-        bad = []
+        bad, pinned = [], 0
         for y in list(range(int(start), int(end) - 300, 160)) + list(range(int(end) - 300, int(start), -160)):
             pg.evaluate(f"scrollTo(0,{y})")
             pg.wait_for_timeout(60)
             g = pg.evaluate(GAUGE)
-            if g["deskTop"] < 0 and g["deskBottom"] > g["h"] + 40 and not (-1 <= g["top"] <= 1 and g["bottom"] <= g["vh"]):
-                bad.append((y, round(g["top"], 1)))
-        ok("scrolling down through the desk and back up, the gauge stays pinned under the tape", not bad, bad[:5])
+            if g["y"] > rest + 1 and g["boxBottom"] > g["h"] + 40:
+                pinned += 1
+                if not (-1 <= g["top"] <= 1 and g["bottom"] <= g["vh"]):
+                    bad.append((g["y"], round(g["top"], 1)))
+        ok("scrolling down through the desk and back up, the gauge stays pinned under the tape", pinned > 4 and not bad, (pinned, bad[:5]))
 
         # a note on the desk closes on a tap on the page; the gauge is still there
         pg.evaluate("scrollTo(0,0)")
@@ -121,14 +132,23 @@ def main():
 
         # the tape's "use as entry" note: opens on a tap, closes on a tap outside (reduced motion shows the still row)
         ctx, pg, errs = page(reduced_motion="reduce")
+        pg.wait_for_selector('#tk.still:not(.off) .tki[data-sym="ETH"][data-last]', timeout=5000)
+        pg.evaluate(EVENTS)
         pg.tap('#tk .tki[data-sym="ETH"]')
         pg.wait_for_timeout(150)
-        opened = not pg.evaluate("document.getElementById('tk-use').hidden")
-        pg.tap("body", position={"x": 8, "y": 600})
+        n1 = pg.evaluate(NOTE)
+        ok("a tap on ETH in the tape's still row opens its \"use as entry\" note", not n1["hidden"] and n1["owner"] == "ETH", n1)
+        pg.tap(".hero .lede")                                   # the page's own text, nothing on it to tap
         pg.wait_for_timeout(150)
-        ok("the tape's \"use as entry\" note closes on a tap outside it", opened and pg.evaluate("document.getElementById('tk-use').hidden"))
+        n2 = pg.evaluate(NOTE)
+        ok("the tape's \"use as entry\" note closes on a tap outside it", n2["hidden"], n2)
+        if not n2["hidden"]:
+            pg.evaluate("window.troidPop.hide()")
         pg.tap('#tk .tki[data-sym="ETH"]')
         pg.wait_for_timeout(150)
+        if pg.evaluate("document.getElementById('tk-use').hidden"):
+            print("     note after a second tap:", pg.evaluate(NOTE))
+            pg.evaluate("document.querySelector('#tk .tki[data-sym=\"ETH\"]').click()")
         pg.tap("#tk-use button")
         pg.wait_for_timeout(200)
         ok("\"use\" fills the entry and selects the asset without focusing the field (no zoom)", pg.input_value("#entry") == "2692.58"

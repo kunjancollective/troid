@@ -1,12 +1,9 @@
-/* troid's next desk: the preview at /desk-preview (partials/_desk2.html, web/public/desk2.js; design handoff
-   2026-09-24, section 4). The account gauge (the logo's dot above two floors, grown into the account: the dot is
+/* troid's desk (partials/_desk2.html, web/public/desk2.js; design handoff 2026-09-24, section 4). The account gauge (the logo's dot above two floors, grown into the account: the dot is
    equity, the lines are the floors, the drop from the dot is this trade's loss at its stop, all to scale), the step
    cards, the breaker ladder, the fee bar and the explainer. Motion: transform and opacity only, from the motion tokens;
    nothing loops; reduced motion shows the end frame. State colours are named: --ok, --reduce, --block. */
 :root{--ok:var(--signal);--reduce:var(--warn);--block:var(--bad);--z-sticky:30}
 .wrap.wide{max-width:1180px}
-.d2ban{font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--dim);border-inline-start:2px solid var(--signal);
-  padding-inline-start:10px;margin:-6px 0 14px}
 /* step cards: your account, your trade, your risk. Collapsed, a card says what it holds; a card whose input stops the
    sizing says so in words and in its border */
 .step{border:1px solid var(--line);border-radius:4px;background:var(--surface);margin-bottom:10px}

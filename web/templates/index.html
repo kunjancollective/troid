@@ -213,9 +213,9 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
 .work .wt{overflow-x:auto}
 footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
-{% if desk2 %}{% include "partials/_desk2.css" %}{% endif %}</style>
-{{ head_extra }}{% if desk2 %}<meta name="robots" content="noindex,nofollow">
-{% endif %}</head>
+</style>
+<style>{% include "partials/_desk2.css" %}</style>
+{{ head_extra }}</head>
 <body>
 
 {% include "partials/_header.html" %}
@@ -227,42 +227,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <p class="lede">{{ t("index.hero.lede") }}</p>
 </div>
 
-{% if desk2 %}{% include "partials/_desk2.html" %}{% else %}<div class="panel" id="desk">
-  <p class="eyebrow">{{ t("index.calc.eyebrow") }}</p>
-  <p class="ghint">{{ t("glossary.hint") }}</p>
-  <div id="shared" class="shared" role="status" hidden></div>
-  <div class="grid g4">
-    <div><label for="firm">{{ term("firm", t("index.calc.firm")) }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm" aria-label="{{ t.attr("index.calc.firm") }}"></select></div>
-    <div><label for="profile">{{ term("challenge", t("index.calc.challenge")) }}</label><select id="profile"></select></div>
-    <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" value="100000"></div>
-    <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" value="100000"></div>
-  </div>
-  <div class="grid g4">
-    <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" value="100000"></div>
-    <div id="hiWrap" style="display:none"><label for="hirollover">{{ term("hirollover", t("index.calc.hirollover")) }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
-    <div id="hwmWrap" style="display:none"><label for="hwm">{{ term("hwm", t("index.calc.hwm")) }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
-  </div>
-  <div class="grid g4">
-    <div><label for="side">{{ term("side", t("index.calc.side")) }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
-      <option value="-1">{{ t("index.js.short") }}</option></select></div>
-    <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><input id="entry" type="number" step="any" value="77872"></div>
-    <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" value="74814"></div>
-    <div><label for="targetR">{{ term("target_r", t("index.calc.target_r")) }}</label><input id="targetR" type="number" step="any" value="2"></div>
-  </div>
-  <div class="grid g3">
-    <div><label for="riskPct">{{ term("risk_pct", t("index.calc.risk_pct")) }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
-    <div><label for="capPct">{{ term("cap_pct", t("index.calc.cap_pct")) }}</label><input id="capPct" type="number" step="any" value="35"></div>
-    <div><label for="lev">{{ term("leverage", t("index.calc.leverage")) }}</label><input id="lev" type="number" step="any" value="5"></div>
-  </div>
-  <div class="grid g3">
-    <div><label for="mode">{{ term("mode", t("index.calc.mode")) }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
-      <option value="isolated">{{ t("index.js.isolated") }}</option></select></div>
-  </div>
-  <div id="result"></div>
-  <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>
-    <p>{{ t("index.why3.ask", href=L + "/chat#q=" + (t("index.why3.ask_q")|urlencode)) }}</p></div>
-  {{ glossary }}
-</div>{% endif %}
+{% include "partials/_desk2.html" %}
 
 
 <div class="panel" id="firms">
@@ -308,9 +273,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 {{ profiles_js }}
 <!-- profiles:end -->
 <script src="/desklink.js"></script>
-<script src="/pop.js" defer></script>{% if desk2 %}
+<script src="/pop.js" defer></script>
 <script>var DESK2DATA={{ desk2_data }};var T2={{ t.js("desk2.js.") }};</script>
-<script src="/desk2.js"></script>{% endif %}
+<script src="/desk2.js"></script>
 <script>
 /* Sizing against a firm's two loss ceilings. FIRMS is generated from firms.json by gen_compare.py;
    a null there is a pending rule and is shown as pending here. Nothing is guessed.
@@ -429,7 +394,7 @@ function render(){
   if(dB==null&&ddB==null){
     h=verdict("BLOCK",T.v_pending,T.vs_pending,F(T.pending_txt,{firm:f.name,product:p.label}))+linkRow()+
       '<div class="notes"><div>'+T.pending_note+'</div></div>';
-    el("result").innerHTML=h;{% if desk2 %}DESK2.paint({v:"PENDING"});{% endif %}return;
+    el("result").innerHTML=h;DESK2.paint({v:"PENDING"});return;
   }
   var bind,eff,one=(dB==null||ddB==null);
   if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
@@ -439,7 +404,7 @@ function render(){
   if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
     F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
   if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
-{% if desk2 %}  // the preview: its gauge and explainer get this result. No entry yet: the account only. An entry with no stop: "Set your
+  // the gauge and the explainer get this result (desk2.js). No entry yet: the account only. An entry with no stop: "Set your
   // stop", never BLOCK (ticker v2 E); troid never fills a stop in
   var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fdd,eff:eff,bind:bind,locked:locked,
     ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor};
@@ -451,7 +416,7 @@ function render(){
     el("result").innerHTML=DESK2.set(f,p,bind,eff)+linkRow()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
       provBlock(f,p,used,formula)+working(steps,wOpen);
     DESK2.paint(Object.assign(B,{v:"SET"}));return}
-{% endif %}  var dist=Math.abs(entry-stop),blocks=[];
+  var dist=Math.abs(entry-stop),blocks=[];
   if(side>0&&stop>=entry)blocks.push(T.b_long);
   if(side<0&&stop<=entry)blocks.push(T.b_short);
   if(dist<=0)blocks.push(T.b_zero);
@@ -462,7 +427,7 @@ function render(){
     steps.push(bindStep);
     h=verdict("BLOCK",T.v_block,F(T.vs_block,{reasons:blocks.join("; ")}),bind)+linkRow()+'<div class="notes">'+
       blocks.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
-    el("result").innerHTML=h;{% if desk2 %}DESK2.paint(Object.assign(B,{v:"BLOCK",blocks:blocks}));{% endif %}return;
+    el("result").innerHTML=h;DESK2.paint(Object.assign(B,{v:"BLOCK",blocks:blocks}));return;
   }
   var feeKnown=p.fee!=null,fee=feeKnown?p.fee/100:0;
   if(feeKnown)used.push(["fee",F(T.u_fee,{fee:p.fee})]);
@@ -543,10 +508,10 @@ function render(){
   gx("daily",dB!=null?{floor:$(dFloor),formula:fd,room:$(dB),pct:pc(dB/notional*100)}:null);
   gx("floor",ddB!=null?{floor:$(ddFloor),formula:fdd,room:$(ddB),pct:pc(ddB/notional*100)}:null);
   gx("liq",liq>0&&isFinite(liq)?{pct:pc(liq),formula:fl}:null);
-  el("result").innerHTML=h;{% if desk2 %}
+  el("result").innerHTML=h;
   DESK2.paint(Object.assign(B,{v:v,risk:risk,intended:intended,cap:cap,reduced:reduced,feeKnown:feeKnown,fu:fu,qty:qty,notional:notional,
     margin:margin,levUsed:levUsed,fees:fees,fshare:fshare,dist:dist,entry:entry,stop:stop,side:side,target:target,ord:ord,liq:liq,sp:sp,
-    mode:mode,rp:n("riskPct"),cp:n("capPct")}));{% endif %}
+    mode:mode,rp:n("riskPct"),cp:n("capPct")}));
 }
 el("firm").addEventListener("change",fillProfiles);el("quota").addEventListener("input",levDefault);el("profile").addEventListener("change",function(){toggleInputs();render()});
 ["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]

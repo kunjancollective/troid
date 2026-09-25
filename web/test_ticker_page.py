@@ -9,9 +9,11 @@ widget script is answered by backtest/tv_stub.py and /api/ticker by the test: sp
 - TradingView's attribution sits under it, in the dim ink.
 - The header is the same height with the widget loading, loaded, failed, paused and under reduced motion.
 - A failed widget gives way to troid's still row; so do pause (WCAG 2.2.2) and reduced motion, where the widget isn't
-  even requested until the visitor presses play. /api/ticker is asked only while the still row shows.
+  even requested until the visitor presses play. The tape asks /api/ticker only while the still row shows (the desk's
+  entry field asks it for its own price, so this is checked on a page without the desk).
 - The still row: the same symbols, crypto priced from /api/ticker in the dim ink with ▲/▼, "delayed" past 60 s; on the
-  desk a crypto symbol opens "use as entry", which fills the entry field and recomputes the desk.
+  desk a crypto symbol opens "use as entry", which fills the entry field, selects the asset and recomputes the desk,
+  without focusing the field.
 - On a phone the box is the tape's one-line 44 px too, the row scrolls with snap, and the page never scrolls sideways.
 """
 import json
@@ -98,7 +100,6 @@ def main():
           return {href:a.href,text:a.textContent,c,v}}""")
         ok("TradingView's attribution under the tape, its link kept, in the dim ink", st["credit"] and a["href"] == "https://www.tradingview.com/"
            and a["text"] == EN["ticker.credit"] and a["c"] == a["v"], a)
-        ok("while the tape shows, /api/ticker isn't asked", not asked, asked)
         ok("no script errors", not errs, errs)
         # pause: the frame goes, troid's still row takes its place, the header doesn't move
         pg.click("#tk .tkp")
@@ -123,9 +124,10 @@ def main():
         ok("the desk: a symbol opens its note", note.is_visible() and "ETH 2,693" in note.inner_text(), note.inner_text() if note.count() else "")
         pg.click("#tk-use button")
         pg.wait_for_timeout(100)
-        ok("use as entry: the exchange's price in the entry field, the note closed, the desk recomputed",
-           pg.input_value("#entry") == "2692.58" and not note.is_visible() and "stop at or above entry on a long" in pg.inner_text("#result .vsent"),
-           [pg.input_value("#entry"), pg.inner_text("#result .vsent")])
+        ok("use as entry: the exchange's price in the entry field, ETH selected, the note closed, the desk recomputed (no stop yet: \"Set your stop\")",
+           pg.input_value("#entry") == "2692.58" and pg.input_value("#asset") == "ETH" and not note.is_visible()
+           and pg.inner_text("#result .verdict").startswith(EN["desk2.js.set_tag"]) and pg.evaluate("document.activeElement.id") != "entry",
+           [pg.input_value("#entry"), pg.input_value("#asset"), pg.inner_text("#result .verdict")])
         # play: the tape comes back
         pg.click("#tk .tkp")
         pg.wait_for_timeout(700)
@@ -133,6 +135,10 @@ def main():
         ok("play: the tape is back, the header the same height", st["iframe"] and st["tape"] and not st["row"] and pg.evaluate(hdr) == h_ok
            and pg.evaluate("window.__tv.loads") == 2, [st, pg.evaluate(hdr)])
         ok("no script errors, paused and played", not errs, errs)
+        ctx.close()
+
+        ctx, pg, errs, asked = page("ok", path="/faq")
+        ok("while the tape shows, the tape doesn't ask /api/ticker", not asked, asked)
         ctx.close()
 
         ctx, pg, errs, asked = page("ok", color_scheme="light")

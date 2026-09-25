@@ -49,6 +49,11 @@
       ],
       "destination": "https://troid.ai/:path*",
       "permanent": true
+    },
+    {
+      "source": "/desk-preview",
+      "destination": "/",
+      "permanent": true
     }
   ],
   "crons": [

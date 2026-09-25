@@ -269,7 +269,7 @@ def _src(f, sid):
 
 
 def desk2_context(T):
-    """What the desk preview adds to the desk's template (site_build.desk_preview; ticker v2 handoff, section E): the
+    """What the desk's template gets for its redesigned parts (partials/_desk2.html; ticker v2 handoff, section E): the
     Asset field's options, grouped as firms.json _asset_universe groups them; DESK2DATA for web/public/desk2.js, which
     firms list each asset, as what and on which page read when, each firm's hold limit with its source, the tape's
     symbols (a tapped symbol opens the preview with it selected), and the tape's stocks no firm lists; the glossary with
@@ -323,4 +323,4 @@ def template_context(T):
     firm's name for the sentence under the firms panel (a firm's name comes from firms.json, never from en.json)."""
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
             "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
-            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "glossary": glossary_html(T), "term": term}
+            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "term": term, **desk2_context(T)}

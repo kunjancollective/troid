@@ -24,7 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from i18n_equiv import PUB, serve  # noqa: E402
 from tv_stub import route_tv  # noqa: E402
 
-PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet", "desk-preview"]
+PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
 # (device width, text size): the CSS width Safari lays out
 WIDTHS = sorted({round(w / z) for w in (375, 390) for z in (1.0, 1.15, 1.3)})
 
@@ -120,9 +120,9 @@ def main():
                 if name == "index" and w == 390 and not (h["firm"] and h["firm"] <= FIRST_SCREEN):
                     hdr.append(f"the desk's first field ends at {h['firm']} px, past the first screen ({FIRST_SCREEN} px)")
                 fails += [f"{name} {w}px header: {x}" for x in hdr]
-                if name == "desk-preview":             # its step cards open, so every field is laid out
+                if name == "index":                    # the desk's step cards open, so every field is laid out
                     pg.evaluate("()=>document.querySelectorAll('details.step').forEach(d=>d.open=true)")
-                views = desk_views(pg) if name in ("index", "desk-preview") else iter(["page"])
+                views = desk_views(pg) if name == "index" else iter(["page"])
                 bad = 0
                 for v in views:
                     pg.evaluate(WEBKIT_CONTROLS)
