@@ -228,7 +228,7 @@ def tape_config(T):
     """The Ticker Tape widget's settings (ticker v3 handoff, section B). web/public/ticker.js adds colorTheme from the
     page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site."""
     return {"symbols": [{"proName": s["tv"], "description": _tape_name(T, s, g["group"])} for g in TAPE["groups"] for s in g["symbols"]],
-            "showSymbolLogo": False, "isTransparent": True, "displayMode": "adaptive", "locale": TV_LOCALE.get(T.code, "en"),
+            "showSymbolLogo": False, "isTransparent": True, "displayMode": "regular", "locale": TV_LOCALE.get(T.code, "en"),
             "largeChartUrl": f"{BASE_URL}{T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
 
 

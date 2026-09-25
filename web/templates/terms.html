@@ -47,15 +47,14 @@ header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44p
   .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
 /* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
    in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
-   and when the widget fails. The box has one height, the tape's (44 px, or 72 px when the box is 767 px or narrower, as
-   TradingView's script sizes it), set before anything loads; the two labels share one cell and the button holds both
+   and when the widget fails. The box has one height, the tape's 44 px (its one-line layout at every width, the
+   smallest TradingView's script draws; the owner's call, 2026-09-25), set before anything loads; the two labels share one cell and the button holds both
    words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
    takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
    TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
    crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
 .tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
 .tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
-@container tk (max-width:767px){.tkbox{height:72px}}
 .tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
 .tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
 .tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}

@@ -5,14 +5,14 @@ widget script is answered by backtest/tv_stub.py and /api/ticker by the test: sp
   python web/test_ticker_page.py
 
 - The tape loads after the page with troid's settings: firms.json _ticker_universe's symbols in order, transparent,
-  adaptive, no logos, the page's theme and language, and a tap opens troid's desk, never TradingView's site.
+  one line at every width, no logos, the page's theme and language, and a tap opens troid's desk, never TradingView's site.
 - TradingView's attribution sits under it, in the dim ink.
 - The header is the same height with the widget loading, loaded, failed, paused and under reduced motion.
 - A failed widget gives way to troid's still row; so do pause (WCAG 2.2.2) and reduced motion, where the widget isn't
   even requested until the visitor presses play. /api/ticker is asked only while the still row shows.
 - The still row: the same symbols, crypto priced from /api/ticker in the dim ink with ▲/▼, "delayed" past 60 s; on the
   desk a crypto symbol opens "use as entry", which fills the entry field and recomputes the desk.
-- On a phone the box is the tape's 72 px, the row scrolls with snap, and the page never scrolls sideways.
+- On a phone the box is the tape's one-line 44 px too, the row scrolls with snap, and the page never scrolls sideways.
 """
 import json
 import sys
@@ -87,8 +87,8 @@ def main():
         ok("loaded: the tape shows, the still row doesn't, pause is offered", st["iframe"] and st["tape"] and not st["row"] and st["btn"]
            and st["label"] == EN["ticker.pause_label"], st)
         ok("the tape's symbols are _ticker_universe's, in order: crypto, commodities, stocks", cfg and [x["proName"] for x in cfg["symbols"]] == TAPE, cfg)
-        ok("the tape's settings: transparent, adaptive, no logos, English, the page's dark theme",
-           cfg and cfg["isTransparent"] is True and cfg["displayMode"] == "adaptive" and cfg["showSymbolLogo"] is False
+        ok("the tape's settings: transparent, one line (regular), no logos, English, the page's dark theme",
+           cfg and cfg["isTransparent"] is True and cfg["displayMode"] == "regular" and cfg["showSymbolLogo"] is False
            and cfg["locale"] == "en" and cfg["colorTheme"] == "dark", cfg)
         ok("a tapped symbol opens troid's desk with the symbol named, never TradingView's site",
            cfg and cfg["largeChartUrl"] == "https://troid.ai/?tvwidgetsymbol={symbolname}#desk", cfg and cfg["largeChartUrl"])
@@ -190,7 +190,7 @@ def main():
         ctx, pg, errs, asked = page("ok", "ok", "/", w=320, is_mobile=True, has_touch=True, device_scale_factor=2)
         st = pg.evaluate(state)
         h_ph = pg.evaluate(hdr)
-        ok("phone: the box is the tape's compact 72 px, and the tape fills it", st["box"] == 72 and pg.evaluate("document.querySelector('#tv iframe').getBoundingClientRect().height") == 72, st)
+        ok("phone: the box is the tape's one-line 44 px, and the tape fills it", st["box"] == 44 and pg.evaluate("document.querySelector('#tv iframe').getBoundingClientRect().height") == 44, st)
         pg.click("#tk .tkp")
         pg.wait_for_timeout(700)
         st = pg.evaluate("""()=>{const r=document.querySelector('#tk .tkrow');return {sw:document.documentElement.scrollWidth,W:document.documentElement.clientWidth,

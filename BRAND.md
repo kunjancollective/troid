@@ -142,8 +142,8 @@ label's end swaps the tape for troid's still row of the same symbols (WCAG 2.2.2
 motion and when the widget fails, fading in where the tape was. The still row prices crypto from `/api/ticker`
 (Binance.US) in Plex Mono with the change in `--dim`, greys and says "delayed" past 60 s, and on the desk offers "use as
 entry", a convenience that fills the entry field; the stop, the size and the trade stay the trader's. Gold, oil and the
-stocks are names there: their quotes are TradingView's and troid doesn't copy them. One box of one height (44 px, 72 px
-when 767 px or narrower, as TradingView sizes its tape) and one label cell, so the header never changes height.
+stocks are names there: their quotes are TradingView's and troid doesn't copy them. One box of one height (44 px: the tape's one-line
+layout at every width, the smallest TradingView draws) and one label cell, so the header never changes height.
 `web/public/ticker.js`, `web/api/ticker.js`, `backtest/site_build.py` (`ticker`).
 
 **Term and popover.** A term is its own trigger: every field label on the desk and every figure in its readout (the
