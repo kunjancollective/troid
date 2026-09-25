@@ -71,8 +71,9 @@ WEBKIT_CONTROLS = """() => {
 }"""
 
 
-def desk_views(pg):
-    """Every firm and product on the desk, as a visitor leaves it: the default inputs, then the working open."""
+def desk_views(pg, url):
+    """Every firm and product on the desk, as a visitor leaves it: the default inputs, then the working open; and a
+    tapped tape stock no firm lists, in the Asset field as its temporary option (the longest, GOOGL's)."""
     for f in pg.eval_on_selector_all("#firm option", "e=>e.map(x=>x.value)"):
         pg.select_option("#firm", f)
         for p in pg.eval_on_selector_all("#profile option", "e=>e.map(x=>x.value)"):
@@ -89,6 +90,10 @@ def desk_views(pg):
             pg.click(f'{scope} .term[data-tip="{tid}"]')
             pg.wait_for_timeout(50)
             yield f"note {tid} open"
+    pg.goto(url + "/?tvwidgetsymbol=NASDAQ%3AGOOGL#desk", wait_until="load")
+    pg.wait_for_timeout(300)
+    pg.evaluate("()=>document.querySelectorAll('details.step').forEach(d=>d.open=true)")
+    yield "tape tap on GOOGL"
 
 
 def main():
@@ -128,7 +133,7 @@ def main():
                 fails += [f"{name} {w}px header: {x}" for x in hdr]
                 if name == "index":                    # the desk's step cards open, so every field is laid out
                     pg.evaluate("()=>document.querySelectorAll('details.step').forEach(d=>d.open=true)")
-                views = desk_views(pg) if name == "index" else iter(["page"])
+                views = desk_views(pg, url) if name == "index" else iter(["page"])
                 bad = 0
                 for v in views:
                     pg.evaluate(WEBKIT_CONTROLS)

@@ -13,7 +13,8 @@ Chromium, and there it says it did not run instead of passing.
   kept as a regression test), and a note opened on the desk closes on a tap on the page with the gauge still in view.
 - Every desk field is 16 px, so Safari doesn't zoom into it; "use" fills the entry without focusing it.
 - The first view has no example trade; a tape tap selects the asset without the shared-link notice; nothing is wider
-  than the phone.
+  than the phone. A tapped stock no firm lists shows whole in the Asset field ("GOOGL · not offered by troid's firms",
+  wrapped), with no price by the entry, and the readout says there are no firm rules to size it against.
 """
 import argparse
 import json
@@ -172,6 +173,22 @@ def main():
         ctx, pg, errs = page(f"{base}?tvwidgetsymbol=BINANCEUS:ETHUSDT#desk&utm_source=troid.ai&utm_medium=widget")
         ok("a tape tap: ETH selected, \"ETH selected · live … · use\" by the entry, no shared-link notice",
            pg.input_value("#asset") == "ETH" and pg.inner_text("#chipb").startswith("ETH selected · live") and pg.evaluate("document.getElementById('shared').hidden"))
+        ctx.close()
+        # a tapped stock no firm lists: in the field, its label whole and wrapped, no price, nothing to size it against
+        ctx, pg, errs = page(f"{base}?tvwidgetsymbol=NASDAQ%3AGOOGL#desk&utm_source=troid.ai&utm_medium=widget")
+        opt, none = EN["desk2.js.tape_opt"].format(sym="GOOGL"), EN["desk2.js.tape_none"].format(sym="GOOGL")
+        g = pg.evaluate("""()=>{const l=document.querySelector('.aopt'),r=l?l.getBoundingClientRect():null;
+          return {asset:document.getElementById('asset').value,label:l?l.textContent:null,fits:!!l&&l.scrollWidth<=l.clientWidth,
+            top:r?document.elementFromPoint(r.left+r.width/2,r.top+r.height/2).id:null,fs:l?getComputedStyle(l).fontSize:null,
+            chip:!document.getElementById('chipb').hidden||!document.getElementById('chipm').hidden,res:document.getElementById('result').innerText,
+            wide:document.scrollingElement.scrollWidth>innerWidth}}""")
+        ok(f"a tape tap on GOOGL: \"{opt}\" whole in the field at 16 px, a tap on it reaches the field; no price; the readout says there's nothing to size",
+           g["asset"] == "GOOGL" and g["label"] == opt and g["fits"] and g["top"] == "asset" and g["fs"] == "16px" and not g["chip"]
+           and g["res"].startswith(none) and not g["wide"] and not errs, (g, errs))
+        pg.select_option("#asset", "SOL")
+        pg.wait_for_timeout(100)
+        ok("choosing SOL removes it: SOL in the field, its price by the entry", pg.input_value("#asset") == "SOL"
+           and not pg.evaluate("document.querySelector('.aopt,#asset option[data-tape]')") and pg.inner_text("#chipb") == "live 117.47 · use")
         ctx.close()
         b.close()
     srv.shutdown()

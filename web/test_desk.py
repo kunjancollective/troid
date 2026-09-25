@@ -16,12 +16,18 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 - The entry chip: a crypto asset's spot price, "live … · use", "delayed" past 60 s, gone when there is none; gold, oil and
   stocks point to the tape. A tap fills the entry, lights it and leaves focus where it was; a stop the new entry leaves
   on the wrong side or more than 25% away is cleared ("Set your stop"), never BLOCK, never a suggested stop.
+- The price on the chip always belongs to the asset in the field (the owner's Android test, 2026-09-25: a tapped NVDA
+  left BTC in the field and the chip offered BTC's price for an Nvidia trade): checked on every asset, after a price
+  update, after tape taps and "use", and with the field changed behind the chip's back; a price without its asset fills
+  nothing.
 - A tapped tape symbol (?tvwidgetsymbol=…; every symbol's real link, captured from TradingView's tape, web/tape_captured.json,
   as it was and as the bare largeChartUrl gives it) selects the asset, brings it into
   view lit, says "ETH selected · live … · use" or that live fill isn't available, fills nothing, shows no shared-link
   notice and leaves a clean address; a tab the tape opened hands the address to troid's tab and closes. The symbol counts
   wherever it arrives (the query, or after the #), never an unfilled {symbolname}; one the desk can't read keeps the
-  default asset and says so by the Asset field, never silently.
+  default asset and says so by the Asset field, never silently. A stock no firm lists (NVDA, AAPL, GOOGL, MSFT, AMZN) is
+  in the field as "NVDA · not offered by troid's firms", with no chip and no line about another asset, and the readout
+  says there are no firm rules to size it against, whatever the entry and stop; choosing another asset removes it.
 - A shared link restores the sharer's numbers and says so; #desk alone doesn't.
 - The gauge, the ladder, the fee bar and the explainer draw the result's own numbers; the step cards; the pinned gauge;
   16 px fields on a phone; nothing sideways.
@@ -57,11 +63,36 @@ def ok(name, cond, info=""):
         fails.append(name)
 
 
+PRICE = {"BTC": "84496.41", "ETH": "2692.58", "SOL": "117.47", "XRP": "1.5385", "BNB": "780"}
+
+
 def tick(age_ms=900):
     now = int(time.time() * 1000)
-    rows = [("BTC", "84496.41"), ("ETH", "2692.58"), ("SOL", "117.47"), ("XRP", "1.5385"), ("BNB", "780")]
     return json.dumps({"source": "Binance.US", "quote": "USDT", "as_of": now - age_ms, "served": now,
-                       "items": [{"sym": s, "pair": s + "USDT", "last": p, "chg_pct": 0.5, "at": now - age_ms} for s, p in rows]})
+                       "items": [{"sym": s, "pair": s + "USDT", "last": p, "chg_pct": 0.5, "at": now - age_ms} for s, p in PRICE.items()]})
+
+
+# the chip as drawn, and the asset in the field
+CHIP = """()=>{const b=document.getElementById('chipb'),a=document.getElementById('asset').value;
+  return {hidden:b.hidden,asset:a,sym:b.getAttribute('data-sym'),last:b.getAttribute('data-last'),label:b.getAttribute('aria-label')||'',
+    text:b.innerText,name:(DESK2DATA.assets[a]||{}).name||null}}"""
+
+
+def shown(p):
+    """A quote as the chip shows it: 84496.41 → 84,496.41."""
+    i, _, f = p.partition(".")
+    return f"{int(i):,}" + (f".{f}" if f else "")
+
+
+def chip_bad(pg):
+    """None when the chip is hidden or shows the price of the asset in the field (its own price, its name, drawn for it);
+    otherwise what it shows."""
+    c = pg.evaluate(CHIP)
+    if c["hidden"]:
+        return None
+    p = PRICE.get(c["asset"])
+    good = p and c["sym"] == c["asset"] and c["last"] == p and shown(p) in c["text"] and c["label"].startswith(f"Use {c['name']} at {shown(p)},")
+    return None if good else c
 
 
 CLEAN = """()=>{const r=document.getElementById('result').cloneNode(true);r.querySelectorAll('.d2x').forEach(e=>e.remove());return r.innerHTML}"""
@@ -247,11 +278,11 @@ def main():
         pg.wait_for_timeout(50)
         ok("a stop typed in sizes the trade again", pg.inner_text("#result .verdict").startswith(("OK", "REDUCE")) and not pg.evaluate("document.getElementById('st-trade').classList.contains('err')"))
         pg.fill("#stop", "2000")                                    # 25.7% away
-        pg.evaluate("DESK2.use('2692.58')")
+        pg.evaluate("DESK2.use('2692.58','ETH')")
         ok("more than 25% away is cleared too", pg.input_value("#stop") == "")
         pg.select_option("#side", "-1")
         pg.fill("#stop", "2800")
-        pg.evaluate("DESK2.use('2692.58')")
+        pg.evaluate("DESK2.use('2692.58','ETH')")
         ok("a short's stop above the entry and within 25% stays", pg.input_value("#stop") == "2800")
         for sym in ("XAU", "WTI", "TSLA"):
             pg.select_option("#asset", sym)
@@ -266,6 +297,38 @@ def main():
         ok("no price: no chip, no error", pg.evaluate("document.getElementById('chipb').hidden") and not errs, errs)
         ctx.close()
 
+        # 4b. the price on the chip belongs to the asset in the field, whatever happened before (the owner's Android test,
+        # 2026-09-25: a tapped NVDA left BTC in the field, and "use" would have put BTC's price in an Nvidia trade)
+        ctx, pg, errs = page()
+        bad = {}
+        def look(when):
+            c = chip_bad(pg)
+            if c:
+                bad[when] = c
+        look("first view")
+        for sym in pg.eval_on_selector_all("#asset option", "e=>e.map(x=>x.value)"):
+            pg.select_option("#asset", sym)
+            pg.wait_for_timeout(20)
+            look(f"{sym} chosen")
+            pg.evaluate("document.dispatchEvent(new Event('visibilitychange'))")      # a price update with it selected
+            pg.wait_for_timeout(60)
+            look(f"{sym} after a price update")
+        pg.evaluate("DESK2.use('84496.41','BTC')")
+        look("\"use\" from the tape's still row")
+        ok("every asset, chosen and after a price update, and after \"use\": the chip shows the field's asset's own price or nothing",
+           not bad and pg.input_value("#asset") == "BTC" and pg.input_value("#entry") == "84496.41", bad)
+        pg.fill("#entry", "")
+        pg.evaluate("document.getElementById('asset').value='ETH'")               # the field changed behind the chip's back
+        pg.click("#chipb")
+        pg.wait_for_timeout(40)
+        ok("a chip drawn for another asset than the field's fills nothing, and is redrawn for the field's",
+           pg.input_value("#entry") == "" and chip_bad(pg) is None and pg.evaluate(CHIP)["sym"] == "ETH", pg.evaluate(CHIP))
+        pg.evaluate("DESK2.use('84496.41')")
+        pg.evaluate("DESK2.use('84496.41','NVDA')")
+        ok("a price without its asset, or with one the desk doesn't list, fills nothing", pg.input_value("#entry") == "" and pg.input_value("#asset") == "ETH")
+        ok("no page error", not errs, errs)
+        ctx.close()
+
         # 5. a tapped tape symbol: TradingView adds its own parameters after #desk
         TV = "&utm_source=troid.ai&utm_medium=widget&utm_campaign=ticker-tape"
         MISS = EN["desk2.js.tape_miss"]
@@ -273,20 +336,22 @@ def main():
                 ("BINANCEUS:ETHUSDT", "ETH", "ETH selected · live 2,692.58 · use", None),
                 ("OANDA:XAUUSD", "XAU", None, None),
                 ("OANDA:WTICOUSD", "WTI", None, None),
-                ("NASDAQ:NVDA", "BTC", None, "NVDA is on the tape as market context"),
+                ("NASDAQ:NVDA", "NVDA", None, EN["desk2.js.tape_only"].format(sym="NVDA")),
                 ("NASDAQ:NOPE", "BTC", None, MISS),
                 ("{symbolname}", "BTC", None, MISS),                            # a placeholder the widget never filled
                 ("%7Bsymbolname%7D#desk?tvwidgetsymbol=BINANCEUS%3AXRPUSDT", "XRP", "XRP selected · live 1.5385 · use", None)]:  # the real symbol after the #
             ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol={q}" + ("" if "#" in q else f"#desk{TV}"), w=390, is_mobile=True, has_touch=True)
-            t = pg.inner_text("#assetnote")
+            t = pg.inner_text("#assetnote").strip()
             got = pg.evaluate("""()=>{const r=e=>{const b=e.getBoundingClientRect();return b.top>=0&&b.bottom<=innerHeight};
               return {asset:document.getElementById('asset').value,entry:document.getElementById('entry').value,shared:document.getElementById('shared').hidden,
+                opt:document.getElementById('asset').selectedOptions[0].textContent,res:document.getElementById('result').innerText,
                 chip:document.getElementById('chipb').hidden?null:document.getElementById('chipb').innerText,chipm:document.getElementById('chipm').hidden?null:document.getElementById('chipm').innerText,
                 lit:document.querySelector('#asset').closest('.fi').classList.contains('on'),inview:r(document.getElementById('asset')),noteview:r(document.getElementById('assetnote')),
-                addr:location.pathname+location.search+location.hash}}""")
+                addr:location.pathname+location.search+location.hash,sideways:document.documentElement.scrollWidth-innerWidth}}""")
             label = f"a tape tap on {q}"
-            ok(f"{label}: asset {want_asset}, nothing filled, no shared-link notice, a clean address", got["asset"] == want_asset and got["entry"] == ""
-               and got["shared"] and got["addr"] == DESK + "#desk" and not errs, (got, errs))
+            ok(f"{label}: asset {want_asset}, nothing filled, no shared-link notice, a clean address; the chip, if any, is {want_asset}'s price",
+               got["asset"] == want_asset and got["entry"] == "" and got["shared"] and got["addr"] == DESK + "#desk" and not errs and chip_bad(pg) is None,
+               (got, errs, chip_bad(pg)))
             if note == MISS:
                 ok(f"{label}: never a silent fallback: \"{MISS}\" by the Asset field, in view, nothing lit", t.startswith(MISS) and got["noteview"] and not got["lit"], (t, got))
                 pg.select_option("#asset", "SOL")
@@ -297,9 +362,38 @@ def main():
                 name = EN[f"ticker.sym.{want_asset}"]
                 ok(f"{label}: \"Live fill isn't available for {name} — enter your price from the tape above.\"", got["inview"] and got["lit"]
                    and got["chipm"] == EN["desk2.js.chip_no_fill"].format(asset=name) and got["chip"] is None, got)
+            elif want_asset in UNI["not_listed"]:
+                opt, none = EN["desk2.js.tape_opt"].format(sym=want_asset), EN["desk2.js.tape_none"].format(sym=want_asset)
+                ok(f"{label}: the field shows \"{opt}\", in view and lit", got["opt"] == opt and got["inview"] and got["lit"] and got["noteview"]
+                   and pg.evaluate("document.querySelectorAll('#asset option[data-tape]').length") == 1 and not got["sideways"], got)
+                shown_lab = pg.evaluate("""()=>{const l=document.querySelector('#asset').closest('.fi').querySelector('.aopt'),r=l.getBoundingClientRect(),
+                  a=document.getElementById('asset').getBoundingClientRect(),cs=getComputedStyle(l);
+                  return {text:l.textContent,lines:Math.round(r.height/parseFloat(cs.lineHeight)),fits:l.scrollWidth<=l.clientWidth,
+                    top:document.elementFromPoint(r.left+r.width/2,r.top+r.height/2).id,same:[a.left,a.top,a.width,a.height].join()==[r.left,r.top,r.width,r.height].join()}}""")
+                ok(f"{label}: on a phone the whole label shows, wrapped, and a tap on it reaches the Asset field itself",
+                   shown_lab["text"] == opt and shown_lab["fits"] and shown_lab["top"] == "asset" and shown_lab["same"], shown_lab)
+                ok(f"{label}: no chip, no line about another asset: the tape note alone by the field", got["chip"] is None and got["chipm"] is None and t == note, (t, got))
+                ok(f"{label}: the readout says \"{none}\"", got["res"].startswith(none) and not pg.evaluate("document.querySelector('#result .verdict,#result .read,.lad,.feebar')"), got["res"][:200])
+                trade(pg, "180", "170")
+                ok(f"{label}: an entry and a stop typed in size nothing; the readout still says so", pg.inner_text("#result").startswith(none)
+                   and not pg.evaluate("document.querySelector('#result .verdict,#result .read,.lad,.feebar')") and chip_bad(pg) is None
+                   and pg.evaluate("document.getElementById('gauge').className") == "gauge sEMPTY", pg.inner_text("#result")[:200])
+                pg.select_option("#asset", "SOL")
+                pg.wait_for_timeout(40)
+                ok(f"{label}: choosing SOL removes the temporary option and restores the desk: SOL's lines, its price, the trade sized",
+                   not pg.evaluate("document.querySelector('#asset option[data-tape],.aopt,.fi.tape')") and "lists SOL" in pg.inner_text("#assetnote")
+                   and want_asset not in pg.inner_text("#assetnote") and pg.inner_text("#chipb") == "live 117.47 · use" and chip_bad(pg) is None
+                   and pg.inner_text("#result .verdict").startswith(("OK", "REDUCE")), pg.inner_text("#assetnote"))
             elif note:
                 ok(f"{label}: \"{note}…\", in view", note in t and got["noteview"] and MISS not in t, (t, got))
             ctx.close()
+        # a tapped stock, then the tape's still row: "use" brings the price with its own asset and the stock leaves the field
+        ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol=NASDAQ%3AAAPL#desk", w=390, is_mobile=True, has_touch=True)
+        pg.evaluate("DESK2.use('2692.58','ETH')")
+        ok("after a tapped AAPL, \"use\" on ETH's price: ETH in the field, the temporary option gone, the chip ETH's",
+           pg.input_value("#asset") == "ETH" and pg.input_value("#entry") == "2692.58" and not pg.evaluate("document.querySelector('#asset option[data-tape]')")
+           and chip_bad(pg) is None and not pg.evaluate("document.getElementById('chipb').hidden") and not errs, (pg.evaluate(CHIP), errs))
+        ctx.close()
         # 5b. every tape symbol as TradingView's real tape links it (captured 2026-09-25, web/tape_captured.json): the link
         # as it was (the symbol after the #, an unfilled {symbolname} in the query) and the link the bare largeChartUrl gives
         CAP = json.loads((ROOT / "web" / "tape_captured.json").read_text())
@@ -310,21 +404,24 @@ def main():
             res = {}
             for form, path in forms.items():
                 ctx, pg, errs = page(path, w=390, is_mobile=True, has_touch=True)
-                res[form] = pg.evaluate("""()=>({asset:document.getElementById('asset').value,note:document.getElementById('assetnote').innerText,
+                res[form] = pg.evaluate("""()=>({asset:document.getElementById('asset').value,note:document.getElementById('assetnote').innerText.trim(),
+                  opt:document.getElementById('asset').selectedOptions[0].textContent,res:document.getElementById('result').innerText.slice(0,200),
                   chip:document.getElementById('chipb').hidden?null:document.getElementById('chipb').innerText,
                   chipm:document.getElementById('chipm').hidden?null:document.getElementById('chipm').innerText,
                   shared:document.getElementById('shared').hidden,addr:location.pathname+location.search+location.hash})""")
-                res[form]["errs"] = errs
+                res[form]["errs"], res[form]["chip_bad"] = errs, chip_bad(pg)
                 ctx.close()
             def good(g):
-                if g["errs"] or MISS in g["note"] or not g["shared"] or g["addr"] != "/#desk":
+                if g["errs"] or MISS in g["note"] or not g["shared"] or g["addr"] != "/#desk" or g["chip_bad"]:
                     return False
-                if sym not in listed:
-                    return g["asset"] == "BTC" and g["note"].startswith(f"{sym} is on the tape as market context")
+                if sym not in listed:           # the stock in the field, no chip, the tape note alone, nothing to size it against
+                    return (g["asset"] == sym and g["opt"] == EN["desk2.js.tape_opt"].format(sym=sym) and g["chip"] is None and g["chipm"] is None
+                            and g["note"] == EN["desk2.js.tape_only"].format(sym=sym) and g["res"].startswith(EN["desk2.js.tape_none"].format(sym=sym)))
                 if sym in ("XAU", "WTI"):
                     return g["asset"] == sym and g["chipm"] == EN["desk2.js.chip_no_fill"].format(asset=EN[f"ticker.sym.{sym}"])
                 return g["asset"] == sym and (g["chip"] or "").startswith(f"{sym} selected · live")
-            what = "selected" if sym in listed else "named as market context"
+            what = ("selected" if sym in listed else
+                    f"in the field as \"{EN['desk2.js.tape_opt'].format(sym=sym)}\", no chip, no other asset's lines, nothing to size it against")
             ok(f"the real tape's {sym} link, as captured and from the bare page: {sym} {what}, never unread, no shared-link notice",
                all(good(g) for g in res.values()), res)
 

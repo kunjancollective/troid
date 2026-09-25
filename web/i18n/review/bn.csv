@@ -1101,6 +1101,9 @@ desk2.js.g_line_empty,room {room} before the {bind},,,NEW: translate it in revie
 desk2.js.chip_sel,{asset} selected,,,NEW: translate it in reviewer_edit | keep {asset} exactly as written
 desk2.js.chip_no_fill,Live fill isn't available for {asset} — enter your price from the tape above.,,,NEW: translate it in reviewer_edit | keep {asset} exactly as written
 desk2.js.x_wait_block,Fix the step the desk flags above to see the rest.,,,NEW: translate it in reviewer_edit | 
+desk2.js.tape_opt,{sym} · not offered by troid's firms,,,"NEW: translate it in reviewer_edit | keep {sym} exactly as written; troid stays lowercase, in Latin letters"
+desk2.js.tape_none,"No compared firm offers {sym}, so there are no firm rules to size it against. Choose an asset from the list to size a trade.",,,NEW: translate it in reviewer_edit | keep {sym} exactly as written
+desk2.js.x_wait_none,Choose an asset from the list to see the rest.,,,NEW: translate it in reviewer_edit | 
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly

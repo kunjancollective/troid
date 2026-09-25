@@ -65,6 +65,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   84 states among them); the desk is `partials/_desk2.html` + `web/public/desk2.js` (redesigned 2026-09-25, `/desk-preview`
   now redirects to `/`; `web/test_desk.py` holds its 84 states to the old desk's, served from git, and
   `web/test_desk_webkit.py` runs it as an iPhone lays it out on GitHub's WebKit, `.github/workflows/webkit.yml`);
+  the price on the entry chip always belongs to the asset in the Asset field, and a price enters Entry only with its own
+  asset selected (the owner's rule, 2026-09-25; `test_desk.py` section 4b) — a tapped stock no firm lists sits in the
+  field as "NVDA · not offered by troid's firms", with no chip and nothing sized;
   `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
   sized as WebKit sizes them); `web/i18n/README.md` has the workflow.
 - `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything

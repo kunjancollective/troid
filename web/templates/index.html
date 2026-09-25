@@ -394,7 +394,7 @@ function render(){
   if(dB==null&&ddB==null){
     h=verdict("BLOCK",T.v_pending,T.vs_pending,F(T.pending_txt,{firm:f.name,product:p.label}))+linkRow()+
       '<div class="notes"><div>'+T.pending_note+'</div></div>';
-    el("result").innerHTML=h;DESK2.paint({v:"PENDING"});return;
+    el("result").innerHTML=DESK2.none()||h;DESK2.paint({v:"PENDING"});return;
   }
   var bind,eff,one=(dB==null||ddB==null);
   if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
@@ -405,11 +405,12 @@ function render(){
     F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
   if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
   // the gauge and the explainer get this result (desk2.js). No entry yet: the account only. An entry with no stop: "Set your
-  // stop", never BLOCK (ticker v2 E); troid never fills a stop in
+  // stop", never BLOCK (ticker v2 E); troid never fills a stop in. A tapped stock no firm lists: the account only, whatever
+  // the entry and stop, and the readout says there are no firm rules to size it against
   var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fdd,eff:eff,bind:bind,locked:locked,
-    ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor};
-  if(!el("entry").value.trim()){steps.push(bindStep);                    // no entry yet: the account only, no verdict
-    el("result").innerHTML=DESK2.empty()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
+    ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor},none=DESK2.none();
+  if(none||!el("entry").value.trim()){steps.push(bindStep);             // no entry yet: the account only, no verdict
+    el("result").innerHTML=(none||DESK2.empty())+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
       provBlock(f,p,used,formula)+working(steps,wOpen);
     DESK2.paint(Object.assign(B,{v:"EMPTY"}));return}
   if(!el("stop").value.trim()){steps.push(bindStep);

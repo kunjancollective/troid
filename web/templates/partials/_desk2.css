@@ -37,7 +37,15 @@
 .flash{position:absolute;inset:0;border:1px solid var(--signal);border-radius:3px;pointer-events:none;opacity:0;
   background:color-mix(in srgb,var(--signal) 14%,transparent);transition:opacity var(--dur-slow) var(--ease-out)}
 .fi.on .flash{opacity:1;transition-duration:var(--dur-fast)}
-@media (max-width:640px),(pointer:coarse){ #desk input,#desk select{font-size:16px}}
+/* a tapped stock no firm lists (desk2.js): its temporary option's label, "NVDA · not offered by troid's firms", wraps in
+   a box drawn as the field is; the select lies over it unseen, so a tap opens its list and a screen reader reads it */
+.aopt{display:block;position:relative;background:var(--surface2);border:1px solid var(--line);border-radius:3px;
+  padding:8px 28px 8px 9px;font-family:var(--mono);font-size:14px;line-height:1.4;color:var(--ink);overflow-wrap:anywhere}
+.aopt::after{content:"";position:absolute;inset-inline-end:12px;top:50%;width:6px;height:6px;margin-top:-5px;
+  border-right:1.5px solid var(--dim);border-bottom:1.5px solid var(--dim);transform:rotate(45deg)}
+.fi.tape select{position:absolute;inset:0;height:100%;opacity:0}
+.fi.tape:focus-within .aopt{border-color:var(--signal)}
+@media (max-width:640px),(pointer:coarse){ #desk input,#desk select,#desk .aopt{font-size:16px}}
 .d2empty{margin:0 0 14px;padding:14px 16px;border-inline-start:2px solid var(--line);background:var(--surface2);border-radius:3px;
   font-size:14px;color:var(--ink)}
 .anote{margin:0 0 12px;font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}

@@ -9,6 +9,12 @@
    - The entry field's chip is the crypto asset's spot price from /api/ticker (Binance.US), asked every 15 s while the
      desk is on screen; a tap puts it in the entry. Gold, oil and stocks: their quotes are TradingView's, in its frame,
      so the field points to the tape instead. A tapped tape symbol (?tvwidgetsymbol=) opens this page with it selected.
+   - The price on the chip is always the price of the asset in the field, and a price enters the entry only with its
+     own asset selected (the owner's Android test, 2026-09-25: a tapped NVDA left BTC selected, and the chip offered
+     BTC's price for what the reader took for an Nvidia trade).
+   - A tapped stock no firm lists (NVDA) is in the field as a temporary option, "NVDA · not offered by troid's firms":
+     no line about another asset, no chip, and the readout says there are no firm rules to size it against. Choosing
+     another asset removes the option.
    - A new entry from the chip or the tape that leaves the stop on the wrong side, or more than 25% away, clears the
      stop: the desk then says "Set your stop". troid never suggests one.
    - Motion is transform and opacity only, and reduced motion shows the end frame (the CSS). */
@@ -105,11 +111,33 @@
     read.parentNode.insertBefore(fb, read.nextSibling);
   }
 
+  // a tapped stock no firm lists: in the field, selected, as a temporary option, until another asset is chosen. A closed
+  // select can't wrap its text, and on a phone the label is wider than the field: it is drawn in a box that wraps
+  // (.aopt), with the select, still what a tap and a screen reader reach, laid over it unseen (_desk2.css)
+  function tapeOpt(sym) {
+    var o = document.createElement("option"), w = asset.closest(".fi"), lab = document.createElement("span");
+    o.value = sym; o.textContent = F(S.tape_opt, { sym: sym }); o.setAttribute("data-tape", "");
+    asset.insertBefore(o, asset.firstChild);
+    lab.className = "aopt"; lab.setAttribute("aria-hidden", "true"); lab.textContent = o.textContent;
+    w.insertBefore(lab, asset); w.classList.add("tape");
+    asset.value = sym; tapeOnly = sym;
+  }
+  function clearTape() {
+    var o = asset.querySelector("option[data-tape]"), w = asset.closest(".fi"), lab = w.querySelector(".aopt");
+    if (o && o.selected) return;
+    if (o) asset.removeChild(o);
+    if (lab) w.removeChild(lab);
+    w.classList.remove("tape"); tapeOnly = null;
+  }
+  function only() { return tapeOnly && asset.value === tapeOnly ? tapeOnly : null; }
+  // the readout for it, in place of any result (index.html's render): there is nothing to size it against
+  function none() { var sym = only(); return sym ? '<p class="d2empty">' + F(S.tape_none, { sym: esc(sym) }) + "</p>" : ""; }
+
   // the two lines the Asset field changes: whether the selected firm lists it, and the firm's hold limit for it
   function paintAsset() {
     var a = D.assets[asset.value], fk = $e("firm").value, firm = esc(D.names[fk] || ""), L = a && a.listed[fk], H = D.hold[fk], out = [];
     if (tapeMiss) out.push('<span class="tmiss">' + esc(S.tape_miss) + "</span>");   // never a silent fallback to the default
-    if (tapeOnly) out.push(esc(F(S.tape_only, { sym: tapeOnly })));
+    if (only()) out.push(esc(F(S.tape_only, { sym: only() })));
     if (!a) { $e("assetnote").innerHTML = "<p>" + out.join("</p><p>") + "</p>"; return; }
     if (L) out.push(F(S.avail_listed, { firm: firm, asset: esc(a.name), as: esc(L.as), source: link(L), date: L.date }));
     else {
@@ -127,7 +155,7 @@
     var f = FIRMS[$e("firm").value], p = f.products[$e("profile").value], a = D.assets[asset.value], stop = $e("stop").value.trim();
     $e("ss-account").textContent = F(S.sum_account, { firm: f.name, product: p.label, quota: $(n("quota")), eq: $(n("equity")) });
     var entry = $e("entry").value.trim();
-    $e("ss-trade").textContent = F(!entry ? S.sum_trade_empty : stop ? S.sum_trade : S.sum_trade_nostop, { asset: a ? a.name : "", side: n("side") > 0 ? T.long : T.short,
+    $e("ss-trade").textContent = F(!entry ? S.sum_trade_empty : stop ? S.sum_trade : S.sum_trade_nostop, { asset: a ? a.name : only() || "", side: n("side") > 0 ? T.long : T.short,
       entry: n4(n("entry")), stop: n4(n("stop")), r: n("targetR") });
     $e("ss-risk").textContent = F(S.sum_risk, { rp: n("riskPct"), cp: n("capPct"), lev: n("lev"), mode: $e("mode").value === "isolated" ? T.isolated : T.cross });
     var stopBad = R.v === "SET" || (R.v === "BLOCK" && (R.blocks || []).some(function (b) { return b === T.b_long || b === T.b_short || b === T.b_zero; }));
@@ -155,13 +183,15 @@
       st.push([S.x5_h, S.x5_p, code(T.size + " = " + $(R.risk) + " ÷ (" + n4(R.dist) + " + " + n4(R.fu) + ") = " + n4(R.qty)) +
         (R.feeKnown ? code(T.fees + " = " + $(R.fees) + " ÷ " + $(R.risk) + " = " + fx(R.fshare, 1) + "%") : "")]);
       st.push([S.x6_h, S.x6_p, code(F(S.x6_code, { notional: $(R.notional), lev: R.levUsed, margin: $(R.margin), risk: $(R.risk) }))]);
-    } else st.push(["", R.v === "BLOCK" ? S.x_wait_block : S.x_wait, ""]);
+    } else st.push(["", R.v === "BLOCK" ? S.x_wait_block : only() ? S.x_wait_none : S.x_wait, ""]);
     $e("xs").innerHTML = st.map(function (s) { return "<li>" + (s[0] ? "<h3>" + s[0] + "</h3>" : "") + "<p>" + s[1] + "</p>" + s[2] + "</li>"; }).join("");
   }
 
-  // the entry field's live price: crypto from /api/ticker; gold, oil and stocks: the tape above
+  // the entry field's live price: crypto from /api/ticker; gold, oil and stocks: the tape above. Read from the field at
+  // every paint, and the button carries the asset it was drawn for (data-sym): its price is never another asset's
   function paintChip() {
-    var a = D.assets[asset.value], b = $e("chipb"), m = $e("chipm"), qt = prices[asset.value], sel = a && tapeSel === asset.value;
+    var sym = asset.value, a = D.assets[sym], b = $e("chipb"), m = $e("chipm"), qt = prices[sym], sel = a && tapeSel === sym;
+    b.setAttribute("data-sym", sym);
     b.hidden = !a || a.group !== "crypto" || !qt;
     m.hidden = !a || (a.group === "crypto" && !(sel && !qt));
     m.textContent = !a ? "" : a.group !== "crypto" ? (sel ? F(S.chip_no_fill, { asset: a.name }) : S.chip_manual) : F(S.chip_sel, { asset: a.name });
@@ -181,9 +211,11 @@
     }).catch(function () {});
   }
 
-  // a new entry from the chip or the tape: a stop now on the wrong side, or more than 25% away, is cleared
+  // a new entry from the chip or the tape: a stop now on the wrong side, or more than 25% away, is cleared. The price
+  // comes with its asset (sym), which the field then shows; a price without one fills nothing
   function use(v, sym) {
-    if (sym && D.assets[sym] && asset.value !== sym) { asset.value = sym; tapeOnly = null; tapeMiss = false; }
+    if (!sym || !D.assets[sym]) return;
+    if (asset.value !== sym) { asset.value = sym; clearTape(); tapeMiss = false; }
     var e = $e("entry"), s = $e("stop"), E = parseFloat(v), st = parseFloat(s.value);
     e.value = v;
     if (s.value.trim() !== "" && isFinite(st) && isFinite(E) && E > 0) {
@@ -216,7 +248,7 @@
     paintAsset(); paintCards(R); paintHow(R); paintChip();
   }
 
-  window.DESK2 = { paint: paint, set: setVerdict, use: use, empty: emptyReadout };
+  window.DESK2 = { paint: paint, set: setVerdict, use: use, empty: emptyReadout, none: none };
 
   // a tapped tape symbol: /?tvwidgetsymbol=BINANCEUS:ETHUSDT#desk (or OANDA:XAUUSD, NASDAQ:NVDA). Every tvwidgetsymbol
   // in the address counts, in the query or after the #, decoded, and never an unfilled placeholder ({symbolname}): the
@@ -253,20 +285,22 @@
       };
       var inAssets = known(D.assets, function (a) { return a.tv; }), inTape = known(D.tape_only, function (t) { return t; });
       var real = tvs.filter(function (v) { return v && !/[{}]/.test(v); });
-      var hit = real.map(inAssets).filter(Boolean)[0];
+      var hit = real.map(inAssets).filter(Boolean)[0], stock = real.map(inTape).filter(Boolean)[0];
       if (hit) { asset.value = hit; tapeSel = hit; land = asset; }
-      else {
-        tapeOnly = real.map(inTape).filter(Boolean)[0] || null;
-        // a tap the desk can't read keeps the default asset and says so, by the field
-        tapeMiss = !tapeOnly;
-        land = $e("assetnote");
-      }
+      else if (stock) { tapeOpt(stock); land = asset; }
+      // a tap the desk can't read keeps the default asset and says so, by the field
+      else { tapeMiss = true; land = $e("assetnote"); }
       // the tape's own parameters (and any TradingView adds after #desk) leave the address: a reload or a copied link
       // starts clean
       if (history.replaceState) history.replaceState(null, "", location.pathname + "#desk");
     }
-    asset.addEventListener("change", function () { tapeOnly = null; tapeSel = null; tapeMiss = false; render(); });
-    $e("chipb").addEventListener("click", function () { use(this.getAttribute("data-last")); });
+    asset.addEventListener("change", function () { clearTape(); tapeSel = null; tapeMiss = false; render(); });
+    // a button drawn for an asset the field no longer shows is redrawn, and fills nothing
+    $e("chipb").addEventListener("click", function () {
+      var sym = this.getAttribute("data-sym");
+      if (sym !== asset.value) { paintChip(); return; }
+      use(this.getAttribute("data-last"), sym);
+    });
     // a phone opens on the trade: the account and the risk cards start folded, their summaries showing
     if (window.matchMedia && window.matchMedia("(max-width:640px)").matches) ["st-account", "st-risk"].forEach(function (id) { $e(id).open = false; });
     // the gauge follows the layout: its positions are px along the track, so a new width redraws it
