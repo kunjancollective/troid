@@ -91,7 +91,21 @@ def run_profile(p, name, base, symbols):
                 rec["pause_error"] = str(e)[:120]
             navs.clear()
             opened.clear()
-            loc = fr.get_by_text(desc, exact=True).first
+            # the tape repeats its items to loop: tap the copy that is on screen and on top at its centre (the first copy
+            # can sit outside the frame, or under TradingView's logo link)
+            all_ = fr.get_by_text(desc, exact=True)
+            pick = None
+            for i in range(all_.count()):
+                c = all_.nth(i)
+                hit = c.evaluate("""e=>{const r=e.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+                  if(!r.width||x<0||y<0||x>innerWidth||y>innerHeight)return null;const t=document.elementFromPoint(x,y),a=e.closest('a');
+                  return a&&t&&a.contains(t)?a.getAttribute('href'):null}""")
+                if hit:
+                    pick, rec["tapped_href"] = c, hit
+                    break
+            loc = pick or all_.first
+            if not pick:
+                rec["tap_note"] = "no copy of the symbol on screen and on top; tapped the first"
             try:
                 rec["item_html"] = loc.evaluate("e=>{const x=e.closest('a,[role=link],[data-symbol],div');return (x||e).outerHTML.slice(0,400)}")
                 if dev:
@@ -112,6 +126,7 @@ def run_profile(p, name, base, symbols):
             out["taps"].append(rec)
             print(f"TAP {name} {desc}: navigations={rec.get('navigations')} new_tabs={len(rec['new_tabs'])} "
                   f"(closed {sum(1 for t in rec['new_tabs'] if t['closed'])}) desk={[(x.get('asset'), (x.get('note') or '')[:60]) for x in rec['pages']]}"
+                  + f" tapped={rec.get('tapped_href') or rec.get('tap_note')} tabs={[t['url'] for t in rec['new_tabs']]}"
                   + (f" error={rec.get('tap_error')}" if rec.get("tap_error") else ""), flush=True)
     finally:
         b.close()
