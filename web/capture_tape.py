@@ -55,12 +55,9 @@ def run_profile(p, name, base, symbols):
         ctx = b.new_context(**kw)
         navs, opened = [], []
 
-        def on_req(r):
-            try:
-                if r.is_navigation_request() and r.frame.parent_frame is None:
-                    navs.append(r.url)
-            except Exception:
-                pass
+        def on_req(r):                                  # every page load a tap starts, in any tab
+            if r.resource_type == "document" and "tvwidgetsymbol" in r.url:
+                navs.append(r.url)
         ctx.on("request", on_req)
         ctx.on("page", lambda q: opened.append(q))
         pg = ctx.new_page()

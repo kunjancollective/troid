@@ -1863,7 +1863,8 @@
       "click_through": {
         "url": "https://www.tradingview.com/widget-docs/faq/general/",
         "read": "2026-09-24",
-        "as_listed": "Example - https://yoursite.com/?tvwidgetsymbol={symbolname}"
+        "as_listed": "Example - https://yoursite.com/?tvwidgetsymbol={symbolname}",
+        "observed": "2026-09-25, the Ticker Tape on troid.ai read from inside its frame (web/capture_tape.py, GitHub Actions run 36194664227, desktop Chromium, iPhone 13 WebKit, Pixel 7 Chromium): each symbol's link is largeChartUrl as given with ?tvwidgetsymbol=EXCHANGE%3ASYMBOL appended, target=_blank; no {symbolname} is filled. troid gives it the bare page (web/tape_captured.json)"
       },
       "symbols_checked": "each symbol below found in TradingView's symbol search (symbol-search.tradingview.com) on 2026-09-24, exchange and name as given"
     },

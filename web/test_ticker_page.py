@@ -92,8 +92,9 @@ def main():
         ok("the tape's settings: transparent, one line (regular), no logos, English, the page's dark theme",
            cfg and cfg["isTransparent"] is True and cfg["displayMode"] == "regular" and cfg["showSymbolLogo"] is False
            and cfg["locale"] == "en" and cfg["colorTheme"] == "dark", cfg)
-        ok("a tapped symbol opens troid's desk with the symbol named, never TradingView's site",
-           cfg and cfg["largeChartUrl"] == "https://troid.ai/?tvwidgetsymbol={symbolname}#desk", cfg and cfg["largeChartUrl"])
+        # the bare page: TradingView appends ?tvwidgetsymbol=EXCHANGE%3ASYMBOL itself (captured, web/tape_captured.json)
+        ok("a tapped symbol opens troid's desk with the symbol named, never TradingView's site: the bare page, TradingView adds the symbol",
+           cfg and cfg["largeChartUrl"] == "https://troid.ai/", cfg and cfg["largeChartUrl"])
         ok("the box is the tape's height on a wide screen: 44 px", st["box"] == 44, st)
         a = pg.evaluate("""()=>{const a=document.querySelector('#tk .tkc a'),c=getComputedStyle(a).color,d=document.createElement('i');
           d.style.color=getComputedStyle(document.documentElement).getPropertyValue('--dim');document.body.appendChild(d);const v=getComputedStyle(d).color;d.remove();

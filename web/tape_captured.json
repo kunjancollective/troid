@@ -1,0 +1,19 @@
+{
+ "_what": "The links TradingView's real Ticker Tape put on each symbol on troid.ai, read from inside its frame by web/capture_tape.py in desktop Chromium, WebKit as an iPhone 13 and Chromium as a Pixel 7 (identical in all three), every one target=_blank. TradingView appends ?tvwidgetsymbol=EXCHANGE%3ASYMBOL to the end of largeChartUrl, whatever is already there, and fills no placeholder: with the old largeChartUrl the symbol landed after the #, and the desk read the unfilled {symbolname} (the owner's iPhone: XRP tapped, BTC selected). web/test_desk.py opens each of these as the old links and as the links the bare largeChartUrl gives.",
+ "captured": "2026-09-25, GitHub Actions run 36194664227 (.github/workflows/tape-capture.yml), https://troid.ai at 7be70e7",
+ "largeChartUrl_then": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk",
+ "links": {
+  "BTC": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=BINANCEUS%3ABTCUSDT",
+  "ETH": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=BINANCEUS%3AETHUSDT",
+  "SOL": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=BINANCEUS%3ASOLUSDT",
+  "XRP": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=BINANCEUS%3AXRPUSDT",
+  "BNB": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=BINANCEUS%3ABNBUSDT",
+  "XAU": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=OANDA%3AXAUUSD",
+  "WTI": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=OANDA%3AWTICOUSD",
+  "NVDA": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=NASDAQ%3ANVDA",
+  "AAPL": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=NASDAQ%3AAAPL",
+  "GOOGL": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=NASDAQ%3AGOOGL",
+  "MSFT": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=NASDAQ%3AMSFT",
+  "AMZN": "https://troid.ai/?tvwidgetsymbol={symbolname}#desk?tvwidgetsymbol=NASDAQ%3AAMZN"
+ }
+}

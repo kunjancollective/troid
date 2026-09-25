@@ -227,10 +227,13 @@ def _tape_name(T, s, group):
 def tape_config(T, path=None):
     """The Ticker Tape widget's settings (ticker v3 handoff, section B). web/public/ticker.js adds colorTheme from the
     page's theme when it loads the widget. A tapped symbol opens troid's desk with it named, never TradingView's site
-    (path: another page to open instead of the language's home page)."""
+    (path: another page to open instead of the language's home page). largeChartUrl is the bare page: the widget appends
+    ?tvwidgetsymbol=EXCHANGE%3ASYMBOL to whatever it is given and fills no {symbolname} placeholder (captured 2026-09-25,
+    web/tape_captured.json; the old ?tvwidgetsymbol={symbolname}#desk put the symbol after the #, where the desk didn't
+    look). desk2.js scrolls the desk into view itself."""
     return {"symbols": [{"proName": s["tv"], "description": _tape_name(T, s, g["group"])} for g in TAPE["groups"] for s in g["symbols"]],
             "showSymbolLogo": False, "isTransparent": True, "displayMode": "regular", "locale": TV_LOCALE.get(T.code, "en"),
-            "largeChartUrl": f"{BASE_URL}{path or T.L or '/'}?tvwidgetsymbol={{symbolname}}#desk"}
+            "largeChartUrl": f"{BASE_URL}{path or T.L or '/'}"}
 
 
 def ticker(T, desk=False, path=None, hint=False):

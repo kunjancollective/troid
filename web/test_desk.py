@@ -16,7 +16,8 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 - The entry chip: a crypto asset's spot price, "live … · use", "delayed" past 60 s, gone when there is none; gold, oil and
   stocks point to the tape. A tap fills the entry, lights it and leaves focus where it was; a stop the new entry leaves
   on the wrong side or more than 25% away is cleared ("Set your stop"), never BLOCK, never a suggested stop.
-- A tapped tape symbol (?tvwidgetsymbol=…#desk, with whatever TradingView adds after it) selects the asset, brings it into
+- A tapped tape symbol (?tvwidgetsymbol=…; every symbol's real link, captured from TradingView's tape, web/tape_captured.json,
+  as it was and as the bare largeChartUrl gives it) selects the asset, brings it into
   view lit, says "ETH selected · live … · use" or that live fill isn't available, fills nothing, shows no shared-link
   notice and leaves a clean address; a tab the tape opened hands the address to troid's tab and closes. The symbol counts
   wherever it arrives (the query, or after the #), never an unfilled {symbolname}; one the desk can't read keeps the
@@ -31,6 +32,7 @@ import sys
 import tempfile
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from playwright.sync_api import sync_playwright
 
@@ -298,6 +300,34 @@ def main():
             elif note:
                 ok(f"{label}: \"{note}…\", in view", note in t and got["noteview"] and MISS not in t, (t, got))
             ctx.close()
+        # 5b. every tape symbol as TradingView's real tape links it (captured 2026-09-25, web/tape_captured.json): the link
+        # as it was (the symbol after the #, an unfilled {symbolname} in the query) and the link the bare largeChartUrl gives
+        CAP = json.loads((ROOT / "web" / "tape_captured.json").read_text())
+        listed = {s["sym"] for g in UNI["groups"] for s in g["symbols"]}
+        for sym, link in CAP["links"].items():
+            u = urlsplit(link)
+            forms = {"as captured": f"{u.path}?{u.query}#{u.fragment}", "from the bare page": "/?" + u.fragment.split("?", 1)[1]}
+            res = {}
+            for form, path in forms.items():
+                ctx, pg, errs = page(path, w=390, is_mobile=True, has_touch=True)
+                res[form] = pg.evaluate("""()=>({asset:document.getElementById('asset').value,note:document.getElementById('assetnote').innerText,
+                  chip:document.getElementById('chipb').hidden?null:document.getElementById('chipb').innerText,
+                  chipm:document.getElementById('chipm').hidden?null:document.getElementById('chipm').innerText,
+                  shared:document.getElementById('shared').hidden,addr:location.pathname+location.search+location.hash})""")
+                res[form]["errs"] = errs
+                ctx.close()
+            def good(g):
+                if g["errs"] or MISS in g["note"] or not g["shared"] or g["addr"] != "/#desk":
+                    return False
+                if sym not in listed:
+                    return g["asset"] == "BTC" and g["note"].startswith(f"{sym} is on the tape as market context")
+                if sym in ("XAU", "WTI"):
+                    return g["asset"] == sym and g["chipm"] == EN["desk2.js.chip_no_fill"].format(asset=EN[f"ticker.sym.{sym}"])
+                return g["asset"] == sym and (g["chip"] or "").startswith(f"{sym} selected · live")
+            what = "selected" if sym in listed else "named as market context"
+            ok(f"the real tape's {sym} link, as captured and from the bare page: {sym} {what}, never unread, no shared-link notice",
+               all(good(g) for g in res.values()), res)
+
         ctx = b.new_context(viewport={"width": 1280, "height": 900})
         ctx, first, errs = page(ctx=ctx)
         with ctx.expect_page() as info:
