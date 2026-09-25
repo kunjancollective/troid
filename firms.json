@@ -874,7 +874,12 @@
         "troid": "9%, the help centre's figure; the Terms are silent on the Express"
       }
     ],
-    "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes."
+    "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes.",
+    "reset_clock": {
+      "time": "16:00",
+      "tz": "UTC",
+      "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc). 00:00 UTC+8 is 16:00 UTC; the help centre says it takes effect by 00:10 UTC+8."
+    }
   },
   "brightfunded": {
     "name": "BrightFunded",
@@ -1228,6 +1233,11 @@
         "PK": "listed by propfirmmatch; not read in BrightFunded's terms",
         "AE": "MT5 bar for the UAE recorded in troid's notes without a clause"
       }
+    },
+    "reset_clock": {
+      "time": "23:30",
+      "tz": "Europe/Berlin",
+      "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc). The CET rollover starts 23:30 Central European time, so 21:30 UTC in summer (CEST) and 22:30 UTC in winter."
     }
   },
   "_excluded": {
@@ -1676,6 +1686,11 @@
       },
       "not_from_terms": {},
       "basis": "none listed, per the owner's reading of the Terms and Conditions (HANDOFF-global-launch \u00a74); clause not recorded"
+    },
+    "reset_clock": {
+      "time": "00:05",
+      "tz": "UTC",
+      "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc)."
     }
   },
   "_watch": {

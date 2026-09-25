@@ -45,7 +45,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   shares — the footer line and the verbatim 17 CFR 4.41(b)(1)(i) hypothetical-performance text — and
   `gen_compare.py` writes the footer into the marked `<!-- footer -->` region of every static page.
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
-  `data.yml` is the one-shot multi-year fetch.
+  `data.yml` is the one-shot multi-year fetch; `calendar.yml` reads the BLS, BEA and Fed release schedules into
+  `web/public/calendar.json` every Monday for the calendar strip (`backtest/fetch_calendar.py`; no forecasts).
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as

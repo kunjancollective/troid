@@ -72,6 +72,29 @@ button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
 .tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
 .tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
+/* the calendar strip under the tape (web/public/calendar.js; ticker v2 handoff, section D): the scheduled US releases of
+   the next 7 days on one line, 32 px tall whatever shows (so every event is a 32 px target, over WCAG's 24), hidden with
+   its space kept until the schedule loads, and when it can't or is over 14 days old. When the events don't fit, the row
+   and a copy of it move by a transform (calendar.js sets --calx and --calt, about 40 px/s) and hold while hovered,
+   touched or open; keyboard focus, the tape's pause and reduced motion make it a still row that swipes. Its note is a
+   .pop (web/public/pop.js), below: no shadow, --surface2 and a --line border (BRAND.md). */
+.cal{height:32px;margin-top:4px;overflow:hidden;font-family:var(--mono);font-size:11px;line-height:32px;color:var(--dim)}
+.cal.off{visibility:hidden}
+.calrow{display:flex;align-items:baseline;gap:0 8px;height:32px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  scrollbar-width:none;white-space:nowrap}
+.calrow::-webkit-scrollbar{display:none}
+.cal.mv .calrow{width:max-content;overflow:visible;scroll-snap-type:none;animation:calmv var(--calt,60s) linear infinite}
+.cal.mv.hold .calrow{animation-play-state:paused}
+@keyframes calmv{to{transform:translateX(var(--calx,0))}}
+.cale{flex:none;scroll-snap-align:start;height:32px;padding:0 3px;border:0;background:none;color:inherit;font:inherit;
+  line-height:inherit;font-variant-numeric:tabular-nums;cursor:pointer}
+.cale b{font-weight:600;color:var(--ink)}.cale:hover b,.cale[aria-expanded="true"] b{color:var(--signal)}
+.cale:focus-visible{outline:1px solid var(--signal);outline-offset:-3px}
+.calsep{flex:none;color:var(--line)}.calempty{flex:none;padding:0 3px}
+@media (prefers-reduced-motion:reduce){.cal.mv .calrow{animation:none}}
+.pop{position:absolute;z-index:var(--z-popover,40);max-width:280px;padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
+.pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
 nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
 /* type */

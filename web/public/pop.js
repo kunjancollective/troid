@@ -9,6 +9,7 @@
    of the page when it opens, so no box that clips its contents can cut it off, and placed under its button, inside
    the window. No framework; the page's CSS draws it (.pop, .term): --surface2 and a --line border, no shadow. */
 (function () {
+  if (window.troidPop) return;        // loaded once: the desk loads it, and so does every page's calendar strip
   var open = null, openBtn = null, timer = null;
   function trigger(t) { return t && t.closest ? t.closest("[data-tip],[data-pop]") : null; }
   function place(btn, pop) {

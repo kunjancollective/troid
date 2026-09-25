@@ -263,7 +263,28 @@ def ticker(T, desk=False):
             f'<button type="button" class="tkp" aria-controls="tk" aria-label="{T.attr("ticker.pause_label")}"'
             f' data-pause="{T.attr("ticker.pause_label")}" data-play="{T.attr("ticker.play_label")}">'
             f'<span class="tkpp">{T("ticker.pause")}</span><span class="tkpl">{T("ticker.play")}</span></button></p>'
-            f'</div>{note}<script src="/ticker.js" defer></script>')
+            f'</div>{calendar_strip(T, desk)}{note}<script src="/ticker.js" defer></script>')
+
+
+CAL_KINDS = ["cpi", "ppi", "jobs", "jolts", "gdp", "pce", "fomc", "minutes"]
+
+
+def calendar_strip(T, desk=False):
+    """The calendar strip under the tape (web/public/calendar.js; ticker v2 handoff, section D, kept by v3): the scheduled
+    US releases of the next 7 days, from web/public/calendar.json, each opening a note with its source (pop.js, which
+    the desk's template loads itself). On the desk each event says how long before or after the selected firm's reset
+    it lands. Hidden, its space kept, until the schedule loads, and when it can't or is over 14 days old. The note says
+    why troid lists them, the MEASURED finding with its sample (verify_claims re-measures it), and what it doesn't show."""
+    t = {"kinds": {k: T(f"calendar.kind.{k}") for k in CAL_KINDS}, "longs": {k: T(f"calendar.long.{k}") for k in CAL_KINDS},
+         "est": {k: T(f"calendar.est.{k}") for k in ("advance", "second", "third")},
+         **{k: T(f"calendar.{k}") for k in ("before", "after", "h", "hm", "m", "empty")},
+         **{k: T(f"calendar.note.{k}") for k in ("what", "inside", "outside", "source")}}
+    data = html.escape(json.dumps(t, ensure_ascii=False, separators=(",", ":")), quote=True)
+    return (f'<div class="cal off" id="cal" role="region" aria-label="{T.attr("calendar.aria")}" data-t="{data}"><div class="calrow"></div></div>'
+            f'<div class="pop" id="cal-note" hidden><p class="cn1"></p>'
+            f'<p>{T("calendar.note.why")} {T("calendar.note.measured")} {T("calendar.note.cause")}</p>'
+            f'<p class="cn2"></p><p class="cn3"></p></div><script src="/calendar.js" defer></script>'
+            + ("" if desk else '<script src="/pop.js" defer></script>'))
 
 
 def html_attrs(T):

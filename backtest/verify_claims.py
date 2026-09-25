@@ -433,6 +433,32 @@ check("SOURCED", f"glossary example: {_rf['name']} \"{_cp['label']}\" has a {_cp
 check("DERIVED", "glossary: every field label and readout figure on the desk opens a note that exists", float(all(
     f'id="g-{t}"' in _read("web/public/index.html") for t in _re.findall(r'data-tip="g-([a-z_]+)"', _read("web/public/index.html") + _read("web/templates/index.html")))), 1.0)
 
+# the calendar strip (ticker v2, section D): the MEASURED sentence its note quotes, re-measured from the frozen
+# multi-year Binance.US 4h files (a bar's width is (high - low) / open; the widest tenth is the top 10% by width; a bar
+# is named by the UTC hour it opens), and every page that carries the note says it with what it doesn't show
+import datetime as _dt
+def _widest(sym):
+    rows = [[float(x) for x in r.split(",")] for r in _read(f"backtest/data/{sym}_4h.csv").splitlines() if r[:1].isdigit()]
+    top = sorted(rows, key=lambda r: (r[2] - r[3]) / r[1], reverse=True)[:len(rows) // 10]
+    return rows, sum(1 for r in top if int(r[0]) // 3600 % 24 == 12) / len(top) * 100
+_btc_rows, _btc12 = _widest("BTCUSDT")
+_eth_rows, _eth12 = _widest("ETHUSDT")
+_y0, _y1 = (_dt.datetime.fromtimestamp(_btc_rows[i][0], _dt.timezone.utc).year for i in (0, -1))
+check("MEASURED", f"calendar note: the 12:00-16:00 UTC bar holds {_btc12:.1f}% of BTC's widest tenth ({len(_btc_rows)} bars)", round(_btc12), 27, 0, "%")
+check("MEASURED", f"calendar note: and {_eth12:.1f}% of ETH's ({len(_eth_rows)} bars)", round(_eth12), 25, 0, "%")
+check("DERIVED", "calendar note: an even spread over six bars gives 17%", round(100 / 6), 17, 0, "%")
+_meas = (f"MEASURED: in Binance.US 4h bars from {_y0} to {_y1}, the bar from 12:00 to 16:00 UTC holds {round(_btc12)}% of BTC's widest "
+         f"tenth and {round(_eth12)}% of ETH's; an even spread would give {round(100 / 6)}%.")
+check("DERIVED", f"calendar note: en.json states the measurement as measured ({_y0} to {_y1})", float(_en["calendar.note.measured"] == _meas), 1.0)
+for _pg in [p for p in _SB.PAGES if p != "tearsheet"]:
+    _t = " ".join(_html.unescape(_read(f"web/public/{_pg}.html")).split())
+    check("DERIVED", f"{_pg}: the calendar note carries the MEASURED sentence, and that troid hasn't tested the cause",
+          float(_meas in _t and _en["calendar.note.cause"] in _t and "move prices fast" not in _t), 1.0)
+_calj = _json.loads(_read("web/public/calendar.json"))
+check("SOURCED", f"calendar.json: all {len(_calj['events'])} events name an agency page and the date troid read it", float(all(
+    _e["url"].startswith({"BLS": "https://www.bls.gov/", "BEA": "https://www.bea.gov/", "Federal Reserve": "https://www.federalreserve.gov/"}[_e["source"]])
+    and _re.fullmatch(r"\d{4}-\d{2}-\d{2}", _e["read"]) for _e in _calj["events"])), 1.0)
+
 print()
 print("="*76)
 print(f"  RESULT: {len(FAIL)} failed check(s)" + (f" -> {FAIL}" if FAIL else " - all derivations reproduce"))

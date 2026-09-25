@@ -146,6 +146,8 @@ stocks are names there: their quotes are TradingView's and troid doesn't copy th
 layout at every width, the smallest TradingView draws) and one label cell, so the header never changes height.
 `web/public/ticker.js`, `web/api/ticker.js`, `backtest/site_build.py` (`ticker`).
 
+**Calendar strip.** One line under the tape's label, 32 px tall whatever it shows: the scheduled US releases of the next 7 days, each "CPI (Aug) · Tue 08:30 · 12:30 UTC" with the kind in `--ink` and the rest in `--dim`, separated by a `--line` │; on the desk each adds how long before or after the selected firm's nearest reset it lands. Names, times and sources only, never a forecast or a consensus. A tap opens a note (the popover below) saying what it is, the agency and read date, why troid lists it, the MEASURED finding stated as measured, with its sample, and that troid hasn't tested whether the releases are the cause, never "releases move prices". Empty week: "Next 7 days: no US releases scheduled." A schedule that fails or has gone stale: the line is hidden and its space kept, so nothing under it moves. When the events don't fit they move at about 40 px/s and hold while hovered, touched or open; keyboard focus, the tape's pause and reduced motion stop it. `web/public/calendar.js`, `backtest/fetch_calendar.py`, `backtest/site_build.py` (`calendar_strip`).
+
 **Term and popover.** A term is its own trigger: every field label on the desk and every figure in its readout (the
 verdict's badge, the binding limit and the room, each cell's label, each breaker, the losses left) carries a dotted
 underline in its own ink, is reachable by Tab, and has a target of at least 24 px that stays off the input under it; no

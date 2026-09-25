@@ -1,0 +1,46 @@
+name: calendar — weekly release schedules
+
+# Once a week, reads the release schedules the US government publishes (BLS, BEA, the Federal Reserve) into
+# web/public/calendar.json for troid's calendar strip, and commits the diff. Names, times and sources only: no
+# forecasts. A source that refuses keeps the events it gave last time, with their old read date
+# (backtest/fetch_calendar.py); the page hides a list whose newest read is over 14 days old.
+
+on:
+  schedule:
+    - cron: "17 6 * * 1"          # Mondays 06:17 UTC
+  workflow_dispatch:              # manual run from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: calendar
+  cancel-in-progress: false
+
+jobs:
+  calendar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read the schedules
+        working-directory: backtest
+        run: python fetch_calendar.py
+
+      - name: Commit the week's schedule
+        run: |
+          git config user.name "troid-calendar"
+          git config user.email "calendar@troid.ai"
+          git add web/public/calendar.json
+          if git diff --cached --quiet; then
+            echo "no change this week"
+          else
+            git commit -m "calendar: $(date -u +%Y-%m-%d) — $(python3 -c "import json;d=json.load(open('web/public/calendar.json'));k=sum(1 for v in d['reads'].values() if v!=d['read']);print(f\"{len(d['events'])} events, {k} source(s) kept from an earlier read\")")"
+            git pull --rebase origin main    # the shadow run may have pushed in between
+            git push
+          fi

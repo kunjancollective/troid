@@ -104,6 +104,8 @@ def profiles_js(T=None):
                                    "lev": cite(f, "max_leverage", pk, fallback="max_leverage" not in pc)}}
         if products:
             out[k] = {"name": f["name"], "products": products}
+            if f.get("reset_clock"):                        # the calendar strip's "before the reset" (calendar.js)
+                out[k]["reset"] = {"time": f["reset_clock"]["time"], "tz": f["reset_clock"]["tz"]}
     ascii_ = site_text._english(T)                  # English exactly as before; other scripts written as themselves
     return ("<script>var FIRMS=" + json.dumps(out, separators=(",", ":"), ensure_ascii=ascii_) + ";var PROV_TAIL="
             + json.dumps(T("prov.tail"), ensure_ascii=ascii_)
