@@ -1,12 +1,13 @@
-/* troid's popovers (design handoff 2026-09-24, sections 2 and 6): a "?" beside a term explains it, in one or two
-   plain sentences from web/i18n. Two kinds share this file, and at most one is open at a time.
+/* troid's popovers (design handoff 2026-09-24, sections 2 and 6; glossary v2): a term (a field label, a readout
+   figure, dotted underline) explains itself in a note built from web/i18n (backtest/regions.glossary_html). Two kinds
+   share this file, and at most one is open at a time.
    - [data-tip="id"]: a tooltip (role="tooltip", linked by aria-describedby, so a screen reader hears it without
      opening it). It shows after 300 ms of hover or at once on keyboard focus; a tap opens and closes it on a phone.
    - [data-pop="id"]: a note with links in it ("why these 3?"). It opens and closes on a click or tap, never on hover,
      and its button carries aria-expanded.
    Esc closes either and returns focus to its button; so does a click or tap anywhere else. The note is moved to the end
    of the page when it opens, so no box that clips its contents can cut it off, and placed under its button, inside
-   the window. No framework; the page's CSS draws it (.pop, .qm): --surface2 and a --line border, no shadow. */
+   the window. No framework; the page's CSS draws it (.pop, .term): --surface2 and a --line border, no shadow. */
 (function () {
   var open = null, openBtn = null, timer = null;
   function trigger(t) { return t && t.closest ? t.closest("[data-tip],[data-pop]") : null; }
