@@ -141,7 +141,8 @@
     note.querySelector(".cn1").textContent = F(S.what, { what: (S.longs[e.kind] || e.kind) + (p ? " (" + p + ")" : ""), source: e.source,
       when: when(t, fLong) });
     note.querySelector(".cn2").textContent = mins >= 720 && mins < 960 ? S.inside : S.outside;
-    note.querySelector(".cn3").innerHTML = F(S.source, { url: esc(e.url), source: esc(e.source), date: esc(e.read) });
+    note.querySelector(".cn3").innerHTML = F(S.source, { url: esc(e.url), source: esc(e.source),
+      date: '<span style="white-space:nowrap">' + esc(e.read) + "</span>" });   // a date never breaks at its hyphen
   }, true);
 
   fetch("/calendar.json").then(function (r) {
