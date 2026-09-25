@@ -174,3 +174,5 @@ The header is the same `.bar` markup on every page: the `tr●id` wordmark (`sit
 goes in it. The wordmark's letters are SVG paths drawn from `brand/PlexMono-SemiBold.ttf` by
 `backtest/wordmark.py`, in the line box the text had (1.175em above the baseline, .425em below): a phone that has
 not loaded Plex yet draws the same wordmark, so nothing moves when the font arrives. The dot and its floors stay CSS.
+
+On a phone (640 px and under) the header gives way to the desk: the wordmark is 1.5× its size (32 px, the largest thing in the header, above every page's headline, which steps down to 24 px, 22 px on the faq and research), the nav is one line that scrolls sideways to the screen's edges with 29 px targets, and the spacing tightens, so the desk's first field ends inside a 390 × 844 iPhone's first screen (664 px under Safari's bars). Above 640 px nothing changes. `backtest/phone_check.py` holds all three at every phone width.

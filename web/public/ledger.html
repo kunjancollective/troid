@@ -119,9 +119,22 @@ nav a{color:var(--dim);text-decoration:none}
 nav a:hover{color:var(--ink)}
 .discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
 .hero{margin-bottom:38px}
-h1{font-size:clamp(30px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
+h1{font-size:clamp(24px,5.2vw,46px);line-height:1.08;letter-spacing:-.035em;
   font-weight:700;margin:0 0 14px;max-width:16ch}
 .lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+/* the phone header (the owner's Android check, 2026-09-25): the wordmark 1.5x its size, the page's headline clearly
+   under it, the nav on one line that scrolls sideways to the screen's edges (each link a 29 px target), and less space
+   between them, so the desk's first field shows on a 390 px screen. Above 640 px nothing here applies. */
+@media (max-width:640px){
+  header{padding-top:16px;margin-bottom:26px}
+  .bar{row-gap:10px}
+  .mark{font-size:32px}
+  nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
+    scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
+  nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
+  .hero{margin-bottom:24px}
+  h1{font-size:clamp(24px,5.2vw,28px);max-width:none}
+}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
   padding:22px;margin-bottom:14px}
 .eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;

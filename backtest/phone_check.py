@@ -8,6 +8,10 @@ passes the viewport's, unless that element sits inside a box that scrolls on its
 controls are sized as WebKit sizes them (WEBKIT_CONTROLS). The header's price tape is present, laid out as TradingView's
 script lays it out (tv_stub.py).
 
+The phone header (the owner's Android check, 2026-09-25) is held too: on every page at every width the nav is one line
+and the wordmark is larger than the page's headline; and at 390 px the desk's first field ends inside the first screen,
+FIRST_SCREEN px, the height a 390 x 844 iPhone shows under Safari's bars.
+
   python phone_check.py                     # every page, web/public as it is
   python phone_check.py --pages index
   python phone_check.py --rev HEAD          # the pages as a revision left them
@@ -23,6 +27,15 @@ from tv_stub import route_tv  # noqa: E402
 PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
 # (device width, text size): the CSS width Safari lays out
 WIDTHS = sorted({round(w / z) for w in (375, 390) for z in (1.0, 1.15, 1.3)})
+
+FIRST_SCREEN = 664
+
+HEADER = """() => {
+  const q = s => document.querySelector(s), px = e => parseFloat(getComputedStyle(e).fontSize);
+  const nav = q('nav'), mark = q('.mark'), h1 = q('h1'), firm = q('#firm');
+  return { navH: nav ? Math.round(nav.getBoundingClientRect().height) : 0, navLine: nav ? parseFloat(getComputedStyle(nav).lineHeight) || 20 : 0,
+           mark: mark ? px(mark) : 0, h1: h1 ? px(h1) : 0, firm: firm ? Math.round(firm.getBoundingClientRect().bottom + scrollY) : null };
+}"""
 
 OVER = """() => {
   const W = document.documentElement.clientWidth, out = [];
@@ -98,6 +111,15 @@ def main():
                 pg = ctx.new_page()
                 pg.goto(url + ("/" if name == "index" else f"/{name}"), wait_until="load")
                 pg.wait_for_timeout(400)
+                h = pg.evaluate(HEADER)
+                hdr = []
+                if h["navH"] > 40:
+                    hdr.append(f"the nav is {h['navH']} px tall, more than one line")
+                if h["mark"] and h["h1"] and not h["mark"] > h["h1"]:        # the tearsheet (quantstats) has no troid header
+                    hdr.append(f"the headline ({h['h1']:g} px) is not smaller than the wordmark ({h['mark']:g} px)")
+                if name == "index" and w == 390 and not (h["firm"] and h["firm"] <= FIRST_SCREEN):
+                    hdr.append(f"the desk's first field ends at {h['firm']} px, past the first screen ({FIRST_SCREEN} px)")
+                fails += [f"{name} {w}px header: {x}" for x in hdr]
                 views = desk_views(pg) if name == "index" else iter(["page"])
                 bad = 0
                 for v in views:
@@ -107,13 +129,14 @@ def main():
                         bad += 1
                         if bad <= 3:
                             fails.append(f"{name} {w}px {v}: scrolls {r['sideways']}px sideways; " + " | ".join(r["over"][:4]))
-                print(("ok  " if not bad else "FAIL") + f" {name} {w}px" + (f" ({bad} views)" if bad else ""))
+                print(("ok  " if not (bad or hdr) else "FAIL") + f" {name} {w}px" + (f" ({bad} views)" if bad else "")
+                      + (f" (header: {'; '.join(hdr)})" if hdr else "") + (f" · first field ends at {h['firm']} px" if name == "index" else ""))
                 ctx.close()
         b.close()
     srv.shutdown()
     for f in fails:
         print("FAIL", f)
-    print(f"RESULT: {len(fails)} overflow(s) at {', '.join(map(str, WIDTHS))} CSS px")
+    print(f"RESULT: {len(fails)} problem(s) (overflow or header) at {', '.join(map(str, WIDTHS))} CSS px")
     sys.exit(1 if fails else 0)
 
 
