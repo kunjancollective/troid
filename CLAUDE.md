@@ -46,7 +46,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `gen_compare.py` writes the footer into the marked `<!-- footer -->` region of every static page.
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch; `calendar.yml` reads the BLS, BEA and Fed release schedules into
-  `web/public/calendar.json` every Monday for the calendar strip (`backtest/fetch_calendar.py`; no forecasts).
+  `web/public/calendar.json` every Monday for the calendar strip (`backtest/fetch_calendar.py`; no forecasts);
+  `tape-capture.yml`, by hand, taps every symbol on the live TradingView tape in three browsers and records the link it
+  really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
+  given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
