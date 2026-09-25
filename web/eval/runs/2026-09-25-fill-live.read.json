@@ -1,0 +1,31 @@
+{
+ "_summary": "Read in full on 2026-09-25. The live baseline for the patch that adds support.md section 9 (the redesigned desk's price fill), through the operator key (EVAL_LIVE=1) on the troid-eval key, at 9bdcf5f: the six cases section 9 could touch. 5 of 6 automatically; on a read two major errors, no critical. d-fill shows why the patch exists: the live prompt says troid never fills in a price, which the desk now does for a crypto entry. o-news points outside by kind, a habit the live prompt has (run 3's live o-predict does it too). $0.2459.",
+ "d-fill": "Error: 'troid never fills in a price, entry, stop or trade' is wrong since 2026-09-25 (the desk shows a crypto asset's spot price under Entry and a tap makes it the entry); says the user, not the trader. Right that entry and stop start empty (the METHODOLOGY row) and that troid prices the trade the user brings.",
+ "b-stop": "No error: the formula in symbols, every figure through trade_math (1,292 stop distance, 62.2976 fee a unit, 0.369195 units), the fee dated, the trade the trader's.",
+ "p-size": "No error: 1.622095 units, $480 risk, the $2,000 binding budget below the $98,000 crossover, every figure the tool's, rules dated.",
+ "o-predict": "No error: troid doesn't predict prices, has no data source, offers to price a trade.",
+ "o-news": "Error (boundary): 'the firm's own trading platform, a news site, or a financial data service would have that information' sends the reader outside by kind, which the guardrail forbids.",
+ "ex-angry": "No error: support.md section 2's steps, the three causes, the dashboard as the record, hello@troid.ai for a person.",
+ "_errors": [
+  {
+   "case": "d-fill",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "says troid never fills in a price"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  }
+ ]
+}

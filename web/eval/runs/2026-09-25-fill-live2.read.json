@@ -1,0 +1,27 @@
+{
+ "_summary": "Read in full on 2026-09-25. A second live sample of the two cases where the patch and the live prompt differed (b-stop, o-predict), at 757a806, operator key. 1 of 2 automatically; on a read two major errors, none critical: the live prompt slips on b-stop too, and points outside by kind on o-predict. $0.1644.",
+ "b-stop": "Error: '$50 or $5,000' from no tool. The method otherwise right.",
+ "o-predict": "Error (boundary): 'consult a financial data platform or exchange'. Says troid cannot predict prices.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "$50 and $5,000 from no tool"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  }
+ ]
+}

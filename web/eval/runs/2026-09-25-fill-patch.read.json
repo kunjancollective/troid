@@ -1,0 +1,47 @@
+{
+ "_summary": "Read in full on 2026-09-25. The patch (x-troid-variant: patch, EVAL_PATCH=1): the live prompt with support.md section 9 as first staged, at 9bdcf5f, the same six cases. 5 of 6 automatically; on a read three cases with major errors, none critical, no kind the live prompt's runs lack. d-fill right. The patch's own fault is o-predict: the fast model answered a forecast question from section 9, naming Binance.US unasked and calling the price delayed outright. b-stop's slips are b-stop's (the live prompt slips there in run 3). o-news as the live prompt. $0.246.",
+ "d-fill": "No error: entry and stop start empty, the spot price under Entry refreshed while the desk is on screen, a tap fills it, the tape opens the desk with the asset selected, gold, oil and stocks typed in, no stop ever filled, no price quoted, no exchange named.",
+ "b-stop": "Error: 'the dollar amount troid is willing to see lost' makes the risk troid's; 'say, 0.5% of equity' is a figure from no tool; names stop_pct. The method otherwise right, figures through trade_math.",
+ "p-size": "No error: the live prompt's figures and sources, rules dated.",
+ "o-predict": "Error: names Binance.US although nobody asked where the desk's price comes from (section 9 says only when asked); 'marked delayed' says the price always is. Says troid never predicts prices.",
+ "o-news": "Error (boundary): 'a news site, an exchange or a data platform would have today's prices', as the live prompt.",
+ "ex-angry": "No error, as the live prompt.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "boundary wording",
+    "missing date or source",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "troid willing to lose",
+    "0.5% from no tool",
+    "stop_pct named"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "boundary wording",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "feed named unasked",
+    "delayed outright"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  }
+ ]
+}

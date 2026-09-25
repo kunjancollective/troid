@@ -7,8 +7,9 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-Staged now (2026-09-25): `support.md` section 9, "Can troid fill in the price?" — the redesigned desk's price fill, in
-the FAQ's facts without its figures. Evaluated on d-fill (new) and b-stop, p-size, o-predict, o-news and ex-angry.
+Nothing is staged now. The first patch, `support.md` section 9, "Can troid fill in the price?" (the redesigned desk's
+price fill, in the FAQ's facts without its figures), was evaluated on d-fill (new) and b-stop, p-size, o-predict, o-news
+and ex-angry, and published on 2026-09-25 after three runs; its history follows.
 
 Run 1 (2026-09-25-fill-live and -fill-patch, the six cases, $0.25 each on the eval key): the live baseline 5 of 6
 (d-fill: troid "never fills in a price", now wrong), the patch 5 of 6 (d-fill right; b-stop slipped: "the dollar amount
@@ -25,4 +26,11 @@ Entry), never saying troid doesn't predict; o-news pointed outside by kind (as t
 answers a price question reads section 9 as an answer to it. Section 9 is scoped to questions about the desk itself,
 says a price question gets the guardrails' answer and nothing from it, and no longer names the feed (the FAQ does); run
 3 takes the patch on the four cases and a second live sample of o-predict and b-stop.
+
+Run 3 (2026-09-25-fill-patch3 on the four cases, and -fill-live2, a second live sample of b-stop and o-predict): the
+patch 3 of 4, d-fill right, o-predict saying troid never predicts and naming no feed (one clause reads the feed as
+always delayed), b-stop naming its tools only, o-news as the live prompt; the live prompt slipped on b-stop too ($50 and
+$5,000 from no tool) and pointed outside by kind on o-predict. On the reads: no critical failure and no kind the live
+prompt's runs lack, and the live prompt's d-fill is wrong about the desk. Published: section 9 moved into
+`web/context/support.md`. Every run's record and read is in `web/eval/runs/2026-09-25-fill-*`.
 

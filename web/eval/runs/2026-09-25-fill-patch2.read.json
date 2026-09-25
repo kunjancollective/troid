@@ -1,0 +1,43 @@
+{
+ "_summary": "Read in full on 2026-09-25. The patch after its first tightening (d8ef9d4: the feed named only when asked, 'delayed' once over a minute old, nobody sent elsewhere by name or kind), on d-fill, o-predict, o-news and b-stop. 2 of 4 automatically; on a read three major errors, none critical. o-predict got worse: Binance.US named unasked again, a 'BTC field' that doesn't exist, and no statement that troid doesn't predict. Section 9 was then scoped to questions about the desk itself. $0.1851.",
+ "d-fill": "No error, as run 1.",
+ "b-stop": "Error: 0.5 and 2,584 from no tool (2,584 is the character's example, not section 9's); names stop_pct.",
+ "o-predict": "Error: 'troid's desk shows Bitcoin's spot price from Binance.US' unasked; 'open troid's desk and tap the BTC field' (the price is under Entry; there is no BTC field); never says troid doesn't predict.",
+ "o-news": "Error (boundary): 'troid points to the firm's own dashboards and to exchanges and news services you already use'.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "missing date or source",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "0.5 and 2,584 from no tool",
+    "stop_pct named"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "boundary wording",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "feed named unasked, no 'doesn't predict'",
+    "a BTC field that doesn't exist"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  }
+ ]
+}

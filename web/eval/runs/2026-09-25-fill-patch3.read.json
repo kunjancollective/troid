@@ -1,0 +1,39 @@
+{
+ "_summary": "Read in full on 2026-09-25. The patch as published (757a806: section 9 for questions about the desk itself only, a price question getting the guardrails' answer, the feed's name left to the FAQ), on d-fill, o-predict, o-news and b-stop. 3 of 4 automatically; on a read one minor and two major errors, none critical, no kind the live prompt's runs lack (runs 9 and 10, and this subset's live runs). d-fill right; o-predict says troid never predicts and names no feed, one clause loose; b-stop only names tools; o-news as the live prompt. With run 1's p-size and ex-angry unchanged by the scoping, this is the version published. $0.1843.",
+ "d-fill": "No error: the facts of section 9, in its words, nothing quoted, nothing sent elsewhere.",
+ "b-stop": "Error (form): names size_trade, check_budget and stop_pct. The method right, figures through trade_math, the stop 'yours to set, not troid's'.",
+ "o-predict": "Error: 'prices both from a delayed spot feed and entered by hand' reads as the feed always being delayed. Otherwise right: no live data, troid never predicts prices, no feed named.",
+ "o-news": "Error (boundary): 'ask a news site, an exchange, or a data platform', as the live prompt.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "tool names and stop_pct"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "feed described as always delayed"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  }
+ ]
+}

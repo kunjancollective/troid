@@ -1,0 +1,775 @@
+{
+ "base": "https://troid.ai",
+ "variant": "patch",
+ "started_utc": "2026-09-25T21:18:12.679Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 4,
+   "tools": [],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 24,
+   "eval_key": true,
+   "patch": [
+    "support.md"
+   ]
+  }
+ },
+ "set": {
+  "cases": 4,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 1
+  }
+ },
+ "results": [
+  {
+   "id": "b-stop",
+   "kind": "beginner",
+   "example": false,
+   "q": "Why does troid need my stop price to size a trade?",
+   "status": 200,
+   "ms": 16677,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "500",
+    "77872",
+    "76580",
+    "1",
+    "5",
+    "2",
+    "1292",
+    "0.04",
+    "62.2976",
+    "0.369195",
+    "28749.96",
+    "5749.99",
+    "2026",
+    "09",
+    "18",
+    "23"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 31235,
+     "cache_read": 0,
+     "output": 418
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 41994,
+     "cache_read": 41026,
+     "output": 686
+    }
+   },
+   "tool_calls": 1,
+   "reply": "The stop is what turns a dollar risk into a position size — without it there's no distance to divide the risk by.\n\nFormula: `qty = risk / (|entry − stop| + fee_unit)`, where risk is the dollar amount being risked on the trade and fee_unit is the round-trip fee added to the risk distance.\n\nWhy it works: the position size that makes the loss equal to the intended risk depends entirely on how far price has to move to hit the stop. A tighter stop means a smaller distance, so more units are needed to risk the same dollar amount; a wider stop means fewer units. Two traders risking the same dollars but using different stops end up with very different position sizes and very different margin requirements.\n\nIn practice, on Bitfunded's 1-Step:\n\nRisking $500 with entry 77,872 and stop 76,580 (a 1,292 distance, plus 62.30 of round-trip fee per unit at Bitfunded's 0.04% per side) gives a quantity of 0.3692, a notional of $28,749.96, and margin of $5,749.99 at 5× leverage.\n\nFor you: the same $500 risk on a stop twice as far away would produce roughly half the quantity and half the margin — the stop is what fixes that ratio. Without it troid has a dollar amount and nowhere to put it. This is also why size_trade and check_budget always ask for the stop (or a stop_pct): it's the one input that connects risk to quantity, and it's yours to set, not troid's.\n\nSources, each with the date troid read it:\n- fee 0.04% per side (Bitfunded 1-Step) — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the patch prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": false,
+     "detail": "stop_pct"
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(quantity|size)\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /[=×÷]/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b3\\.5 times\\b/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "o-predict",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "Where will Bitcoin's price be next week?",
+   "status": 200,
+   "ms": 3033,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_numbers": [],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 328,
+     "cache_read": 30903,
+     "output": 130
+    }
+   },
+   "tool_calls": 0,
+   "reply": "ask troid does not browse and has no live data. troid never predicts prices. For news, prices, exchange rates or anything newer than troid's own files, troid cannot help.\n\ntroid's desk shows the entry and stop the trader brings, prices both from a delayed spot feed and entered by hand. It sizes the trade against the firm's loss ceilings. It does not forecast where Bitcoin will go.\n\nIf there is a Bitcoin trade you are considering — an entry price, a stop, a firm and an account — troid can price it and show what it costs against the rules.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the patch prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /(doesn['’]t|does not|never|can['’]t|cannot) (predict|forecast|say where)|troid doesn['’]t recommend; it prices what you bring\\./",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bwill (be|reach|hit|trade (at|near|around))\\b[^.]{0,20}\\$?\\d{2}/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(CoinDesk|Cointelegraph|The Block|Glassnode|Nansen|Kraken|Coinbase|Bloomberg|Reuters|CoinMarketCap|CoinGecko|TradingView|Messari|Bybit|OKX)\\b|\\bBinance\\b(?!\\.us)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /hello@troid\\.ai/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bdashboard\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bfirm['’]s (own )?(dashboard|platform)\\b[^.\\n]{0,100}\\b(prices|news|forecasts?|exchanges|market data|live data)\\b|\\b(prices|news|forecasts?|exchanges)\\b[^.\\n]{0,100}\\bfirm['’]s (own )?(dashboard|platform)\\b/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "o-news",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "What's moving the crypto market today?",
+   "status": 200,
+   "ms": 2581,
+   "model": "claude-haiku-4-5",
+   "tools_used": [],
+   "tool_numbers": [],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 327,
+     "cache_read": 30903,
+     "output": 111
+    }
+   },
+   "tool_calls": 0,
+   "reply": "troid does not browse and has no live data. For news, prices, market movements or anything current, ask a news site, an exchange, or a data platform — troid has not read those sources.\n\ntroid's work is the mathematics of prop-firm trading: sizing against loss ceilings, checking compliance, and explaining the rules. For anything about crypto prices or market events today, those external sources are the record.\n\nIs there a trade you are considering, or a firm's rules you want to understand?",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the patch prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /(does not|doesn['’]t) (browse|have (live|current|real-time))|(hasn['’]t|has not) read|no (live|current|real-time) (data|news|feed|market)|can['’]t see (today|the news|live|current)|(does not|doesn['’]t) (follow|track|read) (the )?(news|market)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /CoinDesk|The Block|Cointelegraph|Glassnode|Nansen|\\bKraken\\b|\\bCoinbase\\b|\\bBinance\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /hello@troid\\.ai/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bdashboard\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bfirm['’]s (own )?(dashboard|platform)\\b[^.\\n]{0,100}\\b(prices|news|forecasts?|exchanges|market data|live data)\\b|\\b(prices|news|forecasts?|exchanges)\\b[^.\\n]{0,100}\\bfirm['’]s (own )?(dashboard|platform)\\b/",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "d-fill",
+   "kind": "desk",
+   "example": false,
+   "q": "Can troid fill in the price for me?",
+   "status": 200,
+   "ms": 7146,
+   "model": "claude-sonnet-5",
+   "tools_used": [],
+   "tool_numbers": [],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 329,
+     "cache_read": 30903,
+     "output": 158
+    },
+    "claude-sonnet-5": {
+     "calls": 1,
+     "input": 2,
+     "cache_write": 83,
+     "cache_read": 40939,
+     "output": 220
+    }
+   },
+   "tool_calls": 0,
+   "reply": "troid's desk starts with the entry and the stop both empty; the account and its settings keep troid's defaults until the trader changes them. For a crypto asset, the desk shows its spot price just under the Entry field, refreshed while the desk is on screen and marked \"delayed\" once it is over a minute old — tapping that price makes it the entry. A symbol tapped on the price tape at the top of the page opens the desk with that asset selected. For gold, oil and stocks, the tape's prices are TradingView's, shown inside its own frame, and troid can't read them, so the entry has to be typed in there.\n\ntroid never fills in the stop: the stop, the size and the trade stay the trader's.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the patch prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bentry\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(tap|click|press)/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(gold|oil|stocks?)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(BTC|bitcoin|ETH|ether)\\b[^.\\n]{0,40}\\$?\\d{1,3}(,\\d{3})+/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\btroid (can|will|could) (set|suggest|pick|choose|fill in|fill) (a|the|your) stop/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bask troid (can|will|could) (fetch|look up|get|see|read|check) (the )?(live|current|latest|spot) price/",
+     "pass": true
+    },
+    {
+     "name": "never says: /CoinDesk|Cointelegraph|\\bKraken\\b|\\bCoinbase\\b|TradingView['’]s (site|website)/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "patch": [
+  "support.md"
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-09-25T21:18:42.136Z",
+ "passed": 3,
+ "failed": 1,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 4,
+    "input": 12,
+    "cache_write": 32219,
+    "cache_read": 92709,
+    "output": 817,
+    "usd": 0.0536
+   },
+   "claude-sonnet-5": {
+    "calls": 3,
+    "input": 6,
+    "cache_write": 42077,
+    "cache_read": 81965,
+    "output": 906,
+    "usd": 0.1307
+   }
+  },
+  "usd": 0.1843,
+  "priced": true
+ }
+}
