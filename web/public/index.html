@@ -127,7 +127,10 @@ nav a:hover{color:var(--ink)}
 /* the line troid introduces itself with (BRAND.md), as the banners set it: under the wordmark, in the mono, dim */
 .tagline{font-family:var(--mono);font-size:15px;line-height:1.5;color:var(--dim);margin:0 0 14px;max-width:none}
 /* each sentence is a box, so a narrow screen breaks the line between them, never mid-sentence */
-.tagline span{display:inline-block;max-width:100%}
+.tagline .s{display:inline-block;max-width:100%}
+/* "tr" from trade and "oid" from droid spell troid: those letters in the dot's blue, the rest of the two words in the
+   wordmark's ink (site_text.TAGLINE_MARKS) */
+.tagline .ink{color:var(--ink)}.tagline .signal{color:var(--signal)}
 /* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
 h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
   font-weight:700;margin:0 0 14px;max-width:24ch}
@@ -411,7 +414,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 <div class="wrap">
 
 <div class="hero">
-  <p class="tagline"><span>The droid does the prop-firm math.</span> <span>You decide the trade.</span></p>
+  <p class="tagline"><span class="s">The <span class="ink">dr</span><span class="signal">oid</span> does the prop-firm math.</span> <span class="s">You decide the <span class="signal">tr</span><span class="ink">ade</span>.</span></p>
   <h1>Prop-firm risk, computed.</h1>
   <p class="lede">Most failed challenges end on a loss limit, not a missed target: 93.7% at
   <a href="/sources#onefunded_failures">one firm that publishes its own figures</a>, below. troid computes both of your

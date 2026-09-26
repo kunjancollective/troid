@@ -4,19 +4,25 @@ banners, the home page and the share image say the same thing (the owner, 2026-0
 
 Each banner's background is a vertical gradient with every row one colour, so the strip the line sits in is erased row
 by row to that row's own colour, then the line is drawn back in IBM Plex Mono Regular (PlexMono-Regular.ttf, OFL), in
-the site's dim ink, centred where the banners set it under the wordmark. The wordmark, its floors and troid.ai are
-not touched. Running it again redraws the same strip, so a new line only needs en.json changed and this run.
+the site's dim ink, centred where the banners set it under the wordmark; the letters that spell troid ("tr" in trade,
+"oid" in droid) in the dot's blue and the rest of those two words in the wordmark's ink, as on the home page. The
+wordmark, its floors and troid.ai are not touched. Running it again redraws the same strip, so a new line only needs en.json changed and this run.
 
   python brand/tagline.py            # brand/banner-*.png and their copies in brand/social/
 """
 import json
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
+sys.path.insert(0, str(ROOT / "backtest"))
+import site_text  # noqa: E402  the letters that spell troid (TAGLINE_MARKS), the same rule as the home page's
+
 DIM = (125, 138, 160)            # --dim, #7d8aa0, as the banners were set
+COLOUR = {None: DIM, "ink": (230, 237, 245), "signal": (77, 163, 255)}   # the wordmark's ink and dot (README colours)
 FONT = HERE / "PlexMono-Regular.ttf"
 
 # file and its copy, the rows of the line's strip (clear of the floors above and troid.ai below), the type size, the
@@ -39,7 +45,10 @@ def draw(line):
         f = ImageFont.truetype(str(FONT), size)
         w = f.getlength(line)
         assert w < im.width - 200, f"{name}: the line is {w:.0f} px wide"
-        ImageDraw.Draw(im).text((cx - w / 2, base), line, font=f, fill=DIM, anchor="ls")
+        x, d = cx - w / 2, ImageDraw.Draw(im)
+        for text, role in site_text.tagline_parts(line):     # "dr" and "ade" in the ink, "oid" and "tr" in the blue
+            d.text((x, base), text, font=f, fill=COLOUR[role], anchor="ls")
+            x += f.getlength(text)
         for out in (name, copy):
             im.save(HERE / out, optimize=True)
         print(f"{name} (= {copy}): {line!r}, {size} px, {w:.0f} px wide, centred at x {cx}")

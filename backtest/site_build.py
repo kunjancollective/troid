@@ -151,6 +151,17 @@ def switcher(T, page, live):
             + share)
 
 
+def tagline_html(T):
+    """The line troid introduces itself with (og.tagline), for the home page: each sentence a box of its own, so a phone
+    breaks between them, never mid-sentence, and the letters that spell troid in the wordmark's colours
+    (site_text.tagline_parts)."""
+    def mark(text):
+        return "".join(html.escape(t) if r is None else f'<span class="{r}">{html.escape(t)}</span>'
+                       for t, r in site_text.tagline_parts(text))
+    parts = T("og.tagline").split(". ")
+    return " ".join(f'<span class="s">{mark(p)}{"." if i < len(parts) - 1 else ""}</span>' for i, p in enumerate(parts))
+
+
 NAV = [("index", "product.desk"), ("compare", "product.compare"), ("ledger", "product.ledger"),
        ("dashboard", "product.research"), ("chat", "product.ask"), ("faq", "common.nav.faq")]
 
@@ -361,7 +372,7 @@ def common(T, page, live, preview=False):
     """What every template gets."""
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
-            "switcher": switcher(T, page, live), "nav": nav(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
+            "switcher": switcher(T, page, live), "nav": nav(T, page, live), "tagline": tagline_html(T), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
             "ticker": ticker(T, desk=page == "index", hint=page == "index"),
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),

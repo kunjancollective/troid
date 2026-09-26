@@ -18,6 +18,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import i18n  # noqa: E402
+import site_text  # noqa: E402
 
 ROOT = HERE.parent
 FONTS = ROOT / "tools" / "og" / "node_modules" / "@fontsource"
@@ -47,8 +48,12 @@ def nowrap(s):
     own, so the line breaks between sentences, never inside one (as the home page sets the line)."""
     s = re.sub(r"\S+-\S+", lambda m: f'<span style="white-space:nowrap">{m.group(0)}</span>', s)
     parts = s.split(". ")
-    return " ".join(f'<span style="display:inline-block;max-width:100%">{p}{"." if i < len(parts) - 1 else ""}</span>'
-                    for i, p in enumerate(parts))
+    s = " ".join(f'<span style="display:inline-block;max-width:100%">{p}{"." if i < len(parts) - 1 else ""}</span>'
+                 for i, p in enumerate(parts))
+    # the letters that spell troid ("tr" in trade, "oid" in droid) in the dot's blue, as on the home page
+    for word, pieces in site_text.TAGLINE_MARKS.items():
+        s = re.sub(rf"\b{word}\b", "".join(t if r == "ink" else f'<span style="color:#4da3ff">{t}</span>' for t, r in pieces), s)
+    return s
 
 
 def render(codes, out, fallback=False):

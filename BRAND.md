@@ -13,7 +13,9 @@ exclamatory, never emoji. Where a number exists, lead with the number.
 
 The line, where troid introduces itself (share title and image, the X and Reddit banners, and the first line of the
 home page, above its headline, in the mono and dim as the banners set it): *"The droid does the
-prop-firm math. You decide the trade."* (the owner's words, 2026-09-26; it was "You make the trade."). It says what the name means and where troid stops:
+prop-firm math. You decide the trade."* (the owner's words, 2026-09-26; it was "You make the trade."). It hides the name: "tr" in trade and "oid" in droid
+take the dot's blue, the rest of those two words the wordmark's ink, the rest of the line the dim, wherever the line
+appears (site_text.TAGLINE_MARKS: the home page, the share image, the banners). It says what the name means and where troid stops:
 troid computes, a person places the order.
 
 Every claim carries a tier — DERIVED, SOURCED, MODELLED, MEASURED — and a MEASURED

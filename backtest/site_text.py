@@ -5,7 +5,7 @@ Imported by gen_compare.py (which also writes the footer into the marked <!-- fo
 static pages), gen_ledger.py, gen_tearsheet.py and walkforward.py. Change the wording here, once.
 """
 from __future__ import annotations
-import html, json
+import html, json, re
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -64,6 +64,24 @@ LINK_KEYS = {"/": "product.desk", "/compare": "product.compare", "/ledger": "pro
              "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq", "/terms": "common.link.terms",
              "https://github.com/kunjancollective/troid": "common.link.source", "https://x.com/tradingdroid": "common.link.x",
              "https://www.reddit.com/user/tradingdroid/": "common.link.reddit"}
+
+
+# The line's hidden word (the owner, 2026-09-26): "tr" from "trade" and "oid" from "droid" spell troid. Those letters
+# take the dot's blue, and the rest of the two words the wordmark's letters' ink, as the wordmark has them; the rest of
+# the line stays dim. One rule for the home page, the share image and the banners (site_build, gen_og, brand/tagline.py).
+TAGLINE_MARKS = {"droid": (("dr", "ink"), ("oid", "signal")), "trade": (("tr", "signal"), ("ade", "ink"))}
+
+
+def tagline_parts(line):
+    """The line as (text, role) pieces, role None (dim), "ink" or "signal". A line without the two words (a translation)
+    is one dim piece."""
+    out = []
+    for piece in re.split(r"\b(droid|trade)\b", line):
+        if piece in TAGLINE_MARKS:
+            out += list(TAGLINE_MARKS[piece])
+        elif piece:
+            out.append((piece, None))
+    return out
 
 
 def _english(T):
