@@ -122,6 +122,7 @@ def head_extra(T, page, live):
         parts.append('<link rel="stylesheet" href="/i18n.css">')   # switcher, governing line, RTL details
     if features_on(T):
         parts.append(runtime(T))
+    parts.append(MENU)
     return "".join(p + "\n" for p in parts)
 
 
@@ -148,6 +149,62 @@ def switcher(T, page, live):
     share = f' <button type="button" class="share" data-share>{T("common.share")}</button>' if features_on(T) else ""
     return (f'\n    <span class="langs" aria-label="{T.attr("common.languages")}">' + " · ".join(items) + "</span>"
             + share)
+
+
+NAV = [("index", "product.desk"), ("compare", "product.compare"), ("ledger", "product.ledger"),
+       ("dashboard", "product.research"), ("chat", "product.ask"), ("faq", "common.nav.faq")]
+
+
+def nav(T, page, live):
+    """The site's links, the same on every page (the header partial, the FAQ, the research page, the ledger): the
+    current page marked, the language switcher at the end. On a phone (640 px and under) they fold into a dropdown
+    behind the "menu" button (the owner, 2026-09-26: "a drop down for the menu to fit, cleaner"); MENU in
+    head_extra styles and runs it, and without script the links stay the one sideways-scrolling row they were."""
+    links = []
+    for pg, key in NAV:
+        href = T.H if pg == "index" else f"{T.L}/{pg}"
+        cur = ' aria-current="page"' if pg == page else ""
+        links.append(f'<a href="{href}"{cur}>{T(key)}</a>')
+    return (f'<button type="button" class="menu" aria-expanded="false" aria-controls="menu-nav">{T("common.nav.menu")}</button>\n'
+            f'    <nav id="menu-nav">{"".join(links)}\n'
+            f'    <a href="https://github.com/kunjancollective/troid">{T("common.nav.source")}</a>{switcher(T, page, live)}</nav>')
+
+
+# The phone menu (nav above): the class goes on <html> before the first paint, so the page never shows the row and then
+# folds it. A 640 px and under screen shows the button beside the wordmark and hides the links until it is pressed;
+# they open as a panel under the bar, over the page, each link a 44 px target, the current page in the signal blue.
+# A tap outside, Escape (focus back to the button) or widening past 640 px closes it.
+MENU = """<style>
+.menu{display:none}
+@media (max-width:640px){
+  .js-menu .bar{position:relative;flex-wrap:nowrap;align-items:center}
+  .js-menu .menu{display:inline-flex;align-items:center;gap:8px;margin-inline-start:auto;min-height:36px;padding:0 12px;
+    border:1px solid var(--line);border-radius:3px;background:none;color:var(--dim);font:500 12px/1 var(--mono);
+    letter-spacing:.04em;cursor:pointer}
+  .js-menu .menu::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
+    transform:translateY(-2px) rotate(45deg);transition:transform var(--dur-fast,120ms) var(--ease-out,ease)}
+  .js-menu .menu[aria-expanded="true"]{color:var(--ink);border-color:var(--dim)}
+  .js-menu .menu[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+  .js-menu .menu:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+  .js-menu .bar nav{display:none}
+  .js-menu .bar nav.open{display:flex;flex-direction:column;align-items:stretch;flex:none;gap:0;position:absolute;
+    top:calc(100% + 6px);inset-inline-end:0;z-index:60;width:min(260px,calc(100vw - 40px));margin:0;padding:6px 0;
+    overflow:visible;white-space:normal;background:var(--surface);border:1px solid var(--line);border-radius:4px}
+  .js-menu .bar nav.open a{display:block;padding:14px 16px;font-size:13px;line-height:16px;color:var(--ink);border:0}
+  .js-menu .bar nav.open a::after{content:none}
+  .js-menu .bar nav.open a[aria-current="page"]{color:var(--signal)}
+  .js-menu .bar nav.open a+a{border-top:1px solid var(--line)}
+  .js-menu .bar nav.open .langs,.js-menu .bar nav.open .share{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){.menu::after{transition:none}}
+</style>
+<script>document.documentElement.classList.add("js-menu");
+document.addEventListener("DOMContentLoaded",function(){var b=document.querySelector(".menu"),n=document.getElementById("menu-nav");
+if(!b||!n)return;function set(o){b.setAttribute("aria-expanded",o?"true":"false");n.classList.toggle("open",o)}
+b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("aria-expanded")!=="true")});
+document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
+var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>"""
 
 
 WORDMARK = json.loads((HERE / "wordmark_paths.json").read_text())
@@ -303,7 +360,7 @@ def common(T, page, live, preview=False):
     """What every template gets."""
     return {"t": T, "T": T, "code": T.code, "lang": T.lang, "dir": T.lang["dir"], "L": T.L, "H": T.H, "page": page,
             "html_attrs": html_attrs(T), "head_extra": head_extra(T, page, live), "og": og(T, page),
-            "switcher": switcher(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
+            "switcher": switcher(T, page, live), "nav": nav(T, page, live), "mark": mark(T), "features": features_on(T), "live": live, "preview": preview,
             "ticker": ticker(T, desk=page == "index", hint=page == "index"),
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),

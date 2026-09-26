@@ -9,7 +9,8 @@ controls are sized as WebKit sizes them (WEBKIT_CONTROLS). The header's price ta
 script lays it out (tv_stub.py).
 
 The phone header (the owner's Android check, 2026-09-25) is held too: on every page at every width the nav is one line
-and the wordmark is larger than the page's headline; and at 390 px, in the owner's words, "the desk's first field
+(since 2026-09-26 a "menu" button beside the wordmark, the owner's dropdown; the check opens it on every page and holds
+the open panel to the same edges) and the wordmark is larger than the page's headline; and at 390 px, in the owner's words, "the desk's first field
 visible without scrolling past more than one screenful": the desk starts inside the first screen, FIRST_SCREEN px (the
 height a 390 x 844 iPhone shows under Safari's bars), and Entry, the first field a visitor fills in, is on screen after
 at most one screenful of scrolling. (Until the redesign the check was the firm field inside the first screen; the
@@ -20,6 +21,7 @@ redesigned desk puts the gauge above its cards, and the owner kept that layout a
   python phone_check.py --rev HEAD          # the pages as a revision left them
 """
 import argparse
+import itertools
 import sys
 from pathlib import Path
 
@@ -135,7 +137,17 @@ def main():
                     pg.evaluate("()=>document.querySelectorAll('details.step').forEach(d=>d.open=true)")
                 views = desk_views(pg, url) if name == "index" else iter(["page"])
                 bad = 0
-                for v in views:
+                def menu_open():            # the phone menu (site_build.nav): opened, its panel inside the screen
+                    if not pg.is_visible(".menu"):
+                        return
+                    pg.evaluate("()=>{scrollTo(0,0);document.querySelectorAll('.pop').forEach(p=>p.hidden=true)}")
+                    pg.click(".menu")
+                    pg.wait_for_timeout(80)
+                    if not pg.evaluate("()=>document.getElementById('menu-nav').getBoundingClientRect().height>0"):
+                        fails.append(f"{name} {w}px: the menu button does not open the links")
+                    yield "menu open"
+                    pg.click(".menu")
+                for v in itertools.chain(views, menu_open()):
                     pg.evaluate(WEBKIT_CONTROLS)
                     r = pg.evaluate(OVER)
                     if r["sideways"] or r["over"]:

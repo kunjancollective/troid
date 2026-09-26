@@ -931,5 +931,6 @@
  "ledger.src.page": "MEASURED · the shadow account, simulated on api.binance.us bars: its state in <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/state.json\">state.json</a>, every closed trade in <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv\">journal.csv</a>.",
  "ledger.src.runs": "MEASURED · simulated · every run in <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/runs.csv\">runs.csv</a>",
  "ledger.src.journal": "MEASURED · simulated · every trade in <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv\">journal.csv</a>",
- "ledger.src.charts": "MEASURED · simulated · the trades from <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv\">journal.csv</a>, the bars from <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/data/live_4h.csv\">data/live_4h.csv</a> (the frozen sample, extended by the shadow)"
+ "ledger.src.charts": "MEASURED · simulated · the trades from <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv\">journal.csv</a>, the bars from <a href=\"https://github.com/kunjancollective/troid/blob/main/backtest/data/live_4h.csv\">data/live_4h.csv</a> (the frozen sample, extended by the shadow)",
+ "common.nav.menu": "menu"
 }

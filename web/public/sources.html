@@ -206,13 +206,45 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </style>
 <link rel="canonical" href="https://troid.ai/sources">
 <meta property="og:url" content="https://troid.ai/sources">
+<style>
+.menu{display:none}
+@media (max-width:640px){
+  .js-menu .bar{position:relative;flex-wrap:nowrap;align-items:center}
+  .js-menu .menu{display:inline-flex;align-items:center;gap:8px;margin-inline-start:auto;min-height:36px;padding:0 12px;
+    border:1px solid var(--line);border-radius:3px;background:none;color:var(--dim);font:500 12px/1 var(--mono);
+    letter-spacing:.04em;cursor:pointer}
+  .js-menu .menu::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
+    transform:translateY(-2px) rotate(45deg);transition:transform var(--dur-fast,120ms) var(--ease-out,ease)}
+  .js-menu .menu[aria-expanded="true"]{color:var(--ink);border-color:var(--dim)}
+  .js-menu .menu[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+  .js-menu .menu:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+  .js-menu .bar nav{display:none}
+  .js-menu .bar nav.open{display:flex;flex-direction:column;align-items:stretch;flex:none;gap:0;position:absolute;
+    top:calc(100% + 6px);inset-inline-end:0;z-index:60;width:min(260px,calc(100vw - 40px));margin:0;padding:6px 0;
+    overflow:visible;white-space:normal;background:var(--surface);border:1px solid var(--line);border-radius:4px}
+  .js-menu .bar nav.open a{display:block;padding:14px 16px;font-size:13px;line-height:16px;color:var(--ink);border:0}
+  .js-menu .bar nav.open a::after{content:none}
+  .js-menu .bar nav.open a[aria-current="page"]{color:var(--signal)}
+  .js-menu .bar nav.open a+a{border-top:1px solid var(--line)}
+  .js-menu .bar nav.open .langs,.js-menu .bar nav.open .share{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){.menu::after{transition:none}}
+</style>
+<script>document.documentElement.classList.add("js-menu");
+document.addEventListener("DOMContentLoaded",function(){var b=document.querySelector(".menu"),n=document.getElementById("menu-nav");
+if(!b||!n)return;function set(o){b.setAttribute("aria-expanded",o?"true":"false");n.classList.toggle("open",o)}
+b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("aria-expanded")!=="true")});
+document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
+var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
 </head>
 <body>
 
 <header><div class="wrap">
   <div class="bar">
     <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
-    <nav><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
+    <button type="button" class="menu" aria-expanded="false" aria-controls="menu-nav">menu</button>
+    <nav id="menu-nav"><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
     <a href="https://github.com/kunjancollective/troid">source</a></nav>
   </div>
   <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
