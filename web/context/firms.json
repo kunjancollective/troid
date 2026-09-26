@@ -111,7 +111,7 @@
     "mandatory_sl": "expected; absence can be classed excessive risk",
     "min_closed_trades_per_stage": 2,
     "refund": "Conflicting: Terms 9(a) \u2014 100% at first profit split day, all levels. Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.",
-    "split": "80% to 90%",
+    "split": "80% (Terms 18(a): 'initial'; a Scaling Plan can raise it, no figure stated)",
     "payouts_per_30d": 3,
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
@@ -133,11 +133,11 @@
       "hold_cap": "10d / 7d / 5d",
       "max_open": 5,
       "refund": "Conflicting: Terms 9(a) \u2014 100% at first profit split day, all levels. Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.",
-      "split": "80% \u2192 90%",
-      "us_available": "yes",
+      "split": "80%",
+      "us_available": "not excluded by its Terms (4b: local law applies)",
       "consistency_rule": null,
       "news_rule": "none stated",
-      "profit_cap": "none"
+      "profit_cap": "none stated"
     },
     "affiliate_payout": {
       "schedule": "on request via portal 'Payment Request'; AP Policy: approved within ~3-5 business days",
@@ -361,6 +361,34 @@
           "read_on": "2026-09-24",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page 31f940cb9324e1d1): s.1, Maximum holding duration by asset type: 'Every 10 days: Major Crypto Assets: BTC, ETH, BNB, XRP, SOL, TRX, HYPE, ZEC, DOGE, ADA.' 'Every 7 days: Minor Crypto Assets (all other cryptocurrencies available on the platform)' 'Every 5 days: Traditional Trading Pairs (XAU, XAG, TSLA)'. The only instrument list Bitfunded publishes outside its platform."
+        },
+        "tou_0926": {
+          "doc": "Bitfunded Terms of Use",
+          "url": "https://www.bitfunded.com/terms-of-use/",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 55a4cd41b7e15980): 4(b): 'You also declare that your use of the Services is in compliance with all applicable laws ... in your jurisdiction' (no excluded countries listed anywhere in the Terms). 14(d)(i)-(xiii), prohibited strategies: no news-trading rule. 18(a): 'BitFUNDED offers an initial profit split ratio of 80:20 in favor of the traders ... each user can request a maximum of three payouts every 30 days' (no cap on profit). Definitions: 'Scaling Plan: Refers to a program that allows traders to increase their profit split ratio and trading capital based on their trading performance' (no figure stated)."
+        },
+        "faq_0926": {
+          "doc": "Bitfunded FAQ",
+          "url": "https://www.bitfunded.com/faq/",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page c0d1d56f0a95a45c): 'What's the profit split? You keep 80% of what you make on a 2-Step, 1-Step or 1-Step Express funded account. On Instant Funding it's 60%.' No news rule, no profit cap, no country list."
+        },
+        "rtp_0926": {
+          "doc": "Bitfunded help centre: Restricted Trading Practices",
+          "url": "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 31f940cb9324e1d1): unchanged since 2026-09-24 (same sha256). No news-trading rule, no profit cap."
+        },
+        "trader_stage_0926": {
+          "doc": "Bitfunded help centre: Challenge & Trader Stage",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage.md",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 0daab90607eb3df1): 'Upon completing the requirements of these stages, you will become a Funded Trader and will be eligible to receive 80% profit sharing.' One Step Evaluation table: 'Profit Share Ratio | - | 80%'."
         }
       },
       "fields": {
@@ -466,6 +494,34 @@
             "criteria_0924"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success, 1. Maximum Daily Loss and 2. Maximum Loss (floating losses are in both calculations; an open position that reaches either limit fails the account)"
+        },
+        "split": {
+          "src": [
+            "faq_0926",
+            "trader_stage_0926",
+            "tou_0926"
+          ],
+          "section": "Bitfunded FAQ (What's the profit split?); help centre \u2014 Challenge & Trader Stage, One Step Evaluation table; Terms of Use 18(a) (an initial 80:20; a Scaling Plan can raise it, no figure stated)"
+        },
+        "us_available": {
+          "src": [
+            "tou_0926"
+          ],
+          "section": "Bitfunded Terms of Use \u2014 no excluded countries listed; 4(b), the trader declares their use complies with the laws of their jurisdiction"
+        },
+        "news_rule": {
+          "src": [
+            "tou_0926",
+            "rtp_0926"
+          ],
+          "section": "Bitfunded Terms of Use 14(d), prohibited strategies (i\u2013xiii), and help centre \u2014 Restricted Trading Practices: no news-trading rule stated"
+        },
+        "profit_cap": {
+          "src": [
+            "tou_0926",
+            "faq_0926"
+          ],
+          "section": "Bitfunded Terms of Use 18 (at most three payout requests every 30 days; no cap on profit stated) and FAQ"
         }
       },
       "products": {
@@ -1075,6 +1131,27 @@
           "read_on": "2026-09-24",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page eff06cb81b59f8d4): the page draws its Crypto, Commodities and Indices tabs from its site's instrument collection (framerusercontent.com module p8UkBIvqr, sha256 c1a879942176d01d), read the same day: 95 symbols, among them BTC/USD 'Bitcoin vs United States dollar', ETH/USD, SOL/USD, XRP/USD, BNB/USD, XAU/USD 'Gold vs US Dollar', WTI/USD 'Oil - US Crude Vs US Dollar', BRN/USD; no single stock. The page's own summary: 'over 100 Trading Instruments ... across Forex, Metals, Indices, Commodities, and Crypto'."
+        },
+        "tc_0926": {
+          "doc": "BrightFunded Terms and Conditions",
+          "url": "https://brightfunded.com/terms-and-conditions",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page d9d696d6ea7aebbb): no maximum holding time and no cap on profit or payouts stated."
+        },
+        "product_1step_0926": {
+          "doc": "BrightFunded 1-Step product page",
+          "url": "https://brightfunded.com/1-step",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 1c9bad691f6e27e4): no maximum holding time and no cap on profit stated."
+        },
+        "help_1step_0926": {
+          "doc": "BrightFunded help centre article 14284743, 'BrightFunded 1-Step' (title taken from the URL slug)",
+          "url": "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 1b10761cb7f34560): no maximum holding time and no cap on profit stated."
         }
       },
       "fields": {
@@ -1194,6 +1271,22 @@
             "tc"
           ],
           "section": "BrightFunded T&C s.2, MT5 clause"
+        },
+        "hold_cap": {
+          "src": [
+            "tc_0926",
+            "help_1step_0926",
+            "product_1step_0926"
+          ],
+          "section": "BrightFunded Terms and Conditions and 1-Step pages"
+        },
+        "profit_cap": {
+          "src": [
+            "tc_0926",
+            "help_1step_0926",
+            "product_1step_0926"
+          ],
+          "section": "BrightFunded Terms and Conditions and 1-Step pages: no cap on profit stated"
         }
       },
       "products": {
@@ -1418,10 +1511,10 @@
       "hold_cap": "none stated",
       "max_open": "discretionary",
       "refund": "none if the evaluation is not completed",
-      "split": "up to 90% (add-on); base unconfirmed",
+      "split": "up to 90% with the 90% add-on; base not stated",
       "us_available": "MT5 barred to US residents; Match-Trader access not yet sourced",
-      "consistency_rule": "none (40% on Break)",
-      "news_rule": "none on 1-Phase",
+      "consistency_rule": "none stated for 1-Phase (40% on Break Final Stage)",
+      "news_rule": "none stated for 1-Phase (Ascend has one; may be added with notice)",
       "profit_cap": "$10k / day and / trade"
     },
     "_leads_third_party": {
@@ -1507,6 +1600,13 @@
           "read_on": "2026-09-24",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-24 (sha256 of the page f863bf97c5603f85): 'On Bybit you can currently trade more than 550 crypto futures pairs. On Match-Trader and MetaTrader 5 we have more than 720 instruments ... 556 Cryptocurrencies, 106 Forex, 15 Indices, 22 Commodities, 25 Stocks.' It names no symbol."
+        },
+        "tc_0926": {
+          "doc": "Crypto Fund Trader Terms and Conditions",
+          "url": "https://cryptofundtrader.com/terms-and-conditions/",
+          "read_on": "2026-09-26",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page b7b66c6b5ec56041): 8(i): 'At no time during the \u20182 Phases\u2019 Evaluation or \u2018Ascend\u2019 Evaluation Process or Final Stage account have you registered losses ... which exceeded in total 5% of your balance at 12:05 AM UTC or 10% of the initial demo balance.' 8(ii): 'At no time during the \u20181 Phase\u2019 Evaluation Process or Final Stage have you registered losses ... which exceeded in total 4% of your balance at 12:05 AM UTC or 6% based on the maximum demo balance until you make a 6% demo profit, at which point your trailing drawdown will remain static at the account\u2019s opening balance.' 5.9 AddOns: '90% Bonus Performance: Costs 20% of the evaluation price and increases your eligibility to receive up to 90% of the internal reward' (no base share stated). 7.1 xxiv: the 40% consistency rule, 'IN BREAK ACCOUNTS FINAL STAGE' only. 7.1 xxi: 'IN ASCEND ACCOUNTS, within two minutes before and after high-impact news or market opening, the user must not open or add new positions'. Section 6: the firm may impose restrictions 'with prior notice', including 'news trading limits'."
         }
       },
       "fields": {
@@ -1605,6 +1705,30 @@
             "tc"
           ],
           "section": "Crypto Fund Trader T&C 7.3 and 7.1(xvi), MT5 bar"
+        },
+        "drawdown_type": {
+          "src": [
+            "tc_0926"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases: 10% of the initial demo balance) and 8(ii) (1 Phase)"
+        },
+        "split": {
+          "src": [
+            "tc_0926"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions 5.9, AddOns: 90% Bonus Performance (no base share stated)"
+        },
+        "consistency_rule": {
+          "src": [
+            "tc_0926"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions 7.1 xxiv (Break Final Stage only)"
+        },
+        "news_rule": {
+          "src": [
+            "tc_0926"
+          ],
+          "section": "Crypto Fund Trader Terms and Conditions 7.1 xxi (Ascend accounts only) and section 6 (news trading limits may be imposed with prior notice)"
         }
       },
       "products": {

@@ -387,7 +387,19 @@ render();
 </script></body></html>'''
 
 
+def unsourced():
+    """Every compare cell that shows a value without a recorded source: troid's rule is that a cell shows a value only
+    from the firm's own document, so the build refuses one (challenge-proof audit, 2026-09-26, C). Source it with a read
+    date in firms.json provenance, or return it to pending (null)."""
+    return [(FIRMS[k]["name"], x) for k in ORDER for x in FIELDS
+            if FIRMS[k]["compare_product"].get(x) is not None and not sourced(FIRMS[k], x, FIRMS[k]["compare_product"])]
+
+
 def main():
+    bad = unsourced()
+    if bad:
+        sys.exit("compare: filled but unsourced — source each from the firm's document or return it to pending: "
+                 + "; ".join(f"{n} {x}" for n, x in bad))
     live = site_build.targets()
     for code in live:
         out = site_build.out_path(code, "compare")
@@ -413,7 +425,7 @@ def main():
     CONTEXT.parent.mkdir(exist_ok=True)
     if not CONTEXT.exists() or CONTEXT.read_bytes() != (HERE.parent / "firms.json").read_bytes():
         CONTEXT.write_bytes((HERE.parent / "firms.json").read_bytes()); changed.append("context/firms.json")
-    print(f"compare.html: coverage {cov} of {len(FIELDS)} · links live: {links} · required disclaimers: "
+    print(f"compare.html: coverage {cov} of {len(FIELDS)}, every filled cell sourced · links live: {links} · required disclaimers: "
           f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")
 
 

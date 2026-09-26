@@ -241,7 +241,9 @@ def main():
         ok("each asset line links its source", links == [rtp_url, hold_url], links)
         pg.select_option("#firm", "brightfunded")
         t = pg.inner_text("#assetnote")
-        ok(f"{br}, BTC: listed as “BTC/USD”; no hold limit found", f"{br} lists BTC as “BTC/USD”" in t and f"Hold limit at {br}: none found" in t, t)
+        br_tc_url, br_tc_date = src("brightfunded", "tc_0926")
+        ok(f"{br}, BTC: listed as “BTC/USD”; no hold limit stated in its Terms and 1-Step pages (read {br_tc_date})",
+           f"{br} lists BTC as “BTC/USD”" in t and f"Hold limit at {br}: none stated in its Terms and Conditions and 1-Step pages (read {br_tc_date})" in t, t)
         pg.select_option("#firm", "crypto_fund_trader")
         t = pg.inner_text("#assetnote")
         faq_url, faq_date = src("crypto_fund_trader", "faq_0924")

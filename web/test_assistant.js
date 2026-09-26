@@ -278,7 +278,8 @@ ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separat
 const dd = RT("explain_rule", { topic: "drawdown" }, "live");
 ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
    /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)
-   && dd.sources.some((x) => /^Crypto Fund Trader drawdown, by product \(1-Phase: trails on balance.*2-Phase: static\)$/.test(x.rule) && x.source === "not yet recorded")
+   && dd.sources.some((x) => /^Crypto Fund Trader drawdown, by product \(1-Phase: trails on balance.*2-Phase: static\)$/.test(x.rule)
+     && /Terms and Conditions 8\(i\) \(2 Phases.*8\(ii\) \(1 Phase\)/.test(x.document_section) && x.read_on.includes("2026-09-26"))
    && !dd.sources.some((x) => /Crypto Fund Trader drawdown \(trailing/.test(x.rule)), dd.sources);
 ok("guardrails: a rule that differs by product is stated with its product; the daily limit's size apart from its reference point (run 7, b-limits)",
    /stated with its product, never as the whole firm's/.test(liveSys[0].text) && /the floor it sets is measured from the day's start/.test(liveSys[0].text));
