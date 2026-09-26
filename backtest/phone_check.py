@@ -9,7 +9,7 @@ controls are sized as WebKit sizes them (WEBKIT_CONTROLS). The header's price ta
 script lays it out (tv_stub.py).
 
 The phone header (the owner's Android check, 2026-09-25) is held too: on every page at every width the nav is one line
-(since 2026-09-26 a "menu" button beside the wordmark, the owner's dropdown; the check opens it on every page and holds
+(since 2026-09-26 a "data" button beside the wordmark, the owner's dropdown; the check opens it on every page and holds
 the open panel to the same edges) and the wordmark is larger than the page's headline; and at 390 px, in the owner's words, "the desk's first field
 visible without scrolling past more than one screenful": the desk starts inside the first screen, FIRST_SCREEN px (the
 height a 390 x 844 iPhone shows under Safari's bars), and Entry, the first field a visitor fills in, is on screen after

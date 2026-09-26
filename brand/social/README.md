@@ -9,6 +9,8 @@
 | x-launch-card-1600x900.png | image on the first post of the launch thread |
 
 Banners use the wordmark only (it already carries the mark), the line
-"The droid does the prop-firm math. You make the trade." and troid.ai.
+"the droid does the prop firm math. you decide the trade." and troid.ai (redrawn 26 Sep 2026 by
+../tagline.py from the site's og.tagline; replace both on X and Reddit when it changes).
 X header content sits inside y 90–410 and clear of the avatar's bottom-left overlap.
-Wordmark and mark are the unmodified brand/ files; tagline in IBM Plex Mono.
+Wordmark and mark are the unmodified brand/ files; tagline in IBM Plex Mono Regular (../PlexMono-Regular.ttf), 27 px on
+the X header and 26 px on the Reddit banner, in the site's dim ink #7d8aa0.

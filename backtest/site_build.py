@@ -158,7 +158,8 @@ NAV = [("index", "product.desk"), ("compare", "product.compare"), ("ledger", "pr
 def nav(T, page, live):
     """The site's links, the same on every page (the header partial, the FAQ, the research page, the ledger): the
     current page marked, the language switcher at the end. On a phone (640 px and under) they fold into a dropdown
-    behind the "menu" button (the owner, 2026-09-26: "a drop down for the menu to fit, cleaner"); MENU in
+    behind a button labelled "data" (the owner, 2026-09-26: "a drop down for the menu to fit, cleaner"; "rename menu button
+    to read: data"); MENU in
     head_extra styles and runs it, and without script the links stay the one sideways-scrolling row they were."""
     links = []
     for pg, key in NAV:

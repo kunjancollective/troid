@@ -43,8 +43,12 @@ font-size:40px;line-height:1.35;color:#e6edf5;letter-spacing:-.01em;text-wrap:ba
 
 
 def nowrap(s):
-    """A hyphenated word stays whole on the card: "prop-firm" never breaks after "prop-"."""
-    return re.sub(r"\S+-\S+", lambda m: f'<span style="white-space:nowrap">{m.group(0)}</span>', s)
+    """A hyphenated word stays whole on the card: "prop-firm" never breaks after "prop-". Each sentence is a box of its
+    own, so the line breaks between sentences, never inside one (as the home page sets the line)."""
+    s = re.sub(r"\S+-\S+", lambda m: f'<span style="white-space:nowrap">{m.group(0)}</span>', s)
+    parts = s.split(". ")
+    return " ".join(f'<span style="display:inline-block;max-width:100%">{p}{"." if i < len(parts) - 1 else ""}</span>'
+                    for i, p in enumerate(parts))
 
 
 def render(codes, out, fallback=False):

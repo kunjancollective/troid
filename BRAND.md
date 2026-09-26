@@ -12,8 +12,9 @@ Flat, precise, slightly dry. A ship's computer, not a coach. Never excited, neve
 exclamatory, never emoji. Where a number exists, lead with the number.
 
 The line, where troid introduces itself (share title and image, the X and Reddit banners, and the first line of the
-home page, above its headline, in the mono and dim as the banners set it): *"The droid does the
-prop-firm math. You make the trade."* It says what the name means and where troid stops:
+home page, above its headline, in the mono and dim as the banners set it): *"the droid does the
+prop firm math. you decide the trade."* (the owner's words, lowercase like the name, 2026-09-26; it was "The droid
+does the prop-firm math. You make the trade."). It says what the name means and where troid stops:
 troid computes, a person places the order.
 
 Every claim carries a tier — DERIVED, SOURCED, MODELLED, MEASURED — and a MEASURED
@@ -178,4 +179,4 @@ goes in it. The wordmark's letters are SVG paths drawn from `brand/PlexMono-Semi
 `backtest/wordmark.py`, in the line box the text had (1.175em above the baseline, .425em below): a phone that has
 not loaded Plex yet draws the same wordmark, so nothing moves when the font arrives. The dot and its floors stay CSS.
 
-The wordmark is 32 px at every width (1.5× the 21 px it was; the owner, 2026-09-25, phones first and then desktop): the largest thing in the header, with every page's headline under it, 24 px on a phone to 30 px from about 680 px up (22 to 28 px on the faq and research). On a phone (640 px and under) the links fold into a dropdown behind a "menu" button beside the wordmark (the owner, 2026-09-26; `site_build.nav`: each link a 44 px target, the current page in the signal blue, closed by a tap outside or Escape; without script they stay the one line that scrolls sideways) and the spacing tightens, so the desk's first field ends inside a 390 × 844 iPhone's first screen (664 px under Safari's bars). `backtest/phone_check.py` holds the wordmark over the headline, the one-line nav and the first field at every phone width.
+The wordmark is 32 px at every width (1.5× the 21 px it was; the owner, 2026-09-25, phones first and then desktop): the largest thing in the header, with every page's headline under it, 24 px on a phone to 30 px from about 680 px up (22 to 28 px on the faq and research). On a phone (640 px and under) the links fold into a dropdown behind a "data" button beside the wordmark (the owner, 2026-09-26; `site_build.nav`: each link a 44 px target, the current page in the signal blue, closed by a tap outside or Escape; without script they stay the one line that scrolls sideways) and the spacing tightens, so the desk's first field ends inside a 390 × 844 iPhone's first screen (664 px under Safari's bars). `backtest/phone_check.py` holds the wordmark over the headline, the one-line nav and the first field at every phone width.

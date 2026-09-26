@@ -7,7 +7,8 @@ Every file here carries the two floors: mark-*.png is the same drawing as mark-2
 (kept under both names so existing links still work); in the wordmark, lockup, preview and
 banners the wordmark's dot sits above its two floors at 60% ink, as in the site header. The X and Reddit
 banners (24 Sep 2026, the owner's set in social/) carry the wordmark alone, since it already holds the mark, then the
-line "The droid does the prop-firm math. You make the trade." and troid.ai; social/README.md says where each goes.
+line "the droid does the prop firm math. you decide the trade." and troid.ai; social/README.md says where each goes.
+The line is drawn from the site's own text (og.tagline) by tagline.py, which redraws only its strip.
 
 Wordmark: troid in IBM Plex Mono SemiBold with the o replaced by the dot, above its two
 floors. The dot is
