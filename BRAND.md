@@ -12,9 +12,8 @@ Flat, precise, slightly dry. A ship's computer, not a coach. Never excited, neve
 exclamatory, never emoji. Where a number exists, lead with the number.
 
 The line, where troid introduces itself (share title and image, the X and Reddit banners, and the first line of the
-home page, above its headline, in the mono and dim as the banners set it): *"the droid does the
-prop firm math. you decide the trade."* (the owner's words, lowercase like the name, 2026-09-26; it was "The droid
-does the prop-firm math. You make the trade."). It says what the name means and where troid stops:
+home page, above its headline, in the mono and dim as the banners set it): *"The droid does the
+prop-firm math. You decide the trade."* (the owner's words, 2026-09-26; it was "You make the trade."). It says what the name means and where troid stops:
 troid computes, a person places the order.
 
 Every claim carries a tier — DERIVED, SOURCED, MODELLED, MEASURED — and a MEASURED

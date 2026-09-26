@@ -7,9 +7,9 @@ product.compare,troid's compare,comparador do troid,,"troid's product name: choo
 product.ledger,troid's ledger,registro do troid,,"CHECK FIRST: product.ledger 'registro do troid': 'registro' also appears generically ('a legenda é o registro', 'lançamento no registro'). 'livro-razão do troid' is the alternative. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,pesquisa do troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,pergunte ao troid,,"CHECK FIRST: product.ask 'pergunte ao troid': it is used as a noun with the article, like 'o Fale Conosco' ('O pergunte ao troid está desligado'). Check that this reads naturally in ask.*, chat.js.status_off and chat.discl, or whether the English 'ask troid' should stay as the product name. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,troid — the droid does the prop firm math. you decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","Dimensione pelos dois tetos de perda, líquido de taxas. Gratuito. Nunca envia ordens.",,
-og.tagline,the droid does the prop firm math. you decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
+og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,O troid calcula os dois limites de perda da sua prop firm a partir das regras da própria empresa. Gratuito.,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,faq,,
 common.nav.source,source,código,,

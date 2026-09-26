@@ -6,9 +6,9 @@ product.compare,troid's compare,مقارنة troid,,"troid's product name: choos
 product.ledger,troid's ledger,سجل troid,,"CHECK FIRST: product.ledger 'سجل troid': the word سجل is common. Other uses were worded so they never form 'سجل troid': the journal is 'دفتر اليومية', and the chat log (chat.isnt.p) is 'سجلّ الأحداث'. Please check that no remaining سجل reads as the product. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,أبحاث troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,اسأل troid,,"CHECK FIRST: product.ask and every ask.* / chat.* string: 'اسأل troid' is an imperative, so it reads oddly as a sentence subject. In running prose it is wrapped in guillemets («اسأل troid»), while nav labels and titles use it bare. The fixed form still appears verbatim, but the reviewer should confirm that the guillemets, and the imperative itself, are acceptable as a product name. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,troid — the droid does the prop firm math. you decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.",حدّد حجم الصفقة وفق سقفَي الخسارة معًا، بعد خصم الرسوم. مجاني. لا يضع أوامر أبدًا.,,
-og.tagline,the droid does the prop firm math. you decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
+og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,يحسب troid حدَّي الخسارة لديك في شركة تمويل المتداولين من قواعد الشركة نفسها. مجاني.,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,الأسئلة الشائعة,,
 common.nav.source,source,الشيفرة المصدرية,,

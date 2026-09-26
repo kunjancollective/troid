@@ -157,8 +157,8 @@ calendar.note.cause,troid hasn't tested whether these releases are the reason.,,
 calendar.note.inside,This release lands inside that bar.,,,NEW: translate it in reviewer_edit | 
 calendar.note.outside,This release lands outside that bar.,,,NEW: translate it in reviewer_edit | 
 calendar.note.source,"Source: <a href=""{url}"">{source}'s release schedule</a>, read {date}. troid shows the schedule only, never a forecast.",,,"NEW: translate it in reviewer_edit | keep {date} {source} {url} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-og.title,troid — the droid does the prop firm math. you decide the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
-og.tagline,the droid does the prop firm math. you decide the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
+og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {exp} {n} {se} exactly as written; keep every number exactly
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.hero.lede,"Most failed challenges end on a loss limit, not a missed target: 93.7% at

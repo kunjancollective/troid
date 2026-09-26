@@ -6,9 +6,9 @@ product.compare,troid's compare,comparateur de troid,,"troid's product name: cho
 product.ledger,troid's ledger,registre de troid,,"CHECK FIRST: product.desk 'desk de troid' (the anglicism 'desk' is standard on French trading desks) and product.ledger 'registre de troid'. 'journal' was avoided because it collides with journal.csv; 'grand livre' is the alternative. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,recherche de troid,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,demandez à troid,,"CHECK FIRST: product.ask 'demandez à troid': an imperative used as a name reads oddly as a sentence subject, so running text wraps it in « » (all ask.*, chat.hero.lede, chat.discl, chat.js.status_off). The reviewer may prefer another fixed form, or keeping 'ask troid'. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,troid — the droid does the prop firm math. you decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","Dimensionnez face aux deux plafonds de perte, frais inclus. Gratuit. Ne passe jamais d'ordres.",,
-og.tagline,the droid does the prop firm math. you decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
+og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,troid calcule vos deux limites de perte en prop firm à partir des règles de la firme elle-même. Gratuit.,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,faq,,
 common.nav.source,source,source,,

@@ -6,9 +6,9 @@ product.compare,troid's compare,troid तुलना,,"CHECK FIRST: product.com
 product.ledger,troid's ledger,troid लेजर,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.research,troid's research,troid रिसर्च,,"troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
 product.ask,ask troid,troid से पूछें,,"CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid's product name: choose one form here; it is used the same way everywhere; troid stays lowercase, in Latin letters"
-og.title,troid — the droid does the prop firm math. you decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.description,"Size against both loss ceilings, net of fees. Free. Never places orders.","दोनों लॉस सीमाओं के हिसाब से साइज़ तय करें, फ़ीस घटाकर। मुफ़्त। कभी ऑर्डर नहीं लगाता।",,
-og.tagline,the droid does the prop firm math. you decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
+og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 share.line,troid computes both of your prop-firm loss limits from the firm's own rules. Free.,troid फ़र्म के अपने नियमों से आपकी दोनों प्रॉप-फ़र्म लॉस सीमाओं की गणना करता है। मुफ़्त।,,"troid stays lowercase, in Latin letters"
 common.nav.faq,faq,सवाल-जवाब,,
 common.nav.source,source,सोर्स,,
