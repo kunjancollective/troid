@@ -127,6 +127,9 @@ def allow_list():
     return json.loads(p.read_text())["allow"] if p.exists() else []
 
 
+STATS = {}          # page -> how each figure found was covered (the audit's summary, --report)
+
+
 def e1_page(page, allow):
     """The numbers on a page with no tier and source, and the refused words and headlines."""
     html_text = (PUB / f"{page}.html").read_text()
@@ -160,12 +163,19 @@ def e1_page(page, allow):
             text = re.sub(r"\s+", " ", b["text"]).strip()
             if not text:
                 continue
-            ok_block = (tiered or READ.search(text) or any("/sources#" in h for h in b["links"])
-                        or re.match(r"(Example|Also called)\b", text) or TIER.search(text) and SOURCE.search(text + b["code"] + " ".join(b["links"])))
-            for n in ([] if ok_block else numbers(text)):
-                if any(a["text"] in text and (a.get("number") in (None, n)) for a in mine):
-                    continue
-                found.append(("E1 unsourced number", page, sg["head"], n, text[:160]))
+            why = ("tier and source in its box" if tiered else "a read date beside it" if READ.search(text)
+                   else "its /sources entry" if any("/sources#" in h for h in b["links"])
+                   else "an input example" if re.match(r"(Example|Also called)\b", text)
+                   else "tier and source in its line" if TIER.search(text) and SOURCE.search(text + b["code"] + " ".join(b["links"])) else None)
+            st = STATS.setdefault(page, {})
+            for n in numbers(text):
+                if why:
+                    st[why] = st.get(why, 0) + 1
+                elif any(a["text"] in text and (a.get("number") in (None, n)) for a in mine):
+                    st["allow-list"] = st.get("allow-list", 0) + 1
+                else:
+                    st["NONE"] = st.get("NONE", 0) + 1
+                    found.append(("E1 unsourced number", page, sg["head"], n, text[:160]))
             if (b["tag"] in HEAD or "stat" in b["cls"]) and "source not yet recorded" in text.lower():
                 found.append(("E1 'source not yet recorded' in a headline or tile", page, sg["head"], "", text[:160]))
             for m in WORDS.finditer(text):
@@ -262,8 +272,44 @@ def run():
     return found + bad + e2_texts(F)
 
 
+def report(res):
+    """The audit re-run as a script (challenge-proof audit, 2026-09-26): what was checked and how each figure is covered."""
+    F = json.loads((ROOT / "figures.json").read_text())
+    S = {k: v for k, v in json.loads((ROOT / "sources.json").read_text()).items() if not k.startswith("_")}
+    sys.path.insert(0, str(ROOT / "backtest"))
+    import gen_compare as G
+    print("troid challenge-proof audit, as a script: backtest/claim_check.py --report\n")
+    print("E1  Every number in a public page's text, and how it is covered")
+    for pg in PAGES:
+        st = STATS.get(pg, {})
+        print(f"  {pg + '.html':<16} {sum(st.values()):>4} figures · " + " · ".join(f"{v} {k}" for k, v in sorted(st.items(), key=lambda x: -x[1])))
+    words = ", ".join(WORDS.pattern[3:-3].split("|"))
+    print(f"  claim words refused without a citation: {words}")
+    print(f"  allow-list: {len(allow_list())} entries, each with its reason (backtest/claim_allow.json)")
+    print("\nC   troid's compare: filled = sourced")
+    for k in G.ORDER:
+        f = G.FIRMS[k]; p = f["compare_product"]
+        n = sum(1 for x in G.FIELDS if p.get(x) is not None); m = sum(1 for x in G.FIELDS if G.sourced(f, x, p))
+        print(f"  {f['name']:<20} {n} of {len(G.FIELDS)} filled, {m} sourced")
+    print("\nE2  Canonical figures (figures.json), each read from its source")
+    for k, v in F.items():
+        if k.startswith("_"):
+            continue
+        src = v.get("from") or v.get("checked_by")
+        extra = f", interval {v['interval']}" if "interval" in v else (f", every fee stated: {v['all']}" if "all" in v else "")
+        print(f"  {k:<17} {v['value']!s:<7} from {src}{extra}")
+    print(f"  checked against every page, {', '.join(TEXTS)}: the 1-Step price, 'no edge', the trade frequency,")
+    print("  the holdout, the reset time and the fee per side")
+    print("\nE3  Outside figures on /sources (sources.json)")
+    for k, v in S.items():
+        print(f"  {k:<20} {v['publisher']}, published {v['published']}, read {v['read_on']}, sha256 {v['sha256']}: {v['caveat'][:90]}")
+    print()
+
+
 if __name__ == "__main__":
     res = run()
+    if "--report" in sys.argv:
+        report(res)
     by = {}
     for r in res:
         by.setdefault(r[0], []).append(r)
