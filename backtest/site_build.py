@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -24,14 +25,15 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import i18n  # noqa: E402
 import site_text  # noqa: E402
+import sources  # noqa: E402
 from jinja2 import Environment, FileSystemLoader, StrictUndefined  # noqa: E402
 
 ROOT = HERE.parent
 PUB = ROOT / "web" / "public"
 TEMPLATES = ROOT / "web" / "templates"
 SITE = json.loads((ROOT / "web" / "i18n" / "site.json").read_text())
-STATIC = ["index", "faq", "dashboard", "chat", "terms"]   # rendered here; compare, ledger, tearsheet by their generators
-PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms"]
+STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources"]   # rendered here; compare, ledger, tearsheet by their generators
+PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources"]
 BASE_URL = "https://troid.ai"
 
 ENV = Environment(loader=FileSystemLoader(str(TEMPLATES)), autoescape=False, keep_trailing_newline=True,
@@ -306,7 +308,8 @@ def common(T, page, live, preview=False):
             "footer": site_text.footer_html(T), "governs": governs_html(T),
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
-            "country_box": country_box(T), "avail_attr": avail_attr(T)}
+            "country_box": country_box(T), "avail_attr": avail_attr(T),
+            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES}
 
 
 def country_box(T):
@@ -328,10 +331,35 @@ def governs_html(T, summary_key=None):
     return f'<p class="governs">{s}<span class="gov-line">{T("legal.governs")}</span></p>'
 
 
+DATE_MARK = "\x00updated\x00"
+
+
+def dated(text, old):
+    """A page that shows a date ("Last updated", "Effective") shows the last change of its own content: the text
+    between <!-- dated --> and <!-- /dated --> (challenge-proof audit, D4: the FAQ said "Last updated 23 September 2026"
+    after changing on the 25th). The same content as the page published before (old) keeps that page's date; any
+    change makes it today (UTC). Nav, ticker and footer are outside the marks, so a change there moves no date."""
+    if DATE_MARK not in text:
+        return text
+    def region(s):
+        i, j = s.find("<!-- dated"), s.find("<!-- /dated -->")
+        return s[i:j] if 0 <= i < j else None
+    new, prev, date = region(text), region(old) if old else None, None
+    if new and prev:
+        m = re.fullmatch(re.escape(new).replace(re.escape(DATE_MARK), "(.+?)"), prev, re.S)
+        if m and len(set(m.groups())) == 1:
+            date = m.group(1)
+    from datetime import datetime, timezone
+    return text.replace(DATE_MARK, date or datetime.now(timezone.utc).strftime("%Y-%m-%d"))
+
+
 def render(template, T, page, live, preview=False, **extra):
     ctx = common(T, page, live, preview)
+    ctx["updated"] = DATE_MARK
     ctx.update(extra)
-    return ENV.get_template(template).render(**ctx)
+    text = ENV.get_template(template).render(**ctx)
+    prev = out_path(T.code, page)
+    return dated(text, prev.read_text() if prev.exists() else None)
 
 
 def extra_context(T):

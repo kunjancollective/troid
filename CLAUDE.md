@@ -44,6 +44,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   widening on 2026-09-22 kept every row's `logged_utc`. `site_text.py` holds the text every page
   shares — the footer line and the verbatim 17 CFR 4.41(b)(1)(i) hypothetical-performance text — and
   `gen_compare.py` writes the footer into the marked `<!-- footer -->` region of every static page.
+  `sources.json` holds every outside figure (who produced it, who reported it, published, read, quotes, caveat) and
+  renders `/sources`; `figures.json` holds the canonical figures and where each is read from; `claim_check.py`, run by
+  `verify_claims.py`, fails on a public number with no tier and source, a claim word with no citation, or a page that
+  disagrees with `figures.json` (challenge-proof audit, 2026-09-26; exceptions in `claim_allow.json`, each with why).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
   `data.yml` is the one-shot multi-year fetch; `calendar.yml` reads the BLS, BEA and Fed release schedules into
   `web/public/calendar.json` every Monday for the calendar strip (`backtest/fetch_calendar.py`; no forecasts);
@@ -105,7 +109,7 @@ and no number that isn't the question's, a tool's, or a step shown on the page.
 Evaluation spends its own budget. Keyed runs go out on `ANTHROPIC_API_KEY_EVAL` (the `troid-eval` workspace, its own
 limit), never the key visitors use; the runner refuses a keyed run while the deployment reports no evaluation key. If
 the organisation's credit runs out, ask troid stops answering visitors, not just tests. Between changes, run only the
-cases a change touches (`--only`); run every case (26 since d-stock, 2026-09-25) for the candidate and the live baseline
+cases a change touches (`--only`); run every case (27 since d-keep, 2026-09-26) for the candidate and the live baseline
 only when deciding a promotion. A single change the owner asks to ship on its own is staged in `web/context/patch/`
 instead (the live prompt with that file, `x-troid-variant: patch`, `EVAL_PATCH=1`), run on the cases it touches against
 the live baseline, and published when it adds no critical failure and no new kind of failure.

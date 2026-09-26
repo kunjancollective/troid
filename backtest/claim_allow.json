@@ -1,0 +1,40 @@
+{
+ "_what": "Numbers and words on troid's public pages that need no tier or source, each with the reason (challenge-proof audit E1, 2026-09-26). claim_check.py skips a finding when its block contains `text` (and, if given, the finding is `number`; `word` for a claim word). Keep it short: a number that is a claim gets a tier and a source instead.",
+ "allow": [
+  {
+   "page": "terms",
+   "text": "is zero dollars ($0)",
+   "number": "$0",
+   "why": "the liability limit, a legal term, not a figure troid computes or cites"
+  },
+  {
+   "page": "terms",
+   "text": "such as a 0.5% risk and a 35% budget cap",
+   "why": "the desk's default inputs, named as placeholders in the same sentence, not claims"
+  },
+  {
+   "page": "compare",
+   "text": "1-Phase (Advanced, $100k)",
+   "number": "$100",
+   "why": "the product's name as the firm labels it; its rules are sourced cell by cell"
+  },
+  {
+   "page": "*",
+   "text": "troid is an independent affiliate",
+   "word": true,
+   "why": "troid's own status, in the affiliate disclosure, not a claim about data"
+  },
+  {
+   "page": "*",
+   "text": "an independent marketing affiliate",
+   "word": true,
+   "why": "Crypto Fund Trader's required disclaimer, its exact wording (firms.json required_disclaimer)"
+  },
+  {
+   "page": "*",
+   "text": "qualified professional",
+   "word": true,
+   "why": "the disclaimer telling the reader to seek advice, not a claim"
+  }
+ ]
+}

@@ -152,6 +152,7 @@ class Result:
     balance: float = E.INITIAL; peak: float = E.INITIAL; trough_dd: float = 0.0
     trades: list = field(default_factory=list); trading_days: set = field(default_factory=set)
     rollover_breach: bool = False
+    worst_reset_float: float = 0.0     # the largest floating loss carried into a reset (after the policy flatten); a record only
     # state at the last bar, captured BEFORE any open position is marked to the last close
     realized_balance: float = E.INITIAL; realized_today: float = 0.0; day_start: float = E.INITIAL
     open_position: dict | None = None
@@ -201,6 +202,8 @@ def run(bars, sigs, start, challenge=True, risk_pct=E.RISK_PCT, capped=True, atr
                 pos = book(pos, o[i], pos.held(), i, "reset_flat")
             elif pos and HOLDING == "swing_safe" and pos.flt(o[i]) < 0:
                 pos = book(pos, o[i], pos.held(), i, "reset_flat_loser")
+            if pos:
+                r.worst_reset_float = min(r.worst_reset_float, pos.flt(o[i]))
             # 2. that close belongs to the OLD day
             if challenge and -realized_today >= daily_limit:
                 r.outcome, r.end_bar, r.fail_note = "fail_daily", i, "realized at reset"

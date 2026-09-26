@@ -138,7 +138,8 @@ def runs_table(T):
                    for r in reversed(rows[-42:]))
     return (f'<div class="panel"><p class="eyebrow">{T("ledger.runs.eyebrow", n=len(rows))}</p><div class="scroll"><table>'
             f'<tr><th>{T("ledger.runs.th.run")}</th><th>{T("ledger.runs.th.bar")}</th><th class="num">{T("ledger.runs.th.balance")}</th>'
-            f'<th class="num">{T("ledger.runs.th.closed")}</th><th>{T("ledger.runs.th.position")}</th></tr>{body}</table></div></div>')
+            f'<th class="num">{T("ledger.runs.th.closed")}</th><th>{T("ledger.runs.th.position")}</th></tr>{body}</table></div>'
+            f'<p class="hs">{T("ledger.src.runs")}</p></div>')
 
 
 def load_bars():
@@ -193,7 +194,7 @@ def trade_charts(T, rows):
     if not items: return ""
     return (f'<div class="panel"><p class="eyebrow">{T("ledger.charts.eyebrow", n=len(items))}</p>'
             f'<p class="hs" style="margin:-8px 0 14px">{T("ledger.charts.note")}</p>'
-            + "".join(caps) + "</div>"
+            + "".join(caps) + f'<p class="hs">{T("ledger.src.charts")}</p></div>'
             + f'<script src="{LWC}"></script>\n<script>var TRADES=' + json.dumps(items, separators=(",", ":"), ensure_ascii=_english(T)) + ";\n"
             + "var T=" + T.js("ledger.js.") + ";\n" + F_JS + "\n" + CHART_JS + "</script>")
 
@@ -299,13 +300,14 @@ def render_ledger(T, live):
 <h1>{code(T, cfg["name"])}</h1>
 <p class="lede">{T("ledger.hero.lede")}</p>
 <p class="meta">{asof}</p>
+<p class="meta" style="margin-top:-24px">{T("ledger.src.page")}</p>
 
 {heartbeat(T, st)}
 {runs_table(T)}
 <div class="warnbox">{warn}</div>
 {site_text.hypo_html(T=T)}
 
-<div class="panel"><p class="eyebrow">{T("ledger.equity.eyebrow")}</p>{equity_svg(T, rows)}</div>
+<div class="panel"><p class="eyebrow">{T("ledger.equity.eyebrow")}</p>{equity_svg(T, rows)}<p class="hs">{T("ledger.src.journal")}</p></div>
 
 <div class="cells">
 <div class="c"><div class="k">{T("ledger.cell.balance")}</div><div class="v">${st.get("balance",QUOTA):,.0f}</div></div>
@@ -326,7 +328,7 @@ def render_ledger(T, live):
 
 <div class="panel"><p class="eyebrow">{T("ledger.trades.eyebrow", n=min(n,40))}</p><div class="scroll"><table>
 <tr><th>{T("ledger.trades.th.closed")}</th><th>{T("ledger.trades.th.kind")}</th><th>{T("ledger.trades.th.side")}</th><th class="num">{T("ledger.trades.th.fills")}</th><th class="num">{T("ledger.trades.th.bars")}</th><th>{T("ledger.trades.th.exit")}</th><th class="num">{T("ledger.trades.th.pnl")}</th><th class="num">{T("ledger.trades.th.r")}</th></tr>
-{trades_html}</table></div></div>
+{trades_html}</table></div><p class="hs">{T("ledger.src.journal")}</p></div>
 
 {trade_charts(T, rows)}
 

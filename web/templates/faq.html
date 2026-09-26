@@ -169,9 +169,10 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 </div>
 {{ ticker }}
 
+<!-- dated: the date below is the last change between these marks (site_build.dated) -->
 <h1>{{ t("faq.hero.h1") }}</h1>
 <p class="lede">{{ t("faq.hero.lede") }}</p>
-<p class="meta">{{ t("faq.hero.updated") }}</p>
+<p class="meta">{{ t("faq.hero.updated", date=updated) }}</p>
 
 
 
@@ -180,22 +181,21 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <div class="q">
 <h2>{{ t("faq.pass.q") }}</h2>
 <p>{{ t("faq.pass.p1") }}</p>
-<p>{{ t("faq.pass.p2") }}</p>
-<p class="src">{{ t("faq.pass.src") }}</p>
+<p class="src">{{ src("fpfx_payouts") }}</p>
 </div>
 
 <div class="q">
 <h2>{{ t("faq.cost.q") }}</h2>
 <p>{{ t("faq.cost.p1") }}</p>
 <p>{{ t("faq.cost.p2") }}</p>
-<p class="src">{{ t("faq.cost.src") }}</p>
+<p class="src">{{ src("fpfx_payouts") }}</p>
 </div>
 
 <div class="q">
 <h2>{{ t("faq.fail.q") }}</h2>
 <p>{{ t("faq.fail.p1") }}</p>
 <p>{{ t("faq.fail.p2") }}</p>
-<p class="src">{{ t("faq.fail.src") }}</p>
+<p class="src">{{ src("onefunded_failures") }}</p>
 </div>
 
 <div class="q">
@@ -216,12 +216,14 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <p>{{ t("faq.daily.p1") }}</p>
 <p>{{ t("faq.daily.p2") }}</p>
 <p>{{ t("faq.daily.p3") }}</p>
+<p class="src">{{ rules_src(["daily_pct", "max_pct", "daily_basis", "drawdown_type", "floating_counts"], "faq.daily.derived") }}</p>
 </div>
 
 <div class="q">
 <h2>{{ t("faq.reset.q") }}</h2>
 <p>{{ t("faq.reset.p1") }}</p>
 <p>{{ t("faq.reset.p2") }}</p>
+<p class="src">{{ rules_src(["reset_utc", "floating_counts"]) }}</p>
 </div>
 
 <div class="q">
@@ -236,6 +238,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <h2>{{ t("faq.fees.q") }}</h2>
 <p>{{ t("faq.fees.p1") }}</p>
 <p>{{ t("faq.fees.p2") }}</p>
+<p class="src">{{ rules_src(["fee_per_side_pct", "max_leverage"], "faq.fees.derived") }}</p>
 </div>
 
 <h3 class="sec">{{ t("faq.sec.about") }}</h3>
@@ -270,7 +273,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 
 <div class="q">
 <h2>{{ t("faq.worth.q") }}</h2>
-<p>{{ t("faq.worth.p1") }}</p>
+<p>{{ t("faq.worth.p1", **ref_price) }}</p>
 <p>{{ t("faq.worth.p2") }}</p>
 </div>
 
@@ -304,6 +307,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <p>{{ t("faq.disc.jurisdiction.p") }}</p>
 </div>
 
+<!-- /dated -->
 <p class="foot"><!-- footer:start -->
 {{ footer }}
 <!-- footer:end --></p>

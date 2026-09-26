@@ -7,7 +7,12 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-Nothing is staged now. The second patch, section 9's facts in the FAQ's new words (the owner's, 2026-09-25): troid
+Staged now (2026-09-26, the challenge-proof audit): `TROID.md`, the crossover as "half of one day's loss limit" (D3,
+was "half of one bad day"), and `support.md` section 8, who reads a conversation: only troid's operator reads the stored
+conversations, and each message is sent to Anthropic to generate the answer, under Anthropic's API terms (D7). Evaluated
+on p-crossover and d-keep (new: "Who can read what I type to ask troid?") against the live prompt.
+
+The second patch, section 9's facts in the FAQ's new words (the owner's, 2026-09-25): troid
 doesn't fill in a price for gold, oil or stocks "at this time", and a stock no compared firm lists on the pages troid has
 read, like NVDA, opens the desk but can't be sized, because there are no firm rules to size it against. Evaluated on
 d-fill, d-stock (new: "I tapped NVDA on the price tape and the desk won't size it. Why?"), o-predict and b-stop, and

@@ -8,11 +8,14 @@ numbers you give it.
 
 ## Why this exists
 
-Across 300,000+ prop accounts, roughly 14% reach a funded account and about 7% ever get
-paid. Around 70% of failures are loss-limit breaches, most in the first week — failures
-trace to position size, not to strategy selection (SOURCED, source not yet recorded: troid has not
-yet traced these figures to a document and a read date). Almost everything sold in this niche
-is entry signals. This is the other thing.
+In FPFX Tech's data (300,000+ accounts, 100,000 traders, 10 firms), 14% of traders reached a
+funded account and 7% were ever paid (SOURCED: FPFX Tech, a company that sells software to prop
+firms, reported by Finance Magnates, published 2024-09-18, read 2026-09-26; not independent, not
+audited). At OneFunded, 93.7% of failed evaluations ended on a loss limit — 78.7% daily, 15.0% overall —
+clustered in the opening session and near the profit target (SOURCED: OneFunded's own platform data,
+published 2026-06-17, read 2026-09-26; one firm's self-reported figures). Every outside figure, its
+producer, dates and caveat: [`sources.json`](sources.json), shown at [troid.ai/sources](https://troid.ai/sources).
+Almost everything sold in this niche is entry signals. This is the other thing.
 
 ## Check troid's numbers before trusting any of them
 
@@ -75,14 +78,13 @@ Profiles: `1step`, `2step_s1`, `2step_s2`, `express`, `instant`, `trader`.
 
 **Your daily limit often isn't the constraint.** On a $100k 1-Step, below $98,000 of
 equity the static 6% floor binds instead, and the advertised 4% daily is fiction. That
-crossover is $2,000 from the starting line — half of one bad day.
+crossover is $2,000 from the starting line — half of one day's loss limit.
 
 **Leverage is not risk.** A $500 loss is $500 at 2×, 5× or 25×. Leverage changes margin
 and liquidation distance, never the loss. What it changes is whether price can wick
 through liquidation before reaching your stop.
 
-**Sizing beats edge.** At +0.35R per trade — better than most professionals sustain —
-risking 1% with no cap on remaining budget blows the account 68% of the time within a
+**Sizing beats edge.** At +0.35R per trade (45% of trades won at 2:1), risking 1% with no cap on remaining budget blows the account 68% of the time within a
 year. At 2%, 100%. Under a proportional cap, 0%. MODELLED: 20,000 simulated years of 30 trades
 a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static
 floor ([`backtest/income_math.py`](backtest/income_math.py); `verify_claims.py` reproduces it).

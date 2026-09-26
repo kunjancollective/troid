@@ -182,7 +182,8 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
   <h2>{{ t("dashboard.verdict.h2") }}</h2>
   <p class="big">{{ t("dashboard.verdict.big") }}</p>
   <p>{{ t("dashboard.verdict.p1") }}</p>
-  <p>{{ t("dashboard.verdict.p2") }}</p>
+  <p>{{ t("dashboard.verdict.p2", published=S.fpfx_payouts.published, read=S.fpfx_payouts.read_on) }}</p>
+  <p class="src">{{ t("dashboard.verdict.src") }}</p>
 </section>
 
 <section>
@@ -231,6 +232,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
       <span class="tag">{{ t("dashboard.xref.f7.tag") }}</span></div>
     <p>{{ t("dashboard.xref.f7.p1") }}</p>
   </div>
+  <p class="src">{{ t("dashboard.xref.src") }}</p>
 </section>
 
 <section>
@@ -262,6 +264,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
   </table>
   </div>
   <p style="margin-top:12px;color:var(--dim);font-size:13.5px">{{ t("dashboard.variants.note") }}</p>
+  <p class="src">{{ t("dashboard.variants.src") }}</p>
 </section>
 
 <section>
@@ -281,6 +284,8 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
       <div class="n">{{ t("dashboard.risk.reset.n") }}</div></div>
   </div>
   <p style="margin-top:14px">{{ t("dashboard.risk.p") }}</p>
+  <p class="src">{{ rules_src(["daily_pct", "max_pct", "daily_basis", "drawdown_type", "fee_per_side_pct", "reset_utc"], "dashboard.risk.derived") }}</p>
+  <p class="src">{{ t("faq.risk.src") }}</p>
 </section>
 
 <section>
@@ -289,7 +294,6 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
     <li>{{ t("dashboard.change.li1") }}</li>
     <li>{{ t("dashboard.change.li2") }}</li>
     <li>{{ t("dashboard.change.li3") }}</li>
-    <li>{{ t("dashboard.change.li4") }}</li>
   </ol>
 </section>
 

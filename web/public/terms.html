@@ -218,12 +218,13 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 <div class="hero">
   <p class="eyebrow" style="text-transform:none">troid · terms</p>
+  <!-- dated: the date below is the last change between these marks (site_build.dated) -->
   <h1>Terms of use</h1>
   <p class="lede">troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.</p>
 </div>
 
-<div class="draft">Effective 24 September 2026.</div>
+<div class="draft">Effective 2026-09-26.</div>
 
 <div class="panel"><p class="eyebrow">Contents</p><ul class="toc"><li><a href="#acceptance">1. Acceptance of these terms</a></li><li><a href="#service">2. Description of the service</a></li><li><a href="#not-advice">3. Not advice</a></li><li><a href="#rule-data">4. Accuracy of third-party rule data</a></li><li><a href="#verify">5. Your obligation to verify</a></li><li><a href="#hypothetical">6. Hypothetical results</a></li><li><a href="#no-guarantee">7. No guarantee of passing any challenge</a></li><li><a href="#prop-challenges">8. What a prop challenge is</a></li><li><a href="#affiliate">9. Affiliate disclosure</a> (<a href="#affiliate-notices">affiliate notices</a>)</li><li><a href="#ask-troid">10. ask troid, the AI assistant</a></li><li><a href="#as-is">11. Provided &ldquo;as is&rdquo;, with no warranty</a></li><li><a href="#liability">12. Limitation of liability</a></li><li><a href="#indemnification">13. Indemnification</a></li><li><a href="#governing-law">14. Governing law</a></li><li><a href="#changes">15. Changes to these terms</a></li><li><a href="#contact">16. Contact</a></li></ul></div>
 
@@ -287,7 +288,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <h2>6. Hypothetical results</h2>
 <p>troid's ledger, troid's research and troid's backtests show the results of a simulated strategy. No real money was traded and no real orders were placed. Every trade on troid's ledger up to 21 September 2026 was backfilled on that date from a backtest, not recorded as it happened. The ledger page shows how many have been logged live since.</p>
 <p>These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p>
-<p>troid's own strategy shows no statistical edge. Tested on data from 1 January 2021 to 7 January 2026, which it was not tuned on, it measured +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades). R is the amount risked on one trade. For both, the 95% confidence interval includes zero, so the result is inside noise. Until a strategy passes that test, treat every number troid publishes about its strategy as noise. Past results, simulated or real, do not predict future results.</p>
+<p>troid's own strategy shows no statistical edge. Tested on data from 1 January 2021 to 7 January 2026, which it was not tuned on, it measured +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades). R is the amount risked on one trade. For both, the 95% confidence interval includes zero, so the result is inside noise. Until a strategy passes that test, treat every number troid publishes about its strategy as noise. Past results, simulated or real, do not predict future results. These are MEASURED figures: the test, its code and every trade are in <a href="https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md">WALKFORWARD.md</a>.</p>
 </section>
 
 <section id="no-guarantee">
@@ -327,9 +328,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <li>troid keeps each conversation for 30 days after its last message, under its session ID, and then deletes it automatically. It keeps the time of each message, the page's language, your messages and ask troid's replies, each tool ask troid used with its inputs and results, the rule sources and read dates cited, and the AI model used. It does not keep your IP address, your browser's user agent, your name or any account.</li>
 <li>troid keeps conversations to answer disputes about what ask troid said, to correct errors, to check that ask troid keeps to the guardrails described in this section, and to understand which questions come up most, so it can improve its pages and answers.</li>
 <li>For that last purpose, once a week troid counts that week's messages by topic (for example &ldquo;position size&rdquo; or &ldquo;the daily reset&rdquo;), by the firms and ask troid tools they involve, and by the page's language. The counts are made by fixed rules, not by reading or summarising any one conversation. They hold no text from any conversation, no quotation and no session ID. troid keeps them after the conversations themselves are deleted and does not publish them. Deleting a conversation removes it, but not counts already made from it, which cannot be traced back to it.</li>
-<li>Only the Operator can read a kept conversation. No page or interface on this site returns one. troid never sells conversations and never uses them for marketing or to train any AI model. They are held for the Operator by a third-party database provider.</li>
+<li>Only the Operator can read a kept conversation. No page or interface on this site returns one. Each message also goes to Anthropic to produce the answer, as below. troid never sells conversations and never uses them for marketing or to train any AI model. They are held for the Operator by a third-party database provider.</li>
 <li>To delete a conversation before the 30 days are up, use &ldquo;delete this conversation&rdquo; on the ask troid page while the session is open, which deletes it at once, or write to <a href="mailto:hello@troid.ai">hello@troid.ai</a> with the session ID.</li>
-<li>To produce each answer, troid sends the conversation so far to the company that provides the AI model. That company handles it under its own terms and may keep it for a limited period.</li>
+<li>To produce each answer, troid sends the conversation so far to Anthropic, the company that provides the AI model. Anthropic handles it under its API terms and may keep it for a limited period.</li>
 <li>For each message ask troid answers or fails to answer, troid's server log also records one line: whether it was answered or failed; how many tool calls it used; which model was called; whether the conversation was kept; whether the reply was the abuse warning, the fixed reply given when the AI model declines to answer, or the end of the session; and, if the AI provider returned an error, its numeric status code. The log line does not record the text of your messages or your IP address. A message turned away before any call to the AI model (ask troid switched off or busy, over the per-address limit, too long, malformed or unverifiable) is neither logged nor kept.</li>
 <li>ask troid limits each IP address to about 20 messages an hour (for IPv6, each /64 block of addresses). To do that, troid holds the address in the server's working memory until that server instance restarts. It is never written to troid's log or kept with a conversation.</li>
 <li>troid's hosting provider keeps its own request logs, which can include your IP address.</li>
@@ -380,6 +381,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <h2>16. Contact</h2>
 <p>Questions about these terms, corrections to any number or rule, and complaints go to <a href="mailto:hello@troid.ai">hello@troid.ai</a>.</p>
 </section>
+<!-- /dated -->
 </div>
 
 </div>

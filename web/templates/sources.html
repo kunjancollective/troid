@@ -1,0 +1,251 @@
+{% include "partials/_head.html" %}<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --dur-fast:120ms;--dur:240ms;--dur-slow:480ms;--ease-out:cubic-bezier(.2,.7,.3,1);--ease-inout:cubic-bezier(.65,0,.35,1);
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:32px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink)}
+.mark a{color:inherit;text-decoration:none;border:0}
+/* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
+   no font to wait for, so nothing moves when the page's fonts arrive */
+.mark .wm{display:inline-block;line-height:0}
+.mark svg{width:1.12em;height:1.6em;vertical-align:-.425em;fill:currentColor}
+.dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+.dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
+  background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
+/* the ripple moves only transform and opacity (the compositor's), starts from nothing, and fades in and out with the
+   state over --dur-slow: the build writes the state, live.js confirms it */
+.dot .rp{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;transition:opacity var(--dur-slow) var(--ease-out)}
+.dot.live .rp{opacity:1}
+.dot .rp::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;
+  transform-origin:center;will-change:transform,opacity;animation:ripple 2.4s var(--ease-out) infinite}
+.dot:not(.live) .rp::before{animation-play-state:paused}
+@keyframes ripple{0%{transform:scale(1);opacity:0}15%{opacity:.45}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot .rp::before{animation:none}.dot .rp{transition:none}
+  .dot.live{outline:.06em solid var(--signal);outline-offset:.18em}}
+@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
+  .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
+  .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
+/* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
+   in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
+   and when the widget fails. The box has one height, the tape's 44 px (its one-line layout at every width, the
+   smallest TradingView's script draws; the owner's call, 2026-09-25), set before anything loads; the two labels share one cell and the button holds both
+   words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
+   takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
+   TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
+   crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
+.tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
+.tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
+.tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
+.tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
+.tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}
+.tradingview-widget-container{overflow:hidden}.tradingview-widget-container iframe{display:block;border:0}
+.tkrow{align-self:center;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;overflow-x:auto;
+  scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
+.tkrow::-webkit-scrollbar{display:none}.tk.stale .tkrow{opacity:.55}
+@container tk (min-width:768px){.tkrow{flex-wrap:wrap;padding:0;overflow:visible}.tkrow .tkbr{flex:0 0 100%;height:0;overflow:hidden}}
+.tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
+  background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}.tkx b{font-weight:400;color:var(--dim)}
+.tksep{flex:none;color:var(--line)}
+button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
+button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
+button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+.tkl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0 14px;margin:0;font-size:10.5px;line-height:16px}
+.tkt,.tkp{display:grid;min-width:0}.tkt>*,.tkp>*{grid-area:1/1;min-width:0}
+.tk.still .tkc,.tk:not(.still) .tks,.tk.still.off .tks,.tk.still .tkpp,.tk:not(.still) .tkpl,.tk.fail .tkp{visibility:hidden}
+.tkc a{color:var(--dim);text-decoration:none}.tkc a:hover{color:var(--ink);text-decoration:underline}
+.tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
+.tkp{position:relative;padding:0;border:0;background:none;color:var(--dim);font:inherit;line-height:inherit;cursor:pointer;text-align:end}
+.tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
+.tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
+/* the calendar strip under the tape (web/public/calendar.js; ticker v2 handoff, section D): the scheduled US releases of
+   the next 7 days on one line, 32 px tall whatever shows (so every event is a 32 px target, over WCAG's 24), hidden with
+   its space kept until the schedule loads, and when it can't or is over 14 days old. When the events don't fit, the row
+   and a copy of it move by a transform (calendar.js sets --calx and --calt, about 40 px/s) and hold while hovered,
+   touched or open; keyboard focus, the tape's pause and reduced motion make it a still row that swipes. Its note is a
+   .pop (web/public/pop.js), below: no shadow, --surface2 and a --line border (BRAND.md). */
+.cal{height:32px;margin-top:4px;overflow:hidden;font-family:var(--mono);font-size:11px;line-height:32px;color:var(--dim)}
+.cal.off{visibility:hidden}
+.calrow{display:flex;align-items:baseline;gap:0 8px;height:32px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  scrollbar-width:none;white-space:nowrap}
+.calrow::-webkit-scrollbar{display:none}
+.cal.mv .calrow{width:max-content;overflow:visible;scroll-snap-type:none;animation:calmv var(--calt,60s) linear infinite}
+.cal.mv.hold .calrow{animation-play-state:paused}
+@keyframes calmv{to{transform:translateX(var(--calx,0))}}
+.cale{flex:none;scroll-snap-align:start;height:32px;padding:0 3px;border:0;background:none;color:inherit;font:inherit;
+  line-height:inherit;font-variant-numeric:tabular-nums;cursor:pointer}
+.cale b{font-weight:600;color:var(--ink)}.cale:hover b,.cale[aria-expanded="true"] b{color:var(--signal)}
+.cale:focus-visible{outline:1px solid var(--signal);outline-offset:-3px}
+.calsep{flex:none;color:var(--line)}.calempty{flex:none;padding:0 3px}
+@media (prefers-reduced-motion:reduce){.cal.mv .calrow{animation:none}}
+.pop{position:absolute;z-index:var(--z-popover,40);max-width:280px;padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
+.pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+/* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
+h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:24ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+/* the phone header (the owner's Android check, 2026-09-25): the nav on one line that scrolls sideways to the screen's
+   edges (each link a 29 px target) and less space around it, so the desk's first field shows on a 390 px screen. The
+   wordmark's size and the headline's under it are the same rule at every width (.mark and h1 above). */
+@media (max-width:640px){
+  header{padding-top:16px;margin-bottom:26px}
+  .bar{row-gap:10px}
+  nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
+    scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
+  nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
+  .hero{margin-bottom:24px}
+}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-inline-start:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+h3{font-size:15px;margin:18px 0 6px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+.src{border-top:1px solid var(--line);padding:22px 0 8px;scroll-margin-top:16px}
+.src h2{font-size:17px;margin:0 0 6px;line-height:1.35}
+.src .by{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 12px}
+.kv{border-collapse:collapse;width:100%;font-size:13.5px;margin:0 0 12px}
+.kv th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);text-align:start;
+  vertical-align:top;padding:6px 14px 6px 0;white-space:nowrap}
+.kv td{padding:6px 0;line-height:1.55;overflow-wrap:anywhere}
+.src blockquote{margin:0 0 10px;padding:8px 14px;border-inline-start:2px solid var(--line);background:var(--surface2);font-size:13.5px;line-height:1.6}
+.src .k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin:14px 0 6px}
+.src ul{padding-inline-start:20px;margin:0 0 10px;font-size:13.5px}
+@media(max-width:640px){.kv th{white-space:normal;width:34%}}
+</style>
+{{ head_extra }}</head>
+<body>
+
+{% include "partials/_header.html" %}
+
+<div class="wrap">
+
+<div class="hero">
+  <p class="eyebrow" style="text-transform:none">{{ t("sources.hero.eyebrow") }}</p>
+  <h1>{{ t("sources.hero.h1") }}</h1>
+  <p class="lede">{{ t("sources.hero.lede") }}</p>
+</div>
+
+{#- Every outside figure troid's pages use, from sources.json (backtest/sources.py). The documents' own words stay as
+    they were read, in their language; troid's labels are translated. #}
+{% for sid, s in S.items() %}
+<section class="src" id="{{ sid }}">
+<h2 lang="en">{{ s.title|e }}</h2>
+<p class="by"><a href="{{ s.url|e }}" rel="noopener">{{ s.publisher|e }}</a>{% if s.author %} · {{ s.author|e }}{% endif %}</p>
+<table class="kv">
+<tr><th>{{ t("sources.l.produced") }}</th><td>{{ s.produced_by|e }}</td></tr>
+<tr><th>{{ t("sources.l.reported") }}</th><td>{{ s.reported_by|e }}</td></tr>
+<tr><th>{{ t("sources.l.published") }}</th><td>{{ s.published }}{% if s.updated %} · {{ t("sources.l.updated", date=s.updated) }}{% endif %}</td></tr>
+<tr><th>{{ t("sources.l.read") }}</th><td>{{ t("sources.l.read_v", date=s.read_on, sha=s.sha256) }}</td></tr>
+<tr><th>{{ t("sources.l.uses") }}</th><td>{{ s.used_on|join("; ")|e }}</td></tr>
+<tr><th>{{ t("sources.l.caveat") }}</th><td>{{ s.caveat|e }}</td></tr>
+</table>
+<p class="k">{{ t("sources.l.says") }}</p>
+{% for q in s.quotes %}<blockquote lang="en">{{ q|e }}</blockquote>
+{% endfor %}
+{% if s.derived %}<p class="k">{{ t("sources.l.derived") }}</p>
+<ul>{% for k, v in s.derived.items() %}<li>{{ v|e }}</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endfor %}
+
+<section class="src" id="ranking">
+<h2>{{ t("sources.ranking.h") }}</h2>
+<p class="by">{{ ranking.source|e }} · {{ t("sources.ranking.read", date=ranking.date) }}</p>
+<ul>{% for r in ranking.top %}<li>{{ t("sources.ranking.row", firm=r.firm|e, n=r.reviews, rating=r.rating) }}</li>{% endfor %}</ul>
+<p>{{ t("sources.ranking.p") }}</p>
+</section>
+
+<section class="src" id="calendar">
+<h2>{{ t("sources.calendar.h") }}</h2>
+<p>{{ t("sources.calendar.p", read=calendar_read) }}</p>
+</section>
+
+<section class="src" id="rules">
+<h2>{{ t("sources.rules.h") }}</h2>
+<p>{{ t("sources.rules.p") }}</p>
+</section>
+
+</div>
+
+<footer><div class="wrap">
+<!-- footer:start -->
+{{ footer }}
+<!-- footer:end -->
+</div></footer>
+</body>
+</html>

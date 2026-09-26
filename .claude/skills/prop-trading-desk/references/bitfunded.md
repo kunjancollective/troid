@@ -38,7 +38,7 @@ equal when      4,000 = E − 94,000   →  E = 98,000   [daily limit is FIXED a
 
 Above $98,000 the daily limit binds. Below it, the 6% max loss governs and the daily
 allowance is fiction. On a $100,000 account that crossover is only $2,000 away — about
-half of one bad day. So for most of a struggling account's life, the max loss is the
+half of one day's loss limit. So for most of a struggling account's life, the max loss is the
 real constraint and the "4% daily" number on the marketing page is irrelevant.
 
 Say this explicitly the first time the account drops below the crossover. A trader who

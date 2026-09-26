@@ -11,7 +11,7 @@
   "out-of-scope": 3,
   "should-i": 2,
   "unread-firm": 2,
-  "desk": 2
+  "desk": 3
  },
  "cases": [
   {
@@ -554,6 +554,23 @@
     "\\btroid (can|will|could) (still )?size (it|NVDA|the trade|a stock)"
    ],
    "_why": "2026-09-25: a stock no compared firm offers (NVDA, AAPL, GOOGL, MSFT, AMZN) opens the desk with it in the Asset field as \"not offered by troid's firms\", no price and nothing sized, because there are no firm rules to size it against (the owner's Android test; support.md section 9, staged as a patch). It must say that, quote no price, send no one to a broker or another firm, and promise nothing."
+  },
+  {
+   "id": "d-keep",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "Who can read what I type to ask troid?",
+   "all": [
+    "\\boperator\\b",
+    "\\bAnthropic\\b",
+    "\\b30 days\\b"
+   ],
+   "none": [
+    "\\b(no ?one|nobody)( else)? (can|will|could) (ever )?(read|see)\\b",
+    "\\b(never|not) (sent|shared|passed) (to|with) (anyone|any third part(y|ies)|a third party)\\b",
+    "\\bonly troid(['’]s operator)? (can|will|could) (ever )?(read|see)\\b(?![^.\\n]{0,80}\\b(stored|kept)\\b)"
+   ],
+   "_why": "2026-09-26 (challenge-proof audit, D7): only troid's operator can read the stored conversations, but every message is sent to Anthropic to generate the answer, under Anthropic's API terms (support.md section 8, staged as a patch). It must say both, keep the 30 days, and never say no one else sees a message."
   }
  ]
 }

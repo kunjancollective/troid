@@ -60,6 +60,7 @@ for label,cfg in CONFIGS:
 best=max(rows,key=lambda x:x[1]['exp_r'])
 rs=[t['r'] for t in best[2].trades]
 sd=statistics.stdev(rs); se=sd/math.sqrt(len(rs)); m=statistics.mean(rs)
+
 print(f"""
 ## Is the best configuration real?
 
@@ -87,27 +88,80 @@ hypothesis for the walk-forward, not a result.
 4. **The budget cap is what makes the account survivable.** At +0.35R, naive sizing at
    1% blows the account 68% of the time in a year; at 2%, 100%. Under the cap, 0%
    (MODELLED: income_math.py, 20,000 simulated years; verify_claims.py reproduces it).
-5. **The rollover trap needs two conditions together**: uncapped risk >= 4% per position
-   AND a policy that holds losers through the reset. Desk sizing plus swing_safe kills
-   it twice over. Largest floating loss measured into a reset was $3,422 vs the $4,000
-   line, at 4% naive risk.
+5. **The rollover trap** (below): no configuration carried a floating loss across a reset
+   that broke the daily limit on this sample; the closest needed uncapped risk and a policy
+   that holds losers through the reset together.""")
 
+# The chosen configuration (strategy_config.json: 5-strength + reverse on stop) over rolling challenge starts: a start
+# every 18 bars (3 days), each run to the end of the sample, in challenge mode with desk sizing.
+CHOSEN = 8
+apply(CONFIGS[CHOSEN][1]); V.HOLDING = "swing_safe"
+sg = V.build_signals(bars, e20, e120, atr)
+STARTS = list(range(warm, len(bars) - 120, 18))
+runs = [V.run(bars, sg, s0, atr=atr) for s0 in STARTS]
+oc = {}
+for x in runs: oc[x.outcome] = oc.get(x.outcome, 0) + 1
+print(f"""
+## Rolling challenge starts, the chosen configuration
+
+**{CONFIGS[CHOSEN][0]}**, desk sizing, `swing_safe`: {len(runs)} starts, one every 18 bars (3 days), each run to the
+end of the sample. Outcomes: {", ".join(f"{k} {v}" for k, v in sorted(oc.items()))}. Median ending balance
+**${statistics.median(x.balance for x in runs):,.0f}** (from $100,000).""")
+
+# The rollover trap: the largest floating loss carried into a reset (after the holding policy's flatten), and how many
+# starts broke the daily limit with it, by sizing and holding policy, across every configuration.
+TRAP = [("desk sizing (0.5%, capped)", 0.005, True), ("4% uncapped", 0.04, False)]
+print("""
+## The rollover trap
+
+The largest floating loss carried into a daily reset, against the fixed $4,000 line, over the same rolling starts:
+
+| holding | sizing | worst over every configuration | starts that broke the limit at a reset |
+|---|---|---|---|""")
+for hold, what in (("swing_safe", "swing_safe (a loser is closed before the reset)"), ("swing", "swing (a loser is held through it)")):
+    for sname, rp, cap in TRAP:
+        worst, breaches = 0.0, 0
+        for label, cfg in CONFIGS:
+            apply(cfg); V.HOLDING = hold
+            sgx = V.build_signals(bars, e20, e120, atr)
+            rr = [V.run(bars, sgx, s0, risk_pct=rp, capped=cap, atr=atr) for s0 in STARTS]
+            worst = min(worst, min(x.worst_reset_float for x in rr)); breaches += sum(x.rollover_breach for x in rr)
+        print(f"| {what} | {sname} | ${max(0.0, -worst):,.0f} | {breaches} of {len(STARTS) * len(CONFIGS)} |")
+V.HOLDING = "swing_safe"
+
+# The reversal trigger: how often each trigger fired (trades of kind "reverse") in the continuous run, and how many of
+# the base ladder's trades reached their third target.
+print("""
+## The reversal trigger
+
+| configuration | trades | reverse trades | trades that reached the third target |
+|---|---|---|---|""")
+for label, st, r in rows[6:]:
+    tr = r.trades; tp3 = sum(1 for t in tr if t["tps_hit"] >= 3)
+    print(f"| {label} | {len(tr)} | {sum(1 for t in tr if t['kind'] == 'reverse')} | {tp3} ({100 * tp3 / len(tr):.1f}%) |")
+
+# Frequency: the chosen configuration's, and what an income target needs at it. DERIVED: gross a month per account =
+# exp R x trades a month x the $500 risk (0.5% of $100,000), before the split, fees and any breach.
+TPM = rows[CHOSEN][1]["n"] / MONTHS
+print(f"""
 ## Frequency, and what it costs
 
-This strategy produces **{rows[6][1]['n']/MONTHS:.1f} trades/month** (5-strength, no reverse).
-Earlier income modelling assumed 30/month and must be read with that correction:
+The chosen configuration produces **{TPM:.1f} trades/month**. Earlier income modelling assumed 30 a month (an
+assumption, never measured). DERIVED: gross a month per account = exp R x trades a month x $500 risk (0.5% of
+$100,000), before the split, fees and any breach:
 
 | edge | trades/mo | gross/account/mo | accounts for $6,250/mo |
-|---|---|---|---|
-| +0.15R | 7 | $614 | **10.2** |
-| +0.15R | 30 | $1,862 | 3.4 |
-| +0.35R | 7 | $1,250 | 5.0 |
-| +0.35R | 30 | $5,342 | 1.2 |
-
-At the real frequency the account requirement roughly triples.
-
-## Not established
+|---|---|---|---|""")
+for er in (0.15, 0.35):
+    for tpm, lab in ((TPM, f"{TPM:.1f} (measured)"), (30, "30 (assumed)")):
+        g = er * tpm * 500
+        print(f"| +{er:.2f}R | {lab} | ${g:,.0f} | {6250 / g:.1f} |")
+print(f"""
+At the measured frequency the account requirement is about {30 / TPM:.1f} times the assumed one.
+""")
+print(f"""## Not established
 
 Anything outside these {MONTHS:.1f} months, this one asset, this one regime. The
 walk-forward in `HANDOFF.md` is the gate on every number above.
 """)
+

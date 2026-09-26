@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ask troid</title>
-<meta name="description" content="ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.">
+<title>troid — sources</title>
+<meta name="description" content="Every outside figure troid's pages use: what it says, who produced it, who reported it, when it was published, when troid read it, and its caveat.">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:image" content="https://troid.ai/og/en.png">
-<meta property="og:title" content="ask troid">
-<meta property="og:description" content="troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.">
+<meta property="og:title" content="troid's sources">
+<meta property="og:description" content="Every outside figure troid uses, with who produced it, when troid read it, and its caveat.">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -166,9 +166,6 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
-.sess{margin:10px 0 0;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7;overflow-wrap:anywhere}
-.sess code{font-family:var(--mono);color:var(--ink)}
-.lk{background:none;border:0;padding:0;font:inherit;color:var(--signal);cursor:pointer}
 .notes div{padding-inline-start:14px;position:relative}
 .notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
@@ -178,30 +175,37 @@ input:focus,select:focus{outline:none;border-color:var(--signal)}
   color:var(--signal);line-height:1}
 .stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
 h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+h3{font-size:15px;margin:18px 0 6px;font-weight:600}
 p{margin:0 0 11px}
 a{color:var(--signal);text-decoration:none;border-bottom:1px solid
   color-mix(in srgb,var(--signal) 30%,transparent)}
 code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
   padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
 footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
 </style>
 <style>
-.chat{display:flex;flex-direction:column;gap:10px;min-height:200px;max-height:60vh;overflow-y:auto;padding:4px 2px;margin-bottom:12px}
-.msg{max-width:88%;padding:10px 13px;border-radius:4px;font-size:14px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
-.msg.u{align-self:flex-end;background:var(--surface2);border:1px solid var(--line)}
-.msg.a{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-inline-start:2px solid var(--signal);font-family:var(--mono);font-size:12.5px}
-.msg.s{align-self:stretch;font-family:var(--mono);font-size:11px;color:var(--dim);background:none;border:0;padding:2px 0}
-.row{display:flex;gap:10px;align-items:flex-end}
-textarea{width:100%;min-height:64px;resize:vertical;background:var(--surface2);border:1px solid var(--line);color:var(--ink);border-radius:3px;padding:9px;font-size:14px;font-family:var(--sans)}
-textarea:focus{outline:none;border-color:var(--signal)}
-button{font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.06em;background:var(--signal);color:#fff;border:0;border-radius:3px;padding:11px 18px;cursor:pointer}
-button:disabled{opacity:.45;cursor:default}
-.box{border-inline-start:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:14px}
-.off{border-inline-start-color:var(--bad)}
+.src{border-top:1px solid var(--line);padding:22px 0 8px;scroll-margin-top:16px}
+.src h2{font-size:17px;margin:0 0 6px;line-height:1.35}
+.src .by{font-family:var(--mono);font-size:12px;color:var(--dim);margin:0 0 12px}
+.kv{border-collapse:collapse;width:100%;font-size:13.5px;margin:0 0 12px}
+.kv th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);text-align:start;
+  vertical-align:top;padding:6px 14px 6px 0;white-space:nowrap}
+.kv td{padding:6px 0;line-height:1.55;overflow-wrap:anywhere}
+.src blockquote{margin:0 0 10px;padding:8px 14px;border-inline-start:2px solid var(--line);background:var(--surface2);font-size:13.5px;line-height:1.6}
+.src .k{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin:14px 0 6px}
+.src ul{padding-inline-start:20px;margin:0 0 10px;font-size:13.5px}
+@media(max-width:640px){.kv th{white-space:normal;width:34%}}
 </style>
-<link rel="canonical" href="https://troid.ai/chat">
-<meta property="og:url" content="https://troid.ai/chat">
+<link rel="canonical" href="https://troid.ai/sources">
+<meta property="og:url" content="https://troid.ai/sources">
 </head>
 <body>
 
@@ -219,46 +223,69 @@ button:disabled{opacity:.45;cursor:default}
 <div class="wrap">
 
 <div class="hero">
-  <h1>ask troid</h1>
-  <p class="lede">ask troid answers from troid's rule data and its own arithmetic tools. It
-  prices the trade you bring. It does not generate one.</p>
+  <p class="eyebrow" style="text-transform:none">Sources</p>
+  <h1>Every outside figure, and where it comes from</h1>
+  <p class="lede">Each figure troid's pages take from outside troid: what the document says, in its own words; who produced the data and who reported it; when it was published and when troid read it; and its caveat. A figure from outside troid that isn't on this page doesn't appear on troid's pages. Firm rules have their own sources on troid's compare, rule by rule.</p>
 </div>
 
-<div class="panel">
-  <p class="eyebrow"><span style="text-transform:none">ask troid</span> · automated assistant</p>
-  <div id="status" class="box">checking whether the assistant is switched on…</div>
-  <div id="chat" class="chat" aria-live="polite"></div>
-  <div class="row">
-    <textarea id="q" maxlength="2000" placeholder="e.g. Bitfunded 1-Step, $100k quota, equity 96,000, short 77,872 with a 0.3% stop — size it." disabled></textarea>
-    <button id="send" disabled>send</button>
-  </div>
-  <p class="sess" id="sess">Session <code id="sid" translate="no"></code> — quote this if you contact troid about this conversation.
-    <button type="button" id="copy" class="lk">copy</button> ·
-    <button type="button" id="del" class="lk">delete this conversation</button></p>
-  <p class="notes" style="margin-top:10px"><span>Not financial advice. Verify with the firm before acting.</span></p>
-</div>
+<section class="src" id="onefunded_failures">
+<h2 lang="en">The Most Common Reasons Why Traders Fail Prop Firm Challenges (And How to Fix Them)</h2>
+<p class="by"><a href="https://onefunded.com/blog/trading-psychology/why-traders-fail-prop-firm-challenges/" rel="noopener">OneFunded</a> · Damilola Esebame</p>
+<table class="kv">
+<tr><th>Produced by</th><td>OneFunded, a prop firm: its own platform data</td></tr>
+<tr><th>Reported by</th><td>OneFunded&#39;s own blog</td></tr>
+<tr><th>Published</th><td>2026-06-17 · updated 2026-08-19</td></tr>
+<tr><th>Read by troid</th><td>2026-09-26, in full (sha256 of the page as read: 740be9ceccc51e00…)</td></tr>
+<tr><th>Used on</th><td>troid&#39;s desk (the home page): the headline and the 93.7% tile; troid&#39;s FAQ: Why do people fail?; the README</td></tr>
+<tr><th>Caveat</th><td>One firm&#39;s self-reported figures, not independently audited. The post gives no number of accounts and no period (&#34;since its inception&#34;, across its Flash, Core and Value programs).</td></tr>
+</table>
+<p class="k">What it says, in its own words</p>
+<blockquote lang="en">Here is how breaches break down across OneFunded’s platform: 78.7% of failed evaluations ended on a daily loss limit breach; 15.0% ended on an overall (maximum) loss limit breach; 6.3% ended due to inactivity and other risk rules</blockquote>
+<blockquote lang="en">In the challenges offered by OneFunded, most of the breaches occur in two stages. First, during the opening session, where the traders are unaccustomed to equity-based drawdown, and secondly, close to the profit target stage, where they expand their positions to hit the target early.</blockquote>
+<blockquote lang="en">The problem is not always the strategy. More often, it comes down to risk management issues. Since its inception, OneFunded has been tracking prop challenges across all programs (Flash, Core, and Value).</blockquote>
 
-<div class="panel">
-  <h2>What it is</h2>
-  <p>A chat over <a href="/TROID.md">TROID.md</a>, the rules on
-  <a href="/compare">troid's compare</a>, the <a href="/METHODOLOGY.md">methodology</a> and a fixed
-  <a href="https://github.com/kunjancollective/troid/blob/main/web/context/support.md">support script</a>.
-  Sizing, budgets and compliance checks run through tools that do the arithmetic and name the
-  document and read date of every rule they use, or say its source is not yet recorded; the
-  model reports what they return. Every number carries its tier. A pending rule stays pending.</p>
-  <h2 style="margin-top:20px">What it isn't</h2>
-  <p>A signal service, a firm recommendation, a memory of you, or a way to reach your account.
-  troid keeps each conversation for 30 days after its last message, under the session ID shown
-  under the message box, then deletes it automatically: your messages, ask troid's replies, the
-  tools used and the sources cited. Never your IP address, your browser, your name or an account.
-  Once a week troid counts which topics come up most, never quoting anyone.
-  Only troid's operator can read the stored conversations; they are never sold and never used for marketing or
-  to train a model. To answer, troid sends each message, with the conversation so far, to Anthropic, the company
-  that provides the AI model, under Anthropic's API terms; Anthropic may keep it for a limited period. The hosting provider keeps
-  its own request logs, which can include your IP address. About 20 messages an hour per address.</p>
-  <p style="margin-bottom:0" id="discl">ask troid can be wrong; the firm's own documents govern. Verify with
-  the firm before acting. <a href="/terms#ask-troid">Section 10 of troid's terms</a> has the detail.</p>
-</div>
+<p class="k">What troid computes from it</p>
+<ul><li>78.7% + 15.0% = 93.7%, troid&#39;s sum of the two loss-limit shares</li></ul>
+</section>
+
+<section class="src" id="fpfx_payouts">
+<h2 lang="en">Exclusive: Only 7% of 300,000 Prop Trading Accounts Achieved Payouts</h2>
+<p class="by"><a href="https://www.financemagnates.com/forex/analysis/exclusive-only-7-of-300000-prop-trading-accounts-achieved-payouts/" rel="noopener">Finance Magnates</a> · Damian Chmiel</p>
+<table class="kv">
+<tr><th>Produced by</th><td>FPFX Tech, a fintech that sells technology (software as a service) to prop trading firms</td></tr>
+<tr><th>Reported by</th><td>Finance Magnates</td></tr>
+<tr><th>Published</th><td>2024-09-18</td></tr>
+<tr><th>Read by troid</th><td>2026-09-26, in full (sha256 of the page as read: b4796da4f15bce43…)</td></tr>
+<tr><th>Used on</th><td>troid&#39;s FAQ: What percentage of people actually pass? and What does it really cost to get funded?; troid&#39;s research: the 14% pass rate; the README</td></tr>
+<tr><th>Caveat</th><td>Industry data from a company that sells software to prop firms, published in 2024; not independent and not audited. The ten firms are not named.</td></tr>
+</table>
+<p class="k">What it says, in its own words</p>
+<blockquote lang="en">It covered a total of over 300,000 accounts belonging to 100,000 traders from 10 different prop trading companies.</blockquote>
+<blockquote lang="en">“According to the data in the survey, 14% of traders passed the challenge and obtained a funded account. Of those, about 45% achieved a payout (7% of all traders) in their funded account, with the average payout being 4% of the plan size (or account value),” Justin Hertzberg, one of the founders and CEO of FPFX Tech, commented for Finance Magnates.</blockquote>
+<blockquote lang="en">Considering that a single account spends an average of $800 on challenge purchases throughout its entire activity cycle, typically taking three different challenges, the average profits are not high at all.</blockquote>
+<blockquote lang="en">The data comes from FPFX Tech, a fintech that specializes in providing technology solutions for prop trading firms, offering software-as-a-service (SaaS) solutions.</blockquote>
+
+<p class="k">What troid computes from it</p>
+<ul><li>100% − 7% = 93%, troid&#39;s arithmetic</li></ul>
+</section>
+
+
+<section class="src" id="ranking">
+<h2>The review ranking that orders troid's compare</h2>
+<p class="by">propfirmmatch.com/crypto/prop-firm-reviews · read 2026-09-21</p>
+<ul><li>BrightFunded: 128 verified reviews at 4.5</li><li>Crypto Fund Trader: 109 verified reviews at 4.1</li></ul>
+<p>propfirmmatch is an external, public ranking. troid uses it to choose which firms it verifies next, never to rate them. Review counts change daily; these are the counts on the date troid read them.</p>
+</section>
+
+<section class="src" id="calendar">
+<h2>The release calendar</h2>
+<p>The calendar strip under troid's desk shows scheduled US releases from the agencies' own schedules: the Bureau of Labor Statistics (CPI, PPI, jobs, JOLTS), the Bureau of Economic Analysis and the Federal Reserve. troid reads them every Monday; the dates shown were read 2026-09-25. No forecasts.</p>
+</section>
+
+<section class="src" id="rules">
+<h2>Firm rules</h2>
+<p>Every firm rule troid states — loss limits, fees, hold limits, prices — comes from the firm's own document, with the section and the date troid read it, shown beside the rule on <a href="/compare">troid's compare</a>. A rule troid hasn't read shows “pending”.</p>
+</section>
 
 </div>
 
@@ -267,68 +294,5 @@ button:disabled{opacity:.45;cursor:default}
 <a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end -->
 </div></footer>
-
-<script>
-/* The page holds the conversation in this array; the service keeps it for 30 days under SESSION, a random
-   128-bit ID made here when the session starts and covered by every signature (terms section 10). The
-   opening disclosure comes from the service (GET /api/troid), is shown before anything else, and is not part
-   of hist. Each reply carries a signature over the conversation so far, which the next message sends back,
-   and the session's delete token, which "delete this conversation" sends (and a retried first message, since
-   the service lets a first message join a stored session only with its token). A delete asked for while an
-   answer is on its way waits for it, so the answer cannot be kept again after the delete. */
-var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","delete_wait":"Deleting once the answer on its way arrives…","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
-function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
-var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10}),SESSION="",delTok=null,disc="",onMsg="",pending=null,lost=false;
-function newSession(){var b=new Uint8Array(16);crypto.getRandomValues(b);
-  SESSION=Array.prototype.map.call(b,function(x){return("0"+x.toString(16)).slice(-2)}).join("");
-  el("sid").textContent=SESSION;hist=[];sig=null;delTok=null;lost=false}
-function el(id){return document.getElementById(id)}
-function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
-function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
-function stop(msg){ended=true;setOn(false,msg)}
-fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
-  if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
-  if(s.max_chars)el("q").maxLength=s.max_chars;
-  if(s.enabled&&s.disclosure){disc=s.disclosure;add("a",disc);shown=true}
-  if(s.enabled){onMsg=F(T.status_on,{firms:s.context&&s.context.firms?F(T.status_firms,{n:s.context.firms.length}):"",limit:s.limit_per_hour});setOn(true,onMsg)}
-  else setOn(false,T.status_off);
-}).catch(function(){setOn(false,T.unreachable)});
-function send(){
-  var t=el("q").value.trim();if(!t||busy||ended)return;
-  busy=true;el("send").disabled=true;el("q").value="";hist.push({role:"user",content:t});add("u",t);
-  var w=add("s",T.waiting),h={"content-type":"application/json"};if(delTok)h["x-troid-token"]=delTok;lost=true;
-  pending=fetch("/api/troid?lang="+LANG,{method:"POST",headers:h,body:JSON.stringify({messages:hist,disclosed:shown,sig:sig,session:SESSION,lang:LANG})})
-  .then(function(r){return r.json().then(function(j){return[r.status,j]})})
-  .then(function(x){var st=x[0],j=x[1];w.remove();lost=false;if(j.delete_token&&j.session===SESSION)delTok=j.delete_token;
-    if(st===200&&j.ended){add("a",j.reply);stop(T.ended)}
-    else if(st===200){hist.push({role:"assistant",content:j.reply});sig=j.sig||null;add("a",j.reply);
-      add("s",(j.tool_calls?F(j.tool_calls>1?T.tool_call_n:T.tool_call_1,{n:j.tool_calls}):"")+j.model);
-      if(j.full||hist.length+1>maxMsgs)stop(FULL)}
-    else{hist.pop();add("s",j.error||F(T.error,{status:st}));
-      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
-  }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s",T.unreachable)})
-  .then(function(){busy=false;pending=null;if(!ended&&!el("q").disabled)el("send").disabled=false});
-}
-function del(){
-  if(pending){add("s",T.delete_wait);pending.then(del);return}
-  if(!delTok){add("s",lost?T.delete_failed:T.delete_none);return}
-  fetch("/api/troid?session="+SESSION+"&lang="+LANG,{method:"DELETE",headers:{"x-troid-token":delTok}})
-  .then(function(r){return r.json().then(function(j){return[r.status,j]})})
-  .then(function(x){if(x[0]!==200||!x[1].deleted){add("s",T.delete_failed);return}
-    el("chat").innerHTML="";newSession();ended=false;shown=!!disc;if(disc)add("a",disc);add("s",T.deleted);
-    if(onMsg)setOn(true,onMsg)})
-  .catch(function(){add("s",T.delete_failed)});
-}
-function copy(){if(navigator.clipboard)navigator.clipboard.writeText(SESSION).then(function(){var b=el("copy"),w=b.textContent;b.textContent=T.copied;setTimeout(function(){b.textContent=w},1500)}).catch(function(){})}
-newSession();
-el("del").addEventListener("click",del);
-el("copy").addEventListener("click",copy);
-el("send").addEventListener("click",send);
-el("q").addEventListener("keydown",function(e){if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
-/* A question another page hands over in the fragment, as the desk's "Want another firm? Ask troid." does: it goes in
-   the box, never sent, and the fragment is cleared so a reload doesn't bring it back. */
-(function(){var m=/^#q=(.*)$/.exec(location.hash),q;if(!m)return;try{q=decodeURIComponent(m[1])}catch(e){return}
-  el("q").value=q.slice(0,el("q").maxLength>0?el("q").maxLength:2000);history.replaceState(null,"",location.pathname+location.search)})();
-</script>
 </body>
 </html>

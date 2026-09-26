@@ -204,9 +204,9 @@ print("="*76)
 print("  6. SOURCED CLAIMS - cite, never re-derive")
 print("="*76)
 for claim, src in [
-    ("~14% reach a funded account; ~7% ever get paid", "source not yet recorded: attributed to FPFX Technology aggregate data (300k+ accounts); no document or read date in the repo"),
-    ("~70% of failures are loss-limit breaches", "source not yet recorded: no document or read date in the repo; published with that label"),
-    ("average 3 attempts, $1,600+ in fees per $100k", "source not yet recorded: no document or read date in the repo"),
+    ("14% passed and got a funded account; 7% of all traders were paid (93% never were)", "FPFX Tech's data, reported by Finance Magnates, published 2024-09-18, read 2026-09-26 (sources.json fpfx_payouts)"),
+    ("93.7% of failed evaluations ended on a loss limit: 78.7% daily, 15.0% overall", "OneFunded's own platform data, its blog, published 2026-06-17, updated 2026-08-19, read 2026-09-26 (sources.json onefunded_failures)"),
+    ("an account spends an average of $800 on challenges, typically taking three", "FPFX Tech's data, reported by Finance Magnates, published 2024-09-18, read 2026-09-26 (sources.json fpfx_payouts)"),
     ("0.04% fee per side on notional", "Bitfunded help centre"),
     ("reset 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (16:00-16:10 UTC)", "Bitfunded help centre, Criteria to be Success"),
     ("max loss is STATIC, measured from account quota", "Bitfunded help centre"),
@@ -324,11 +324,23 @@ print("  10. troid.ai - tiers beside the figures; generated claims on troid's co
 print("="*76)
 _index = " ".join(_html.unescape(_read("web/public/index.html")).split())
 _faqs = " ".join(_faq.split())
-check("DERIVED", "landing: the ~70% tile says SOURCED, source not yet recorded", float(_en["index.stats.failures.prov"] in _index and _en["index.stats.failures.prov"].startswith("SOURCED · source not yet recorded")), 1.0)
-check("DERIVED", "FAQ: the 70% says SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.fail.src"]).split()) in _faqs), 1.0)
-check("DERIVED", "FAQ: the 14% / 7% say SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.pass.src"]).split()) in _faqs and _en["faq.pass.src"].startswith("SOURCED · source not yet recorded")), 1.0)
-check("DERIVED", "FAQ: the $1,600 says SOURCED, source not yet recorded", float(" ".join(_html.unescape(_en["faq.cost.src"]).split()) in _faqs), 1.0)
-check("DERIVED", "research page: the 14% base rate carries its tier", float("14% industry base rate (SOURCED, source not yet recorded)" in " ".join(_html.unescape(_read("web/public/dashboard.html")).split())), 1.0)
+# the outside figures (challenge-proof audit, A and E3, 2026-09-26): each with its producer, publication and read dates
+# and its entry on /sources (sources.json), and "source not yet recorded" nowhere
+import sources as _SRC
+_dash = " ".join(_html.unescape(_read("web/public/dashboard.html")).split())
+_srcs = " ".join(_html.unescape(_read("web/public/sources.html")).split())
+for _sid, _where in (("onefunded_failures", (("landing", _index), ("FAQ", _faqs))), ("fpfx_payouts", (("FAQ", _faqs), ("research page", _dash)))):
+    _s = _SRC.SOURCES[_sid]
+    for _nm, _txt in _where:
+        check("SOURCED", f"{_nm}: {_sid} carries its tier, published {_s['published']}, read {_s['read_on']} and its /sources entry",
+              float(f"published {_s['published']}" in _txt and f"read {_s['read_on']}" in _txt and f"/sources#{_sid}" in _read(
+                  {"landing": "web/public/index.html", "FAQ": "web/public/faq.html", "research page": "web/public/dashboard.html"}[_nm])), 1.0)
+    check("SOURCED", f"/sources: {_sid} names its producer and quotes the page", float(_s["produced_by"] in _srcs and all(
+        " ".join(_html.unescape(q).split())[:80] in _srcs for q in _s["quotes"])), 1.0)
+check("DERIVED", "landing: the failure tile is 93.7% = 78.7% + 15.0% (OneFunded)", float("93.7%" in _index and abs(
+    _SRC.SOURCES["onefunded_failures"]["figures"]["daily_pct"] + _SRC.SOURCES["onefunded_failures"]["figures"]["max_pct"] - 93.7) < 1e-9), 1.0)
+check("DERIVED", "no page says 'source not yet recorded' of a figure", float(not any("source not yet recorded" in _html.unescape(pg.read_text()).replace(
+    "or says its source is not yet recorded", "") for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
 check("DERIVED", "landing: the 68% tile says MODELLED with its assumptions and the script", float(all(x in _index for x in ("MODELLED. 20,000 simulated years", "+0.35R a trade", "30 trades a month for 12 months", "1% of balance risked a trade with no cap on remaining budget", "income_math.py"))), 1.0)
 check("DERIVED", "FAQ: the ruin figures say MODELLED and name the script", float("MODELLED: 20,000 simulated years" in _faqs and "income_math.py" in _faqs), 1.0)
 check("DERIVED", "no page still publishes the pre-correction 98%", float(not any("98%" in _html.unescape(pg.read_text()) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
@@ -458,6 +470,16 @@ _calj = _json.loads(_read("web/public/calendar.json"))
 check("SOURCED", f"calendar.json: all {len(_calj['events'])} events name an agency page and the date troid read it", float(all(
     _e["url"].startswith({"BLS": "https://www.bls.gov/", "BEA": "https://www.bea.gov/", "Federal Reserve": "https://www.federalreserve.gov/"}[_e["source"]])
     and _re.fullmatch(r"\d{4}-\d{2}-\d{2}", _e["read"]) for _e in _calj["events"])), 1.0)
+
+# The challenge-proof audit as a check (2026-09-26, E1 and E2; claim_check.py): every number on a public page with its
+# tier and source, no claim word without a citation, the canonical figures (figures.json) read from their sources and
+# agreed with everywhere troid states them, and every filled compare cell sourced.
+import claim_check as _cc
+_cf = _cc.run()
+for _f in _cf:
+    print(f"  [CLAIM   ] FAIL  {_f[0]}: {_f[1]} · {_f[2][:50]} · {_f[3]} · {_f[4][:100]}")
+check("SOURCED", "claim check: every number on a public page has a tier and a source; the canonical figures agree "
+      f"({len(_cf)} finding(s))", float(len(_cf)), 0.0)
 
 print()
 print("="*76)

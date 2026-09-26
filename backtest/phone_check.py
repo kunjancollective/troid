@@ -27,7 +27,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from i18n_equiv import PUB, serve  # noqa: E402
 from tv_stub import route_tv  # noqa: E402
 
-PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
+PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet", "sources"]
 # (device width, text size): the CSS width Safari lays out
 WIDTHS = sorted({round(w / z) for w in (375, 390) for z in (1.0, 1.15, 1.3)})
 

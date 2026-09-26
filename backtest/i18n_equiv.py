@@ -31,7 +31,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PUB = ROOT / "web" / "public"
-PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet"]
+PAGES = ["index", "compare", "faq", "dashboard", "chat", "terms", "ledger", "tearsheet", "sources"]
 WIDTHS = (390, 1280)
 
 

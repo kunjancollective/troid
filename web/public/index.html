@@ -375,9 +375,9 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 
 <div class="hero">
   <h1>Prop-firm risk, computed.</h1>
-  <p class="lede">Most funded accounts fail on position size, not entries. troid computes
-  both of your loss ceilings, reports which one actually binds, and sizes the trade net
-  of fees.</p>
+  <p class="lede">Most failed challenges end on a loss limit, not a missed target: 93.7% at
+  <a href="/sources#onefunded_failures">one firm that publishes its own figures</a>, below. troid computes both of your
+  loss ceilings, reports which one actually binds, and sizes the trade net of fees.</p>
 </div>
 
 
@@ -434,7 +434,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
       <div id="result"></div>
     </div>
   </div>
-  <div class="pop" id="p-why3" hidden><p>troid compares 3 firms: Bitfunded, the reference firm troid verified first, and the 2 crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.</p><p><a href="/compare#chosen">How firms are chosen →</a></p>
+  <div class="pop" id="p-why3" hidden><p>troid compares 3 firms: Bitfunded, the reference firm troid verified first, and the 2 crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.</p><p><a href="/compare#chosen">How firms are chosen →</a></p>
     <p>Want another firm? <a href="/chat#q=Can%20troid%20add%20another%20firm%20to%20its%20compare%3F%20The%20one%20I%27d%20like%20is%20">Ask troid.</a></p></div>
   <div class="pop gl" id="g-asset" role="tooltip" hidden><p>What you're trading. It sets the firm's hold limit and whether the firm lists it; the size troid computes is the same for every asset.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">symbol, instrument, pair, market</span></p></div>
   <div class="pop gl" id="g-firm" role="tooltip" hidden><p>The prop firm whose rules troid applies.</p><p><span class="gk">Example</span> choose Bitfunded and every limit below is Bitfunded's.</p></div>
@@ -450,7 +450,7 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <div class="pop gl" id="g-target_r" role="tooltip" hidden><p>Your profit target as a multiple of your stop distance.</p><p>troid's default — change it to yours.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">take-profit (TP), reward-to-risk, R:R, R-multiple</span></p><p><span class="gk">Example</span> stop 3,058 below 77,872, target 2 → 77,872 + 2 × 3,058 = 83,988.</p><p><code>target = entry ± target R × stop distance</code></p></div>
   <div class="pop gl" id="g-risk_pct" role="tooltip" hidden><p>How much of your account you'd lose if the stop is hit.</p><p>troid's default — change it to yours.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">risk per trade, position risk</span></p><p><span class="gk">Example</span> 0.5 on equity of 100,000 → $500 at the stop.</p><p><code>risk = equity × risk %</code></p></div>
   <div class="pop gl" id="g-cap_pct" role="tooltip" hidden><p>troid's own safety rule, not a firm's: one trade may use at most this share of the room left before your nearest limit.</p><p>troid's default — change it to yours.</p><p><span class="gk">Example</span> $4,000 of room at 35 → no single trade risks more than $1,400. After losses the room shrinks, so each trade shrinks with it instead of breaching the floor.</p><p><code>risk ≤ room × budget cap %</code></p></div>
-  <div class="pop gl" id="g-leverage" role="tooltip" hidden><p>How much position each dollar of margin controls. It changes margin and liquidation distance — not the loss at your stop.</p><p>troid's default — change it to yours.</p><p>5× is the most Bitfunded allows on crypto, so it's the starting point. troid has no recorded cap for Bitfunded's Express and BrightFunded yet.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">5x, 1:5, margin multiplier</span></p><p><span class="gk">Example</span> a $12,478 position at 5× ties up $2,496 of margin. At 2× it ties up $6,239 — same loss at the stop either way.</p><p><code>margin = notional ÷ leverage</code></p></div>
+  <div class="pop gl" id="g-leverage" role="tooltip" hidden><p>How much position each dollar of margin controls. It changes margin and liquidation distance — not the loss at your stop.</p><p>troid's default — change it to yours.</p><p>5× is the most Bitfunded allows on crypto (its own documents, read 2026-09-23), so it's the starting point. troid has no recorded cap for Bitfunded's Express and BrightFunded yet.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">5x, 1:5, margin multiplier</span></p><p><span class="gk">Example</span> a $12,478 position at 5× ties up $2,496 of margin. At 2× it ties up $6,239 — same loss at the stop either way.</p><p><code>margin = notional ÷ leverage</code></p></div>
   <div class="pop gl" id="g-mode" role="tooltip" hidden><p>Cross: your whole account backs every position. Isolated: each position has its own margin and can be liquidated on its own.</p><p>troid's default — change it to yours.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">cross margin / shared margin; isolated margin / position margin</span></p><p><span class="gk">Example</span> under cross at 5× with a normal stop, the firm's loss floor is reached long before the exchange would liquidate — so the stop is the only thing in front of the floor.</p></div>
   <div class="pop gl" id="g-verdict" role="tooltip" hidden><p>OK, REDUCE or BLOCK — whether your trade fits, was cut to fit, or can't be sized.</p></div>
   <div class="pop gl" id="g-binding" role="tooltip" hidden><p>Whichever limit is closer right now: the daily limit or the max-loss floor. The one that would stop you first.</p><p><span class="gk">Also called</span> <span lang="en" translate="no">binding limit, nearest limit</span></p><p class="gnow" hidden><span class="gk">Now</span> <span class="gx" id="gx-binding" data-live="{daily} of room before the daily limit, {dd} before the max-loss floor: the {bind} is closer."></span></p><p>Crossover: the equity where the two limits swap which one binds, on products with a static floor and a daily limit fixed from the starting balance.</p><p><span class="gk">Example</span> Bitfunded 1-Step: $100,000 × (1 − 6% + 4%) = $98,000.</p><p><code>quota × (1 − max% + daily%)</code></p></div>
@@ -483,7 +483,8 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <div class="read" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
     <div class="cell">
       <div class="k">Bitfunded · reference</div>
-      <div class="v" style="font-size:14px;margin:4px 0">1-Step 4% / 6% static · 2-Step 5% / 10%</div>
+      <div class="v" style="font-size:14px;margin:4px 0">1-Step 4% / 6% static · 2-Step Stage 1 5% / 10%</div>
+      <div class="s">SOURCED · its own documents, read 2026-09-23; each rule with its section on <a href="/compare">troid's compare</a></div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
       <div class="s">Where troid&#x27;s ledger runs. Each rule&#x27;s source and read date is on troid&#x27;s compare.</div>
       <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link · their promos apply here</div>
@@ -491,13 +492,13 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
     <div class="cell">
       <div class="k">BrightFunded · #1 by reviews</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules filled · 15 sourced</div>
-      <div class="s">128 verified reviews at 4.5 on propfirmmatch. Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
+      <div class="s">128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21). Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
       <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
     </div>
     <div class="cell">
       <div class="k">Crypto Fund Trader · #2 by reviews</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
-      <div class="s">109 verified reviews at 4.1 on propfirmmatch. Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.</div>
+      <div class="s">109 verified reviews at 4.1 on propfirmmatch (read 2026-09-21). Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input. (its own documents, read 2026-09-21)</div>
       <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
       <div class="s req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></div>
     </div>
@@ -513,18 +514,19 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 </div>
 
 <div class="stats">
-  <div class="stat"><div class="n">~70%</div>
-    <p>of prop-firm failures are loss-limit breaches, most inside the first week. Firms
-    report failures trace to size, not strategy selection.</p>
-    <div class="prov">SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.</div></div>
+  <div class="stat"><div class="n">93.7%</div>
+    <p>of failed challenges at OneFunded ended on a loss limit — 78.7% on the daily limit, 15.0% on
+    the overall maximum. Breaches cluster in the opening session and near the profit target, when traders size up to
+    reach it.</p>
+    <div class="prov">SOURCED · OneFunded's own platform data, in its post “The Most Common Reasons Why Traders Fail Prop Firm Challenges”, published 2026-06-17 (updated 2026-08-19), read 2026-09-26. One firm's self-reported figures, not independently audited; the post gives no number of accounts or period. 93.7% is troid's sum of its 78.7% and 15.0%. <a href="/sources#onefunded_failures">Sources</a></div></div>
   <div class="stat"><div class="n">68%</div>
-    <p>of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
+    <p>of accounts blow up within a year at a +0.35R edge (45% of trades won at 2:1), risking 1%
     with no cap on remaining budget. Under a cap, zero.</p>
     <div class="prov">MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href="https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py">income_math.py</a></div></div>
 <!-- crossover:start -->
   <div class="stat"><div class="n">$98,000</div>
     <p>On a $100k 1-Step, below this equity the 6% static floor binds instead of the 4%
-    daily. That is $2,000 from the start — half of one bad day.</p>
+    daily. That is $2,000 from the start — half of one day's loss limit.</p>
     <div class="prov">DERIVED. Computed from Bitfunded 1-Step rules as published on 2026-09-18 and 2026-09-21 and 2026-09-23 — daily %, max % from help centre: Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives (read 2026-09-23) · static floor from help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota) (read 2026-09-18) · initial-balance daily limit from FAQ (read 2026-09-21). Rules change without notice. Verify with the firm before trading. <code>quota × (1 − max% + daily%) = $100,000 × (1 − 6% + 4%)</code></div></div>
 <!-- crossover:end -->
 </div>
@@ -532,19 +534,17 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <div class="panel">
   <h2>What troid does</h2>
   <p>Computes both loss ceilings and reports the binding one. Sizes positions net of the
-  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
-  5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
-  every asset the firm lists.</p>
+  firm's own fee. Checks trades against each firm's own rules as troid has read them: its hold limit, its margin
+  concentration limit, its minimum trading days. Works across the challenge types on troid's compare and the assets
+  troid has read in each firm's own documents; troid's compare shows each rule with its source.</p>
   <h2 style="margin-top:20px">What it doesn't</h2>
   <p>Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.</p>
   <p><a href="/TROID.md">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
   assistant as a system prompt. The <a href="https://github.com/kunjancollective/troid/tree/main/mcp">MCP
   server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.</p>
-  <p style="margin-bottom:0">Every figure here is arithmetic you can check.
-  <code>verify_claims.py</code> in the repo re-derives each published number from first
-  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
-  A measured number is never stated as fact.</p>
+  <p style="margin-bottom:0">Every figure here shows its tier and source; the arithmetic reproduces in
+  <code>verify_claims.py</code>, which re-derives each published number from first principles and tags it by
+  tier — derived, sourced, modelled, or measured. A measured number is never stated as fact.</p>
 </div>
 
 </div>

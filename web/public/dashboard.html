@@ -190,10 +190,10 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 
 <p class="eyebrow" style="text-transform:none">troid's research · strategy review · <a href="/tearsheet">tearsheet</a> · <a href="/METHODOLOGY.md">methodology</a></p>
 <h1>Strategy review</h1>
-<p class="meta">Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed</p>
+<p class="meta">MEASURED on BTCUSDT 4h bars from api.binance.us, one feed · under the rules of Bitfunded's 1-Step, Expert level, $100,000 · figures as of 21 Sep 2026</p>
 
 <!-- hypo:start -->
-<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure, inside noise, and not a fact about the future.</p></div>
+<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.</p></div>
 <!-- hypo:end -->
 
 <section class="verdict">
@@ -201,28 +201,27 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
   <p class="big"><strong>Five-tranche strength ladder + regime filter + desk cap</strong> — but
   do <em>not</em> buy a challenge. The walk-forward has been run, and it came back as noise.</p>
   <p>Of everything tested it has the lowest drawdown
-  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), zero failed and
-  zero zombie accounts across 72 rolling challenge starts, median ending balance $100,409.
-  It is also still <strong>+0.03R</strong> on the sample it was chosen on, and
-  <strong>+0.008R</strong> on the 504 BTC trades from 1 January 2021 to 7 January 2026 it never saw
-  (<a href="https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md">WALKFORWARD.md</a>).
-  That is a well-built vehicle with no engine in it.</p>
+  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), and across 72 rolling challenge starts none
+  failed, none stalled and none passed: every one was still running at the end of the sample, median balance $100,409.
+  It is +0.03R a trade on the sample it was chosen on, and <strong>+0.008R</strong> on the 504 BTC trades from 1 January
+  2021 to 7 January 2026 it never saw. That is a well-built vehicle with no engine in it.</p>
   <p><strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
-  of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.</p>
+  of holdout just said the entry logic has no measurable edge. At the 14% pass rate in FPFX Tech's data (SOURCED ·
+  reported by Finance Magnates, published 2024-09-18, read 2026-09-26; <a href="/sources#fpfx_payouts">Sources</a>),
+  passing once barely updates whether you have an edge — plenty of edgeless traders pass.</p>
+  <p class="src">MEASURED · the sample: <a href="https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md">RESULTS.md</a>, generated by <code>gen_results.py</code> from 1,539 4h bars, 8 Jan – 21 Sep 2026 (<code>data/btc_4h.csv</code>); the holdout: <a href="https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md">WALKFORWARD.md</a>.</p>
 </section>
 
 <section>
-  <h2>Cross-reference — things that don't add up</h2>
+  <h2>What the research found, including where troid was wrong</h2>
 
   <div class="finding">
-    <div class="fh"><h3>1. "5x scale-in for a larger position" does the opposite</h3>
-      <span class="tag bad">design assumption inverted</span></div>
+    <div class="fh"><h3>1. A 5-tranche ladder holds less, not more</h3>
+      <span class="tag bad">measured on the sample</span></div>
     <p>At the same $500 risk, a 5-tranche <em>strength</em> ladder holds
-    <strong>34% less</strong> quantity than a single entry (0.109 BTC vs 0.167 BTC;
-    $8,524 vs $13,000 notional). Because the stop stays anchored at T1's structure,
-    each later tranche sits further from the stop and therefore gets less size.</p>
+    <strong>34% less</strong> quantity than a single entry (0.109 BTC against 0.167 BTC on a 1.5-ATR stop). Because the
+    stop stays anchored at the first tranche's structure, each later tranche sits further from the stop and therefore
+    gets less size.</p>
     <p>The ladder's benefit is <strong>conditionality, not size</strong>: losers fill
     1.66 tranches, winners fill 4.26. You're small when wrong and large when right. If
     what you actually want is a bigger position, that comes from raising risk per trade,
@@ -230,62 +229,61 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>2. The income model assumed 4.3&times; the trade frequency</h3>
+    <div class="fh"><h3>2. troid's income model assumed about three times the real trade frequency</h3>
       <span class="tag bad">changes the conclusion</span></div>
-    <p><code>income_math.py</code> ran at 30 trades/month. The strategy produces
-    <strong>10.1/month</strong> (78 trades in 7.7 months). Every encouraging number in the
-    $5k/month analysis — the 4-months-to-target row, $614 at the real 9/mo frequency (was $1,862 at an assumed 30/mo)/account — assumed a frequency
-    this strategy does not reach.</p>
-    <p>Corrected: at 10.1 trades/month and 0.5% risk, $6,250/month gross needs
-    <strong>+1.24R per trade</strong>. Not credible at any skill level. Either the
-    timeframe drops below 4h to raise frequency, or the income target needs more accounts
-    than the scaling table implied.</p>
+    <p>troid's income model (<code>income_math.py</code>) assumed 30 trades a month. The strategy
+    produces <strong>10.1 a month</strong> (78 trades in 7.7 months), so each account earns about a third of what the
+    model showed.</p>
+    <p>At 10.1 trades a month and 0.5% risk, $6,250 a month gross needs <strong>+1.24R per
+    trade</strong> ($6,250 ÷ $500 ÷ 10.1), far above the +0.008R the strategy measured out of sample. Either the timeframe
+    drops below 4h to trade more often, or the target needs more accounts.</p>
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>3. RESULTS.md was stale on every row</h3>
+    <div class="fh"><h3>3. The published statistics are generated, never written by hand</h3>
       <span class="tag">resolved</span></div>
-    <p>It was hand-written and drifted from the engine after every change. It is now
-    generated by <code>gen_results.py</code> from the live engine on the frozen sample, and
-    <code>verify_claims.py</code> re-derives the published statistics from
-    <code>journal.csv</code> and fails if either drifts. The table below is that output.</p>
+    <p>The results table was once written by hand, and it drifted from the engine after every change. It
+    is now generated by <code>gen_results.py</code> from the engine on the frozen sample, and
+    <code>verify_claims.py</code> re-derives the published statistics from <code>journal.csv</code> and fails if
+    either drifts. The table below is that output.</p>
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>4. The skill still describes the rollover trap as a general hazard</h3>
-      <span class="tag warn">skill text</span></div>
-    <p><code>bitfunded.md</code> presents it as broadly dangerous. Measured: it needs
-    <em>both</em> uncapped risk &ge;4% per position <em>and</em> a policy that holds
-    losers through the reset. Under desk sizing plus swing_safe it is dead twice over —
-    by cap and by policy. Largest floating loss actually carried into a reset was $3,422
-    against the $4,000 line, at 4% naive risk.</p>
+    <div class="fh"><h3>4. The rollover trap needs two conditions at once</h3>
+      <span class="tag warn">measured on the sample</span></div>
+    <p>Holding a position through the daily reset is often described as broadly dangerous.
+    Measured over 72 rolling challenge starts for each of the 10 configurations, no position carried across a reset
+    broke the $4,000 daily limit. The closest took uncapped 4% risk <em>and</em> a policy that holds losing positions
+    through the reset together: a $3,448 floating loss against the $4,000 line. With troid's desk sizing the worst was
+    $431; with its holding policy, which closes a losing position before the reset, none was carried.</p>
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>5. Reverse-after-TP3 was untested; the trigger moved to the stop-out</h3>
+    <div class="fh"><h3>5. The reversal trigger moved to the stop-out; still one regime</h3>
       <span class="tag warn">still one regime</span></div>
-    <p>On TP3 it fired 4 times in 8 months, because only ~8% of trades reach 3R. On the
-    stop-out it fires 24 times in the 78-trade sample, which is a sample rather than
-    an anecdote — but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January 2026)
-    says the whole configuration is inside noise.</p>
+    <p>Triggered on the third target, the reverse fired 5 times in 7.7 months, because only
+    about 9% of trades reach it. Triggered on the stop-out, it fires 24 times in the 78-trade sample, which is a sample
+    rather than an anecdote, but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January
+    2026) says the whole configuration is inside noise.</p>
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>6. None of it was in the repo</h3>
+    <div class="fh"><h3>6. Everything is public</h3>
       <span class="tag">resolved</span></div>
-    <p>All of it is in <code>kunjancollective/troid</code>, and troid's ledger runs daily from
-    <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit.
-    The journal's <code>logged_utc</code> column is the timestamp nothing can backdate.</p>
+    <p>Everything is in troid's public repository, <code>kunjancollective/troid</code>, and troid's ledger runs
+    daily from <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit. Each journal
+    row is committed when it is logged, with its <code>logged_utc</code>, so the repository's history shows when
+    every trade was recorded.</p>
   </div>
 
   <div class="finding">
-    <div class="fh"><h3>7. Two known small defects, both flagged and unfixed</h3>
+    <div class="fh"><h3>7. Two known defects in troid's tools, not yet fixed</h3>
       <span class="tag">minor</span></div>
-    <p><code>income_math.py</code>'s <code>withdraw=False</code> arm reports $0 by
-    construction — it counts only withdrawals as income, so the "bank profits to grow the
-    buffer" comparison can't be sized. And <code>risk.py</code> accepts
-    <code>--json</code> only before the subcommand.</p>
+    <p>In <code>income_math.py</code>, the option that keeps profits in the account reports no
+    income by construction, because it counts only withdrawals, so it can't be compared with withdrawing. And
+    <code>risk.py</code> reads <code>--json</code> only before its subcommand.</p>
   </div>
+  <p class="src">MEASURED on the sample · <a href="https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md">RESULTS.md</a>, generated by <code>gen_results.py</code>; <code>verify_claims.py</code> re-derives the ladder quantity and the trade frequency. DERIVED · the +1.24R: $6,250 ÷ $500 ÷ 10.1.</p>
 </section>
 
 <section>
@@ -316,14 +314,14 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
       <td class="num">0.90</td><td class="num">&minus;$1,488</td><td class="num">4.24 / 1.63</td></tr>
   </table>
   </div>
-  <p style="margin-top:12px;color:var(--dim);font-size:13.5px">Ladder direction is the
-  single largest structural effect found: same signals, same stops, only the side the
-  tranches sit on. Weakness at 5 tranches is the worst profit factor in the project
-  (0.14); strength at 5 with the reverse on stop is the best drawdown (&minus;$1,058).</p>
+  <p style="margin-top:12px;color:var(--dim);font-size:13.5px">Ladder direction, the side the tranches sit on with the same signals and stops, moves
+  the results more than any other change in the table. Weakness at 5 tranches has the worst profit factor
+  (0.14); strength at 5 with the reverse on the stop has the smallest drawdown (&minus;$1,058).</p>
+  <p class="src">MEASURED on the sample, 0.5% risk a trade, continuous run · <a href="https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md">RESULTS.md</a>, generated by <code>gen_results.py</code>. n = 33 to 89 trades a row, one asset, one regime.</p>
 </section>
 
 <section>
-  <h2>Risk model — verified, independent of strategy</h2>
+  <h2>Risk model: the firm's rules, the same whatever the strategy</h2>
   <div class="grid">
     <div class="cell"><div class="k">Daily budget</div><div class="v">$4,000</div>
       <div class="n">4% of the initial balance, fixed</div></div>
@@ -338,10 +336,11 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
     <div class="cell"><div class="k">Reset</div><div class="v">16:00 UTC</div>
       <div class="n">noon in New York, 11:00 in winter</div></div>
   </div>
-  <p style="margin-top:14px">The budget cap is not conservatism — it is the only thing
-  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
-  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
-  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.</p>
+  <p style="margin-top:14px">The budget cap is not conservatism: it is what makes the account survivable. At
+  <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
+  time within a year, and at 2% it's 100%. Under the cap, every one of those cells is 0%.</p>
+  <p class="src">SOURCED · Bitfunded: help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives (read 2026-09-23); FAQ (read 2026-09-21); help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota) (read 2026-09-18); help centre: Criteria to be Success (read 2026-09-23); help centre: Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid&#x27;s conversion (read 2026-09-23). DERIVED · troid's arithmetic: 4% × $100,000 = $4,000; $100,000 × (1 − 6%) = $94,000; the crossover, $100,000 × (1 − 6% + 4%) = $98,000; fees 0.04% a side, 0.08% a round trip. The $500 risk (0.5% of $100,000) and the 35% cap are troid's desk defaults, not firm rules. <a href="/sources#rules">Sources</a></p>
+  <p class="src">MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href="https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py">income_math.py</a></p>
 </section>
 
 <section>
@@ -351,22 +350,18 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
       parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
       on api.binance.us: the config was chosen on 2026; on the 504 BTC trades from
       1 January 2021 to 7 January 2026 it never saw, +0.008R, 95% CI [&minus;0.023R, +0.040R]. ETH, 498 trades:
-      +0.008R. Not met.</em></li>
-    <li><strong>Frequency reaches ~30 trades/month</strong>, which on this structure means
-      dropping below the 4h timeframe. Without it the income target needs roughly four
-      times the accounts the scaling model suggested.</li>
+      +0.008R. Not met (MEASURED: <a href="https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md">WALKFORWARD.md</a>).</em></li>
+    <li><strong>Frequency reaches about 30 trades a month</strong>, the rate the income model
+      assumed, which on this structure means dropping below the 4h timeframe.</li>
     <li><strong>Reverse moves to TP2 or stop-out</strong> so the exhaustion thesis gets a
-      real sample instead of n=4. <em>Done: reverse-on-stop is the config, 24 reverse
-      trades in the sample. It did not change the verdict.</em></li>
-    <li><strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
-      withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
-      four correlated accounts running one strategy aren't four independent bets anyway.</li>
+      real sample instead of 5 trades. <em>Done: reverse-on-stop is the config, 24 reverse
+      trades in the sample (RESULTS.md). It did not change the verdict.</em></li>
   </ol>
 </section>
 
 <section>
   <h2>What troid is testing next</h2>
-  <p>troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:</p>
+  <p>troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no measurable edge. Next:</p>
   <ol>
     <li>A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.</li>
     <li>Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.</li>
@@ -376,8 +371,8 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
   <p class="src">Source: the work order, <a href="https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md"><code>backtest/HANDOFF.md</code></a>.</p>
 </section>
 
-<p class="foot">Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
-asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
+<p class="foot">The sample: 1,539 4h bars, 8 Jan – 21 Sep 2026, api.binance.us (<code>backtest/data/btc_4h.csv</code>),
+one asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>), came back
 inside noise on BTC and ETH.<br><!-- footer:start -->
 <a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end --></p>

@@ -44,18 +44,18 @@ legal.summary.terms,"troid's terms of use. They are published in English, and th
 legal.summary.citations,"Rule sources are named in English, as each firm publishes them.","Источники правил названы по-английски — так, как их публикует каждая фирма.",,CHECK FIRST: legal.governs / legal.summary.*: 'The English version governs' is 'Юридическую силу имеет английская версия'. Confirm this is the right legal formula. Another option is 'Преимущественную силу имеет...'.
 hypo.label,Hypothetical performance,Гипотетические результаты,,
 hypo.no_edge_short,troid's own strategy shows no statistical edge.,Собственная стратегия troid не показывает статистического преимущества.,,"troid stays lowercase, in Latin letters"
-hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure, inside noise, and not a fact about the future.","Вне выборки, на {n} сделках по BTC с 1 января 2021 года по 7 января 2026 года, которых параметры никогда не видели, она показывает {exp} на сделку при стандартной ошибке {se} — это величина уровня MEASURED (измерено), в пределах шума, а не факт о будущем.",,"CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep {exp} {n} {se} exactly as written; keep every number exactly"
+hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,"Правила меняются без предупреждения. Прежде чем торговать, сверьтесь с фирмой.",,
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.meta.description,"Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.","Риск и соблюдение правил проп-фирм, рассчитанные. Размер позиции по обоим лимитам убытка, с учётом комиссий.",,
 index.hero.h1,"Prop-firm risk, computed.","Риск проп-трейдинга, рассчитанный.",,
-index.hero.lede,"Most funded accounts fail on position size, not entries. troid computes
-  both of your loss ceilings, reports which one actually binds, and sizes the trade net
-  of fees.","Большинство финансируемых счетов проваливается из-за размера позиции, а не из-за входов. troid рассчитывает оба ваших лимита убытка, показывает, какой из них на самом деле ограничивает, и определяет размер сделки с учётом комиссий.",,"troid stays lowercase, in Latin letters"
+index.hero.lede,"Most failed challenges end on a loss limit, not a missed target: 93.7% at
+  <a href=""{L}/sources#onefunded_failures"">one firm that publishes its own figures</a>, below. troid computes both of your
+  loss ceilings, reports which one actually binds, and sizes the trade net of fees.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.calc.eyebrow,"<span style=""text-transform:none"">troid's desk</span> · size a trade","<span style=""text-transform:none"">деск troid</span> · размер сделки",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.calc.firm,Firm,Фирма,,
 index.why3.link,why these {n}?,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
-index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm is added only after troid has read its terms and help centre rule by rule — that's what makes every number here traceable.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
+index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
 index.why3.how,How firms are chosen →,,,NEW: translate it in reviewer_edit | 
 index.why3.ask,"Want another firm? <a href=""{href}"">Ask troid.</a>",,,"NEW: translate it in reviewer_edit | keep {href} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.why3.ask_q,Can troid add another firm to its compare? The one I'd like is ,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -74,8 +74,8 @@ index.calc.target_r,Target R,"Цель, R",,
 index.calc.risk_pct,Risk %,"Риск, %",,
 index.calc.cap_pct,Budget cap %,"Лимит от бюджета, %",,
 index.calc.leverage,Leverage,Плечо,,
-index.lev.first_one,"5× is the most {firms} allows on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
-index.lev.first_many,"5× is the most {firms} allow on crypto, so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {firms} exactly as written; keep every number exactly
+index.lev.first_one,"5× is the most {firms} allows on crypto (its own documents, read {date}), so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {date} {firms} exactly as written; keep every number exactly
+index.lev.first_many,"5× is the most {firms} allow on crypto (their own documents, read {date}), so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {date} {firms} exactly as written; keep every number exactly
 index.lev.pending,troid has no recorded cap for {firms} yet.,,,"NEW: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
 index.lev.firm_product,{firm}'s {product},,,NEW: translate it in reviewer_edit | keep {firm} {product} exactly as written
 index.calc.mode,Margin mode,Режим маржи,,
@@ -89,23 +89,23 @@ index.firms.reference,reference,эталон,,
 index.firms.rank,#{n} by reviews,#{n} по отзывам,,keep {n} exactly as written
 index.firms.filled,{n} of {total} rules filled · {m} sourced,заполнено правил: {n} из {total} · с источником: {m},,keep {m} {n} {total} exactly as written
 index.firms.pending,verification pending,ожидает проверки,,"CHECK FIRST: index.js.v_block / v_reduce / v_pending: the verdict tags are БЛОК / СНИЗИТЬ / УТОЧНЯЕТСЯ. 'pending' is уточняется everywhere, and index.firms.pending is ожидает проверки. Check that the tags are short and clear enough."
-index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch.,"Подтверждённых отзывов на propfirmmatch: {n}, оценка {rating}.",,keep {n} {rating} exactly as written
+index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch (read {date}).,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} {n} {rating} exactly as written
 index.firms.challenges,{firm} challenges,челленджи {firm},,keep {firm} exactly as written
 index.firms.affiliate,affiliate link,партнёрская ссылка,,
 index.firms.code,code {code},код {code},,keep {code} exactly as written
 index.firms.promos,their promos apply here,их акции действуют и здесь,,
-index.stats.failures.n,~70%,~70%,,keep every number exactly
-index.stats.failures.p,"of prop-firm failures are loss-limit breaches, most inside the first week. Firms
-    report failures trace to size, not strategy selection.","провалов в проп-фирмах — это нарушения лимитов убытка, большинство — в первую же неделю. Фирмы сообщают, что провалы сводятся к размеру позиции, а не к выбору стратегии.",,
-index.stats.failures.prov,SOURCED · source not yet recorded. Industry data troid has not yet traced to a document and a read date.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.stats.failures.n,93.7%,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+index.stats.failures.p,"of failed challenges at OneFunded ended on a loss limit — 78.7% on the daily limit, 15.0% on
+    the overall maximum. Breaches cluster in the opening session and near the profit target, when traders size up to
+    reach it.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 index.stats.blowup.n,68%,68%,,keep every number exactly
-index.stats.blowup.p,"of accounts blow up within a year at a professional-grade +0.35R edge, risking 1%
-    with no cap on remaining budget. Under a cap, zero.","счетов сливаются в течение года при преимуществе профессионального уровня +0,35R, если рисковать 1% без ограничения от оставшегося бюджета. С ограничением — ноль.",,keep every number exactly
+index.stats.blowup.p,"of accounts blow up within a year at a +0.35R edge (45% of trades won at 2:1), risking 1%
+    with no cap on remaining budget. Under a cap, zero.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 index.stats.blowup.prov,"MODELLED. 20,000 simulated years: 45% of trades won at 2:1 (+0.35R a trade), 30 trades a month for 12 months, 1% of balance risked a trade with no cap on remaining budget, under a 4% daily limit fixed on the $100,000 start and a 6% static floor. The cap: at most 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.crossover.p_half,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
-    daily. That is {gap} from the start — half of one bad day.","На счёте {product} {quota} ниже этого эквити ограничивает статический порог {max}%, а не дневной лимит {daily}%. Это {gap} от старта — половина одного плохого дня.",,keep {daily} {gap} {max} {product} {quota} exactly as written
+    daily. That is {gap} from the start — half of one day's loss limit.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {daily} {gap} {max} {product} {quota} exactly as written
 index.crossover.p_share,"On a {quota} {product}, below this equity the {max}% static floor binds instead of the {daily}%
-    daily. That is {gap} from the start — {share} of one bad day.","На счёте {product} {quota} ниже этого эквити ограничивает статический порог {max}%, а не дневной лимит {daily}%. Это {gap} от старта — {share} одного плохого дня.",,keep {daily} {gap} {max} {product} {quota} {share} exactly as written
+    daily. That is {gap} from the start — {share} of one day's loss limit.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {daily} {gap} {max} {product} {quota} {share} exactly as written
 index.crossover.prov,DERIVED. Computed from {firm} {product} rules as published on {dates} — {sources}. {tail} <code>{formula}</code>,DERIVED (выведено). Рассчитано по правилам {firm} {product} в редакции на {dates} — {sources}. {tail} <code>{formula}</code>,,"CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep {dates} {firm} {formula} {product} {sources} {tail} exactly as written; keep the <…> tags and links as they are; translate only the words"
 index.crossover.formula,quota × (1 − max% + daily%) = {quota} × (1 − {max}% + {daily}%),номинал × (1 − макс. % + дневной %) = {quota} × (1 − {max}% + {daily}%),,keep {daily} {max} {quota} exactly as written; keep every number exactly
 index.crossover.lab_daily,daily %,дневной %,,
@@ -114,19 +114,17 @@ index.crossover.lab_static,static floor,статический порог,,
 index.crossover.lab_basis,initial-balance daily limit,дневной лимит от начального баланса,,
 index.does.h2,What troid does,Что делает troid,,"troid stays lowercase, in Latin letters"
 index.does.p,"Computes both loss ceilings and reports the binding one. Sizes positions net of the
-  0.04%-per-side fee. Checks trades against firm rules — the hold limit (10 days for majors, 7 for other crypto,
-  5 for TradFi), the
-  margin concentration limit, the five-day minimum. Works across the challenge types on troid's compare and
-  every asset the firm lists.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+  firm's own fee. Checks trades against each firm's own rules as troid has read them: its hold limit, its margin
+  concentration limit, its minimum trading days. Works across the challenge types on troid's compare and the assets
+  troid has read in each firm's own documents; troid's compare shows each rule with its source.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.doesnt.h2,What it doesn't,Чего он не делает,,
 index.doesnt.p,Publish trade signals. Place orders. Touch your credentials. Sell you a strategy.,Не публикует торговые сигналы. Не выставляет ордера. Не касается ваших учётных данных. Не продаёт вам стратегию.,,
 index.doesnt.tools,"<a href=""/TROID.md"">TROID.md</a> is troid's rules and arithmetic as one file — paste it into any
   assistant as a system prompt. The <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">MCP
   server</a> does the same for Claude Desktop or Cursor, with exact arithmetic.","<a href=""/TROID.md"">TROID.md</a> — это правила и арифметика troid в одном файле: вставьте его в любого ИИ-ассистента как системный промпт. <a href=""https://github.com/kunjancollective/troid/tree/main/mcp"">MCP-сервер</a> делает то же самое для Claude Desktop или Cursor, с точной арифметикой.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-index.doesnt.verify,"Every figure here is arithmetic you can check.
-  <code>verify_claims.py</code> in the repo re-derives each published number from first
-  principles and tags it by confidence tier — derived, sourced, modelled, or measured.
-  A measured number is never stated as fact.","Каждое число здесь — это арифметика, которую вы можете проверить. <code>verify_claims.py</code> в репозитории заново выводит каждое опубликованное число из первых принципов и помечает его уровнем достоверности — выведено, по источнику, смоделировано или измерено. Измеренное число никогда не подаётся как факт.",,"CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep the <…> tags and links as they are; translate only the words"
+index.doesnt.verify,"Every figure here shows its tier and source; the arithmetic reproduces in
+  <code>verify_claims.py</code>, which re-derives each published number from first principles and tags it by
+  tier — derived, sourced, modelled, or measured. A measured number is never stated as fact.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Tier labels: hypo.no_edge_tail and tearsheet.head.box now say 'уровня/к уровню MEASURED (измерено)', and index.crossover.prov starts 'DERIVED (выведено).', per STYLE.md. index.doesnt.verify follows the English, which writes the tiers in lowercase there, so it keeps the Russian glosses выведено, по источнику, смоделировано, измерено. Confirm the glosses (especially по источнику for SOURCED) and whether index.doesnt.verify should also show the English capitals. | keep the <…> tags and links as they are; translate only the words"
 index.js.pending,pending,уточняется,,
 index.js.list_comma,"{a}, {b}","{a}, {b}",,keep {a} {b} exactly as written
 index.js.list_and,{a} and {b},{a} и {b},,keep {a} {b} exactly as written
@@ -275,6 +273,8 @@ index.js.shared_firm,"The link names a firm troid doesn't list now ({firm}), so 
 index.js.shared_product,"The link names a challenge troid doesn't list for {firm} now ({product}), so the desk shows {shown}.",,,"NEW: translate it in reviewer_edit | keep {firm} {product} {shown} exactly as written; troid stays lowercase, in Latin letters"
 index.js.shared_bad,Values in the link that couldn't be read ({n}) were left at the desk's defaults.,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
 index.js.shared_long,"The link was too long to read, so the desk shows its defaults.",,,NEW: translate it in reviewer_edit | 
+index.firms.summary_src,"SOURCED · its own documents, read {date}; each rule with its section on <a href=""{L}/compare"">troid's compare</a>",,,"NEW: translate it in reviewer_edit | keep {L} {date} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+index.firms.note_src,"(its own documents, read {date})",,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.meta.title,troid's compare,сравнение troid,,"troid stays lowercase, in Latin letters"
 compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -468,76 +468,76 @@ ledger.foot.week,"A week of trades is n≈2 with a standard error of ~0.26R. The
 ledger entry, not a claim. Read it that way.","Неделя сделок — это n≈2 при стандартной ошибке ~0,26R. Недельная строка выше — запись в реестре, а не утверждение. Так её и читайте.",,keep every number exactly
 ledger.foot.feed,"Bars from api.binance.us, one feed end to end; ⚑ marks a trade that held through a forward-filled bar.","Бары с api.binance.us, один фид от начала до конца; ⚑ отмечает сделку, удерживавшуюся через заполненный бар.",,
 ledger.foot.journal,"<a href=""https://github.com/kunjancollective/troid"">journal.csv in the repo</a>","<a href=""https://github.com/kunjancollective/troid"">journal.csv в репозитории</a>",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+ledger.src.page,"MEASURED · the shadow account, simulated on api.binance.us bars: its state in <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/state.json"">state.json</a>, every closed trade in <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv"">journal.csv</a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+ledger.src.runs,"MEASURED · simulated · every run in <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/runs.csv"">runs.csv</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+ledger.src.journal,"MEASURED · simulated · every trade in <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv"">journal.csv</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+ledger.src.charts,"MEASURED · simulated · the trades from <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/journal.csv"">journal.csv</a>, the bars from <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/data/live_4h.csv"">data/live_4h.csv</a> (the frozen sample, extended by the shadow)",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.meta.title,troid's research — strategy review,исследования troid — разбор стратегии,,"troid stays lowercase, in Latin letters"
 dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
 dashboard.hero.eyebrow,"troid's research · strategy review · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">methodology</a>","исследования troid · разбор стратегии · <a href=""{L}/tearsheet"">tearsheet</a> · <a href=""/METHODOLOGY.md"">методология</a>",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 dashboard.hero.h1,Strategy review,Разбор стратегии,,
-dashboard.hero.meta,"Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · cross-reference as of 21 Sep 2026 · bars from api.binance.us, one feed","Bitfunded Expert $100k · 1-Step · BTCUSDT 4h · сверка на 21 сент. 2026 г. · бары с api.binance.us, один фид",,keep every number exactly
+dashboard.hero.meta,"MEASURED on BTCUSDT 4h bars from api.binance.us, one feed · under the rules of Bitfunded's 1-Step, Expert level, $100,000 · figures as of 21 Sep 2026",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.verdict.h2,Lowest-drawdown structure tested,Структура с наименьшей просадкой из протестированных,,
 dashboard.verdict.big,"<strong>Five-tranche strength ladder + regime filter + desk cap</strong> — but
   do <em>not</em> buy a challenge. The walk-forward has been run, and it came back as noise.","<strong>Пятитраншевая лестница по силе + фильтр режима + лимит деска</strong> — но <em>не</em> покупайте челлендж. Walk-forward-тест проведён, и он показал шум.",,keep the <…> tags and links as they are; translate only the words
 dashboard.verdict.p1,"Of everything tested it has the lowest drawdown
-  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), zero failed and
-  zero zombie accounts across 72 rolling challenge starts, median ending balance $100,409.
-  It is also still <strong>+0.03R</strong> on the sample it was chosen on, and
-  <strong>+0.008R</strong> on the 504 BTC trades from 1 January 2021 to 7 January 2026 it never saw
-  (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>).
-  That is a well-built vehicle with no engine in it.","Из всего протестированного у неё наименьшая просадка (<strong>&minus;$1 058</strong> против &minus;$7 295 при одном входе), ноль проваленных и ноль «зомби»-счетов на 72 скользящих стартах челленджа, медианный итоговый баланс $100 409. Кроме того, она по-прежнему даёт <strong>+0,03R</strong> на выборке, по которой её выбирали, и <strong>+0,008R</strong> на 504 сделках по BTC с 1 января 2021 года по 7 января 2026 года, которых она никогда не видела (<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>). Это хорошо собранная машина без двигателя.",,"keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+  (<strong>&minus;$1,058</strong> against &minus;$7,295 for single entry), and across 72 rolling challenge starts none
+  failed, none stalled and none passed: every one was still running at the end of the sample, median balance $100,409.
+  It is +0.03R a trade on the sample it was chosen on, and <strong>+0.008R</strong> on the 504 BTC trades from 1 January
+  2021 to 7 January 2026 it never saw. That is a well-built vehicle with no engine in it.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.verdict.p2,"<strong>Why not:</strong> a $999 challenge buys one noisy binary outcome. Five years
-  of holdout just said the entry logic has no measurable edge. At a 14% industry base
-  rate (SOURCED, source not yet recorded), passing once barely updates whether you have an edge — plenty of edgeless traders
-  pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.xref.h2,Cross-reference — things that don't add up,Сверка — что не сходится,,
-dashboard.xref.f1.h3,"1. ""5x scale-in for a larger position"" does the opposite",1. «Набор позиции 5x ради большего размера» даёт обратный результат,,keep every number exactly
-dashboard.xref.f1.tag,design assumption inverted,исходное допущение перевёрнуто,,
+  of holdout just said the entry logic has no measurable edge. At the 14% pass rate in FPFX Tech's data (SOURCED ·
+  reported by Finance Magnates, published {published}, read {read}; <a href=""{L}/sources#fpfx_payouts"">Sources</a>),
+  passing once barely updates whether you have an edge — plenty of edgeless traders pass.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {L} {published} {read} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.h2,"What the research found, including where troid was wrong",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.xref.f1.h3,"1. A 5-tranche ladder holds less, not more",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+dashboard.xref.f1.tag,measured on the sample,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 dashboard.xref.f1.p1,"At the same $500 risk, a 5-tranche <em>strength</em> ladder holds
-    <strong>34% less</strong> quantity than a single entry (0.109 BTC vs 0.167 BTC;
-    $8,524 vs $13,000 notional). Because the stop stays anchored at T1's structure,
-    each later tranche sits further from the stop and therefore gets less size.","При том же риске в $500 лестница по <em>силе</em> из 5 траншей держит на <strong>34% меньше</strong> количества, чем один вход (0,109 BTC против 0,167 BTC; объём $8 524 против $13 000). Поскольку стоп остаётся привязан к структуре T1, каждый следующий транш находится дальше от стопа и потому получает меньший размер.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+    <strong>34% less</strong> quantity than a single entry (0.109 BTC against 0.167 BTC on a 1.5-ATR stop). Because the
+    stop stays anchored at the first tranche's structure, each later tranche sits further from the stop and therefore
+    gets less size.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.xref.f1.p2,"The ladder's benefit is <strong>conditionality, not size</strong>: losers fill
     1.66 tranches, winners fill 4.26. You're small when wrong and large when right. If
     what you actually want is a bigger position, that comes from raising risk per trade,
     and the ruin math says don't.","Польза лестницы — в <strong>условности, а не в размере</strong>: убыточные сделки набирают 1,66 транша, прибыльные — 4,26. Когда вы ошибаетесь, позиция маленькая, когда правы — большая. Если на самом деле вам нужна позиция побольше, она достигается повышением риска на сделку, а математика разорения говорит: не надо.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.xref.f2.h3,2. The income model assumed 4.3&times; the trade frequency,"2. Модель дохода закладывала частоту сделок в 4,3&times; выше",,keep every number exactly
+dashboard.xref.f2.h3,2. troid's income model assumed about three times the real trade frequency,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.xref.f2.tag,changes the conclusion,меняет вывод,,
-dashboard.xref.f2.p1,"<code>income_math.py</code> ran at 30 trades/month. The strategy produces
-    <strong>10.1/month</strong> (78 trades in 7.7 months). Every encouraging number in the
-    $5k/month analysis — the 4-months-to-target row, $614 at the real 9/mo frequency (was $1,862 at an assumed 30/mo)/account — assumed a frequency
-    this strategy does not reach.","<code>income_math.py</code> считал при 30 сделках в месяц. Стратегия даёт <strong>10,1/мес.</strong> (78 сделок за 7,7 месяца). Каждое обнадёживающее число в анализе на $5k/мес. — строка «4 месяца до цели», $614 при реальной частоте 9/мес. (было $1 862 при допущенных 30/мес.) на счёт — предполагало частоту, которой эта стратегия не достигает.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.xref.f2.p2,"Corrected: at 10.1 trades/month and 0.5% risk, $6,250/month gross needs
-    <strong>+1.24R per trade</strong>. Not credible at any skill level. Either the
-    timeframe drops below 4h to raise frequency, or the income target needs more accounts
-    than the scaling table implied.","С поправкой: при 10,1 сделки в месяц и риске 0,5% для $6 250/мес. брутто нужно <strong>+1,24R на сделку</strong>. Это неправдоподобно при любом уровне мастерства. Либо таймфрейм опускается ниже 4h ради частоты, либо для целевого дохода нужно больше счетов, чем подразумевала таблица масштабирования.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.xref.f3.h3,3. RESULTS.md was stale on every row,3. RESULTS.md устарел в каждой строке,,keep every number exactly
+dashboard.xref.f2.p1,"troid's income model (<code>income_math.py</code>) assumed 30 trades a month. The strategy
+    produces <strong>10.1 a month</strong> (78 trades in 7.7 months), so each account earns about a third of what the
+    model showed.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.xref.f2.p2,"At 10.1 trades a month and 0.5% risk, $6,250 a month gross needs <strong>+1.24R per
+    trade</strong> ($6,250 ÷ $500 ÷ 10.1), far above the +0.008R the strategy measured out of sample. Either the timeframe
+    drops below 4h to trade more often, or the target needs more accounts.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f3.h3,"3. The published statistics are generated, never written by hand",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.xref.tag.resolved,resolved,решено,,
-dashboard.xref.f3.p1,"It was hand-written and drifted from the engine after every change. It is now
-    generated by <code>gen_results.py</code> from the live engine on the frozen sample, and
-    <code>verify_claims.py</code> re-derives the published statistics from
-    <code>journal.csv</code> and fails if either drifts. The table below is that output.","Его писали вручную, и после каждого изменения он расходился с движком. Теперь его генерирует <code>gen_results.py</code> из действующего движка на замороженной выборке, а <code>verify_claims.py</code> заново выводит опубликованную статистику из <code>journal.csv</code> и завершается с ошибкой, если расходится любое из двух. Таблица ниже — это его вывод.",,keep the <…> tags and links as they are; translate only the words
-dashboard.xref.f4.h3,4. The skill still describes the rollover trap as a general hazard,4. Скилл по-прежнему описывает ловушку ролловера как общую опасность,,"CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept). | keep every number exactly"
-dashboard.xref.f4.tag,skill text,текст скилла,,"CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept)."
-dashboard.xref.f4.p1,"<code>bitfunded.md</code> presents it as broadly dangerous. Measured: it needs
-    <em>both</em> uncapped risk &ge;4% per position <em>and</em> a policy that holds
-    losers through the reset. Under desk sizing plus swing_safe it is dead twice over —
-    by cap and by policy. Largest floating loss actually carried into a reset was $3,422
-    against the $4,000 line, at 4% naive risk.","<code>bitfunded.md</code> подаёт её как опасность в целом. Измерено: для неё нужны <em>одновременно</em> риск без лимита &ge;4% на позицию <em>и</em> политика, при которой убыточные позиции удерживаются через сброс. При расчёте размера по деску плюс swing_safe она исключена дважды — лимитом и политикой. Наибольший плавающий убыток, реально перенесённый через сброс, составил $3 422 при рубеже $4 000, при наивном риске 4%.",,"CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept). | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
-dashboard.xref.f5.h3,5. Reverse-after-TP3 was untested; the trigger moved to the stop-out,5. Разворот после TP3 не был протестирован; триггер перенесён на выбивание по стопу,,keep every number exactly
+dashboard.xref.f3.p1,"The results table was once written by hand, and it drifted from the engine after every change. It
+    is now generated by <code>gen_results.py</code> from the engine on the frozen sample, and
+    <code>verify_claims.py</code> re-derives the published statistics from <code>journal.csv</code> and fails if
+    either drifts. The table below is that output.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words
+dashboard.xref.f4.h3,4. The rollover trap needs two conditions at once,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept). | keep every number exactly"
+dashboard.xref.f4.tag,measured on the sample,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept)."
+dashboard.xref.f4.p1,"Holding a position through the daily reset is often described as broadly dangerous.
+    Measured over 72 rolling challenge starts for each of the 10 configurations, no position carried across a reset
+    broke the $4,000 daily limit. The closest took uncapped 4% risk <em>and</em> a policy that holds losing positions
+    through the reset together: a $3,448 floating loss against the $4,000 line. With troid's desk sizing the worst was
+    $431; with its holding policy, which closes a losing position before the reset, none was carried.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Jargon to confirm: tearsheet kept in Latin script, walk-forward, форвард-тест, отложенная выборка (holdout), матожидание, винрейт, профит-фактор, правило консистентности, сливать счёт, скилл (dashboard.xref.f4.* for 'the skill'), реестр as the translation of ledger (журнал was avoided because journal.csv is a separate concept). | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.xref.f5.h3,5. The reversal trigger moved to the stop-out; still one regime,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.xref.f5.tag,still one regime,всё ещё один режим,,
-dashboard.xref.f5.p1,"On TP3 it fired 4 times in 8 months, because only ~8% of trades reach 3R. On the
-    stop-out it fires 24 times in the 78-trade sample, which is a sample rather than
-    an anecdote — but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January 2026)
-    says the whole configuration is inside noise.","На TP3 он срабатывал 4 раза за 8 месяцев, потому что лишь ~8% сделок доходят до 3R. На выбивании по стопу он срабатывает 24 раза в выборке из 78 сделок — это уже выборка, а не единичный случай, — но это по-прежнему один актив в одном режиме, а отложенная выборка (с 1 января 2021 года по 7 января 2026 года) говорит, что вся конфигурация в пределах шума.",,keep every number exactly
-dashboard.xref.f6.h3,6. None of it was in the repo,6. Ничего из этого не было в репозитории,,keep every number exactly
-dashboard.xref.f6.p1,"All of it is in <code>kunjancollective/troid</code>, and troid's ledger runs daily from
-    <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit.
-    The journal's <code>logged_utc</code> column is the timestamp nothing can backdate.","Всё это есть в <code>kunjancollective/troid</code>, и реестр troid ежедневно запускается из <code>.github/workflows/shadow.yml</code>: свежие бары, прогон, журнал, реестр, коммит. Столбец <code>logged_utc</code> в журнале — это метка времени, которую ничто не может датировать задним числом.",,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-dashboard.xref.f7.h3,"7. Two known small defects, both flagged and unfixed","7. Два известных мелких дефекта, оба отмечены и не исправлены",,keep every number exactly
+dashboard.xref.f5.p1,"Triggered on the third target, the reverse fired 5 times in 7.7 months, because only
+    about 9% of trades reach it. Triggered on the stop-out, it fires 24 times in the 78-trade sample, which is a sample
+    rather than an anecdote, but it is still one asset over one regime, and the holdout (1 January 2021 to 7 January
+    2026) says the whole configuration is inside noise.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+dashboard.xref.f6.h3,6. Everything is public,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+dashboard.xref.f6.p1,"Everything is in troid's public repository, <code>kunjancollective/troid</code>, and troid's ledger runs
+    daily from <code>.github/workflows/shadow.yml</code>: fresh bars, replay, journal, ledger, commit. Each journal
+    row is committed when it is logged, with its <code>logged_utc</code>, so the repository's history shows when
+    every trade was recorded.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+dashboard.xref.f7.h3,"7. Two known defects in troid's tools, not yet fixed",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.xref.f7.tag,minor,мелочь,,
-dashboard.xref.f7.p1,"<code>income_math.py</code>'s <code>withdraw=False</code> arm reports $0 by
-    construction — it counts only withdrawals as income, so the ""bank profits to grow the
-    buffer"" comparison can't be sized. And <code>risk.py</code> accepts
-    <code>--json</code> only before the subcommand.","Ветка <code>withdraw=False</code> в <code>income_math.py</code> по построению показывает $0 — доходом она считает только выводы средств, поэтому сравнение «копить прибыль, чтобы нарастить буфер» оценить нельзя. А <code>risk.py</code> принимает <code>--json</code> только перед подкомандой.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.xref.f7.p1,"In <code>income_math.py</code>, the option that keeps profits in the account reports no
+    income by construction, because it counts only withdrawals, so it can't be compared with withdrawing. And
+    <code>risk.py</code> reads <code>--json</code> only before its subcommand.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words
 dashboard.variants.h2,Where each variant stands — corrected numbers,Где находится каждый вариант — исправленные числа,,
 dashboard.variants.th.config,Configuration,Конфигурация,,
 dashboard.variants.th.n,n,n,,
@@ -555,11 +555,10 @@ dashboard.variants.row.strong5,5-tranche strength ladder,5-траншевая л
 dashboard.variants.row.rev_tp3,5-strength + reverse on TP3,5 по силе + разворот на TP3,,keep every number exactly
 dashboard.variants.row.rev_stop,5-strength + reverse on stop,5 по силе + разворот на стопе,,keep every number exactly
 dashboard.variants.row.rev_any,5-strength + reverse on any,5 по силе + разворот на любом,,keep every number exactly
-dashboard.variants.note,"Ladder direction is the
-  single largest structural effect found: same signals, same stops, only the side the
-  tranches sit on. Weakness at 5 tranches is the worst profit factor in the project
-  (0.14); strength at 5 with the reverse on stop is the best drawdown (&minus;$1,058).","Направление лестницы — самый сильный структурный эффект из найденных: те же сигналы, те же стопы, отличается только сторона, с которой стоят транши. Слабость на 5 траншах — худший профит-фактор в проекте (0,14); сила на 5 с разворотом на стопе — лучшая просадка (&minus;$1 058).",,keep every number exactly
-dashboard.risk.h2,"Risk model — verified, independent of strategy","Модель риска — проверена, не зависит от стратегии",,
+dashboard.variants.note,"Ladder direction, the side the tranches sit on with the same signals and stops, moves
+  the results more than any other change in the table. Weakness at 5 tranches has the worst profit factor
+  (0.14); strength at 5 with the reverse on the stop has the smallest drawdown (&minus;$1,058).",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+dashboard.risk.h2,"Risk model: the firm's rules, the same whatever the strategy",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 dashboard.risk.daily.k,Daily budget,Дневной бюджет,,
 dashboard.risk.daily.n,"4% of the initial balance, fixed","4% от начального баланса, фиксированный",,keep every number exactly
 dashboard.risk.floor.k,Static floor,Статический порог,,
@@ -573,35 +572,34 @@ dashboard.risk.fees.n,"round trip, on notional","за полный круг, о�
 dashboard.risk.reset.k,Reset,Сброс,,
 dashboard.risk.reset.n,"noon in New York, 11:00 in winter","полдень в Нью-Йорке, зимой 11:00",,keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
-dashboard.risk.p,"The budget cap is not conservatism — it is the only thing
-  that makes the account survivable. At <strong>+0.35R</strong>, a genuinely excellent
-  system, naive sizing at 1% blows the account <strong>68%</strong> of the time within a
-  year, and at 2% it's 100%. Every one of those cells is 0.0% under the cap.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
+  <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
+  time within a year, and at 2% it's 100%. Under the cap, every one of those cells is 0%.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.change.h2,What would change the verdict,Что изменило бы вывод,,
 dashboard.change.li1,"<strong>Walk-forward comes back &gt;+0.10R out-of-sample</strong> with a stable
       parameter neighbourhood. This is the gate on everything else. <em>Run 21 Sep 2026
       on api.binance.us: the config was chosen on 2026; on the 504 BTC trades from
       1 January 2021 to 7 January 2026 it never saw, +0.008R, 95% CI [&minus;0.023R, +0.040R]. ETH, 498 trades:
-      +0.008R. Not met.</em>","<strong>Walk-forward показывает &gt;+0,10R вне выборки</strong> при стабильной окрестности параметров. Это условие, от которого зависит всё остальное. <em>Прогон 21 сентября 2026 года на api.binance.us: конфигурация выбрана на данных 2026 года; на 504 сделках по BTC с 1 января 2021 года по 7 января 2026 года, которых она никогда не видела, +0,008R, 95% ДИ [&minus;0,023R; +0,040R]. ETH, 498 сделок: +0,008R. Не выполнено.</em>",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.change.li2,"<strong>Frequency reaches ~30 trades/month</strong>, which on this structure means
-      dropping below the 4h timeframe. Without it the income target needs roughly four
-      times the accounts the scaling model suggested.","<strong>Частота достигает ~30 сделок в месяц</strong>, что при этой структуре означает переход ниже таймфрейма 4h. Без этого для целевого дохода нужно примерно в четыре раза больше счетов, чем предполагала модель масштабирования.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+      +0.008R. Not met (MEASURED: <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>).</em>",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.change.li2,"<strong>Frequency reaches about 30 trades a month</strong>, the rate the income model
+      assumed, which on this structure means dropping below the 4h timeframe.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.change.li3,"<strong>Reverse moves to TP2 or stop-out</strong> so the exhaustion thesis gets a
-      real sample instead of n=4. <em>Done: reverse-on-stop is the config, 24 reverse
-      trades in the sample. It did not change the verdict.</em>","<strong>Разворот переносится на TP2 или выбивание по стопу</strong>, чтобы тезис об истощении получил реальную выборку вместо n=4. <em>Сделано: разворот на стопе — это текущая конфигурация, 24 сделки-разворота в выборке. Вывод это не изменило.</em>",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-dashboard.change.li4,"<strong>Bitfunded's scaling plan</strong> — 10% net for 4 consecutive months, 2
-      withdrawals — grows one account instead of buying four. Cheaper, less to manage, and
-      four correlated accounts running one strategy aren't four independent bets anyway.","<strong>План масштабирования Bitfunded</strong> — 10% нетто 4 месяца подряд, 2 вывода — наращивает один счёт вместо покупки четырёх. Дешевле, меньше забот с управлением, и четыре коррелированных счёта с одной стратегией — это в любом случае не четыре независимые ставки.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
+      real sample instead of 5 trades. <em>Done: reverse-on-stop is the config, 24 reverse
+      trades in the sample (RESULTS.md). It did not change the verdict.</em>",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 dashboard.next.h2,What troid is testing next,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
-dashboard.next.p,"troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no edge. Next:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.next.p,"troid's own strategy has been tested on five years of data it never saw, and measures inside noise: no measurable edge. Next:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.next.li1,"A second strategy, <code>troid-shadow-2</code>, built separately so the first stays as it was: momentum over months, position size set by volatility, and the same loss limits and firm rules.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.next.li2,"Both strategies across at least 10 assets, not only BTC. A rule that works on BTC alone was fitted to BTC.",,,NEW: translate it in reviewer_edit | keep every number exactly
 dashboard.next.li3,"The same walk-forward test for both, reported side by side. If neither survives it, that is the finding, and troid says so.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.next.li4,Whether troid ever trades a challenge with its own strategy waits on that result.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.next.src,"Source: the work order, <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/HANDOFF.md""><code>backtest/HANDOFF.md</code></a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-dashboard.foot,"Sample figures from 1,539 4h bars, Jan 8 – Sep 21 2026, api.binance.us — one
-asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>) came back
-inside noise on BTC and ETH.","Показатели выборки — по 1539 барам 4h с 8 января по 21 сентября 2026 года, api.binance.us — один актив, один режим. Отложенная выборка, с 1 января 2021 года по 7 января 2026 года (<code>backtest/WALKFORWARD.md</code>), показала результат в пределах шума на BTC и ETH.",,"CHECK FIRST: dashboard.foot: '1,539 4h bars' is now 'по 1539 барам 4h'. Confirm that the reader will take '4h' after барам as the timeframe; 'по 1539 четырёхчасовым барам' would be more natural but drops the literal '4h'. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.foot,"The sample: 1,539 4h bars, 8 Jan – 21 Sep 2026, api.binance.us (<code>backtest/data/btc_4h.csv</code>),
+one asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>), came back
+inside noise on BTC and ETH.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: dashboard.foot: '1,539 4h bars' is now 'по 1539 барам 4h'. Confirm that the reader will take '4h' after барам as the timeframe; 'по 1539 четырёхчасовым барам' would be more natural but drops the literal '4h'. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+dashboard.verdict.src,"MEASURED · the sample: <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code> from 1,539 4h bars, 8 Jan – 21 Sep 2026 (<code>data/btc_4h.csv</code>); the holdout: <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.xref.src,"MEASURED on the sample · <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code>; <code>verify_claims.py</code> re-derives the ladder quantity and the trade frequency. DERIVED · the +1.24R: $6,250 ÷ $500 ÷ 10.1.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.variants.src,"MEASURED on the sample, 0.5% risk a trade, continuous run · <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code>. n = 33 to 89 trades a row, one asset, one regime.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+dashboard.risk.derived,"troid's arithmetic: 4% × $100,000 = $4,000; $100,000 × (1 − 6%) = $94,000; the crossover, $100,000 × (1 − 6% + 4%) = $98,000; fees 0.04% a side, 0.08% a round trip. The $500 risk (0.5% of $100,000) and the 35% cap are troid's desk defaults, not firm rules.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 tearsheet.meta.title,troid's research — tearsheet,исследования troid — tearsheet,,"troid stays lowercase, in Latin letters"
 tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
@@ -638,9 +636,9 @@ chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way 
   under the message box, then deletes it automatically: your messages, ask troid's replies, the
   tools used and the sources cited. Never your IP address, your browser, your name or an account.
   Once a week troid counts which topics come up most, never quoting anyone.
-  Only troid's operator can read a conversation; it is never sold and never used for marketing or
-  to train a model. To answer, troid also sends the conversation to the company that provides the
-  AI model, which may keep it for a limited period under its own terms. The hosting provider keeps
+  Only troid's operator can read the stored conversations; they are never sold and never used for marketing or
+  to train a model. To answer, troid sends each message, with the conversation so far, to Anthropic, the company
+  that provides the AI model, under Anthropic's API terms; Anthropic may keep it for a limited period. The hosting provider keeps
   its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: chat.isnt.p: 'a memory of you' is 'не хранилище сведений о вас', and 'Never the text, never your address' is 'Никогда — текст, никогда — ваш адрес'. This is a privacy statement, so the reviewer should confirm that no nuance is lost. | keep every number exactly; troid stays lowercase, in Latin letters"
 chat.discl,"ask troid can be wrong; the firm's own documents govern. Verify with
   the firm before acting. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.","ассистент troid может ошибаться; определяющими являются документы самой фирмы. Прежде чем действовать, сверьтесь с фирмой. Подробности — в <a href=""{L}/terms#ask-troid"">разделе 10 условий troid</a>.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
@@ -665,31 +663,25 @@ faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in rev
 faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
 faq.hero.h1,What the numbers actually say,Что на самом деле говорят числа,,
 faq.hero.lede,"Base rates, rule mechanics and troid's own conflicts — the things a landing page leaves out.","Базовые показатели, механика правил и собственные конфликты интересов troid — то, о чём умалчивает лендинг.",,"troid stays lowercase, in Latin letters"
-faq.hero.updated,Last updated 23 September 2026,Последнее обновление: 23 сентября 2026 года,,keep every number exactly
+faq.hero.updated,Last updated {date},,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} exactly as written
 faq.sec.base,Base rates,Базовые показатели,,
 faq.pass.q,What percentage of people actually pass?,Какой процент людей на самом деле проходит?,,
-faq.pass.p1,"The largest independent dataset covers more than 300,000 accounts from roughly 100,000
-traders across 10 firms. About <span class=""stat"">14%</span> passed a challenge and
-reached a funded account. Only about <span class=""stat"">7%</span> of everyone who bought
-a challenge ever got paid.","Крупнейший независимый набор данных охватывает более 300 000 счетов примерно 100 000 трейдеров в 10 фирмах. Около <span class=""stat"">14%</span> прошли челлендж и получили финансируемый счёт. Лишь около <span class=""stat"">7%</span> всех, кто купил челлендж, когда-либо получили выплату.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-faq.pass.p2,Most firms self-report pass rates in the 5–10% range.,Большинство фирм сами сообщают о доле прохождения в диапазоне 5–10%.,,keep every number exactly
-faq.pass.src,"SOURCED · source not yet recorded. troid attributes these figures to FPFX Technology's aggregate data and firms' own disclosures, but has not yet recorded the documents or the dates it read them.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.pass.p1,"Data from FPFX Tech, a company that sells software to prop firms, reported by Finance Magnates in
+September 2024, covers more than 300,000 accounts from 100,000 traders at 10 firms. <span class=""stat"">14%</span>
+of those traders passed a challenge and reached a funded account. About 45% of them were then paid:
+<span class=""stat"">7%</span> of all traders. The average payout was 4% of the account size.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.cost.q,What does it really cost to get funded?,Сколько на самом деле стоит получить финансирование?,,
-faq.cost.p1,"The average trader needs about three attempts, spending over
-<span class=""stat"">$1,600</span> in fees for a $100,000 challenge.","Среднему трейдеру нужно около трёх попыток, и на оплату челленджа на $100 000 он тратит более <span class=""stat"">$1 600</span>.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-faq.cost.p2,"Put the two numbers together: for most participants the expected value of a challenge
-fee is <span class=""flag"">negative</span>. That is not a controversial claim, it is what
-the pass-rate data implies arithmetically.","Сложите эти два числа: для большинства участников математическое ожидание от оплаты челленджа <span class=""flag"">отрицательное</span>. Это не спорное утверждение — это то, что арифметически следует из данных о доле прохождения.",,keep the <…> tags and links as they are; translate only the words
-faq.cost.src,"SOURCED · source not yet recorded. troid has not yet traced the three attempts or the $1,600 to a document and a read date.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.cost.p1,"In the same data, an account spent an average of <span class=""stat"">$800</span> on challenge purchases
+over its whole life, typically across three challenges.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.cost.p2,"Put the numbers together: <span class=""flag"">93%</span> of the traders in that data were never paid, so for
+them the fees were a loss. That is what the published figures say about those traders, not a forecast for anyone.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
 faq.fail.q,Why do people fail?,Почему люди проваливаются?,,
-faq.fail.p1,"Roughly <span class=""stat"">70%</span> of failures are loss-limit breaches — daily loss
-or maximum drawdown. Most happen in the first week. Very few people fail by reaching the
-end of the evaluation period and missing the profit target.","Примерно <span class=""stat"">70%</span> провалов — это нарушения лимитов убытка: дневного убытка или максимальной просадки. Большинство происходит в первую неделю. Очень немногие проваливаются, дойдя до конца периода оценки и не выполнив цель по прибыли.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-faq.fail.p2,"One firm's own summary puts it plainly: almost all failures trace back to
-<strong>size</strong>, not to strategy selection. People do not blow accounts because
-their entries are bad. They blow them because one position was too large on a day that
-went wrong.","В собственной сводке одной из фирм сказано прямо: почти все провалы сводятся к <strong>размеру позиции</strong>, а не к выбору стратегии. Люди сливают счета не потому, что у них плохие входы. Они сливают их потому, что одна позиция оказалась слишком большой в день, который пошёл не так.",,keep the <…> tags and links as they are; translate only the words
-faq.fail.src,SOURCED · source not yet recorded. troid has not yet traced the 70% or the firm's summary to a document and a read date.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.fail.p1,"One firm, OneFunded, has published its own figures: <span class=""stat"">93.7%</span> of its failed
+evaluations ended on a loss limit — 78.7% on the daily loss limit, 15.0% on the overall maximum — and 6.3% on
+inactivity and other rules. Its breaches cluster in the opening session and near the profit target, when traders
+enlarge positions to reach it.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.fail.p2,"OneFunded's own reading of those figures: “The problem is not always the strategy. More often, it comes
+down to risk management issues.”",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | 
 faq.offer.q,Then what is troid actually offering?,Тогда что на самом деле предлагает troid?,,"troid stays lowercase, in Latin letters"
 faq.offer.p1,"A free, open risk tool and the research behind it. It sizes positions against both of
 a firm's loss ceilings at once, net of fees, and tells you which one is actually
@@ -708,8 +700,8 @@ faq.daily.p2,"But it often is not the constraint that matters. The 6% maximum lo
 $94,000. Below roughly <span class=""stat"">$98,000</span> of equity, the distance to that
 static floor is smaller than your daily allowance, so the max loss becomes the real
 ceiling and the ""4% daily"" number is fiction.","Но часто значение имеет не это ограничение. Максимальный убыток 6% статичен — на уровне $94 000. Ниже примерно <span class=""stat"">$98 000</span> эквити расстояние до этого статического порога меньше вашего дневного лимита, поэтому реальным потолком становится максимальный убыток, а число «4% в день» — фикция.",,keep the <…> tags and links as they are; translate only the words; keep every number exactly
-faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one bad day. Size
-against the smaller of the two, always.",На свежем счёте эта точка пересечения примерно в $2 000 от старта — половина одного плохого дня. Всегда рассчитывайте размер по меньшему из двух.,,keep every number exactly
+faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
+against the smaller of the two, always.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 faq.reset.q,When does your trading day reset?,Когда сбрасывается ваш торговый день?,,
 faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
 For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
@@ -723,10 +715,9 @@ themselves.","Ловушка: плавающий убыток, переживш�
 faq.risk.q,How much should you risk per trade?,Сколько стоит рисковать на сделку?,,
 faq.risk.p1,"The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.","Правильное число зависит от вашей системы, поэтому troid его вам не назовёт. Показать он может другое: что арифметика делает с неправильным.",,"troid stays lowercase, in Latin letters"
-faq.risk.p2,"troid simulated a trader with a genuinely excellent edge — +0.35R per trade, better than
-most professionals sustain. Risking 1% per trade with no cap on remaining budget, that
-trader blew the account <span class=""stat"">68%</span> of the time within twelve months. At
-2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
+faq.risk.p2,"troid simulated a trader with an edge of +0.35R per trade: 45% of trades won at 2:1. Risking 1% per
+trade with no cap on remaining budget, that trader blew the account <span class=""stat"">68%</span> of the time within
+twelve months. At 2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
 0%.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.risk.p3,"A real edge is not enough on its own. Under a 4%/6% rule set, position sizing decides
@@ -755,8 +746,9 @@ faq.trust.p1,"Don't, on troid's say-so. Everything above is checkable: the pass-
 Bitfunded's rules are in their own documentation, and troid's backtest code is open — you can
 run it and get the same numbers, including the unflattering ones.","Не верьте troid на слово. Всё сказанное выше можно проверить: данные о доле прохождения опубликованы, правила Bitfunded есть в её собственной документации, а код бэктестов troid открыт — вы можете запустить его и получить те же числа, включая нелестные.",,"troid stays lowercase, in Latin letters"
 faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
-troid's own strategy tested out of sample at +0.008R over 504 trades — no edge — and the
-page says so.","<a href=""{L}/ledger"">реестр troid</a> публикует собственные результаты каждые четыре часа, включая убытки. Собственная стратегия troid, протестированная вне выборки, показала +0,008R на 504 сделках — преимущества нет, — и страница прямо это говорит.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+troid's own strategy tested out of sample at +0.008R over 504 trades (MEASURED:
+<a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>) — no measurable
+edge — and the page says so.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.keep.q,Does troid keep my conversation with ask troid?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.keep.p,"Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
 message box, and deleted automatically 30 days after its last message. troid keeps your messages,
@@ -765,7 +757,8 @@ dates it cited, the page's language and the AI model used; never your IP address
 user agent, your name or an account. It keeps them to answer disputes about what ask troid said,
 to correct errors, to check that ask troid keeps to its guardrails, and to learn which questions
 come up most so troid can improve its pages and answers: once a week it counts them by topic,
-never quoting a message. Only troid's operator can read a conversation. They are never sold and never used for marketing or to train an AI model. To
+never quoting a message. Only troid's operator can read the stored conversations. Each message is sent to Anthropic to generate the
+answer, under Anthropic's API terms. They are never sold and never used for marketing or to train an AI model. To
 delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under the message box, or write to
 <a href=""mailto:hello@troid.ai"">hello@troid.ai</a> with the session ID. <a href=""{L}/terms#ask-troid"">Section 10 of troid's terms</a> has the detail.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.track.q,Does troid track me?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -783,8 +776,9 @@ stop: the stop, the size and the trade stay yours.",,,"NEW: translate it in revi
 faq.worth.q,Is a challenge worth buying?,Стоит ли покупать челлендж?,,
 faq.worth.p1,"troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
 reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
-sizing survives will find those out from a challenge, at $799, faster than from a spreadsheet at no cost.
-The base rates on this page are the rest of it.","troid ни за кого на этот вопрос не отвечает; он просчитывает то, с чем вы пришли. Арифметика одинакова для каждого читателя: трейдер, который не может назвать своё преимущество, среднее соотношение прибыли к убытку и серию убытков, которую выдерживает его расчёт размера, выяснит это на челлендже за $799 быстрее, чем бесплатно в электронной таблице. Остальное — базовые показатели на этой странице.",,"CHECK FIRST: faq.worth.p1: the English itself is ambiguous: a trader 'will find those out from a challenge, at $799, faster than from a spreadsheet at no cost'. It is translated literally. Check the intent against the English before changing it. | keep every number exactly; troid stays lowercase, in Latin letters"
+sizing survives will find those out from a challenge ({fee} for {firm}'s {quota} {product}, read {date}) faster than from a
+spreadsheet at no cost.
+The base rates on this page are the rest of it.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: faq.worth.p1: the English itself is ambiguous: a trader 'will find those out from a challenge, at $799, faster than from a spreadsheet at no cost'. It is translated literally. Check the intent against the English before changing it. | keep {date} {fee} {firm} {product} {quota} exactly as written; troid stays lowercase, in Latin letters"
 faq.worth.p2,"<a href=""{L}/compare"">troid's compare</a> has the affiliate links and codes, and the criterion for which firms are
 on it. They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code
 is shown.","<a href=""{L}/compare"">сравнение troid</a> содержит партнёрские ссылки и коды, а также критерий, по которому на нём оказываются фирмы. За их счёт финансируется troid, и вам они ничего не стоят сверх цены. Напрямую — та же цена там, где код не указан.",,"keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
@@ -842,6 +836,8 @@ account credentials. You are responsible for verifying any output before acting 
 faq.disc.jurisdiction.h,Jurisdiction,Юрисдикция,,
 faq.disc.jurisdiction.p,"Availability and legality of prop firm services vary by country. It is your
 responsibility to confirm you are eligible to participate where you live.","Доступность и законность услуг проп-фирм различаются в зависимости от страны. Вы сами отвечаете за то, чтобы убедиться, что можете участвовать там, где живёте.",,
+faq.daily.derived,"troid's arithmetic on the $100,000 account: 4% × $100,000 = $4,000; the floor, $100,000 × (1 − 6%) = $94,000; the crossover, $100,000 × (1 − 6% + 4%) = $98,000, $2,000 below the start.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.fees.derived,"troid's arithmetic: a trade sized so that the stop plus fees loses the risk budget pays 0.08% ÷ (stop% + 0.08%) of it in fees, 0.04% on entry and 0.04% on exit: 0.08 ÷ 3.98 ≈ 2% for a 3.9% stop, 0.08 ÷ 0.38 ≈ 21% for a 0.3% stop, and 21% of $500 ≈ $105.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 terms.meta.title,troid — terms of use,troid — условия использования,,"troid stays lowercase, in Latin letters"
 terms.meta.description,"troid's terms of use: a free informational tool, not advice. Verify every number with the firm before trading.","Условия использования troid: бесплатный информационный инструмент, а не консультация. Сверяйте каждое число с фирмой, прежде чем торговать.",,"troid stays lowercase, in Latin letters"
 terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -850,7 +846,7 @@ terms.hero.eyebrow,troid · terms,troid · условия,,"troid stays lowercas
 terms.hero.h1,Terms of use,Условия использования,,
 terms.hero.lede,"troid is a free informational tool. It is not advice, it places nothing, and the firm's own
   documents govern. The full terms follow.","troid — бесплатный информационный инструмент. Это не консультация; troid не выставляет никаких ордеров, а определяющими являются документы самой фирмы. Далее — полный текст условий.",,"troid stays lowercase, in Latin letters"
-terms.draft,Effective 24 September 2026.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
+terms.draft,Effective {date}.,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} exactly as written
 terms.toc.h,Contents,Содержание,,
 glossary.hint,Tap any label for what it means.,,,NEW: translate it in reviewer_edit | 
 glossary.default,troid's default — change it to yours.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -1104,6 +1100,36 @@ desk2.js.x_wait_block,Fix the step the desk flags above to see the rest.,,,NEW: 
 desk2.js.tape_opt,{sym} · not offered by troid's firms,,,"NEW: translate it in reviewer_edit | keep {sym} exactly as written; troid stays lowercase, in Latin letters"
 desk2.js.tape_none,"No compared firm offers {sym}, so there are no firm rules to size it against. Choose an asset from the list to size a trade.",,,NEW: translate it in reviewer_edit | keep {sym} exactly as written
 desk2.js.x_wait_none,Choose an asset from the list to see the rest.,,,NEW: translate it in reviewer_edit | 
+sources.tier.onefunded_failures,"SOURCED · OneFunded's own platform data, in its post “The Most Common Reasons Why Traders Fail Prop Firm Challenges”, published {published} (updated {updated}), read {read}. One firm's self-reported figures, not independently audited; the post gives no number of accounts or period. 93.7% is troid's sum of its 78.7% and 15.0%. <a href=""{L}/sources#onefunded_failures"">Sources</a>",,,"NEW: translate it in reviewer_edit | keep {L} {published} {read} {updated} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+sources.tier.fpfx_payouts,"SOURCED · FPFX Tech's data, reported by Finance Magnates, published {published}, read {read}. Industry data from a company that sells software to prop firms: not independent, not audited, the ten firms not named. <a href=""{L}/sources#fpfx_payouts"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {published} {read} exactly as written; keep the <…> tags and links as they are; translate only the words
+sources.meta.title,troid — sources,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.meta.description,"Every outside figure troid's pages use: what it says, who produced it, who reported it, when it was published, when troid read it, and its caveat.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.og.title,troid's sources,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.og.description,"Every outside figure troid uses, with who produced it, when troid read it, and its caveat.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.hero.eyebrow,Sources,,,NEW: translate it in reviewer_edit | 
+sources.hero.h1,"Every outside figure, and where it comes from",,,NEW: translate it in reviewer_edit | 
+sources.hero.lede,"Each figure troid's pages take from outside troid: what the document says, in its own words; who produced the data and who reported it; when it was published and when troid read it; and its caveat. A figure from outside troid that isn't on this page doesn't appear on troid's pages. Firm rules have their own sources on troid's compare, rule by rule.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.l.produced,Produced by,,,NEW: translate it in reviewer_edit | 
+sources.l.reported,Reported by,,,NEW: translate it in reviewer_edit | 
+sources.l.published,Published,,,NEW: translate it in reviewer_edit | 
+sources.l.updated,updated {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+sources.l.read,Read by troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.l.read_v,"{date}, in full (sha256 of the page as read: {sha}…)",,,NEW: translate it in reviewer_edit | keep {date} {sha} exactly as written; keep every number exactly
+sources.l.uses,Used on,,,NEW: translate it in reviewer_edit | 
+sources.l.caveat,Caveat,,,NEW: translate it in reviewer_edit | 
+sources.l.says,"What it says, in its own words",,,NEW: translate it in reviewer_edit | 
+sources.l.derived,What troid computes from it,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.ranking.h,The review ranking that orders troid's compare,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.ranking.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
+sources.ranking.row,{firm}: {n} verified reviews at {rating},,,NEW: translate it in reviewer_edit | keep {firm} {n} {rating} exactly as written
+sources.ranking.p,"propfirmmatch is an external, public ranking. troid uses it to choose which firms it verifies next, never to rate them. Review counts change daily; these are the counts on the date troid read them.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.calendar.h,The release calendar,,,NEW: translate it in reviewer_edit | 
+sources.calendar.p,"The calendar strip under troid's desk shows scheduled US releases from the agencies' own schedules: the Bureau of Labor Statistics (CPI, PPI, jobs, JOLTS), the Bureau of Economic Analysis and the Federal Reserve. troid reads them every Monday; the dates shown were read {read}. No forecasts.",,,"NEW: translate it in reviewer_edit | keep {read} exactly as written; troid stays lowercase, in Latin letters"
+sources.rules.h,Firm rules,,,NEW: translate it in reviewer_edit | 
+sources.rules.p,"Every firm rule troid states — loss limits, fees, hold limits, prices — comes from the firm's own document, with the section and the date troid read it, shown beside the rule on <a href=""{L}/compare"">troid's compare</a>. A rule troid hasn't read shows “pending”.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+tier.rules,"SOURCED · {firm}: {docs}. <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
+tier.rules_derived,"SOURCED · {firm}: {docs}. DERIVED · {derived} <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {derived} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
+data.0784116eb356,none stated for 1-Phase (Ascend has one; may be added with notice),,,text from a firm's rules (firms.json); keep every number exactly
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
 data.0c74f1273dd1,1-Step,1-Step,,text from a firm's rules (firms.json); keep every number exactly
@@ -1117,8 +1143,8 @@ data.1d95103da2c3,Rules go on this page only after they're read from BrightFunde
 data.1f61f2d86a2b,3%,,,text from a firm's rules (firms.json); keep every number exactly
 data.1f7a32c047e8,none if the evaluation is not completed,"нет, если оценка не завершена",,text from a firm's rules (firms.json)
 data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,ролловер 23:30–23:59 CET = 21:30 UTC (CEST) / 22:30 UTC (CET); фирма советует не торговать в этом окне,,text from a firm's rules (firms.json); keep every number exactly
-data.254f81f3de77,up to 90% (add-on); base unconfirmed,до 90% (дополнение); базовое значение не подтверждено,,text from a firm's rules (firms.json); keep every number exactly
 data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,"Bitfunded проводит собственные акции («купи один — получи второй» и подобные), и они действуют через эту ссылку — код не нужен.",,text from a firm's rules (firms.json)
+data.2b53c3a2e09f,1-Step 4% / 6% static · 2-Step Stage 1 5% / 10%,,,text from a firm's rules (firms.json); keep every number exactly
 data.32470a1f372d,a blog post of May 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
 data.3a3e0ad3ccb5,"up to $599 for $100,000",,,text from a firm's rules (firms.json); keep every number exactly
@@ -1126,13 +1152,13 @@ data.3ce26c9516b7,none stated,не указано,,text from a firm's rules (fir
 data.3d74b6357262,Where troid's ledger runs. Each rule's source and read date is on troid's compare.,Здесь работает реестр troid. Источник и дату прочтения каждого правила показывает сравнение troid.,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
 data.443b076a4761,"help centre, Restricted Trading Practices s.1",,,text from a firm's rules (firms.json); keep every number exactly
 data.44652ad36760,9%,,,text from a firm's rules (firms.json); keep every number exactly
-data.44fadd8eb267,80% → 90%,80% → 90%,,text from a firm's rules (firms.json); keep every number exactly
 data.45c9dde99668,day-start balance,баланс на начало дня,,text from a firm's rules (firms.json)
 data.4622b5f5c4b4,5: the help centre is newer and stricter,,,text from a firm's rules (firms.json); keep every number exactly
 data.4d29d0f9361d,"A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",,,"text from a firm's rules (firms.json); troid stays lowercase, in Latin letters"
 data.4de966a2be8a,Open positions,,,text from a firm's rules (firms.json)
 data.4eddb3859ab9,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",,,"text from a firm's rules (firms.json); keep {conflicts} exactly as written; troid stays lowercase, in Latin letters"
 data.5129c48719a9,5-min restriction,ограничение 5 мин,,text from a firm's rules (firms.json); keep every number exactly
+data.5366a7416787,80%,,,text from a firm's rules (firms.json); keep every number exactly
 data.56d9a0cd140e,Funded · after 1-Step,Funded · после 1-Step,,text from a firm's rules (firms.json); keep every number exactly
 data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,"комиссия по крипто 0,012%/сторона — проверьте на brightfunded.com/trading-instruments",,text from a firm's rules (firms.json); keep every number exactly
 data.5bc39b578c6e,Maximum hold,,,text from a firm's rules (firms.json)
@@ -1153,9 +1179,9 @@ data.7b921a3bc2ed,"Conflicting: Terms 9(a) — 100% at first profit split day, a
 data.7bf372bece8d,initial balance,начальный баланс,,text from a firm's rules (firms.json)
 data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,Означает ли «reverse trading» (7.1 xiv) stop-and-reverse? Это блокирует запуск shadow-1 там.,,text from a firm's rules (firms.json); keep every number exactly
 data.853ca806d6d6,blog of 28 August 2026,,,text from a firm's rules (firms.json); keep every number exactly
-data.881df945bb17,1-Step 4% / 6% static · 2-Step 5% / 10%,1-Step 4% / 6% статическая · 2-Step 5% / 10%,,text from a firm's rules (firms.json); keep every number exactly
 data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
 data.8b9e2967d124,Expert $799,,,text from a firm's rules (firms.json); keep every number exactly
+data.8e0f20efffc5,not excluded by its Terms (4b: local law applies),,,text from a firm's rules (firms.json); keep every number exactly
 data.94934cc00dcb,none for the 2-Step,,,text from a firm's rules (firms.json); keep every number exactly
 data.a0c0cbd0c834,"help centre, Challenge Type, One Step Evaluation table",,,text from a firm's rules (firms.json)
 data.a199f4153a08,Funded · after Express,Funded · после Express,,text from a firm's rules (firms.json)
@@ -1173,6 +1199,7 @@ data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text 
 data.b318f061ccfb,Terms of Use 9(a) and 9(b),,,text from a firm's rules (firms.json); keep every number exactly
 data.c07565a92bfd,paid add-on only,только как платное дополнение,,text from a firm's rules (firms.json)
 data.c1f8219caf61,a blog post of September 2025,,,text from a firm's rules (firms.json); keep every number exactly
+data.c40bfbb28bb3,none stated for 1-Phase (40% on Break Final Stage),,,text from a firm's rules (firms.json); keep every number exactly
 data.c9008cbdcde9,2-Phase,2-Phase,,text from a firm's rules (firms.json); keep every number exactly
 data.cc9922ebfa08,€497 (€347.90 promo),"€497 (€347,90 по акции)",,text from a firm's rules (firms.json); keep every number exactly
 data.cd51088f5851,16:00–16:10,16:00–16:10,,text from a firm's rules (firms.json); keep every number exactly
@@ -1180,18 +1207,16 @@ data.ce18773ae94c,"Where a code is shown, it's cheaper through the affiliate lin
 data.cfb7b53e61ea,a flat 10 calendar days,,,text from a firm's rules (firms.json); keep every number exactly
 data.d1cb4218cd2f,"help centre, Challenge & Trader Stage, One Step Express table",,,text from a firm's rules (firms.json)
 data.d2cd691e6d53,"5, for the 1-Step and both 2-Step stages",,,text from a firm's rules (firms.json); keep every number exactly
-data.d4978ed5cbab,none (40% on Break),нет (40% на Break),,text from a firm's rules (firms.json); keep every number exactly
 data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","фиксированная сумма = 3% от ИСХОДНОГО размера; порог = max(баланс, эквити) на ролловере − эта сумма",,text from a firm's rules (firms.json); keep every number exactly
 data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 недоступна для США; криптоплатформа для США не подтверждена,,text from a firm's rules (firms.json); keep every number exactly
 data.db70dd511d6f,"Terms of Use 14(d)(xi), revision of 24 March 2026",,,text from a firm's rules (firms.json); keep every number exactly
 data.e17c8ad0dc2e,Refund,,,text from a firm's rules (firms.json)
-data.e49a4a29c821,none on 1-Phase,нет на 1-Phase,,text from a firm's rules (firms.json); keep every number exactly
 data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
 data.e84af9e146a4,"Price of the $100,000 1-Step",,,text from a firm's rules (firms.json); keep every number exactly
 data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly
 data.ecebb8ea369d,$619,$619,,text from a firm's rules (firms.json); keep every number exactly
 data.ed4867d9ff50,"Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input.","Плечо до 100× на счетах Advanced ($50k+) и 5× на счетах Student и Instant, согласно её Terms and Conditions — модель предохранителей принимает это как входные данные.",,text from a firm's rules (firms.json); keep every number exactly
+data.f006926ab908,up to 90% with the 90% add-on; base not stated,,,text from a firm's rules (firms.json); keep every number exactly
 data.f15129262732,up to 90%,до 90%,,text from a firm's rules (firms.json); keep every number exactly
 data.f844ade271f6,"a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases",,,text from a firm's rules (firms.json)
 data.fac9b2e683d7,"10 days for majors, 7 for other crypto, 5 for TradFi",,,text from a firm's rules (firms.json); keep every number exactly
-data.fb360f9c09ac,yes,да,,text from a firm's rules (firms.json)

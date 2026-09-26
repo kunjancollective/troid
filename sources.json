@@ -1,0 +1,74 @@
+{
+  "_what": "Every outside figure troid's pages use: what it says, who produced it, who reported it, when it was published, when troid read it, and its caveat. The pages' tier lines and the public /sources page are generated from this file (backtest/sources.py); a figure that is not here does not appear on a page. Each entry was read in full in the document itself, fetched from a sandbox on its read date, and records the page's sha256 and the words used. Firm rules are not here: they are in firms.json, with their own provenance. The external review ranking that orders troid's compare is firms.json _external_ranking_snapshot.",
+  "onefunded_failures": {
+    "title": "The Most Common Reasons Why Traders Fail Prop Firm Challenges (And How to Fix Them)",
+    "url": "https://onefunded.com/blog/trading-psychology/why-traders-fail-prop-firm-challenges/",
+    "publisher": "OneFunded",
+    "author": "Damilola Esebame",
+    "produced_by": "OneFunded, a prop firm: its own platform data",
+    "reported_by": "OneFunded's own blog",
+    "used_on": [
+      "troid's desk (the home page): the headline and the 93.7% tile",
+      "troid's FAQ: Why do people fail?",
+      "the README"
+    ],
+    "published": "2026-06-17",
+    "updated": "2026-08-19",
+    "read_on": "2026-09-26",
+    "sha256": "740be9ceccc51e00",
+    "figures": {
+      "daily_pct": 78.7,
+      "max_pct": 15.0,
+      "other_pct": 6.3,
+      "loss_limit_pct": 93.7
+    },
+    "derived": {
+      "loss_limit_pct": "78.7% + 15.0% = 93.7%, troid's sum of the two loss-limit shares"
+    },
+    "quotes": [
+      "Here is how breaches break down across OneFunded’s platform: 78.7% of failed evaluations ended on a daily loss limit breach; 15.0% ended on an overall (maximum) loss limit breach; 6.3% ended due to inactivity and other risk rules",
+      "In the challenges offered by OneFunded, most of the breaches occur in two stages. First, during the opening session, where the traders are unaccustomed to equity-based drawdown, and secondly, close to the profit target stage, where they expand their positions to hit the target early.",
+      "The problem is not always the strategy. More often, it comes down to risk management issues. Since its inception, OneFunded has been tracking prop challenges across all programs (Flash, Core, and Value)."
+    ],
+    "caveat": "One firm's self-reported figures, not independently audited. The post gives no number of accounts and no period (\"since its inception\", across its Flash, Core and Value programs)."
+  },
+  "fpfx_payouts": {
+    "title": "Exclusive: Only 7% of 300,000 Prop Trading Accounts Achieved Payouts",
+    "url": "https://www.financemagnates.com/forex/analysis/exclusive-only-7-of-300000-prop-trading-accounts-achieved-payouts/",
+    "publisher": "Finance Magnates",
+    "author": "Damian Chmiel",
+    "produced_by": "FPFX Tech, a fintech that sells technology (software as a service) to prop trading firms",
+    "reported_by": "Finance Magnates",
+    "used_on": [
+      "troid's FAQ: What percentage of people actually pass? and What does it really cost to get funded?",
+      "troid's research: the 14% pass rate",
+      "the README"
+    ],
+    "published": "2024-09-18",
+    "updated": null,
+    "read_on": "2026-09-26",
+    "sha256": "b4796da4f15bce43",
+    "figures": {
+      "accounts": 300000,
+      "traders": 100000,
+      "firms": 10,
+      "passed_pct": 14,
+      "paid_of_passed_pct": 45,
+      "paid_pct": 7,
+      "never_paid_pct": 93,
+      "avg_payout_pct": 4,
+      "avg_spend_usd": 800,
+      "challenges_per_account": 3
+    },
+    "derived": {
+      "never_paid_pct": "100% − 7% = 93%, troid's arithmetic"
+    },
+    "quotes": [
+      "It covered a total of over 300,000 accounts belonging to 100,000 traders from 10 different prop trading companies.",
+      "“According to the data in the survey, 14% of traders passed the challenge and obtained a funded account. Of those, about 45% achieved a payout (7% of all traders) in their funded account, with the average payout being 4% of the plan size (or account value),” Justin Hertzberg, one of the founders and CEO of FPFX Tech, commented for Finance Magnates.",
+      "Considering that a single account spends an average of $800 on challenge purchases throughout its entire activity cycle, typically taking three different challenges, the average profits are not high at all.",
+      "The data comes from FPFX Tech, a fintech that specializes in providing technology solutions for prop trading firms, offering software-as-a-service (SaaS) solutions."
+    ],
+    "caveat": "Industry data from a company that sells software to prop firms, published in 2024; not independent and not audited. The ten firms are not named."
+  }
+}

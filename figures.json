@@ -1,0 +1,40 @@
+{
+  "_what": "The canonical figures (challenge-proof audit E2, 2026-09-26): each one troid states in more than one place, the file it is read from, and the value every page, TROID.md, the README and ask troid's context must agree with. backtest/claim_check.py (run by verify_claims.py) reads each value from its source and fails when they differ, then looks for the contradictions the audit found in every published text. A figure changes in its source, then here; never on a page.",
+  "price_1step": {
+    "what": "Bitfunded 1-Step $100,000, the fee troid quotes as its reference price",
+    "value": 999,
+    "from": "firms.json:bitfunded.products.1step.fee_usd"
+  },
+  "price_2step": {
+    "what": "Bitfunded 2-Step $100,000 (Stage 1 and Stage 2, one fee)",
+    "value": 799,
+    "from": "firms.json:bitfunded.products.2step_s1.fee_usd"
+  },
+  "holdout_r": {
+    "what": "The baseline strategy's mean R per trade on BTC 2021-2025, years the config never saw (MEASURED), shown to three places",
+    "value": 0.008,
+    "tol": 0.0005,
+    "from": "backtest/results/walkforward_BTCUSDT.json:holdout.exp",
+    "from_dir": "backtest/results/walkforward_BTCUSDT.json:holdout",
+    "interval": [-0.023, 0.04],
+    "n": 504
+  },
+  "trades_per_month": {
+    "what": "Trades per month on the frozen sample (MEASURED); verify_claims.py computes it from the journal and checks it at 10.1. The 30 a month in the income model is an assumption and is labelled so wherever it appears.",
+    "value": 10.1,
+    "checked_by": "backtest/verify_claims.py"
+  },
+  "reset": {
+    "what": "Bitfunded's daily reset: 00:00 UTC+8 = 16:00 UTC, effective by 16:10 UTC; the daily loop runs at 16:20 UTC",
+    "value": "16:00",
+    "from": "firms.json:bitfunded.reset_utc",
+    "settles_by": "16:10",
+    "times_allowed": ["16:00", "16:10", "16:20"]
+  },
+  "fee_pct": {
+    "what": "Crypto trading fee, % of position size per side: Bitfunded 0.04 (help centre); Crypto Fund Trader 0.0325 (T&C 5.8). BrightFunded's is not recorded.",
+    "value": 0.04,
+    "from": "firms.json:bitfunded.fee_per_side_pct",
+    "all": [0.04, 0.0325]
+  }
+}

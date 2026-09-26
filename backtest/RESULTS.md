@@ -53,24 +53,50 @@ hypothesis for the walk-forward, not a result.
 4. **The budget cap is what makes the account survivable.** At +0.35R, naive sizing at
    1% blows the account 68% of the time in a year; at 2%, 100%. Under the cap, 0%
    (MODELLED: income_math.py, 20,000 simulated years; verify_claims.py reproduces it).
-5. **The rollover trap needs two conditions together**: uncapped risk >= 4% per position
-   AND a policy that holds losers through the reset. Desk sizing plus swing_safe kills
-   it twice over. Largest floating loss measured into a reset was $3,422 vs the $4,000
-   line, at 4% naive risk.
+5. **The rollover trap** (below): no configuration carried a floating loss across a reset
+   that broke the daily limit on this sample; the closest needed uncapped risk and a policy
+   that holds losers through the reset together.
+
+## Rolling challenge starts, the chosen configuration
+
+**5-strength + reverse on stop**, desk sizing, `swing_safe`: 72 starts, one every 18 bars (3 days), each run to the
+end of the sample. Outcomes: running 72. Median ending balance
+**$100,409** (from $100,000).
+
+## The rollover trap
+
+The largest floating loss carried into a daily reset, against the fixed $4,000 line, over the same rolling starts:
+
+| holding | sizing | worst over every configuration | starts that broke the limit at a reset |
+|---|---|---|---|
+| swing_safe (a loser is closed before the reset) | desk sizing (0.5%, capped) | $0 | 0 of 720 |
+| swing_safe (a loser is closed before the reset) | 4% uncapped | $0 | 0 of 720 |
+| swing (a loser is held through it) | desk sizing (0.5%, capped) | $431 | 0 of 720 |
+| swing (a loser is held through it) | 4% uncapped | $3,448 | 0 of 720 |
+
+## The reversal trigger
+
+| configuration | trades | reverse trades | trades that reached the third target |
+|---|---|---|---|
+| 5-tranche strength ladder | 57 | 0 | 5 (8.8%) |
+| 5-strength + reverse on TP3 | 60 | 5 | 7 (11.7%) |
+| 5-strength + reverse on stop | 78 | 24 | 9 (11.5%) |
+| 5-strength + reverse on any | 88 | 41 | 8 (9.1%) |
 
 ## Frequency, and what it costs
 
-This strategy produces **7.4 trades/month** (5-strength, no reverse).
-Earlier income modelling assumed 30/month and must be read with that correction:
+The chosen configuration produces **10.1 trades/month**. Earlier income modelling assumed 30 a month (an
+assumption, never measured). DERIVED: gross a month per account = exp R x trades a month x $500 risk (0.5% of
+$100,000), before the split, fees and any breach:
 
 | edge | trades/mo | gross/account/mo | accounts for $6,250/mo |
 |---|---|---|---|
-| +0.15R | 7 | $614 | **10.2** |
-| +0.15R | 30 | $1,862 | 3.4 |
-| +0.35R | 7 | $1,250 | 5.0 |
-| +0.35R | 30 | $5,342 | 1.2 |
+| +0.15R | 10.1 (measured) | $757 | 8.3 |
+| +0.15R | 30 (assumed) | $2,250 | 2.8 |
+| +0.35R | 10.1 (measured) | $1,766 | 3.5 |
+| +0.35R | 30 (assumed) | $5,250 | 1.2 |
 
-At the real frequency the account requirement roughly triples.
+At the measured frequency the account requirement is about 3.0 times the assumed one.
 
 ## Not established
 

@@ -37,6 +37,19 @@ def reference_firm():
     return FIRMS[next(k for k in ORDER if FIRMS[k].get("reference"))]
 
 
+def _panel_read(f, what):
+    """The date troid last read the documents a firm's panel summary or note states (firms.json {what}_src): every field
+    it lists must have a recorded source (challenge-proof audit, E1)."""
+    fields = f.get(what + "_src")
+    assert fields, f"{f['name']}: {what} states figures with no {what}_src"
+    dates = []
+    for prod, x in fields:
+        c = cite(f, x, prod)
+        assert c, f"{f['name']}: {what} states {prod or ''} {x}, which has no recorded source"
+        dates += c["o"]
+    return max(dates)
+
+
 def panel_cell(k, f, T=None):
     T = _strings(T)
     p = f["compare_product"]; name = html.escape(f["name"])
@@ -49,10 +62,13 @@ def panel_cell(k, f, T=None):
     count = T("index.firms.filled", n=n, total=len(FIELDS), m=m) if n else T("index.firms.pending")
     v = f'<div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">{count}</div>'
     if f.get("panel_summary"):
-        v = f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(T.data(f["panel_summary"]))}</div>\n      ' + v
+        v = (f'<div class="v" style="font-size:14px;margin:4px 0">{html.escape(T.data(f["panel_summary"]))}</div>\n      '
+             f'<div class="s">{T("index.firms.summary_src", date=_panel_read(f, "panel_summary"))}</div>\n      ' + v)
     notes = []
-    if rank: notes.append(T("index.firms.reviews", n=rank[1]["reviews"], rating=rank[1]["rating"]))
-    if f.get("panel_note"): notes.append(html.escape(T.data(f["panel_note"])))
+    if rank: notes.append(T("index.firms.reviews", n=rank[1]["reviews"], rating=rank[1]["rating"], date=FIRMS["_external_ranking_snapshot"]["date"]))
+    if f.get("panel_note"):
+        notes.append(html.escape(T.data(f["panel_note"]))
+                     + (" " + T("index.firms.note_src", date=_panel_read(f, "panel_note")) if re.search(r"\d", f["panel_note"]) else ""))
     note = f'\n      <div class="s">{" ".join(notes)}</div>' if notes else ""
     link = ""
     if link_live(f):
@@ -171,9 +187,11 @@ def _lev_caps(f, T):
         bands = c.get("lev_bands") or []
         if "max_leverage" in pc or not bands:
             lev = pc.get("max_leverage", c.get("max_leverage"))
-            caps.append((label, lev if lev is not None and cite(f, "max_leverage", pk, fallback="max_leverage" not in pc) else None))
+            ct = cite(f, "max_leverage", pk, fallback="max_leverage" not in pc)
+            caps.append((label, lev if lev is not None and ct else None, ct["o"] if ct else []))
         else:
-            caps.append((label, max(b["lev"] for b in bands) if all(cite(f, b["cite"]) for b in bands) else None))
+            cts = [cite(f, b["cite"]) for b in bands]
+            caps.append((label, max(b["lev"] for b in bands) if all(cts) else None, [d for ct in cts if ct for d in ct["o"]]))
     return caps
 
 
@@ -182,16 +200,17 @@ def lev_first(T=None):
     (min(5, the product's cap)); then each firm, or product, with no recorded cap. Only caps firms.json records with a
     source, never one from memory: a firm with some products unrecorded is named with them."""
     T = _strings(T)
-    five, pend = [], []
+    five, pend, read = [], [], []
     for k in ORDER:
         name = html.escape(FIRMS[k]["name"]); caps = _lev_caps(FIRMS[k], T)
-        known = [c for _, c in caps if c is not None]
-        missing = [html.escape(lab) for lab, c in caps if c is None]
+        known = [c for _, c, _ in caps if c is not None]
+        missing = [html.escape(lab) for lab, c, _ in caps if c is None]
         if known and max(known) == 5:
-            five.append(name)
+            five.append(name); read += [d for _, c, ds in caps if c is not None for d in ds]
         if missing:
             pend.append(name if not known else T("index.lev.firm_product", firm=name, product=_join(T, "index.js.list_and", missing)))
-    out = [T("index.lev.first_one" if len(five) == 1 else "index.lev.first_many", firms=_join(T, "index.js.list_and", five))] if five else []
+    out = [T("index.lev.first_one" if len(five) == 1 else "index.lev.first_many", firms=_join(T, "index.js.list_and", five),
+             date=max(read))] if five else []
     if pend:
         out.append(T("index.lev.pending", firms=_join(T, "index.js.list_and", pend)))
     return " ".join(out)
@@ -318,9 +337,42 @@ def desk2_context(T):
             "glossary": glossary_html(T, desk2=True)}
 
 
+def _calendar_read():
+    """The date troid last read the agencies' release schedules for the calendar strip (calendar.json), for /sources."""
+    p = site_build.PUB / "calendar.json"
+    return json.loads(p.read_text()).get("read", "") if p.exists() else ""
+
+
+def ref_price():
+    """The reference firm's compare product and its fee, with the date troid read the fee (the FAQ's "Is a challenge
+    worth buying?"; challenge-proof audit, B1: the FAQ said $799, the 2-Step's, beside the 1-Step troid compares)."""
+    f = reference_firm(); p = f["compare_product"]; c = cite(f, "price", p.get("key"))
+    assert c, "the reference firm's price has no recorded source"
+    # the level whose fee is recorded (the price's cite names it: "$100,000 account, fee $999"), as the crossover uses
+    return {"fee": p["price"], "firm": html.escape(f["name"]), "quota": "$100,000",
+            "product": html.escape(p["label"]), "date": max(c["o"])}
+
+
+def rules_src(T, fields, derived=None):
+    """A tier line for text that states the reference firm's rules (challenge-proof audit, E1): each field's recorded
+    source in firms.json, the section and the date troid read it, and, where the text computes dollars from them, the
+    arithmetic (DERIVED). A field with no recorded source stops the build: a rule troid can't source isn't stated."""
+    T = _strings(T)
+    f = reference_firm(); key = f["compare_product"].get("key"); seen = {}
+    for x in fields:
+        c = cite(f, x, key)
+        assert c, f"{f['name']} {x}: no recorded source for a rule a page states"
+        seen.setdefault(c["c"], set()).update(c["o"])
+    docs = "; ".join(f"{sec} (read {max(ds)})" for sec, ds in seen.items())
+    kw = {"firm": html.escape(f["name"]), "docs": html.escape(docs)}
+    return T("tier.rules_derived", derived=T(derived), **kw) if derived else T("tier.rules", **kw)
+
+
 def template_context(T):
     """The generated fragments the static page templates embed, in T's language (site_build.py), and the reference
     firm's name for the sentence under the firms panel (a firm's name comes from firms.json, never from en.json)."""
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
             "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
-            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "term": term, **desk2_context(T)}
+            "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "term": term, "ref_price": ref_price(),
+            "ranking": FIRMS["_external_ranking_snapshot"], "calendar_read": _calendar_read(),
+            "rules_src": lambda fields, derived=None: rules_src(T, fields, derived), **desk2_context(T)}

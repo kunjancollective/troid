@@ -252,7 +252,29 @@
     "reference": true,
     "link_live": true,
     "required_disclaimer": null,
-    "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step 5% / 10%",
+    "panel_summary": "1-Step 4% / 6% static \u00b7 2-Step Stage 1 5% / 10%",
+    "panel_summary_src": [
+      [
+        "1step",
+        "daily_pct"
+      ],
+      [
+        "1step",
+        "max_pct"
+      ],
+      [
+        null,
+        "drawdown_type"
+      ],
+      [
+        "2step_s1",
+        "daily_pct"
+      ],
+      [
+        "2step_s1",
+        "max_pct"
+      ]
+    ],
     "panel_note": "Where troid's ledger runs. Each rule's source and read date is on troid's compare.",
     "calc": {
       "daily_basis": "initial",
@@ -1547,6 +1569,16 @@
     "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
     "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
     "panel_note": "Leverage up to 100\u00d7 on Advanced accounts ($50k+) and 5\u00d7 on Student and Instant accounts, per its Terms and Conditions \u2014 the breaker model takes that as an input.",
+    "panel_note_src": [
+      [
+        null,
+        "max_leverage_student"
+      ],
+      [
+        null,
+        "max_leverage_advanced"
+      ]
+    ],
     "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
     "calc": {
       "daily_basis": "day_start",
@@ -2070,5 +2102,6 @@
         }
       }
     ]
-  }
+  },
+  "_panel_src_rule": "panel_summary_src and panel_note_src: the recorded fields ([product or null, field]) a panel summary or note states. The build cites each (regions.panel_cell) and stops when one has no recorded source; a summary or note with figures and no _src list stops it too (challenge-proof audit, E1, 2026-09-26)."
 }
