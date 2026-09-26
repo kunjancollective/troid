@@ -131,6 +131,7 @@ is on screen and marked "delayed" once it is over a minute old; tapping that pri
 entry. A symbol tapped on the price tape at the top of the page opens the desk with that asset
 selected. troid doesn't fill in a price for gold, oil or stocks at this time: the tape's prices for
 them are TradingView's, inside its own frame, and troid can't read them, so the trader types the
-entry in from the tape. A stock no compared firm offers, like NVDA, opens the desk but can't be
-sized, because there are no firm rules to size it against. troid never fills in a stop: the stop,
+entry in from the tape. The tape also carries stocks, as market context, that no compared firm
+lists on the pages troid has read, like NVDA: one tapped there opens the desk but can't be sized,
+because there are no firm rules to size it against. troid never fills in a stop: the stop,
 the size and the trade stay the trader's.
