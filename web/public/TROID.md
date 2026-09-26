@@ -90,7 +90,7 @@ Both budgets count **floating** losses on open positions, not just closed ones. 
 Bitfunded both auto-fail on floating — no close required.
 
 **Crossover.** On a fresh day the two swap at `equity = quota × (1 − max% + daily%)`.
-Bitfunded 1-Step on $100k: **$98,000** — $2,000 below the start, half of one bad day.
+Bitfunded 1-Step on $100k: **$98,000** — $2,000 below the start, half of one day's loss limit.
 Below it the max loss governs and the advertised daily limit is fiction.
 
 **Static vs trailing.** Static: profit widens the buffer permanently — the account gets

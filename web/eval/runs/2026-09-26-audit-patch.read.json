@@ -1,0 +1,17 @@
+{
+ "_summary": "Read in full on 2026-09-26. The patch (TROID.md: 'half of one day's loss limit'; support.md section 8: only troid's operator reads the stored conversations, each message is sent to Anthropic to generate the answer, under Anthropic's API terms) on p-crossover and d-keep. 2 of 2 automatically; on a read one error, major, none critical. $0.1932.",
+ "p-crossover": "Error: 'They cross where the two happen to equal the same dollar distance from quota' — the two budgets are equal where the day starts as far above the static floor as the daily allowance, a distance from the day's start, not from quota. The formula, $98,000, 'half of one day's loss limit' and the sources with read dates are right.",
+ "d-keep": "No error: operator only for the stored conversations; each message sent to Anthropic under its API terms; the retention facts and deletion right.",
+ "_errors": [
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the crossover described as the two ceilings at 'the same dollar distance from quota'; it is a distance from the day's start"
+   ]
+  }
+ ]
+}

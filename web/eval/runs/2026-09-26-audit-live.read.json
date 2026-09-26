@@ -1,0 +1,6 @@
+{
+ "_summary": "Read in full on 2026-09-26. The live prompt, the baseline for the audit patch (TROID.md's crossover wording, support.md section 8 on who reads a conversation), on p-crossover and d-keep. 2 of 2 automatically; on a read no error. $0.2.",
+ "p-crossover": "No error: $98,000 from quota × (1 − max% + daily%), both floors worked at a $98,000 day-start, each rule with its source and read date. Says 'half of one bad day', the live prompt's wording (the patch replaces it); not an error.",
+ "d-keep": "No error: each message goes to Anthropic under its API terms to generate the answer; only troid's operator reads the stored conversations; 30 days, what is and isn't kept, how to delete.",
+ "_errors": []
+}

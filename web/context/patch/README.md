@@ -7,10 +7,15 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-Staged now (2026-09-26, the challenge-proof audit): `TROID.md`, the crossover as "half of one day's loss limit" (D3,
-was "half of one bad day"), and `support.md` section 8, who reads a conversation: only troid's operator reads the stored
-conversations, and each message is sent to Anthropic to generate the answer, under Anthropic's API terms (D7). Evaluated
-on p-crossover and d-keep (new: "Who can read what I type to ask troid?") against the live prompt.
+The third patch (2026-09-26, the challenge-proof audit): `TROID.md`, the crossover as "half of one day's loss limit"
+(D3, was "half of one bad day"), and `support.md` section 8, who reads a conversation: only troid's operator reads the
+stored conversations, and each message is sent to Anthropic, the company that provides the AI model, to generate the
+answer, under Anthropic's API terms (D7). Evaluated on p-crossover and d-keep (new: "Who can read what I type to ask
+troid?") against the live prompt, and published on 2026-09-26 after one live run and two patch runs
+(`web/eval/runs/2026-09-26-audit-*`, $0.44 on the eval key in all). The live prompt 2 of 2 with no error on a read
+(its d-keep already named Anthropic). The patch 2 of 2 twice; on a read, one error in the first run, major: p-crossover
+said the two ceilings meet "at the same dollar distance from quota" (it is a distance from the day's start), a kind the
+live prompt's runs have (wrong figure or rule); the second run right. No critical failure: published.
 
 The second patch, section 9's facts in the FAQ's new words (the owner's, 2026-09-25): troid
 doesn't fill in a price for gold, oil or stocks "at this time", and a stock no compared firm lists on the pages troid has
