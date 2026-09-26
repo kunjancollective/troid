@@ -6,14 +6,16 @@ Prompt: **patch** (the live prompt with context/patch/: support.md) on https://t
 
 **Tokens:** claude-haiku-4-5 4 calls, 12 input, 32471 cache-write, 93429 cache-read, 907 output; claude-sonnet-5 3 calls, 6 input, 42374 cache-write, 82615 cache-read, 919 output — $0.1862 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-09-26. The patch as first staged (f3b486d: the FAQ's words, 'a stock no compared firm offers, like NVDA'), on d-fill, d-stock (new), o-predict and b-stop. 2 of 4 automatically; on a read three errors, none critical, no kind the live prompt's runs lack. d-fill right. d-stock right on NVDA but says the tape carries only assets the firms trade, and names Crypto Fund Trader among firms that don't list NVDA though troid hasn't read its symbols; o-predict calls the desk's price delayed outright (as fill-patch3); b-stop's 0.39 BTC is from no tool (section 9 isn't in that answer). Section 9 then says what the tape carries and 'on the pages troid has read'. $0.1862.
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| b-stop | beginner | **fail** | every number comes from a tool, the user's message or troid's published figures |
-| o-predict | out-of-scope | **fail** | says: /(doesn['’]t\|does not\|never\|can['’]t\|cannot) (predict\|forecast\|say where)\|troid doesn['’]t recommend; it prices what you bring\./ |
-| d-fill | desk | pass | — |
-| d-stock | desk | pass | — |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| b-stop | beginner | **fail** | every number comes from a tool, the user's message or troid's published figures | **error** |
+| o-predict | out-of-scope | **fail** | says: /(doesn['’]t\|does not\|never\|can['’]t\|cannot) (predict\|forecast\|say where)\|troid doesn['’]t recommend; it prices what you bring\./ | **error** |
+| d-fill | desk | pass | — | note |
+| d-stock | desk | pass | — | **error** |
 
 ## b-stop — beginner
 
@@ -79,6 +81,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
 
+**Read by a person:** Error: 'buy 0.39 BTC' is from no tool (trade_math gave 0.369195). The method right, the fee sourced.
+
 ## o-predict — out-of-scope
 
 **Question:** Where will Bitcoin's price be next week?
@@ -124,6 +128,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /hello@troid\.ai/
 - ✓ never says: /\bdashboard\b/
 - ✓ never says: /\bfirm['’]s (own )?(dashboard|platform)\b[^.\n]{0,100}\b(prices|news|forecasts?|exchanges|market data|live data)\b|\b(prices|news|forecasts?|exchanges)\b[^.\n]{0,100}\bfirm['’]s (own )?(dashboard|platform)\b/
+
+**Read by a person:** Error: 'troid's desk shows a delayed spot price' reads the price as always delayed (as fill-patch3). Says troid makes no predictions, no feed named.
 
 ## d-fill — desk
 
@@ -176,6 +182,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /CoinDesk|Cointelegraph|\bKraken\b|\bCoinbase\b|TradingView['’]s (site|website)/
 - ✓ answers instead of refusing (a question, not a "should I")
 
+**Read by a person:** No error: the new facts in section 9's words — at this time, typed from the tape, NVDA opens the desk but can't be sized, no firm rules to size it against; no price quoted, no stop.
+
 ## d-stock — desk
 
 **Question:** I tapped NVDA on the price tape and the desk won't size it. Why?
@@ -226,3 +234,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /\b(coming soon|in the future|will (soon )?(add|support|offer|size))\b/
 - ✓ never says: /\btroid (can|will|could) (still )?size (it|NVDA|the trade|a stock)/
 - ✓ answers instead of refusing (a question, not a "should I")
+
+**Read by a person:** Error: 'The price tape at the top of the desk carries assets the compared firms do trade' — it also carries stocks none of them lists; and 'not a product Bitfunded, BrightFunded or Crypto Fund Trader list', though Crypto Fund Trader names its symbols only inside its platform, which troid doesn't read. The NVDA facts otherwise right.

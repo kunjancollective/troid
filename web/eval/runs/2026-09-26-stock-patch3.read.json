@@ -1,0 +1,18 @@
+{
+ "_summary": "Read in full on 2026-09-26. The patch as published (24c35c6: the Asset field lists what the firms list on the pages troid has read — crypto, and some commodities and stocks, each firm its own — and the tape also carries stocks none of them lists there), on d-stock, d-fill and o-predict. 3 of 3 automatically; on a read one error, none critical: the fast model's d-stock overstates what the desk does for a listed asset. d-fill and o-predict right. $0.1561.",
+ "d-stock": "Error: 'tap an asset one of those firms does offer ... and the desk will show the entry price, fill in the firm settings and give you the sizing' — the desk shows a price for crypto only, fills in no firm settings, and sizes from an entry and a stop. The NVDA facts right ('none of the three firms ... list it', unqualified).",
+ "d-fill": "No error: every fact of section 9, the Asset field's lists 'on the pages troid has read', NVDA opens the desk but can't be sized.",
+ "o-predict": "No error: troid cannot predict prices, no live data, prices a trade the trader brings.",
+ "_errors": [
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the desk said to fill firm settings and show a price for any listed asset"
+   ]
+  }
+ ]
+}

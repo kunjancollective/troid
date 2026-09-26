@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-09-26. A second sample of d-stock on the published patch. 1 of 1 automatically; on a read no error. $0.0147.",
+ "d-stock": "No error: the Asset field lists what the firms list on the pages troid has read; NVDA on the tape as market context; none of the firms lists it 'in troid's records'; no firm rules to size it against, no price, nothing sized.",
+ "_errors": []
+}

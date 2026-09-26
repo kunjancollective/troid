@@ -1,0 +1,18 @@
+{
+ "_summary": "Read in full on 2026-09-26. The patch at 3e0ecb2 (the tape also carries stocks, as market context, that no compared firm lists on the pages troid has read), on d-stock, d-fill and o-predict. 3 of 3 automatically; on a read one error, none critical: d-stock says the firms list only crypto. Section 9 then says what the Asset field lists. $0.155.",
+ "d-stock": "Error: 'each lists only crypto assets — no individual stocks' — Bitfunded lists TSLA and gold on the pages troid has read. The NVDA facts right.",
+ "d-fill": "No error: the new facts; 'no firm troid compares actually lists' drops 'on the pages troid has read' (noted, not counted).",
+ "o-predict": "No error: troid never predicts prices, no live data, no feed, nobody sent elsewhere.",
+ "_errors": [
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the firms said to list only crypto"
+   ]
+  }
+ ]
+}

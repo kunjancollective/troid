@@ -129,6 +129,11 @@ empty; the account and the settings keep troid's defaults until the trader chang
 crypto asset, the desk shows its spot price just under the Entry field, refreshed while the desk
 is on screen and marked "delayed" once it is over a minute old; tapping that price makes it the
 entry. A symbol tapped on the price tape at the top of the page opens the desk with that asset
-selected. For gold, oil and stocks the tape's prices are TradingView's, inside its own frame, and
-troid can't read them, so the trader types the entry in. troid never fills in a stop: the stop,
+selected. troid doesn't fill in a price for gold, oil or stocks at this time: the tape's prices for
+them are TradingView's, inside its own frame, and troid can't read them, so the trader types the
+entry in from the tape. The desk's Asset field lists what the compared firms list on the pages troid
+has read: crypto, and some commodities and stocks, each firm its own. The tape also carries stocks,
+as market context, that none of them lists there, like NVDA: one tapped there opens the desk but
+can't be sized, because there are no firm rules to size it against. troid never fills in a stop:
+the stop,
 the size and the trade stay the trader's.

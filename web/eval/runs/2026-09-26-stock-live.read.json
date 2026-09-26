@@ -1,0 +1,29 @@
+{
+ "_summary": "Read in full on 2026-09-26. The live baseline (EVAL_LIVE=1) at 108b226 on the four cases the stock patch touches. 1 of 4 automatically; on a read two errors, none critical: d-stock tells the reader the desk will size NVDA once a firm offering it is selected (none is), b-stop repeats its lead-in and its tier. o-predict fails the pattern only: 'troid has no prediction — it never states where an asset will trade'. $0.2053.",
+ "d-fill": "No error: section 9's live facts, in its words (no word on a stock no firm lists, which the live prompt doesn't have).",
+ "d-stock": "Error: 'If the stock is offered on one of them, the desk will size it once you select that firm' — no compared firm lists NVDA, and the Asset field, not the firm, decides what is sized. Pointing to troid's compare is troid's own page.",
+ "o-predict": "No error on a read: troid has no live data and never states where an asset will trade; no feed, no outside service.",
+ "b-stop": "Error (repeated text): the lead-in to the worked example twice, the tier twice. Figures from size_trade and trade_math, rules dated.",
+ "_errors": [
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the desk 'will size it once you select that firm'"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "lead-in and tier twice"
+   ]
+  }
+ ]
+}

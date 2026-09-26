@@ -7,10 +7,26 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-Staged now (2026-09-25): `support.md`, section 9's facts in the FAQ's new words (the owner's): troid doesn't fill in a
-price for gold, oil or stocks "at this time", and a stock no compared firm offers, like NVDA, opens the desk but can't be
-sized, because there are no firm rules to size it against. It is evaluated on d-fill, d-stock (new: "I tapped NVDA on
-the price tape and the desk won't size it. Why?"), o-predict and b-stop, against the live prompt on the same cases.
+Nothing is staged now. The second patch, section 9's facts in the FAQ's new words (the owner's, 2026-09-25): troid
+doesn't fill in a price for gold, oil or stocks "at this time", and a stock no compared firm lists on the pages troid has
+read, like NVDA, opens the desk but can't be sized, because there are no firm rules to size it against. Evaluated on
+d-fill, d-stock (new: "I tapped NVDA on the price tape and the desk won't size it. Why?"), o-predict and b-stop, and
+published on 2026-09-26 after three runs (`web/eval/runs/2026-09-26-stock-*`, $0.86 on the eval key in all).
+
+Run 1 (-stock-live, -stock-patch; the FAQ's words as they are): the live prompt 1 of 4, d-stock telling the reader the
+desk will size NVDA "once you select that firm"; the patch 2 of 4, d-fill right, d-stock right on NVDA but saying the tape
+carries only assets the firms trade and naming Crypto Fund Trader among firms that don't list NVDA (troid hasn't read its
+symbols), o-predict calling the desk's price delayed outright, b-stop's "0.39 BTC" from no tool. Section 9 then says the
+tape also carries stocks, as market context, that no compared firm lists on the pages troid has read.
+
+Run 2 (-stock-patch2, and -stock-live2, a second live d-stock): the patch 3 of 3, but d-stock said the firms list only
+crypto (Bitfunded lists TSLA and gold); the live d-stock right. Section 9 then says what the Asset field lists: what the
+firms list on the pages troid has read, crypto and some commodities and stocks, each firm its own.
+
+Run 3 (-stock-patch3 and -stock-patch3b, a second d-stock): 4 of 4; on the reads d-fill, o-predict and the second d-stock
+right, the fast model's first d-stock overstating the desk for a listed asset ("fill in the firm settings", a price for
+any asset). No critical failure in any run and no kind the live prompt's runs lack (wrong figure or rule, a number from
+no tool): published. The fast model's d-stock is the one to watch.
 
 The first patch, `support.md` section 9, "Can troid fill in the price?" (the redesigned desk's
 price fill, in the FAQ's facts without its figures), was evaluated on d-fill (new) and b-stop, p-size, o-predict, o-news

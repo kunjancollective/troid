@@ -1,0 +1,258 @@
+{
+ "base": "https://troid.ai",
+ "variant": "patch",
+ "started_utc": "2026-09-26T00:41:33.112Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 4,
+   "tools": [],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 24,
+   "eval_key": true,
+   "patch": [
+    "support.md"
+   ]
+  }
+ },
+ "set": {
+  "cases": 1,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 2
+  }
+ },
+ "results": [
+  {
+   "id": "d-stock",
+   "kind": "desk",
+   "example": false,
+   "q": "I tapped NVDA on the price tape and the desk won't size it. Why?",
+   "status": 200,
+   "ms": 6800,
+   "model": "claude-sonnet-5",
+   "tools_used": [],
+   "tool_numbers": [],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 0,
+     "cache_read": 31532,
+     "output": 196
+    },
+    "claude-sonnet-5": {
+     "calls": 1,
+     "input": 2,
+     "cache_write": 96,
+     "cache_read": 41329,
+     "output": 205
+    }
+   },
+   "tool_calls": 0,
+   "reply": "The desk's Asset field lists only what troid's compared firms actually list on the pages troid has read: crypto, and some commodities and stocks, each firm its own. NVDA appears on the price tape as market context — TradingView's feed carries it — but none of the firms troid covers (Bitfunded, BrightFunded, Crypto Fund Trader) lists it as a tradable product in troid's records. So tapping it opens the desk with NVDA selected, but there are no firm rules to size it against, and the desk shows it as not offered by troid's firms rather than computing a position.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the patch prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bNVDA\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b(no|none of (the|troid['’]s)) (compared )?firms?\\b[^.\\n]{0,60}\\b(offers?|lists?|names?)\\b|\\bnot offered\\b|\\bno firm rules\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\brules?\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bNVDA\\b[^.\\n]{0,40}\\$\\d/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(Interactive Brokers|Robinhood|eToro|Webull|Schwab|Fidelity|FTMO|Topstep|The5ers|FundedNext|Apex)\\b|TradingView['’]s (site|website)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(try|use|consider|switch to|sign up (with|for))\\b[^.\\n]{0,30}\\b(another|a different|other) (prop )?(firm|broker|platform|exchange)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(coming soon|in the future|will (soon )?(add|support|offer|size))\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\btroid (can|will|could) (still )?size (it|NVDA|the trade|a stock)/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "patch": [
+  "support.md"
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-09-26T00:41:39.923Z",
+ "passed": 1,
+ "failed": 0,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 1,
+    "input": 3,
+    "cache_write": 0,
+    "cache_read": 31532,
+    "output": 196,
+    "usd": 0.0041
+   },
+   "claude-sonnet-5": {
+    "calls": 1,
+    "input": 2,
+    "cache_write": 96,
+    "cache_read": 41329,
+    "output": 205,
+    "usd": 0.0106
+   }
+  },
+  "usd": 0.0147,
+  "priced": true
+ }
+}

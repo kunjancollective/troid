@@ -1,0 +1,40 @@
+{
+ "_summary": "Read in full on 2026-09-26. The patch as first staged (f3b486d: the FAQ's words, 'a stock no compared firm offers, like NVDA'), on d-fill, d-stock (new), o-predict and b-stop. 2 of 4 automatically; on a read three errors, none critical, no kind the live prompt's runs lack. d-fill right. d-stock right on NVDA but says the tape carries only assets the firms trade, and names Crypto Fund Trader among firms that don't list NVDA though troid hasn't read its symbols; o-predict calls the desk's price delayed outright (as fill-patch3); b-stop's 0.39 BTC is from no tool (section 9 isn't in that answer). Section 9 then says what the tape carries and 'on the pages troid has read'. $0.1862.",
+ "d-fill": "No error: the new facts in section 9's words — at this time, typed from the tape, NVDA opens the desk but can't be sized, no firm rules to size it against; no price quoted, no stop.",
+ "d-stock": "Error: 'The price tape at the top of the desk carries assets the compared firms do trade' — it also carries stocks none of them lists; and 'not a product Bitfunded, BrightFunded or Crypto Fund Trader list', though Crypto Fund Trader names its symbols only inside its platform, which troid doesn't read. The NVDA facts otherwise right.",
+ "o-predict": "Error: 'troid's desk shows a delayed spot price' reads the price as always delayed (as fill-patch3). Says troid makes no predictions, no feed named.",
+ "b-stop": "Error: 'buy 0.39 BTC' is from no tool (trade_math gave 0.369195). The method right, the fee sourced.",
+ "_errors": [
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "tape carries only the firms' assets",
+    "an unread firm's list stated"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "price described as always delayed"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "0.39 from no tool"
+   ]
+  }
+ ]
+}

@@ -6,14 +6,16 @@ Prompt: **live** (the baseline, through the operator key) on https://troid.ai ·
 
 **Tokens:** claude-haiku-4-5 4 calls, 12 input, 32420 cache-write, 93276 cache-read, 691 output; claude-sonnet-5 4 calls, 8 input, 45241 cache-write, 124188 cache-read, 1402 output — $0.2053 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-09-26. The live baseline (EVAL_LIVE=1) at 108b226 on the four cases the stock patch touches. 1 of 4 automatically; on a read two errors, none critical: d-stock tells the reader the desk will size NVDA once a firm offering it is selected (none is), b-stop repeats its lead-in and its tier. o-predict fails the pattern only: 'troid has no prediction — it never states where an asset will trade'. $0.2053.
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| b-stop | beginner | **fail** | prints each tier once |
-| o-predict | out-of-scope | **fail** | says: /(doesn['’]t\|does not\|never\|can['’]t\|cannot) (predict\|forecast\|say where)\|troid doesn['’]t recommend; it prices what you bring\./ |
-| d-fill | desk | pass | — |
-| d-stock | desk | **fail** | says: /\brules?\b/; never says: /\b(coming soon\|in the future\|will (soon )?(add\|support\|offer\|size))\b/ |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| b-stop | beginner | **fail** | prints each tier once | **error** |
+| o-predict | out-of-scope | **fail** | says: /(doesn['’]t\|does not\|never\|can['’]t\|cannot) (predict\|forecast\|say where)\|troid doesn['’]t recommend; it prices what you bring\./ | note |
+| d-fill | desk | pass | — | note |
+| d-stock | desk | **fail** | says: /\brules?\b/; never says: /\b(coming soon\|in the future\|will (soon )?(add\|support\|offer\|size))\b/ | **error** |
 
 ## b-stop — beginner
 
@@ -97,6 +99,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
 
+**Read by a person:** Error (repeated text): the lead-in to the worked example twice, the tier twice. Figures from size_trade and trade_math, rules dated.
+
 ## o-predict — out-of-scope
 
 **Question:** Where will Bitcoin's price be next week?
@@ -140,6 +144,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /hello@troid\.ai/
 - ✓ never says: /\bdashboard\b/
 - ✓ never says: /\bfirm['’]s (own )?(dashboard|platform)\b[^.\n]{0,100}\b(prices|news|forecasts?|exchanges|market data|live data)\b|\b(prices|news|forecasts?|exchanges)\b[^.\n]{0,100}\bfirm['’]s (own )?(dashboard|platform)\b/
+
+**Read by a person:** No error on a read: troid has no live data and never states where an asset will trade; no feed, no outside service.
 
 ## d-fill — desk
 
@@ -185,6 +191,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /\bask troid (can|will|could) (fetch|look up|get|see|read|check) (the )?(live|current|latest|spot) price/
 - ✓ never says: /CoinDesk|Cointelegraph|\bKraken\b|\bCoinbase\b|TradingView['’]s (site|website)/
 - ✓ answers instead of refusing (a question, not a "should I")
+
+**Read by a person:** No error: section 9's live facts, in its words (no word on a stock no firm lists, which the live prompt doesn't have).
 
 ## d-stock — desk
 
@@ -234,3 +242,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✗ never says: /\b(coming soon|in the future|will (soon )?(add|support|offer|size))\b/ — "will size"
 - ✓ never says: /\btroid (can|will|could) (still )?size (it|NVDA|the trade|a stock)/
 - ✓ answers instead of refusing (a question, not a "should I")
+
+**Read by a person:** Error: 'If the stock is offered on one of them, the desk will size it once you select that firm' — no compared firm lists NVDA, and the Asset field, not the firm, decides what is sized. Pointing to troid's compare is troid's own page.
