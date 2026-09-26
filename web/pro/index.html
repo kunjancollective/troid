@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>troid Pro · test mode</title>
+<!-- Served by web/api/pro/page.js only while troid Pro is switched on (TROID_PRO); not a published page. The real
+     /pro, /pro/thanks and /account pages go through web/templates and web/i18n at launch. -->
+<style>
+:root{--bg:#070b12;--surface:#0d1420;--surface2:#131c2b;--line:#1c2839;--ink:#e6edf5;--dim:#7d8aa0;--signal:#4da3ff;
+  --warn:#e0a33c;--bad:#e05f4f;--sans:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color-scheme:dark}
+@media (prefers-color-scheme:light){:root{--bg:#f7f9fc;--surface:#fff;--surface2:#eef2f7;--line:#dde4ee;--ink:#0b1220;
+  --dim:#5f6f86;--signal:#1f6fd1;color-scheme:light}}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans);-webkit-text-size-adjust:100%}
+@media (prefers-color-scheme:dark){body{background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed}}
+main{max-width:640px;margin:0 auto;padding:24px 16px 64px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.wm{font:600 26px/1 var(--mono);letter-spacing:-.04em}
+.wm .dot{display:inline-block;width:.52em;height:.52em;margin:0 .07em 0 .1em;border-radius:50%;background:var(--signal);
+  box-shadow:0 0 0 .1em color-mix(in srgb,var(--signal) 18%,transparent)}
+.tag{font:13px var(--mono);color:var(--dim)}
+.banner{border:1px solid var(--warn);color:var(--warn);border-radius:4px;padding:10px 12px;font:13px/1.5 var(--mono);margin:0 0 16px}
+.grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+section{background:var(--surface);padding:16px}
+h1{font-size:22px;letter-spacing:-.02em;margin:0 0 4px}
+h2{font:600 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:0 0 10px}
+p{margin:0 0 10px}
+.dim{color:var(--dim)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+label{display:block;font:13px var(--mono);color:var(--dim);margin-bottom:6px}
+input[type=email]{width:100%;font:16px var(--sans);color:var(--ink);background:var(--surface2);border:1px solid var(--line);
+  border-radius:4px;padding:10px 12px;min-height:44px}
+button{font:500 15px var(--mono);color:var(--ink);background:var(--surface2);border:1px solid var(--line);border-radius:4px;
+  padding:10px 14px;min-height:44px;cursor:pointer}
+button:hover:not(:disabled),button:focus-visible{border-color:var(--signal);outline:none}
+button:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.state{font:600 15px var(--mono)}
+.state[data-tone=ok]{color:var(--signal)}
+.msg{min-height:1.4em;font-size:14px}
+.msg[data-tone=bad]{color:var(--bad)}.msg[data-tone=warn]{color:var(--warn)}.msg[data-tone=ok]{color:var(--signal)}
+[hidden]{display:none!important}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0 0 10px;font-size:14px}
+dt{color:var(--dim);font-family:var(--mono)}dd{margin:0;font-family:var(--mono);overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main>
+  <header><span class="wm" aria-label="troid">tr<span class="dot" aria-hidden="true"></span>id</span><span class="tag">Pro · <span id="mode">test</span> mode</span></header>
+  <p class="banner" id="banner">Test mode. Stripe's test cards only; nothing is charged. This page exists only on a preview
+    deployment while troid Pro is built, and stays off troid.ai until the launch gates clear.</p>
+  <p class="msg" id="fatal" data-tone="bad" role="alert"></p>
+
+  <div class="grid">
+    <section id="thanks" hidden aria-live="polite">
+      <h1>Checkout finished</h1>
+      <p id="thanks-msg">troid Pro turns on when Stripe confirms the payment to troid, usually within a few seconds. This page
+        checks every two seconds.</p>
+    </section>
+
+    <section id="signin">
+      <h1 id="title">troid Pro</h1>
+      <p class="dim">Sign in with an email link. troid never asks for a password or any trading account.</p>
+      <form id="signin-form" novalidate>
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="email" required>
+        <div class="row"><button id="send" type="submit">Email a sign-in link</button></div>
+      </form>
+      <p class="msg" id="signin-msg" aria-live="polite"></p>
+    </section>
+
+    <section id="account" hidden>
+      <h2>Account</h2>
+      <p>Signed in as <span class="mono" id="who"></span></p>
+      <p class="state" id="state" aria-live="polite">Checking…</p>
+      <dl id="facts" hidden>
+        <dt>status</dt><dd id="f-status"></dd>
+        <dt id="f-until-label">until</dt><dd id="f-until"></dd>
+        <dt>Pro features</dt><dd id="f-features"></dd>
+      </dl>
+      <p id="state-note" class="dim"></p>
+      <div class="row">
+        <button id="manage" type="button" hidden>Manage subscription</button>
+        <button id="signout" type="button">Sign out</button>
+      </div>
+      <p class="msg" id="account-msg" aria-live="polite"></p>
+    </section>
+
+    <section id="buy" hidden>
+      <h2>Subscribe</h2>
+      <p id="copy"></p>
+      <p class="dim">Stripe's checkout shows the price and any sales tax before you pay. You can cancel online at any time from
+        this account, and access runs to the end of the period you paid for.</p>
+      <div class="row">
+        <button type="button" data-plan="monthly">Monthly</button>
+        <button type="button" data-plan="yearly">Yearly</button>
+      </div>
+      <p class="dim mono" id="testcard">Test card 4242 4242 4242 4242, any future expiry, any CVC. For the tax table, try billing
+        addresses in Connecticut, California, the UK, Germany and India, and note the tax Stripe shows for each.</p>
+      <p class="msg" id="buy-msg" aria-live="polite"></p>
+    </section>
+  </div>
+</main>
+
+<script id="pro-config" type="application/json">{{CONFIG}}</script>
+<script nonce="{{NONCE}}" src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"
+  integrity="sha384-Rj26LVGvoeRVR6+mwQmFfcR3QOBEwT+ZmuCWpuiqeTzJpCs0ER4ITAWGb4Hiy3Ok" crossorigin="anonymous"></script>
+<script nonce="{{NONCE}}">
+(() => {
+  "use strict";
+  const cfg = JSON.parse(document.getElementById("pro-config").textContent);
+  const $ = (id) => document.getElementById(id);
+  const say = (el, text, tone) => { el.textContent = text || ""; el.dataset.tone = tone || ""; };
+  const path = location.pathname.replace(/\/+$/, "");
+  const view = path === "/pro/thanks" ? "thanks" : path === "/account" ? "account" : cfg.view || "pro";
+  $("mode").textContent = cfg.mode;
+  $("banner").hidden = cfg.mode !== "test";
+  $("testcard").hidden = cfg.mode !== "test";
+  $("copy").textContent = cfg.copy;
+  if (view === "account") $("title").textContent = "troid Pro account";
+  if (view === "thanks") $("thanks").hidden = false;
+
+  if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    say($("fatal"), "The sign-in library didn't load, so this page can't sign anyone in. Reload; if it persists, cdn.jsdelivr.net is unreachable or the file no longer matches its integrity hash.", "bad");
+    return;
+  }
+  // The magic link comes back here with ?code= (PKCE); the client exchanges it on load. A link that failed says why.
+  const q = new URLSearchParams(location.search);
+  if (q.get("error_description")) say($("signin-msg"), "Sign-in link refused: " + q.get("error_description"), "bad");
+  const sb = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey,
+    { auth: { flowType: "pkce", persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
+  let session = null, polling = false;
+
+  async function api(url, method, body) {
+    const headers = { accept: "application/json" };
+    if (session) headers.authorization = "Bearer " + session.access_token;
+    if (body !== undefined) headers["content-type"] = "application/json";
+    let r;
+    try { r = await fetch(url, { method: method || "GET", headers, body: body === undefined ? undefined : JSON.stringify(body) }); }
+    catch (e) { return { status: 0, data: { error: "The request didn't reach troid. Check the connection and try again." } }; }
+    let data = {};
+    try { data = await r.json(); } catch (e) { /* no JSON */ }
+    return { status: r.status, data };
+  }
+  const why = (d) => (d && d.error ? d.error : "Something failed.") +
+    (d && d.stripe ? " Stripe: " + [d.stripe.type, d.stripe.code, d.stripe.param, d.stripe.message].filter(Boolean).join(" · ") : "") +
+    (d && d.problems ? " Missing: " + d.problems.join("; ") : "");
+  const utc = (iso) => { const d = new Date(iso); return isNaN(d) ? "—" : d.toISOString().slice(0, 16).replace("T", " ") + " UTC"; };
+
+  function render(st) {
+    const on = st.pro === true;
+    const s = $("state");
+    s.dataset.tone = on ? "ok" : "";
+    s.textContent = on ? "troid Pro: on" : "troid Pro: off";
+    $("facts").hidden = !st.status;
+    $("f-status").textContent = st.status || "—";
+    $("f-until-label").textContent = st.status === "canceled" ? "ended" : st.cancel_at_period_end ? "ends" : "period ends";
+    $("f-until").textContent = st.pro_until ? utc(st.pro_until) : "—";
+    $("f-features").textContent = on ? "unlocked" : "locked";
+    let note = "";
+    if (on && st.status === "past_due") note = "The last payment failed. Stripe is retrying it, and access continues until Stripe stops retrying. Update the card in Manage subscription.";
+    else if (on && st.cancel_at_period_end) note = "Cancelled: it won't renew. Access runs to the end of the period, then locks.";
+    else if (on) note = "Renews at the end of the period unless cancelled.";
+    else if (st.status === "canceled") note = "The subscription has ended.";
+    else if (st.status === "unpaid") note = "Stripe stopped retrying the payment, so access is locked. Manage subscription can settle it.";
+    else if (st.status === "incomplete") note = "The first payment hasn't completed.";
+    $("state-note").textContent = note;
+    $("manage").hidden = !st.manage;
+    $("buy").hidden = on;
+  }
+
+  async function refresh() {
+    if (!session) return null;
+    const r = await api("/api/pro/status");
+    if (r.status === 401) { await sb.auth.signOut(); return null; }
+    if (r.status !== 200) { say($("account-msg"), why(r.data), "bad"); return null; }
+    say($("account-msg"), "");
+    render(r.data);
+    return r.data;
+  }
+
+  async function showSession(s) {
+    session = s;
+    $("signin").hidden = !!s;
+    $("account").hidden = !s;
+    if (!s) {
+      $("buy").hidden = true;
+      if (view === "thanks") say($("thanks-msg"), "Sign in with the email used at checkout to see the account.");
+      return;
+    }
+    $("who").textContent = s.user && s.user.email ? s.user.email : "—";
+    if (q.has("code")) { q.delete("code"); history.replaceState(null, "", location.pathname + (q.toString() ? "?" + q : "")); }
+    const st = await refresh();
+    if (view === "thanks" && !polling && !(st && st.pro)) poll();
+    else if (view === "thanks" && st && st.pro) say($("thanks-msg"), "Stripe confirmed it: troid Pro is on.", "ok");
+  }
+
+  // The success page grants nothing: it only asks troid, which knows only what Stripe's webhook has told it.
+  async function poll() {
+    polling = true;
+    const t0 = Date.now();
+    while (session && Date.now() - t0 < 60_000) {
+      await new Promise((r) => setTimeout(r, 2000));
+      const st = await refresh();
+      if (st && st.pro) { say($("thanks-msg"), "Stripe confirmed it: troid Pro is on.", "ok"); polling = false; return; }
+    }
+    if (session) say($("thanks-msg"), "Stripe hasn't confirmed the payment to troid yet. Nothing is lost: this page shows troid Pro as on once it does. Reload in a minute.", "warn");
+    polling = false;
+  }
+
+  $("signin-form").addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    const email = $("email").value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return say($("signin-msg"), "Enter an email address.", "bad");
+    $("send").disabled = true;
+    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname, shouldCreateUser: true } });
+    $("send").disabled = false;
+    say($("signin-msg"), error ? "The link wasn't sent: " + error.message : "Sent. Open the link in this browser; it signs you in on this page.", error ? "bad" : "ok");
+  });
+
+  document.querySelectorAll("[data-plan]").forEach((b) => b.addEventListener("click", async () => {
+    const buttons = document.querySelectorAll("[data-plan]");
+    buttons.forEach((x) => (x.disabled = true));
+    say($("buy-msg"), "Opening Stripe's checkout…");
+    const r = await api("/api/pro/checkout", "POST", { plan: b.dataset.plan });
+    if (r.status === 200 && r.data.url) return location.assign(r.data.url);
+    buttons.forEach((x) => (x.disabled = false));
+    say($("buy-msg"), why(r.data), "bad");
+    if (r.status === 409) refresh();
+  }));
+
+  $("manage").addEventListener("click", async () => {
+    $("manage").disabled = true;
+    say($("account-msg"), "Opening Stripe's customer portal…");
+    const r = await api("/api/pro/portal", "POST", {});
+    if (r.status === 200 && r.data.url) return location.assign(r.data.url);
+    $("manage").disabled = false;
+    say($("account-msg"), why(r.data), "bad");
+  });
+
+  $("signout").addEventListener("click", async () => { await sb.auth.signOut(); });
+
+  sb.auth.onAuthStateChange((event, s) => { setTimeout(() => showSession(s), 0); });
+})();
+</script>
+</body>
+</html>

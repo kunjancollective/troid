@@ -30,12 +30,40 @@
     },
     "api/ticker.js": {
       "maxDuration": 10
+    },
+    "api/pro/page.js": {
+      "includeFiles": "pro/*.html",
+      "maxDuration": 10
+    },
+    "api/pro/checkout.js": {
+      "maxDuration": 20
+    },
+    "api/pro/portal.js": {
+      "maxDuration": 20
+    },
+    "api/pro/status.js": {
+      "maxDuration": 10
+    },
+    "api/stripe-webhook.js": {
+      "maxDuration": 20
     }
   },
   "rewrites": [
     {
       "source": "/:lang(zh|hi|es|ar|fr|bn|pt|ru|id)",
       "destination": "/:lang/index.html"
+    },
+    {
+      "source": "/pro",
+      "destination": "/api/pro/page?view=pro"
+    },
+    {
+      "source": "/pro/thanks",
+      "destination": "/api/pro/page?view=thanks"
+    },
+    {
+      "source": "/account",
+      "destination": "/api/pro/page?view=account"
     }
   ],
   "redirects": [

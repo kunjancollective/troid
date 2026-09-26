@@ -141,6 +141,77 @@ each conversation after reading it.
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.
 
+## troid Pro — Stripe Managed Payments, test mode (`/pro`, `/account`, `api/pro/*`, `api/stripe-webhook.js`)
+
+Built 2026-09-26 from the owner's handoff ("Stripe Managed Payments for troid Pro", with the launch plan's section 6).
+**Test mode only.** Nothing goes live until every gate in the launch plan (section 6.3) clears: Vercel Pro, counsel,
+updated Terms (they still say troid has no user accounts and sets no cookies), and the owner's approval. The switch
+refuses test mode on production, so troid.ai keeps answering 404 at `/pro`, `/pro/thanks` and `/account`. Managed
+Payments makes Stripe the merchant of record, so Stripe, not troid, handles sales tax worldwide; nothing falls back
+to plain Stripe.
+
+| file | route | what |
+|---|---|---|
+| `lib/stripe.js` | — | Stripe's REST API without an SDK: form encoding, one call, the webhook signature check (as stripe-node's: HMAC-SHA256, any `v1`, 300 s). `Stripe-Version` only on the Checkout call, `2026-08-26.dahlia`: `managed_payments` is GA from `2026-04-22.dahlia` (stripe-node 22.1.0's changelog), later than the blueprint's `2026-02-25.preview`. Every other call leaves it unset. |
+| `lib/pro.js` | — | the switch and the keys' mode; the signed-in user (Supabase Auth); `proStatus`, the entitlement check every Pro feature uses; the Checkout parameters; what each Stripe event becomes, in both API shapes (before and after `2025-03-31.basil` moved the period end onto the item and the invoice's subscription under `parent`) |
+| `api/pro/checkout.js` | `POST /api/pro/checkout` | `{plan: "monthly" \| "yearly"}` with the Supabase access token → a Checkout Session: `mode=subscription`, `managed_payments[enabled]=true`, one price, `customer_email` (or the Stripe customer the user already has), the user id in `client_reference_id` and `subscription_data.metadata.user_id`, and the copy "troid Pro — risk-calculation software. Not investment advice." Success `/pro/thanks?session_id={CHECKOUT_SESSION_ID}`, cancel `/pro`, on the origin the page was on (troid.ai, the deployment or its branch URL, never another). 409 when the account already has Pro. In test mode a refusal carries Stripe's own type, code, parameter and message. |
+| `api/pro/portal.js` | `POST /api/pro/portal` | Stripe's customer portal for the user's customer: cancel, switch plan, invoices (handoff item 5, ROSCA and Connecticut). |
+| `api/pro/status.js` | `GET /api/pro/status` | without a token, whether Pro is on here and, off production, which settings are missing, by name; with one, the user's own state. Never a Stripe id. |
+| `api/stripe-webhook.js` | `POST /api/stripe-webhook` | verified with `STRIPE_WEBHOOK_SECRET` against the raw body (Vercel's helpers replay it; never `req.body`); an event of the other mode is refused; five types, through one database function; the only place access is granted. A failure to record answers 500 so Stripe retries. |
+| `api/pro/page.js`, `pro/index.html` | `/pro`, `/pro/thanks`, `/account` | the test-mode page: email-link sign-in (supabase-js 2.117.2 from jsDelivr, pinned with its integrity hash), Monthly and Yearly, the success page (it polls status and never reads `session_id`), the account with Manage subscription. A CSP with a fresh nonce per response; 404 unless switched on. Not a published page: the real ones go through `templates/` and `i18n/` at launch. |
+| `../supabase/migrations/20260926120000_troid_pro_billing.sql` | — | `pro_accounts` (one row per user and Stripe mode, so a test subscription never counts live), `stripe_events` (each event id once, with its outcome), RLS (a user reads their own row; only the webhook writes), `pro_entitled()`, `pro_status()`, `pro_apply_stripe_event()` |
+| `pro_prices.js` | — | the owner's read-only lookup of troid Pro's price IDs, checked against $19.00 a month and $190.00 a year: `STRIPE_SECRET_KEY=… node web/pro_prices.js` in their own shell |
+| `test_pro.js` | — | 123 offline checks: the migration in PGlite (real Postgres, in process) behind a fake of Supabase Auth and PostgREST, a fake Stripe, every route and event. Once, `cd web && npm install --no-save @electric-sql/pglite@0.5.8`; then `node web/test_pro.js`. |
+
+**Who has Pro** (`pro_entitled()`, one rule): Stripe reports the subscription `active`, `trialing` or `past_due`, and
+its period hasn't ended. A failed renewal is past due and keeps access while Stripe retries; `unpaid` or `canceled`,
+Stripe giving up, locks at once. A subscription cancelled at the period's end keeps access to that end and locks there;
+one that renews keeps 24 hours past it, so a late renewal webhook doesn't lock out someone who paid. Stripe delivers
+at least once and in any order: a repeated event id changes nothing ("duplicate"), an event older than the one applied
+changes nothing ("stale"), an ended subscription never comes back. `stripe_events.outcome` records each event;
+`other_subscription` (a second purchase while the first still grants Pro) and `conflict` are for the owner to refund
+or look at in the Stripe Dashboard.
+
+Settings, in Vercel only (test values in Preview; `web/.env.example` lists them as placeholders):
+
+| env | meaning |
+|---|---|
+| `TROID_PRO` | `test` on Preview. Refused on production and with a live key. `live`, with live keys, is for launch day. Unset: every Pro route answers 404 or 503. |
+| `STRIPE_SECRET_KEY` | a restricted test key with Checkout Sessions write, Customer portal write, Customers write, Subscriptions read, Products and Prices read (Test clocks write too, only for `TROID_PRO_TEST_CLOCK`) |
+| `STRIPE_PUBLISHABLE_KEY` | optional: hosted Checkout doesn't use it; if set, its mode must match the secret key's |
+| `STRIPE_WEBHOOK_SECRET` | the webhook endpoint's signing secret |
+| `STRIPE_PRICE_MONTHLY`, `STRIPE_PRICE_YEARLY` | troid Pro's two price IDs |
+| `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` | the Supabase project; the legacy `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` names are read too |
+| `TROID_PRO_TEST_CLOCK` | `on`, test mode only: each first checkout's customer is put on a Stripe test clock, so a period can end in minutes |
+
+Nothing is sold until every one of the first eight is set: a checkout the webhook couldn't record would take money for
+access troid couldn't give.
+
+Setting it up, once (the owner; nothing here pastes a key anywhere but Vercel):
+1. **Supabase.** A project for troid (the account's only project, `crossnet`, is another one). Run the migration (SQL
+   editor, or `supabase db push`). Authentication → Providers: Email on. Authentication → URL Configuration: add the
+   branch's preview URL, `https://troid-git-<branch>-kunjan-collective-ai.vercel.app/**`, to the redirect URLs.
+2. **Stripe, test mode.** The price IDs (`node web/pro_prices.js`, or Product catalog → troid Pro). A restricted key
+   with the permissions above. Settings → Billing → Customer portal: cancellation at the end of the billing period
+   (the page says access runs to the end of the period), switching between troid Pro's two prices, invoice history.
+   Developers → Webhooks → add an endpoint, `https://<branch URL>/api/stripe-webhook?x-vercel-protection-bypass=<secret>`,
+   with `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`,
+   `customer.subscription.deleted` and `invoice.payment_failed`; copy its signing secret.
+3. **Vercel.** Preview deployments sit behind Vercel Authentication, which Stripe can't pass: Settings → Deployment
+   Protection → Protection Bypass for Automation makes the secret in the URL above. The settings above, in Preview
+   only. Redeploy the branch.
+4. **Check.** `<branch URL>/api/pro/status` answers `{"on":true,"mode":"test"}`, or names what is missing.
+
+The live checks (the handoff's list; `test_pro.js` covers the logic of each offline, but only Stripe can answer them):
+- Checkout with Stripe's test card 4242 4242 4242 4242 completes; the webhook sets `pro_until`; `/account` says
+  troid Pro: on, Pro features unlocked. This is also the answer to whether Managed Payments takes subscription mode.
+- Billing addresses in Connecticut, California, the UK, Germany and India: record the tax Managed Payments shows for each.
+- Manage subscription → cancel: `customer.subscription.updated` at once (cancel at period end), still Pro;
+  `customer.subscription.deleted` at the period's end, and locked then. With `TROID_PRO_TEST_CLOCK=on`, advance the
+  customer's clock past the period's end (Billing → Test clocks) instead of waiting a month.
+- Resend a delivered event (Developers → Webhooks → the event → Resend): the reply says `duplicate`, nothing changes.
+- No key in the repo: `test_pro.js` runs the handoff's grep over every tracked and new file.
+
 ## Provenance
 
 Every number troid's desk and troid's compare compute carries a block beneath it: the firm and product, the date

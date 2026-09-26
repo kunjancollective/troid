@@ -3,6 +3,9 @@
 !**/bitfunded_config.json
 **/creds*.json
 *.env
+# `vercel env pull` writes .env.local; only the placeholder example (web/.env.example) is tracked
+.env.*
+!.env.example
 
 # business planning: revenue projections, funnel assumptions, affiliate economics.
 # Delete this line if the repo is private and you want them tracked.

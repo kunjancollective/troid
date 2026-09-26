@@ -55,6 +55,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- `web/api/pro/`, `web/api/stripe-webhook.js`, `web/lib/{pro,stripe}.js`, `web/pro/`, `supabase/migrations/` — troid Pro
+  through Stripe Managed Payments, **test mode only** until the launch gates clear (Vercel Pro, counsel, updated Terms, the
+  owner's approval): `TROID_PRO=test` is refused on production and with a live key. Access is granted by the webhook alone,
+  never by the success page; `web/test_pro.js` checks it against real Postgres (PGlite). Settings and runbook: `web/README.md`.
 - `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
   the candidate (`web/context/candidate/`, `CANDIDATE_*` in `web/api/troid.js`) and runs `web/eval_character.js` against
