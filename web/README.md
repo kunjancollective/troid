@@ -66,10 +66,20 @@ Switched on by the owner in Vercel → Project → Environment Variables. Withou
 | `TROID_TOOLS_EFFORT` | effort on the tool route (default `low`; `none` omits it). Compare `low` and `medium` on real transcripts before switch-on. |
 | `TROID_CALLS_PER_HOUR` | model calls per instance an hour, all users together (default 300; 0 stops all calls) |
 | `TROID_DEADLINE_MS` | time budget for one message, every call and retry included (default 50000, at most 55000; the function limit is 60 s) |
+| `TROID_DAILY_TURNS` | launch cap: messages answered in a UTC day across every visitor (default 500; 0 rests all day). Counted in the store as `cap:<YYYY-MM-DD>`, a number and nothing else, kept two days. Past it, ask troid rests until 00:00 UTC. |
+| `TROID_VISITOR_TURNS` | launch cap: messages one address may send in a UTC day (default 40), in memory per instance like the hourly limit |
+| `ANTHROPIC_API_KEY_EXPIRES`, `ANTHROPIC_API_KEY_EVAL_EXPIRES` | the date each key expires, as the Console shows it (`node web/key_expiry.js` lists them). `GET /api/troid` reports the days left and warns from 14 days out; the evaluation runner warns too, and refuses a keyed run once the evaluation key has expired. |
 
 Limits: about twenty messages an hour per address (IPv6 by /64), in memory, per instance; at
 most three tool rounds per message; one retry after a fast upstream failure, and a retry-after over 10 s
-is answered "busy" at once. Before switch-on, also add a Vercel WAF rate-limit rule on
+is answered "busy" at once. The launch caps (launch handoff 2026-09-26, 5.4) hold across instances for the day's
+total: past `TROID_DAILY_TURNS`, or an address's `TROID_VISITOR_TURNS`, a message is answered 429 with "ask troid is
+resting until 00:00 UTC; the FAQ and sources are open.", and the page closes the box with links to both (it checks on
+load, so a visitor at the cap sees it before typing). A store that can't count lets a message through and the log
+line says `cap_error`; the per-instance call ceiling and the workspace's spend limit still hold. The operator's
+evaluation runs are held to neither cap. Sizing the cap: the evaluation runs recorded in `web/context/patch/README.md`
+came to roughly $0.05–0.07 a message on the eval key (single questions; a long conversation sends more context), so 500
+messages a day is a budget in the tens of dollars: a rough guide from those runs, not a measured production cost. Before switch-on, also add a Vercel WAF rate-limit rule on
 `POST /api/troid`, which holds across instances. Only same-origin `application/json` requests
 are answered, so another site cannot spend the key through its visitors' browsers.
 

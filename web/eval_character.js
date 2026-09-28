@@ -396,6 +396,13 @@ if (REPORT) {                                                      // a saved ru
   if (KEY && !(g.j.candidate && g.j.candidate.eval_key) && process.env.EVAL_SHARED_KEY !== "1") {
     console.log("the deployment reports no evaluation key (ANTHROPIC_API_KEY_EVAL): a keyed run would spend the key visitors use. " +
                 "Set it in the troid-eval workspace and redeploy, or EVAL_SHARED_KEY=1 to override."); process.exit(1); }
+  // the keys' expiry as the deployment reports it (ANTHROPIC_API_KEY_EXPIRES and _EVAL_EXPIRES; web/key_expiry.js reads
+  // the dates from the Admin API): a warning from 14 days out, and no keyed run on an evaluation key that has expired,
+  // which would answer every case with a 401
+  for (const w of g.j.key_warnings || []) console.log("warning: " + w);
+  record.get.key_days_left = g.j.key_days_left;
+  if (KEY && g.j.key_days_left && g.j.key_days_left.eval != null && g.j.key_days_left.eval < 0) {
+    console.log("the deployment's evaluation key has expired: rotate it (web/key_expiry.js lists the keys) before a keyed run"); process.exit(1); }
   // With the key and nothing staged (after a promotion), the candidate is the live prompt: this evaluates the live
   // prompt at full speed, unstored and not held to a visitor's limit.
   const cd = g.j.candidate || {};

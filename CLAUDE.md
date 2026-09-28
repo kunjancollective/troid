@@ -63,6 +63,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
   the candidate (`web/context/candidate/`, `CANDIDATE_*` in `web/api/troid.js`) and runs `web/eval_character.js` against
   the live model with the candidate key before it is promoted, under the rule in "Promoting a candidate" below.
+- ask troid's launch caps (`TROID_DAILY_TURNS` across every visitor, counted in the store as a number; `TROID_VISITOR_TURNS`
+  per address, in memory) rest it until 00:00 UTC; each API key's expiry date is recorded in Vercel and reported by
+  `GET /api/troid` (`web/key_expiry.js` reads them from the Admin API). Settings: `web/README.md`.
 - ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
   never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
   written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.

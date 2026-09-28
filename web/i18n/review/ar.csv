@@ -650,6 +650,7 @@ chat.js.status_on,on · {firms}{limit} messages an hour · no memory between vis
 chat.js.status_firms,{n} firms · ,الشركات: {n} · ,,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {n} exactly as written"
 chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,تعذّر الوصول إلى «اسأل troid».,,"troid stays lowercase, in Latin letters"
+chat.js.resting_links,"<a href=""{L}/faq"">faq</a> · <a href=""{L}/sources"">sources</a>",,,NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
 chat.js.ended,This session has ended. Reloading the page starts a new one.,انتهت هذه الجلسة. إعادة تحميل الصفحة تبدأ جلسة جديدة.,,
 chat.js.switched_off,switched off,مُعطَّل,,
 chat.js.tool_call_1,{n} tool call · ,استدعاء أداة: {n} · ,,keep {n} exactly as written
@@ -1018,6 +1019,7 @@ ask.err.restart,"This conversation can't continue: at most {n} alternating messa
 ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,تعذّر التحقق من هذه المحادثة. إعادة تحميل الصفحة تبدأ محادثة جديدة.,,
 ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.",نفد الوقت المتاح لـ«اسأل troid» في هذا السؤال. اسأل مجددًا بصيغة أضيق.,,"troid stays lowercase, in Latin letters"
 ask.err.busy,ask troid is busy. Try again in a minute.,«اسأل troid» مشغول. حاول مجددًا بعد دقيقة.,,"troid stays lowercase, in Latin letters"
+ask.err.resting,ask troid is resting until 00:00 UTC; the FAQ and sources are open.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.unreachable,The model could not be reached. Try again in a minute.,تعذّر الوصول إلى النموذج. حاول مجددًا بعد دقيقة.,,
 ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.",إعدادات «اسأل troid» غير صحيحة. حاول مجددًا لاحقًا، أو راسل hello@troid.ai.,,"troid stays lowercase, in Latin letters"
 ask.err.error,ask troid hit an error. Try again in a minute.,واجه «اسأل troid» خطأ. حاول مجددًا بعد دقيقة.,,"troid stays lowercase, in Latin letters"

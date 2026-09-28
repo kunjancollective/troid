@@ -670,6 +670,7 @@ chat.js.status_on,on · {firms}{limit} messages an hour · no memory between vis
 chat.js.status_firms,{n} firms · ,{n} फ़र्में · ,,keep {n} exactly as written
 chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'troid से पूछें': the name is an imperative phrase. As a sentence subject in ask.*, chat.hero.lede, chat.discl and chat.js.status_off it sits in ‘ ’ quotes. Check that the fixed replies (ask.warning, ask.refusal, ask.disclosure) read naturally. | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,‘troid से पूछें’ तक पहुँचा नहीं जा सका।,,"troid stays lowercase, in Latin letters"
+chat.js.resting_links,"<a href=""{L}/faq"">faq</a> · <a href=""{L}/sources"">sources</a>",,,NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
 chat.js.ended,This session has ended. Reloading the page starts a new one.,यह सत्र समाप्त हो गया है। पेज दोबारा लोड करने पर नया सत्र शुरू होता है।,,
 chat.js.switched_off,switched off,बंद,,
 chat.js.tool_call_1,{n} tool call · ,{n} टूल कॉल · ,,keep {n} exactly as written
@@ -1099,6 +1100,7 @@ ask.err.restart,"This conversation can't continue: at most {n} alternating messa
 ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,इस बातचीत का सत्यापन नहीं हो सका। पेज दोबारा लोड करने पर नई बातचीत शुरू होती है।,,
 ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.","इस सवाल पर ‘troid से पूछें’ का समय ख़त्म हो गया। दोबारा पूछें, ज़्यादा सीमित सवाल के साथ।",,"troid stays lowercase, in Latin letters"
 ask.err.busy,ask troid is busy. Try again in a minute.,‘troid से पूछें’ अभी व्यस्त है। एक मिनट बाद फिर कोशिश करें।,,"troid stays lowercase, in Latin letters"
+ask.err.resting,ask troid is resting until 00:00 UTC; the FAQ and sources are open.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.unreachable,The model could not be reached. Try again in a minute.,मॉडल तक पहुँचा नहीं जा सका। एक मिनट बाद फिर कोशिश करें।,,
 ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.","‘troid से पूछें’ ग़लत तरीक़े से कॉन्फ़िगर है। बाद में फिर कोशिश करें, या hello@troid.ai पर लिखें।",,"troid stays lowercase, in Latin letters"
 ask.err.error,ask troid hit an error. Try again in a minute.,‘troid से पूछें’ में एक एरर आया। एक मिनट बाद फिर कोशिश करें।,,"troid stays lowercase, in Latin letters"

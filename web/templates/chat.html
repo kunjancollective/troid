@@ -244,9 +244,13 @@ function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 function stop(msg){ended=true;setOn(false,msg)}
+/* at the day's cap (the service's launch caps) ask troid rests until 00:00 UTC: the box closes, and the FAQ and sources
+   are a tap away; the message the visitor typed stays in the box */
+function rest(msg){stop(msg);var a=document.createElement("span");a.innerHTML=" "+T.resting_links;el("status").appendChild(a)}
 fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
   if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
   if(s.max_chars)el("q").maxLength=s.max_chars;
+  if(s.enabled&&s.resting){rest(s.resting_text);return}
   if(s.enabled&&s.disclosure){disc=s.disclosure;add("a",disc);shown=true}
   if(s.enabled){onMsg=F(T.status_on,{firms:s.context&&s.context.firms?F(T.status_firms,{n:s.context.firms.length}):"",limit:s.limit_per_hour});setOn(true,onMsg)}
   else setOn(false,T.status_off);
@@ -263,7 +267,7 @@ function send(){
       add("s",(j.tool_calls?F(j.tool_calls>1?T.tool_call_n:T.tool_call_1,{n:j.tool_calls}):"")+j.model);
       if(j.full||hist.length+1>maxMsgs)stop(FULL)}
     else{hist.pop();add("s",j.error||F(T.error,{status:st}));
-      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
+      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(j.resting)rest(j.error);else if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
   }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s",T.unreachable)})
   .then(function(){busy=false;pending=null;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }

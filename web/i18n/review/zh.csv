@@ -649,6 +649,7 @@ chat.js.status_on,on · {firms}{limit} messages an hour · no memory between vis
 chat.js.status_firms,{n} firms · ,{n} 家公司 · ,,keep {n} exactly as written
 chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,无法连接 troid 问答。,,"troid stays lowercase, in Latin letters"
+chat.js.resting_links,"<a href=""{L}/faq"">faq</a> · <a href=""{L}/sources"">sources</a>",,,NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
 chat.js.ended,This session has ended. Reloading the page starts a new one.,本次会话已结束。重新加载页面即可开始新的会话。,,
 chat.js.switched_off,switched off,已关闭,,
 chat.js.tool_call_1,{n} tool call · ,{n} 次工具调用 · ,,keep {n} exactly as written
@@ -1017,6 +1018,7 @@ ask.err.restart,"This conversation can't continue: at most {n} alternating messa
 ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,无法验证本次对话。重新加载页面即可开始新的对话。,,
 ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.",troid 问答处理这个问题时超时。请缩小范围后再问一次。,,"troid stays lowercase, in Latin letters"
 ask.err.busy,ask troid is busy. Try again in a minute.,troid 问答正忙。请一分钟后再试。,,"troid stays lowercase, in Latin letters"
+ask.err.resting,ask troid is resting until 00:00 UTC; the FAQ and sources are open.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.unreachable,The model could not be reached. Try again in a minute.,无法连接模型。请一分钟后再试。,,
 ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.",troid 问答配置有误。请稍后再试，或写信至 hello@troid.ai。,,"troid stays lowercase, in Latin letters"
 ask.err.error,ask troid hit an error. Try again in a minute.,troid 问答出错了。请一分钟后再试。,,"troid stays lowercase, in Latin letters"

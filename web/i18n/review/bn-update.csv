@@ -384,6 +384,7 @@ chat.isnt.p,"A signal service, a firm recommendation, a memory of you, or a way 
   that provides the AI model, under Anthropic's API terms; Anthropic may keep it for a limited period. The hosting provider keeps
   its own request logs, which can include your IP address. About 20 messages an hour per address.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.js.resting_links,"<a href=""{L}/faq"">faq</a> · <a href=""{L}/sources"">sources</a>",,,NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
 chat.js.copied,copied,,,NEW: translate it in reviewer_edit | 
 chat.js.deleted,Deleted: troid no longer keeps this conversation. A new session has started.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.js.delete_none,Nothing is kept for this session yet.,,,NEW: translate it in reviewer_edit | 
@@ -391,6 +392,7 @@ chat.js.delete_failed,It could not be deleted just now. Write to hello@troid.ai 
 chat.js.delete_wait,Deleting once the answer on its way arrives…,,,NEW: translate it in reviewer_edit | 
 ask.disclosure,"This is ask troid, an automated assistant. It is not a person and not financial advice. It answers from each firm's own published rules and computed math, and shows the source — or says when a source isn't recorded yet. Verify with the firm before acting. Conversations are kept for 30 days under the session ID shown below, then deleted automatically. troid counts which topics come up most, never quoting them. Don't share personal information here.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.switched_off,ask troid is switched off at the moment.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ask.err.resting,ask troid is resting until 00:00 UTC; the FAQ and sources are open.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.session,This conversation has no valid session ID. Reloading the page starts a new one.,,,NEW: translate it in reviewer_edit | 
 ask.sources,"Sources, each with the date troid read it:",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ask.tier.derived,Tier: the figures above are DERIVED — troid's tools computed them from the rules listed.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"

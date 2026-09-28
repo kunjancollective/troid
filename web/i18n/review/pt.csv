@@ -652,6 +652,7 @@ chat.js.status_on,on · {firms}{limit} messages an hour · no memory between vis
 chat.js.status_firms,{n} firms · ,{n} empresas · ,,keep {n} exactly as written
 chat.js.status_off,ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: product.ask 'pergunte ao troid': it is used as a noun with the article, like 'o Fale Conosco' ('O pergunte ao troid está desligado'). Check that this reads naturally in ask.*, chat.js.status_off and chat.discl, or whether the English 'ask troid' should stay as the product name. | troid stays lowercase, in Latin letters"
 chat.js.unreachable,ask troid could not be reached.,Não foi possível acessar o pergunte ao troid.,,"troid stays lowercase, in Latin letters"
+chat.js.resting_links,"<a href=""{L}/faq"">faq</a> · <a href=""{L}/sources"">sources</a>",,,NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words
 chat.js.ended,This session has ended. Reloading the page starts a new one.,Esta sessão foi encerrada. Recarregar a página inicia uma nova.,,
 chat.js.switched_off,switched off,desligado,,
 chat.js.tool_call_1,{n} tool call · ,{n} chamada de ferramenta · ,,keep {n} exactly as written
@@ -1020,6 +1021,7 @@ ask.err.restart,"This conversation can't continue: at most {n} alternating messa
 ask.err.unverified,This conversation could not be verified. Reloading the page starts a new one.,Não foi possível verificar esta conversa. Recarregar a página inicia uma nova.,,
 ask.err.timeout,"ask troid ran out of time on that one. Ask again, narrower.","O pergunte ao troid ficou sem tempo nessa pergunta. Pergunte de novo, de forma mais específica.",,"troid stays lowercase, in Latin letters"
 ask.err.busy,ask troid is busy. Try again in a minute.,O pergunte ao troid está ocupado. Tente de novo em um minuto.,,"troid stays lowercase, in Latin letters"
+ask.err.resting,ask troid is resting until 00:00 UTC; the FAQ and sources are open.,,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 ask.err.unreachable,The model could not be reached. Try again in a minute.,Não foi possível acessar o modelo. Tente de novo em um minuto.,,
 ask.err.misconfigured,"ask troid is misconfigured. Try again later, or write to hello@troid.ai.",O pergunte ao troid está configurado incorretamente. Tente de novo mais tarde ou escreva para hello@troid.ai.,,"troid stays lowercase, in Latin letters"
 ask.err.error,ask troid hit an error. Try again in a minute.,O pergunte ao troid encontrou um erro. Tente de novo em um minuto.,,"troid stays lowercase, in Latin letters"
