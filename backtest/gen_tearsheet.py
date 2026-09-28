@@ -104,7 +104,7 @@ def render_stub(T, live):
     else:
         body = head_html(T, live, 0, cfg, None, None, tail=f'<p style="margin:0 0 14px">{T("tearsheet.empty")}</p>')
     og = site_build.og(T, "tearsheet")
-    return f'''<!DOCTYPE html>
+    return site_build.finish(T, "tearsheet", f'''<!DOCTYPE html>
 <html{site_build.html_attrs(T)}>
 <head>
 <meta charset="utf-8">
@@ -123,7 +123,7 @@ body{{-webkit-font-smoothing:antialiased;margin:30px;background:#fff;color:#000;
 {foot_html(T)}
 </body>
 </html>
-'''
+''')
 
 
 def main(out=None):
@@ -163,7 +163,7 @@ def main(out=None):
                         + "".join(f'<meta property="og:{k}" content="{v}">\n' for k, v in site_build.og(T, "tearsheet").items())
                         + site_build.head_extra(T, "tearsheet", live) + "</head>", 1)
     page = page.replace('</body>', foot_html(T) + '\n</body>', 1)
-    dest.write_text(page)
+    dest.write_text(site_build.finish(T, "tearsheet", page))
     print(f"tearsheet.html: {len(rows)} trades, {len(s)} days, {dest.stat().st_size//1024} KB -> {dest}"
           + (f" (stubs: {', '.join(c for c in live if c != 'en')})" if len(live) > 1 else ""))
 

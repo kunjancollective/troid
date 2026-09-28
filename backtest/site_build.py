@@ -19,6 +19,7 @@ import json
 import re
 import shutil
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -99,12 +100,22 @@ def runtime(T):
             + ';</script>\n<script src="/i18n.js"></script>')
 
 
+# troid's own accounts: the footer's links to the repo, X and Reddit (site_text.LINKS), which the structured data names
+# as troid's (sameAs) and the X card credits (twitter:site)
+SAME_AS = [u for u, _ in site_text.LINKS if u.startswith("https://")]
+X_HANDLE = "@" + next(u for u in SAME_AS if u.startswith("https://x.com/")).rstrip("/").rsplit("/", 1)[-1]
+
+
 def head_extra(T, page, live):
-    """The page's canonical URL on troid.ai (and og:url), then hreflang alternates, the language's og tags and
-    font. The alternates, og locale, font and i18n.css appear on English only once a second language is live."""
+    """The page's canonical URL on troid.ai (and og:url), its type and site name, the X card (summary with the large
+    image, troid's X account: every page, the tearsheet included; launch handoff 2026-09-26, 5.1 item 3), then hreflang
+    alternates, the language's og tags and font. The alternates, og locale, font and i18n.css appear on English only
+    once a second language is live."""
     lang = T.lang
     url = BASE_URL + page_url(T.code, page)
-    parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
+    parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">',
+             '<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
+             '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
     if len(live) > 1:
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
@@ -133,6 +144,108 @@ def og(T, page=None):
     img = f"{BASE_URL}/og/{T.code}.png" if has else f"{BASE_URL}/og-image.png"
     key = f"{page}.og" if page and f"{page}.og.title" in T.en else "og"
     return {"image": img, "title": T.attr(key + ".title"), "description": T.attr(key + ".description")}
+
+
+def _plain(s):
+    """A string as text: tags dropped, entities read, spaces collapsed."""
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", s or ""))).strip()
+
+
+class _FAQ(HTMLParser):
+    """The FAQ page's questions (each div.q's heading) and answers (the paragraphs under it, its source line
+    included), as the page shows them."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.pairs, self.depth, self.part, self.buf = [], 0, None, []
+
+    def handle_starttag(self, t, a):
+        if t == "div":
+            if self.depth:
+                self.depth += 1
+            elif "q" in (dict(a).get("class") or "").split():
+                self.depth = 1
+                self.pairs.append({"q": "", "a": []})
+        elif self.depth and t in ("h2", "h3"):
+            self.part, self.buf = "q", []
+        elif self.depth and t == "p":
+            self.part, self.buf = "a", []
+
+    def handle_endtag(self, t):
+        if not self.depth:
+            return
+        if t == "div":
+            self.depth -= 1
+        elif t in ("h2", "h3") and self.part == "q":
+            self.pairs[-1]["q"] = _plain("".join(self.buf)); self.part = None
+        elif t == "p" and self.part == "a":
+            self.pairs[-1]["a"].append(_plain("".join(self.buf))); self.part = None
+
+    def handle_data(self, d):
+        if self.part:
+            self.buf.append(d)
+
+
+def faq_pairs(text):
+    p = _FAQ()
+    p.feed(text)
+    return [(x["q"], "\n\n".join(a for a in x["a"] if a)) for x in p.pairs if x["q"]]
+
+
+def jsonld(T, page, text=""):
+    """The page's structured data, one @graph (launch handoff 2026-09-26, 5.1 item 2). On every page troid as an
+    Organization, its sameAs the repo, X and Reddit accounts the footer links, and the WebSite; then the page's own
+    entity: the desk a WebApplication, free; the FAQ a FAQPage, each question with its answer as the page shows it;
+    the ledger a Dataset, described as simulated; the research page an Article; the sources a CollectionPage listing
+    each source. Every string is the page's own, in its language; a figure appears only as the page states it."""
+    org_id, site_id = BASE_URL + "/#organization", BASE_URL + "/#website"
+    url = BASE_URL + page_url(T.code, page)
+    graph = [{"@type": "Organization", "@id": org_id, "name": "troid", "url": BASE_URL + "/",
+              "logo": BASE_URL + "/apple-touch-icon.png", "sameAs": SAME_AS},
+             {"@type": "WebSite", "@id": site_id, "name": "troid", "url": BASE_URL + "/", "publisher": {"@id": org_id}}]
+    key = f"{page}.og" if f"{page}.og.title" in T.en else "og"
+    title, desc = _plain(T(key + ".title")), _plain(T(key + ".description"))
+    if page == "index":
+        graph.append({"@type": "WebApplication", "@id": url + "#desk", "name": T("product.desk"), "url": url,
+                      "description": _plain(T("index.meta.description")), "applicationCategory": "FinanceApplication",
+                      "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": True,
+                      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+                      "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page == "faq":
+        graph.append({"@type": "FAQPage", "@id": url + "#faq", "url": url, "name": title, "inLanguage": T.code,
+                      "isPartOf": {"@id": site_id},
+                      "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+                                     for q, a in faq_pairs(text)]})
+    elif page == "ledger":
+        repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
+        raw = repo.replace("https://github.com/", "https://raw.githubusercontent.com/") + "/main/backtest/journal.csv"
+        graph.append({"@type": "Dataset", "@id": url + "#dataset", "name": title, "url": url,
+                      "description": _plain(T("ledger.ld.description")), "creator": {"@id": org_id},
+                      "publisher": {"@id": org_id}, "isAccessibleForFree": True, "license": repo + "/blob/main/LICENSE",
+                      "inLanguage": T.code,
+                      "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": raw}]})
+    elif page == "dashboard":
+        graph.append({"@type": "Article", "@id": url + "#article", "headline": title, "description": desc, "url": url,
+                      "mainEntityOfPage": url, "image": og(T, page)["image"], "author": {"@id": org_id},
+                      "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page == "sources":
+        items = [{"@type": "ListItem", "position": i + 1,
+                  "item": {k: v for k, v in (("@type", "CreativeWork"), ("name", x.get("title")), ("url", x.get("url")),
+                                             ("publisher", {"@type": "Organization", "name": x["publisher"]} if x.get("publisher") else None),
+                                             ("author", {"@type": "Person", "name": x["author"]} if x.get("author") else None),
+                                             ("datePublished", x.get("published"))) if v}}
+                 for i, x in enumerate(sources.SOURCES.values())]
+        graph.append({"@type": "CollectionPage", "@id": url + "#sources", "url": url, "name": title, "description": desc,
+                      "isPartOf": {"@id": site_id}, "inLanguage": T.code,
+                      "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": items}})
+    body = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
+    return '<script type="application/ld+json">' + body.replace("</", "<\\/") + "</script>"
+
+
+def finish(T, page, text):
+    """A page as published: its structured data (jsonld()) just before </head>. Every page comes through here: the
+    templates (render()) and the generators (compare, ledger, the tearsheet)."""
+    i = text.find("</head>")
+    return text if i < 0 else text[:i] + jsonld(T, page, text) + "\n" + text[i:]
 
 
 def switcher(T, page, live):
@@ -428,7 +541,7 @@ def render(template, T, page, live, preview=False, **extra):
     ctx.update(extra)
     text = ENV.get_template(template).render(**ctx)
     prev = out_path(T.code, page)
-    return dated(text, prev.read_text() if prev.exists() else None)
+    return finish(T, page, dated(text, prev.read_text() if prev.exists() else None))
 
 
 def extra_context(T):

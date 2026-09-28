@@ -218,6 +218,7 @@ compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit |
 compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
 dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"

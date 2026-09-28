@@ -378,6 +378,7 @@ compare.js.foot_open_n,open: {n} questions — {first} …,অমীমাংস
 ledger.meta.title,troid's ledger,troid লেজার,,"troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.","শ্যাডো অ্যাকাউন্ট। প্রতিটি বন্ধ ট্রেড, কোনো সম্পাদনা ছাড়া, লসের ট্রেডসহ। এটি কোনো অর্ডার দেয় না — দিলে দিত একজন মানুষ।",,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar","{asof} UTC অনুযায়ী · {market} · {profile} নিয়ম · ক্রস 5x · প্রতি 4h-এ রিপ্লে, বার শেষ হওয়ার 20 মিনিট পর",,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,শেষ বার,,

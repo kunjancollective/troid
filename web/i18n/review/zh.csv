@@ -376,6 +376,7 @@ compare.js.foot_open_n,open: {n} questions — {first} …,未决：{n} 个问�
 ledger.meta.title,troid's ledger,troid 账本,,"troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.",影子账户。每一笔已平仓交易，未经编辑，亏损交易也在内。它不下任何订单——下单的会是人。,,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar",截至 {asof} UTC · {market} · {profile} 规则 · 全仓 5x · 每 4h 重放一次，在 K 线结束后 20 分钟,,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,最新 K 线,,

@@ -381,6 +381,7 @@ compare.js.foot_open_n,open: {n} questions — {first} …,abiertas: {n} pregunt
 ledger.meta.title,troid's ledger,libro mayor de troid,,"troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.hero.lede,"The shadow account. Every closed trade, unedited, losers included. It places nothing — a human would.","La cuenta en sombra. Cada operación cerrada, sin editar, perdedoras incluidas. No coloca nada: lo haría una persona.",,
 ledger.hero.asof,"as of {asof} UTC · {market} · {profile} rules · cross 5x · replayed every 4h, 20 min after the bar","a fecha de {asof} UTC · {market} · reglas {profile} · cruzado 5x · reprocesado cada 4h, 20 min después de la vela",,keep {asof} {market} {profile} exactly as written; keep every number exactly
 ledger.hb.last_bar,last bar,última vela,,

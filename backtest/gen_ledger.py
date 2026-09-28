@@ -46,7 +46,7 @@ def _style(T):
     """index.html's icon, og and font links and its stylesheet, with the ledger's own og title and description (a
     shared /ledger link previews as itself) and the language's og image."""
     og = site_build.og(T, "ledger")
-    s = STYLE
+    s = re.sub(r'<meta name="twitter:card"[^>]*>\n?', "", STYLE)     # head_extra writes the card, on every page
     for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
         s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)
     return s
@@ -277,7 +277,7 @@ def render_ledger(T, live):
     asof = T("ledger.hero.asof", asof=utc(T, st.get("as_of_bar_utc", "")) or "—",
              market=code(T, f'{cfg["instrument"]} {cfg["timeframe"]}'), profile=code(T, cfg["profile"]))
 
-    return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
+    return site_build.finish(T, "ledger", f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("ledger.meta.title")}</title>
 {_style(T)}
 <style>.k{{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}}
@@ -332,7 +332,7 @@ def render_ledger(T, live):
 {trade_charts(T, rows)}
 
 <p class="foot">{T("ledger.foot.week")} · {T("ledger.foot.feed")} · {T("ledger.foot.journal")}<br>{site_text.footer_html(T)}</p>
-</div></body></html>'''
+</div></body></html>''')
 
 
 # The shadow loop runs every 4 hours (.github/workflows/shadow.yml, 20 minutes after each 4-hour bar closes). GitHub

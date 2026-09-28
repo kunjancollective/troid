@@ -185,7 +185,7 @@ def _style(T):
     """index.html's icon, og and font links and its stylesheet, with the compare page's own og title and description
     (a shared /compare link previews as itself) and the language's og image."""
     og = site_build.og(T, "compare")
-    s = STYLE
+    s = re.sub(r'<meta name="twitter:card"[^>]*>\n?', "", STYLE)     # head_extra writes the card, on every page
     for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
         s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)
     return s
@@ -432,7 +432,7 @@ def render_compare(T, live):
     gov = site_build.governs_html(T, "legal.summary.citations")
     D = lambda key: html.escape(T.data(FIRMS.get(key, "")))   # noqa: E731
     ref_text = D("_reference_firm").replace("{conflicts}", str(len(reference().get("_conflicts_found") or [])))
-    return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
+    return site_build.finish(T, "compare", f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("compare.meta.title")}</title>
 {_style(T)}
 <style>
@@ -579,7 +579,7 @@ function render(){{
 }}
 ["quota","risk","stop","lev"].forEach(function(i){{document.getElementById(i).addEventListener("input",render)}});
 render();
-</script></body></html>'''
+</script></body></html>''')
 
 
 def unsourced():
