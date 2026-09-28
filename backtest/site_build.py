@@ -109,8 +109,16 @@ SAME_AS = [u for u, _ in site_text.LINKS if u.startswith("https://")]
 X_HANDLE = "@" + next(u for u in SAME_AS if u.startswith("https://x.com/")).rstrip("/").rsplit("/", 1)[-1]
 
 
+def description_key(T, page):
+    """The key of a page's meta description (launch handoff 2026-09-26, 5.1 item 1): {page}.meta.description where
+    en.json has one, else the line the page previews with when shared ({page}.og.description), else the site's. The
+    search audit's strings go in as {page}.meta.description."""
+    return next(k for k in (f"{page}.meta.description", f"{page}.og.description", "og.description") if k in T.en)
+
+
 def head_extra(T, page, live):
-    """The page's canonical URL on troid.ai (and og:url), its type and site name, the X card (summary with the large
+    """The page's meta description (description_key), its canonical URL on troid.ai (and og:url), its type and site
+    name, the X card (summary with the large
     image, troid's X account: every page, the tearsheet included; launch handoff 2026-09-26, 5.1 item 3), then hreflang
     alternates, the language's og tags and font. The alternates, og locale, font and i18n.css appear on English only
     once a second language is live."""
@@ -119,7 +127,8 @@ def head_extra(T, page, live):
     if page == NOT_FOUND:                   # the page for an address with no page: not indexed, no URL of its own
         parts = ['<meta name="robots" content="noindex">']
     else:
-        parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
+        parts = [f'<meta name="description" content="{T.attr(description_key(T, page))}">',
+                 f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
     parts += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
               '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
     if len(live) > 1 and page != NOT_FOUND:

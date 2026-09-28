@@ -4,7 +4,8 @@ items 2 and 3), for the published English pages and every language rendered with
 
   python web/test_seo_head.py
 
-- Every page: one canonical URL on troid.ai and og:url equal to it, og:type, og:site_name troid, the X card
+- Every page: one meta description, its own ({page}.meta.description, else the line it previews with when shared;
+  no two pages share one), one canonical URL on troid.ai and og:url equal to it, og:type, og:site_name troid, the X card
   (summary_large_image) and twitter:site @tradingdroid, each exactly once; the tearsheet included.
 - Every page: one JSON-LD block that parses, an @graph with troid as an Organization whose sameAs are exactly the
   footer's repo, X and Reddit links, and the WebSite; the page's own entity where it has one: the desk a free
@@ -66,6 +67,10 @@ def check(label, path, code, page):
     s = path.read_text()
     head = s[:s.find("</head>")]
     url = site_build.BASE_URL + site_build.page_url(code, page)
+    T = site_build.i18n.Strings(code, fallback=True)
+    desc = T.attr(site_build.description_key(T, page))
+    ok(f"{label}: one meta description, the page's own ({site_build.description_key(T, page)})",
+       head.count('name="description"') == 1 and f'<meta name="description" content="{desc}">' in head)
     for tag, pat in (("canonical", rf'<link rel="canonical" href="{re.escape(url)}">'),
                      ("og:url", rf'<meta property="og:url" content="{re.escape(url)}">'),
                      ("og:type", r'<meta property="og:type" content="website">'),
@@ -137,6 +142,11 @@ def levels(s):
 
 def rest():
     T = site_build.i18n.Strings("en")
+    # ---------------------------------------------------------------- descriptions (5.1 item 1)
+    D = {pg: re.search(r'<meta name="description" content="([^"]*)">', site_build.out_path("en", pg).read_text()) for pg in site_build.PAGES}
+    ok("descriptions: every page has one, and no two pages share one",
+       all(D.values()) and len({m.group(1) for m in D.values()}) == len(D), {k: bool(v) for k, v in D.items()})
+
     # ---------------------------------------------------------------- llms.txt
     L = (site_build.PUB / "llms.txt").read_text()
     ok("llms.txt: a title, then troid's summary as its blockquote",
