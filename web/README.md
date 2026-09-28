@@ -191,16 +191,21 @@ Setting it up, once (the owner; nothing here pastes a key anywhere but Vercel):
 1. **Supabase.** A project for troid (the account's only project, `crossnet`, is another one). Run the migration (SQL
    editor, or `supabase db push`). Authentication → Providers: Email on. Authentication → URL Configuration: add the
    branch's preview URL, `https://troid-git-<branch>-kunjan-collective-ai.vercel.app/**`, to the redirect URLs.
-2. **Stripe, test mode.** The price IDs (`node web/pro_prices.js`, or Product catalog → troid Pro). A restricted key
-   with the permissions above. Settings → Billing → Customer portal: cancellation at the end of the billing period
-   (the page says access runs to the end of the period), switching between troid Pro's two prices, invoice history.
-   Developers → Webhooks → add an endpoint, `https://<branch URL>/api/stripe-webhook?x-vercel-protection-bypass=<secret>`,
-   with `checkout.session.completed`, `customer.subscription.created`, `customer.subscription.updated`,
-   `customer.subscription.deleted` and `invoice.payment_failed`; copy its signing secret.
+2. **Stripe, test mode.** The product needs an eligible tax code on the product itself, or Managed Payments refuses the
+   checkout (troid Pro: `txcd_10103000`, SaaS for personal use). The price IDs (`node web/pro_prices.js`, or Product
+   catalog → troid Pro). A restricted key with the permissions above. Settings → Billing → Customer portal:
+   cancellation at the end of the billing period (the page says access runs to the end of the period), switching
+   between troid Pro's two prices, invoice history. Developers → Webhooks → add an endpoint,
+   `https://<branch URL>/api/stripe-webhook?x-vercel-protection-bypass=<secret>`, with `checkout.session.completed`,
+   `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted` and
+   `invoice.payment_failed`; copy its signing secret.
 3. **Vercel.** Preview deployments sit behind Vercel Authentication, which Stripe can't pass: Settings → Deployment
-   Protection → Protection Bypass for Automation makes the secret in the URL above. The settings above, in Preview
-   only. Redeploy the branch.
-4. **Check.** `<branch URL>/api/pro/status` answers `{"on":true,"mode":"test"}`, or names what is missing.
+   Protection → Protection Bypass for Automation makes the secret in the URL above. The URL takes the secret's value,
+   the long random string, not its name; with the name, every delivery stops at Vercel's login and troid sees nothing.
+   The settings above, in Preview only. Redeploy the branch.
+4. **Check.** `<branch URL>/api/pro/status` answers `{"on":true,"mode":"test"}`, or names what is missing. If
+   deliveries failed before the URL was right, resend every failed one, not only the first two: order doesn't matter
+   and a repeat changes nothing. Production needs no bypass: Vercel Authentication leaves troid.ai open.
 
 The live checks (the handoff's list; `test_pro.js` covers the logic of each offline, but only Stripe can answer them):
 - Checkout with Stripe's test card 4242 4242 4242 4242 completes; the webhook sets `pro_until`; `/account` says
@@ -211,6 +216,23 @@ The live checks (the handoff's list; `test_pro.js` covers the logic of each offl
   customer's clock past the period's end (Billing → Test clocks) instead of waiting a month.
 - Resend a delivered event (Developers → Webhooks → the event → Resend): the reply says `duplicate`, nothing changes.
 - No key in the repo: `test_pro.js` runs the handoff's grep over every tracked and new file.
+
+Results, the owner's sandbox run of 2026-09-28 (Stripe's figures; troid's side read from `stripe_events` and `pro_accounts`):
+- Checkout in subscription mode with Managed Payments completed. Stripe refused two things first, both fixed:
+  `custom_text` (taken out of the code) and a product with no tax code (set in Stripe).
+- The webhook linked the checkout and applied `customer.subscription.created` (the resends arrived in the other order;
+  both applied), the portal's cancellation (two `customer.subscription.updated`: still Pro, ending) and, once the test
+  clock passed the period's end, `customer.subscription.deleted`: Pro off. On a test clock an ended subscription's
+  `pro_until` is in the clock's time and can lie in the future; its status, `canceled`, is what locks it.
+- A resent event changed nothing. A repeat leaves no row, and the Hobby plan keeps function logs for an hour, so this
+  one is the run's report, not a record troid kept.
+- Tax on $19 with tax included in the price: California $0.00; Connecticut $1.13 (6.35%); Germany $3.03 (19%);
+  India $2.90 (18%); UK $3.17 (20%).
+- Open: whether $19 includes tax or tax goes on top (Stripe won't change a price's tax behaviour once set, so tax on
+  top means two new prices and new IDs in the two settings, no code change); Stripe's fee lines on the $19 payment;
+  the failed-payment path, tested offline only (subscribe with 4242, swap the card in the portal for
+  4000 0000 0000 0341, which attaches but fails when charged, then advance the test clock to the renewal). No Pro
+  feature exists yet: `proStatus` is the check each will call.
 
 ## Provenance
 
