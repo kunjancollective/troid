@@ -11,7 +11,7 @@
    is sold: a checkout the webhook couldn't record would take money for access it can't give. */
 const S = require("./stripe.js");
 
-const CHECKOUT_COPY = "troid Pro — risk-calculation software. Not investment advice.";   // handoff item 6, word for word
+const CHECKOUT_COPY = "troid Pro — risk-calculation software. Not investment advice.";   // handoff item 6, word for word, on /pro
 const PRICE_ENV = { monthly: "STRIPE_PRICE_MONTHLY", yearly: "STRIPE_PRICE_YEARLY" };
 const HANDLED = new Set(["checkout.session.completed", "customer.subscription.created", "customer.subscription.updated",
                          "customer.subscription.deleted", "invoice.payment_failed"]);
@@ -156,9 +156,11 @@ async function applyEvent(c, args) {
 }
 
 // --- Stripe ---------------------------------------------------------------------------------------------------------------
-// The Checkout Session (handoff items 2, 3 and 6): subscription mode, Managed Payments on, one price, the user's id in
+// The Checkout Session (handoff items 2 and 3): subscription mode, Managed Payments on, one price, the user's id in
 // client_reference_id and in the subscription's metadata, the email for a first purchase or the Stripe customer the user
-// already has.
+// already has. No custom_text: Stripe refuses it with Managed Payments ("You cannot use custom_text with Managed
+// Payments", the first sandbox checkout, 2026-09-28), so the handoff's copy (item 6) is on troid's /pro page and in the
+// product's description in Stripe, which Checkout shows.
 function checkoutParams(c, user, plan, origin, customer) {
   const params = {
     mode: "subscription",
@@ -169,7 +171,6 @@ function checkoutParams(c, user, plan, origin, customer) {
     client_reference_id: user.id,
     metadata: { user_id: user.id },
     subscription_data: { metadata: { user_id: user.id } },
-    custom_text: { submit: { message: CHECKOUT_COPY } },
   };
   if (customer) params.customer = customer;
   else if (user.email) params.customer_email = user.email;

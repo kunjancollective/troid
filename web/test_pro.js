@@ -307,9 +307,10 @@ async function main() {
      && f.cancel_url === ORIGIN + "/pro", f);
   ok("checkout: email, user id in client_reference_id and the subscription's metadata", f.customer_email === "a@example.com"
      && f.client_reference_id === U.A && f["subscription_data[metadata][user_id]"] === U.A && f["metadata[user_id]"] === U.A && !("customer" in f), f);
-  ok("checkout: the copy, word for word", f["custom_text[submit][message]"] === "troid Pro — risk-calculation software. Not investment advice.", f);
-  ok("checkout: no tax or payment-method settings (Managed Payments owns them)",
-     !Object.keys(f).some((k) => /^(automatic_tax|payment_method_types|tax_id_collection|payment_method_configuration)/.test(k)), Object.keys(f));
+  ok('checkout: no custom_text (Stripe, 2026-09-28: "You cannot use custom_text with Managed Payments")',
+     !Object.keys(f).some((k) => k.startsWith("custom_text")), Object.keys(f));
+  ok("checkout: nothing else Managed Payments owns or refuses: tax, payment methods, customer_update",
+     !Object.keys(f).some((k) => /^(automatic_tax|payment_method_types|tax_id_collection|payment_method_configuration|customer_update)/.test(k)), Object.keys(f));
   await call(checkout, { headers: auth("A"), body: { plan: "yearly" } });
   ok("checkout: yearly uses the yearly price", lastStripe().form["line_items[0][price]"] === PRICE_Y);
   await call(checkout, { headers: { ...auth("A"), origin: "https://elsewhere.example" }, body: { plan: "monthly" } });
@@ -547,6 +548,8 @@ async function main() {
   ok("page: a fresh nonce per response", nonce !== (/'nonce-([^']+)'/.exec((await call(page, { method: "GET", url: "/api/pro/page" })).res.headers["content-security-policy"]) || [])[1]);
   ok("page: pins supabase-js with an integrity hash", /supabase-js@2\.\d+\.\d+\/dist\/umd\/supabase\.js"\s+integrity="sha384-[A-Za-z0-9+/=]{64}"/.test(r.res.body));
   ok("page: the success page never reads session_id", !/session_id/.test(fs.readFileSync(path.join(__dirname, "pro", "index.html"), "utf8")));
+  ok("page: carries the handoff's copy word for word, since Checkout can't", pc.copy === "troid Pro — risk-calculation software. Not investment advice."
+     && r.res.body.includes('<p id="copy">'), pc.copy);
 
   // --- 17. test clocks (test mode only) -------------------------------------------------------------------------------------
   env({ TROID_PRO_TEST_CLOCK: "on" });
