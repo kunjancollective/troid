@@ -275,6 +275,18 @@ const rs = RT("explain_rule", { topic: "reset" }, "live");
 ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
    /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
    && rs.sources.every((x) => x.document_section && x.read_on.length), rs);
+{ // the fourth patch (context/patch/README.md, launch handoff section 0): the reset in UTC; the live text stays until it publishes
+  const rp = RT("explain_rule", { topic: "reset" }, "patch");
+  const tail = (s) => s.slice(s.indexOf("Because of the platform's settlement process"));
+  ok("patch: the reset in UTC all year, a local hour only for the date it was converted for, its example in UTC; no fixed New York hour",
+     /16:00 UTC all year/.test(rp.explanation) && /only for the date it was converted for/.test(rp.explanation)
+     && /a loss at 15:45 UTC and a loss at 16:15 UTC/.test(rp.explanation) && !/\bnoon\b|\bEDT\b|\bEST\b|1[12]:00 in (winter|summer)/.test(rp.explanation)
+     && rp.sources.length === 3 && rp.sources.every((x) => x.document_section && x.read_on.length), rp);
+  ok("patch: the rest of the reset explanation is the live one's word for word, and the live one is untouched until the patch publishes",
+     tail(rp.explanation).replace("mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC", "mid-session, so a loss at 11:45 and a loss at 12:15 EDT")
+       === tail(rs.explanation) && Object.keys(handler._patchRules).join() === "reset", tail(rp.explanation).slice(0, 240));
+  ok("patch: the candidate keeps the live reset until the patch publishes into RULES",
+     RT("explain_rule", { topic: "reset" }, "candidate").explanation === rs.explanation); }
 const dd = RT("explain_rule", { topic: "drawdown" }, "live");
 ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
    /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)

@@ -77,10 +77,11 @@ So: mention it when the user is sizing above ~4% per position or explicitly hold
 loser into the reset. Don't lead with it otherwise; it isn't live under the desk's own
 recommendations, and treating a dead hazard as urgent costs credibility on the live ones.
 
-**The reset lands midday.** 00:00 UTC+8 is 16:00 UTC, which is **noon in New York**
-(11:00 EST in winter). Not overnight. A morning session and an afternoon session are
-on different trading days, and a loss at 11:45 plus a loss at 12:15 draw on separate
-budgets. Bitfunded's help centre says that, because of the platform's settlement process,
+**The reset lands mid-session in New York.** 00:00 UTC+8 is 16:00 UTC, all year (UTC+8 is a
+fixed offset). Not overnight. Local clocks move with daylight saving and UTC doesn't, so give
+the reset in UTC, and a local hour only converted for the date in question, never a fixed one.
+A morning session and an afternoon session in New York are on different trading days in every
+season, and a loss at 15:45 UTC plus a loss at 16:15 UTC draw on separate budgets. Bitfunded's help centre says that, because of the platform's settlement process,
 the reset may become effective anywhere between 00:00 and 00:10 UTC+8 — 16:00 to 16:10 UTC.
 The first ten minutes after the reset are ambiguous: don't rely on a fresh daily budget until
 16:10 UTC, and don't hold a marginal position through the window.

@@ -696,6 +696,13 @@ const CANDIDATE_RULES = {
 // the rules each candidate explanation states, where they differ from TOPIC_CITES
 const FLOAT_CITE = ["bitfunded", "floating_counts", null, "floating losses count toward the daily and maximum loss (Bitfunded)"];
 const CANDIDATE_TOPIC_CITES = {};
+// A patch's rule explanations (context/patch/README.md): explain_rule, for a request with x-troid-variant: patch, gets the
+// live RULES with these in their place and nothing of the candidate's. Publishing the patch folds each into RULES and
+// empties this object. The fourth patch (the owner's launch handoff, section 0): the reset stated in UTC, since "noon in
+// New York" holds only while New York keeps daylight saving (until 1 November 2026), and its example in UTC too.
+const PATCH_RULES = {
+  reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC all year (UTC+8 is a fixed offset). Not midnight. Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
+};
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -1157,8 +1164,9 @@ const CANDIDATE_RUN = {                                                  // a ca
   trade_math: tradeMathNext,
 };
 const RUN_NEXT = Object.assign({}, RUN, CANDIDATE_RUN);
+const RUN_PATCH = Object.assign({}, RUN, { explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, PATCH_RULES), TOPIC_CITES) });
 function runTool(name, input, variant) {
-  const run = variant === "candidate" ? RUN_NEXT : RUN;
+  const run = variant === "candidate" ? RUN_NEXT : variant === "patch" ? RUN_PATCH : RUN;
   try { return Object.hasOwn(run, name) ? run[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
@@ -1665,7 +1673,8 @@ module.exports = async (req, res) => {
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
                         rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length,
-                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null) };
+                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null),
+                        patch_rules: Object.keys(PATCH_RULES) };
     return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
                             disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
@@ -1880,5 +1889,6 @@ module.exports._promptFirms = () => context().prompt_firms;   // for tests
 module.exports._hasFigure = hasFigure;                             // for tests: the candidate's service changes
 module.exports._closeWithNote = closeWithNote;
 module.exports._runTool = runTool;
+module.exports._patchRules = PATCH_RULES;
 module.exports._withSupportStep5 = withSupportStep5;
 module.exports._withSources = withSources;

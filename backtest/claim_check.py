@@ -257,7 +257,31 @@ def e2_texts(F):
             for m in re.finditer(r"(0\.\d+)%(?:-| )per[- ]side", t):
                 if f"{float(m.group(1)):g}" not in fees:
                     out.append(("E2 fee per side", name, "", m.group(0), t[:160]))
+    # Retired wording (the owner's launch handoff, section 0): troid's result is "no measurable edge"; the reset is stated in
+    # UTC, never at a fixed local hour ("noon in New York" is wrong from 1 November 2026, when New York leaves daylight
+    # saving). ask troid's prompt files are read as they will go live: a copy staged in web/context/patch/ stands in for its
+    # live file until the patch's evaluation publishes it (CLAUDE.md), so the daily check passes on the staged fix.
+    nxt = dict(docs)
+    for name in ("TROID.md", "web/context/support.md", "web/context/TROID-CHARACTER.md"):
+        staged = ROOT / "web" / "context" / "patch" / Path(name).name
+        if name in nxt and staged.exists():
+            nxt[name] = staged.read_text()
+    for name, s in nxt.items():
+        for sent in re.split(r"(?<=[.!?])\s+|\n\n", s):
+            t = re.sub(r"\s+", " ", sent)
+            m = RETIRED_EDGE.search(t)
+            if m:
+                out.append(("E2 retired wording (troid's result is 'no measurable edge')", name, "", m.group(0), t[:160]))
+            m = FIXED_LOCAL_RESET.search(t)
+            if m:
+                out.append(("E2 the reset at a fixed local hour (state 16:00 UTC)", name, "", m.group(0), t[:160]))
     return out
+
+
+RETIRED_EDGE = re.compile(r"\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b", re.I)
+# a clock time labelled EDT or EST holds for one season only
+FIXED_LOCAL_RESET = re.compile(r"\bnoon\b[^.]{0,30}\bNew York\b|\bNew York\b[^.]{0,30}\bnoon\b|\b1[12]:00 (in )?(winter|summer)\b"
+                               r"|\b\d{1,2}:\d{2}\s*(EDT|EST)\b", re.I)
 
 
 def run():

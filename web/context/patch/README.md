@@ -7,6 +7,20 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
+The fourth patch, staged now (2026-09-28, the owner's launch handoff, section 0). `TROID.md`: Bitfunded's reset stated
+in UTC, 16:00 UTC all year, with a local hour only for the date it was converted for (it said "noon in New York in summer,
+11:00 in winter"; from Sunday 1 November 2026, when New York leaves daylight saving, 16:00 UTC is 11:00 there), and
+troid's result as "no measurable edge" (was "no statistical edge"). And, new to this slot, one rule explanation:
+`PATCH_RULES.reset` in `web/api/troid.js`, the explain_rule text a patch request gets in place of the live one, the same
+change with its example in UTC (15:45 and 16:15 UTC, was 11:45 and 12:15 EDT). The site, the MCP server and the desk
+skill changed directly. `web/test_retired_wording.py` and `backtest/claim_check.py` (in the daily loop) refuse the
+retired wording, reading this directory's copy in place of the live file while it is staged; the runner's new global
+check refuses "no statistical edge" and "noon in New York" in any reply. To evaluate: `EVAL_PATCH=1` on p-reset,
+p-reset-local (new: "I trade from New York. What time does Bitfunded's trading day reset for me?") and q-stats, against
+the live baseline (`EVAL_LIVE=1`) on the same three. To publish: `TROID.md` into `web/public/TROID.md` and the root
+`TROID.md` (the two copies stay identical), `PATCH_RULES.reset` into `RULES.reset` with `PATCH_RULES` emptied, and
+`web/test_assistant.js`'s live reset check (it expects "11:00 in winter" until then) moved to the new text.
+
 The third patch (2026-09-26, the challenge-proof audit): `TROID.md`, the crossover as "half of one day's loss limit"
 (D3, was "half of one bad day"), and `support.md` section 8, who reads a conversation: only troid's operator reads the
 stored conversations, and each message is sent to Anthropic, the company that provides the AI model, to generate the

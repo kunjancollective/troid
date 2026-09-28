@@ -45,7 +45,7 @@ legal.summary.hypo,"The standard US regulatory warning about simulated results (
 legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.","troid-এর ব্যবহারের শর্তাবলি। এগুলো ইংরেজিতে প্রকাশিত, এবং ইংরেজি পাঠই প্রাধান্য পাবে।",,"CHECK FIRST: legal.governs, legal.summary.terms, faq.disc.eval.p2: 'governs' is rendered 'প্রাধান্য পাবে' (the Bangladeshi statutory idiom 'পাঠ প্রাধান্য পাইবে'). In UI prose, 'the firm's own documents govern' uses 'চূড়ান্ত' instead (chat.discl, terms.hero.lede, common.avail.not_excluded). Please confirm the split is acceptable in legal register. | troid stays lowercase, in Latin letters"
 legal.summary.citations,"Rule sources are named in English, as each firm publishes them.","নিয়মের উৎসগুলোর নাম ইংরেজিতে দেওয়া হয়েছে, প্রতিটি ফার্ম যেভাবে সেগুলো প্রকাশ করে।",,
 hypo.label,Hypothetical performance,হাইপোথেটিক্যাল পারফরম্যান্স,,CHECK FIRST: hypo.no_edge_tail: 'not a fact about the future' is rendered 'ভবিষ্যৎ সম্পর্কে কোনো সত্য নয়'. Check that it neither strengthens nor weakens the denial. hypo.label and faq.disc.hypo.*: 'হাইপোথেটিক্যাল পারফরম্যান্স' is transliterated; 'অনুমানভিত্তিক ফলাফল' is the alternative.
-hypo.no_edge_short,troid's own strategy shows no statistical edge.,troid-এর নিজের স্ট্র্যাটেজিতে কোনো পরিসংখ্যানগত এজ দেখা যায় না।,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Tier labels now stay in English capitals with a Bengali gloss in parentheses: 'DERIVED (নির্ণীত)', 'SOURCED (উৎসভিত্তিক)', 'MODELLED (মডেলকৃত)', 'MEASURED (পরিমাপিত)' in index.crossover.prov, hypo.no_edge_tail, tearsheet.head.box and index.doesnt.verify (where the English has the tiers in lowercase; the Bengali uses the capital labels per STYLE.md, and the closing sentence reads 'MEASURED সংখ্যাকে…'). Please confirm the glosses. | CHECK FIRST: hypo.no_edge_tail: 'not a fact about the future' is rendered 'ভবিষ্যৎ সম্পর্কে কোনো সত্য নয়'. Check that it neither strengthens nor weakens the denial. hypo.label and faq.disc.hypo.*: 'হাইপোথেটিক্যাল পারফরম্যান্স' is transliterated; 'অনুমানভিত্তিক ফলাফল' is the alternative. | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,নিয়ম কোনো নোটিশ ছাড়াই বদলায়। ট্রেড করার আগে ফার্মের সাথে যাচাই করুন।,,
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -572,7 +572,7 @@ dashboard.risk.risk.n,capped at 35% of budget,বাজেটের 35%-এ ক�
 dashboard.risk.fees.k,Fees,ফি,,
 dashboard.risk.fees.n,"round trip, on notional","রাউন্ড ট্রিপ, নোশনালের ওপর",,
 dashboard.risk.reset.k,Reset,রিসেট,,
-dashboard.risk.reset.n,"noon in New York, 11:00 in winter","নিউইয়র্কে দুপুর, শীতে 11:00",,keep every number exactly
+dashboard.risk.reset.n,"00:00 UTC+8, settled by 16:10 UTC",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
@@ -705,11 +705,12 @@ ceiling and the ""4% daily"" number is fiction.","কিন্তু প্র�
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
 against the smaller of the two, always.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 faq.reset.q,When does your trading day reset?,আপনার ট্রেডিং দিন কখন রিসেট হয়?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
-For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
+doesn't, so the reset's local hour depends on the date: read it in UTC.
+For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
 different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","00:00 UTC+8, অর্থাৎ 16:00 UTC — গ্রীষ্মে <strong>নিউইয়র্কে দুপুর</strong>, শীতে 11:00 — মধ্যরাত নয়। নিউইয়র্কের ট্রেডারের কাছে রিসেট সেশনের মাঝখানে পড়ে, তাই সকালের লস আর বিকেলের লস আলাদা ট্রেডিং দিনে পড়তে পারে এবং আলাদা দৈনিক বাজেট থেকে খরচ হতে পারে। প্ল্যাটফর্মের সেটেলমেন্টের কারণে রিসেট সর্বোচ্চ দশ মিনিট পিছিয়ে 16:10 UTC পর্যন্ত যেতে পারে, তাই তার আগে নতুন দৈনিক বাজেট পাওয়া যাবে বলে ধরে নেবেন না।",,"CHECK FIRST: faq.reset.p1: 'ten minutes' stays a word ('দশ মিনিট'), as in the English. 'settlement' is transliterated as 'সেটেলমেন্ট'. The English line breaks were not carried over, matching the old draft value, which was a single line. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+on a fresh daily budget before then.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: faq.reset.p1: 'ten minutes' stays a word ('দশ মিনিট'), as in the English. 'settlement' is transliterated as 'সেটেলমেন্ট'. The English line breaks were not carried over, matching the old draft value, which was a single line. | keep every number exactly"
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
 limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this

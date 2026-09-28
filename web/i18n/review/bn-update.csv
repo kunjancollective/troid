@@ -159,6 +159,7 @@ calendar.note.outside,This release lands outside that bar.,,,NEW: translate it i
 calendar.note.source,"Source: <a href=""{url}"">{source}'s release schedule</a>, read {date}. troid shows the schedule only, never a forecast.",,,"NEW: translate it in reviewer_edit | keep {date} {source} {url} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
+hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {exp} {n} {se} exactly as written; keep every number exactly
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.hero.lede,"Most failed challenges end on a loss limit, not a missed target: 93.7% at
@@ -275,6 +276,7 @@ dashboard.variants.note,"Ladder direction, the side the tranches sit on with the
   the results more than any other change in the table. Weakness at 5 tranches has the worst profit factor
   (0.14); strength at 5 with the reverse on the stop has the smallest drawdown (&minus;$1,058).",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
 dashboard.risk.h2,"Risk model: the firm's rules, the same whatever the strategy",,,ENGLISH CHANGED: translate it in reviewer_edit | 
+dashboard.risk.reset.n,"00:00 UTC+8, settled by 16:10 UTC",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
   time within a year, and at 2% it's 100%. Under the cap, every one of those cells is 0%.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
@@ -317,6 +319,12 @@ faq.fail.p2,"OneFunded's own reading of those figures: “The problem is not alw
 down to risk management issues.”",,,ENGLISH CHANGED: translate it in reviewer_edit | 
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
 against the smaller of the two, always.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
+doesn't, so the reset's local hour depends on the date: read it in UTC.
+For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
+different trading days and draw on different daily budgets.
+The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
+on a fresh daily budget before then.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
 faq.risk.p2,"troid simulated a trader with an edge of +0.35R per trade: 45% of trades won at 2:1. Risking 1% per
 trade with no cap on remaining budget, that trader blew the account <span class=""stat"">68%</span> of the time within
 twelve months. At 2%, <span class=""stat"">100%</span>: every simulated year. Capping each trade at a fraction of the

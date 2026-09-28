@@ -175,6 +175,10 @@ const splitSources = (reply) => { const i = reply.indexOf(SOURCES_HEAD);
 const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|can afford to) (put|risk|open|place|enter)\b[^.\n]{0,30}\b(on|into|in) (the |a |this )?(trade|position|market)\b|\btroid (is willing to|wants to|is going to|plans to) (take|risk|lose)\b|\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b|\btroid (can |could |will |would )?(let|lets|allow|allows|permit|permits)\b[^.\n]{0,30}\b(into|in|on) (a|the|this) (trade|position)\b/i;   // run 14: "the dollar amount troid allows on the trade"; run 15: "troid can let into a trade"
 // Which limit binds, the wrong way round (run 14, b-limits: "after a loss, the daily limit is usually tighter and binds;
 // well above the account's starting balance, the maximum loss usually binds"). Above the crossover the daily limit binds.
+// retired wording (the owner's launch handoff, section 0): troid's result is "no measurable edge", never "no statistical
+// edge"; the reset is 16:00 UTC, and a fixed local hour for it ("noon in New York") is wrong from 1 November 2026. A bare
+// "no edge at all" names the statistical null and stays allowed.
+const RETIRED = /\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b|\bnoon\b[^.\n]{0,30}\bNew York\b|\bNew York\b[^.\n]{0,30}\bnoon\b/i;
 const XOVER_BACKWARDS = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
 // A teaching answer that asks the user for the numbers its example needs (run 14: b-limits "troid can work it through
 // check_budget if you give those", b-leverage "give a specific entry, stop and quantity"; runs 2 to 4, b-limits).
@@ -257,6 +261,7 @@ function check(c, r, variant) {
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
+  { const m = unquoted(reply).match(RETIRED); add("retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"", !m, m && m[0]); }   // launch §0
   if (Array.isArray(r.j.tool_numbers)) {                                                                                                    // run 16
     // every number from a tool, the user's message or troid's published figures; the service's own blocks (sources,
     // tier, troid's assumptions, the note) are not troid's prose

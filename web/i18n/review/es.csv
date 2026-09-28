@@ -45,7 +45,7 @@ legal.summary.hypo,"The standard US regulatory warning about simulated results (
 legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.","Los términos de uso de troid. Se publican en inglés, y prevalece el texto en inglés.",,"troid stays lowercase, in Latin letters"
 legal.summary.citations,"Rule sources are named in English, as each firm publishes them.","Las fuentes de las reglas se nombran en inglés, tal como las publica cada empresa.",,
 hypo.label,Hypothetical performance,Rendimiento hipotético,,
-hypo.no_edge_short,troid's own strategy shows no statistical edge.,La propia estrategia de troid no muestra ninguna ventaja estadística.,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Tier labels: hypo.no_edge_tail, index.crossover.prov and tearsheet.head.box now keep MEASURED / DERIVED in English capitals with a gloss in brackets ('MEASURED (medida)', 'DERIVED (derivado)'). Confirm the bracketed gloss reads well. index.doesnt.verify is left translated ('derivado, con fuente, modelado o medido'), because the English writes the tiers there in lowercase as ordinary words. The reviewer may prefer the capital labels there too, for consistency. | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,Las reglas cambian sin previo aviso. Verifica con la empresa antes de operar.,,
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -588,7 +588,7 @@ dashboard.risk.risk.n,capped at 35% of budget,con tope del 35% del presupuesto,,
 dashboard.risk.fees.k,Fees,Comisiones,,
 dashboard.risk.fees.n,"round trip, on notional","ida y vuelta, sobre el nocional",,
 dashboard.risk.reset.k,Reset,Reinicio,,
-dashboard.risk.reset.n,"noon in New York, 11:00 in winter","mediodía en Nueva York, 11:00 en invierno",,keep every number exactly
+dashboard.risk.reset.n,"00:00 UTC+8, settled by 16:10 UTC",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
@@ -734,15 +734,12 @@ real y la cifra del «4% diario» es ficción.",,"CHECK FIRST: NUMBER FORMAT (al
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
 against the smaller of the two, always.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 faq.reset.q,When does your trading day reset?,¿Cuándo se reinicia tu día de trading?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
-For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
+doesn't, so the reset's local hour depends on the date: read it in UTC.
+For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
 different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","A las 00:00 UTC+8, que son las 16:00 UTC: <strong>mediodía en Nueva York</strong> en verano, las 11:00 en invierno; no medianoche.
-Para quien opera desde Nueva York el reinicio cae en plena sesión, así que una pérdida de la mañana y otra de la tarde pueden caer
-en días de trading distintos y consumir presupuestos diarios distintos.
-La liquidación de la plataforma puede retrasar el reinicio hasta diez minutos, hasta las 16:10 UTC, así que no
-cuentes con un presupuesto diario nuevo antes de esa hora.",,CHECK FIRST: faq.reset.p1: 'settlement' became 'liquidación' and 'fresh daily budget' became 'presupuesto diario nuevo'. Check that these sound natural. Line breaks follow the English layout. | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+on a fresh daily budget before then.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: faq.reset.p1: 'settlement' became 'liquidación' and 'fresh daily budget' became 'presupuesto diario nuevo'. Check that these sound natural. Line breaks follow the English layout. | keep every number exactly
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
 limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this

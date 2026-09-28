@@ -45,7 +45,7 @@ legal.summary.hypo,"The standard US regulatory warning about simulated results (
 legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.","troid की उपयोग की शर्तें। ये अंग्रेज़ी में प्रकाशित हैं, और अंग्रेज़ी पाठ ही मान्य है।",,"CHECK FIRST: legal.governs, legal.summary.terms, common.avail.not_excluded, faq.disc.eval.p2: 'governs' is rendered 'ही मान्य है'. A legal reviewer may prefer 'अभिभावी होगा' or 'किसी विसंगति की स्थिति में अंग्रेज़ी संस्करण मान्य होगा'. The English does not mention a discrepancy, so that phrase was not added. | troid stays lowercase, in Latin letters"
 legal.summary.citations,"Rule sources are named in English, as each firm publishes them.","नियमों के स्रोतों के नाम अंग्रेज़ी में दिए गए हैं, जैसे हर फ़र्म उन्हें प्रकाशित करती है।",,
 hypo.label,Hypothetical performance,काल्पनिक प्रदर्शन,,
-hypo.no_edge_short,troid's own strategy shows no statistical edge.,troid की अपनी रणनीति में कोई सांख्यिकीय एज नहीं दिखता।,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Tier labels now follow STYLE.md: the English capital first with a Hindi gloss in brackets, e.g. 'MEASURED (मापा गया)', 'DERIVED (व्युत्पन्न)' (hypo.no_edge_tail, tearsheet.head.box, index.crossover.prov). index.doesnt.verify, where the English lists the tiers in lowercase, now also uses the capitals with glosses, for consistency. Check the glosses 'स्रोत-आधारित' (SOURCED) and 'मॉडल-आधारित' (MODELLED). | keep {exp} {n} {se} exactly as written; keep every number exactly"
 prov.tail,Rules change without notice. Verify with the firm before trading.,नियम बिना सूचना के बदलते हैं। ट्रेड करने से पहले फ़र्म से सत्यापित करें।,,
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -588,7 +588,7 @@ dashboard.risk.risk.n,capped at 35% of budget,बजट के 35% पर कै
 dashboard.risk.fees.k,Fees,फ़ीस,,
 dashboard.risk.fees.n,"round trip, on notional","राउंड ट्रिप, नोशनल पर",,
 dashboard.risk.reset.k,Reset,रीसेट,,
-dashboard.risk.reset.n,"noon in New York, 11:00 in winter","न्यूयॉर्क में मध्याह्न, सर्दियों में 11:00",,"CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | keep every number exactly"
+dashboard.risk.reset.n,"00:00 UTC+8, settled by 16:10 UTC",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | keep every number exactly"
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
@@ -733,15 +733,12 @@ $94,000 पर स्टैटिक है। लगभग <span class=""stat""
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
 against the smaller of the two, always.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 faq.reset.q,When does your trading day reset?,आपका ट्रेडिंग दिन कब रीसेट होता है?,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
-For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
+doesn't, so the reset's local hour depends on the date: read it in UTC.
+For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
 different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.","00:00 UTC+8, यानी 16:00 UTC — गर्मियों में <strong>न्यूयॉर्क में मध्याह्न</strong>, सर्दियों में 11:00 — आधी रात नहीं।
-न्यूयॉर्क के ट्रेडर के लिए रीसेट सेशन के बीच में पड़ता है, इसलिए सुबह का घाटा और दोपहर बाद का घाटा अलग-अलग
-ट्रेडिंग दिनों में पड़ सकते हैं और अलग-अलग डेली बजट से गिने जा सकते हैं।
-प्लेटफ़ॉर्म के सेटलमेंट से रीसेट में दस मिनट तक, यानी 16:10 UTC तक, की देरी हो सकती है, इसलिए उससे पहले
-नए डेली बजट पर भरोसा न करें।",,"CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | CHECK FIRST: faq.reset.p1: 'settlement' is kept as the loanword 'सेटलमेंट', and the line break sits in a different place from the English line wrap. Neither affects the tags or figures. | keep the <…> tags and links as they are; translate only the words; keep every number exactly"
+on a fresh daily budget before then.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: dashboard.risk.reset.n, faq.reset.p1: 'noon in New York' is rendered 'न्यूयॉर्क में मध्याह्न', a formal word. 'दोपहर' would clash with 'afternoon' ('दोपहर बाद के सेशन') in the same paragraph. | CHECK FIRST: faq.reset.p1: 'settlement' is kept as the loanword 'सेटलमेंट', and the line break sits in a different place from the English line wrap. Neither affects the tags or figures. | keep every number exactly"
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
 limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this

@@ -43,7 +43,7 @@ legal.summary.hypo,"The standard US regulatory warning about simulated results (
 legal.summary.terms,"troid's terms of use. They are published in English, and the English text governs.",troid 的使用条款。条款以英文发布，以英文文本为准。,,"CHECK FIRST: legal.governs '本译文仅为方便阅读而提供。以英文版本为准。' and legal.summary.*: check against standard Chinese governing-language clauses. The draft deliberately does not add '如有歧义' ('in case of ambiguity'), because the English doesn't say it. | troid stays lowercase, in Latin letters"
 legal.summary.citations,"Rule sources are named in English, as each firm publishes them.",规则来源以英文列出，与各公司发布时的名称一致。,,"CHECK FIRST: legal.governs '本译文仅为方便阅读而提供。以英文版本为准。' and legal.summary.*: check against standard Chinese governing-language clauses. The draft deliberately does not add '如有歧义' ('in case of ambiguity'), because the English doesn't say it."
 hypo.label,Hypothetical performance,假设性业绩,,
-hypo.no_edge_short,troid's own strategy shows no statistical edge.,troid 自己的策略没有显示出统计上的优势。,,"troid stays lowercase, in Latin letters"
+hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {exp} {n} {se} exactly as written; keep every number exactly
 prov.tail,Rules change without notice. Verify with the firm before trading.,规则变更不会事先通知。交易前请向公司核实。,,
 index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: og.title, og.tagline, index.hero.h1, index.meta.*: 'Prop-firm risk, computed.' became '自营交易公司风险，逐项计算' ('computed item by item'). Check the tagline carries no promise the English lacks. | troid stays lowercase, in Latin letters"
@@ -570,7 +570,7 @@ dashboard.risk.risk.n,capped at 35% of budget,上限为预算的 35%,,keep every
 dashboard.risk.fees.k,Fees,手续费,,
 dashboard.risk.fees.n,"round trip, on notional",往返，按名义价值计,,
 dashboard.risk.reset.k,Reset,重置,,
-dashboard.risk.reset.n,"noon in New York, 11:00 in winter",纽约中午，冬季 11:00,,keep every number exactly
+dashboard.risk.reset.n,"00:00 UTC+8, settled by 16:10 UTC",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 dashboard.risk.reset.v,16:00 UTC,16:00 UTC,,keep every number exactly
 dashboard.risk.p,"The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
@@ -703,11 +703,12 @@ ceiling and the ""4% daily"" number is fiction.","但它往往不是真正起作
 faq.daily.p3,"On a fresh account that crossover is about $2,000 away — half of one day's loss limit. Size
 against the smaller of the two, always.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep every number exactly
 faq.reset.q,When does your trading day reset?,你的交易日什么时候重置？,,
-faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC — <strong>noon in New York</strong> in summer, 11:00 in winter — not midnight.
-For a trader in New York the reset lands mid-session, so a morning loss and an afternoon loss can fall on
+faq.reset.p1,"00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
+doesn't, so the reset's local hour depends on the date: read it in UTC.
+For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
 different trading days and draw on different daily budgets.
 The platform's settlement can delay the reset by up to ten minutes, to 16:10 UTC, so don't count
-on a fresh daily budget before then.",00:00 UTC+8，即 16:00 UTC——夏季是<strong>纽约中午</strong>，冬季是 11:00，不是午夜。对身在纽约的交易者来说，重置发生在交易时段中间，所以上午的亏损和下午的亏损可能落在不同的交易日，使用不同的每日预算。平台的结算可能使重置最多延迟十分钟，即推迟到 16:10 UTC，因此在此之前不要指望已有新的每日预算。,,CHECK FIRST: faq.reset.p1: I wrote 'ten minutes' as '十分钟' rather than '10 分钟' so it adds no figure the English lacks. Check that it reads well next to '16:10 UTC'. | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+on a fresh daily budget before then.",,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: faq.reset.p1: I wrote 'ten minutes' as '十分钟' rather than '10 分钟' so it adds no figure the English lacks. Check that it reads well next to '16:10 UTC'. | keep every number exactly
 faq.reset.p2,"The trap: a floating loss that survives the reset counts in full against the new day,
 because the previous day's profit does not carry over. A position comfortably inside the
 limit a minute before the reset can breach a minute after it without price moving at all. Bitfunded documents this

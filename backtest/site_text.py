@@ -41,7 +41,7 @@ def holdout():
     return json.loads(p.read_text())["holdout"] if p.exists() else None
 
 
-NO_EDGE_SHORT = "troid's own strategy shows no statistical edge."
+NO_EDGE_SHORT = "troid's own strategy shows no measurable edge."
 
 
 def no_edge_sentence():
@@ -49,7 +49,7 @@ def no_edge_sentence():
     tail = (f" Out of sample, on {h['n']} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures "
             f"{h['exp']:+.3f}R per trade, standard error {h['se']:.3f}R — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, "
             f"and not a fact about the future.") if h else ""
-    return "troid's own strategy shows no statistical edge." + tail
+    return "troid's own strategy shows no measurable edge." + tail
 
 
 def required_sentences():
