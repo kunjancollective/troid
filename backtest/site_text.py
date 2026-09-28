@@ -30,7 +30,7 @@ FOOTER_TEXT = ("troid is a free informational tool, not financial or investment 
 COPYRIGHT = "© 2026 Kunjan Patel"
 
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
-         ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/terms", "terms"),
+         ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/sources", "sources"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
          ("https://www.reddit.com/user/tradingdroid/", "reddit")]
 
@@ -59,9 +59,19 @@ def required_sentences():
     return [F[k]["required_disclaimer"].strip() for k in order if (F[k].get("required_disclaimer") or "").strip()]
 
 
+# /llms.txt (llmstxt.org; site_build.llms_txt), English only, for a language model reading the site: its headings and
+# the lines for the files an assistant can use. Each page's line is the page's own description (en.json). The lines are
+# troid's own words from elsewhere: og.description, index.doesnt.tools, METHODOLOGY.md's opening.
+LLMS = {"about": "Free. Never places orders.", "pages": "Pages", "assist": "For assistants", "optional": "Optional",
+        "troid_md": "troid's rules and arithmetic as one file — paste it into any assistant as a system prompt.",
+        "mcp": "The same for Claude Desktop or Cursor, with exact arithmetic.",
+        "methodology": "How numbers get onto a page, what tier each one carries, and every correction made since launch."}
+
+
 # The footer's link labels, keyed for translation (web/i18n/en.json); the English labels are LINKS above.
 LINK_KEYS = {"/": "product.desk", "/compare": "product.compare", "/ledger": "product.ledger", "/dashboard": "product.research",
-             "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq", "/terms": "common.link.terms",
+             "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq",
+             "/sources": "common.link.sources", "/terms": "common.link.terms",
              "https://github.com/kunjancollective/troid": "common.link.source", "https://x.com/tradingdroid": "common.link.x",
              "https://www.reddit.com/user/tradingdroid/": "common.link.reddit"}
 

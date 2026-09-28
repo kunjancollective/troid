@@ -1,4 +1,5 @@
 ﻿key,english,draft,reviewer_edit,note
+common.link.sources,sources,,,NEW: translate it in reviewer_edit | 
 common.mark.home,"troid, home",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 common.mark.ledger,troid's ledger,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 common.mark.live,troid's ledger is live: last shadow run {time} UTC,,,"NEW: translate it in reviewer_edit | keep {time} exactly as written; troid stays lowercase, in Latin letters"

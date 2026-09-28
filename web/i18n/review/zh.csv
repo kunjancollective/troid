@@ -20,6 +20,7 @@ common.link.terms,terms,条款,,
 common.link.source,source,源码,,
 common.link.x,x,x,,
 common.link.reddit,reddit,reddit,,
+common.link.sources,sources,,,NEW: translate it in reviewer_edit | 
 common.country.label,Your country,你所在的国家或地区,,
 common.country.unset,not set,未设置,,
 common.country.note,"Preselected from your browser's language, never from your location.",根据你的浏览器语言预选，从不根据你的位置。,,

@@ -21,6 +21,7 @@ common.link.terms,terms,условия,,
 common.link.source,source,код,,
 common.link.x,x,x,,
 common.link.reddit,reddit,reddit,,
+common.link.sources,sources,,,NEW: translate it in reviewer_edit | 
 common.country.label,Your country,Ваша страна,,
 common.country.unset,not set,не выбрана,,
 common.country.note,"Preselected from your browser's language, never from your location.",Выбрана заранее по языку вашего браузера и никогда — по вашему местоположению.,,

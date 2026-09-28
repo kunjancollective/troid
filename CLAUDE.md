@@ -79,7 +79,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
   sized as WebKit sizes them); `web/i18n/README.md` has the workflow. Every page's head comes from `site_build.head_extra()` (canonical,
   og:type and site name, the X card) and its JSON-LD from `site_build.jsonld()`, which `finish()` places before `</head>`
-  for the templates and the generators alike; `web/test_seo_head.py` holds both in every language.
+  for the templates and the generators alike; `write_seo()` writes `sitemap.xml` (a page's lastmod is the day its text
+  last changed) and `llms.txt`; `404.html` is English only (`i18n.ENGLISH_ONLY`); `web/test_seo_head.py` holds all of it.
 - `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
   the compare page, the firms panel and required disclaimers in the marked regions of

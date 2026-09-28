@@ -61,7 +61,7 @@ def staged_or_live(name, live):
 en = json.loads((ROOT / "web" / "i18n" / "en.json").read_text())
 texts = {f"en.json {k}": v for k, v in en.items() if isinstance(v, str) and not k.startswith("_")}
 files = ([*(ROOT / "web" / "templates").rglob("*.html"), *(ROOT / "web" / "public").glob("*.html"),
-          ROOT / "README.md", ROOT / "backtest" / "STRATEGY.md", ROOT / "backtest" / "WALKFORWARD.md", ROOT / "mcp" / "server.py",
+          ROOT / "README.md", ROOT / "web" / "public" / "llms.txt", ROOT / "backtest" / "STRATEGY.md", ROOT / "backtest" / "WALKFORWARD.md", ROOT / "mcp" / "server.py",
           *(ROOT / ".claude" / "skills" / "prop-trading-desk").rglob("*.md"), ROOT / ".claude" / "skills" / "prop-trading-desk" / "config.example.json",
           ROOT / "backtest" / "bitfunded_config.json", ROOT / "firms.json",
           staged_or_live("TROID.md", ROOT / "web" / "public" / "TROID.md"),

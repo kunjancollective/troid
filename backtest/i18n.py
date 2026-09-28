@@ -70,11 +70,17 @@ def en_hash(s):
     return hashlib.sha1(s.encode("utf-8")).hexdigest()[:10]
 
 
+# Keys only English shows: the page for an address with no page (web/public/404.html) is published in English alone,
+# so no review sheet asks for them and no language needs them to go live.
+ENGLISH_ONLY = ("404.",)
+
+
 def stale(code):
     """Keys whose English changed after the draft was written, or that the draft never had."""
     h, s = load(code)
     was = h.get("_drafted_from") or {}
-    return [k for k, v in english().items() if not s.get(k) or (was and was.get(k) != en_hash(v))]
+    return [k for k, v in english().items()
+            if not k.startswith(ENGLISH_ONLY) and (not s.get(k) or (was and was.get(k) != en_hash(v)))]
 
 
 def load(code):

@@ -14,11 +14,13 @@ A template asks for strings by key; a key missing from en.json stops the build.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import html
 import json
 import re
 import shutil
 import sys
+from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -33,7 +35,8 @@ ROOT = HERE.parent
 PUB = ROOT / "web" / "public"
 TEMPLATES = ROOT / "web" / "templates"
 SITE = json.loads((ROOT / "web" / "i18n" / "site.json").read_text())
-STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources"]   # rendered here; compare, ledger, tearsheet by their generators
+STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources", "404"]   # rendered here; compare, ledger, tearsheet by their generators
+NOT_FOUND = "404"   # web/public/404.html, which Vercel serves for any address with no page: English only, not in the sitemap
 PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources"]
 BASE_URL = "https://troid.ai"
 
@@ -113,10 +116,13 @@ def head_extra(T, page, live):
     once a second language is live."""
     lang = T.lang
     url = BASE_URL + page_url(T.code, page)
-    parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">',
-             '<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
-             '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
-    if len(live) > 1:
+    if page == NOT_FOUND:                   # the page for an address with no page: not indexed, no URL of its own
+        parts = ['<meta name="robots" content="noindex">']
+    else:
+        parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
+    parts += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
+              '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
+    if len(live) > 1 and page != NOT_FOUND:
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
         parts.append(f'<link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}">')
@@ -249,8 +255,9 @@ def finish(T, page, text):
 
 
 def switcher(T, page, live):
-    """Each published language, named in its own script. Nothing while only English is published."""
-    if len(live) < 2:
+    """Each published language, named in its own script. Nothing while only English is published, and nothing on the
+    page for an address with no page (it is published in English only)."""
+    if len(live) < 2 or page == NOT_FOUND:
         return ""
     items = []
     for c in live:
@@ -577,7 +584,7 @@ def render_static(codes, out=None, preview=False):
         T = i18n.Strings(code, fallback=preview)
         ctx = extra_context(T)
         for page in STATIC:
-            if not (TEMPLATES / f"{page}.html").exists():
+            if not (TEMPLATES / f"{page}.html").exists() or (page == NOT_FOUND and code != "en"):
                 continue                                    # not converted yet: the page in public/ stays as it is
             p = out_path(code, page, out)
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -590,26 +597,76 @@ def render_static(codes, out=None, preview=False):
     return written
 
 
-def write_seo(out=None):
-    """robots.txt (allow all, with the sitemap line) and sitemap.xml: every published page in every live language,
-    with its hreflang alternates once a second language is live. Written with each build."""
+def body_text(s):
+    """A page's body as a reader reads it: scripts, styles, drawings, comments and tags dropped, spaces collapsed. A
+    page's lastmod moves when this moves, not on a change to its head or to quantstats' fresh SVG ids."""
+    i = s.lower().find("<body")
+    b = s[i:] if i >= 0 else s
+    b = re.sub(r"<(script|style|svg|noscript|template)\b.*?</\1\s*>", " ", b, flags=re.S | re.I)
+    b = re.sub(r"<!--.*?-->", " ", b, flags=re.S)
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", b))).strip()
+
+
+# a URL's lastmod as the sitemap last wrote it, with the hash of the page's text on that date
+LASTMOD = re.compile(r"<loc>([^<]+)</loc>\s*<lastmod>(\d{4}-\d{2}-\d{2})</lastmod><!-- text ([0-9a-f]{16}) -->")
+
+
+def llms_txt():
+    """/llms.txt (llmstxt.org): what troid is and where each page and file is, for a language model reading the site.
+    English. Each page's line is its own description (en.json: its structured-data description where it has one, the
+    ledger's "Simulated: …", else the one it previews with when shared, else its meta description), the rest
+    site_text.LLMS and the footer's words, so the file changes when the pages do."""
+    T, L = i18n.Strings("en"), site_text.LLMS
+    names = {"index": "product.desk", "compare": "product.compare", "ledger": "product.ledger", "dashboard": "product.research",
+             "tearsheet": "common.link.tearsheet", "chat": "product.ask", "faq": "common.link.faq", "sources": "common.link.sources",
+             "terms": "common.link.terms"}
+
+    def line(page):
+        k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
+                 if k in T.en)
+        return f"- [{T(names[page])}]({BASE_URL}{page_url('en', page)}): {_plain(T(k))}"
+    repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
+    ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
+    out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
+           f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
+           f"## {L['pages']}", "", *[line(p) for p in PAGES], "",
+           f"## {L['assist']}", "",
+           f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
+           f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
+           f"- [METHODOLOGY.md]({BASE_URL}/METHODOLOGY.md): {L['methodology']}", "",
+           f"## {L['optional']}", "", *[f"- [{name}]({u})" for u, name in ext], ""]
+    return "\n".join(out)
+
+
+def write_seo(out=None, today=None):
+    """robots.txt (allow all, with the sitemap line), llms.txt, and sitemap.xml: every published page in every live
+    language, with its hreflang alternates once a second language is live, and its lastmod: the day its text last
+    changed (body_text), kept from the sitemap as last written while the text's hash is the same, else today (UTC).
+    Written with each build."""
     base = Path(out) if out else PUB
     live = targets()
+    old = base / "sitemap.xml"
+    prev = {m.group(1): (m.group(2), m.group(3)) for m in LASTMOD.finditer(old.read_text())} if old.exists() else {}
+    today = today or datetime.now(timezone.utc).date().isoformat()
     urls = []
     for code in live:
         for page in PAGES:
-            if not out_path(code, page, out).exists() and not (code == "en" and page == "tearsheet"):
+            f = out_path(code, page, out)
+            if not f.exists() and not (code == "en" and page == "tearsheet"):
                 continue
             alts = ""
             if len(live) > 1:
                 alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}"/>' for c in live)
                 alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}"/>'
-            urls.append(f"  <url>\n    <loc>{BASE_URL}{page_url(code, page)}</loc>{alts}\n  </url>")
+            loc = BASE_URL + page_url(code, page)
+            h = hashlib.sha256(body_text(f.read_text()).encode()).hexdigest()[:16] if f.exists() else "0" * 16
+            lm = prev[loc][0] if loc in prev and prev[loc][1] == h else today
+            urls.append(f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{lm}</lastmod><!-- text {h} -->{alts}\n  </url>")
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
     robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
     written = []
-    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots)):
+    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())):
         f = base / name
         if not f.exists() or f.read_text() != text:
             f.write_text(text); written.append(name)

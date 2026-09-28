@@ -12,6 +12,16 @@ items 2 and 3), for the published English pages and every language rendered with
   research page an Article, the sources a CollectionPage listing every source in sources.json.
 - The FAQPage holds each question the page shows, in order, with the answer's text as the page shows it.
 - Nothing in the JSON-LD can close its script early, and no string in it carries a tag.
+
+And the rest of 5.1 (items 5 to 8):
+- /llms.txt: troid's summary, the footer's disclosure, a line for every page with its address and its own description
+  (the ledger's "Simulated: …"), the files for assistants; every troid.ai address in it is a file the site serves.
+- The footer links /sources on every page; /research redirects to /dashboard, permanently (vercel.json).
+- sitemap.xml: every page with a lastmod, no later than today; a change to a page's text moves it to today, a change to
+  its head or to nothing keeps it; the page for an address with no page is not in it.
+- /404.html: noindex, no canonical, a link to each page it lists, every one a page the site serves; English only.
+- Headings: one h1 on every page; the FAQ's sections h2 and its questions and disclaimers h3, no level skipped; the
+  ledger's h1 is its name, troid's ledger.
 Reads files only. Spends nothing, calls no one.
 """
 import json
@@ -112,7 +122,105 @@ def check(label, path, code, page):
            [q["acceptedAnswer"]["text"] for q in qs] == [a for _, a in shown] and all(len(a) > 40 for _, a in shown))
 
 
+def served(href):
+    """A troid.ai address as web/public serves it (cleanUrls): a page, or a file."""
+    path = href.replace(site_build.BASE_URL, "", 1).split("#")[0].split("?")[0] or "/"
+    if path == "/":
+        return (site_build.PUB / "index.html").exists()
+    f = site_build.PUB / path.lstrip("/")
+    return f.is_file() or f.with_suffix(".html").is_file() or (f / "index.html").is_file()
+
+
+def levels(s):
+    return [int(x) for x in re.findall(r"<h([1-6])\b", s[s.find("<body"):])]
+
+
+def rest():
+    T = site_build.i18n.Strings("en")
+    # ---------------------------------------------------------------- llms.txt
+    L = (site_build.PUB / "llms.txt").read_text()
+    ok("llms.txt: a title, then troid's summary as its blockquote",
+       L.startswith("# troid\n\n> ") and site_build._plain(T("index.meta.description")) in L.split("\n")[2])
+    ok("llms.txt: the footer's disclosure, word for word", site_text.FOOTER_TEXT in L)
+    for page in site_build.PAGES:
+        url = site_build.BASE_URL + site_build.page_url("en", page)
+        m = re.search(r"^- \[[^\]]+\]\(" + re.escape(url) + r"\): (.+)$", L, re.M)
+        ok(f"llms.txt: {page} listed at {url} with a line of its own", m is not None and len(m.group(1)) > 30)
+    ok("llms.txt: the ledger's line says it is simulated",
+       re.search(r"\(https://troid\.ai/ledger\): Simulated: ", L) is not None)
+    links = re.findall(r"\]\((https://troid\.ai[^)]*)\)", L)
+    ok(f"llms.txt: every troid.ai address in it is served ({len(links)})", links and all(served(u) for u in links),
+       [u for u in links if not served(u)])
+    ok("llms.txt: TROID.md, the MCP server and METHODOLOGY.md for assistants",
+       all(x in L for x in ("(https://troid.ai/TROID.md)", "/tree/main/mcp)", "(https://troid.ai/METHODOLOGY.md)")))
+    ok("llms.txt: troid's accounts, as the footer links them", all(f"({u})" in L for u in SOCIAL))
+    ok("llms.txt: written by the build (site_build.llms_txt), unedited", L == site_build.llms_txt())
+
+    # ---------------------------------------------------------------- footer and redirect
+    for page in site_build.PAGES:
+        f = site_build.out_path("en", page)
+        ok(f"footer: {page} links /sources", '<a href="/sources">sources</a>' in f.read_text())
+    V = json.loads((ROOT / "web" / "vercel.json").read_text())
+    ok("vercel.json: /research redirects to /dashboard, permanently",
+       {"source": "/research", "destination": "/dashboard", "permanent": True} in V.get("redirects", []))
+
+    # ---------------------------------------------------------------- sitemap lastmod
+    X = (site_build.PUB / "sitemap.xml").read_text()
+    today = site_build.datetime.now(site_build.timezone.utc).date().isoformat()
+    marks = site_build.LASTMOD.findall(X)
+    locs = re.findall(r"<loc>([^<]+)</loc>", X)
+    ok(f"sitemap: every page has a lastmod no later than today ({len(locs)})",
+       len(marks) == len(locs) == len(site_build.PAGES) and all(d <= today for _, d, _ in marks), marks)
+    ok("sitemap: the page for an address with no page is not in it", not any("404" in u for u in locs))
+    with tempfile.TemporaryDirectory() as d:
+        d = Path(d)
+        for f in site_build.PUB.glob("*.html"):
+            (d / f.name).write_bytes(f.read_bytes())
+        (d / "sitemap.xml").write_text(re.sub(r"<lastmod>\d{4}-\d{2}-\d{2}</lastmod>", "<lastmod>2026-01-02</lastmod>", X))
+        site_build.write_seo(d, today="2026-09-30")
+        kept = dict((u, m) for u, m, _ in site_build.LASTMOD.findall((d / "sitemap.xml").read_text()))
+        ok("sitemap: nothing changed, every lastmod kept", set(kept.values()) == {"2026-01-02"}, kept)
+        faq = (d / "faq.html").read_text()
+        (d / "faq.html").write_text(faq.replace("<title>", '<meta name="x-test" content="head only"><title>', 1))
+        site_build.write_seo(d, today="2026-09-30")
+        kept = dict((u, m) for u, m, _ in site_build.LASTMOD.findall((d / "sitemap.xml").read_text()))
+        ok("sitemap: a change to a page's head keeps its lastmod", kept["https://troid.ai/faq"] == "2026-01-02", kept)
+        (d / "faq.html").write_text(faq.replace("</h1>", " (a test edit)</h1>", 1))
+        site_build.write_seo(d, today="2026-09-30")
+        kept = dict((u, m) for u, m, _ in site_build.LASTMOD.findall((d / "sitemap.xml").read_text()))
+        ok("sitemap: a change to a page's text moves its lastmod to today, and only its",
+           kept["https://troid.ai/faq"] == "2026-09-30" and sum(v == "2026-09-30" for v in kept.values()) == 1, kept)
+
+    # ---------------------------------------------------------------- 404
+    N = (site_build.PUB / "404.html").read_text()
+    nh = N[:N.find("</head>")]
+    ok("404: noindex, and no canonical or og:url of its own",
+       '<meta name="robots" content="noindex">' in nh and 'rel="canonical"' not in nh and 'property="og:url"' not in nh)
+    hrefs = re.findall(r'<ul class="pages">(.*?)</ul>', N, re.S)
+    hrefs = re.findall(r'href="([^"]+)"', hrefs[0]) if hrefs else []
+    ok(f"404: lists the pages, each one served ({len(hrefs)})",
+       set(hrefs) >= {"/", "/compare", "/ledger", "/dashboard", "/chat", "/faq", "/sources"} and all(served(h) for h in hrefs), hrefs)
+    ok("404: one h1, and the footer", levels(N).count(1) == 1 and site_text.FOOTER_TEXT in site_build.html.unescape(N))
+
+    # ---------------------------------------------------------------- headings
+    for page in site_build.PAGES:
+        f = site_build.out_path("en", page)
+        if page == "tearsheet":
+            continue                                        # quantstats' report: troid's box sits above it, no h1 of troid's
+        lv = levels(f.read_text())
+        ok(f"headings: {page} has one h1", lv.count(1) == 1, lv)
+    F = (site_build.PUB / "faq.html").read_text()
+    lv = levels(F)
+    ok("headings: the FAQ's sections are h2, its questions and disclaimers h3, no h4",
+       F.count('<h2 class="sec">') == 4 and len(re.findall(r'<div class="q"[^>]*>\s*<h3>', F)) >= 10 and 4 not in lv, lv)
+    ok("headings: the FAQ skips no level going down", all(b - a <= 1 for a, b in zip(lv, lv[1:])), lv)
+    G = (site_build.PUB / "ledger.html").read_text()
+    h1 = re.findall(r"<h1[^>]*>(.*?)</h1>", G, re.S)
+    ok("headings: the ledger's h1 is its name, troid's ledger", h1 == [T("product.ledger")], h1)
+
+
 def main():
+    rest()
     for page in site_build.PAGES:
         check(f"en {page}", site_build.out_path("en", page), "en", page)
     out = tempfile.TemporaryDirectory()

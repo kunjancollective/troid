@@ -36,7 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PUB = ROOT / "web" / "public"
 PAGES = ["index", "faq", "dashboard", "chat", "compare", "ledger", "terms"]   # sources is the evidence itself
-TEXTS = ["TROID.md", "README.md", "web/context/support.md", "web/context/TROID-CHARACTER.md", "METHODOLOGY.md"]
+TEXTS = ["TROID.md", "README.md", "web/context/support.md", "web/context/TROID-CHARACTER.md", "METHODOLOGY.md", "web/public/llms.txt"]
 
 TIER = re.compile(r"\b(SOURCED|DERIVED|MODELLED|MEASURED)\b")
 SOURCE = re.compile(r"\bread \d{4}-\d{2}-\d{2}|\bpublished\b|\bComputed from\b|\.py\b|\.md\b|\.json\b|\.csv\b|\bhref=|\bsha256\b", re.I)

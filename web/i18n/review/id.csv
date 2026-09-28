@@ -23,6 +23,7 @@ common.link.terms,terms,ketentuan,,
 common.link.source,source,sumber,,CHECK FIRST: common.nav.source and common.link.source: 'sumber' could be confused with rule 'sumber' (the source-not-recorded wording). 'kode' is an alternative.
 common.link.x,x,x,,
 common.link.reddit,reddit,reddit,,
+common.link.sources,sources,,,NEW: translate it in reviewer_edit | 
 common.country.label,Your country,Negara Anda,,
 common.country.unset,not set,belum diatur,,
 common.country.note,"Preselected from your browser's language, never from your location.","Dipilih otomatis dari bahasa browser Anda, tidak pernah dari lokasi Anda.",,

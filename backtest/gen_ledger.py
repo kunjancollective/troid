@@ -291,12 +291,16 @@ def render_ledger(T, live):
   margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}}
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
 .tc{{margin-bottom:18px}}.tchart{{height:300px;border:1px solid var(--line);border-radius:3px;overflow:hidden}}
-.tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
+.tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}
+/* the page's heading is its name, troid's ledger (launch handoff 2026-09-26, 5.1 item 8), in the eyebrow's look; the
+   strategy's name under it keeps the headline's */
+h1.eyebrow{{line-height:inherit;max-width:none}}
+.name{{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;font-weight:700;margin:0 0 14px;max-width:24ch}}</style>
 {site_build.head_extra(T, "ledger", live)}</head><body><div class="wrap">
 {header(T, live)}
 {site_build.ticker(T)}
-<p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</p>
-<h1>{code(T, cfg["name"])}</h1>
+<h1 class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</h1>
+<p class="name">{code(T, cfg["name"])}</p>
 <p class="lede">{T("ledger.hero.lede")}</p>
 <p class="meta">{asof}</p>
 <p class="meta" style="margin-top:-24px">{T("ledger.src.page")}</p>

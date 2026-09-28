@@ -82,6 +82,11 @@
       "source": "/desk-preview",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/research",
+      "destination": "/dashboard",
+      "permanent": true
     }
   ],
   "crons": [

@@ -126,9 +126,10 @@ h1{font-size:clamp(22px,3.4vw,28px);line-height:1.1;letter-spacing:-.03em;font-w
   nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
 }
 .meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
-h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
-h3{font-size:16px;margin:0 0 6px;font-weight:600}
-h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+/* h2 a section, h3 a question or a disclaimer under it (launch handoff 2026-09-26, 5.1 item 8); each looks as it did */
+.q h3{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
+h2{font-size:16px;margin:0 0 6px;font-weight:600}
+h2.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);margin:34px 0 12px;font-weight:500}
 p{margin:0 0 11px}p:last-child{margin-bottom:0}
 ul,ol{margin:0 0 11px;padding-inline-start:20px}li{margin-bottom:6px}
@@ -169,8 +170,8 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 /* disclaimer */
 .disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
   border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
-.disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
-.disc h4:first-child{margin-top:0}
+.disc h3{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
+.disc h3:first-child{margin-top:0}
 .foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
   margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}
 </style>
@@ -230,10 +231,10 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 
 
 
-<h3 class="sec">Base rates</h3>
+<h2 class="sec">Base rates</h2>
 
 <div class="q">
-<h2>What percentage of people actually pass?</h2>
+<h3>What percentage of people actually pass?</h3>
 <p>Data from FPFX Tech, a company that sells software to prop firms, reported by Finance Magnates in
 September 2024, covers more than 300,000 accounts from 100,000 traders at 10 firms. <span class="stat">14%</span>
 of those traders passed a challenge and reached a funded account. About 45% of them were then paid:
@@ -242,7 +243,7 @@ of those traders passed a challenge and reached a funded account. About 45% of t
 </div>
 
 <div class="q">
-<h2>What does it really cost to get funded?</h2>
+<h3>What does it really cost to get funded?</h3>
 <p>In the same data, an account spent an average of <span class="stat">$800</span> on challenge purchases
 over its whole life, typically across three challenges.</p>
 <p>Put the numbers together: <span class="flag">93%</span> of the traders in that data were never paid, so for
@@ -251,7 +252,7 @@ them the fees were a loss. That is what the published figures say about those tr
 </div>
 
 <div class="q">
-<h2>Why do people fail?</h2>
+<h3>Why do people fail?</h3>
 <p>One firm, OneFunded, has published its own figures: <span class="stat">93.7%</span> of its failed
 evaluations ended on a loss limit — 78.7% on the daily loss limit, 15.0% on the overall maximum — and 6.3% on
 inactivity and other rules. Its breaches cluster in the opening session and near the profit target, when traders
@@ -262,7 +263,7 @@ down to risk management issues.”</p>
 </div>
 
 <div class="q">
-<h2>Then what is troid actually offering?</h2>
+<h3>Then what is troid actually offering?</h3>
 <p>A free, open risk tool and the research behind it. It sizes positions against both of
 a firm's loss ceilings at once, net of fees, and tells you which one is actually
 binding. It does not publish trade signals and it will never place a trade.</p>
@@ -271,15 +272,15 @@ troid's desk, someone else's tool, or a spreadsheet, the arithmetic is the part 
 right.</p>
 </div>
 
-<h3 class="sec">Things worth knowing about the rules</h3>
+<h2 class="sec">Things worth knowing about the rules</h2>
 
 <div class="q" id="prop-challenge">
-<h2>What is a prop challenge, really?</h2>
+<h3>What is a prop challenge, really?</h3>
 <p>A prop challenge is an evaluation you pay for. The account you trade is usually a demo account. Your orders do not reach a real market, and the balance is not money you own. If you pass, the firm may pay you a share of simulated profits, on its own terms. In general, the firm is not a broker and holds no client funds. The fee buys the evaluation. It is not a deposit. So, in most cases, no broker regulation, client-money rule or investor-compensation scheme protects the account. Apart from the general consumer-protection law where you live, your protections are the firm's contract and nothing else. Read the contract before you pay: who you are contracting with, which country's law applies, what ends an account, and when a payout can be refused. A few firms also offer a route through a real exchange account. Check which kind you are buying.</p>
 </div>
 
 <div class="q">
-<h2>What is your daily loss limit really?</h2>
+<h3>What is your daily loss limit really?</h3>
 <p>On a $100,000 1-Step account it is a fixed $4,000 — 4% of the <em>initial</em> balance,
 not of the day's starting balance. The day's loss is measured from your balance at the
 reset, and it counts <em>floating</em> losses on open positions, not just closed ones.</p>
@@ -293,7 +294,7 @@ against the smaller of the two, always.</p>
 </div>
 
 <div class="q">
-<h2>When does your trading day reset?</h2>
+<h3>When does your trading day reset?</h3>
 <p>00:00 UTC+8, which is 16:00 UTC all year — not midnight. Local clocks move with daylight saving and UTC
 doesn't, so the reset's local hour depends on the date: read it in UTC.
 For a trader in New York it lands mid-session in every season, so a morning loss and an afternoon loss can fall on
@@ -308,7 +309,7 @@ themselves.</p>
 </div>
 
 <div class="q">
-<h2>How much should you risk per trade?</h2>
+<h3>How much should you risk per trade?</h3>
 <p>The right number depends on your system, so troid is not going to give you one.
 What it can show you is what the arithmetic does to the wrong one.</p>
 <p>troid simulated a trader with an edge of +0.35R per trade: 45% of trades won at 2:1. Risking 1% per
@@ -322,7 +323,7 @@ whether you survive long enough to use it.</p>
 </div>
 
 <div class="q">
-<h2>Do fees matter?</h2>
+<h3>Do fees matter?</h3>
 <p>More than most people model. Bitfunded charges 0.04% of position size on entry and
 again on exit, calculated on notional — which at 5× leverage is five times your margin.</p>
 <p>Because notional scales inversely with stop distance, tight stops are punished hardest.
@@ -331,10 +332,10 @@ A stop 3.9% away costs about 2% of your risk budget in fees. A 0.3% scalp stop c
 <p class="src">SOURCED · Bitfunded: help centre: Criteria to be Success (read 2026-09-23); help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage) (read 2026-09-23). DERIVED · troid's arithmetic: a trade sized so that the stop plus fees loses the risk budget pays 0.08% ÷ (stop% + 0.08%) of it in fees, 0.04% on entry and 0.04% on exit: 0.08 ÷ 3.98 ≈ 2% for a 3.9% stop, 0.08 ÷ 0.38 ≈ 21% for a 0.3% stop, and 21% of $500 ≈ $105. <a href="/sources#rules">Sources</a></p>
 </div>
 
-<h3 class="sec">About <span style="text-transform:none">troid</span></h3>
+<h2 class="sec">About <span style="text-transform:none">troid</span></h2>
 
 <div class="q">
-<h2>How does troid make money?</h2>
+<h3>How does troid make money?</h3>
 <p>Two ways, and only one exists yet.</p>
 <p>troid is an independent affiliate of the firms it compares. When
 someone buys a challenge through one of its links or codes, that firm pays troid a commission. It's
@@ -348,7 +349,7 @@ anyone buying a challenge, which is deliberate.</p>
 </div>
 
 <div class="q">
-<h2>Why should you trust any of this?</h2>
+<h3>Why should you trust any of this?</h3>
 <p>Don't, on troid's say-so. Everything above is checkable: the pass-rate data is published,
 Bitfunded's rules are in their own documentation, and troid's backtest code is open — you can
 run it and get the same numbers, including the unflattering ones.</p>
@@ -359,7 +360,7 @@ edge — and the page says so.</p>
 </div>
 
 <div class="q" id="ask-troid-conversations">
-<h2>Does troid keep my conversation with ask troid?</h2>
+<h3>Does troid keep my conversation with ask troid?</h3>
 <p>Yes, for 30 days. Each conversation is kept under a random session ID, shown under the
 message box, and deleted automatically 30 days after its last message. troid keeps your messages,
 ask troid's replies, the tools it used with their inputs and results, the rule sources and read
@@ -374,7 +375,7 @@ delete a conversation sooner, use &ldquo;delete this conversation&rdquo; under t
 </div>
 
 <div class="q" id="tracking">
-<h2>Does troid track me?</h2>
+<h3>Does troid track me?</h3>
 <p>No. troid sets no cookies and runs no analytics. The moving price tape at the top of each page is
 TradingView's: your browser loads it from TradingView's servers, which see your IP address and the page
 it sits on. <a href="https://www.tradingview.com/privacy-policy/">TradingView's privacy policy</a> covers that connection. With your device set to reduce motion,
@@ -382,7 +383,7 @@ the tape isn't loaded unless you press play; pausing it takes it off the page.</
 </div>
 
 <div class="q" id="fill">
-<h2>Can troid fill in the price?</h2>
+<h3>Can troid fill in the price?</h3>
 <p>For crypto, yes — tap "use" under Entry. The price there is the asset's spot price from Binance.US, asked about
 every 15 seconds and marked "delayed" once it is over a minute old. A symbol tapped on the tape at the top of the page
 opens the desk with that asset selected. Not for gold, oil or stocks at this time; type the price from the tape. Their
@@ -392,7 +393,7 @@ stop: the stop, the size and the trade stay yours.</p>
 </div>
 
 <div class="q">
-<h2>Is a challenge worth buying?</h2>
+<h3>Is a challenge worth buying?</h3>
 <p>troid doesn't answer that for anyone; it prices what you bring. The arithmetic is the same for every
 reader: a trader who cannot state an edge, an average win-to-loss ratio, and the losing streak their
 sizing survives will find those out from a challenge ($999 for Bitfunded's $100,000 1-Step, read 2026-09-23) faster than from a
@@ -403,33 +404,33 @@ on it. They're how troid is funded, and they cost you nothing extra. Direct is t
 is shown.</p>
 </div>
 
-<h3 class="sec">Disclaimer</h3>
+<h2 class="sec">Disclaimer</h2>
 <div class="disc">
-<h4>Not financial advice</h4>
+<h3>Not financial advice</h3>
 <p>Everything on this site is general information and education. It is not financial,
 investment, trading, tax, or legal advice, and it does not account for your circumstances,
 objectives, or risk tolerance. troid and the people who run it are not licensed financial advisors, brokers, or
 registered investment professionals. Consult a qualified professional before making
 financial decisions.</p>
 
-<h4>Affiliate relationship</h4>
+<h3>Affiliate relationship</h3>
 <p>troid is an independent affiliate of the firms it compares. It earns a commission on
 challenge purchases made through its links or discount codes. It is not an employee, agent or
 representative of any firm, and no firm owns or operates this website or is responsible for its
 contents. The current firms, and the criterion for choosing them, are on
 <a href="/compare">troid's compare</a>.</p>
-<h4>Simulated trading</h4>
+<h3>Simulated trading</h3>
 <p>Prop challenges and funded accounts are generally simulated trading environments.
 <a href="#prop-challenge">What is a prop challenge, really?</a> above says what that means for your protections.
 Read the firm's terms yourself.</p>
 
-<h4>Backtest and hypothetical results</h4>
+<h3>Backtest and hypothetical results</h3>
 <p>The hypothetical-performance disclosure, in the regulator's own words, is in
 <a href="/terms#hypothetical">troid's terms, section 6</a>, and beside every result on troid's ledger and
 troid's research. troid's published backtests cover BTC and ETH on one exchange feed; the out-of-sample test
 showed no measurable edge, and troid publishes that result rather than the in-sample one.</p>
 
-<h4>Prop firm evaluations</h4>
+<h3>Prop firm evaluations</h3>
 <p>Challenge fees are generally non-refundable if you fail. Breaching a firm rule can
 void accrued profits, terminate the account, or trigger a payout penalty — not merely
 end the evaluation. Firms change their terms, and troid's rule summaries can lag those
@@ -451,24 +452,24 @@ directly — Bitfunded provides support tickets for rule clarification.</p>
 <p>Beyond the affiliate relationship above, troid is not affiliated with, employed by, endorsed by, or authorised to speak for any
 prop firm.</p>
 
-<h4>Risk</h4>
+<h3>Risk</h3>
 <p>Trading leveraged cryptocurrency carries substantial risk. Most participants in prop
 firm evaluations do not receive a payout. Challenge fees are generally non-refundable.
 Never risk money you cannot afford to lose.</p>
 
-<h4>Software</h4>
+<h3>Software</h3>
 <p>troid's tools are provided as-is, without warranty of any kind. They perform arithmetic on
 numbers you supply. They do not place, modify, or close trades, and they never handle
 account credentials. You are responsible for verifying any output before acting on it.</p>
 
-<h4>Jurisdiction</h4>
+<h3>Jurisdiction</h3>
 <p>Availability and legality of prop firm services vary by country. It is your
 responsibility to confirm you are eligible to participate where you live.</p>
 </div>
 
 <!-- /dated -->
 <p class="foot"><!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end --></p>
 </div>
 </body>

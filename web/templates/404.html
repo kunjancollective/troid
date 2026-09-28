@@ -1,18 +1,25 @@
 {% include "partials/_head.html" %}<style>
-/* troid brand tokens — see BRAND.md. Identical block on every page. */
-:root{--dur-fast:120ms;--dur:240ms;--dur-slow:480ms;--ease-out:cubic-bezier(.2,.7,.3,1);--ease-inout:cubic-bezier(.65,0,.35,1);--bg:#070b12;--surface:#0d1420;--surface2:#131c2b;--line:#1c2839;--ink:#e6edf5;
-  --dim:#7d8aa0;--signal:#4da3ff;--warn:#e0a33c;--bad:#e05f4f;
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --dur-fast:120ms;--dur:240ms;--dur-slow:480ms;--ease-out:cubic-bezier(.2,.7,.3,1);--ease-inout:cubic-bezier(.65,0,.35,1);
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
-@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){--bg:#f7f9fc;--surface:#fff;
-  --surface2:#eef2f7;--line:#dde4ee;--ink:#0b1220;--dim:#5f6f86;--signal:#1f6fd1;--warn:#96661a;--bad:#a83f32}}
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);font-size:15px;
-  line-height:1.65;-webkit-font-smoothing:antialiased}
-.wrap{max-width:760px;margin:0 auto;padding:0 20px 70px}
-/* header */
-.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  border-bottom:1px solid var(--line);padding:22px 0 18px;margin-bottom:36px}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .mark{font-family:var(--mono);font-size:32px;font-weight:600;letter-spacing:-.04em;
   display:inline-flex;align-items:baseline;color:var(--ink)}
 .mark a{color:inherit;text-decoration:none;border:0}
@@ -96,221 +103,114 @@ button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
   border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
 .pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
 nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
-nav a{color:var(--dim);text-decoration:none;border:0}nav a:hover{color:var(--ink)}
-/* type */
-/* the page's title sits under the 32 px wordmark at every width: 22 px on a phone, 28 px from about 820 px up */
-h1{font-size:clamp(22px,3.4vw,28px);line-height:1.1;letter-spacing:-.03em;font-weight:700;margin:0 0 10px}
-.lede{color:var(--dim);font-size:16.5px;margin:0 0 6px;max-width:56ch}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+/* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
+h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:24ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
 /* the phone header (the owner's Android check, 2026-09-25): the nav on one line that scrolls sideways to the screen's
    edges (each link a 29 px target) and less space around it, so the desk's first field shows on a 390 px screen. The
    wordmark's size and the headline's under it are the same rule at every width (.mark and h1 above). */
 @media (max-width:640px){
-  .bar{row-gap:10px;padding-top:16px;margin-bottom:26px}
+  header{padding-top:16px;margin-bottom:26px}
+  .bar{row-gap:10px}
   nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
     scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
   nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
+  .hero{margin-bottom:24px}
 }
-.meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
-/* h2 a section, h3 a question or a disclaimer under it (launch handoff 2026-09-26, 5.1 item 8); each looks as it did */
-.q h3{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
-h2{font-size:16px;margin:0 0 6px;font-weight:600}
-h2.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
-  color:var(--dim);margin:34px 0 12px;font-weight:500}
-p{margin:0 0 11px}p:last-child{margin-bottom:0}
-ul,ol{margin:0 0 11px;padding-inline-start:20px}li{margin-bottom:6px}
-a{color:var(--signal);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--signal) 30%,transparent)}
-code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);padding:1px 5px;border-radius:2px}
-/* panels */
-.q,section,.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
-  padding:20px 22px;margin-bottom:12px}
-.src{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
-  padding-top:9px;margin-top:12px}
-.stat,.flag{font-family:var(--mono);font-weight:600;font-variant-numeric:tabular-nums}
-.flag{color:var(--bad)}.stat{color:var(--signal)}
-.verdict{border-inline-start:2px solid var(--signal)}
-.big{font-size:18px;line-height:1.45;margin-bottom:12px}
-.tag{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:500;padding:2px 8px;
-  border-radius:2px;background:var(--surface2);color:var(--dim);letter-spacing:.06em;text-transform:uppercase;
-  vertical-align:middle}
-.tag.bad{color:var(--bad)}.tag.warn{color:var(--warn)}.tag.good{color:var(--signal)}
-/* tables */
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px;font-family:var(--mono)}
-th{text-align:start;font-weight:500;color:var(--dim);font-size:10px;text-transform:uppercase;
-  letter-spacing:.1em;padding:0 0 8px;padding-inline:0 10px;border-bottom:1px solid var(--line)}
-td{padding-block:9px;padding-inline:0 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
-tr:last-child td{border-bottom:none}.num{text-align:end}
-.pick td{color:var(--signal);font-weight:500}
-/* audit findings */
-.finding{border-top:1px solid var(--line);padding:15px 0}
-.finding:first-of-type{border-top:none;padding-top:0}.finding:last-child{padding-bottom:0}
-.fh{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:5px}
-/* cells */
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;
-  background:var(--line);border:1px solid var(--line);border-radius:3px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
 .cell{background:var(--surface);padding:13px}
-.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
-.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
-.cell .n{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
-/* disclaimer */
-.disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
-  border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
-.disc h3{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
-.disc h3:first-child{margin-top:0}
-.foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
-  margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-inline-start:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+h3{font-size:15px;margin:18px 0 6px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+.pages{list-style:none;padding:0;margin:0;border-top:1px solid var(--line)}
+.pages li{border-bottom:1px solid var(--line);padding:14px 0}
+.pages a{font-family:var(--mono);font-size:14px;color:var(--signal);text-decoration:none}
+.pages a:hover{text-decoration:underline}
+.pages p{margin:4px 0 0;color:var(--dim);font-size:14px;line-height:1.55}
 </style>
 {{ head_extra }}</head>
 <body>
+
+{% include "partials/_header.html" %}
+
 <div class="wrap">
-<div class="bar">
-  {{ mark }}
-  {{ nav }}
-</div>
-{{ ticker }}
 
-<!-- dated: the date below is the last change between these marks (site_build.dated) -->
-<h1>{{ t("faq.hero.h1") }}</h1>
-<p class="lede">{{ t("faq.hero.lede") }}</p>
-<p class="meta">{{ t("faq.hero.updated", date=updated) }}</p>
-
-
-
-<h2 class="sec">{{ t("faq.sec.base") }}</h2>
-
-<div class="q">
-<h3>{{ t("faq.pass.q") }}</h3>
-<p>{{ t("faq.pass.p1") }}</p>
-<p class="src">{{ src("fpfx_payouts") }}</p>
+<div class="hero">
+  <p class="eyebrow" style="text-transform:none">404</p>
+  <h1>{{ t("404.hero.h1") }}</h1>
+  <p class="lede">{{ t("404.hero.lede") }}</p>
 </div>
 
-<div class="q">
-<h3>{{ t("faq.cost.q") }}</h3>
-<p>{{ t("faq.cost.p1") }}</p>
-<p>{{ t("faq.cost.p2") }}</p>
-<p class="src">{{ src("fpfx_payouts") }}</p>
+{#- Every page troid publishes, each with the line it previews with when shared (en.json *.og.description). #}
+<ul class="pages">
+{%- for href, name, line in [(H, "product.desk", "index.meta.description"), (L ~ "/compare", "product.compare", "compare.og.description"),
+                              (L ~ "/ledger", "product.ledger", "ledger.og.description"), (L ~ "/dashboard", "product.research", "dashboard.og.description"),
+                              (L ~ "/chat", "product.ask", "chat.og.description"), (L ~ "/faq", "common.link.faq", "faq.og.description"),
+                              (L ~ "/sources", "common.link.sources", "sources.og.description")] %}
+  <li><a href="{{ href }}">{{ t(name) }}</a><p>{{ t(line) }}</p></li>
+{%- endfor %}
+</ul>
+
 </div>
 
-<div class="q">
-<h3>{{ t("faq.fail.q") }}</h3>
-<p>{{ t("faq.fail.p1") }}</p>
-<p>{{ t("faq.fail.p2") }}</p>
-<p class="src">{{ src("onefunded_failures") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.offer.q") }}</h3>
-<p>{{ t("faq.offer.p1") }}</p>
-<p>{{ t("faq.offer.p2") }}</p>
-</div>
-
-<h2 class="sec">{{ t("faq.sec.rules") }}</h2>
-
-<div class="q" id="prop-challenge">
-<h3>{{ t("faq.challenge.q") }}</h3>
-<p>{{ t("faq.challenge.p") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.daily.q") }}</h3>
-<p>{{ t("faq.daily.p1") }}</p>
-<p>{{ t("faq.daily.p2") }}</p>
-<p>{{ t("faq.daily.p3") }}</p>
-<p class="src">{{ rules_src(["daily_pct", "max_pct", "daily_basis", "drawdown_type", "floating_counts"], "faq.daily.derived") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.reset.q") }}</h3>
-<p>{{ t("faq.reset.p1") }}</p>
-<p>{{ t("faq.reset.p2") }}</p>
-<p class="src">{{ rules_src(["reset_utc", "floating_counts"]) }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.risk.q") }}</h3>
-<p>{{ t("faq.risk.p1") }}</p>
-<p>{{ t("faq.risk.p2") }}</p>
-<p>{{ t("faq.risk.p3") }}</p>
-<p class="src">{{ t("faq.risk.src") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.fees.q") }}</h3>
-<p>{{ t("faq.fees.p1") }}</p>
-<p>{{ t("faq.fees.p2") }}</p>
-<p class="src">{{ rules_src(["fee_per_side_pct", "max_leverage"], "faq.fees.derived") }}</p>
-</div>
-
-<h2 class="sec">{{ t("faq.sec.about") }}</h2>
-
-<div class="q">
-<h3>{{ t("faq.money.q") }}</h3>
-<p>{{ t("faq.money.p1") }}</p>
-<p>{{ t("faq.money.p2") }}</p>
-<p>{{ t("faq.money.p3") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.trust.q") }}</h3>
-<p>{{ t("faq.trust.p1") }}</p>
-<p>{{ t("faq.trust.p2") }}</p>
-</div>
-
-<div class="q" id="ask-troid-conversations">
-<h3>{{ t("faq.keep.q") }}</h3>
-<p>{{ t("faq.keep.p") }}</p>
-</div>
-
-<div class="q" id="tracking">
-<h3>{{ t("faq.track.q") }}</h3>
-<p>{{ t("faq.track.p") }}</p>
-</div>
-
-<div class="q" id="fill">
-<h3>{{ t("faq.fill.q") }}</h3>
-<p>{{ t("faq.fill.p") }}</p>
-</div>
-
-<div class="q">
-<h3>{{ t("faq.worth.q") }}</h3>
-<p>{{ t("faq.worth.p1", **ref_price) }}</p>
-<p>{{ t("faq.worth.p2") }}</p>
-</div>
-
-<h2 class="sec">{{ t("faq.sec.disclaimer") }}</h2>
-<div class="disc">
-<h3>{{ t("faq.disc.advice.h") }}</h3>
-<p>{{ t("faq.disc.advice.p") }}</p>
-
-<h3>{{ t("faq.disc.affiliate.h") }}</h3>
-<p>{{ t("faq.disc.affiliate.p") }}</p>
-<h3>{{ t("faq.disc.simulated.h") }}</h3>
-<p>{{ t("faq.disc.simulated.p", question=t("faq.challenge.q")) }}</p>
-
-<h3>{{ t("faq.disc.hypo.h") }}</h3>
-<p>{{ t("faq.disc.hypo.p") }}</p>
-
-<h3>{{ t("faq.disc.eval.h") }}</h3>
-<p>{{ t("faq.disc.eval.p1") }}</p>
-<p>{{ t("faq.disc.eval.p2") }}</p>
-<p>{{ t("faq.disc.eval.p3") }}</p>
-<p>{{ t("faq.disc.eval.p4") }}</p>
-<p>{{ t("faq.disc.eval.p5") }}</p>
-
-<h3>{{ t("faq.disc.risk.h") }}</h3>
-<p>{{ t("faq.disc.risk.p") }}</p>
-
-<h3>{{ t("faq.disc.software.h") }}</h3>
-<p>{{ t("faq.disc.software.p") }}</p>
-
-<h3>{{ t("faq.disc.jurisdiction.h") }}</h3>
-<p>{{ t("faq.disc.jurisdiction.p") }}</p>
-</div>
-
-<!-- /dated -->
-<p class="foot"><!-- footer:start -->
+<footer><div class="wrap">
+<!-- footer:start -->
 {{ footer }}
-<!-- footer:end --></p>
-</div>
+<!-- footer:end -->
+</div></footer>
 </body>
 </html>
