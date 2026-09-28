@@ -35,6 +35,11 @@
    "text": "qualified professional",
    "word": true,
    "why": "the disclaimer telling the reader to seek advice, not a claim"
+  },
+  {
+   "page": "faq",
+   "text": "at $19/month or $190/year, tax included",
+   "why": "troid Pro's own price, the owner's decision (launch handoff 2026-09-26, 6.1-6.2; tax included, 28 Sep 2026): an offer troid makes, not a figure it computes or cites. Shown only once site.json pro_waitlist is true"
   }
  ]
 }

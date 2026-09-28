@@ -70,9 +70,10 @@ def en_hash(s):
     return hashlib.sha1(s.encode("utf-8")).hexdigest()[:10]
 
 
-# Keys only English shows: the page for an address with no page (web/public/404.html) is published in English alone,
+# Keys only English shows: the page for an address with no page (web/public/404.html) and troid Pro's waitlist page
+# (web/pro/waitlist.html, served by a function) are published in English alone,
 # so no review sheet asks for them and no language needs them to go live.
-ENGLISH_ONLY = ("404.",)
+ENGLISH_ONLY = ("404.", "pro.")
 
 
 def stale(code):

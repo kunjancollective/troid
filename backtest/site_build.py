@@ -37,6 +37,14 @@ TEMPLATES = ROOT / "web" / "templates"
 SITE = json.loads((ROOT / "web" / "i18n" / "site.json").read_text())
 STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources", "404"]   # rendered here; compare, ledger, tearsheet by their generators
 NOT_FOUND = "404"   # web/public/404.html, which Vercel serves for any address with no page: English only, not in the sitemap
+# Pages rendered for a function to serve, never into web/public: troid Pro's waitlist (launch handoff 6.4 step 1), which
+# web/api/pro/page.js serves at /pro only while TROID_WAITLIST is on. site.json pro_waitlist adds it to the sitemap and
+# llms.txt and the FAQ's "Will troid charge?" (6.3, gate 0: publish it once Vercel's plan allows a commercial page).
+PRIVATE = {"pro": ROOT / "web" / "pro" / "waitlist.html"}
+
+
+def published(page):
+    return page != "pro" or bool(SITE.get("pro_waitlist"))
 PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources"]
 BASE_URL = "https://troid.ai"
 
@@ -507,7 +515,7 @@ def common(T, page, live, preview=False):
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
             "country_box": country_box(T), "avail_attr": avail_attr(T),
-            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES}
+            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "pro_waitlist": published("pro")}
 
 
 def country_box(T):
@@ -601,6 +609,13 @@ def render_static(codes, out=None, preview=False):
             if not p.exists() or p.read_text() != text:
                 p.write_text(text)
                 written.append(str(p.relative_to(out if out else PUB)))
+        if code == "en" and out is None:
+            for page, p in PRIVATE.items():
+                # no price tape: TradingView's embed runs in the page, and this page takes an email
+                text = render(f"{page}.html", T, page, live, preview, **dict(ctx, ticker=""))
+                if not p.exists() or p.read_text() != text:
+                    p.write_text(text)
+                    written.append(str(p.relative_to(ROOT)))
         if T.missing:
             print(f"  {code}: {len(T.missing)} string(s) fell back to English (draft preview)")
     return written
@@ -628,7 +643,7 @@ def llms_txt():
     T, L = i18n.Strings("en"), site_text.LLMS
     names = {"index": "product.desk", "compare": "product.compare", "ledger": "product.ledger", "dashboard": "product.research",
              "tearsheet": "common.link.tearsheet", "chat": "product.ask", "faq": "common.link.faq", "sources": "common.link.sources",
-             "terms": "common.link.terms"}
+             "terms": "common.link.terms", "pro": "pro.hero.eyebrow"}
 
     def line(page):
         k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
@@ -638,7 +653,7 @@ def llms_txt():
     ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
     out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
            f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
-           f"## {L['pages']}", "", *[line(p) for p in PAGES], "",
+           f"## {L['pages']}", "", *[line(p) for p in PAGES + [p for p in PRIVATE if published(p)]], "",
            f"## {L['assist']}", "",
            f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
            f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
@@ -659,8 +674,8 @@ def write_seo(out=None, today=None):
     today = today or datetime.now(timezone.utc).date().isoformat()
     urls = []
     for code in live:
-        for page in PAGES:
-            f = out_path(code, page, out)
+        for page in PAGES + [p for p in PRIVATE if published(p) and code == "en"]:
+            f = PRIVATE[page] if page in PRIVATE else out_path(code, page, out)
             if not f.exists() and not (code == "en" and page == "tearsheet"):
                 continue
             alts = ""

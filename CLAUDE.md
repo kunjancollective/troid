@@ -55,6 +55,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`) is built and dark:
+  served at /pro only with `TROID_WAITLIST=on`, and `site.json` `pro_waitlist` adds the FAQ's "Will troid charge?";
+  both wait for gate 0 (Vercel Pro, or support's written OK). Settings and the publish steps: `web/README.md`.
 - `web/api/pro/`, `web/api/stripe-webhook.js`, `web/lib/{pro,stripe}.js`, `web/pro/`, `supabase/migrations/` — troid Pro
   through Stripe Managed Payments, **test mode only** until the launch gates clear (Vercel Pro, counsel, updated Terms, the
   owner's approval): `TROID_PRO=test` is refused on production and with a live key. Access is granted by the webhook alone,

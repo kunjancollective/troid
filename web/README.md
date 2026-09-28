@@ -151,6 +151,44 @@ each conversation after reading it.
 Local check without spending anything: `node web/test_assistant.js` runs the tool port
 against the calculator's reference case and the handler against a local fake of the API.
 
+## troid Pro's waitlist (`/pro`, `/pro/leave`, `api/pro/waitlist.js`), built, not published
+
+The launch handoff (2026-09-26), 6.4 step 1: a page reading "troid Pro is in preparation" with the features, the price
+($19/month or $190/year, tax included), "the free desk stays free", and a waitlist: an email, the first box ("Tell me
+when troid Pro opens", required) and a second for troid for agents, into the store, with a privacy line and a one-click
+leave link. The FAQ answers "Will troid charge?". **Not published** until the owner moves to Vercel Pro or Vercel
+support confirms in writing that the page is allowed on Hobby (6.3, gate 0: Hobby is for non-commercial use, and the
+fair-use guidelines count advertising a service as commercial).
+
+| file | route | what |
+|---|---|---|
+| `templates/pro.html` → `pro/waitlist.html` | `/pro` (where troid Pro's test mode is off), `/pro/waitlist`, `/pro/leave` | rendered by `backtest/site_build.py` from `en.json`'s `pro.*`, English only, never into `public/`; served by `api/pro/page.js` while the waitlist is on, otherwise 404. No price tape on it: TradingView's embed runs in the page, and this page takes an email. `/pro/leave` is the leave link's page: not indexed, and no Referer leaves it. |
+| `api/pro/waitlist.js` | `POST /api/pro/waitlist` | `{email, pro: true, agents}` joins (or changes the choices) and answers with the leave link; `{leave: <token>}` leaves; a form POST of `List-Unsubscribe=One-Click` to `?t=<token>` is a mail client's one-click unsubscribe (RFC 8058). Same-origin JSON only for joins, ten tries an hour per address (in memory). |
+
+Kept, per email: `waitlist:e:<sha256 of the email, lower-cased>` → the email as typed, the two choices, the consent's
+version (`2026-09-28`, the page's boxes and privacy line as committed on that date) and when; a year to live, set again
+on every join. The ids are also in the sets `waitlist:pro` and `waitlist:agents`: `SCARD waitlist:agents` in the Upstash
+console is the agents count (the handoff's threshold for building troid for agents is 50). Never an address or a user
+agent; the log line is counts only. A join answers the same whether the email was already on the list. The leave link
+is the id and an HMAC of it under `TROID_WAITLIST_KEY`: only troid can make one, and a new key voids the old links.
+
+| env | meaning |
+|---|---|
+| `TROID_WAITLIST` | `on` serves the page and takes the form. Anything else: 404, as before it existed. |
+| `TROID_WAITLIST_KEY` | 32 bytes or more (`openssl rand -hex 32`). Signs the leave links; without it the waitlist stays off. |
+| `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the store ask troid already uses. |
+
+To publish (the owner, after gate 0): set `TROID_WAITLIST=on` and `TROID_WAITLIST_KEY` in Vercel for Production and
+redeploy; then set `"pro_waitlist": true` in `web/i18n/site.json` and build (`python backtest/gen_compare.py`, or the
+next daily run), which adds the FAQ's "Will troid charge?", `/pro` to the sitemap and `llms.txt`. The price in the FAQ is
+allow-listed in `backtest/claim_allow.json` as troid's own offer. When troid Pro opens, the email to the list carries
+each person's leave link, and the headers `List-Unsubscribe: <https://troid.ai/api/pro/waitlist?t=<token>>` and
+`List-Unsubscribe-Post: List-Unsubscribe=One-Click`.
+
+Tests: `node web/test_pro_waitlist.js` (39: off and on, joins and refusals, the store, leave links forged or valid, the
+one-click unsubscribe, the page's views and headers, vercel.json) and `python web/test_pro_page.py` (26, the page in
+Chromium). `web/test_seo_head.py` checks both states of `pro_waitlist`.
+
 ## troid Pro — Stripe Managed Payments, test mode (`/pro`, `/account`, `api/pro/*`, `api/stripe-webhook.js`)
 
 Built 2026-09-26 from the owner's handoff ("Stripe Managed Payments for troid Pro", with the launch plan's section 6).

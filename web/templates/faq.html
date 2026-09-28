@@ -250,6 +250,13 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <p>{{ t("faq.money.p3") }}</p>
 </div>
 
+{% if pro_waitlist -%}
+<div class="q" id="charge">
+<h3>{{ t("faq.charge.q") }}</h3>
+<p>{{ t("faq.charge.p") }}</p>
+</div>
+
+{% endif -%}
 <div class="q">
 <h3>{{ t("faq.trust.q") }}</h3>
 <p>{{ t("faq.trust.p1") }}</p>

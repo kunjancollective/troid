@@ -229,8 +229,46 @@ def rest():
     ok("headings: the ledger's h1 is its name, troid's ledger", h1 == [T("product.ledger")], h1)
 
 
+def pro_waitlist():
+    """troid Pro's waitlist (launch handoff 6.4 step 1) stays unpublished until site.json pro_waitlist is true (gate 0:
+    Vercel's plan); then the FAQ's "Will troid charge?", its FAQPage entry, /pro in the sitemap and llms.txt appear, and
+    claim_check still finds nothing."""
+    import claim_check
+    T = site_build.i18n.Strings("en")
+    ok("unpublished: no /pro page in web/public, the waitlist page rendered for the function only",
+       not (site_build.PUB / "pro.html").exists() and site_build.PRIVATE["pro"].exists())
+    ok("unpublished: the FAQ has no 'Will troid charge?', the sitemap and llms.txt no /pro",
+       'id="charge"' not in (site_build.PUB / "faq.html").read_text() and "https://troid.ai/pro<" not in (site_build.PUB / "sitemap.xml").read_text()
+       and "(https://troid.ai/pro)" not in (site_build.PUB / "llms.txt").read_text())
+    was = site_build.SITE.get("pro_waitlist")
+    site_build.SITE["pro_waitlist"] = True
+    try:
+        faq = site_build.render("faq.html", T, "faq", ["en"], False, **site_build.extra_context(T))
+        ok("published: the FAQ answers 'Will troid charge?' as a question like the others, linking /pro",
+           re.search(r'<div class="q" id="charge">\s*<h3>Will troid charge\?</h3>', faq) is not None and 'href="/pro"' in faq
+           and "$19/month or $190/year, tax included" in faq)
+        ok("published: the FAQPage structured data carries it", '"name":"Will troid charge?"' in faq[:faq.find("</head>")])
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            for f in site_build.PUB.glob("*.html"):
+                (d / f.name).write_bytes(f.read_bytes())
+            (d / "faq.html").write_text(faq)
+            site_build.write_seo(d, today="2026-10-06")
+            X, L = (d / "sitemap.xml").read_text(), (d / "llms.txt").read_text()
+            ok("published: /pro in the sitemap with a lastmod, and in llms.txt with its own line",
+               re.search(r"<loc>https://troid\.ai/pro</loc>\s*<lastmod>\d{4}-\d\d-\d\d</lastmod>", X) is not None
+               and re.search(r"^- \[troid Pro\]\(https://troid\.ai/pro\): .{30,}$", L, re.M) is not None)
+            claim_check.PUB = d
+            found = claim_check.e1_page("faq", claim_check.allow_list())
+            ok("published: claim_check finds nothing on the FAQ (the price is troid's own offer, allow-listed with its reason)", not found, found)
+    finally:
+        site_build.SITE["pro_waitlist"] = was
+        claim_check.PUB = site_build.PUB
+
+
 def main():
     rest()
+    pro_waitlist()
     for page in site_build.PAGES:
         check(f"en {page}", site_build.out_path("en", page), "en", page)
     out = tempfile.TemporaryDirectory()
