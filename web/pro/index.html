@@ -147,7 +147,8 @@ dt{color:var(--dim);font-family:var(--mono)}dd{margin:0;font-family:var(--mono);
     return { status: r.status, data };
   }
   const why = (d) => (d && d.error ? d.error : "Something failed.") +
-    (d && d.stripe ? " Stripe: " + [d.stripe.type, d.stripe.code, d.stripe.param, d.stripe.message].filter(Boolean).join(" · ") : "") +
+    (d && d.stripe ? " Stripe" + (d.stripe.step ? " (" + d.stripe.step + ")" : "") + ": " +
+      [d.stripe.type, d.stripe.code, d.stripe.param, d.stripe.message].filter(Boolean).join(" · ") : "") +
     (d && d.problems ? " Missing: " + d.problems.join("; ") : "");
   const utc = (iso) => { const d = new Date(iso); return isNaN(d) ? "—" : d.toISOString().slice(0, 16).replace("T", " ") + " UTC"; };
 

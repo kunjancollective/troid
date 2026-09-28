@@ -106,7 +106,7 @@ const stripeFake = http.createServer(async (req, res) => {
   const raw = await readAll(req);
   stripeCalls.push({ method: req.method, path: req.url, headers: req.headers, form: Object.fromEntries(new URLSearchParams(raw)) });
   if (!/^Bearer [rs]k_(test|live)_/.test(req.headers.authorization || "")) return send(res, 401, { error: { type: "invalid_request_error", message: "Invalid API Key provided" } });
-  if (stripeFail) { const f = stripeFail; stripeFail = null; return send(res, f.status, { error: f.error }); }
+  if (stripeFail && (!stripeFail.path || stripeFail.path === req.url)) { const f = stripeFail; stripeFail = null; return send(res, f.status, { error: f.error }); }
   if (req.method === "GET" && req.url.startsWith("/v1/products?")) return send(res, 200, { object: "list", data: catalog.products });
   if (req.method === "GET" && req.url.startsWith("/v1/prices?")) {
     const product = new URL(req.url, "http://x").searchParams.get("product");
@@ -134,6 +134,11 @@ async function call(h, { method = "POST", headers = {}, body, url = "/" } = {}) 
   return { status: res.statusCode, data, res };
 }
 const auth = (who) => ({ authorization: "Bearer tok-" + who });
+async function quiet(fn) {                                    // runs fn with console.log captured: the lines it logged
+  const lines = [], orig = console.log;
+  console.log = (...a) => lines.push(a.join(" "));
+  try { return { v: await fn(), lines }; } finally { console.log = orig; }
+}
 const lastStripe = () => stripeCalls[stripeCalls.length - 1];
 
 const nowS = () => Math.floor(Date.now() / 1000);
@@ -321,13 +326,24 @@ async function main() {
   await call(checkout, { headers: { ...auth("A"), origin: undefined }, body: { plan: "monthly" } });
   ok("checkout: no origin → the branch URL off production", lastStripe().form.cancel_url === "https://troid-git-branch-team.vercel.app/pro");
   env();
-  stripeFail = { status: 400, error: { type: "invalid_request_error", code: "parameter_unknown", param: "managed_payments", message: "Received unknown parameter: managed_payments" } };
-  r = await call(checkout, { headers: auth("A"), body: { plan: "monthly" } });
-  ok("checkout: Stripe's refusal reaches the tester in test mode, with its parameter", r.status === 502 && r.data.stripe.param === "managed_payments"
+  stripeFail = { status: 400, error: { type: "invalid_request_error", code: "parameter_unknown", param: "managed_payments",
+                                       message: "Received unknown parameter: managed_payments (for a@example.com)" } };
+  let logged;
+  ({ v: r, lines: logged } = await quiet(() => call(checkout, { headers: auth("A"), body: { plan: "monthly" } })));
+  ok("checkout: Stripe's refusal reaches the tester in test mode: the call, the parameter, Stripe's words", r.status === 502
+     && r.data.stripe.step === "checkout session" && r.data.stripe.param === "managed_payments" && /unknown parameter/.test(r.data.stripe.message)
      && /Nothing was charged/.test(r.data.error), r.data);
+  const refusal = JSON.parse(logged.find((x) => x.includes('"error":"stripe"')) || "{}");
+  ok("checkout: the log names the call and, in test mode, Stripe's words with the email masked", refusal.step === "checkout session"
+     && refusal.param === "managed_payments" && /unknown parameter: managed_payments \(for <email>\)/.test(refusal.message)
+     && !logged.join("\n").includes("a@example.com"), refusal);
   const liveCfg = P.config({ ...ENV_ON, TROID_PRO: "live", STRIPE_SECRET_KEY: SECRET_LIVE, STRIPE_PUBLISHABLE_KEY: PK_LIVE,
                              SUPABASE_URL: "https://offline.supabase.co", STRIPE_API_BASE: undefined });
   ok("in live mode a buyer never sees Stripe's error text", liveCfg.on && !("stripe" in P.stripeError(liveCfg, { stripe: true, message: "x" })), liveCfg.problems);
+  const { lines: liveLines } = await quiet(() => P.stripeLog(liveCfg, "checkout", "checkout session",
+    Object.assign(new Error("Stripe's words, b@example.com"), { stripe: true, status: 400, type: "invalid_request_error" })));
+  ok("in live mode the log keeps the call, type and code, never Stripe's words", liveLines.length === 1
+     && !liveLines[0].includes("Stripe's words") && JSON.parse(liveLines[0]).step === "checkout session", liveLines);
   ok("live mode won't use a local Supabase", P.config({ ...ENV_ON, TROID_PRO: "live", STRIPE_SECRET_KEY: SECRET_LIVE, STRIPE_PUBLISHABLE_KEY: PK_LIVE })
      .problems.includes("SUPABASE_URL is not an https origin"));
 
@@ -563,6 +579,12 @@ async function main() {
      r.status === 200 && made.join() === "/v1/test_helpers/test_clocks,/v1/customers,/v1/checkout/sessions"
      && stripeCalls[stripeCalls.length - 2].form.test_clock && lastStripe().form.customer === "cus_clock_" + (seqStripe - 1), made);
   ok("test clock: never in live mode", P.config({ ...ENV_ON, TROID_PRO: "live", STRIPE_SECRET_KEY: SECRET_LIVE, STRIPE_PUBLISHABLE_KEY: PK_LIVE, TROID_PRO_TEST_CLOCK: "on" }).testClock === false);
+  for (const [path_, step] of [["/v1/test_helpers/test_clocks", "test clock"], ["/v1/customers", "test-clock customer"], ["/v1/checkout/sessions", "checkout session"]]) {
+    stripeFail = { path: path_, status: 400, error: { type: "invalid_request_error", message: "refused at " + path_ } };
+    ({ v: r } = await quiet(() => call(checkout, { headers: auth("F"), body: { plan: "monthly" } })));
+    ok("test clock: a refusal names the call Stripe refused: " + step, r.status === 502 && r.data.stripe.step === step
+       && r.data.stripe.message === "refused at " + path_, r.data);
+  }
   env();
 
   // --- 18. the owner's price lookup ----------------------------------------------------------------------------------------------

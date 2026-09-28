@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
     P.log({ route: "checkout", mode: c.mode, plan, returning: !!st.customer, session: session.id });
     return P.json(res, 200, { url: session.url });
   } catch (e) {
-    P.log({ route: "checkout", mode: c.mode, plan, error: "stripe", status: e.status || null, type: e.type || null, code: e.code || null, param: e.param || null });
-    return P.json(res, 502, P.stripeError(c, e));
+    P.stripeLog(c, "checkout", "checkout session", e, { plan });
+    return P.json(res, 502, P.stripeError(c, e, "checkout session"));
   }
 };

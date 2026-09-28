@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     P.log({ route: "portal", mode: c.mode });
     return P.json(res, 200, { url: session.url });
   } catch (e) {
-    P.log({ route: "portal", mode: c.mode, error: "stripe", status: e.status || null, type: e.type || null, code: e.code || null });
-    return P.json(res, 502, P.stripeError(c, e));
+    P.stripeLog(c, "portal", "portal session", e);
+    return P.json(res, 502, P.stripeError(c, e, "portal session"));
   }
 };

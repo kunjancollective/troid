@@ -104,10 +104,19 @@ function rawBody(req, limit = 1 << 20, waitMs = 5000) {
 
 const log = (o) => console.log(JSON.stringify({ troid: "pro", ...o }));   // never a key, an email or a user id
 // Stripe's refusal, with its reason in test mode, where the owner is the one reading (it answers whether Managed
-// Payments took a parameter); in live mode a buyer sees only that it failed.
-const stripeError = (c, e) => ({
+// Payments took a parameter); in live mode a buyer sees only that it failed. step names the call Stripe refused: a first
+// checkout with test clocks on makes three (test clock, test-clock customer, checkout session).
+const stripeError = (c, e, step) => ({
   error: "Stripe didn't accept the request. Nothing was charged.",
-  ...(c.mode === "test" && e && e.stripe ? { stripe: { status: e.status, type: e.type, code: e.code, param: e.param, message: e.message } } : {}),
+  ...(c.mode === "test" && e && e.stripe
+    ? { stripe: { step: e.step || step || null, status: e.status, type: e.type, code: e.code, param: e.param, message: e.message } } : {}),
+});
+// The same refusal in the log. In test mode it carries Stripe's own words, email addresses masked, so a refusal can be read
+// in Vercel's logs; live mode logs the call, type and code only.
+const stripeLog = (c, route, step, e, extra = {}) => log({
+  route, mode: c.mode, ...extra, step: e.step || step, error: "stripe", status: e.status || null, type: e.type || null,
+  code: e.code || null, param: e.param || null,
+  ...(c.mode === "test" && e.message ? { message: String(e.message).replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, "<email>").slice(0, 300) } : {}),
 });
 
 // --- Supabase ------------------------------------------------------------------------------------------------------------
@@ -180,11 +189,15 @@ function checkoutParams(c, user, plan, origin, customer) {
 // Test mode only (TROID_PRO_TEST_CLOCK=on): the customer gets a Stripe test clock, so a tester can advance time in the
 // Dashboard and watch a period end, a portal cancellation take effect and access lock, in minutes instead of a month.
 async function testClockCustomer(c, user) {
-  const clock = await S.request(c.secretKey, "POST", "/v1/test_helpers/test_clocks",
-                                { frozen_time: Math.floor(Date.now() / 1000), name: "troid Pro test " + user.id.slice(0, 8) });
-  const customer = await S.request(c.secretKey, "POST", "/v1/customers",
-                                   { email: user.email, test_clock: clock.id, metadata: { user_id: user.id } });
-  return customer.id;
+  let step = "test clock";
+  try {
+    const clock = await S.request(c.secretKey, "POST", "/v1/test_helpers/test_clocks",
+                                  { frozen_time: Math.floor(Date.now() / 1000), name: "troid Pro test " + user.id.slice(0, 8) });
+    step = "test-clock customer";
+    const customer = await S.request(c.secretKey, "POST", "/v1/customers",
+                                     { email: user.email, test_clock: clock.id, metadata: { user_id: user.id } });
+    return customer.id;
+  } catch (e) { throw Object.assign(e, { step }); }
 }
 
 // --- Stripe event → pro_apply_stripe_event() arguments ---------------------------------------------------------------------
@@ -224,4 +237,4 @@ function eventArgs(event) {
 }
 
 module.exports = { CHECKOUT_COPY, PRICE_ENV, HANDLED, config, report, json, bearer, refused, body, returnOrigin, rawBody, log,
-                   stripeError, signedIn, proStatus, applyEvent, checkoutParams, testClockCustomer, eventArgs };
+                   stripeError, stripeLog, signedIn, proStatus, applyEvent, checkoutParams, testClockCustomer, eventArgs };
