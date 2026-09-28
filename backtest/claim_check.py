@@ -5,6 +5,9 @@ E1, every number on a public page has its tier and its source. A number in a pag
   - its section (the text between two headings) carries a tier label (SOURCED, DERIVED, MODELLED, MEASURED) and a source
     (a link, a read or publication date, a script or file troid publishes); or
   - its own paragraph cites a document with a read date ("read 2026-09-23"), or links to its entry on /sources; or
+  - it is in a cell of troid's compare whose provenance line names the firm's rules, the date troid read them and the
+    document ("Computed from Bitfunded 1-Step rules as published on 2026-09-23 — Terms of Use 9(a) …"), with nothing in
+    the cell "not yet recorded", or says the figure is the reader's own ("From your inputs; no firm rule used."); or
   - it is an input example (a glossary note's "Example …", "Also called …"), a formula (<code>), a date or time, a
     clause or section number; or
   - it is on the allow-list (claim_allow.json), with the reason it needs no source.
@@ -16,8 +19,10 @@ each figure is read from its own source (firms.json, the walk-forward results, t
 checked for the contradictions the audit found (a 1-Step at $799, "no edge", a trade frequency or holdout that
 isn't the measured one, a reset or fee that isn't the firm's).
 
-The static pages are read as the build writes them; what their scripts draw (the desk's result, troid's compare cells)
-is held to its sources elsewhere (the desk's provenance block, gen_compare's unsourced()).
+The static pages are read as the build writes them. troid's compare carries its cells in the page, sized at its default
+inputs (gen_compare.static_column, launch handoff 2026-09-26, 5.1 item 4), so they are read here like any text, and
+gen_compare's unsourced() still refuses a filled cell with no recorded source; what the desk's script draws is held to
+its sources elsewhere (its provenance block).
 """
 from __future__ import annotations
 
@@ -46,7 +51,10 @@ SKIP = {"script", "style", "noscript", "svg", "template", "nav", "header", "foot
 
 
 CONTAINER_TAGS = {"section", "article", "aside"}
-CONTAINER_CLASSES = {"q", "panel", "stat", "hero", "disc", "discl", "hypo", "verdict"}
+CONTAINER_CLASSES = {"q", "panel", "stat", "hero", "disc", "discl", "hypo", "verdict", "r"}   # r: a cell of troid's compare
+# a compare cell's provenance line (gen_compare): the firm's rules as read on a date, from a named document; or the
+# reader's own inputs
+CELL = re.compile(r"\bComputed from .{1,160}? rules as published on \d{4}-\d{2}-\d{2}\b.{0,40}? — \S|\bFrom your inputs; no firm rule used\.", re.S)
 
 
 class _Blocks(HTMLParser):
@@ -159,11 +167,13 @@ def e1_page(page, allow):
     for sg in segs:
         body = " ".join(x["text"] + " " + x["code"] + " " + " ".join("href=" + h for h in x["links"]) for x in sg["blocks"])
         tiered = bool(TIER.search(body) and SOURCE.search(body))
+        cell = bool(CELL.search(body)) and "not yet recorded" not in body.lower()
         for b in sg["blocks"]:
             text = re.sub(r"\s+", " ", b["text"]).strip()
             if not text:
                 continue
-            why = ("tier and source in its box" if tiered else "a read date beside it" if READ.search(text)
+            why = ("tier and source in its box" if tiered else "its compare cell's provenance line" if cell
+                   else "a read date beside it" if READ.search(text)
                    else "its /sources entry" if any("/sources#" in h for h in b["links"])
                    else "an input example" if re.match(r"(Example|Also called)\b", text)
                    else "tier and source in its line" if TIER.search(text) and SOURCE.search(text + b["code"] + " ".join(b["links"])) else None)

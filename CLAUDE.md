@@ -82,6 +82,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
   the compare page, the firms panel and required disclaimers in the marked regions of
   `index.html` and `faq.html`. Generic text never names a firm. Edit `firms.json`, not the HTML.
+  The compare's columns are in the served page at its default inputs (`static_column`, figures by `backtest/jsnum.py`
+  and languages.json `num`), the same HTML its script writes: a change to its `render()` changes `static_column()` too,
+  and `web/test_compare_static.py` (Chromium, every language) proves the two equal.
 - `BRAND.md` — voice and visual tokens. troid never hypes; that is the brand.
 
 ## Promoting a candidate

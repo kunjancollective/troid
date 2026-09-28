@@ -14,18 +14,25 @@ target and price each have a recorded source (firms.json _link_rule, the page's 
 until then it is held. Nothing is
 scored. Nothing is ranked.
 
+The columns are in the page as served, sized at the page's default inputs (DEFAULTS; static_column, numbers written by
+jsnum.py as the browser writes them), so a reader without the script and a search or AI crawler read every value with
+its provenance line (launch handoff 2026-09-26, 5.1 item 4). The script's render() redraws them on load and on every
+input; at the defaults it writes the same HTML, which web/test_compare_static.py holds in Chromium for every language.
+A change to render() is a change to static_column(), and the test says so.
+
 The page renders once per published language (render_compare; site_build.py). Its words come from
 web/i18n (compare.*, and the script's compare.js.*); text from firms.json (labels, rule values, the
 criterion, link rule and disclosure, promo notes, open questions) goes through T.data, so a reviewed
 translation of it shows and anything unreviewed stays in English. Rule-source names stay in English.
 """
 from __future__ import annotations
-import json, html, re, sys
+import json, html, math, re, sys
 from pathlib import Path
 
 HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 import i18n
+import jsnum
 import site_build
 import site_text
 FIRMS = json.loads((HERE.parent / "firms.json").read_text())
@@ -193,7 +200,7 @@ def header(T, live):
 </div>'''
 
 
-def js(k, f, T):
+def js_data(k, f, T):
     """One firm's column data for the page's script. p holds the rule values as firms.json has them (the script's
     logic reads them); pt holds the ones whose text differs in T's language, which the script shows instead."""
     p = f["compare_product"]
@@ -207,7 +214,7 @@ def js(k, f, T):
             if t != p[x]:
                 pt[x] = t
     qs = f.get("_open_questions") or []
-    return json.dumps({"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
+    return {"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
                      **{b["cite"]: cite(f, b["cite"]) for b in (c.get("lev_bands") or []) if "max_leverage" not in pc}),
@@ -217,17 +224,206 @@ def js(k, f, T):
         "url": f.get("affiliate_url") if link_ok else None,
         "code": code if link_ok else None,
         "promo": T.data(f.get("_promo_note")) if link_ok else None,
-        "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}, ensure_ascii=site_text._english(T))
+        "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}
+
+
+def js(k, f, T):
+    return json.dumps(js_data(k, f, T), ensure_ascii=site_text._english(T))
+
+
+# The page's inputs as it opens. Its script sizes every column at these, and the page carries the columns already
+# sized at them, so a reader without the script, and a search or AI crawler, reads each firm's rules with their sources
+# (launch handoff 2026-09-26, 5.1 item 4: until then the columns were empty until the script ran).
+DEFAULTS = {"quota": 100000, "risk": 0.5, "stop": 1.66, "lev": 5}
+RESET_HM = re.compile(r"[0-9][0-9]?:[0-9][0-9]([–-][0-9][0-9]?:[0-9][0-9])?")      # the script's reset test, ASCII digits
+
+
+def _fmt(T):
+    """The page's $ and fx, as _numbers(T) defines them in its script: Intl in the page's locale where the reading
+    aids are on, otherwise toLocaleString and toFixed as an en-US browser writes them."""
+    if site_build.features_on(T):
+        I = jsnum.Intl(T.lang)
+        return (lambda x: I.usd(x, 0)), I.fixed
+    en = jsnum.Intl(i18n.BY_CODE["en"])
+    return (lambda x: "$" + en.num(x, 0)), jsnum.to_fixed
+
+
+def static_column(d, T, inputs=DEFAULTS):
+    """One firm's rows and column foot as the page's render() writes them at inputs: the same HTML, in the page before
+    the script runs. d is the firm's js_data(). Each step mirrors render() line for line (render() stays the page's
+    only logic once it runs); web/test_compare_static.py holds the two equal in Chromium, every language."""
+    J = json.loads(T.js("compare.js."))
+    usd, fx = _fmt(T)
+    features = site_build.features_on(T)
+    LAB = {k[4:]: v for k, v in J.items() if k.startswith("lab_")}
+    tail, lc = T("prov.tail"), T("index.js.list_comma")
+    P = '<span class="pend">' + J["pending"] + '</span>'
+    f, p = d, d["p"]
+    S = jsnum.js_str
+
+    def F(s, o):
+        return re.sub(r"\{([A-Za-z0-9_]+)\}", lambda m: S(o[m.group(1)]) if m.group(1) in o else m.group(0), s)
+
+    def esc(x):
+        return S(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+
+    def v(x, fmt=None):
+        return P if x is None else (fmt(x) if fmt else S(x))
+
+    def lst(a):
+        if not a:
+            return ""
+        acc = a[0]
+        for y in a[1:]:
+            acc = F(lc, {"a": acc, "b": y})
+        return acc
+
+    def andj(a):
+        return "".join(a) if len(a) < 2 else F(J["list_and"], {"a": lst(a[:-1]), "b": a[-1]})
+
+    def pv(keys, formula=None):
+        by, order, dates, miss = {}, [], [], []
+        for x in keys:
+            c = f["prov"].get(x)
+            if x in p and p[x] is None:
+                continue
+            if not c:
+                miss.append(LAB.get(x) or x)
+                continue
+            if c["c"] not in by:
+                by[c["c"]] = {"labs": [], "o": c["o"]}
+                order.append(c["c"])
+            by[c["c"]]["labs"].append(LAB.get(x) or x)
+            for dt in c["o"]:
+                if dt not in dates:
+                    dates.append(dt)
+        dates.sort()
+        o = {"firm": esc(f["name"]), "product": esc(f["label"]), "missing": lst(miss), "tail": tail}
+        if order:
+            o["dates"] = andj(dates)
+            o["sources"] = esc(order[0]) if len(order) == 1 and len(keys) == 1 else " · ".join(
+                F(J["pv_src_read"] if len(dates) > 1 and by[c]["o"] else J["pv_src"],
+                  {"labels": lst(by[c]["labs"]), "source": esc(c), "dates": andj(by[c]["o"])}) for c in order)
+            t = F(J["pv_dated_miss"] if miss else J["pv_dated"], o)
+        else:
+            t = F(J["pv_miss"] if miss else J["pv_plain"], o)
+        if formula:
+            t += " <code>" + formula + "</code>"
+        return '<div class="pv">' + t + '</div>'
+
+    def row(l, val, prov=""):
+        return '<div class="r"><div class="rt"><span class="l">' + l + '</span><span class="v">' + val + '</span></div>' + (prov or "") + '</div>'
+
+    def rr(l, x, fmt=None, formula=None):
+        val = p.get(x)
+        return row(l, v(f["pt"][x] if x in f["pt"] else val, fmt), "" if val is None else pv([x], formula))
+
+    def sec(t):
+        return '<div class="r sec">' + t + '</div>'
+
+    def reset(x):
+        return '<bdi data-utc-hm="' + S(x) + '">' + S(x) + ' UTC</bdi>' if RESET_HM.fullmatch(S(x)) else S(x)
+
+    Q, rp, s, lev = (float(inputs["quota"]), float(inputs["risk"]) / 100, float(inputs["stop"]) / 100,
+                     float(inputs["lev"]))
+    dly = p["daily_pct"] / 100 if p.get("daily_pct") is not None else None
+    m = p["max_pct"] / 100 if p.get("max_pct") is not None else None
+    is_static = p.get("drawdown_type") is not None and S(p["drawdown_type"]).startswith("static")
+    known = dly is not None and m is not None
+    derivable = known and p.get("drawdown_type") is not None and p.get("daily_basis") is not None
+    h = sec(J["sec_rules"])
+    h += row(J["row_daily_loss"], v(p.get("daily_pct"), lambda x: S(x) + "% · " + usd(Q * x / 100)),
+             "" if p.get("daily_pct") is None else pv(["daily_pct", "daily_basis"],
+                                                     J["f_daily_day_start"] if f["basis"] == "day_start" else J["f_daily"]))
+    h += rr(J["row_daily_basis"], "daily_basis")
+    h += rr(J["row_reset"], "reset_utc", reset if features else None)
+    h += row(J["row_max_loss"], v(p.get("max_pct"), lambda x: S(x) + "% · " + usd(Q * x / 100)),
+             "" if p.get("max_pct") is None else pv(["max_pct", "drawdown_type"], J["f_max"] if is_static else J["f_max_trailing"]))
+    h += rr(J["row_drawdown_type"], "drawdown_type")
+    h += rr(J["row_target"], "target_pct", lambda x: S(x) + "%")
+    h += rr(J["row_min_days"], "min_days")
+    h += rr(J["row_leverage_cap"], "max_leverage", lambda x: S(x) + "×")
+    h += rr(J["row_hold_cap"], "hold_cap")
+    h += rr(J["row_open_positions"], "max_open")
+    h += rr(J["row_consistency_rule"], "consistency_rule")
+    h += rr(J["row_news_rule"], "news_rule")
+    h += rr(J["row_profit_cap"], "profit_cap")
+    h += sec(J["sec_sizing"])
+    risk = rp * Q
+    h += row(J["row_risk"], usd(risk) + " (" + fx(rp * 100, 2) + "%)",
+             '<div class="pv">' + J["pv_inputs"] + ' <code>' + J["f_risk"] + '</code></div>')
+    K = ["daily_pct", "max_pct", "daily_basis", "drawdown_type"]
+    cross, cf = None, ""
+    if derivable and is_static:
+        if f["basis"] in ("initial", "max_balance_equity"):
+            cross, cf = Q * (1 - m + dly), J["f_cf_initial"]
+        elif f["basis"] == "day_start":
+            cross, cf = Q * (1 - m) / (1 - dly), J["f_cf_day_start"]
+    if cross is not None:
+        room = Q - cross
+        h += row(J["row_room"], usd(room) + " (" + fx(room / Q * 100, 1) + "%)", pv(K, F(J["f_room"], {"cf": cf})))
+        h += row(J["row_cross"], usd(cross), pv(K, F(J["f_cross"], {"cf": cf})))
+        h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk), "pct": fx(rp * 100, 2)})
+                 if room > 0 and risk > 0 else "—", pv(K, J["f_losses"]))
+        h += row(J["row_survive"], F(J["v_survive"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
+                 pv(["max_pct", "drawdown_type"], J["f_survive"]))
+    elif derivable and not is_static:
+        h += row(J["row_room"], '<span class="pend">' + J["v_room_trail"] + '</span>', pv(["drawdown_type"]))
+        h += row(J["row_cross"], '<span class="pend">' + J["v_cross_trail"] + '</span>', pv(["drawdown_type"]))
+        h += row(J["row_losses"], '<span class="pend">' + J["v_losses_trail"] + '</span>', pv(["drawdown_type"]))
+        h += row(J["row_survive"], F(J["v_survive_trail"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
+                 pv(["max_pct", "drawdown_type"], J["f_survive"]))
+    else:
+        h += row(J["row_room"], P) + row(J["row_cross"], P) + row(J["row_losses"], P) + row(J["row_survive"], P)
+    if p.get("fee_per_side_pct") is not None:
+        fee = p["fee_per_side_pct"] / 100
+        drag = 2 * fee / (s + 2 * fee) * 100 if s > 0 else 0
+        h += row(F(J["row_fee_at"], {"stop": fx(s * 100, 2)}), F(J["v_fee"], {"drag": fx(drag, 1), "fee": p["fee_per_side_pct"]}),
+                 pv(["fee_per_side_pct"], J["f_fee"]))
+    else:
+        h += row(J["row_fee"], P)
+    cap, ck = p.get("max_leverage"), "max_leverage"
+    if f["levb"] is not None:                              # an empty list is truthy in the script
+        cap = None
+        for b in f["levb"]:
+            if (b.get("max_quota") is None or Q <= b["max_quota"]) and (b.get("min_quota") is None or Q >= b["min_quota"]):
+                cap, ck = b["lev"], b["cite"]
+    if cap is not None:
+        L = min(lev, cap)
+        h += row(J["row_liq"], F(J["v_liq"], {"pct": fx((1 - (1 - 1 / L)) * 100, 0), "lev": L}),
+                 pv([ck], F(J["f_liq"], {"cap": cap, "quota": usd(Q)})))
+    else:
+        h += row(J["row_liq"], P)
+    h += sec(J["sec_cost"])
+    h += rr(J["row_price"], "price") + rr(J["row_refund"], "refund") + rr(J["row_split"], "split")
+    h += rr(J["row_us"], "us_available")
+    if f["url"]:
+        foot = F(J["foot_link"], {"url": f["url"], "name": f["name"]})
+        if f["code"]:
+            foot += "<br>" + F(J["foot_code"], {"code": f["code"]})
+        if f["promo"]:
+            foot += '<br><span style="color:var(--dim)">' + f["promo"] + '</span>'
+        if f["req"]:
+            foot += '<div class="req">' + f["req"] + '</div>'
+        if features:
+            foot = '<div data-avail-link>' + foot + '</div>'
+    else:
+        foot = '<span class="pend">' + F(J["foot_held"], {"name": f["name"]}) + '</span>'
+    if f["open_n"]:
+        foot += ('<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'
+                 + F(J["foot_open_n"] if f["open_n"] > 1 else J["foot_open_1"], {"n": f["open_n"], "first": f["open1"]}) + '</div>')
+    return h, foot
 
 
 def column(k, f, T):
     p = f["compare_product"]; n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
     tag = "good" if m == len(FIELDS) else ("warn" if m >= len(FIELDS)//2 else "bad")
+    rows, foot = static_column(js_data(k, f, T), T)
     return f'''<div class="col" id="col-{k}">
   <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">{html.escape(f["name"])}</div>
     <div class="s" style="margin-top:3px">{html.escape(T.data(p["label"]))}</div>
     <div style="margin-top:7px"><span class="tag {tag}">{T("compare.col.tag", n=n, total=len(FIELDS), m=m)}</span></div></div>
-  <div class="rows" id="rows-{k}"></div><div class="colfoot" id="foot-{k}"{site_build.avail_attr(T)(k)}></div></div>'''
+  <div class="rows" id="rows-{k}">{rows}</div><div class="colfoot" id="foot-{k}"{site_build.avail_attr(T)(k)}>{foot}</div></div>'''
 
 
 def render_compare(T, live):
@@ -267,10 +463,10 @@ def render_compare(T, live):
 <p class="lede">{T("compare.hero.lede")}</p>
 <p class="meta">{T("compare.hero.meta", date=html.escape(last_read()))}</p>
 {gov + chr(10) if gov else ""}<div class="panel"><p class="eyebrow">{T("compare.sizing.h")}</p><div class="inputs">
-  <div><label>{T("compare.sizing.quota")}</label><input id="quota" type="number" value="100000"></div>
-  <div><label>{T("compare.sizing.risk")}</label><input id="risk" type="number" step="any" value="0.5"></div>
-  <div><label>{T("compare.sizing.stop")}</label><input id="stop" type="number" step="any" value="1.66"></div>
-  <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="5"></div>
+  <div><label>{T("compare.sizing.quota")}</label><input id="quota" type="number" value="{jsnum.js_str(DEFAULTS["quota"])}"></div>
+  <div><label>{T("compare.sizing.risk")}</label><input id="risk" type="number" step="any" value="{jsnum.js_str(DEFAULTS["risk"])}"></div>
+  <div><label>{T("compare.sizing.stop")}</label><input id="stop" type="number" step="any" value="{jsnum.js_str(DEFAULTS["stop"])}"></div>
+  <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="{jsnum.js_str(DEFAULTS["lev"])}"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
 <p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
