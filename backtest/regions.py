@@ -53,8 +53,11 @@ def _panel_read(f, what):
 def panel_cell(k, f, T=None):
     T = _strings(T)
     p = f["compare_product"]; name = html.escape(f["name"])
+    # The review ranking chooses which firms troid covers (firms.json _criterion); it is not a standing troid gives a
+    # firm, so the panel shows no rank beside a name (the owner's independence stance, 29 Sep 2026). The dated review
+    # count below stays: it is the criterion's own figure, with its read date.
     rank = RANK.get(f["name"])
-    role = T("index.firms.reference") if f.get("reference") else (T("index.firms.rank", n=rank[0]) if rank else "")
+    role = T("index.firms.reference") if f.get("reference") else ""
     head = f"{name} · {role}" if role else name
     # One rule for every firm, the reference firm included: how many of the compare's rules are filled and how many
     # have a recorded source; a firm's own one-line summary (panel_summary), where it has one, sits above the count.
@@ -75,8 +78,7 @@ def panel_cell(k, f, T=None):
         code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")
         bits = [f'<a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">{T("index.firms.challenges", firm=name)}</a>',
                 T("index.firms.affiliate")]
-        if code: bits.append(T("index.firms.code", code=html.escape(code)))
-        if f.get("_promo_note"): bits.append(T("index.firms.promos"))
+        if code: bits.append(T("index.firms.code", code=html.escape(code)))   # the link, disclosed; no pitch beside it
         hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
         link = f'\n      <div class="s" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
         if (f.get("required_disclaimer") or "").strip():                # the firm's own wording, beside its link (2d)

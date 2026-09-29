@@ -22,7 +22,7 @@ A change to render() is a change to static_column(), and the test says so.
 
 The page renders once per published language (render_compare; site_build.py). Its words come from
 web/i18n (compare.*, and the script's compare.js.*); text from firms.json (labels, rule values, the
-criterion, link rule and disclosure, promo notes, open questions) goes through T.data, so a reviewed
+criterion, link rule and disclosure, open questions) goes through T.data, so a reviewed
 translation of it shows and anything unreviewed stays in English. Rule-source names stay in English.
 """
 from __future__ import annotations
@@ -225,7 +225,6 @@ def js_data(k, f, T):
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": code if link_ok else None,
-        "promo": T.data(f.get("_promo_note")) if link_ok else None,
         "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}
 
 
@@ -421,11 +420,11 @@ def static_column(d, T, inputs=DEFAULTS):
     h += rr(J["row_price"], "price") + rr(J["row_refund"], "refund") + rr(J["row_split"], "split")
     h += rr(J["row_us"], "us_available")
     if f["url"]:
+        # One line: the link, "affiliate link" and the code, as the index's firms panel has it. The link is disclosed,
+        # never sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026).
         foot = F(J["foot_link"], {"url": f["url"], "name": f["name"]})
         if f["code"]:
-            foot += "<br>" + F(J["foot_code"], {"code": f["code"]})
-        if f["promo"]:
-            foot += '<br><span style="color:var(--dim)">' + f["promo"] + '</span>'
+            foot += " · " + F(J["foot_code"], {"code": f["code"]})
         if f["req"]:
             foot += '<div class="req">' + f["req"] + '</div>'
         if features:
@@ -599,8 +598,7 @@ function render(){{
     h+=rr(f,T.row_us,"us_available");
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
-      if(f.code)foot+='<br>'+F(T.foot_code,{{code:f.code}});
-      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';
+      if(f.code)foot+=' · '+F(T.foot_code,{{code:f.code}});
       if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
     if(f.open_n)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'+F(f.open_n>1?T.foot_open_n:T.foot_open_1,{{n:f.open_n,first:f.open1}})+'</div>';
