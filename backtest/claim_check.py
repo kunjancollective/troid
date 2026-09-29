@@ -22,7 +22,8 @@ isn't the measured one, a reset or fee that isn't the firm's).
 The static pages are read as the build writes them. troid's compare carries its cells in the page, sized at its default
 inputs (gen_compare.static_column, launch handoff 2026-09-26, 5.1 item 4), so they are read here like any text, and
 gen_compare's unsourced() still refuses a filled cell with no recorded source; what the desk's script draws is held to
-its sources elsewhere (its provenance block).
+its sources elsewhere (its provenance block), and so is the calculator audit's line that audit.js draws under the desk
+from web/public/audit.json (verify_claims.py holds its counts to the report it links).
 """
 from __future__ import annotations
 
