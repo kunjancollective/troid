@@ -232,14 +232,14 @@ def ledger_data():
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
     cfg = json.loads(CFG.read_text())
     n = len(rows); wins = sum(1 for r in rows if float(r["pnl"])>0)
-    net = sum(float(r["pnl"]) for r in rows)
+    net = math.fsum(float(r["pnl"]) for r in rows)
     rs = [float(r["r"]) for r in rows]
-    exp = sum(rs)/n if n else 0
+    exp = math.fsum(rs)/n if n else 0
     se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
     noise30 = se*expected_max_normal(30)            # expected best of ~30 independent configs under a true zero edge
     flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
-    gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
-    gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
+    gw = math.fsum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
+    gl = -math.fsum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
     pf = gw/gl if gl else 0
     # this week / this month, by exit date
     now = dt.datetime.now(dt.timezone.utc)
@@ -273,7 +273,9 @@ def render_ledger(T, live):
             + T("ledger.warn.logged", live=len(d["logged_live"]), date=rows[0]["logged_utc"][:10] if rows else "—")
             + (" " + T("ledger.warn.flagged", n=d["flagged"]) if d["flagged"] else ""))
     status = word(T, "status", st["outcome"]) if st.get("outcome") else "—"
-    wk_r, mo_r = f'{sum(float(r["r"]) for r in wk):+.2f}R', f'{sum(float(r["r"]) for r in mo):+.2f}R'
+    # math.fsum, not sum: the exactly rounded total, the same on every Python (3.12's sum compensates and 3.11's
+    # doesn't, so a total at a tie, -0.775 over this month's 14 trades on 29 Sep 2026, showed -0.77 or -0.78 by version)
+    wk_r, mo_r = f'{math.fsum(float(r["r"]) for r in wk):+.2f}R', f'{math.fsum(float(r["r"]) for r in mo):+.2f}R'
     asof = T("ledger.hero.asof", asof=utc(T, st.get("as_of_bar_utc", "")) or "—",
              market=code(T, f'{cfg["instrument"]} {cfg["timeframe"]}'), profile=code(T, cfg["profile"]))
 
