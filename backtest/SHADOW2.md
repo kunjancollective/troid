@@ -74,8 +74,8 @@ already admitted, in this order: the vote, the volatility, the vol-of-vol. The m
 
 **Periods.** The holdout is 1 January 2025 to 21 September 2026, the frozen end of the sample (HANDOFF.md step 3);
 later bars are a live tail. Nothing is fitted on any year, so the rows before 2025 are reported as what they are:
-before the holdout. The 12-month lookback, the 365-day medians and the 90-day window need about fifteen months of
-bars before the first decision.
+before the holdout. The 12-month lookback, the 365-day medians and the 90-day window need about sixteen months of
+bars before the first decision (corrected from "fifteen" on 2026-09-29: 2,903 bars).
 
 **The cross-section.** Bitfunded's ten named major crypto assets (Restricted Trading Practices s.1): BTC, ETH, BNB,
 XRP, SOL, TRX, HYPE, ZEC, DOGE, ADA, each where binance.us has 4h history from before 1 January 2023, USDT pair
@@ -84,6 +84,17 @@ ATOM, UNI, ETC, ALGO (Bitfunded's other crypto, a 7-day hold). Every asset that 
 ten. TradFi (XAU, XAG, TSLA) has no binance.us history, and troid mixes no feeds: it stays open. PAXG, tokenised gold
 on binance.us if it is listed there, is reported apart as a gold proxy, with TradFi's 5-day hold, and not counted as
 TradFi. shadow-1 runs on the same assets, its config unchanged but for the hold limit of each asset's class.
+
+**Added 2026-09-29, before any cross-section data was fetched** (the BTC and ETH walk-forward had run; nothing
+here changes shadow-2, its periods or its verdicts):
+- An asset's file qualifies when its header names api.binance.us, its first bar is before 1 January 2023, at most 1% of
+  its bars are forward-filled and no forward-filled gap is longer than a day (six bars): a delisting and relisting would
+  otherwise read as a flat market. An asset that doesn't qualify is listed with the reason.
+- shadow-1 runs on each asset twice more, the two ablations HANDOFF.md asks the cross-section to settle: without the
+  regime filter (and so without its breakout), and with a single entry instead of the strength ladder. They are read as
+  a neighbourhood across assets.
+- The pooled tables also show the standard error clustered by entry week, for information: trades opened on different
+  days of one week can still ride the same move. The verdicts use the day, as fixed.
 
 ## What counts as surviving
 

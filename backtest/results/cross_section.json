@@ -1,0 +1,312 @@
+{
+ "window": [
+  "2025-01-01",
+  "2026-09-21"
+ ],
+ "assets": [
+  {
+   "asset": "BTC",
+   "pair": "BTCUSDT",
+   "cls": "major",
+   "hold": 60,
+   "first": "2021-01-01",
+   "s2": {
+    "n": 86,
+    "exp": -0.03374845005718206,
+    "se": 0.1394371007432842,
+    "lo": -0.3070451675140191,
+    "hi": 0.23954826739965498
+   },
+   "s1": {
+    "n": 195,
+    "exp": 0.010683253651979504,
+    "se": 0.028109362276177805,
+    "lo": -0.044411096409329,
+    "hi": 0.065777603713288
+   },
+   "s1_noregime": {
+    "n": 204,
+    "exp": 0.0036117808138503554,
+    "se": 0.02781318467208842,
+    "lo": -0.05090206114344294,
+    "hi": 0.05812562277114366
+   },
+   "s1_single": {
+    "n": 240,
+    "exp": -0.054518133744807434,
+    "se": 0.059204527248635126,
+    "lo": -0.1705590071521323,
+    "hi": 0.06152273966251741
+   },
+   "calm": {
+    "n": 46,
+    "exp": -0.11270138370401486,
+    "se": 0.17782250395425875,
+    "lo": -0.461233491454362,
+    "hi": 0.2358307240463323
+   },
+   "unsettled": {
+    "n": 40,
+    "exp": 0.05704742363667566,
+    "se": 0.22080059680299347,
+    "lo": -0.37572174609719156,
+    "hi": 0.48981659337054284
+   },
+   "compressed": {
+    "n": 38,
+    "exp": 0.1462617796312567,
+    "se": 0.225113655532683,
+    "lo": -0.294960985212802,
+    "hi": 0.5874845444753154
+   },
+   "expanded": {
+    "n": 48,
+    "exp": -0.1762565485605294,
+    "se": 0.17446644252152602,
+    "lo": -0.5182107759027204,
+    "hi": 0.16569767878166158
+   }
+  },
+  {
+   "asset": "ETH",
+   "pair": "ETHUSDT",
+   "cls": "major",
+   "hold": 60,
+   "first": "2021-01-01",
+   "s2": {
+    "n": 72,
+    "exp": -0.028021007716041664,
+    "se": 0.15113997252712566,
+    "lo": -0.32425535386920795,
+    "hi": 0.26821333843712464
+   },
+   "s1": {
+    "n": 169,
+    "exp": 0.010508010501648584,
+    "se": 0.028867286096428597,
+    "lo": -0.04607187024735147,
+    "hi": 0.06708789125064864
+   },
+   "s1_noregime": {
+    "n": 185,
+    "exp": 0.008998675496132348,
+    "se": 0.02781946482207437,
+    "lo": -0.045527475555133416,
+    "hi": 0.0635248265473981
+   },
+   "s1_single": {
+    "n": 231,
+    "exp": 0.0010067837861703509,
+    "se": 0.06203233091330725,
+    "lo": -0.12057658480391187,
+    "hi": 0.12259015237625256
+   },
+   "calm": {
+    "n": 39,
+    "exp": -0.1726114404867029,
+    "se": 0.18592269285050322,
+    "lo": -0.5370199184736892,
+    "hi": 0.19179703750028343
+   },
+   "unsettled": {
+    "n": 33,
+    "exp": 0.14285859464928524,
+    "se": 0.24573502139024378,
+    "lo": -0.3387820472755926,
+    "hi": 0.6244992365741631
+   },
+   "compressed": {
+    "n": 22,
+    "exp": -0.11063320199667213,
+    "se": 0.24973956846309472,
+    "lo": -0.6001227561843377,
+    "hi": 0.3788563521909935
+   },
+   "expanded": {
+    "n": 50,
+    "exp": 0.008328357767435745,
+    "se": 0.18924535913965393,
+    "lo": -0.36259254614628594,
+    "hi": 0.3792492616811574
+   }
+  }
+ ],
+ "skipped": [
+  [
+   "BNB",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "XRP",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "SOL",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "TRX",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "HYPE",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "ZEC",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "DOGE",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "ADA",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "LTC",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "LINK",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "BCH",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "DOT",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "AVAX",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "XLM",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "ATOM",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "UNI",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "ETC",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "ALGO",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ],
+  [
+   "PAXG",
+   "no file: api.binance.us has no 4h history for it, or it hasn't been fetched"
+  ]
+ ],
+ "proxy": null,
+ "pooled": {
+  "s2": {
+   "day": {
+    "n": 158,
+    "clusters": 134,
+    "exp": -0.03113847633210542,
+    "se": 0.11488991521422087,
+    "lo": -0.25632271015197833,
+    "hi": 0.19404575748776748
+   },
+   "week": {
+    "n": 158,
+    "clusters": 77,
+    "exp": -0.03113847633210542,
+    "se": 0.12540310195126986,
+    "lo": -0.27692855615659434,
+    "hi": 0.2146516034923835
+   }
+  },
+  "s1": {
+   "day": {
+    "n": 364,
+    "clusters": 253,
+    "exp": 0.010601890760754434,
+    "se": 0.021991853304652836,
+    "lo": -0.032502141716365125,
+    "hi": 0.053705923237873994
+   },
+   "week": {
+    "n": 364,
+    "clusters": 89,
+    "exp": 0.010601890760754434,
+    "se": 0.024106488981622768,
+    "lo": -0.03664682764322619,
+    "hi": 0.057850609164735056
+   }
+  },
+  "s1_noregime": {
+   "day": {
+    "n": 389,
+    "clusters": 265,
+    "exp": 0.006173671601053875,
+    "se": 0.02198040812453293,
+    "lo": -0.03690792832303067,
+    "hi": 0.049255271525138415
+   },
+   "week": {
+    "n": 389,
+    "clusters": 90,
+    "exp": 0.006173671601053875,
+    "se": 0.023161450603029782,
+    "lo": -0.039222771580884504,
+    "hi": 0.05157011478299225
+   }
+  },
+  "s1_single": {
+   "day": {
+    "n": 471,
+    "clusters": 298,
+    "exp": -0.027286167821971196,
+    "se": 0.046851461144209836,
+    "lo": -0.11911503166462248,
+    "hi": 0.06454269602068008
+   },
+   "week": {
+    "n": 471,
+    "clusters": 89,
+    "exp": -0.027286167821971196,
+    "se": 0.0519875002696939,
+    "lo": -0.12918166835057124,
+    "hi": 0.07460933270662884
+   }
+  }
+ },
+ "h2": {
+  "d": -0.2360283023206555,
+  "se": 0.22582293562841052,
+  "lo": -0.67864125615234,
+  "hi": 0.2065846515110291,
+  "clusters": 134
+ },
+ "bb": {
+  "d": 0.1341475289785701,
+  "se": 0.2189137754046175,
+  "lo": -0.2949234708144802,
+  "hi": 0.5632185287716204,
+  "clusters": 134
+ },
+ "decided": false,
+ "h1": {
+  "survived": null,
+  "positive": 0,
+  "of": 2
+ },
+ "h2_verdict": {
+  "survived": null,
+  "same_sign": 0,
+  "of": 2
+ }
+}

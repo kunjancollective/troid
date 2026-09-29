@@ -4,13 +4,15 @@
   python fetch_binance.py BTCUSDT 2021-01-01 data/BTCUSDT_4h.csv
 
 Forward-fills any gaps with flat bars so engine.py's regular-step contract holds,
-and prints how many it filled. Tries api.binance.com then api.binance.us.
+and prints how many it filled. Tries api.binance.com then api.binance.us; BINANCE_HOSTS
+(comma-separated) pins the hosts, so the cross-section's fetch reads api.binance.us alone and
+can't mix in a second feed if a runner ever reaches api.binance.com.
 NOT tested from the sandbox that wrote it (no egress there) — run it in Claude Code.
 """
-import sys, json, time, csv, datetime as dt, urllib.request, urllib.error
+import os, sys, json, time, csv, datetime as dt, urllib.request, urllib.error
 
 STEP = 14400
-HOSTS = ["https://api.binance.com", "https://api.binance.us"]
+HOSTS = os.environ.get("BINANCE_HOSTS", "https://api.binance.com,https://api.binance.us").split(",")
 
 def get(host, params):
     q = "&".join(f"{k}={v}" for k, v in params.items())

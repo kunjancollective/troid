@@ -153,7 +153,7 @@ def one(path, cfg):
 
     L = []
     L.append(f"## {sym}: {len(bars)} bars, {when(0):%Y-%m-%d} -> {when(len(bars) - 1):%Y-%m-%d}\n")
-    L.append(f"Data: `{Path(path).relative_to(HERE).as_posix()}`. Forward-filled bars in the file: {len(flat)}. The first decision "
+    L.append(f"Data: `{Path(path).resolve().relative_to(HERE).as_posix()}`. Forward-filled bars in the file: {len(flat)}. The first decision "
              f"with every input: {when(first):%Y-%m-%d} (bar {first}). Hold limit: {cfg['hold_bars'][S2.asset_class(asset, cfg)]} "
              f"bars ({S2.asset_class(asset, cfg)}).\n")
     L.append("| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |")

@@ -101,5 +101,34 @@ r2 = V.run(b1, V.build_signals(b1, *E.indicators(b1)), warm, challenge=True, ris
 ok("shadow-1's replay of its frozen sample is identical after shadow-2 ran", [(t["bar"], round(t["pnl"], 6)) for t in r1.trades]
    == [(t["bar"], round(t["pnl"], 6)) for t in r2.trades] and len(r1.trades) > 50, (len(r1.trades), len(r2.trades)))
 
+# the cross-section's statistics and data rule
+import random  # noqa: E402
+import tempfile  # noqa: E402
+import cross_section as X  # noqa: E402
+rng = random.Random(7)
+tr = [dict(r=rng.gauss(0.1, 1.0), k=j) for j in range(200)]
+iid = statistics.stdev([t["r"] for t in tr]) / math.sqrt(len(tr))
+ok("clustered SE with one trade a cluster is the plain standard error", abs(X.clustered(tr, lambda t: t["k"])["se"] - iid) < 1e-12)
+twins = [dict(r=t["r"], k=t["k"]) for t in tr] + [dict(r=t["r"], k=t["k"]) for t in tr]
+ok("a trade repeated in its own cluster doesn't shrink the error (clustering sees the copies)",
+   X.clustered(twins, lambda t: t["k"])["se"] > 0.99 * iid)
+a_, b_ = tr[:100], tr[100:]
+d = X.clustered_diff(a_, b_, lambda t: t["k"])
+welch = math.sqrt(statistics.variance([t["r"] for t in a_]) / 100 + statistics.variance([t["r"] for t in b_]) / 100)
+ok("the clustered difference with singleton clusters is Welch's, to within the degrees-of-freedom factor", abs(d["se"] / welch - 1) < 0.02, (d, welch))
+tmp = Path(tempfile.mkdtemp())
+rows = [(1609459200 + j * 14400, 10.0 + (j % 5), 11.0 + (j % 5), 9.0 + (j % 5), 10.5 + (j % 5)) for j in range(6000)]
+for j in range(3000, 3010):
+    rows[j] = (rows[j][0], 12.0, 12.0, 12.0, 12.0)                      # a ten-bar forward-filled gap
+f = tmp / "GAPUSDT_4h.csv"
+f.write_text('"# GAPUSDT 4h from https://api.binance.us, t,o,h,l,c, gaps forward-filled: 10"\n' + "\n".join(",".join(map(str, r)) for r in rows))
+gb, gt = S2.load(f)
+ok("the data rule refuses a gap longer than a day", "gap of 10 bars" in (X.qualify(f, gb, gt) or ""), X.qualify(f, gb, gt))
+f.write_text('"# GAPUSDT 4h from https://api.binance.com, t,o,h,l,c, gaps forward-filled: 0"\n' + "\n".join(",".join(map(str, r)) for r in rows[:2000]))
+gb, gt = S2.load(f)
+ok("the data rule refuses a second feed", "not api.binance.us" in (X.qualify(f, gb, gt) or ""), X.qualify(f, gb, gt))
+bb, bt = S2.load(HERE / "data" / "BTCUSDT_4h.csv")
+ok("BTC's file qualifies", X.qualify(HERE / "data" / "BTCUSDT_4h.csv", bb, bt) is None)
+
 print(f"\n{n - len(fails)} of {n} checks passed" + (f"; FAILED: {fails}" if fails else ""))
 sys.exit(1 if fails else 0)

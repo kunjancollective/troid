@@ -91,6 +91,9 @@ shadow-2 only if |corr| < 0.5 with everything already in. Candidates that pass o
 mechanism: funding rate, open-interest change, cross-asset (BTC dominance, DXY), macro
 calendar. Verify data availability before building on any of them.
 
+shadow-2 takes HANDOFF.md's route (time-series momentum, volatility targeting, a vol-of-vol state) with this gate
+applied to its inputs: `SHADOW2.md`.
+
 ## What would make it real
 
 In order: survive 10 assets (5 crypto, 5 TradFi) in the cross-section; survive the
