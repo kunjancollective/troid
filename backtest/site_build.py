@@ -45,7 +45,12 @@ PRIVATE = {"pro": ROOT / "web" / "pro" / "waitlist.html"}
 
 def published(page):
     return page != "pro" or bool(SITE.get("pro_waitlist"))
-PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources"]
+FIRMS_JSON = json.loads((ROOT / "firms.json").read_text())
+# troid's page of each compared firm's rules (launch handoff 2026-09-26, 5.2 A): /firms/<slug>, rendered by gen_compare
+# from firms.json, its words the generic firm.* strings with the firm's name (FirmT), so no firm is named in en.json
+FIRM_PAGES = {"firms/" + k.replace("_", "-"): k
+              for k in sorted(k for k, f in FIRMS_JSON.items() if isinstance(f, dict) and "compare_product" in f)}
+PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources", *FIRM_PAGES]
 BASE_URL = "https://troid.ai"
 
 ENV = Environment(loader=FileSystemLoader(str(TEMPLATES)), autoescape=False, keep_trailing_newline=True,
@@ -70,6 +75,67 @@ def page_url(code, page):
     if page == "index":
         return "/" if code == "en" else f"/{code}"
     return f"/{page}" if code == "en" else f"/{code}/{page}"
+
+
+class _FirmKeys:
+    """en.json as a firm's page sees it: its own keys ({page}.meta.title, {page}.og.*, …) are the generic firm.* keys."""
+    def __init__(self, en, prefix):
+        self.en, self.p = en, prefix
+
+    def _k(self, key):
+        return "firm." + key[len(self.p):] if isinstance(key, str) and key.startswith(self.p) else key
+
+    def __contains__(self, key):
+        return self._k(key) in self.en
+
+    def __getitem__(self, key):
+        return self.en[self._k(key)]
+
+    def get(self, key, default=None):
+        return self.en.get(self._k(key), default)
+
+    def __iter__(self):
+        return iter(self.en)
+
+    def __len__(self):
+        return len(self.en)
+
+    def keys(self):
+        return self.en.keys()
+
+    def items(self):
+        return self.en.items()
+
+
+class FirmT:
+    """T for a firm's page (FIRM_PAGES): the page's own keys read the generic firm.* strings with {firm}, the firm's name
+    from firms.json. Everything else is T's, so the head, the share tags, the structured data and llms.txt work as on
+    any page."""
+    def __init__(self, T, page):
+        self._T, self._p = T, page + "."
+        self.firm = FIRMS_JSON[FIRM_PAGES[page]]["name"]
+        self.en = _FirmKeys(T.en, self._p)
+
+    def _k(self, key, kw):
+        if key.startswith(self._p):
+            return "firm." + key[len(self._p):], {"firm": self.firm, **kw}
+        return key, kw
+
+    def __call__(self, key, **kw):
+        k, kw = self._k(key, kw)
+        return self._T(k, **kw)
+
+    def attr(self, key, **kw):
+        k, kw = self._k(key, kw)
+        return self._T.attr(k, **kw)
+
+    def __getattr__(self, name):
+        return getattr(self._T, name)
+
+
+def page_T(T, page):
+    """T as page reads it: a firm's page gets FirmT."""
+    return FirmT(T, page) if page in FIRM_PAGES and not isinstance(T, FirmT) else T
 
 
 def features_on(T):
@@ -250,6 +316,10 @@ def jsonld(T, page, text=""):
         graph.append({"@type": "Article", "@id": url + "#article", "headline": title, "description": desc, "url": url,
                       "mainEntityOfPage": url, "image": og(T, page)["image"], "author": {"@id": org_id},
                       "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page in FIRM_PAGES:
+        graph.append({"@type": "WebPage", "@id": url + "#page", "url": url, "name": title, "description": desc,
+                      "about": {"@type": "Organization", "name": FIRMS_JSON[FIRM_PAGES[page]]["name"]},
+                      "isPartOf": {"@id": site_id}, "publisher": {"@id": org_id}, "inLanguage": T.code})
     elif page == "sources":
         items = [{"@type": "ListItem", "position": i + 1,
                   "item": {k: v for k, v in (("@type", "CreativeWork"), ("name", x.get("title")), ("url", x.get("url")),
@@ -589,6 +659,8 @@ def render_page(page, T, live, preview=False, ctx=None):
         return render(f"{page}.html", T, page, live, preview, **(ctx if ctx is not None else extra_context(T)))
     if page == "tearsheet" and T.code == "en" and not getattr(T, "pseudo", False):
         return None
+    if page in FIRM_PAGES:
+        return __import__("gen_compare").render_firm(T, live, page, preview)
     mod_name, fn_name = GENERATED[page]
     fn = getattr(__import__(mod_name), fn_name, None)
     return fn(T, live) if fn else None
@@ -646,9 +718,11 @@ def llms_txt():
              "terms": "common.link.terms", "pro": "pro.hero.eyebrow"}
 
     def line(page):
+        P = page_T(T, page)
         k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
-                 if k in T.en)
-        return f"- [{T(names[page])}]({BASE_URL}{page_url('en', page)}): {_plain(T(k))}"
+                 if k in P.en)
+        name = P(names[page]) if page in names else P(f"{page}.name")
+        return f"- [{name}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
     repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
     ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
     out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
@@ -728,7 +802,7 @@ def main():
         live = targets(preview=True)
         for code in codes:
             T = i18n.Strings(code, fallback=True)
-            for page in GENERATED:
+            for page in [*GENERATED, *FIRM_PAGES]:
                 text = render_page(page, T, live, preview=True)
                 if text is not None:
                     q = out_path(code, page, out); q.parent.mkdir(parents=True, exist_ok=True); q.write_text(text)

@@ -49,7 +49,8 @@ def ok(name, cond, info=""):
 
 
 SOCIAL = [u for u, _ in site_text.LINKS if u.startswith("https://")]
-PAGE_TYPE = {"index": "WebApplication", "faq": "FAQPage", "ledger": "Dataset", "dashboard": "Article", "sources": "CollectionPage"}
+PAGE_TYPE = {"index": "WebApplication", "faq": "FAQPage", "ledger": "Dataset", "dashboard": "Article", "sources": "CollectionPage",
+             **{pg: "WebPage" for pg in site_build.FIRM_PAGES}}
 
 
 def strings(x):
@@ -67,7 +68,7 @@ def check(label, path, code, page):
     s = path.read_text()
     head = s[:s.find("</head>")]
     url = site_build.BASE_URL + site_build.page_url(code, page)
-    T = site_build.i18n.Strings(code, fallback=True)
+    T = site_build.page_T(site_build.i18n.Strings(code, fallback=True), page)
     desc = T.attr(site_build.description_key(T, page))
     ok(f"{label}: one meta description, the page's own ({site_build.description_key(T, page)})",
        head.count('name="description"') == 1 and f'<meta name="description" content="{desc}">' in head)
@@ -112,6 +113,11 @@ def check(label, path, code, page):
     elif want == "Article":
         ok(f"{label}: the research page's Article has its headline, author and image",
            e.get("headline") and e.get("author", {}).get("@id") == org.get("@id") and e.get("image", "").startswith("https://troid.ai/"), e)
+    elif want == "WebPage":
+        firm = site_build.FIRMS_JSON[site_build.FIRM_PAGES[page]]["name"]
+        ok(f"{label}: a firm's page is about the firm, by name, part of troid's site",
+           e.get("about") == {"@type": "Organization", "name": firm} and e.get("url") == url and firm in e.get("name", "")
+           and e.get("isPartOf", {}).get("@id") == site_build.BASE_URL + "/#website", e)
     elif want == "CollectionPage":
         items = e.get("mainEntity", {}).get("itemListElement", [])
         ok(f"{label}: the sources page lists every source in sources.json, with its link",

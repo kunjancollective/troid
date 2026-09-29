@@ -109,9 +109,10 @@ def reference():
     return FIRMS[next(k for k in ORDER if FIRMS[k].get("reference"))]
 
 
-def conflicts_html(T, f):
+def conflicts_html(T, f, heading="p"):
     """A firm's logged conflicts between its own documents (_conflicts_found), each side with its document, linked, and
-    the date troid read it, then what troid shows. Document labels and wording go through T.data."""
+    the date troid read it, then what troid shows. Document labels and wording go through T.data. heading: the tag of
+    its title line (a firm's page makes it a section heading, h2)."""
     S = (f.get("provenance") or {}).get("sources") or {}
     items = []
     for c in f.get("_conflicts_found") or []:
@@ -128,8 +129,9 @@ def conflicts_html(T, f):
                      f'{T("compare.conflicts.troid", what=html.escape(T.data(c["troid"])))}</li>')
     if not items:
         return ""
-    return (f'<div class="s" style="margin:10px 0 0;line-height:1.7"><p style="margin:0">'
-            f'{T("compare.conflicts.h", firm=html.escape(f["name"]), n=len(items))}</p>\n'
+    title = T("compare.conflicts.h", firm=html.escape(f["name"]), n=len(items))
+    head = f'<p style="margin:0">{title}</p>' if heading == "p" else f'<{heading}>{title}</{heading}>'
+    return (f'<div class="s" style="margin:10px 0 0;line-height:1.7">{head}\n'
             f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(items)}</ul></div>\n')
 
 
@@ -248,40 +250,42 @@ def _fmt(T):
     return (lambda x: "$" + en.num(x, 0)), jsnum.to_fixed
 
 
-def static_column(d, T, inputs=DEFAULTS):
-    """One firm's rows and column foot as the page's render() writes them at inputs: the same HTML, in the page before
-    the script runs. d is the firm's js_data(). Each step mirrors render() line for line (render() stays the page's
-    only logic once it runs); web/test_compare_static.py holds the two equal in Chromium, every language."""
-    J = json.loads(T.js("compare.js."))
-    usd, fx = _fmt(T)
-    features = site_build.features_on(T)
-    LAB = {k[4:]: v for k, v in J.items() if k.startswith("lab_")}
-    tail, lc = T("prov.tail"), T("index.js.list_comma")
-    P = '<span class="pend">' + J["pending"] + '</span>'
-    f, p = d, d["p"]
-    S = jsnum.js_str
+class _Kit:
+    """The page script's helpers (F, esc, list, andj, pv, row, rr, sec) in Python, for troid's compare columns
+    (static_column) and a firm's page (render_firm) alike: the same provenance line under every rule."""
+    def __init__(self, T):
+        self.J = J = json.loads(T.js("compare.js."))
+        self.usd, self.fx = _fmt(T)
+        self.features = site_build.features_on(T)
+        self.LAB = {k[4:]: v for k, v in J.items() if k.startswith("lab_")}
+        self.tail, self.lc = T("prov.tail"), T("index.js.list_comma")
+        self.P = '<span class="pend">' + J["pending"] + '</span>'
 
+    @staticmethod
     def F(s, o):
+        S = jsnum.js_str
         return re.sub(r"\{([A-Za-z0-9_]+)\}", lambda m: S(o[m.group(1)]) if m.group(1) in o else m.group(0), s)
 
+    @staticmethod
     def esc(x):
-        return S(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
+        return jsnum.js_str(x).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;")
 
-    def v(x, fmt=None):
-        return P if x is None else (fmt(x) if fmt else S(x))
+    def v(self, x, fmt=None):
+        return self.P if x is None else (fmt(x) if fmt else jsnum.js_str(x))
 
-    def lst(a):
+    def lst(self, a):
         if not a:
             return ""
         acc = a[0]
         for y in a[1:]:
-            acc = F(lc, {"a": acc, "b": y})
+            acc = self.F(self.lc, {"a": acc, "b": y})
         return acc
 
-    def andj(a):
-        return "".join(a) if len(a) < 2 else F(J["list_and"], {"a": lst(a[:-1]), "b": a[-1]})
+    def andj(self, a):
+        return "".join(a) if len(a) < 2 else self.F(self.J["list_and"], {"a": self.lst(a[:-1]), "b": a[-1]})
 
-    def pv(keys, formula=None):
+    def pv(self, f, keys, formula=None):
+        J, p, LAB, F, esc = self.J, f["p"], self.LAB, self.F, self.esc
         by, order, dates, miss = {}, [], [], []
         for x in keys:
             c = f["prov"].get(x)
@@ -298,12 +302,12 @@ def static_column(d, T, inputs=DEFAULTS):
                 if dt not in dates:
                     dates.append(dt)
         dates.sort()
-        o = {"firm": esc(f["name"]), "product": esc(f["label"]), "missing": lst(miss), "tail": tail}
+        o = {"firm": esc(f["name"]), "product": esc(f["label"]), "missing": self.lst(miss), "tail": self.tail}
         if order:
-            o["dates"] = andj(dates)
+            o["dates"] = self.andj(dates)
             o["sources"] = esc(order[0]) if len(order) == 1 and len(keys) == 1 else " · ".join(
                 F(J["pv_src_read"] if len(dates) > 1 and by[c]["o"] else J["pv_src"],
-                  {"labels": lst(by[c]["labs"]), "source": esc(c), "dates": andj(by[c]["o"])}) for c in order)
+                  {"labels": self.lst(by[c]["labs"]), "source": esc(c), "dates": self.andj(by[c]["o"])}) for c in order)
             t = F(J["pv_dated_miss"] if miss else J["pv_dated"], o)
         else:
             t = F(J["pv_miss"] if miss else J["pv_plain"], o)
@@ -311,15 +315,34 @@ def static_column(d, T, inputs=DEFAULTS):
             t += " <code>" + formula + "</code>"
         return '<div class="pv">' + t + '</div>'
 
+    @staticmethod
     def row(l, val, prov=""):
         return '<div class="r"><div class="rt"><span class="l">' + l + '</span><span class="v">' + val + '</span></div>' + (prov or "") + '</div>'
 
-    def rr(l, x, fmt=None, formula=None):
-        val = p.get(x)
-        return row(l, v(f["pt"][x] if x in f["pt"] else val, fmt), "" if val is None else pv([x], formula))
+    def rr(self, f, l, x, fmt=None, formula=None):
+        val = f["p"].get(x)
+        return self.row(l, self.v(f["pt"][x] if x in f["pt"] else val, fmt), "" if val is None else self.pv(f, [x], formula))
 
+    @staticmethod
     def sec(t):
         return '<div class="r sec">' + t + '</div>'
+
+
+def static_column(d, T, inputs=DEFAULTS):
+    """One firm's rows and column foot as the page's render() writes them at inputs: the same HTML, in the page before
+    the script runs. d is the firm's js_data(). Each step mirrors render() line for line (render() stays the page's
+    only logic once it runs); web/test_compare_static.py holds the two equal in Chromium, every language."""
+    K_ = _Kit(T)
+    J, usd, fx, features, P = K_.J, K_.usd, K_.fx, K_.features, K_.P
+    f, p = d, d["p"]
+    S, F, v = jsnum.js_str, K_.F, K_.v
+    row, sec = K_.row, K_.sec
+
+    def pv(keys, formula=None):
+        return K_.pv(f, keys, formula)
+
+    def rr(l, x, fmt=None, formula=None):
+        return K_.rr(f, l, x, fmt, formula)
 
     def reset(x):
         return '<bdi data-utc-hm="' + S(x) + '">' + S(x) + ' UTC</bdi>' if RESET_HM.fullmatch(S(x)) else S(x)
@@ -415,12 +438,17 @@ def static_column(d, T, inputs=DEFAULTS):
     return h, foot
 
 
+def firm_page(k):
+    """The address of a firm's page (site_build.FIRM_PAGES), without the language: firms/<slug>."""
+    return next(pg for pg, key in site_build.FIRM_PAGES.items() if key == k)
+
+
 def column(k, f, T):
     p = f["compare_product"]; n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
     tag = "good" if m == len(FIELDS) else ("warn" if m >= len(FIELDS)//2 else "bad")
     rows, foot = static_column(js_data(k, f, T), T)
     return f'''<div class="col" id="col-{k}">
-  <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600">{html.escape(f["name"])}</div>
+  <div class="colhead"><div style="font-family:var(--mono);font-size:15px;font-weight:600"><a href="{T.L}/{firm_page(k)}" style="color:inherit">{html.escape(f["name"])}</a></div>
     <div class="s" style="margin-top:3px">{html.escape(T.data(p["label"]))}</div>
     <div style="margin-top:7px"><span class="tag {tag}">{T("compare.col.tag", n=n, total=len(FIELDS), m=m)}</span></div></div>
   <div class="rows" id="rows-{k}">{rows}</div><div class="colfoot" id="foot-{k}"{site_build.avail_attr(T)(k)}>{foot}</div></div>'''
@@ -582,6 +610,90 @@ render();
 </script></body></html>''')
 
 
+# ------------------------------------------------------------------ a firm's page (launch handoff 2026-09-26, 5.2 A)
+# /firms/<slug>: every rule troid holds for one firm, from the firm's own documents, each with the section and the date
+# troid read it. The compare column for the firm first (the same rows and provenance lines, at the compare's default
+# sizing, no link: where affiliate links show is the owner's call, 5.3); then each product the desk sizes, a figure shown
+# only with a source recorded for that product (the compare product may use the firm-wide one, as its column does); the
+# funded stage and countries; the conflicts between the firm's documents; the rule changes troid logged.
+PRODUCT_FIELDS = [("daily_pct", "row_daily_loss", "%"), ("max_pct", "row_max_loss", "%"), ("target_pct", "row_target", "%"),
+                  ("min_days", "row_min_days", ""), ("max_leverage", "row_leverage_cap", "×"), ("split", "row_split", "")]
+
+
+def firm_read(f):
+    """The last date troid read one of the firm's documents."""
+    return max((s["read_on"] for s in ((f.get("provenance") or {}).get("sources") or {}).values() if s.get("read_on")), default="")
+
+
+def product_rows(k, f, T):
+    """Each other product troid's desk sizes for the firm (calc.products; the compare product is the rules section's),
+    its limits as rows with their provenance lines. A figure needs a source recorded for that product: the firm-wide
+    one would credit one product's source to another."""
+    K_ = _Kit(T)
+    cp = f["compare_product"].get("key")
+    h = ""
+    for pk, meta in ((f.get("calc") or {}).get("products") or {}).items():
+        if pk == cp:
+            continue                                      # the rules section above is this product's
+        vals = (f.get("products") or {}).get(pk) or {}
+        d = {"name": f["name"], "label": T.data(meta.get("label") or pk), "p": {}, "prov": {}, "pt": {}}
+        rows = ""
+        for x, lab, unit in PRODUCT_FIELDS:
+            val = vals.get(x)
+            if not isinstance(val, (int, float, str)) or isinstance(val, bool) or val == "":
+                continue
+            c = cite(f, x, pk, fallback=False)
+            if c is None:
+                rows += K_.row(K_.J[lab], '<span class="pend">' + T("firm.products.held") + '</span>')
+                continue
+            d["p"][x], d["prov"][x] = val, c
+            shown = K_.esc(T.data(val)) if isinstance(val, str) else jsnum.js_str(val) + unit
+            rows += K_.row(K_.J[lab], shown, K_.pv(d, [x]))
+        if rows:
+            h += K_.sec(K_.esc(d["label"])) + rows
+    return h
+
+
+def more_rows(k, f, T):
+    """The funded stage's rule and the countries the firm serves, where troid recorded a source for them."""
+    K_ = _Kit(T)
+    d = {"name": f["name"], "label": T.data(f["compare_product"]["label"]), "p": {}, "prov": {}, "pt": {}}
+    a = f.get("availability") or {}
+    h = ""
+    for x, key in (("trader_stage_rule", "firm.more.trader_stage"), ("availability", "firm.more.availability")):
+        c = cite(f, x)
+        if x == "trader_stage_rule":
+            shown = K_.esc(T.data(f[x])) if f.get(x) else None
+        else:
+            shown = (K_.esc(T.data(a["note"])) if a.get("note")
+                     else T("firm.more.excluded", list=", ".join(a["excluded"])) if a.get("excluded") else None)
+        if c is None or not shown:
+            continue
+        d["p"][x], d["prov"][x] = shown, c
+        h += K_.row(T(key), shown, K_.pv(d, [x]))
+    return h
+
+
+def render_firm(T, live, page, preview=False):
+    """A firm's page in T's language (site_build.FIRM_PAGES)."""
+    FT = site_build.page_T(T, page)
+    k = site_build.FIRM_PAGES[page]
+    f = FIRMS[k]
+    rows, _foot = static_column(js_data(k, f, FT), FT)          # the column's foot holds the firm's link: not here
+    # nor the column's sizing block: its "from your inputs" is the compare's inputs, and this page has none
+    K_ = _Kit(FT)
+    i, j = rows.index(K_.sec(K_.J["sec_sizing"])), rows.index(K_.sec(K_.J["sec_cost"]))
+    rows = rows[:i] + rows[j:]
+    read = firm_read(f)
+    meta = (FT(f"{page}.hero.meta_verified", date=read, verified=f.get("verified_on")) if f.get("verified") and f.get("verified_on")
+            else FT(f"{page}.hero.meta_unverified", date=read))
+    changes = [{"date": c.get("date", ""), "found": FT.data(c.get("found") or "")} for c in (f.get("rule_changes") or [])]
+    ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "rows": rows,
+           "products": product_rows(k, f, FT), "more": more_rows(k, f, FT), "conflicts": conflicts_html(FT, f, "h2"),
+           "changes": changes}
+    return site_build.render("firm.html", FT, page, live, preview, **ctx)
+
+
 def unsourced():
     """Every compare cell that shows a value without a recorded source: troid's rule is that a cell shows a value only
     from the firm's own document, so the build refuses one (challenge-proof audit, 2026-09-26, C). Source it with a read
@@ -596,10 +708,17 @@ def main():
         sys.exit("compare: filled but unsourced — source each from the firm's document or return it to pending: "
                  + "; ".join(f"{n} {x}" for n, x in bad))
     live = site_build.targets()
+    firm_pages = []
     for code in live:
         out = site_build.out_path(code, "compare")
         out.parent.mkdir(parents=True, exist_ok=True)
         out.write_text(render_compare(i18n.Strings(code), live))
+        for page in site_build.FIRM_PAGES:
+            out = site_build.out_path(code, page)
+            out.parent.mkdir(parents=True, exist_ok=True)
+            text = render_firm(i18n.Strings(code), live, page)
+            if not out.exists() or out.read_text() != text:
+                out.write_text(text); firm_pages.append(str(out.relative_to(PUB)))
     cov={k:sum(1 for x in FIELDS if FIRMS[k]["compare_product"].get(x) is not None) for k in ORDER}
     links=[k for k in ORDER if link_live(FIRMS[k])]
     import regions
@@ -621,7 +740,8 @@ def main():
     if not CONTEXT.exists() or CONTEXT.read_bytes() != (HERE.parent / "firms.json").read_bytes():
         CONTEXT.write_bytes((HERE.parent / "firms.json").read_bytes()); changed.append("context/firms.json")
     print(f"compare.html: coverage {cov} of {len(FIELDS)}, every filled cell sourced · links live: {links} · required disclaimers: "
-          f"{[n for n, _ in required_sentences()] or 'none'} · regions rewritten: {changed or 'none (already current)'}")
+          f"{[n for n, _ in required_sentences()] or 'none'} · firm pages written: {firm_pages or 'none (already current)'} · "
+          f"regions rewritten: {changed or 'none (already current)'}")
 
 
 if __name__ == "__main__":

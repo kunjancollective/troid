@@ -36,6 +36,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PUB = ROOT / "web" / "public"
 PAGES = ["index", "faq", "dashboard", "chat", "compare", "ledger", "terms"]   # sources is the evidence itself
+# each compared firm's rule page (site_build.FIRM_PAGES, named the same way; read here from firms.json, since this module
+# imports nothing of troid's: troid-social loads it on its own for PLUS_TAX)
+PAGES += ["firms/" + k.replace("_", "-") for k, f in sorted(json.loads((ROOT / "firms.json").read_text()).items())
+          if isinstance(f, dict) and "compare_product" in f]
 TEXTS = ["TROID.md", "README.md", "web/context/support.md", "web/context/TROID-CHARACTER.md", "METHODOLOGY.md", "web/public/llms.txt"]
 
 TIER = re.compile(r"\b(SOURCED|DERIVED|MODELLED|MEASURED)\b")

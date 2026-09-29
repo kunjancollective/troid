@@ -98,6 +98,11 @@
       "source": "/research",
       "destination": "/dashboard",
       "permanent": true
+    },
+    {
+      "source": "/firms",
+      "destination": "/compare",
+      "permanent": false
     }
   ],
   "crons": [

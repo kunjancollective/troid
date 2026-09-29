@@ -379,6 +379,33 @@ compare.js.foot_code,discount code <b>{code}</b> — cheaper through this link,c
 compare.js.foot_held,"Link held until daily, max, target and price each have a recorded source in {name}'s own documents, and {name}'s affiliate agreement allows it.","Enlace retenido hasta que diario, máximo, objetivo y precio tengan cada uno una fuente registrada en los propios documentos de {name}, y el acuerdo de afiliación de {name} lo permita.",,keep {name} exactly as written
 compare.js.foot_open_1,open: {n} question — {first},abierta: {n} pregunta — {first},,keep {first} {n} exactly as written
 compare.js.foot_open_n,open: {n} questions — {first} …,abiertas: {n} preguntas — {first} …,,keep {first} {n} exactly as written
+firm.meta.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.meta.description,"Every {firm} rule troid holds, from {firm}'s own documents: the daily and maximum loss and how each is measured, the daily reset, fees, leverage, holding limits and open positions, each with the section and the date troid read it.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.og.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.og.description,"{firm}'s loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.name,{firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.eyebrow,troid · a firm's rules,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.hero.h1,{firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.lede,"Every rule troid holds for {firm}, read from {firm}'s own documents. Each shows the document and the date troid read it; a rule troid has no value for says <em>pending</em>.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.hero.conflicts,"Where {firm}'s documents disagree, both sides are below.",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.govern,The firm's documents govern: verify with the firm before trading.,,,NEW: translate it in reviewer_edit | 
+firm.hero.meta_verified,last read {date} · verified {verified}: its terms read against its help centre,,,NEW: translate it in reviewer_edit | keep {date} {verified} exactly as written
+firm.hero.meta_unverified,last read {date} · not verified yet: troid hasn't read its terms against its help centre,,,"NEW: translate it in reviewer_edit | keep {date} exactly as written; troid stays lowercase, in Latin letters"
+firm.disclosure,"troid is an affiliate of {firm} and earns a commission on purchases through its links, which are on <a href=""{L}/compare"">troid's compare</a>. The rules and the arithmetic here don't change with it.",,,"NEW: translate it in reviewer_edit | keep {L} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.rules.h,The rules,,,NEW: translate it in reviewer_edit | 
+firm.rules.p,"The rows <a href=""{L}/compare"">troid's compare</a> shows for {firm}, each with its document and the date troid read it. A dollar amount beside a percentage is for the account size the compare opens at; <a href=""{H}"">troid's desk</a> and the compare work them out for yours.",,,"NEW: translate it in reviewer_edit | keep {H} {L} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.products.h,The other products troid holds,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.products.p,The limits of each other {firm} product troid's desk sizes. A figure troid holds without a source recorded for that product is held back until one is.,,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.products.held,held: source not yet recorded,,,NEW: translate it in reviewer_edit | 
+firm.more.h,More of {firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.more.trader_stage,Funded stage,,,NEW: translate it in reviewer_edit | 
+firm.more.availability,Countries,,,NEW: translate it in reviewer_edit | 
+firm.more.excluded,excluded: {list},,,NEW: translate it in reviewer_edit | keep {list} exactly as written
+firm.changes.h,"What changed, as troid logged it",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.changes.p,"SOURCED: each entry is the day troid found a change in {firm}'s documents, as recorded in <a href=""https://github.com/kunjancollective/troid/blob/main/firms.json"">firms.json</a> (rule_changes). The rules above are as troid read them after it.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.changes.none,None logged yet.,,,NEW: translate it in reviewer_edit | 
+firm.next.h,The arithmetic,,,NEW: translate it in reviewer_edit | 
+firm.next.p,"<a href=""{H}"">troid's desk</a> sizes a trade on these rules: choose {firm} in its {field} field. <a href=""{L}/compare"">troid's compare</a> sets them beside the other firms'. <a href=""{L}/sources"">troid's sources</a> list every outside figure troid uses.",,,"NEW: translate it in reviewer_edit | keep {H} {L} {field} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 ledger.meta.title,troid's ledger,libro mayor de troid,,"troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -1219,6 +1246,7 @@ sources.rules.h,Firm rules,,,NEW: translate it in reviewer_edit |
 sources.rules.p,"Every firm rule troid states — loss limits, fees, hold limits, prices — comes from the firm's own document, with the section and the date troid read it, shown beside the rule on <a href=""{L}/compare"">troid's compare</a>. A rule troid hasn't read shows “pending”.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 tier.rules,"SOURCED · {firm}: {docs}. <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
 tier.rules_derived,"SOURCED · {firm}: {docs}. DERIVED · {derived} <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {derived} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
+data.032acfb05e68,"Express profit target. Help centre, Challenge & Trader Stage: 9%. The 28 Aug 2026 blog: 3%. The Terms are silent on Express. troid shows 9%.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.0784116eb356,none stated for 1-Phase (Ascend has one; may be added with notice),,,text from a firm's rules (firms.json); keep every number exactly
 data.07f0abb8afb6,"9%, the help centre's figure; the Terms are silent on the Express",,,text from a firm's rules (firms.json); keep every number exactly
 data.0a4d98ce7cde,a full (100%) refund at every level once the trader completes it and reaches the first profit split day,,,text from a firm's rules (firms.json); keep every number exactly
@@ -1235,6 +1263,7 @@ data.1f7a32c047e8,none if the evaluation is not completed,ninguno si la evaluaci
 data.237a7e91268a,23:30–23:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window,rollover 23:30–23:59 CET = 21:30 UTC (CEST) / 22:30 UTC (CET); la empresa aconseja no operar en esa franja,,text from a firm's rules (firms.json); keep every number exactly
 data.257a7ac64978,Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link — no code needed.,"Bitfunded hace sus propias promociones (compra uno y llévate otro, y similares) y se aplican a través de este enlace, sin necesidad de código.",,"CHECK FIRST: data.71f8e7976e4c ('none' → 'no hay'), data.d4978ed5cbab, data.e49a4a29c821: 'none' is rendered with a gender-neutral 'no hay' because the same string fills rows of different gender (reembolso, regla). data.1f7a32c047e8 uses 'ninguno' because it only fills the refund row. data.257a7ac64978 translates buy-one-get-one as 'compra uno y llévate otro' rather than the usual '2x1', because '2x1' would add figures. | text from a firm's rules (firms.json)"
 data.2b53c3a2e09f,1-Step 4% / 6% static · 2-Step Stage 1 5% / 10%,,,text from a firm's rules (firms.json); keep every number exactly
+data.2d300006d189,Help centre (Restricted Trading Practices) says 5 open positions and tiered hold caps; ToU 14(d)(xi)/(x) say 10 and flat 10 days. Help centre newer; stricter applied.,,,text from a firm's rules (firms.json); keep every number exactly
 data.32470a1f372d,a blog post of May 2026,,,text from a firm's rules (firms.json); keep every number exactly
 data.3a1b1666c93e,2-Step · S1,2-Step · S1,,text from a firm's rules (firms.json); keep every number exactly
 data.3a3e0ad3ccb5,"up to $599 for $100,000",,,text from a firm's rules (firms.json); keep every number exactly
@@ -1249,10 +1278,13 @@ data.4de966a2be8a,Open positions,,,text from a firm's rules (firms.json)
 data.4eddb3859ab9,"Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",,,"text from a firm's rules (firms.json); keep {conflicts} exactly as written; troid stays lowercase, in Latin letters"
 data.5129c48719a9,5-min restriction,restricción de 5 min,,text from a firm's rules (firms.json); keep every number exactly
 data.5366a7416787,80%,,,text from a firm's rules (firms.json); keep every number exactly
+data.55568e23961d,"FAQ states daily limit from INITIAL balance; earlier troid config assumed day-start. FAQ applied; crossover corrected $97,917 → $98,000.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.56d9a0cd140e,Funded · after 1-Step,Funded · tras 1-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.583bb4fb3ff2,"Price of the $100,000 1-Step. Terms of Use 9(a) (modified 2026-03-24): 1 Step Challenges, Expert Level, account $100,000, challenge fee $999 — now the primary source for the price, with the help centre's Challenge Type table second. The same clause lists the 2-Step Expert at $799, which explains the September 2025 blog's $799. The May 2026 blog's $599 remains unexplained.",,,text from a firm's rules (firms.json); keep every number exactly
 data.5b61b07db2e7,crypto commission 0.012%/side - verify on brightfunded.com/trading-instruments,comisión cripto 0.012%/lado - verifica en brightfunded.com/trading-instruments,,text from a firm's rules (firms.json); keep every number exactly
 data.5bc39b578c6e,Maximum hold,,,text from a firm's rules (firms.json)
 data.601c3530e85e,trailing → static at initial after +6%,móvil → estático en el saldo inicial tras +6%,,text from a firm's rules (firms.json); keep every number exactly
+data.60e686d78ae4,"Open positions. Terms of Use 14(d)(xi) still says 10 as of the 2026-03-24 revision; the help centre (Restricted Trading Practices s.3) says 5. The stricter, 5, stands.",,,text from a firm's rules (firms.json); keep every number exactly
 data.62603a2168cf,5: the contract governs,,,text from a firm's rules (firms.json); keep every number exactly
 data.633b319f6929,"$999, from the Terms and the help centre; the $599 is unexplained",,,text from a firm's rules (firms.json); keep every number exactly
 data.64d2206416ad,$10k / day and / trade,$10k / día y / operación,,text from a firm's rules (firms.json); keep every number exactly
@@ -1269,15 +1301,20 @@ data.7b921a3bc2ed,"Conflicting: Terms 9(a) — 100% at first profit split day, a
 data.7bf372bece8d,initial balance,saldo inicial,,text from a firm's rules (firms.json)
 data.7e554e7062d1,Does 'reverse trading' (7.1 xiv) mean stop-and-reverse? Blocks running shadow-1 there.,¿«reverse trading» (7.1 xiv) significa stop-and-reverse? Impide ejecutar shadow-1 allí.,,text from a firm's rules (firms.json); keep every number exactly
 data.853ca806d6d6,blog of 28 August 2026,,,text from a firm's rules (firms.json); keep every number exactly
+data.88447c53dd8a,Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied.,,,text from a firm's rules (firms.json); keep every number exactly
 data.8b6520409617,Express,Express,,text from a firm's rules (firms.json)
 data.8b9e2967d124,Expert $799,,,text from a firm's rules (firms.json); keep every number exactly
 data.8e0f20efffc5,not excluded by its Terms (4b: local law applies),,,text from a firm's rules (firms.json); keep every number exactly
 data.94934cc00dcb,none for the 2-Step,,,text from a firm's rules (firms.json); keep every number exactly
+data.9abc0dad0284,"Free Trial. Terms of Use 5(b) still describes a Free Trial; troid's owner found none offered as of 23 September 2026. Recorded, not listed as a product.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
+data.a01b4a6d2b76,"Funded (Trader Stage) limits differ by path. Help centre, Challenge & Trader Stage: after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the 2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader Stage breach disqualifies the account; a new challenge is required. troid had modelled a single Funded product at 4% / 6% with no recorded source.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.a0c0cbd0c834,"help centre, Challenge Type, One Step Evaluation table",,,text from a firm's rules (firms.json)
+data.a16a19d31681,Restricted countries. The Terms of Use (modified 2026-03-24) contain no country exclusion list; 4(b) requires the trader's use of the Services to comply with the laws of the trader's own jurisdiction. troid had recorded the list as not extracted.,,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.a199f4153a08,Funded · after Express,Funded · tras Express,,text from a firm's rules (firms.json)
 data.a1b72dc3e9e4,00:05,00:05,,text from a firm's rules (firms.json); keep every number exactly
 data.a381562afa0e,static,estático,,text from a firm's rules (firms.json)
 data.a608ee8e8ce6,Funded · after 2-Step,Funded · tras 2-Step,,text from a firm's rules (firms.json); keep every number exactly
+data.a612dc71ef57,"Refund. Terms of Use 9(a): every challenge level includes a full (100%) refund if the trader completes the level and reaches the first profit split day; 9(b) repeats it as fully refundable on completing the level. Help centre, Challenge & Trader Stage: a refund only on Two Steps evaluations, paid with the third withdrawal, not on promotional purchases. Bitfunded's own documents conflict on a money claim; troid shows both and picks neither. troid had stated '100% at first profit split' for the 1-Step as settled.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.ac3478d69a3c,5,,,text from a firm's rules (firms.json); keep every number exactly
 data.ac5ceff091ef,none shown ('-'),,,text from a firm's rules (firms.json)
 data.ae10eab9c3d7,Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b).,Los Términos de Bitfunded no enumeran países excluidos; exigen que cumplas las leyes de tu propio país (4b).,,CHECK FIRST: data.ae10eab9c3d7: 'Los Términos de Bitfunded no enumeran países excluidos; exigen que cumplas las leyes de tu propio país (4b).' Check that nothing in it suggests the firm is available in any country. | text from a firm's rules (firms.json); keep every number exactly
@@ -1287,6 +1324,8 @@ data.b187ddbf98f5,"help centre, Restricted Trading Practices s.3",,,text from a 
 data.b1d5781111d8,10,,,text from a firm's rules (firms.json); keep every number exactly
 data.b25b25f35f89,"1-Phase (Advanced, $100k)","1-Phase (Advanced, $100k)",,text from a firm's rules (firms.json); keep every number exactly
 data.b318f061ccfb,Terms of Use 9(a) and 9(b),,,text from a firm's rules (firms.json); keep every number exactly
+data.b75ff15c33c2,"Price of the $100,000 1-Step (Expert) challenge. The help centre's Challenge Type page lists One Step Evaluation, Expert, 100,000 USDT, $999, in a table separate from Two Steps. A May 2026 blog post says challenge fees go up to $599 for $100,000; a September 2025 blog post says the Expert has a $799 entry. The help-centre table is the only one that separates 1-Step from 2-Step, so it governs: $999. $799 is likely the 2-Step Expert, and $599 a promotional or outdated figure.",,,text from a firm's rules (firms.json); keep every number exactly
+data.bc09752ad335,Minimum trading days. Terms of Use 9(a) objectives (modified 2026-03-24): 'Minimum Trading Days: 5' for the 1-Step and both 2-Step stages. The help centre shows '-'. The contract governs: 5.,,,text from a firm's rules (firms.json); keep every number exactly
 data.c07565a92bfd,paid add-on only,solo como complemento de pago,,text from a firm's rules (firms.json)
 data.c1f8219caf61,a blog post of September 2025,,,text from a firm's rules (firms.json); keep every number exactly
 data.c40bfbb28bb3,none stated for 1-Phase (40% on Break Final Stage),,,text from a firm's rules (firms.json); keep every number exactly
@@ -1300,7 +1339,9 @@ data.d2cd691e6d53,"5, for the 1-Step and both 2-Step stages",,,text from a firm'
 data.d673909ae0fb,"fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover − that amount","importe fijo = 3% del tamaño ORIGINAL; suelo = max(saldo, equity) en el rollover − ese importe",,text from a firm's rules (firms.json); keep every number exactly
 data.d7752ffdd846,MT5 barred to US; crypto platform for US unconfirmed,MT5 vetado en EE. UU.; plataforma cripto para EE. UU. sin confirmar,,text from a firm's rules (firms.json); keep every number exactly
 data.db70dd511d6f,"Terms of Use 14(d)(xi), revision of 24 March 2026",,,text from a firm's rules (firms.json); keep every number exactly
+data.e126dad02448,Any Trader Stage breach disqualifies the account; a new challenge is required.,,,text from a firm's rules (firms.json)
 data.e17c8ad0dc2e,Refund,,,text from a firm's rules (firms.json)
+data.e49b5b716d77,"Daily reset. Help centre, Criteria to be Success: the reset is at 00:00 UTC+8, but due to the platform's standard settlement process it may become effective between 00:00 and 00:10 UTC+8 — 16:00–16:10 UTC. troid had shown 16:00 UTC flat. The same page confirms the fee: 0.04% per side on position size, at entry and at exit.",,,"text from a firm's rules (firms.json); keep every number exactly; troid stays lowercase, in Latin letters"
 data.e5dd7083ff5f,Instant,Instant,,text from a firm's rules (firms.json)
 data.e84af9e146a4,"Price of the $100,000 1-Step",,,text from a firm's rules (firms.json); keep every number exactly
 data.eb5e616aae33,2-Step · S2,2-Step · S2,,text from a firm's rules (firms.json); keep every number exactly

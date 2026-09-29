@@ -17,6 +17,9 @@ troid is a free informational tool, not financial or investment advice. troid do
 - [faq](https://troid.ai/faq): Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.
 - [terms](https://troid.ai/terms): A free informational tool, not advice. Verify every number with the firm before trading.
 - [sources](https://troid.ai/sources): Every outside figure troid uses, with who produced it, when troid read it, and its caveat.
+- [Bitfunded's rules](https://troid.ai/firms/bitfunded): Bitfunded's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.
+- [BrightFunded's rules](https://troid.ai/firms/brightfunded): BrightFunded's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.
+- [Crypto Fund Trader's rules](https://troid.ai/firms/crypto-fund-trader): Crypto Fund Trader's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.
 - [troid Pro](https://troid.ai/pro): Saved accounts, rule-change alerts and a journal check, at $19/month. The free desk stays free.
 
 ## For assistants

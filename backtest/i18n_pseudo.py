@@ -66,7 +66,9 @@ def render_pseudo(out, pages):
         if text is None:
             print(f"skip {page}: no template or renderer yet")
             continue
-        (out / ("index.html" if page == "index" else f"{page}.html")).write_text(text)
+        f = out / ("index.html" if page == "index" else f"{page}.html")
+        f.parent.mkdir(parents=True, exist_ok=True)                  # a firm's page: firms/<slug>.html
+        f.write_text(text)
 
 
 SCAN = """() => {

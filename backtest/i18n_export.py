@@ -22,7 +22,7 @@ import i18n  # noqa: E402
 import site_build  # noqa: E402
 
 REVIEW = i18n.I18N / "review"
-ORDER = ["product.", "og.", "share.", "common.", "footer.", "legal.", "hypo.", "prov.", "index.", "compare.", "ledger.",
+ORDER = ["product.", "og.", "share.", "common.", "footer.", "legal.", "hypo.", "prov.", "index.", "compare.", "firm.", "ledger.",
          "dashboard.", "tearsheet.", "chat.", "faq.", "terms.", "data."]
 
 

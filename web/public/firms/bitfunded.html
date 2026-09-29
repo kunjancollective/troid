@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bitfunded's rules, each with its source</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:image" content="https://troid.ai/og/en.png">
+<meta property="og:title" content="Bitfunded's rules, each with its source">
+<meta property="og:description" content="Bitfunded's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* troid design tokens
+   bg #070b12 · surface #0d1420 · line #1c2839 · ink #e6edf5 · dim #7d8aa0
+   signal #4da3ff — state only, never decoration
+   Inter for prose. IBM Plex Mono for every number and label.
+   4px radius. No shadows, no emoji. One gradient: the page background. */
+:root{
+  --dur-fast:120ms;--dur:240ms;--dur-slow:480ms;--ease-out:cubic-bezier(.2,.7,.3,1);--ease-inout:cubic-bezier(.65,0,.35,1);
+  --bg:#070b12; --surface:#0d1420; --surface2:#131c2b; --line:#1c2839;
+  --ink:#e6edf5; --dim:#7d8aa0; --signal:#4da3ff; --warn:#e0a33c; --bad:#e05f4f;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Inter",ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) body{background:var(--bg)}:root:not([data-theme="dark"]){
+  --bg:#f7f9fc; --surface:#fff; --surface2:#eef2f7; --line:#dde4ee;
+  --ink:#0b1220; --dim:#5f6f86; --signal:#1f6fd1; --warn:#96661a; --bad:#a83f32;}}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0e1a2e 0%,#0a1220 28%,var(--bg) 70%) fixed;color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px}
+header{border-bottom:1px solid var(--line);padding:22px 0 20px;margin-bottom:44px}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--mono);font-size:32px;font-weight:600;letter-spacing:-.04em;
+  display:inline-flex;align-items:baseline;color:var(--ink)}
+.mark a{color:inherit;text-decoration:none;border:0}
+/* the letters are SVG (site_build.mark) in the line box the text had, 1.175em above the baseline and .425em below:
+   no font to wait for, so nothing moves when the page's fonts arrive */
+.mark .wm{display:inline-block;line-height:0}
+.mark svg{width:1.12em;height:1.6em;vertical-align:-.425em;fill:currentColor}
+.dot{position:relative;display:inline-block;width:.46em;height:.46em;border-radius:50%;background:var(--signal);
+  margin:0 .06em 0 .12em;vertical-align:-.02em;
+  box-shadow:0 0 0 .14em color-mix(in srgb,var(--signal) 18%,transparent)}
+.dot::after{content:"";position:absolute;left:50%;top:calc(100% + .22em);width:.7em;height:.21em;transform:translateX(-50%);opacity:.6;
+  background:linear-gradient(var(--ink) 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(var(--ink) 0 0) 50% 100%/.7em .06em no-repeat}
+/* the ripple moves only transform and opacity (the compositor's), starts from nothing, and fades in and out with the
+   state over --dur-slow: the build writes the state, live.js confirms it */
+.dot .rp{position:absolute;inset:0;border-radius:50%;opacity:0;pointer-events:none;transition:opacity var(--dur-slow) var(--ease-out)}
+.dot.live .rp{opacity:1}
+.dot .rp::before{content:"";position:absolute;inset:0;border-radius:50%;background:var(--signal);opacity:0;
+  transform-origin:center;will-change:transform,opacity;animation:ripple 2.4s var(--ease-out) infinite}
+.dot:not(.live) .rp::before{animation-play-state:paused}
+@keyframes ripple{0%{transform:scale(1);opacity:0}15%{opacity:.45}100%{transform:scale(2.8);opacity:0}}
+@media (prefers-reduced-motion:reduce){.dot .rp::before{animation:none}.dot .rp{transition:none}
+  .dot.live{outline:.06em solid var(--signal);outline-offset:.18em}}
+@media (forced-colors:active){.dot{forced-color-adjust:none;background:LinkText;box-shadow:none}.dot .rp::before{background:LinkText}
+  .dot::after{opacity:1;background:linear-gradient(CanvasText 0 0) 50% 0/.51em .06em no-repeat,linear-gradient(CanvasText 0 0) 50% 100%/.7em .06em no-repeat}
+  .dot.live{box-shadow:0 0 0 .1em Canvas,0 0 0 .18em LinkText}}
+/* the price tape under the header (web/public/ticker.js; ticker v3 handoff, section B): TradingView's Ticker Tape and,
+   in the same box, troid's still row of the same symbols, shown under reduced motion, when the visitor pauses the tape
+   and when the widget fails. The box has one height, the tape's 44 px (its one-line layout at every width, the
+   smallest TradingView's script draws; the owner's call, 2026-09-25), set before anything loads; the two labels share one cell and the button holds both
+   words: so the header is the same height whatever shows, and nothing on the page moves. On a wide screen the still row
+   takes the box's two lines, crypto then the rest; on a phone it is one line that scrolls. The tape's green and red are
+   TradingView's, accepted for this strip only; the still row is troid's, so its change is an arrow in the dim ink. A
+   crypto symbol that is a button (the desk) has a 44 px target inside the row's padding. */
+.tk{margin-top:12px;font-family:var(--mono);font-size:11.5px;line-height:22px;color:var(--dim);container:tk/inline-size}
+.tkbox{display:grid;grid-template-columns:minmax(0,1fr);height:44px;overflow:hidden}
+.tkbox>*{grid-area:1/1;min-width:0;transition:opacity var(--dur-slow) var(--ease-out),visibility 0s linear var(--dur-slow)}
+.tk.still .tradingview-widget-container,.tk:not(.still) .tkrow,.tk.still.off .tkrow{opacity:0;visibility:hidden}
+.tk.still .tkrow,.tk:not(.still) .tradingview-widget-container{transition-delay:0s}
+.tradingview-widget-container{overflow:hidden}.tradingview-widget-container iframe{display:block;border:0}
+.tkrow{align-self:center;display:flex;align-items:baseline;gap:0 18px;padding:11px 0;overflow-x:auto;
+  scroll-snap-type:x proximity;scrollbar-width:none;white-space:nowrap}
+.tkrow::-webkit-scrollbar{display:none}.tk.stale .tkrow{opacity:.55}
+@container tk (min-width:768px){.tkrow{flex-wrap:wrap;padding:0;overflow:visible}.tkrow .tkbr{flex:0 0 100%;height:0;overflow:hidden}}
+.tki{flex:none;scroll-snap-align:start;position:relative;display:inline-flex;align-items:baseline;gap:6px;padding:0;border:0;
+  background:none;color:inherit;font:inherit;line-height:inherit;font-variant-numeric:tabular-nums}
+.tki b{font-weight:600;color:var(--ink)}.tki .p{color:var(--ink)}.tkx b{font-weight:400;color:var(--dim)}
+.tksep{flex:none;color:var(--line)}
+button.tki{cursor:pointer}button.tki::after{content:"";position:absolute;inset:-11px -6px}
+button.tki:hover .p,button.tki[aria-expanded="true"] .p{color:var(--signal)}
+button.tki:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+.tkl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:0 14px;margin:0;font-size:10.5px;line-height:16px}
+.tkt,.tkp{display:grid;min-width:0}.tkt>*,.tkp>*{grid-area:1/1;min-width:0}
+.tk.still .tkc,.tk:not(.still) .tks,.tk.still.off .tks,.tk.still .tkpp,.tk:not(.still) .tkpl,.tk.fail .tkp{visibility:hidden}
+.tkc a{color:var(--dim);text-decoration:none}.tkc a:hover{color:var(--ink);text-decoration:underline}
+.tkd{visibility:hidden;margin-inline-start:4px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink)}.tk.stale .tkd{visibility:visible}
+.tkp{position:relative;padding:0;border:0;background:none;color:var(--dim);font:inherit;line-height:inherit;cursor:pointer;text-align:end}
+.tkp::after{content:"";position:absolute;inset:-14px -10px}.tkp:hover{color:var(--ink)}
+.tkp:focus-visible{outline:1px solid var(--signal);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.tkbox>*{transition:none}}
+/* the calendar strip under the tape (web/public/calendar.js; ticker v2 handoff, section D): the scheduled US releases of
+   the next 7 days on one line, 32 px tall whatever shows (so every event is a 32 px target, over WCAG's 24), hidden with
+   its space kept until the schedule loads, and when it can't or is over 14 days old. When the events don't fit, the row
+   and a copy of it move by a transform (calendar.js sets --calx and --calt, about 40 px/s) and hold while hovered,
+   touched or open; keyboard focus, the tape's pause and reduced motion make it a still row that swipes. Its note is a
+   .pop (web/public/pop.js), below: no shadow, --surface2 and a --line border (BRAND.md). */
+.cal{height:32px;margin-top:4px;overflow:hidden;font-family:var(--mono);font-size:11px;line-height:32px;color:var(--dim)}
+.cal.off{visibility:hidden}
+.calrow{display:flex;align-items:baseline;gap:0 8px;height:32px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity;
+  scrollbar-width:none;white-space:nowrap}
+.calrow::-webkit-scrollbar{display:none}
+.cal.mv .calrow{width:max-content;overflow:visible;scroll-snap-type:none;animation:calmv var(--calt,60s) linear infinite}
+.cal.mv.hold .calrow{animation-play-state:paused}
+@keyframes calmv{to{transform:translateX(var(--calx,0))}}
+.cale{flex:none;scroll-snap-align:start;height:32px;padding:0 3px;border:0;background:none;color:inherit;font:inherit;
+  line-height:inherit;font-variant-numeric:tabular-nums;cursor:pointer}
+.cale b{font-weight:600;color:var(--ink)}.cale:hover b,.cale[aria-expanded="true"] b{color:var(--signal)}
+.cale:focus-visible{outline:1px solid var(--signal);outline-offset:-3px}
+.calsep{flex:none;color:var(--line)}.calempty{flex:none;padding:0 3px}
+@media (prefers-reduced-motion:reduce){.cal.mv .calrow{animation:none}}
+.pop{position:absolute;z-index:var(--z-popover,40);max-width:280px;padding:10px 12px;background:var(--surface2);
+  border:1px solid var(--line);border-radius:4px;color:var(--ink);font:400 13px/1.55 var(--sans);letter-spacing:0;text-transform:none}
+.pop[hidden]{display:none}.pop p{margin:0 0 7px}.pop p:last-child{margin:0}
+nav{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12px}
+nav a{color:var(--dim);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.discl{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:13px;line-height:1.5}
+.hero{margin-bottom:38px}
+/* the headline sits under the 32 px wordmark at every width: 24 px on a phone, 30 px from about 680 px up */
+h1{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;
+  font-weight:700;margin:0 0 14px;max-width:24ch}
+.lede{color:var(--dim);font-size:17px;max-width:54ch;margin:0}
+/* the phone header (the owner's Android check, 2026-09-25): the nav on one line that scrolls sideways to the screen's
+   edges (each link a 29 px target) and less space around it, so the desk's first field shows on a 390 px screen. The
+   wordmark's size and the headline's under it are the same rule at every width (.mark and h1 above). */
+@media (max-width:640px){
+  header{padding-top:16px;margin-bottom:26px}
+  .bar{row-gap:10px}
+  nav{flex:0 0 calc(100% + 40px);flex-wrap:nowrap;gap:0 18px;margin:-5px -20px;padding:5px 20px;overflow-x:auto;
+    scrollbar-width:none;white-space:nowrap;scroll-padding-inline:20px}
+  nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
+  .hero{margin-bottom:24px}
+}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;
+  padding:22px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;
+  letter-spacing:.14em;color:var(--dim);margin:0 0 16px;font-weight:500}
+label{display:block;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--line);
+  color:var(--ink);border-radius:3px;padding:8px 9px;font-size:14px;
+  font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus{outline:none;border-color:var(--signal)}
+.grid{display:grid;gap:10px;margin-bottom:12px}
+.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:640px){.g4,.g3{grid-template-columns:1fr 1fr}}
+.verdict{display:flex;align-items:center;gap:13px;padding:14px 16px;border-radius:3px;
+  margin-bottom:14px;border-inline-start:2px solid;background:var(--surface2);flex-wrap:wrap}
+.vOK{border-color:var(--signal)}.vREDUCE{border-color:var(--warn)}.vBLOCK{border-color:var(--bad)}
+.vtag{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.06em}
+.vOK .vtag{color:var(--signal)}.vREDUCE .vtag{color:var(--warn)}.vBLOCK .vtag{color:var(--bad)}
+.vtxt{font-family:var(--mono);font-size:12.5px;color:var(--dim)}
+.read{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px}
+.cell{background:var(--surface);padding:13px}
+.cell .k{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;
+  letter-spacing:.1em;color:var(--dim);margin-bottom:5px}
+.cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+.notes div{padding-inline-start:14px;position:relative}
+.notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:4px;margin-bottom:14px}
+.stat{background:var(--surface);padding:22px}
+.stat .n{font-family:var(--mono);font-size:29px;font-weight:500;letter-spacing:-.045em;
+  color:var(--signal);line-height:1}
+.stat p{margin:10px 0 0;font-size:13.5px;color:var(--dim);line-height:1.55}
+h2{font-size:19px;letter-spacing:-.02em;margin:0 0 9px;font-weight:600}
+h3{font-size:15px;margin:18px 0 6px;font-weight:600}
+p{margin:0 0 11px}
+a{color:var(--signal);text-decoration:none;border-bottom:1px solid
+  color-mix(in srgb,var(--signal) 30%,transparent)}
+code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
+  padding:1px 5px;border-radius:2px}
+.prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
+.prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+.work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
+.work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
+@media(max-width:520px){.work tr{display:grid;grid-template-columns:1fr auto}.work td:nth-child(2){grid-column:1/-1;order:3;padding-top:0}}
+.work .wt{overflow-x:auto}
+footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
+  font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.8}
+</style>
+<style>
+/* a firm's rules (gen_compare.render_firm): the compare column's rows, full width, and each product's */
+.fr{border-top:1px solid var(--line);padding:22px 0 8px;scroll-margin-top:16px}
+.fr h2{font-size:17px;margin:0 0 6px;line-height:1.35}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--dim);margin:12px 0 0}
+.disc-line{font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7;margin:0 0 22px}
+.s{font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7;margin:0 0 12px}
+.rows{border:1px solid var(--line);border-radius:4px;background:var(--surface);margin:0 0 14px}
+.r{padding:8px 16px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px}
+.r:last-child{border-bottom:0}
+.r .rt{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 10px}.r .pv{font-size:10px;line-height:1.5;color:var(--dim);margin-top:4px}
+.r .pv code{font-size:10px;padding:0 3px}.r .l{color:var(--dim)}.r .v{font-variant-numeric:tabular-nums;text-align:end;margin-inline-start:auto;min-width:0;overflow-wrap:break-word}
+.r.sec{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}
+.pend{color:var(--dim);font-style:italic}
+.chg{padding-inline-start:18px;margin:0 0 12px;font-size:13.5px;line-height:1.6}.chg li{margin:0 0 6px}
+.chg .d{font-family:var(--mono);font-size:12px;color:var(--dim)}
+</style>
+<meta name="description" content="Every Bitfunded rule troid holds, from Bitfunded's own documents: the daily and maximum loss and how each is measured, the daily reset, fees, leverage, holding limits and open positions, each with the section and the date troid read it.">
+<link rel="canonical" href="https://troid.ai/firms/bitfunded">
+<meta property="og:url" content="https://troid.ai/firms/bitfunded">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="troid">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@tradingdroid">
+<style>
+.menu{display:none}
+@media (max-width:640px){
+  .js-menu .bar{position:relative;flex-wrap:nowrap;align-items:center}
+  .js-menu .menu{display:inline-flex;align-items:center;gap:8px;margin-inline-start:auto;min-height:36px;padding:0 12px;
+    border:1px solid var(--line);border-radius:3px;background:none;color:var(--dim);font:500 12px/1 var(--mono);
+    letter-spacing:.04em;cursor:pointer}
+  .js-menu .menu::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
+    transform:translateY(-2px) rotate(45deg);transition:transform var(--dur-fast,120ms) var(--ease-out,ease)}
+  .js-menu .menu[aria-expanded="true"]{color:var(--ink);border-color:var(--dim)}
+  .js-menu .menu[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+  .js-menu .menu:focus-visible{outline:1px solid var(--signal);outline-offset:2px}
+  .js-menu .bar nav{display:none}
+  .js-menu .bar nav.open{display:flex;flex-direction:column;align-items:stretch;flex:none;gap:0;position:absolute;
+    top:calc(100% + 6px);inset-inline-end:0;z-index:60;width:min(260px,calc(100vw - 40px));margin:0;padding:6px 0;
+    overflow:visible;white-space:normal;background:var(--surface);border:1px solid var(--line);border-radius:4px}
+  .js-menu .bar nav.open a{display:block;padding:14px 16px;font-size:13px;line-height:16px;color:var(--ink);border:0}
+  .js-menu .bar nav.open a::after{content:none}
+  .js-menu .bar nav.open a[aria-current="page"]{color:var(--signal)}
+  .js-menu .bar nav.open a+a{border-top:1px solid var(--line)}
+  .js-menu .bar nav.open .langs,.js-menu .bar nav.open .share{padding:12px 16px}
+}
+@media (prefers-reduced-motion:reduce){.menu::after{transition:none}}
+</style>
+<script>document.documentElement.classList.add("js-menu");
+document.addEventListener("DOMContentLoaded",function(){var b=document.querySelector(".menu"),n=document.getElementById("menu-nav");
+if(!b||!n)return;function set(o){b.setAttribute("aria-expanded",o?"true":"false");n.classList.toggle("open",o)}
+b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("aria-expanded")!=="true")});
+document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
+var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://troid.ai/#organization","name":"troid","url":"https://troid.ai/","logo":"https://troid.ai/apple-touch-icon.png","sameAs":["https://github.com/kunjancollective/troid","https://x.com/tradingdroid","https://www.reddit.com/user/tradingdroid/"]},{"@type":"WebSite","@id":"https://troid.ai/#website","name":"troid","url":"https://troid.ai/","publisher":{"@id":"https://troid.ai/#organization"}},{"@type":"WebPage","@id":"https://troid.ai/firms/bitfunded#page","url":"https://troid.ai/firms/bitfunded","name":"Bitfunded's rules, each with its source","description":"Bitfunded's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.","about":{"@type":"Organization","name":"Bitfunded"},"isPartOf":{"@id":"https://troid.ai/#website"},"publisher":{"@id":"https://troid.ai/#organization"},"inLanguage":"en"}]}</script>
+</head>
+<body>
+
+<header><div class="wrap">
+  <div class="bar">
+    <span class="mark" translate="no"><a class="wm" href="/" aria-label="troid, home"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M335 0Q261 0 226 -39Q191 -78 191 -140V-415H41V-516H143Q174 -516 187 -528Q200 -541 200 -573V-698H319V-516H529V-415H319V-101H529V0ZM635 -101H763V-415H635V-516H891V-375H899Q906 -402 918 -428Q931 -453 950 -472Q970 -492 998 -504Q1026 -516 1065 -516H1121V-396H1015Q957 -396 924 -362Q891 -328 891 -275V-101H1070V0H635Z"/></svg></a><a class="dot live" href="/ledger" aria-label="troid's ledger" title="troid's ledger" data-live="troid's ledger is live: last shadow run {time} UTC" data-still="troid's ledger has had no new data since {time} UTC; its live data may be down" data-unknown="troid's ledger: its live status can't be read"><i class="rp"></i></a><a class="wm" href="/" tabindex="-1" aria-hidden="true"><svg viewBox="0 -1175 1120 1600" aria-hidden="true" focusable="false"><path d="M332 -596Q287 -596 268 -615Q250 -634 250 -661V-685Q250 -712 268 -731Q287 -750 332 -750Q377 -750 396 -731Q414 -712 414 -685V-661Q414 -634 396 -615Q377 -596 332 -596ZM98 -101H268V-415H98V-516H396V-101H554V0H98ZM963 -91H956Q935 -44 898 -16Q862 12 802 12Q758 12 722 -4Q685 -21 659 -54Q633 -88 619 -139Q605 -190 605 -258Q605 -394 659 -461Q713 -528 802 -528Q862 -528 898 -500Q935 -472 956 -425H963V-740H1091V0H963ZM856 -90Q878 -90 898 -96Q917 -101 932 -112Q946 -122 954 -138Q963 -155 963 -177V-339Q963 -361 954 -378Q946 -394 932 -404Q917 -415 898 -420Q878 -426 856 -426Q800 -426 770 -392Q739 -358 739 -299V-217Q739 -158 770 -124Q800 -90 856 -90Z"/></svg></a></span><script src="/live.js" defer></script>
+    <button type="button" class="menu" aria-expanded="false" aria-controls="menu-nav">data</button>
+    <nav id="menu-nav"><a href="/">troid's desk</a><a href="/compare">troid's compare</a><a href="/ledger">troid's ledger</a><a href="/dashboard">troid's research</a><a href="/chat">ask troid</a><a href="/faq">faq</a>
+    <a href="https://github.com/kunjancollective/troid">source</a></nav>
+  </div>
+  <div class="discl">Free · never places orders · troid is an independent affiliate of the firms it
+    <a href="/compare">compares</a></div>
+  <div class="tk off" id="tk" role="region" aria-label="Prices" data-source="Binance.US" data-up="{sym} {price}, up {chg}% in 24 hours" data-down="{sym} {price}, down {chg}% in 24 hours" data-note="{sym} {price}, spot on {source}. It only fills the entry: the stop, the size and the trade stay yours." data-tv="{&quot;symbols&quot;:[{&quot;proName&quot;:&quot;BINANCEUS:BTCUSDT&quot;,&quot;description&quot;:&quot;BTC&quot;},{&quot;proName&quot;:&quot;BINANCEUS:ETHUSDT&quot;,&quot;description&quot;:&quot;ETH&quot;},{&quot;proName&quot;:&quot;BINANCEUS:SOLUSDT&quot;,&quot;description&quot;:&quot;SOL&quot;},{&quot;proName&quot;:&quot;BINANCEUS:XRPUSDT&quot;,&quot;description&quot;:&quot;XRP&quot;},{&quot;proName&quot;:&quot;BINANCEUS:BNBUSDT&quot;,&quot;description&quot;:&quot;BNB&quot;},{&quot;proName&quot;:&quot;OANDA:XAUUSD&quot;,&quot;description&quot;:&quot;Gold&quot;},{&quot;proName&quot;:&quot;OANDA:WTICOUSD&quot;,&quot;description&quot;:&quot;WTI oil&quot;},{&quot;proName&quot;:&quot;NASDAQ:NVDA&quot;,&quot;description&quot;:&quot;NVDA&quot;},{&quot;proName&quot;:&quot;NASDAQ:AAPL&quot;,&quot;description&quot;:&quot;AAPL&quot;},{&quot;proName&quot;:&quot;NASDAQ:GOOGL&quot;,&quot;description&quot;:&quot;GOOGL&quot;},{&quot;proName&quot;:&quot;NASDAQ:MSFT&quot;,&quot;description&quot;:&quot;MSFT&quot;},{&quot;proName&quot;:&quot;NASDAQ:AMZN&quot;,&quot;description&quot;:&quot;AMZN&quot;}],&quot;showSymbolLogo&quot;:false,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;largeChartUrl&quot;:&quot;https://troid.ai/&quot;}"><div class="tkbox"><div class="tradingview-widget-container" id="tv"><div class="tradingview-widget-container__widget"></div></div><div class="tkrow"><span class="tki" data-sym="BTC"><b>BTC</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="ETH"><b>ETH</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="SOL"><b>SOL</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="XRP"><b>XRP</b> <span class="p">—</span> <span class="c"></span></span><span class="tki" data-sym="BNB"><b>BNB</b> <span class="p">—</span> <span class="c"></span></span><span class="tksep tkbr" aria-hidden="true">│</span><span class="tki tkx"><b>Gold</b></span><span class="tki tkx"><b>WTI oil</b></span><span class="tksep" aria-hidden="true">│</span><span class="tki tkx"><b>NVDA</b></span><span class="tki tkx"><b>AAPL</b></span><span class="tki tkx"><b>GOOGL</b></span><span class="tki tkx"><b>MSFT</b></span><span class="tki tkx"><b>AMZN</b></span></div></div><p class="tkl"><span class="tkt"><span class="tkc"><a href="https://www.tradingview.com/" rel="noopener nofollow" target="_blank">Track all markets on TradingView</a></span><span class="tks">crypto: spot in USDT · Binance.US · ~15 s <span class="tkd">delayed</span></span></span><button type="button" class="tkp" aria-controls="tk" aria-label="Pause the moving strips" data-pause="Pause the moving strips" data-play="Play the moving strips"><span class="tkpp">pause</span><span class="tkpl">play</span></button></p></div><div class="cal off" id="cal" role="region" aria-label="Scheduled US releases" data-t="{&quot;kinds&quot;:{&quot;cpi&quot;:&quot;CPI&quot;,&quot;ppi&quot;:&quot;PPI&quot;,&quot;jobs&quot;:&quot;Jobs report&quot;,&quot;jolts&quot;:&quot;JOLTS&quot;,&quot;gdp&quot;:&quot;GDP&quot;,&quot;pce&quot;:&quot;PCE&quot;,&quot;fomc&quot;:&quot;FOMC statement&quot;,&quot;minutes&quot;:&quot;FOMC minutes&quot;},&quot;longs&quot;:{&quot;cpi&quot;:&quot;the Consumer Price Index&quot;,&quot;ppi&quot;:&quot;the Producer Price Index&quot;,&quot;jobs&quot;:&quot;the Employment Situation&quot;,&quot;jolts&quot;:&quot;the Job Openings and Labor Turnover Survey&quot;,&quot;gdp&quot;:&quot;Gross Domestic Product&quot;,&quot;pce&quot;:&quot;Personal Income and Outlays, with the PCE price index&quot;,&quot;fomc&quot;:&quot;the Federal Open Market Committee&#x27;s statement&quot;,&quot;minutes&quot;:&quot;the minutes of the Federal Open Market Committee&#x27;s last meeting&quot;},&quot;est&quot;:{&quot;advance&quot;:&quot;advance&quot;,&quot;second&quot;:&quot;second&quot;,&quot;third&quot;:&quot;third&quot;},&quot;before&quot;:&quot;{t} before {firm}&#x27;s reset&quot;,&quot;after&quot;:&quot;{t} after {firm}&#x27;s reset&quot;,&quot;h&quot;:&quot;{h} h&quot;,&quot;hm&quot;:&quot;{h} h {m} m&quot;,&quot;m&quot;:&quot;{m} m&quot;,&quot;empty&quot;:&quot;Next 7 days: no US releases scheduled.&quot;,&quot;what&quot;:&quot;{when}: {what}, from {source}.&quot;,&quot;inside&quot;:&quot;This release lands inside that bar.&quot;,&quot;outside&quot;:&quot;This release lands outside that bar.&quot;,&quot;source&quot;:&quot;Source: &lt;a href=\&quot;{url}\&quot;&gt;{source}&#x27;s release schedule&lt;/a&gt;, read {date}. troid shows the schedule only, never a forecast.&quot;}"><div class="calrow"></div></div><div class="pop" id="cal-note" hidden><p class="cn1"></p><p>troid lists it for one measurement. MEASURED: in Binance.US 4h bars from 2021 to 2026, the bar from 12:00 to 16:00 UTC holds 27% of BTC's widest tenth and 25% of ETH's; an even spread would give 17%. troid hasn't tested whether these releases are the reason.</p><p class="cn2"></p><p class="cn3"></p></div><script src="/calendar.js" defer></script><script src="/pop.js" defer></script><script src="/ticker.js" defer></script>
+</div></header>
+
+<div class="wrap">
+
+<div class="hero">
+  <p class="eyebrow" style="text-transform:none">troid · a firm's rules</p>
+  <h1>Bitfunded's rules</h1>
+  <p class="lede">Every rule troid holds for Bitfunded, read from Bitfunded's own documents. Each shows the document and the date troid read it; a rule troid has no value for says <em>pending</em>. Where Bitfunded's documents disagree, both sides are below. The firm's documents govern: verify with the firm before trading.</p>
+  <p class="meta">last read 2026-09-26 · verified 2026-09-18: its terms read against its help centre</p>
+</div>
+<p class="disc-line">troid is an affiliate of Bitfunded and earns a commission on purchases through its links, which are on <a href="/compare">troid's compare</a>. The rules and the arithmetic here don't change with it.</p>
+
+<section class="fr" id="rules">
+<h2>The rules</h2>
+<p class="s">The rows <a href="/compare">troid's compare</a> shows for Bitfunded, each with its document and the date troid read it. A dollar amount beside a percentage is for the account size the compare opens at; <a href="/">troid's desk</a> and the compare work them out for yours.</p>
+<div class="rows"><div class="r sec">rules</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">4% · $4,000</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-21 and 2026-09-23 — daily % from help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives (read 2026-09-23) · daily basis from FAQ (read 2026-09-21). Rules change without notice. Verify with the firm before trading. <code>$ = quota × daily%</code></div></div><div class="r"><div class="rt"><span class="l">daily basis</span><span class="v">initial balance</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-21 — FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">reset (UTC)</span><span class="v">16:00–16:10</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — help centre: Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">6% · $6,000</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-18 and 2026-09-23 — max % from help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives (read 2026-09-23) · drawdown type from help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota) (read 2026-09-18). Rules change without notice. Verify with the firm before trading. <code>$ = quota × max%</code></div></div><div class="r"><div class="rt"><span class="l">drawdown type</span><span class="v">static</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-18 — help centre: Criteria to be Success (the mechanics: a static floor measured from the account quota). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">target</span><span class="v">10%</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">min days</span><span class="v">5</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-21 and 2026-09-23 — Terms of Use 9(a) (Minimum Trading Days: 5); FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">leverage cap</span><span class="v">5×</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">hold cap</span><span class="v">10d / 7d / 5d</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-21 — help centre: Restricted Trading Practices s.1. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">open positions</span><span class="v">5</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-21 — help centre: Restricted Trading Practices s.3. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">consistency rule</span><span class="v"><span class="pend">pending</span></span></div></div><div class="r"><div class="rt"><span class="l">news rule</span><span class="v">none stated</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-26 — Terms of Use 14(d), prohibited strategies (i–xiii), and help centre: Restricted Trading Practices: no news-trading rule stated. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit cap</span><span class="v">none stated</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-26 — Terms of Use 18 (at most three payout requests every 30 days; no cap on profit stated) and FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">cost & access</div><div class="r"><div class="rt"><span class="l">challenge fee</span><span class="v">$999</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — Terms of Use 9(a), 1 Step Challenges, Expert Level ($100,000 account, fee $999); help centre: Challenge Type, One Step Evaluation table. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">refund</span><span class="v">Conflicting: Terms 9(a) — 100% at first profit split day, all levels. Help centre — 2-Step only, with the 3rd withdrawal, not on promotions. Confirm with Bitfunded before relying on a refund.</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — Terms of Use 9(a) and 9(b); help centre: Challenge &amp; Trader Stage. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit split</span><span class="v">80%</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-26 — FAQ (What's the profit split?); help centre: Challenge &amp; Trader Stage, One Step Evaluation table; Terms of Use 18(a) (an initial 80:20; a Scaling Plan can raise it, no figure stated). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">US residents</span><span class="v">not excluded by its Terms (4b: local law applies)</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-26 — Terms of Use: no excluded countries listed; 4(b), the trader declares their use complies with the laws of their jurisdiction. Rules change without notice. Verify with the firm before trading.</div></div></div>
+</section>
+<section class="fr" id="products">
+<h2>The other products troid holds</h2>
+<p class="s">The limits of each other Bitfunded product troid's desk sizes. A figure troid holds without a source recorded for that product is held back until one is.</p>
+<div class="rows"><div class="r sec">2-Step · S1</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">5%</span></div><div class="pv">Computed from Bitfunded 2-Step · S1 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">10%</span></div><div class="pv">Computed from Bitfunded 2-Step · S1 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">target</span><span class="v">8%</span></div><div class="pv">Computed from Bitfunded 2-Step · S1 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">min days</span><span class="v">5</span></div><div class="pv">Computed from Bitfunded 2-Step · S1 rules as published on 2026-09-21 and 2026-09-23 — Terms of Use 9(a) (Minimum Trading Days: 5); FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">2-Step · S2</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">5%</span></div><div class="pv">Computed from Bitfunded 2-Step · S2 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">8%</span></div><div class="pv">Computed from Bitfunded 2-Step · S2 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">target</span><span class="v">5%</span></div><div class="pv">Computed from Bitfunded 2-Step · S2 rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">min days</span><span class="v">5</span></div><div class="pv">Computed from Bitfunded 2-Step · S2 rules as published on 2026-09-21 and 2026-09-23 — Terms of Use 9(a) (Minimum Trading Days: 5); FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">Express</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">3%</span></div><div class="pv">Computed from Bitfunded Express rules as published on 2026-09-21 — Blog: How to choose the right prop trading challenge. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">3%</span></div><div class="pv">Computed from Bitfunded Express rules as published on 2026-09-21 — Blog: How to choose the right prop trading challenge. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">target</span><span class="v">9%</span></div><div class="pv">Computed from Bitfunded Express rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">min days</span><span class="v">5</span></div><div class="pv">Computed from Bitfunded Express rules as published on 2026-09-21 and 2026-09-23 — Terms of Use 9(a) (Minimum Trading Days: 5); FAQ. Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">Instant</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">3%</span></div><div class="pv">Computed from Bitfunded Instant rules as published on 2026-09-21 and 2026-09-23 — help centre: Challenge &amp; Trader Stage (Instant); Blog: How to choose the right prop trading challenge. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">6%</span></div><div class="pv">Computed from Bitfunded Instant rules as published on 2026-09-21 and 2026-09-23 — help centre: Challenge &amp; Trader Stage (Instant); Blog: How to choose the right prop trading challenge. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">target</span><span class="v"><span class="pend">held: source not yet recorded</span></span></div></div><div class="r"><div class="rt"><span class="l">min days</span><span class="v"><span class="pend">held: source not yet recorded</span></span></div></div><div class="r"><div class="rt"><span class="l">leverage cap</span><span class="v">5×</span></div><div class="pv">Computed from Bitfunded Instant rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Instant). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit split</span><span class="v"><span class="pend">held: source not yet recorded</span></span></div></div><div class="r sec">Funded · after 1-Step</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">4%</span></div><div class="pv">Computed from Bitfunded Funded · after 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 1-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">6%</span></div><div class="pv">Computed from Bitfunded Funded · after 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 1-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">leverage cap</span><span class="v">5×</span></div><div class="pv">Computed from Bitfunded Funded · after 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 1-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit split</span><span class="v">80%</span></div><div class="pv">Computed from Bitfunded Funded · after 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 1-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">Funded · after Express</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">3%</span></div><div class="pv">Computed from Bitfunded Funded · after Express rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the Express). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">3%</span></div><div class="pv">Computed from Bitfunded Funded · after Express rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the Express). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">leverage cap</span><span class="v">5×</span></div><div class="pv">Computed from Bitfunded Funded · after Express rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the Express). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit split</span><span class="v">80%</span></div><div class="pv">Computed from Bitfunded Funded · after Express rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the Express). Rules change without notice. Verify with the firm before trading.</div></div><div class="r sec">Funded · after 2-Step</div><div class="r"><div class="rt"><span class="l">daily loss</span><span class="v">5%</span></div><div class="pv">Computed from Bitfunded Funded · after 2-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 2-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">max loss</span><span class="v">8%</span></div><div class="pv">Computed from Bitfunded Funded · after 2-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 2-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">leverage cap</span><span class="v">5×</span></div><div class="pv">Computed from Bitfunded Funded · after 2-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 2-Step). Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">profit split</span><span class="v">80%</span></div><div class="pv">Computed from Bitfunded Funded · after 2-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage (Trader Stage after the 2-Step). Rules change without notice. Verify with the firm before trading.</div></div></div>
+</section>
+<section class="fr" id="more">
+<h2>More of Bitfunded's rules</h2>
+<div class="rows"><div class="r"><div class="rt"><span class="l">Funded stage</span><span class="v">Any Trader Stage breach disqualifies the account; a new challenge is required.</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — help centre: Challenge &amp; Trader Stage. Rules change without notice. Verify with the firm before trading.</div></div><div class="r"><div class="rt"><span class="l">Countries</span><span class="v">Bitfunded's Terms list no excluded countries; they require you to comply with your own country's laws (4b).</span></div><div class="pv">Computed from Bitfunded 1-Step rules as published on 2026-09-23 — Terms of Use 4(b) (no excluded-country list). Rules change without notice. Verify with the firm before trading.</div></div></div>
+</section>
+<section class="fr" id="conflicts">
+<div class="s" style="margin:10px 0 0;line-height:1.7"><h2>Where Bitfunded's own documents disagree · 6 logged</h2>
+<ul style="margin:4px 0 0;padding-inline-start:18px"><li><strong>Open positions</strong>. <a href="https://www.bitfunded.com/terms-of-use/">Terms of Use 14(d)(xi), revision of 24 March 2026</a> (read 2026-09-23): 10 · <a href="https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md">help centre, Restricted Trading Practices s.3</a> (read 2026-09-21): 5. troid shows 5: the help centre is newer and stricter.</li><li><strong>Maximum hold</strong>. <a href="https://www.bitfunded.com/terms-of-use/">Terms of Use 14(d)(x)</a> (read 2026-09-21): a flat 10 calendar days · <a href="https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md">help centre, Restricted Trading Practices s.1</a> (read 2026-09-21): 10 days for majors, 7 for other crypto, 5 for TradFi. troid shows the tiers: the help centre is newer and stricter.</li><li><strong>Minimum trading days</strong>. <a href="https://www.bitfunded.com/terms-of-use/">Terms of Use 9(a)</a> (read 2026-09-23): 5, for the 1-Step and both 2-Step stages · <a href="https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage">help centre, Challenge &amp; Trader Stage</a> (read 2026-09-23): none shown (&#x27;-&#x27;) · <a href="https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/">blog of 28 August 2026</a> (read 2026-09-21): none for the 2-Step. troid shows 5: the contract governs.</li><li><strong>Price of the $100,000 1-Step</strong>. <a href="https://www.bitfunded.com/terms-of-use/">Terms of Use 9(a)</a> (read 2026-09-23): $999, with the 2-Step Expert at $799 · <a href="https://bitfunded.gitbook.io/support/introduction/challenge-type">help centre, Challenge Type, One Step Evaluation table</a> (read 2026-09-23): $999 · a blog post of May 2026 (read 2026-09-23): up to $599 for $100,000 · a blog post of September 2025 (read 2026-09-23): Expert $799. troid shows $999, from the Terms and the help centre; the $599 is unexplained.</li><li><strong>Refund</strong>. <a href="https://www.bitfunded.com/terms-of-use/">Terms of Use 9(a) and 9(b)</a> (read 2026-09-23): a full (100%) refund at every level once the trader completes it and reaches the first profit split day · <a href="https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage">help centre, Challenge &amp; Trader Stage</a> (read 2026-09-23): a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases. troid shows both, and picks neither.</li><li><strong>Express profit target</strong>. <a href="https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage">help centre, Challenge &amp; Trader Stage, One Step Express table</a> (read 2026-09-23): 9% · <a href="https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/">blog of 28 August 2026</a> (read 2026-09-21): 3%. troid shows 9%, the help centre&#x27;s figure; the Terms are silent on the Express.</li></ul></div>
+</section>
+
+<section class="fr" id="changes">
+<h2>What changed, as troid logged it</h2>
+<p class="s">SOURCED: each entry is the day troid found a change in Bitfunded's documents, as recorded in <a href="https://github.com/kunjancollective/troid/blob/main/firms.json">firms.json</a> (rule_changes). The rules above are as troid read them after it.</p>
+<ul class="chg">
+<li><span class="d">2026-09-21</span> Help centre (Restricted Trading Practices) says 5 open positions and tiered hold caps; ToU 14(d)(xi)/(x) say 10 and flat 10 days. Help centre newer; stricter applied.</li>
+<li><span class="d">2026-09-21</span> FAQ states daily limit from INITIAL balance; earlier troid config assumed day-start. FAQ applied; crossover corrected $97,917 → $98,000.</li>
+<li><span class="d">2026-09-21</span> Blog (2026-08-28) says 2-Step has no minimum trading days; ToU 9(a) says 5. Stricter applied.</li>
+<li><span class="d">2026-09-23</span> Price of the $100,000 1-Step (Expert) challenge. The help centre&#39;s Challenge Type page lists One Step Evaluation, Expert, 100,000 USDT, $999, in a table separate from Two Steps. A May 2026 blog post says challenge fees go up to $599 for $100,000; a September 2025 blog post says the Expert has a $799 entry. The help-centre table is the only one that separates 1-Step from 2-Step, so it governs: $999. $799 is likely the 2-Step Expert, and $599 a promotional or outdated figure.</li>
+<li><span class="d">2026-09-23</span> Price of the $100,000 1-Step. Terms of Use 9(a) (modified 2026-03-24): 1 Step Challenges, Expert Level, account $100,000, challenge fee $999 — now the primary source for the price, with the help centre&#39;s Challenge Type table second. The same clause lists the 2-Step Expert at $799, which explains the September 2025 blog&#39;s $799. The May 2026 blog&#39;s $599 remains unexplained.</li>
+<li><span class="d">2026-09-23</span> Refund. Terms of Use 9(a): every challenge level includes a full (100%) refund if the trader completes the level and reaches the first profit split day; 9(b) repeats it as fully refundable on completing the level. Help centre, Challenge &amp; Trader Stage: a refund only on Two Steps evaluations, paid with the third withdrawal, not on promotional purchases. Bitfunded&#39;s own documents conflict on a money claim; troid shows both and picks neither. troid had stated &#39;100% at first profit split&#39; for the 1-Step as settled.</li>
+<li><span class="d">2026-09-23</span> Minimum trading days. Terms of Use 9(a) objectives (modified 2026-03-24): &#39;Minimum Trading Days: 5&#39; for the 1-Step and both 2-Step stages. The help centre shows &#39;-&#39;. The contract governs: 5.</li>
+<li><span class="d">2026-09-23</span> Open positions. Terms of Use 14(d)(xi) still says 10 as of the 2026-03-24 revision; the help centre (Restricted Trading Practices s.3) says 5. The stricter, 5, stands.</li>
+<li><span class="d">2026-09-23</span> Funded (Trader Stage) limits differ by path. Help centre, Challenge &amp; Trader Stage: after the 1-Step 4% daily / 6% max, after the Express 3% / 3%, after the 2-Step 5% / 8%, each with an 80% split; Instant 3% / 6% with a 60% split; leverage 1:5 on each. Any Trader Stage breach disqualifies the account; a new challenge is required. troid had modelled a single Funded product at 4% / 6% with no recorded source.</li>
+<li><span class="d">2026-09-23</span> Express profit target. Help centre, Challenge &amp; Trader Stage: 9%. The 28 Aug 2026 blog: 3%. The Terms are silent on Express. troid shows 9%.</li>
+<li><span class="d">2026-09-23</span> Daily reset. Help centre, Criteria to be Success: the reset is at 00:00 UTC+8, but due to the platform&#39;s standard settlement process it may become effective between 00:00 and 00:10 UTC+8 — 16:00–16:10 UTC. troid had shown 16:00 UTC flat. The same page confirms the fee: 0.04% per side on position size, at entry and at exit.</li>
+<li><span class="d">2026-09-23</span> Restricted countries. The Terms of Use (modified 2026-03-24) contain no country exclusion list; 4(b) requires the trader&#39;s use of the Services to comply with the laws of the trader&#39;s own jurisdiction. troid had recorded the list as not extracted.</li>
+<li><span class="d">2026-09-23</span> Free Trial. Terms of Use 5(b) still describes a Free Trial; troid&#39;s owner found none offered as of 23 September 2026. Recorded, not listed as a product.</li>
+</ul>
+</section>
+
+<section class="fr" id="arithmetic">
+<h2>The arithmetic</h2>
+<p><a href="/">troid's desk</a> sizes a trade on these rules: choose Bitfunded in its Firm field. <a href="/compare">troid's compare</a> sets them beside the other firms'. <a href="/sources">troid's sources</a> list every outside figure troid uses.</p>
+</section>
+
+</div>
+
+<footer><div class="wrap">
+<!-- footer:start -->
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<!-- footer:end -->
+</div></footer>
+</body>
+</html>

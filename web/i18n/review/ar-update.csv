@@ -217,6 +217,33 @@ compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: t
 compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
 compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
+firm.meta.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.meta.description,"Every {firm} rule troid holds, from {firm}'s own documents: the daily and maximum loss and how each is measured, the daily reset, fees, leverage, holding limits and open positions, each with the section and the date troid read it.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.og.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.og.description,"{firm}'s loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.name,{firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.eyebrow,troid · a firm's rules,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.hero.h1,{firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.lede,"Every rule troid holds for {firm}, read from {firm}'s own documents. Each shows the document and the date troid read it; a rule troid has no value for says <em>pending</em>.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.hero.conflicts,"Where {firm}'s documents disagree, both sides are below.",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.hero.govern,The firm's documents govern: verify with the firm before trading.,,,NEW: translate it in reviewer_edit | 
+firm.hero.meta_verified,last read {date} · verified {verified}: its terms read against its help centre,,,NEW: translate it in reviewer_edit | keep {date} {verified} exactly as written
+firm.hero.meta_unverified,last read {date} · not verified yet: troid hasn't read its terms against its help centre,,,"NEW: translate it in reviewer_edit | keep {date} exactly as written; troid stays lowercase, in Latin letters"
+firm.disclosure,"troid is an affiliate of {firm} and earns a commission on purchases through its links, which are on <a href=""{L}/compare"">troid's compare</a>. The rules and the arithmetic here don't change with it.",,,"NEW: translate it in reviewer_edit | keep {L} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.rules.h,The rules,,,NEW: translate it in reviewer_edit | 
+firm.rules.p,"The rows <a href=""{L}/compare"">troid's compare</a> shows for {firm}, each with its document and the date troid read it. A dollar amount beside a percentage is for the account size the compare opens at; <a href=""{H}"">troid's desk</a> and the compare work them out for yours.",,,"NEW: translate it in reviewer_edit | keep {H} {L} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.products.h,The other products troid holds,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.products.p,The limits of each other {firm} product troid's desk sizes. A figure troid holds without a source recorded for that product is held back until one is.,,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.products.held,held: source not yet recorded,,,NEW: translate it in reviewer_edit | 
+firm.more.h,More of {firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
+firm.more.trader_stage,Funded stage,,,NEW: translate it in reviewer_edit | 
+firm.more.availability,Countries,,,NEW: translate it in reviewer_edit | 
+firm.more.excluded,excluded: {list},,,NEW: translate it in reviewer_edit | keep {list} exactly as written
+firm.changes.h,"What changed, as troid logged it",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+firm.changes.p,"SOURCED: each entry is the day troid found a change in {firm}'s documents, as recorded in <a href=""https://github.com/kunjancollective/troid/blob/main/firms.json"">firms.json</a> (rule_changes). The rules above are as troid read them after it.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+firm.changes.none,None logged yet.,,,NEW: translate it in reviewer_edit | 
+firm.next.h,The arithmetic,,,NEW: translate it in reviewer_edit | 
+firm.next.p,"<a href=""{H}"">troid's desk</a> sizes a trade on these rules: choose {firm} in its {field} field. <a href=""{L}/compare"">troid's compare</a> sets them beside the other firms'. <a href=""{L}/sources"">troid's sources</a> list every outside figure troid uses.",,,"NEW: translate it in reviewer_edit | keep {H} {L} {field} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
