@@ -6,7 +6,8 @@ page's HTML, and the compare's rule columns were empty until the script ran).
 
 - The page as served, before any script: each firm's column carries its rules, its sizing at the default inputs and
   its foot, every value with its provenance line (Bitfunded's 1-Step: 4% · $4,000 daily, 6% · $6,000 max, the ceilings
-  swapping at $98,000, 4 losses at 0.50% before max loss binds, 12 survivable from a fresh start).
+  swapping at $98,000, 4 losses at 0.50% before max loss binds, 11 survivable from a fresh start: the 12th $500 loss
+  lands on the $94,000 floor, and reaching it is a breach, calculator audit 2026-09-29, F7).
 - Static equals the script: in Chromium, every language rendered with drafts (site_build.py --preview), English also
   with the reading aids on (site.json english_features, launch day), each firm's rows and foot as the page carries them
   equal the rows and foot its render() writes at the default inputs, HTML for HTML.
@@ -160,8 +161,8 @@ def main():
     # ---------------------------------------------------------------- the page before any script
     s, cols = served_text(url + "/compare")
     b = cols["bitfunded"]
-    for want in ("4% · $4,000", "6% · $6,000", "$98,000", "$2,000 (2.0%)", "4 at 0.50%", "12 from a fresh start",
-                 "$500 (0.50%)", "16:00–16:10", "Computed from Bitfunded 1-Step rules as published on",
+    for want in ("4% · $4,000", "6% · $6,000", "$98,000", "$2,000 (2.0%)", "4 at 0.50%", "11 from a fresh start",
+                 "ceil(quota × max% ÷ risk) − 1", "$500 (0.50%)", "16:00–16:10", "Computed from Bitfunded 1-Step rules as published on",
                  "Rules change without notice. Verify with the firm before trading."):
         ok(f"served HTML, no script: Bitfunded's column reads {want!r}", want in b, b[:400])
     for k in gen_compare.ORDER:

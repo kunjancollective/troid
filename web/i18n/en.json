@@ -496,7 +496,7 @@
  "compare.js.f_room": "room = quota − {cf}",
  "compare.js.f_cross": "crossover = {cf}",
  "compare.js.f_losses": "floor(room ÷ risk)",
- "compare.js.f_survive": "floor(quota × max% ÷ risk)",
+ "compare.js.f_survive": "ceil(quota × max% ÷ risk) − 1",
  "compare.js.f_fee": "fee share = 2 × fee ÷ (stop % + 2 × fee)",
  "compare.js.f_liq": "distance ≈ 1 ÷ min(your leverage, cap {cap}× for a {quota} account)",
  "compare.js.foot_link": "<a href=\"{url}\" rel=\"sponsored noopener\">{name} challenges</a> · affiliate link",

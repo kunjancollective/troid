@@ -386,15 +386,22 @@ def static_column(d, T, inputs=DEFAULTS):
         room = Q - cross
         h += row(J["row_room"], usd(room) + " (" + fx(room / Q * 100, 1) + "%)", pv(K, F(J["f_room"], {"cf": cf})))
         h += row(J["row_cross"], usd(cross), pv(K, F(J["f_cross"], {"cf": cf})))
+        # Which ceiling binds, not a breach: after floor(room / risk) losses the balance is still at or above the
+        # crossover, and at the crossover itself the desk's tie-break names the daily limit, so an exact multiple keeps
+        # its count here.
         h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk), "pct": fx(rp * 100, 2)})
                  if room > 0 and risk > 0 else "—", pv(K, J["f_losses"]))
-        h += row(J["row_survive"], F(J["v_survive"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
+        # Losses that leave equity above the max-loss floor. A loss that lands exactly on it is a breach (firms word a
+        # breach as reaching the limit, and troid's simulators count bal <= floor as failure), so an exact multiple
+        # counts one fewer, as on the desk (calculator audit 2026-09-29, F7). The epsilon reads a quotient of
+        # 12.000000000000002 as 12, not 13.
+        h += row(J["row_survive"], F(J["v_survive"], {"n": math.ceil(Q * m / risk - 1e-9) - 1}) if risk > 0 else "—",
                  pv(["max_pct", "drawdown_type"], J["f_survive"]))
     elif derivable and not is_static:
         h += row(J["row_room"], '<span class="pend">' + J["v_room_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_cross"], '<span class="pend">' + J["v_cross_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_losses"], '<span class="pend">' + J["v_losses_trail"] + '</span>', pv(["drawdown_type"]))
-        h += row(J["row_survive"], F(J["v_survive_trail"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
+        h += row(J["row_survive"], F(J["v_survive_trail"], {"n": math.ceil(Q * m / risk - 1e-9) - 1}) if risk > 0 else "—",
                  pv(["max_pct", "drawdown_type"], J["f_survive"]))
     else:
         h += row(J["row_room"], P) + row(J["row_cross"], P) + row(J["row_losses"], P) + row(J["row_survive"], P)
@@ -578,12 +585,12 @@ function render(){{
       h+=row(T.row_room,$(room)+" ("+fx((room/Q*100),1)+"%)",pv(f,K,F(T.f_room,{{cf:cf}})));
       h+=row(T.row_cross,$(cross),pv(f,K,F(T.f_cross,{{cf:cf}})));
       h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
-      h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.floor(Q*m/risk)}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
+      h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.ceil(Q*m/risk-1e-9)-1}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else if(derivable&&!isStatic){{
       h+=row(T.row_room,'<span class="pend">'+T.v_room_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_cross,'<span class="pend">'+T.v_cross_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_losses,'<span class="pend">'+T.v_losses_trail+'</span>',pv(f,["drawdown_type"]));
-      h+=row(T.row_survive,risk>0?F(T.v_survive_trail,{{n:Math.floor(Q*m/risk)}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
+      h+=row(T.row_survive,risk>0?F(T.v_survive_trail,{{n:Math.ceil(Q*m/risk-1e-9)-1}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else{{
       h+=row(T.row_room,P);h+=row(T.row_cross,P);h+=row(T.row_losses,P);h+=row(T.row_survive,P);
     }}
