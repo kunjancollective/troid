@@ -224,6 +224,9 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
   padding:1px 5px;border-radius:2px}
 .prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
 .prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+/* under the result, the calculator audit's line and the rules-read line (audit.js), set like the provenance block */
+.audit{margin:4px 0 0;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
+#result+.audit,#result+[hidden]+.audit{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 .work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
 .work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
 .work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
