@@ -11,11 +11,14 @@
 - The phone menu stays labelled "data".
 - Prices include tax (the owner's addendum, 28 Sep 2026): $19 is what every buyer pays, so never "plus tax" or its
   variants, in English or in any language file, on troid Pro's pages or in its Checkout copy.
+- troid is independent (the owner, 29 Sep 2026): affiliate links stay, disclosed, and the selling language goes. No rank
+  beside a firm's name ("#1 by reviews"), no pitch for a firm's promos, no "cheaper through this link" or "same price
+  direct"; what stays is the fact, "troid's links and codes don't raise the price".
 
 What is scanned is what goes live: the English strings and templates, the English pages as built, the repo's documents,
 the MCP server, the desk skill's references, and ask troid's prompt and reset explanation as they will go live (a copy
 staged in web/context/patch/ stands in for its live file until the patch's evaluation publishes it, as in
-backtest/claim_check.py, which the daily loop runs with the same two patterns).
+backtest/claim_check.py, which the daily loop runs with the same patterns).
 """
 import datetime as dt
 import json
@@ -27,7 +30,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backtest"))
-from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET, PLUS_TAX  # noqa: E402  (one definition, shared with the daily check)
+from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET, PLUS_TAX, RETIRED_SELLING  # noqa: E402  (one definition, shared with the daily check)
 
 fails = 0
 
@@ -61,6 +64,25 @@ ok("the 'plus tax' pattern catches it in English and the launch languages", all(
    [t for t in taxed if not PLUS_TAX.search(t)])
 ok("and passes 'tax included', a Portuguese 'taxa' (a fee) and the like", not any(PLUS_TAX.search(t) for t in included),
    [t for t in included if PLUS_TAX.search(t)])
+# the selling language the owner retired on 29 Sep 2026, and the records that only look like it (firms.json is scanned whole)
+sold = ["BrightFunded · #1 by reviews", "#{n} by reviews", "their promos apply here",
+        "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
+        "discount code <b>{code}</b> — cheaper through this link", "discount code <b>platinum5</b>",
+        "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price.",
+        "where a code is shown it&#x27;s cheaper through the affiliate link, where it isn&#x27;t it&#x27;s the same price",
+        "They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code is shown."]
+unsold = ["troid's links and codes don't raise the price.", "BrightFunded challenges · affiliate link · code platinum5",
+          "Crypto Fund Trader challenges · affiliate link · code <b>platinum5</b>",
+          "128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21).",
+          "#1 by verified-review volume on propfirmmatch (128 at 4.5).",
+          "Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions.", "€497 (€347.90 promo)",
+          "Directory attributes - country, years, reviews, promos - are propfirmmatch's table",
+          "promotion_policy", "tracked through FirstPromoter", "entry and stop are the same price, so 1R is zero",
+          "Never give an affiliate link or a discount code; point to troid's compare"]
+ok("the selling pattern catches every retired phrasing (rank, promos, discount, cheaper, same price)", all(RETIRED_SELLING.search(t) for t in sold),
+   [t for t in sold if not RETIRED_SELLING.search(t)])
+ok("and passes the fact that replaced them and the records that only look like them", not any(RETIRED_SELLING.search(t) for t in unsold),
+   [t for t in unsold if RETIRED_SELLING.search(t)])
 
 # --- what goes live ---------------------------------------------------------------------------------------------------------
 def staged_or_live(name, live):
@@ -100,6 +122,9 @@ for name, s in texts.items():
             hits.append((name, m.group(0)))
 ok(f"none of {len(texts)} texts troid publishes or ask troid reads says 'no statistical edge' or gives the reset a fixed local hour",
    not hits, hits[:10])
+sell_hits = [(name, m.group(0)) for name, s in texts.items() for m in RETIRED_SELLING.finditer(re.sub(r"\s+", " ", s))]
+ok(f"none of {len(texts)} texts sells a firm: no rank beside its name, no promo pitch, no 'cheaper' or 'same price' (troid is independent)",
+   not sell_hits, sell_hits[:10])
 
 # prices include tax: every language file, troid Pro's pages and its Checkout copy too
 taxed_texts = dict(texts)
