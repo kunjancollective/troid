@@ -308,7 +308,12 @@ troid's assumption, and the block says so.
 `public/index.html` carries a JavaScript port of `scripts/risk.py`. It is verified against
 that script's reference cases and reproduces them to 4 decimal places, including the case
 where equity sits below the crossover and the max-drawdown ceiling binds instead of the
-daily. **If you change the arithmetic in one, change it in the other and re-check.**
+daily. **If you change the arithmetic in one, change it in the other and re-check.** The
+calculator audit of 29 Sep 2026 changed both the same way, and the MCP server with them:
+the fee per unit is fee × (entry + stop), the exit fee priced at the stop; losses left are
+ceil(budget ÷ risk) − 1, the losses that leave equity above the floor; a long's exchange
+liquidation at 100% or more reads "none above zero". Both reference cases were re-checked
+against risk.py that day.
 
 The firm and challenge selects are filled from `firms.json` by `backtest/gen_compare.py`,
 which writes the `FIRMS` object into the `<!-- profiles:start/end -->` region. The port
@@ -323,7 +328,9 @@ Reference case 2 — quota 100000, equity 96000, day-start 96000, short, entry 7
 ```
 binding      max drawdown        (not the daily, despite the daily budget being larger)
 daily budget 4,000   dd budget   2,000
-risk         480     qty         1.6221      notional  126,315.79
-margin       25,263.16           fees        101.05  (21.05% of risk)
-consumes     24%     losses left 4
+risk         480     qty         1.6216      notional  126,275.91
+fee/unit     62.3910             = 0.04% × (77,872 + 78,105.62)
+margin (5×)  25,255.18           fees        101.17  (21.08% of risk)
+loss at stop 480.00              = 378.83 price + 101.17 fees
+consumes     24%     losses left 4           = ceil(2,000 ÷ 480) − 1
 ```
