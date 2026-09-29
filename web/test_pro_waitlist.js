@@ -13,7 +13,7 @@ function ok(name, cond, info) {
   else { failed++; console.log("FAIL " + name + (info === undefined ? "" : "  " + JSON.stringify(info).slice(0, 500))); }
 }
 
-// Upstash's REST API, as much as the waitlist uses: POST /multi-exec with SET (EX), SADD, SREM, EXPIRE, DEL
+// Upstash's REST API, as much as the waitlist uses: POST /multi-exec with SET (EX) and DEL
 const KV = new Map(), KV_CALLS = [];
 let kvDown = false;
 const kv = http.createServer((req, res) => {
@@ -24,9 +24,6 @@ const kv = http.createServer((req, res) => {
     const cmds = JSON.parse(raw); KV_CALLS.push({ path: req.url, cmds });
     send(200, cmds.map(([op, key, ...a]) => {
       if (op === "SET") { KV.set(key, { value: a[0], ttl: a[1] === "EX" ? +a[2] : -1 }); return { result: "OK" }; }
-      if (op === "SADD") { const e = KV.get(key) || { set: new Set(), ttl: -1 }; const had = e.set.has(a[0]); e.set.add(a[0]); KV.set(key, e); return { result: had ? 0 : 1 }; }
-      if (op === "SREM") { const e = KV.get(key); if (!e || !e.set) return { result: 0 }; const had = e.set.delete(a[0]); return { result: had ? 1 : 0 }; }
-      if (op === "EXPIRE") { const e = KV.get(key); if (!e) return { result: 0 }; e.ttl = +a[0]; return { result: 1 }; }
       if (op === "DEL") return { result: KV.delete(key) ? 1 : 0 };
       return { error: "unknown command " + op };
     }));
@@ -99,12 +96,13 @@ kv.listen(0, "127.0.0.1", async () => {
     ok("join: the email, both choices, the consent's version and the date, a year to live", stored && stored.email === "Trader@Example.com" && stored.pro === true
        && stored.agents === true && stored.consent === "2026-09-28" && /^\d{4}-\d\d-\d\dT/.test(stored.joined_utc) && e.ttl === 31536000, [stored, e && e.ttl]);
     ok("join: never the address or the user agent", !e.value.includes("198.51.100.5") && !e.value.includes("UA-CANARY") && !/"ip"|agent"/.test(e.value.replace('"agents"', "")), e.value);
-    ok("join: counted in waitlist:pro and waitlist:agents, a year to live", KV.get("waitlist:pro").set.has(id) && KV.get("waitlist:agents").set.has(id)
-       && KV.get("waitlist:pro").ttl === 31536000 && KV.get("waitlist:agents").ttl === 31536000);
+    ok("join: the second box kept as waitlist:a:<id>, a year to live", KV.has("waitlist:a:" + id) && KV.get("waitlist:a:" + id).ttl === 31536000, [...KV.keys()]);
+    ok("join: only those two keys, each with a year at most (nothing about an email outlives its year)",
+       [...KV.keys()].sort().join() === ["waitlist:a:" + id, "waitlist:e:" + id].join() && [...KV.values()].every((x) => x.ttl > 0 && x.ttl <= 31536000), [...KV]);
     ok("join: the log line is counts only", LOGS.length === 1 && LOGS[0] === JSON.stringify({ troid: "waitlist", joined: 1, agents: 1 }), LOGS);
     r = await call(wl, { email: "trader@example.com", pro: true, agents: false }, { ip: "198.51.100.6" });
     ok("join again, same email in another case: the same entry, agents off, the same answer", r.status === 200 && r.j.leave_url === "/pro/leave?t=" + wl._token(id)
-       && JSON.parse(KV.get("waitlist:e:" + id).value).agents === false && !KV.get("waitlist:agents").set.has(id) && KV.get("waitlist:pro").set.size === 1, r.j);
+       && JSON.parse(KV.get("waitlist:e:" + id).value).agents === false && !KV.has("waitlist:a:" + id) && [...KV.keys()].join() === "waitlist:e:" + id, r.j);
 
     // refusals
     for (const [name, body, field] of [["no email", { pro: true }, "email"], ["not an email", { email: "trader.example.com", pro: true }, "email"],
@@ -133,8 +131,8 @@ kv.listen(0, "127.0.0.1", async () => {
     // leave
     LOGS.length = 0;
     r = await call(wl, { leave: wl._token(id) }, { ip: "192.0.2.52" });
-    ok("leave: 200, the entry and both counts gone", r.status === 200 && r.j.left === true && !KV.has("waitlist:e:" + id) && !KV.get("waitlist:pro").set.has(id)
-       && !KV.get("waitlist:agents").set.has(id), [r, [...KV.keys()]]);
+    ok("leave: 200, the entry and the second box's key gone", r.status === 200 && r.j.left === true && !KV.has("waitlist:e:" + id) && !KV.has("waitlist:a:" + id)
+       && KV_CALLS.at(-1).cmds.some(([op, k]) => op === "DEL" && k === "waitlist:a:" + id), [r, [...KV.keys()]]);
     ok("leave: the log line is a count", LOGS.length === 1 && LOGS[0] === JSON.stringify({ troid: "waitlist", left: 1 }), LOGS);
     r = await call(wl, { leave: wl._token(id) }, { ip: "192.0.2.52" });
     ok("leave twice: still 200 (nothing left to delete)", r.status === 200 && r.j.left === true, r);

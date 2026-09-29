@@ -7,10 +7,11 @@
  *   ?t=<token> with the form body List-Unsubscribe=One-Click   a mail client's one-click unsubscribe (RFC 8058), for
  *                                the email that says troid Pro has opened
  *
- * Kept under waitlist:e:<sha256 of the email, lower-cased>, a year at most (set again on every join), the ids also in
- * the sets waitlist:pro and waitlist:agents, so SCARD counts each list in the Upstash console. Never an address, a user
- * agent or anything the page didn't send; the log line is counts only. A join answers the same whether the email was on
- * the list or not. A leave link is the id and an HMAC of it under TROID_WAITLIST_KEY, so only troid can make one.
+ * Kept under waitlist:e:<sha256 of the email, lower-cased>, and waitlist:a:<the same> while the second box is ticked:
+ * each key with its own year to live (set again on every join), and nothing else, so nothing about an email outlives
+ * its year (web/README.md counts each list). Never an address, a user agent or anything the page didn't send; the log
+ * line is counts only. A join answers the same whether the email was on the list or not. A leave link is the id and an
+ * HMAC of it under TROID_WAITLIST_KEY, so only troid can make one.
  *
  * On with TROID_WAITLIST=on, TROID_WAITLIST_KEY (32 bytes or more) and the store (KV_REST_API_URL / KV_REST_API_TOKEN,
  * ask troid's); otherwise 404, as before it existed. Publishing the page is gate 0 in the handoff's 6.3: Vercel's Hobby
@@ -73,7 +74,7 @@ function queryT(req) {
 async function leave(res, t) {
   const id = verify(t);
   if (!id) return send(res, 403, { left: false, error: "not a leave link troid made" });
-  try { await store([["DEL", "waitlist:e:" + id], ["SREM", "waitlist:pro", id], ["SREM", "waitlist:agents", id]]); }
+  try { await store([["DEL", "waitlist:e:" + id], ["DEL", "waitlist:a:" + id]]); }
   catch (e) { return send(res, 503, { left: false, error: "the waitlist can't be reached" }); }
   console.log(JSON.stringify({ troid: "waitlist", left: 1 }));
   return send(res, 200, { left: true });
@@ -103,8 +104,8 @@ module.exports = async (req, res) => {
   const agents = body.agents === true, id = idOf(email);
   const entry = JSON.stringify({ email, pro: true, agents, consent: CONSENT, joined_utc: new Date().toISOString() });
   try {
-    await store([["SET", "waitlist:e:" + id, entry, "EX", YEAR_S], ["SADD", "waitlist:pro", id], ["EXPIRE", "waitlist:pro", YEAR_S],
-                 agents ? ["SADD", "waitlist:agents", id] : ["SREM", "waitlist:agents", id], ["EXPIRE", "waitlist:agents", YEAR_S]]);
+    await store([["SET", "waitlist:e:" + id, entry, "EX", YEAR_S],
+                 agents ? ["SET", "waitlist:a:" + id, "1", "EX", YEAR_S] : ["DEL", "waitlist:a:" + id]]);
   } catch (e) { return send(res, 503, { error: "the waitlist can't be reached" }); }
   console.log(JSON.stringify({ troid: "waitlist", joined: 1, agents: agents ? 1 : 0 }));
   return send(res, 200, { joined: true, leave_url: "/pro/leave?t=" + token(id) });

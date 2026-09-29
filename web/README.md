@@ -156,9 +156,8 @@ against the calculator's reference case and the handler against a local fake of 
 The launch handoff (2026-09-26), 6.4 step 1: a page reading "troid Pro is in preparation" with the features, the price
 ($19/month or $190/year, tax included), "the free desk stays free", and a waitlist: an email, the first box ("Tell me
 when troid Pro opens", required) and a second for troid for agents, into the store, with a privacy line and a one-click
-leave link. The FAQ answers "Will troid charge?". **Not published** until the owner moves to Vercel Pro or Vercel
-support confirms in writing that the page is allowed on Hobby (6.3, gate 0: Hobby is for non-commercial use, and the
-fair-use guidelines count advertising a service as commercial).
+leave link. The FAQ answers "Will troid charge?". Published once gate 0 cleared (6.3: Hobby is for non-commercial use,
+and the fair-use guidelines count advertising a service as commercial; the team moved to Vercel Pro, 2026-09-28).
 
 | file | route | what |
 |---|---|---|
@@ -166,11 +165,17 @@ fair-use guidelines count advertising a service as commercial).
 | `api/pro/waitlist.js` | `POST /api/pro/waitlist` | `{email, pro: true, agents}` joins (or changes the choices) and answers with the leave link; `{leave: <token>}` leaves; a form POST of `List-Unsubscribe=One-Click` to `?t=<token>` is a mail client's one-click unsubscribe (RFC 8058). Same-origin JSON only for joins, ten tries an hour per address (in memory). |
 
 Kept, per email: `waitlist:e:<sha256 of the email, lower-cased>` → the email as typed, the two choices, the consent's
-version (`2026-09-28`, the page's boxes and privacy line as committed on that date) and when; a year to live, set again
-on every join. The ids are also in the sets `waitlist:pro` and `waitlist:agents`: `SCARD waitlist:agents` in the Upstash
-console is the agents count (the handoff's threshold for building troid for agents is 50). Never an address or a user
-agent; the log line is counts only. A join answers the same whether the email was already on the list. The leave link
-is the id and an HMAC of it under `TROID_WAITLIST_KEY`: only troid can make one, and a new key voids the old links.
+version (`2026-09-28`, the page's boxes and privacy line as committed on that date) and when; and `waitlist:a:<the same>`
+while the second box is ticked. Each key has its own year to live, set again on every join, and nothing else is kept, so
+nothing about an email outlives its year (no set of ids that other joins keep alive). To count each list, in the Upstash
+console's CLI (the handoff's threshold for building troid for agents is 50 on the second):
+
+    EVAL "local n,c=0,'0' repeat local r=redis.call('SCAN',c,'MATCH',ARGV[1],'COUNT',1000) c=r[1] n=n+#r[2] until c=='0' return n" 0 waitlist:e:*
+    EVAL "local n,c=0,'0' repeat local r=redis.call('SCAN',c,'MATCH',ARGV[1],'COUNT',1000) c=r[1] n=n+#r[2] until c=='0' return n" 0 waitlist:a:*
+
+Never an address or a user agent; the log line is counts only. A join answers the same whether the email was already on
+the list. The leave link is the id and an HMAC of it under `TROID_WAITLIST_KEY`: only troid can make one, and a new key
+voids the old links.
 
 | env | meaning |
 |---|---|
@@ -178,14 +183,16 @@ is the id and an HMAC of it under `TROID_WAITLIST_KEY`: only troid can make one,
 | `TROID_WAITLIST_KEY` | 32 bytes or more (`openssl rand -hex 32`). Signs the leave links; without it the waitlist stays off. |
 | `KV_REST_API_URL`, `KV_REST_API_TOKEN` | the store ask troid already uses. |
 
-To publish (the owner, after gate 0): set `TROID_WAITLIST=on` and `TROID_WAITLIST_KEY` in Vercel for Production and
-redeploy; then set `"pro_waitlist": true` in `web/i18n/site.json` and build (`python backtest/gen_compare.py`, or the
-next daily run), which adds the FAQ's "Will troid charge?", `/pro` to the sitemap and `llms.txt`. The price in the FAQ is
-allow-listed in `backtest/claim_allow.json` as troid's own offer. When troid Pro opens, the email to the list carries
+Published: gate 0 cleared on 2026-09-28 (Vercel Pro), and `web/i18n/site.json` has `"pro_waitlist": true`, which adds the
+FAQ's "Will troid charge?", the Terms' waitlist paragraph (section 2, `#waitlist`), `/pro` to the sitemap and `llms.txt`
+(false takes them all down; `web/test_seo_head.py` checks both). **Before those pages reach production**, the owner sets
+`TROID_WAITLIST=on` and `TROID_WAITLIST_KEY` in Vercel for Production (the key made on the owner's own machine, never
+pasted anywhere else); without them `/pro` answers 404 while the FAQ and the sitemap link it. The price in the FAQ is
+allow-listed in `backtest/claim_allow.json` as troid's own offer; it includes tax, and no page says "plus tax". When troid Pro opens, the email to the list carries
 each person's leave link, and the headers `List-Unsubscribe: <https://troid.ai/api/pro/waitlist?t=<token>>` and
 `List-Unsubscribe-Post: List-Unsubscribe=One-Click`.
 
-Tests: `node web/test_pro_waitlist.js` (39: off and on, joins and refusals, the store, leave links forged or valid, the
+Tests: `node web/test_pro_waitlist.js` (40: off and on, joins and refusals, the store and each key's year, leave links forged or valid, the
 one-click unsubscribe, the page's views and headers, vercel.json) and `python web/test_pro_page.py` (26, the page in
 Chromium). `web/test_seo_head.py` checks both states of `pro_waitlist`.
 
