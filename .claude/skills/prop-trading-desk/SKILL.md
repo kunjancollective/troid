@@ -207,8 +207,8 @@ Budget      $312 remaining before the drawdown floor at 77,010
 Consumes    47% of what's left
 
 Your usual 0.5% risk would be $51 here, but the floor is closer than that
-tonight — the high-water mark moved up on Tuesday's run. Two losers at this
-size ends the account.
+tonight — the high-water mark moved up on Tuesday's run. Two more losers at
+this size leave $16; a third ends the account.
 ```
 
 Give the number even when the answer is uncomfortable. A trader who wants to know how

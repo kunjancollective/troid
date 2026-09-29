@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from pathlib import Path
 
@@ -99,10 +100,14 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
     """The adverse price move (as % of entry) at which each thing stops you, sorted.
 
     Exchange liquidation differs by margin mode; everything else does not.
-      isolated: the position's own margin is exhausted.
-                P = entry * (1 - 1/lev) / (1 - mmr)             (long; mirrored for short)
+      isolated: the position's own margin is exhausted.   m = 1/lev
       cross:    the whole account backs it; liquidates when equity + pnl = maintenance.
-                P = (entry - equity/qty) / (1 - mmr)             (long; mirrored for short)
+                m = equity/notional
+      adverse move = (m - mmr) / (1 - mmr) on a long, (m - mmr) / (1 + mmr) on a short:
+      the maintenance margin is charged on the notional at the liquidation price, which is
+      below entry on a long and above it on a short. At or below 0 the position is already
+      below maintenance at entry. A long can't fall more than 100%, so at 100% or more it
+      has no liquidation above zero; a short can rise without limit, so its figure stands.
     mmr = maintenance margin rate. Bitfunded's exact figure is not in their public docs;
     the default is a typical major-perp rate and is a config parameter.
     """
@@ -113,14 +118,14 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
     stop_pct = abs(entry - stop) / entry * 100
     daily_pct = b["daily_budget"] / notional * 100 if notional else float("inf")
     floor_pct = b["drawdown_budget"] / notional * 100 if notional else float("inf")
-    if mode == "isolated":
-        liq_pct = (1 - (1 - 1 / leverage) / (1 - mmr)) * 100
-    else:
-        liq_pct = (1 - (1 - equity / notional) / (1 - mmr)) * 100 if notional > 0 else float("inf")   # <= 0: already below maintenance
-    liq_pct = max(liq_pct, 0.0)
+    m = 1 / leverage if mode == "isolated" else (equity / notional if notional > 0 else None)
+    liq_pct = (m - mmr) / (1 - side * mmr) * 100 if m is not None else float("inf")
+    liq_pct = max(liq_pct, 0.0)                                   # 0: already below maintenance
+    none_above_zero = side > 0 and math.isfinite(liq_pct) and liq_pct >= 100 - 1e-9
+    liq_name = f"exchange liquidation ({mode})"
     events = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
                      ("max loss floor", floor_pct),
-                     (f"exchange liquidation ({mode})", liq_pct)], key=lambda e: e[1])
+                     (liq_name, liq_pct)], key=lambda e: e[1])
     first = events[0][0]
     warnings = []
     if first != "your stop":
@@ -130,10 +135,14 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
         warnings.append("Cross margin: exchange liquidation is beyond the firm's floor. Nothing "
                         "cuts a runaway position before the firm fails you; your stop is the "
                         "only circuit breaker in front of the floor.")
-    if mode == "isolated" and liq_pct < floor_pct:
+    if mode == "isolated" and liq_pct < floor_pct and not none_above_zero:
         warnings.append(f"Isolated margin: the exchange would liquidate this position at "
                         f"{liq_pct:.1f}% adverse for its own ${notional/leverage:,.0f} margin, "
                         f"before the firm's floor. A runaway costs the margin, not the account.")
+    # The order keeps its sort by the computed figure (as troid's desk sorts it); a long's liquidation at 100% or
+    # more is reported as "none above zero" in place of a percentage it can't reach.
+    if none_above_zero:
+        events = [(n, "none above zero" if n == liq_name else v) for n, v in events]
     return {"margin_mode": mode, "order": events, "first_to_bind": first,
             "runaway_max_loss": (notional / leverage) if mode == "isolated" else min(notional, b["drawdown_budget"]),
             "warnings": warnings}
@@ -235,9 +244,12 @@ def size_trade(cfg: dict, args) -> dict:
     # Size from risk and stop distance, net of round-trip fees.
     # Fees scale with NOTIONAL, and notional scales inversely with stop distance,
     # so tight stops are disproportionately expensive. Solve for quantity where
-    # stop loss + both fee legs together consume the risk budget.
+    # stop loss + both fee legs together consume the risk budget. The exit fee is
+    # charged on the exit notional, which at the stop is quantity x stop, so the
+    # fee per unit is fee x (entry + stop): a short's stop sits above entry and pays
+    # a little more than entry x fee x 2, a long's a little less.
     fee_rate = rules.get("fee_pct_per_side", 0.0) / 100.0
-    fee_per_unit = entry * fee_rate * 2
+    fee_per_unit = fee_rate * (entry + stop)
     qty = risk_amount / (stop_dist + fee_per_unit)
     notional = qty * entry
     fees = qty * fee_per_unit
@@ -283,8 +295,10 @@ def size_trade(cfg: dict, args) -> dict:
             f"Cut from ${intended:,.2f} to ${risk_amount:,.2f} — "
             f"the {b['binding']} budget caps it."
         )
-    # epsilon guards the exact-integer boundary where float // returns n-1
-    losers_left = int(b["effective_budget"] / risk_amount + 1e-9) if risk_amount > 0 else 0
+    # Losses that leave equity above the floor. Firms word a breach as reaching the
+    # limit, so a loss that lands exactly on it is not one more loss left: an exact
+    # multiple counts one fewer. The epsilon reads a quotient of 4.000000000000001 as 4.
+    losers_left = math.ceil(b["effective_budget"] / risk_amount - 1e-9) - 1 if risk_amount > 0 else 0
     notes.append(f"{losers_left} more losses at this size before {b['binding']} trips.")
 
     cb = circuit_breakers(cfg, 1 if args.side == "long" else -1, entry, stop, qty,
@@ -352,7 +366,8 @@ def print_size(r: dict) -> None:
         print(f"Consumes    {r['consumes_pct_of_budget']:.0f}% of what's left")
         cb = r["circuit_breakers"]
         print(f"Breakers    [{cb['margin_mode']}]  " + "  →  ".join(
-            f"{n} {v:.2f}%" if v != float("inf") else f"{n} —" for n, v in cb["order"]))
+            f"{n} {v}" if isinstance(v, str) else f"{n} {v:.2f}%" if v != float("inf") else f"{n} —"
+            for n, v in cb["order"]))
         print()
     for reason in r.get("reasons", []):
         print(f"  BLOCK: {reason}")
