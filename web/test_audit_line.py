@@ -75,10 +75,12 @@ def main():
         blank = b.new_page()
         intl = blank.evaluate("""([f,t])=>{const o={day:'numeric',month:'short',year:'numeric',timeZone:'UTC'},D=s=>new Date(s+'T00:00:00Z');
           const out={};for(const l of ['en-GB','ar-u-nu-latn']){const F=new Intl.DateTimeFormat(l,o);
-            out[l]={d:F.format(D('2026-10-04')),old:F.format(D('2026-08-30')),range:F.formatRange(D(f),D(t)),n:new Intl.NumberFormat(l).format(1023)}}
+            const x=l==='en-GB'?s=>s.replace(/\\bSept\\b/g,'Sep'):s=>s;   // troid's English writes Sep, as the calendar strip does
+            out[l]={d:x(F.format(D('2026-10-04'))),old:x(F.format(D('2026-08-30'))),range:x(F.formatRange(D(f),D(t))),sep:x(F.format(D('2026-09-18'))),n:new Intl.NumberFormat(l).format(1023)}}
           return out}""", [RULES["from"], RULES["to"]])
         blank.close()
-        ok("Intl en-GB writes the handoff's date form (4 Oct 2026)", intl["en-GB"]["d"] == "4 Oct 2026", intl)
+        ok("Intl en-GB writes the handoff's date form (4 Oct 2026; 18 Sep 2026, not en-GB's 'Sept')",
+           intl["en-GB"]["d"] == "4 Oct 2026" and intl["en-GB"]["sep"] == "18 Sep 2026", intl)
 
         def page(body=None, status=200, base=url, path="/", w=1280, **kw):
             ctx = b.new_context(viewport={"width": w, "height": 900}, timezone_id="UTC", locale="en-US", **kw)

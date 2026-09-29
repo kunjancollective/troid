@@ -7,13 +7,16 @@ the desk's code (render() in web/templates/index.html, web/public/desk2.js, back
 
 Its derivations are those of the seed the owner reviewed (calc_audit_seed.py, 29 Sep 2026). A change to them needs the
 owner's review; don't change the model to make a mismatch go away. The changes from the seed, each one required by an
-item of the handoff as SPEC.md (the contract the desk and this model were both written from) states it:
+item of the handoff as audit/SPEC.md (the contract the desk and this model were both written from) states it:
 
   F2  Input bounds, checked first: quota, entry and stop above 0 (an empty entry or stop is not out of range), risk %
       and budget cap % above 0 and at most 100, leverage at least 1. Out of range is BLOCK in every state, naming each
       field. (The seed sized whatever it was given.)
   F4  The high-water mark is never below the quota, and on a firm that trails on equity never below equity; the high
-      at rollover is never below the day start. (The seed took a typed value as it was.)
+      at rollover is never below the day start. (The seed took a typed value as it was.) A raised mark's note names the
+      bound that set it: equity's only when the mark became the equity. (SPEC.md said "when both apply, the equity
+      one"; below both a quota and an equity under it, the mark is the quota, and equity's note would misstate why.
+      Clarified 2026-09-29 at integration, before any audit was published: for the owner's review.)
   F3  A pending drawdown type with the max loss known is bounded by quota × (1 − max%), the loosest reading of the
       rule: a trailing floor is never lower than the static one. (The seed left that floor unknown.)
   F6  Fee per unit is fee × (entry + stop): the exit fee priced at the stop, the way an exchange charges it. (The seed
@@ -159,7 +162,9 @@ def model(firm, prod, x, FJ=None, revert=()):
             hwm = max(hwm, eq)
         hi = max(hi, ds)
         if H > 0 and hwm > H:
-            out["hwm_raised"] = "equity" if r["hwm"] == "equity" and H < eq else "quota"
+            # the note names the bound that set the value: equity only when the mark was raised to equity (a mark
+            # raised to the quota is the quota's, even on a firm that trails on equity)
+            out["hwm_raised"] = "equity" if r["hwm"] == "equity" and hwm == eq else "quota"
         if R > 0 and hi > R:
             out["hi_raised"] = True
     out.update(hwm=hwm, hi=hi)

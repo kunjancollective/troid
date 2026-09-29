@@ -7,7 +7,7 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
   python web/test_desk.py
 
 - The 84 desk states against OLD, the revision the calculator audit checked (29 Sep 2026; its results are the old desk's
-  of 1eefe86 byte for byte), served from git, the desk's own additions (the ladder and the fee bar, marked d2x) set aside
+  of 1eefe86 byte for byte), served from git with today's firms.json rules in its FIRMS, the desk's own additions (the ladder and the fee bar, marked d2x) set aside
   on both: the structure and wording byte for byte with every figure masked, where only the audit's named rewordings are
   mapped back and its rules applied (F3: a pending drawdown type with a known max is the static floor, labelled as the
   loosest reading, the type not counted as a rule used; F5: a long's liquidation at or past 100% is "none above zero";
@@ -163,6 +163,10 @@ def main():
     srv, url = serve(PUB)
     old_dir = tempfile.TemporaryDirectory()
     baseline(OLD, Path(old_dir.name))
+    # the old desk's code with today's rules: firms.json's data (a newly recorded source, a rule filled in) is held by the
+    # audit and verify_claims, so section 1 measures only what the desk's code does with it
+    oi, rx = Path(old_dir.name) / "index.html", re.compile(r"<!-- profiles:start -->.*?<!-- profiles:end -->", re.S)
+    oi.write_text(rx.sub(lambda m: rx.search((PUB / "index.html").read_text()).group(0), oi.read_text(), count=1))
     srv0, url0 = serve(old_dir.name)
     with sync_playwright() as p:
         b = p.chromium.launch(executable_path="/opt/pw-browsers/chromium")

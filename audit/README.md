@@ -8,6 +8,7 @@ the desk's or the generators'. (HANDOFF-calculator-audit, 29 Sep 2026.)
 
 | file | what |
 |---|---|
+| `SPEC.md` | The contract: the handoff's fixes stated precisely enough that the desk and the model could be written by different hands from the same text, and compared. They were. |
 | `model.py` | The model: `rules(firm, product)` from `firms.json`, `model(firm, product, inputs)` for every figure. Seeded from the owner-reviewed `calc_audit_seed.py`; the changes the handoff's F1–F7 and D6 require are listed in its docstring. |
 | `provenance.py` | Which rules the desk sizes with, the source `firms.json` records for each and the date troid read it: the report's unsourced, pending and stale lists, and the range the desk's "Rules read" line must show. |
 | `cases.py` | The seed's 23 edge cases and a named regression for each fix, each pinned to figures worked by hand; the desk's grid (six rows) on every product it offers; 1,000 random cases seeded by the ISO week. |
@@ -40,8 +41,8 @@ runs the whole audit on those earlier derivations, to show the harness is otherw
 
 A change to the model's derivations needs the owner's review, and a mismatch is never a reason for one. When the desk
 and the model disagree, which is wrong is settled against the firm's documents and the handoff, not by editing
-whichever is easier. When the desk changes on purpose, the handoff says how first, then the desk and the model follow
-it separately, and the change is listed in the model's docstring with the item that requires it. A figure worked by
+whichever is easier. When the desk changes on purpose, the handoff says how first (and `SPEC.md` pins it down), then
+the desk and the model follow it separately, and the change is listed in the model's docstring with the item that requires it. A figure worked by
 hand goes in `cases.py` as a pin, and `run.py` refuses to drive a page until the model meets every pin.
 
 ## On the desk

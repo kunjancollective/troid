@@ -41,6 +41,7 @@ jobs:
         with:
           fetch-depth: 2              # a pull request's merge commit and its base: what the change touched
 
+      # the desk's code, the rules it reads, the words the audit finds its rows by, and what writes them
       - name: Does this change touch the desk?
         id: scope
         env:
@@ -52,7 +53,7 @@ jobs:
           fi
           changed="$(git diff --name-only HEAD^1 HEAD)"
           printf '%s\n' "$changed"
-          if printf '%s\n' "$changed" | grep -qE '^(web/templates/index\.html|web/templates/partials/_desk2\.html|web/public/index\.html|web/public/desk2\.js|web/public/desklink\.js|firms\.json|audit/.*|\.github/workflows/audit\.yml)$'; then
+          if printf '%s\n' "$changed" | grep -qE '^(web/templates/index\.html|web/templates/partials/_desk2\.html|web/public/index\.html|web/public/desk2\.js|web/public/desklink\.js|firms\.json|web/i18n/(en|ar|languages)\.json|backtest/(regions|gen_compare|site_build|i18n)\.py|audit/.*|\.github/workflows/audit\.yml)$'; then
             echo "desk=true" >> "$GITHUB_OUTPUT"
           else
             echo "desk=false" >> "$GITHUB_OUTPUT"

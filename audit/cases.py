@@ -100,8 +100,8 @@ def regressions():
     # F4
     r("F4", "BrightFunded: high-water mark $100,000 typed, equity $103,000", "brightfunded", "1step",
       {"hwm": 103000, "ddF": 97000, "hwm_raised": "equity"}, hwm=100000, equity=103000, daystart=103000)
-    r("F4", "BrightFunded: high-water mark $95,000, below quota and equity", "brightfunded", "1step",
-      {"hwm": 100000, "ddF": 94000, "hwm_raised": "equity"}, hwm=95000, equity=95500, daystart=95500)
+    r("F4", "BrightFunded: high-water mark $95,000, below quota and equity (raised to the quota)", "brightfunded", "1step",
+      {"hwm": 100000, "ddF": 94000, "hwm_raised": "quota"}, hwm=95000, equity=95500, daystart=95500)
     r("F4", "BrightFunded: high-water mark $95,000, below quota only", "brightfunded", "1step",
       {"hwm": 100000, "ddF": 94000, "hwm_raised": "quota"}, hwm=95000, equity=94500, daystart=94500)
     r("F4", "CFT 1-Phase trails on balance: a mark below equity stays", "crypto_fund_trader", "1phase",

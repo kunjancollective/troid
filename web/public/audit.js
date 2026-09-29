@@ -17,9 +17,13 @@
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) { return "&#" + c.charCodeAt(0) + ";"; });
   }
+  // en-GB's CLDR writes September "Sept"; troid's pages write "Sep", as the calendar strip does and the handoff's
+  // "18–23 Sep 2026" reads
   function fmt(el) {
     try {
-      return new Intl.DateTimeFormat(el.getAttribute("data-intl") || "en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+      var l = el.getAttribute("data-intl") || "en-GB", F = new Intl.DateTimeFormat(l, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+      var fix = /^en\b/.test(l) ? function (s) { return s.replace(/\bSept\b/g, "Sep"); } : function (s) { return s; };
+      return { format: function (d) { return fix(F.format(d)); }, formatRange: F.formatRange && function (a, b) { return fix(F.formatRange(a, b)); } };
     } catch (e) { return null; }
   }
   if (r) {
