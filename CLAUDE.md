@@ -62,9 +62,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `run.py` drives the built desk in Chromium (English and the right-to-left /ar draft preview) through `cases.py`'s edge
   cases, a regression per fix, the desk's grid and 1,000 cases seeded by the ISO week, and writes
   `web/public/audit.json` and `audit/reports/<week>.md`; `audit/SPEC.md` is the contract the desk and the model were
-  written from, separately; `.github/workflows/audit.yml` runs it on every pull request (passing at once when nothing the
-  desk reads changed: its code, `firms.json`, the words it finds rows by, the generators, `audit/`) and on Sundays at 22:00 UTC, when it commits
-  the result to `audit/<week>` and opens a pull request for the owner, never to main. The desk shows it in
+  written from, separately; `.github/workflows/audit.yml` runs it on every pull request (passing at once when nothing
+  the desk reads changed: its code, `firms.json`, the words it finds rows by, the generators, `audit/`) and on Sundays
+  at 22:00 UTC, when it commits the result to `audit/<week>` and opens a pull request for the owner, never to main. The desk shows it in
   `audit.js`'s line, with "Rules read" on its own line (`site.json` `calc_audit`).
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`), published since
