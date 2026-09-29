@@ -1,7 +1,7 @@
 {
   "_criterion": "One reference firm \u2014 Bitfunded, verified first \u2014 and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
   "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
-  "_disclosure": "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
+  "_disclosure": "troid's links and codes don't raise the price. Commission structures differ. troid computes; you choose.",
   "_rule": "Every rule field carries its provenance (document, section, read date) or the site says its source is not yet recorded. A null field is pending. A firm's verified flag is true only when its rules are traced to its own primary documents (Terms + help centre, checked against each other); today only Bitfunded is marked so, and some of its cells still lack a recorded source.",
   "bitfunded": {
     "name": "Bitfunded",
@@ -116,7 +116,6 @@
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
     "affiliate_rate_repeat": "3%",
-    "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
     "compare_product": {
       "key": "1step",
       "label": "1-Step",
