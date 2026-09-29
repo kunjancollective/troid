@@ -83,6 +83,20 @@ ok("the selling pattern catches every retired phrasing (rank, promos, discount, 
    [t for t in sold if not RETIRED_SELLING.search(t)])
 ok("and passes the fact that replaced them and the records that only look like them", not any(RETIRED_SELLING.search(t) for t in unsold),
    [t for t in unsold if RETIRED_SELLING.search(t)])
+# Bitfunded's special standing (the owner's call, 29 Sep 2026): "the first firm troid verified from its own documents"
+standing = ["troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms",
+            "{firm} is the reference firm because troid verified it first, not because it ranks highest.",
+            "Bitfunded is the reference firm, not the top-ranked one.", "Another firm verified to the same depth earns the same standing.",
+            "One reference firm \\u2014 Bitfunded, verified first \\u2014 and the next firms", "One reference firm — Bitfunded, verified first —",
+            "The reference-firm standing comes from verification, not directory rank."]
+plain = ["troid compares {n} firms: {firm}, the first firm troid verified from its own documents, and the {others} crypto firms",
+         "One reference firm, chosen for verification depth, not rank.", "alphabetical · one reference firm + two by external ranking · reviewed {date}",
+         "Bitfunded · reference", "troid's reference account (a $100,000 Bitfunded 1-Step)",
+         "It is on troid's compare because troid verified it first, not for a directory rank."]
+ok("the selling pattern catches the reference firm's special standing", all(RETIRED_SELLING.search(t) for t in standing),
+   [t for t in standing if not RETIRED_SELLING.search(t)])
+ok("and passes the plain fact, and what waits for the owner (METHODOLOGY, the compare's meta line, the label)",
+   not any(RETIRED_SELLING.search(t) for t in plain), [t for t in plain if RETIRED_SELLING.search(t)])
 
 # --- what goes live ---------------------------------------------------------------------------------------------------------
 def staged_or_live(name, live):

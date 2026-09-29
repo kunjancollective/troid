@@ -336,7 +336,12 @@ RETIRED_SELLING = re.compile(
     rf"|\bno code needed\b|\bapply through (this|the|troid{_APOS}s) (affiliate )?link\b"
     r"|\bdiscount code:? (<b>)?(\{code\}|(?=[A-Za-z]*\d)[A-Za-z0-9]{4,})"         # a code sold as a discount, not the noun
     rf"|\bcheaper (through|via|with) (this|the|troid{_APOS}s|an?) (affiliate )?(link|code)\b"
-    rf"|\b(it{_APOS}s|it is|direct(ly)? is) the same price\b|\bsame price (direct|where)\b|\bcosts? you nothing extra\b", re.I)
+    rf"|\b(it{_APOS}s|it is|direct(ly)? is) the same price\b|\bsame price (direct|where)\b|\bcosts? you nothing extra\b"
+    # and no special standing for Bitfunded: it is "the first firm troid verified from its own documents", not "the
+    # reference firm troid verified first" (the owner's call, 29 Sep 2026). METHODOLOGY's "One reference firm, chosen for
+    # verification depth" and the compare's "one reference firm + two by external ranking" wait for the owner.
+    r"|\b(is|as) the reference firm\b|\bthe reference firm troid\b|\breference[- ]firm standing\b"
+    r"|\breference firm[^.]{0,12}\bBitfunded\b|\bearns the same standing\b", re.I)
 # Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it. So
 # never "plus tax", in English or in the phrasings the launch languages use for it (es, pt, fr, ru, id, zh, ar, hi, bn).
 PLUS_TAX = re.compile(
