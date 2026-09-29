@@ -37,7 +37,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def send_head(self):
         SEEN.append(self.path)
-        if self.path.split("?")[0] == "/status.json":             # the status light: not under test
+        if self.path.split("?")[0] in ("/status.json", "/audit.json"):   # the status light, the audit line: not under test
             self.send_error(404)
             return None
         last = self.path.split("?")[0].rsplit("/", 1)[-1]

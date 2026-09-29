@@ -55,6 +55,16 @@
     <div class="d2out">
       <div class="anote" id="assetnote"></div>
       <div id="result"></div>
+      {%- if calc_audit %}
+      {#- the weekly calculator audit (audit/run.py) and, on its own line, when troid read the rules the desk sizes with:
+          audit.js fills the first from /audit.json (hidden until it loads and holds together) and dates both in the
+          page's language; the second is written here from firms.json, ISO dates until the script runs #}
+      <p class="audit" id="audit" hidden data-pass="{{ t.attr("desk2.audit.pass") }}" data-fail="{{ t.attr("desk2.audit.fail") }}" data-repo="https://github.com/kunjancollective/troid/blob/main/" data-intl="{{ "en-GB" if code == "en" else intl }}"></p>
+      {%- if rules_read %}
+      <p class="audit" id="rulesread" data-from="{{ rules_read["from"] }}" data-to="{{ rules_read["to"] }}" data-t="{{ t.attr("desk2.audit.rules") }}" data-intl="{{ "en-GB" if code == "en" else intl }}">{{ t("desk2.audit.rules", range=rules_read["from"] ~ " – " ~ rules_read["to"]) }}</p>
+      {%- endif %}
+      <script src="/audit.js" defer></script>
+      {%- endif %}
     </div>
   </div>
   <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>

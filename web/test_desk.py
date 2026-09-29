@@ -127,7 +127,7 @@ def main():
                     if api == "fail":
                         return r.fulfill(status=502, body="{}", content_type="application/json")
                     return r.fulfill(status=200, body=tick(age), content_type="application/json")
-                if u.endswith("/status.json") or u.endswith("/calendar.json"):
+                if u.endswith("/status.json") or u.endswith("/calendar.json") or u.endswith("/audit.json"):
                     return r.fulfill(status=404, body="")
                 return r.continue_() if u.startswith("http://127.0.0.1") else r.abort()
             ctx.route("**/*", handler)

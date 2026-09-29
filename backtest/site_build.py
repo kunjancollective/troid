@@ -604,7 +604,8 @@ def common(T, page, live, preview=False):
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
             "country_box": country_box(T), "avail_attr": avail_attr(T),
-            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "pro_waitlist": published("pro")}
+            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "pro_waitlist": published("pro"),
+            "calc_audit": bool(SITE.get("calc_audit"))}
 
 
 def country_box(T):
