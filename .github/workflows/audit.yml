@@ -1,0 +1,170 @@
+name: audit — the desk's arithmetic, re-derived
+
+# The weekly calculator audit (HANDOFF-calculator-audit, 2026-09-29). audit/model.py reads firms.json and derives every
+# figure troid's desk shows by itself; audit/run.py drives the built desk in Chromium, the English page and the
+# right-to-left /ar (a draft preview), through the seed's edge cases, a regression for each fix, the desk's grid and
+# 1,000 cases seeded by the ISO week, and compares. Nothing in audit/ imports the desk's code: the audit is not written
+# by the thing it audits.
+#
+# Every pull request runs it, and one that touches neither the desk, firms.json nor the audit passes at once, so the
+# check can be required. On Sundays, and by hand, it also commits web/public/audit.json and audit/reports/<week>.md to
+# the branch audit/<week> and opens a pull request for the owner to merge; a week with mismatches opens an issue, once.
+# It never pushes to main, places nothing and touches no account.
+
+on:
+  schedule:
+    - cron: "0 22 * * 0"          # Sundays 22:00 UTC
+  pull_request:                   # every pull request: the first step decides whether it touches the desk
+  workflow_dispatch:              # by hand from the Actions tab, and by the publish job on audit/<week>
+    inputs:
+      week:
+        description: "ISO week to audit, e.g. 2026-W40 (empty: this week)"
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      week: ${{ steps.run.outputs.week }}
+      wrote: ${{ steps.run.outputs.wrote }}
+      failed: ${{ steps.run.outputs.failed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2              # a pull request's merge commit and its base: what the change touched
+
+      - name: Does this change touch the desk?
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "desk=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed="$(git diff --name-only HEAD^1 HEAD)"
+          printf '%s\n' "$changed"
+          if printf '%s\n' "$changed" | grep -qE '^(web/templates/index\.html|web/templates/partials/_desk2\.html|web/public/index\.html|web/public/desk2\.js|web/public/desklink\.js|firms\.json|audit/.*|\.github/workflows/audit\.yml)$'; then
+            echo "desk=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "desk=false" >> "$GITHUB_OUTPUT"
+            echo "the desk, firms.json and the audit are untouched: nothing to audit"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.scope.outputs.desk == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Playwright and its Chromium; jinja2 for the /ar preview
+        if: steps.scope.outputs.desk == 'true'
+        run: |
+          python -m pip install --quiet playwright "jinja2>=3.1"
+          python -m playwright install --with-deps chromium
+
+      - name: The audit
+        id: run
+        if: steps.scope.outputs.desk == 'true'
+        env:
+          WEEK: ${{ inputs.week }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ -z "$WEEK" ]; then
+            # a Sunday run the scheduler starts late still audits Sunday's week
+            if [ "$EVENT" = "schedule" ]; then WEEK="$(date -u -d '-6 hours' +%G-W%V)"; else WEEK="$(date -u +%G-W%V)"; fi
+          fi
+          echo "week=$WEEK" >> "$GITHUB_OUTPUT"
+          set +e
+          python audit/run.py --week "$WEEK"
+          code=$?
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          if [ "$code" = "0" ] || [ "$code" = "1" ]; then       # 2: the audit couldn't run, and wrote nothing
+            echo "wrote=true" >> "$GITHUB_OUTPUT"
+            echo "failed=$(python -c 'import json; print(json.load(open("web/public/audit.json"))["failed"])')" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.run.outputs.wrote == 'true'
+        with:
+          name: audit
+          path: |
+            web/public/audit.json
+            audit/reports/${{ steps.run.outputs.week }}.md
+
+      - name: A mismatch fails the check
+        if: steps.scope.outputs.desk == 'true'
+        env:
+          CODE: ${{ steps.run.outputs.code }}
+        run: |
+          if [ "$CODE" != "0" ]; then
+            echo "::error::the calculator audit found mismatches, or couldn't run: its report is in this run's 'audit' artifact"
+            exit 1
+          fi
+
+  publish:
+    needs: audit
+    # Sunday's run and a run by hand, from main only: the run dispatched on audit/<week> audits that branch and stops
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.audit.outputs.wrote == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write               # the branch audit/<week>, never main
+      pull-requests: write
+      issues: write
+      actions: write                # to dispatch the audit on that branch
+    env:
+      GH_TOKEN: ${{ github.token }}
+      WEEK: ${{ needs.audit.outputs.week }}
+      FAILED: ${{ needs.audit.outputs.failed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: audit
+
+      - name: Commit the week's audit to audit/<week>
+        run: |
+          branch="audit/$WEEK"
+          summary="$(python3 -c 'import json; d = json.load(open("web/public/audit.json")); print("{:,} checks, {:,} passed, {:,} failed".format(d["checks"], d["passed"], d["failed"]))')"
+          git config user.name "troid-audit"
+          git config user.email "audit@troid.ai"
+          git switch -c "$branch"
+          git add web/public/audit.json "audit/reports/$WEEK.md"
+          git commit -m "audit: $WEEK — $summary"
+          # the week run again replaces the branch; --force-with-lease refuses if someone pushed to it meanwhile
+          git fetch --quiet origin "+refs/heads/$branch:refs/remotes/origin/$branch" 2>/dev/null || true
+          git push --force-with-lease origin "$branch"
+          echo "SUMMARY=$summary" >> "$GITHUB_ENV"
+          echo "REPORT=https://github.com/$GITHUB_REPOSITORY/blob/$branch/audit/reports/$WEEK.md" >> "$GITHUB_ENV"
+
+      - name: Open or update the pull request for the owner
+        run: |
+          branch="audit/$WEEK"
+          body="The weekly calculator audit for $WEEK: $SUMMARY. Report: $REPORT
+
+          Merging publishes web/public/audit.json, which the line under troid's desk reads, and the report it links. Nothing else changes. Opened by .github/workflows/audit.yml."
+          if [ "$(gh pr list --head "$branch" --base main --state open --json number --jq length)" != "0" ]; then
+            gh pr edit "$branch" --title "audit: $WEEK — $SUMMARY" --body "$body"
+          else
+            gh pr create --base main --head "$branch" --title "audit: $WEEK — $SUMMARY" --body "$body"
+          fi
+          # a pull request opened with GITHUB_TOKEN starts no pull_request workflow, so its audit check runs from here
+          gh workflow run audit.yml --ref "$branch" -f week="$WEEK"
+
+      - name: A week with mismatches opens an issue, once
+        if: needs.audit.outputs.failed != '0'
+        run: |
+          if [ -z "$(gh issue list --state all --search "\"audit: $WEEK\" in:title" --json number --jq '.[].number')" ]; then
+            gh issue create --title "audit: $WEEK found $FAILED mismatches" \
+              --body "The calculator audit for $WEEK found $FAILED mismatches ($SUMMARY). Report: $REPORT. The line under the desk says so from the day its pull request is merged."
+          fi

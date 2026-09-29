@@ -228,6 +228,9 @@ code{font-family:var(--mono);font-size:12.5px;background:var(--surface2);
   padding:1px 5px;border-radius:2px}
 .prov{margin-top:12px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);border-top:1px solid var(--line);padding-top:10px}
 .prov b{color:var(--ink);font-weight:500}.prov code{font-size:11px}
+/* under the result, the calculator audit's line and the rules-read line (audit.js), set like the provenance block */
+.audit{margin:4px 0 0;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
+#result+.audit,#result+[hidden]+.audit{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
 .work{margin-top:10px;font-family:var(--mono);font-size:11.5px}.work summary{cursor:pointer;color:var(--signal)}
 .work table{width:100%;border-collapse:collapse;margin-top:8px}.work td{padding-block:4px;padding-inline:0 8px;border-bottom:1px solid var(--line);vertical-align:top}
 .work td:first-child{color:var(--dim)}.work td.num{text-align:end}.work code{font-size:11px;background:none;padding:0;white-space:normal;overflow-wrap:break-word}
@@ -478,6 +481,9 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
     <div class="d2out">
       <div class="anote" id="assetnote"></div>
       <div id="result"></div>
+      <p class="audit" id="audit" hidden data-pass="Calculators audited {date} · {n} checks passed · &lt;a href=&quot;{href}&quot;&gt;report&lt;/a&gt;" data-fail="Calculators audited {date} · found {n} mismatches · &lt;a href=&quot;{href}&quot;&gt;report&lt;/a&gt;" data-repo="https://github.com/kunjancollective/troid/blob/main/" data-intl="en-GB"></p>
+      <p class="audit" id="rulesread" data-from="2026-09-18" data-to="2026-09-23" data-t="Rules read {range}" data-intl="en-GB">Rules read 2026-09-18 – 2026-09-23</p>
+      <script src="/audit.js" defer></script>
     </div>
   </div>
   <div class="pop" id="p-why3" hidden><p>troid compares 3 firms: Bitfunded, the reference firm troid verified first, and the 2 crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.</p><p><a href="/compare#chosen">How firms are chosen →</a></p>

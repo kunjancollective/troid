@@ -80,7 +80,7 @@ def main():
                 u = r.request.url
                 if "/api/ticker" in u:
                     return r.fulfill(status=200, body=tick(), content_type="application/json")
-                if u.endswith("/status.json") or u.endswith("/calendar.json"):
+                if u.endswith("/status.json") or u.endswith("/calendar.json") or u.endswith("/audit.json"):
                     return r.fulfill(status=404, body="")
                 return r.continue_() if u.startswith("http://127.0.0.1") else r.abort()
             ctx.route("**/*", handler)

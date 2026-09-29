@@ -495,6 +495,39 @@ check("SOURCED", f"calendar.json: all {len(_calj['events'])} events name an agen
     _e["url"].startswith({"BLS": "https://www.bls.gov/", "BEA": "https://www.bea.gov/", "Federal Reserve": "https://www.federalreserve.gov/"}[_e["source"]])
     and _re.fullmatch(r"\d{4}-\d{2}-\d{2}", _e["read"]) for _e in _calj["events"])), 1.0)
 
+# the calculator audit (2026-09-29): the desk's "Calculators audited" line is drawn from web/public/audit.json by
+# audit.js, so claim_check never reads it; it is held here to the report it links. The "Rules read" line beside it is
+# written at build time from firms.json (regions.desk_rules_read) and held to the range the audit derives from
+# firms.json on its own (audit/provenance.py), so the two can only agree by both being right.
+import importlib.util as _ilu
+_ps = _ilu.spec_from_file_location("audit_provenance", _ROOT / "audit" / "provenance.py")
+_PV = _ilu.module_from_spec(_ps); _ps.loader.exec_module(_PV)
+_rr = _PV.rules_read()
+_rl = _re.search(r'id="rulesread" data-from="([\d-]+)" data-to="([\d-]+)"', _read("web/public/index.html"))
+if _SB.SITE.get("calc_audit"):
+    check("SOURCED", f"desk: 'Rules read' spans firms.json's read dates of the rules the desk sizes with ({_rr['from']} to {_rr['to']})",
+          float(bool(_rl) and _rl.groups() == (_rr["from"], _rr["to"])
+                and _en["desk2.audit.rules"].replace("{range}", f"{_rr['from']} – {_rr['to']}") in _index), 1.0)
+else:
+    check("DERIVED", "desk: site.json calc_audit is off, and neither audit line is on the page", float(
+        not _rl and 'id="audit"' not in _read("web/public/index.html")), 1.0)
+_aj = _ROOT / "web" / "public" / "audit.json"
+if _aj.exists():
+    try:
+        _a = _json.loads(_aj.read_text())
+    except ValueError:
+        _a = {}
+    _ints = all(isinstance(_a.get(k), int) and _a.get(k) >= 0 for k in ("checks", "passed", "failed"))
+    check("DERIVED", f"audit.json: checks = passed + failed ({_a.get('checks')} = {_a.get('passed')} + {_a.get('failed')})",
+          float(_ints and _a["checks"] == _a["passed"] + _a["failed"]), 1.0)
+    _rp = str(_a.get("report", ""))
+    _rt = (_ROOT / _rp).read_text() if _re.fullmatch(r"audit/reports/\d{4}-W\d{2}\.md", _rp) and (_ROOT / _rp).exists() else ""
+    check("DERIVED", f"audit.json: its report ({_rp or 'none named'}) exists, for its week, and states the same totals", float(
+        _ints and bool(_rt) and _rp == f"audit/reports/{_a.get('week')}.md" and f"# Calculator audit, {_a.get('week')}\n" in _rt
+        and f"Totals: {_a['checks']:,} checks, {_a['passed']:,} passed, {_a['failed']:,} failed." in _rt), 1.0)
+else:
+    print("  [DERIVED ] --    audit.json not published yet: the desk's audit line stays hidden")
+
 # The challenge-proof audit as a check (2026-09-26, E1 and E2; claim_check.py): every number on a public page with its
 # tier and source, no claim word without a citation, the canonical figures (figures.json) read from their sources and
 # agreed with everywhere troid states them, and every filled compare cell sourced.

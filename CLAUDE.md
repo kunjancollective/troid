@@ -56,6 +56,15 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `tape-capture.yml`, by hand, taps every symbol on the live TradingView tape in three browsers and records the link it
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
+- `audit/` — the weekly calculator audit (HANDOFF-calculator-audit, 2026-09-29): the audit is not written by the thing
+  it audits. `model.py` re-derives every figure troid's desk shows from `firms.json` and first principles, never from the
+  desk's code; a change to its derivations needs the owner's review, and a mismatch is never the reason for one.
+  `run.py` drives the built desk in Chromium (English and the right-to-left /ar draft preview) through `cases.py`'s edge
+  cases, a regression per fix, the desk's grid and 1,000 cases seeded by the ISO week, and writes
+  `web/public/audit.json` and `audit/reports/<week>.md`; `.github/workflows/audit.yml` runs it on every pull request
+  (passing at once when the desk, `firms.json` and `audit/` are untouched) and on Sundays at 22:00 UTC, when it commits
+  the result to `audit/<week>` and opens a pull request for the owner, never to main. The desk shows it in
+  `audit.js`'s line, with "Rules read" on its own line (`site.json` `calc_audit`).
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`), published since
   gate 0 cleared (Vercel Pro, 2026-09-28): served at /pro only with `TROID_WAITLIST=on` and its key in Vercel, and
