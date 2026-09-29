@@ -6,9 +6,14 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 
   python web/test_desk.py
 
-- The same figures as before the redesign: the 84 desk states give the result the old desk gave, byte for byte, once the
-  desk's own additions (the ladder and the fee bar, marked d2x) are set aside (against OLD, the last revision whose home
-  page was the old desk, served from git).
+- The 84 desk states against OLD, the revision the calculator audit checked (29 Sep 2026; its results are the old desk's
+  of 1eefe86 byte for byte), served from git, the desk's own additions (the ladder and the fee bar, marked d2x) set aside
+  on both: the structure and wording byte for byte with every figure masked, where only the audit's named rewordings are
+  mapped back and its rules applied (F3: a pending drawdown type with a known max is the static floor, labelled as the
+  loosest reading, the type not counted as a rule used; F5: a long's liquidation at or past 100% is "none above zero";
+  the margin check and the loss at the stop are new rows); every figure the audit didn't change equals the old desk's;
+  the loss at the stop is the risk to the cent. The figures it changed are held by the independent audit (audit/).
+- The audit's cases as regressions (F1-F7 and the leverage held where no class is recorded), each read from the page.
 - A first view with no example trade: entry and stop empty with a grey 0.00 placeholder, the account on the gauge and
   "Enter your entry and stop to size a trade." in the readout; an entry alone is "Set your stop"; a stop alone is the
   first view. The settings keep their defaults and their notes say whose they are.
@@ -32,8 +37,10 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 - The gauge, the ladder, the fee bar and the explainer draw the result's own numbers; the step cards; the pinned gauge;
   16 px fields on a phone; nothing sideways.
 """
+import html
 import json
 import re
+import subprocess
 import sys
 import tempfile
 import time
@@ -51,7 +58,7 @@ EN = json.loads((ROOT / "web" / "i18n" / "en.json").read_text())
 FIRMS = json.loads((ROOT / "firms.json").read_text())
 UNI = FIRMS["_asset_universe"]
 DESK = "/"                      # the redesigned desk, troid's home page since 2026-09-25
-OLD = "1eefe86"                 # the last revision whose home page was the old desk: the figures the new one must give
+OLD = "9c8d447"                 # the revision the calculator audit checked: its 84 states are 1eefe86's (the old desk's)
 fails, n = [], 0
 
 
@@ -96,7 +103,49 @@ def chip_bad(pg):
 
 
 CLEAN = """()=>{const r=document.getElementById('result').cloneNode(true);r.querySelectorAll('.d2x').forEach(e=>e.remove());return r.innerHTML}"""
+# a state as section 1 compares it: the result without the desk's own additions, and its working table's rows
+GRAB = """()=>{const r=document.getElementById('result').cloneNode(true);r.querySelectorAll('.d2x').forEach(e=>e.remove());
+  return {html:r.innerHTML,rows:[...r.querySelectorAll('details.work tr')].map(t=>[...t.children].map(td=>td.textContent))}}"""
 NUM = re.compile(r"\d[\d,]*(?:\.\d+)?")
+EN0 = json.loads(subprocess.run(["git", "show", f"{OLD}:web/i18n/en.json"], cwd=ROOT, capture_output=True, text=True, check=True).stdout)
+
+# The calculator audit (29 Sep 2026) as rules, never a list of states. F3 on the old desk: a product whose drawdown type
+# is pending and whose max is known is sized as the static floor, and the type isn't a rule used (its provenance)
+F3_OLD = """()=>{for(const f in FIRMS)for(const k in FIRMS[f].products){const p=FIRMS[f].products[k];if(p.dd==null&&p.m!=null){p.dd='static';p._loose=1}}
+  const pb=window.provBlock;window.provBlock=function(f,p,used,formula,assumed){return pb(f,p,p._loose?used.filter(u=>u[0]!=='dd'):used,formula,assumed)}}"""
+FIG = re.compile(r"[−-]?\$?\d[\d,]*(?:\.\d+)?")
+REWORDED = ["index.js.f_fpu", "index.js.f_size", "index.js.f_left",                 # F6, F6, F7
+            "index.js.n_lev_held", "index.js.f_lev_pending_held"]                    # held to the lowest cap, not the highest
+NEW_ROWS = ["index.js.st_margin_check", "index.js.st_loss"]                            # F1, F6
+# the working table's rows, by label, whose figures the audit left as they were
+KEPT = ["inputs", "high at rollover", "high-water mark", "daily floor", "daily budget", "max-loss floor", "drawdown budget",
+        "binding", "intended risk", "cap", "risk", "stop distance", "leverage used", "budget used", "target"]
+
+
+def mask(s):
+    return FIG.sub("#", s)
+
+
+def _key(k, en):
+    """A string as a result carries it, figures masked: its placeholders filled with a figure, escaped as innerHTML is."""
+    return html.escape(mask(re.sub(r"\{\w+\}", "0", en[k])), quote=False)
+
+
+def as_old(h):
+    """The new desk's result, figures masked, written as the old desk wrote it: the new rows out, the named rewordings
+    back, "none above zero" a percentage again, the loosest reading's label and note out."""
+    h = mask(h)
+    for k in NEW_ROWS:
+        h = re.sub(r"<tr><td>" + re.escape(EN[k]) + r"</td>.*?</tr>", "", h)
+    for k in REWORDED:
+        h = h.replace(_key(k, EN), _key(k, EN0))
+    h = h.replace(_key("index.js.n_isolated_none", EN), _key("index.js.n_isolated", EN0)).replace(EN["index.js.v_liq_none"], "#%")
+    h = h.replace(_key("index.js.f_dd_loosest", EN), _key("index.js.f_dd_static", EN0))
+    return h.replace("<div>" + _key("index.js.n_dd_loosest", EN) + "</div>", "").replace('<div class="notes"></div>', "")
+
+
+def usd(s):
+    return float(s.replace("$", "").replace(",", "").replace("−", "-"))
 
 
 def nums(s):
@@ -149,22 +198,52 @@ def main():
                         pg.evaluate("""g=>{for(const k of ['quota','equity','daystart','entry','stop','lev']){document.getElementById(k).value=g[k];}
                           document.getElementById('side').value=g.side;document.getElementById('mode').value=g.mode;
                           document.getElementById('quota').dispatchEvent(new Event('input'));}""", g)
-                        out.append((f, pr, str(g), pg.evaluate(clean)))
+                        out.append((f, pr, str(g), pg.evaluate(clean), g))
                     pg.evaluate("()=>{const d=document.querySelector('#result details.work');if(d){d.open=true;}"
                                 "document.getElementById('quota').dispatchEvent(new Event('input'))}")
-                    out.append((f, pr, "working open", pg.evaluate(clean)))
+                    out.append((f, pr, "working open", pg.evaluate(clean), DESK_GRID[-1]))
             return out
         state = "()=>({cls:document.getElementById('gauge').className,line:document.querySelector('.gline').textContent,res:document.getElementById('result').innerText})"
 
-        # 1. the same figures as the desk before the redesign
+        # 1. the 84 states against the revision the calculator audit checked, the old desk's figures, as the audit changed them
         ctx, old, _ = page("/", root=url0)
-        base = states(old, "()=>document.getElementById('result').innerHTML")
+        old.evaluate(F3_OLD)
+        levb = old.evaluate("()=>Object.fromEntries(Object.entries(FIRMS).flatMap(([f,x])=>Object.entries(x.products).map(([k,p])=>[f+'/'+k,p.levb])))")
+        base = states(old, GRAB)
         ctx.close()
         ctx, pg, errs = page()
-        mine = states(pg, CLEAN)
-        diff = [a[:3] for a, c in zip(base, mine) if a != c]
-        ok(f"the {len(base)} desk states: the result the old desk gave, byte for byte, the desk's own additions aside",
+        mine = states(pg, GRAB)
+        diff = [a[:3] for a, c in zip(base, mine) if mask(a[3]["html"]) != as_old(c[3]["html"])]
+        ok(f"the {len(base)} desk states: the old desk's structure and wording, byte for byte, every figure masked; only the audit's "
+           "rewordings mapped back and its rules applied (F3's loosest reading, F5's \"none above zero\", the two new rows)",
            len(base) == len(mine) == 84 and not diff, diff[:3])
+
+        def covers(b, q):
+            return (b.get("max_quota") is None or q <= b["max_quota"]) and (b.get("min_quota") is None or q >= b["min_quota"])
+        moved, liq, loss = [], [], []
+        for a, c in zip(base, mine):
+            ro, rn = [r for r in a[3]["rows"] if r[0] in KEPT], [r for r in c[3]["rows"] if r[0] in KEPT]
+            if [r[0] for r in ro] != [r[0] for r in rn]:
+                moved.append((a[:3], [r[0] for r in ro], [r[0] for r in rn]))
+            for x, y in zip(ro, rn):
+                want, g, bands = x[2], a[4], levb[f"{a[0]}/{a[1]}"]
+                if x[0] == "leverage used" and bands and not any(covers(b, g["quota"]) for b in bands):
+                    want = f"{min(float(g['lev']), min(b['lev'] for b in bands)):g}×"      # the lowest recorded cap, not the highest
+                if y[2] != want:
+                    moved.append((a[:3], x[0], x[2], y[2]))
+            lo, ln = [r[2] for r in a[3]["rows"] if r[0].startswith("exchange liq")], [r[2] for r in c[3]["rows"] if r[0].startswith("exchange liq")]
+            if lo:
+                past = a[4]["side"] == "1" and lo[0].endswith("%") and float(lo[0].rstrip("%").replace(",", "")) >= 100
+                if past != (ln[0] == EN["index.js.v_liq_none"]):
+                    liq.append((a[:3], lo[0], ln[0]))
+            rr = {r[0]: r for r in c[3]["rows"]}
+            if EN["index.js.st_loss"] in rr and not (rr[EN["index.js.st_qty"]][1] == EN["index.js.f_qty_margin"] or rr[EN["index.js.st_loss"]][2] == rr["risk"][2]):
+                loss.append((a[:3], rr["risk"][2], rr[EN["index.js.st_loss"]][2]))
+        ok("the figures the audit didn't change are the old desk's in every state: inputs, floors, budgets, binding, intended risk, cap, "
+           "risk, stop distance, leverage used (held to the lowest recorded cap where no class covers the quota), budget used, target",
+           not moved, moved[:4])
+        ok("\"none above zero\" exactly where a long's liquidation was at or past 100%; shorts and nearer ones as computed", not liq, liq[:4])
+        ok("in every sized state, the loss at the stop is the risk to the cent", not loss, loss[:4])
         ok("no page error across the 84 states", not errs, errs)
         ctx.close()
 
@@ -481,8 +560,8 @@ def main():
         pg.wait_for_timeout(50)
         lad = pg.evaluate("()=>[...document.querySelectorAll('.lad .lr')].map(r=>[r.className,r.querySelector('.ln').innerText,r.querySelector('.lv').innerText])")
         brk = pg.evaluate("()=>document.querySelector('#result .brk').textContent")
-        ok("the ladder: the readout's breakers in order, the stop first, liquidation under cross off-scale",
-           bool(lad) and lad[0][0] == "lr first" and "off" in lad[-1][0] and lad[-1][2] == "→ 804.92%, off-scale"
+        ok("the ladder: the readout's breakers in order, the stop first; a long's liquidation under cross past 100%: none above zero",
+           bool(lad) and lad[0][0] == "lr first" and "off" in lad[-1][0] and lad[-1][2] == EN["index.js.v_liq_none"]
            and all(x[2].replace("→ ", "").replace(", off-scale", "") in brk for x in lad), (lad, brk))
         pg.select_option("#firm", "crypto_fund_trader")                # up to 100x at $50,000 and over
         pg.select_option("#mode", "isolated")
@@ -524,6 +603,126 @@ def main():
         ctx, pg, errs = page(w=1280)
         ok("on a wide screen the fields keep the desk's 14 px", pg.evaluate("getComputedStyle(document.getElementById('entry')).fontSize") == "14px")
         ctx.close()
+        # 9. the calculator audit's cases (29 Sep 2026) as regressions, each read from the page: the verdict, its sentence, the
+        # notes, the working table, the readout, the ladder and the step cards
+        ctx, pg, errs = page()
+        READ = """()=>{const r=document.getElementById('result');return {
+          v:(r.querySelector('.verdict')||{className:''}).className.replace('verdict ',''),sent:(r.querySelector('.vsent')||{}).textContent||'',
+          notes:[...r.querySelectorAll('.notes > div')].map(d=>d.textContent),brk:(r.querySelector('.brk')||{}).textContent||'',
+          rows:Object.fromEntries([...r.querySelectorAll('details.work tr')].map(t=>{const c=[...t.children].map(d=>d.textContent);return [c[0],c.slice(1)]})),
+          cells:Object.fromEntries([...r.querySelectorAll('.cell')].map(c=>[c.querySelector('.k').textContent,c.querySelector('.v').textContent])),
+          lad:[...document.querySelectorAll('.lad .lr .lv')].map(e=>e.textContent),prov:(r.querySelector('.prov')||{}).textContent||'',
+          liqline:!document.getElementById('gx-liq').parentNode.hidden,
+          cards:['st-account','st-trade','st-risk'].filter(i=>document.getElementById(i).classList.contains('err'))}}"""
+
+        def desk(firm="bitfunded", prod="1step", side="1", mode="cross", **v):
+            pg.select_option("#firm", firm)
+            pg.select_option("#profile", prod)
+            vals = dict(quota=100000, equity=100000, daystart=100000, hwm="", hirollover="", entry="", stop="", targetR=2, riskPct=0.5, capPct=35, lev=5)
+            vals.update(v)
+            pg.evaluate("""([v,side,mode])=>{for(const k in v)document.getElementById(k).value=v[k];document.getElementById('side').value=side;
+              document.getElementById('mode').value=mode;document.getElementById('quota').dispatchEvent(new Event('input'))}""",
+                        [{k: str(x) for k, x in vals.items()}, side, mode])
+            pg.wait_for_timeout(30)
+            return pg.evaluate(READ)
+        E = EN.get
+        CHECK, LOSS, QTY, LIQ = E("index.js.st_margin_check"), E("index.js.st_loss"), E("index.js.st_qty"), E("index.js.br_liq")
+        NONE = E("index.js.v_liq_none")
+
+        # F1: a margin above equity is cut to what equity carries at this leverage, never "Fits"
+        r = desk(entry=60000, stop=59990)
+        rw = r["rows"]
+        ok("F1: Bitfunded 1-Step, $100,000, long 60,000, stop 59,990 at 5×: REDUCE; quantity 100,000 × 5 ÷ 60,000; margin within equity",
+           r["v"] == "vREDUCE" and rw[QTY] == [E("index.js.f_qty_margin"), "8.333333"] and usd(rw["margin"][1]) <= 100000
+           and usd(r["cells"]["margin"]) <= 100000, r)
+        ok("F1: the margin check shows the risk-based size's margin above equity, and the sentence says the margin cut it",
+           rw[CHECK][0] == E("index.js.f_margin_cut").format(lev=5) and usd(rw[CHECK][1]) > 100000
+           and r["sent"] == E("index.js.vs_margin").format(lev=5, max="$500,000.00", risk=rw[LOSS][1]) and r["cells"]["risk"] == rw[LOSS][1], r)
+        r = desk(entry=77872, stop=74814)
+        ok("F1: a trade whose margin fits: OK, the margin check says so", r["v"] == "vOK" and r["rows"][CHECK][0] == E("index.js.f_margin_fits")
+           and r["rows"][CHECK][1] == r["rows"]["margin"][1] and r["rows"][QTY][0] == E("index.js.f_qty"), r["rows"].get(CHECK))
+
+        # F2: out of range is BLOCK, naming the field, and its step card is flagged
+        attrs = pg.evaluate("()=>Object.fromEntries(['quota','entry','stop','riskPct','capPct','lev'].map(i=>{const e=document.getElementById(i);return [i,[e.min,e.max]]}))")
+        ok("F2: the fields carry the bounds: quota, entry, stop min 0; risk % and budget cap % 0 to 100; leverage min 1",
+           attrs == {"quota": ["0", ""], "entry": ["0", ""], "stop": ["0", ""], "riskPct": ["0", "100"], "capPct": ["0", "100"], "lev": ["1", ""]}, attrs)
+        for fid, bad, key, lab, card in [("riskPct", -1, "b_pct", "risk_pct", "st-risk"), ("capPct", 150, "b_pct", "cap_pct", "st-risk"),
+                                         ("lev", 0, "b_lev", "leverage", "st-risk"), ("quota", 0, "b_gt0", "quota", "st-account"),
+                                         ("entry", 0, "b_gt0", "entry", "st-trade"), ("stop", -5, "b_gt0", "stop", "st-trade")]:
+            reason = E("index.js." + key).format(field=E("index.calc." + lab))
+            r = desk(**dict({"entry": 77872, "stop": 74814}, **{fid: bad}))
+            ok(f"F2: {E('index.calc.' + lab)} {bad}: BLOCK, \"{reason}\", the {card[3:]} card flagged",
+               r["v"] == "vBLOCK" and reason in r["sent"] and reason in r["notes"] and r["cards"] == [card] and not r["cells"], r)
+        r = desk(riskPct=-1)
+        ok("F2: before an entry is typed too", r["v"] == "vBLOCK" and r["sent"] == E("index.js.vs_block").format(
+            reasons=E("index.js.b_pct").format(field=E("index.calc.risk_pct"))) and r["cards"] == ["st-risk"], r)
+        r = desk(entry=77872, stop=74814)
+        ok("F2: back in range, the desk sizes again and no card is flagged", r["v"] == "vOK" and not r["cards"], r["cards"])
+
+        # F3: a pending drawdown type with a known max is sized against the static floor, the loosest reading
+        m = FIRMS["crypto_fund_trader"]["products"]["instant"]["max_pct"]
+        r = desk(firm="crypto_fund_trader", prod="instant", quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=100, entry=77872, stop=74814)
+        ok(f"F3: CFT Instant, $10,000, equity and day start $9,500, 2% at a 100% cap: the {m:g}% max loss's floor at $9,400 binds, room $100, "
+           "the risk at most $100, and the note says which reading it is",
+           r["rows"]["max-loss floor"] == [E("index.js.f_dd_loosest").format(m=f"{m:g}"), "$9,400.00"] and r["rows"]["binding"][1].endswith("$100.00")
+           and usd(r["cells"]["risk"]) <= 100 and E("index.js.n_dd_loosest").format(m=f"{m:g}") in r["notes"]
+           and E("index.js.n_dd_pending") not in r["notes"] and E("index.js.u_dd") not in r["prov"], r)
+
+        # F4: a high-water mark or a high at rollover below what the account has reached is raised, and says so
+        r = desk(firm="brightfunded", prod="1step", equity=103000, daystart=103000, hwm=100000)
+        ok("F4: BrightFunded trails on equity: a high-water mark of 100,000 with equity 103,000 is raised to 103,000, the trailing floor 97,000",
+           r["rows"]["high-water mark"][1] == "$103,000.00" and r["rows"]["max-loss floor"][1] == "$97,000.00"
+           and E("index.js.n_hwm_raised_equity").format(typed="$100,000.00", hwm="$103,000.00") in r["notes"], r)
+        r = desk(firm="brightfunded", prod="1step", equity=95500, daystart=95500, hwm=95000)
+        ok("F4: a high-water mark of 95,000 is raised to the quota: the floor 94,000, not 89,000",
+           r["rows"]["high-water mark"][1] == "$100,000.00" and r["rows"]["max-loss floor"][1] == "$94,000.00"
+           and E("index.js.n_hwm_raised").format(typed="$95,000.00", hwm="$100,000.00") in r["notes"], r)
+        r = desk(firm="brightfunded", prod="1step", hirollover=99000)
+        ok("F4: a high at rollover of 99,000 below the day start is raised to it: the daily floor 97,000",
+           r["rows"]["high at rollover"][1] == "$100,000.00" and r["rows"]["daily floor"][1] == "$97,000.00"
+           and E("index.js.n_hi_raised").format(typed="$99,000.00", hi="$100,000.00") in r["notes"], r)
+        r = desk(firm="brightfunded", prod="1step", equity=103000, daystart=103000, hwm=104000)
+        ok("F4: one above both stays as typed, with no note", r["rows"]["high-water mark"][1] == "$104,000.00"
+           and not any("raised" in x for x in r["notes"]), r["notes"])
+
+        # F5: a long can't fall more than 100%
+        cross, iso = E("index.js.cross"), E("index.js.isolated")
+        r = desk(entry=77872, stop=74814)
+        ok("F5: a cross long past 100%: \"none above zero\" in the working table, the breakers and the ladder; no live line",
+           r["rows"][LIQ.format(mode=cross)][1] == NONE and r["brk"].endswith(NONE) and r["lad"][-1] == NONE and not r["liqline"], r)
+        r = desk(entry=77872, stop=74814, lev=1, mode="isolated")
+        ok("F5: isolated at 1× (100.00% before): none above zero, and the note says the position's own margin covers a fall to zero",
+           r["rows"][LIQ.format(mode=iso)][1] == NONE and r["lad"][-1] == NONE and E("index.js.n_isolated_none").format(lev=1) in r["notes"], r)
+        r = desk(side="-1", entry=77872, stop=85659.2)
+        v = r["rows"][LIQ.format(mode=cross)][1]
+        ok("F5: a short's liquidation past 100% is shown as computed", v.endswith("%") and float(v.rstrip("%").replace(",", "")) > 100
+           and NONE not in r["brk"] and r["lad"][-1] == E("desk2.js.l_off").format(pct=v) and r["liqline"], (v, r["lad"]))
+
+        # F6: the exit fee on the exit price: the loss at the stop is the risk to the cent, long or short
+        for side, pct in [("1", 1), ("-1", 1), ("1", 0.2), ("-1", 0.2)]:
+            e = 77872
+            st = round(e * (1 - int(side) * pct / 100), 6)
+            r = desk(side=side, entry=e, stop=st)
+            fu = f"{0.0004 * (e + st):,.6f}".rstrip("0").rstrip(".")
+            ok(f"F6: a {'long' if side == '1' else 'short'} with a {pct:g}% stop: fee per unit (entry + stop) × 0.04% = {fu}; the loss at the stop, "
+               "$500.00, is the risk", r["rows"]["fee per unit"] == [E("index.js.f_fpu").format(fee="0.04"), fu]
+               and r["rows"][LOSS] == [E("index.js.f_loss"), "$500.00"] and r["rows"]["risk"][1] == "$500.00" and r["cells"]["risk"] == "$500.00", r["rows"])
+
+        # F7: losses that leave equity above the floor
+        r = desk(entry=77872, stop=74814, riskPct=5, capPct=25)
+        ok("F7: a 25% cap makes the risk a quarter of the room ($1,000 of $4,000): 3 losses left, not 4 (the 4th reaches the limit)",
+           r["rows"]["risk"][1] == "$1,000.00" and r["rows"]["losses left"] == [E("index.js.f_left"), "3"]
+           and E("index.js.n_left").format(n="3", bind=E("index.js.bind_daily")) in r["notes"], r["rows"].get("losses left"))
+
+        # no leverage class recorded at this size: held to the lowest recorded cap, and says so
+        low = min(b["lev"] for b in FIRMS["crypto_fund_trader"]["calc"]["lev_bands"])
+        r = desk(firm="crypto_fund_trader", prod="1phase", quota=30000, equity=30000, daystart=30000, lev=200, entry=77872, stop=74814)
+        ok(f"CFT 1-Phase, $30,000 at 200×: no class recorded at this size, so leverage is held to {low}×, the lowest cap the firm records",
+           r["rows"]["leverage used"] == [E("index.js.f_lev_pending_held").format(lev=low), f"{low}×"]
+           and E("index.js.n_lev_held").format(lev=low) in r["notes"] and r["cells"]["margin"] == r["rows"]["margin"][1], r)
+        ok("no page error in the audit's cases", not errs, errs)
+        ctx.close()
+
         size = sum((PUB / f).stat().st_size for f in ("ticker.js", "calendar.js", "desk2.js"))
         ok(f"the header strips' and the desk's scripts: {size / 1024:.1f} KB, under the 40 KB budget", size < 40 * 1024)
         b.close()

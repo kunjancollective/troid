@@ -107,7 +107,7 @@ def main():
         pg.click('#result .term[data-tip="g-size"]')
         now = pg.inner_text("#gx-size")
         ok("size's Now line: this result's risk, stop distance, fee per unit, size and notional",
-           now == "$500.00 ÷ (3,058 + 62.2976) = 0.160241; 0.160241 × 77,872 = $12,478.30." and pg.is_visible("#g-size"), now)
+           now == "$500.00 ÷ (3,058 + 61.0744) = 0.160304; 0.160304 × 77,872 = $12,483.19." and pg.is_visible("#g-size"), now)
         pg.click("body", position={"x": 5, "y": 5})
         ok("a click outside closes it", not pg.is_visible("#g-size"))
         pg.fill("#riskPct", "0.25")
