@@ -36,5 +36,25 @@
     "value": 0.04,
     "from": "firms.json:bitfunded.fee_per_side_pct",
     "all": [0.04, 0.0325]
+  },
+  "shadow2_r": {
+    "what": "troid-shadow-2's mean R per trade on the cross-section (MEASURED): the ten qualifying crypto assets pooled, on its holdout 2025-01-01 -> 2026-09-21, the standard error clustered by entry day; SHADOW2.md's H1 did not survive",
+    "value": -0.016,
+    "tol": 0.0005,
+    "from": "backtest/results/cross_section.json:pooled.s2.day.exp",
+    "from_dir": "backtest/results/cross_section.json:pooled.s2.day",
+    "interval": [-0.141, 0.108],
+    "n": 890,
+    "assets": 10
+  },
+  "shadow1_xs_r": {
+    "what": "troid-shadow-1 on the same cross-section and window (MEASURED; for BTC, 2026 is its fit sample)",
+    "value": -0.002,
+    "tol": 0.0005,
+    "from": "backtest/results/cross_section.json:pooled.s1.day.exp",
+    "from_dir": "backtest/results/cross_section.json:pooled.s1.day",
+    "interval": [-0.026, 0.021],
+    "n": 1879,
+    "assets": 10
   }
 }

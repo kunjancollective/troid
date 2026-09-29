@@ -235,8 +235,17 @@ _ROOT = _pl.Path(__file__).resolve().parent.parent
 _sys.path.insert(0, str(_ROOT / "backtest"))
 import site_text as _T
 def _read(rel): return (_ROOT / rel).read_text()
-for rel in ("README.md", "backtest/STRATEGY.md", "backtest/WALKFORWARD.md"):
+for rel in ("README.md", "backtest/STRATEGY.md", "backtest/WALKFORWARD.md", "backtest/SHADOW2.md", "backtest/WALKFORWARD2.md",
+            "backtest/CROSSSECTION.md"):
     check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _read(rel)), 1.0)
+# troid-shadow-2's holdout rows are its results files', as walkforward2.py wrote them (SHADOW2.md): MEASURED, never fact
+_wf2 = _read("backtest/WALKFORWARD2.md")
+for _f in sorted((_ROOT / "backtest" / "results").glob("shadow2_*.json")):
+    _h = _json.loads(_f.read_text())["holdout"]
+    _cell = (f"| {_h['n']} |" if _h["n"] < 30 else f"| {_h['n']} | {_h['n'] / _h['months']:.1f} | {_h['win']:.0f}% | {_h['exp']:+.3f} |")
+    _sec = next((x for x in _wf2.split("\n## ")[1:] if x.startswith(_f.stem[8:] + ":")), "")
+    check("MEASURED", f"WALKFORWARD2.md's holdout row for {_f.stem[8:]} is its results file's (n {_h['n']})",
+          float(any(ln.startswith("| **holdout") and _cell in ln for ln in _sec.splitlines())), 1.0)
 for rel in ("web/public/terms.html", "web/public/ledger.html", "web/public/tearsheet.html", "web/public/dashboard.html"):
     check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _html.unescape(_read(rel))), 1.0)
 for page in sorted((_ROOT / "web" / "public").glob("*.html")):

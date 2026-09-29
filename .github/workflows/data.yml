@@ -1,13 +1,19 @@
 name: data — expand history
 
-# One-shot, manual. Pulls the multi-year 4h history the walk-forward needs
-# (HANDOFF.md step 1) on a GitHub runner, because the sandbox that does the
-# analysis has no Binance egress. api.binance.com refuses GitHub's runners (451);
-# fetch_binance.py falls back to api.binance.us, which is the feed the ledger runs
-# on. The files are committed so the walk-forward is reproducible from the repo.
+# One-shot, manual. Pulls the multi-year 4h history the walk-forward and the cross-section need
+# (HANDOFF.md step 1 and "Asset coverage"; SHADOW2.md "The cross-section") on a GitHub runner, because the
+# sandbox that does the analysis has no Binance egress. Every file comes from api.binance.us alone: BINANCE_HOSTS
+# pins it (api.binance.com refuses GitHub's runners with a 451 today, and a second feed must never slip in). A file
+# already in the repo is never fetched again: history is frozen once committed. The files are committed so every
+# run is reproducible from the repo.
 
 on:
   workflow_dispatch:
+    inputs:
+      symbols:
+        description: "Assets, space-separated; each tried as <asset>USDT, then <asset>USD"
+        required: false
+        default: "BTC ETH BNB XRP SOL TRX HYPE ZEC DOGE ADA LTC LINK BCH DOT AVAX XLM ATOM UNI ETC ALGO PAXG"
 
 permissions:
   contents: write
@@ -19,7 +25,7 @@ concurrency:
 jobs:
   data:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -27,23 +33,40 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Fetch BTCUSDT and ETHUSDT 4h from 2021-01-01
+      - name: Fetch each asset's 4h history from 2021-01-01, api.binance.us only
         working-directory: backtest
+        env:
+          BINANCE_HOSTS: https://api.binance.us
+          SYMBOLS: ${{ inputs.symbols }}
         run: |
-          for s in BTCUSDT ETHUSDT; do
-            python fetch_binance.py "$s" 2021-01-01 "data/${s}_4h.csv"
-            head -1 "data/${s}_4h.csv"
-            tail -1 "data/${s}_4h.csv"
+          : > "$RUNNER_TEMP/fetched.txt"
+          for a in ${SYMBOLS:-BTC ETH}; do
+            if ls "data/${a}USDT_4h.csv" >/dev/null 2>&1 || ls "data/${a}USD_4h.csv" >/dev/null 2>&1; then
+              echo "$a: already in the repo, kept as it is"; continue
+            fi
+            got=""
+            for q in USDT USD; do
+              if python fetch_binance.py "${a}${q}" 2021-01-01 "data/${a}${q}_4h.csv"; then got="${a}${q}"; break; fi
+              rm -f "data/${a}${q}_4h.csv"
+            done
+            if [ -n "$got" ]; then
+              head -1 "data/${got}_4h.csv"; tail -1 "data/${got}_4h.csv"
+              echo "backtest/data/${got}_4h.csv" >> "$RUNNER_TEMP/fetched.txt"
+            else
+              echo "$a: no 4h history on api.binance.us (USDT or USD)"
+            fi
           done
 
       - name: Commit the data
         run: |
           git config user.name "troid-shadow"
           git config user.email "shadow@troid.ai"
-          git add -f backtest/data/BTCUSDT_4h.csv backtest/data/ETHUSDT_4h.csv
+          if [ -s "$RUNNER_TEMP/fetched.txt" ]; then
+            xargs git add -f < "$RUNNER_TEMP/fetched.txt"
+          fi
           if git diff --cached --quiet; then
             echo "no change"
           else
-            git commit -m "data: BTCUSDT and ETHUSDT 4h from 2021-01-01 (binance.us)"
+            git commit -m "data: 4h history from 2021-01-01 (binance.us): $(xargs -n1 basename < "$RUNNER_TEMP/fetched.txt" | sed 's/_4h.csv//' | tr '\n' ' ')"
             git push
           fi

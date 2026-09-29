@@ -230,7 +230,22 @@ def canonical():
     lo, hi = h["exp"] - 1.96 * h["sd"] / math.sqrt(h["n"]), h["exp"] + 1.96 * h["sd"] / math.sqrt(h["n"])
     if [round(lo, 3), round(hi, 3)] != ho["interval"]:
         bad.append(("E2 holdout interval differs from the walk-forward", "figures.json", "holdout_r", str(ho["interval"]), f"[{lo:.4f}, {hi:.4f}]"))
+    # the cross-section's figures (cross_section.py): the interval as clustered there, the trades and the assets pooled
+    for k, v in F.items():
+        if k.startswith("_") or k == "holdout_r" or "from_dir" not in v:
+            continue
+        d = _get(v["from_dir"])
+        got = [round(d["lo"], 3), round(d["hi"], 3)]
+        if got != v["interval"] or d["n"] != v["n"]:
+            bad.append(("E2 interval or trades differ from the results", "figures.json", k, f"{v['interval']}, n {v['n']}", f"{got}, n {d['n']}"))
+        if "assets" in v and len(_get(v["from_dir"].partition(":")[0] + ":assets")) != v["assets"]:
+            bad.append(("E2 assets pooled differ from the results", "figures.json", k, str(v["assets"]), v["from_dir"]))
     return F, bad
+
+
+def _r(x):
+    """A figure as the pages write it: +0.108R, −0.016R."""
+    return ("+" if x >= 0 else "−") + format(abs(x), ".3f") + "R"
 
 
 def _plain(s):
@@ -246,10 +261,13 @@ def e2_texts(F):
     # METHODOLOGY's corrections table quotes each error it corrects; its rows are the record, not claims
     docs["METHODOLOGY.md"] = re.sub(r"(?m)^\| \d{4}-\d{2}-\d{2} \|.*$", "", docs.get("METHODOLOGY.md", ""))
     fees = {f"{x:g}" for x in F["fee_pct"]["all"]}
+    # the cross-section's figures, each value and interval bound as a page writes it; a sentence about the cross-section or
+    # shadow-2 carries only these, and a holdout sentence may carry their positive bounds
+    xs = {_r(x) for k in ("shadow2_r", "shadow1_xs_r") if k in F for x in [F[k]["value"], *F[k]["interval"]]}
     out = []
     for name, s in docs.items():
         for sent in re.split(r"(?<=[.!?])\s+|\n\n", s):
-            t = re.sub(r"\s+", " ", sent)
+            t = re.sub(r"\s+", " ", sent.replace("&minus;", "−"))
             one = re.search(r"\$(\d{3})\b(?![,\d])[^.]{0,50}\b1-Step\b|\b1-Step\b[^.]{0,50}\$(\d{3})\b(?![,\d])", t)
             priced = one and re.search(r"\b(fee|fees|price|costs?|pay|buy|bought|purchase)\b", t, re.I)
             if priced and int(one.group(1) or one.group(2)) != F["price_1step"]["value"] and "2-Step" not in t:
@@ -265,8 +283,12 @@ def e2_texts(F):
                 for m in re.finditer(r"\+0\.\d{2,3}R", t):
                     if re.search(r"in[- ]sample|chosen on|best of", t[max(0, m.start() - 60):m.start()], re.I):
                         continue                             # the in-sample figure, named as such
-                    if m.group(0) not in ("+" + format(F["holdout_r"]["value"], ".3f") + "R", "+0.03R", "+0.040R", "+0.10R", "+0.35R"):
+                    if m.group(0) not in {"+" + format(F["holdout_r"]["value"], ".3f") + "R", "+0.03R", "+0.040R", "+0.10R", "+0.35R"} | xs:
                         out.append(("E2 holdout expectancy", name, "", m.group(0), t[:160]))
+            if xs and re.search(r"shadow-2|cross-section", t, re.I):
+                for m in re.finditer(r"[−+-]0\.\d{3}R", t):
+                    if m.group(0).replace("-", "−") not in xs:
+                        out.append(("E2 the cross-section's figures (figures.json shadow2_r, shadow1_xs_r)", name, "", m.group(0), t[:160]))
             for m in re.finditer(r"\b16:(\d\d) UTC", t):
                 if m.group(1) not in ("00", "10", "20"):
                     out.append(("E2 reset time", name, "", m.group(0), t[:160]))

@@ -149,6 +149,30 @@ balance, static floor, 16:00 UTC reset):
 Steps 2, 4, 5, 6, 7 and the cross-section are open. The feed is api.binance.us
 throughout; the fetch falls back to it because api.binance.com answers 451 on runners.
 
+**Status 2026-09-29.** troid-shadow-2 is built as its own config and code (`SHADOW2.md`,
+`shadow2_config.json`, `engine_s2.py`), its design, hypotheses and pass criteria fixed before any
+run. `WALKFORWARD2.md`: on the 2025-01-01 -> 2026-09-21 holdout it measures -0.034R on BTC (n = 86)
+and -0.028R on ETH (n = 72), both intervals containing zero; MEASURED, and H1 and H2 are decided
+on the cross-section, not on two assets. `cross_section.py` runs shadow-1 (with its two ablations)
+and shadow-2 on every asset that qualifies; it waits for `data.yml`, now taking a symbols input and
+pinned to api.binance.us, to fetch the universe SHADOW2.md fixes. No forward journal for shadow-2
+until H1 is decided. Steps 2, 4, 5, 6 and 7 are still open for shadow-1.
+
+**Status 2026-09-29, the cross-section.** `data.yml` fetched SHADOW2.md's universe from
+api.binance.us (`e7fe612`). 10 assets qualify: BTC, ETH, BNB, SOL, DOGE, ADA, LTC, LINK, AVAX, XLM.
+XRP, TRX, ZEC, BCH, DOT, ATOM, UNI, ETC and ALGO forward-fill more than 1% of their bars, HYPE starts
+in 2025, and PAXG, the proxy, forward-fills 38.3%. `CROSSSECTION.md`, on shadow-2's holdout
+(2025-01-01 -> 2026-09-21), standard errors clustered by entry day, all MEASURED:
+- shadow-2, pooled: -0.016R, 95% CI [-0.141, +0.108] (n = 890), positive on 4 of 10 assets. **H1 did
+  not survive.** Calm minus unsettled: -0.077R, CI [-0.264, +0.111], same sign on 3 of 10. **H2 did
+  not survive.** As SHADOW2.md fixed it: no forward journal for shadow-2; that is the finding.
+- shadow-1 on the same ten assets and window: -0.002R, CI [-0.026, +0.021] (n = 1,879); without the
+  regime filter -0.000R [-0.024, +0.023]; a single entry -0.018R [-0.078, +0.042]. Every interval
+  contains zero: across assets, neither the regime filter nor the strength ladder shows a
+  measurable effect ("Asset coverage" above).
+TradFi stays open: api.binance.us has no TradFi feed. Steps 2, 4, 5, 6 and 7 are still open for
+shadow-1.
+
 ### 1. Expand the data
 ```
 python fetch_binance.py BTCUSDT 2021-01-01 data/BTCUSDT_4h.csv

@@ -1,0 +1,1093 @@
+{
+ "symbol": "LINKUSDT",
+ "asset": "LINK",
+ "bars": 10316,
+ "first": "2022-01-14T00:00:00+00:00",
+ "last": "2026-09-29T04:00:00+00:00",
+ "config": "troid-shadow-2",
+ "first_decision": "2023-05-12T20:00:00+00:00",
+ "hold_bars": 42,
+ "forward_filled_bars": 22,
+ "years": {
+  "2023": {
+   "n": 37,
+   "exp": 0.06083560776714143,
+   "sd": 1.1679300757583888,
+   "se": 0.19200652169814836,
+   "lo": -0.31549717476122935,
+   "hi": 0.4371683902955122,
+   "pf": 1.1332875782881764,
+   "win": 48.648648648648646,
+   "net": 1069.8504768658245
+  },
+  "2024": {
+   "n": 59,
+   "exp": -0.02200275973726284,
+   "sd": 1.2630655439347631,
+   "se": 0.16443712766226876,
+   "lo": -0.3442995299553096,
+   "hi": 0.3002940104807839,
+   "pf": 0.9516893520844036,
+   "win": 38.983050847457626,
+   "net": -769.4953209765
+  },
+  "2025": {
+   "n": 56,
+   "exp": 0.02556007394943271,
+   "sd": 1.183989797729512,
+   "se": 0.15821729187641476,
+   "lo": -0.2845458181283402,
+   "hi": 0.3356659660272056,
+   "pf": 1.0492507519303322,
+   "win": 42.857142857142854,
+   "net": 623.4915105098976
+  },
+  "2026": {
+   "n": 38,
+   "exp": 0.10062790724879368,
+   "sd": 1.1557725838567796,
+   "se": 0.1874910710572202,
+   "lo": -0.26685459202335793,
+   "hi": 0.46811040652094527,
+   "pf": 1.2275936280430007,
+   "win": 50.0,
+   "net": 1884.3610829729812
+  }
+ },
+ "before": {
+  "n": 96,
+  "exp": 0.009924527738392972,
+  "sd": 1.2216969744235393,
+  "se": 0.12468892531832093,
+  "lo": -0.23446576588551604,
+  "hi": 0.254314821362302,
+  "pf": 1.0125384635921821,
+  "win": 42.708333333333336,
+  "net": 300.3551558893245
+ },
+ "holdout": {
+  "n": 93,
+  "exp": 0.03554766075181426,
+  "sd": 1.1564086357603067,
+  "se": 0.11991398946525492,
+  "lo": -0.19948375860008538,
+  "hi": 0.2705790801037139,
+  "pf": 1.0723771912472275,
+  "win": 45.16129032258065,
+  "net": 1515.5082683873163,
+  "months": 20.66360052562418
+ },
+ "after": {
+  "n": 1
+ },
+ "alone": {
+  "3": {
+   "n": 107,
+   "exp": 0.08147946134989836,
+   "sd": 1.2387837686775676,
+   "se": 0.11975774712181071,
+   "lo": -0.15324572300885062,
+   "hi": 0.31620464570864737,
+   "pf": 1.170470145676739,
+   "win": 45.794392523364486,
+   "net": 4448.454606925453
+  },
+  "6": {
+   "n": 104,
+   "exp": 0.03846802983636532,
+   "sd": 1.1502937603138592,
+   "se": 0.11279558327316135,
+   "lo": -0.18261131337903092,
+   "hi": 0.25954737305176157,
+   "pf": 1.081375088812223,
+   "win": 44.23076923076923,
+   "net": 1895.8066310589795
+  },
+  "9": {
+   "n": 104,
+   "exp": -0.044460229590908194,
+   "sd": 1.0902931621049947,
+   "se": 0.10691204055981057,
+   "lo": -0.2540078290881369,
+   "hi": 0.16508736990632053,
+   "pf": 0.8972032990312304,
+   "win": 44.23076923076923,
+   "net": -2408.5084949978973
+  },
+  "12": {
+   "n": 104,
+   "exp": 0.030781345334296543,
+   "sd": 1.1361895263281698,
+   "se": 0.11141254934398234,
+   "lo": -0.18758725137990884,
+   "hi": 0.24914994204850194,
+   "pf": 1.0606793783927682,
+   "win": 46.15384615384615,
+   "net": 1407.7823879778546
+  }
+ },
+ "states": {
+  "vov_state": {
+   "calm": {
+    "n": 55,
+    "exp": 0.06342354019879237,
+    "sd": 1.245097076236605,
+    "se": 0.16788885551042076,
+    "lo": -0.2656386166016323,
+    "hi": 0.39248569699921704,
+    "pf": 1.1248408303650064,
+    "win": 41.81818181818182,
+    "net": 1650.4563069225214
+   },
+   "unsettled": {
+    "n": 38,
+    "exp": -0.004799006868811959,
+    "sd": 1.0294428491964775,
+    "se": 0.16699768196955386,
+    "lo": -0.33211446352913754,
+    "hi": 0.3225164497915136,
+    "pf": 0.9825163920997234,
+    "win": 50.0,
+    "net": -134.94803853520503
+   }
+  },
+  "bb_state": {
+   "compressed": {
+    "n": 43,
+    "exp": -0.08411500132616426,
+    "sd": 1.1564442406367814,
+    "se": 0.1763560933664838,
+    "lo": -0.42977294432447255,
+    "hi": 0.261542941672144,
+    "pf": 0.8243556227336762,
+    "win": 41.86046511627907,
+    "net": -1971.3294051179878
+   },
+   "expanded": {
+    "n": 50,
+    "exp": 0.13845755013887578,
+    "sd": 1.1580714277708088,
+    "se": 0.16377603193502518,
+    "lo": -0.18254347245377356,
+    "hi": 0.45945857273152513,
+    "pf": 1.3588899465797173,
+    "win": 48.0,
+    "net": 3486.8376735053043
+   }
+  }
+ },
+ "calm_minus_unsettled": {
+  "d": 0.06822254706760433,
+  "se": 0.23680138003779286,
+  "lo": -0.39590815780646965,
+  "hi": 0.5323532519416783
+ },
+ "compressed_minus_expanded": {
+  "d": -0.22257255146504004,
+  "se": 0.2406741787227503,
+  "lo": -0.6942939417616306,
+  "hi": 0.2491488388315505
+ },
+ "states_agree_pct": 56.561922365988906,
+ "holdout_exits": {
+  "max_hold_10d": 51,
+  "stop": 37,
+  "tp1": 5
+ },
+ "confluence": {
+  "vote|vote": 1.0,
+  "vote|sigma": 0.48124174929877184,
+  "vote|vov": 0.21621449871660275,
+  "vote|bb_width": 0.2288078349576453,
+  "vote|s1_trend": 0.3005541449291612,
+  "vote|s1_range_width": -0.17051751159075884,
+  "sigma|vote": 0.48124174929877184,
+  "sigma|sigma": 1.0,
+  "sigma|vov": 0.31006010988883076,
+  "sigma|bb_width": 0.36292911177682846,
+  "sigma|s1_trend": -0.08079497381793783,
+  "sigma|s1_range_width": -0.00573356013365207,
+  "vov|vote": 0.21621449871660275,
+  "vov|sigma": 0.31006010988883076,
+  "vov|vov": 1.0,
+  "vov|bb_width": 0.17374753172439927,
+  "vov|s1_trend": 0.04751278264443466,
+  "vov|s1_range_width": -0.03742754935910766,
+  "bb_width|vote": 0.2288078349576453,
+  "bb_width|sigma": 0.36292911177682846,
+  "bb_width|vov": 0.17374753172439927,
+  "bb_width|bb_width": 1.0,
+  "bb_width|s1_trend": 0.056764562652709474,
+  "bb_width|s1_range_width": -0.19959985469492947,
+  "s1_trend|vote": 0.3005541449291612,
+  "s1_trend|sigma": -0.08079497381793783,
+  "s1_trend|vov": 0.04751278264443466,
+  "s1_trend|bb_width": 0.056764562652709474,
+  "s1_trend|s1_trend": 1.0,
+  "s1_trend|s1_range_width": -0.2753192959865322,
+  "s1_range_width|vote": -0.17051751159075884,
+  "s1_range_width|sigma": -0.00573356013365207,
+  "s1_range_width|vov": -0.03742754935910766,
+  "s1_range_width|bb_width": -0.19959985469492947,
+  "s1_range_width|s1_trend": -0.2753192959865322,
+  "s1_range_width|s1_range_width": 1.0
+ },
+ "n_decisions": 1236,
+ "admitted": {
+  "vote": {
+   "admitted": true,
+   "worst": 0.0
+  },
+  "sigma": {
+   "admitted": true,
+   "worst": 0.48124174929877184
+  },
+  "vov": {
+   "admitted": true,
+   "worst": 0.31006010988883076
+  },
+  "bb_width": {
+   "admitted": true,
+   "worst": 0.36292911177682846
+  }
+ },
+ "holdout_trades": [
+  {
+   "entry_utc": "2024-12-28T00:00:00+00:00",
+   "exit_utc": "2025-01-04T00:00:00+00:00",
+   "side": 1,
+   "r": 0.5420441141440874,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-01-05T00:00:00+00:00",
+   "exit_utc": "2025-01-08T16:00:00+00:00",
+   "side": 1,
+   "r": -1.0012992557599065,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-01-09T00:00:00+00:00",
+   "exit_utc": "2025-01-16T00:00:00+00:00",
+   "side": 1,
+   "r": 0.558924869699939,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-01-17T00:00:00+00:00",
+   "exit_utc": "2025-01-24T00:00:00+00:00",
+   "side": 1,
+   "r": 0.8884790257291464,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-01-25T00:00:00+00:00",
+   "exit_utc": "2025-02-01T00:00:00+00:00",
+   "side": 1,
+   "r": 0.02389315114308383,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-02-02T00:00:00+00:00",
+   "exit_utc": "2025-02-02T16:00:00+00:00",
+   "side": 1,
+   "r": -1.0017610368449816,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-02-03T00:00:00+00:00",
+   "exit_utc": "2025-02-03T00:00:00+00:00",
+   "side": 1,
+   "r": -1.0017323954969628,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-02-04T00:00:00+00:00",
+   "exit_utc": "2025-02-06T16:00:00+00:00",
+   "side": 1,
+   "r": -1.0013856094181808,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-02-07T00:00:00+00:00",
+   "exit_utc": "2025-02-14T00:00:00+00:00",
+   "side": 1,
+   "r": -0.031048147225320368,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-02-15T00:00:00+00:00",
+   "exit_utc": "2025-02-22T00:00:00+00:00",
+   "side": 1,
+   "r": -0.7097301640437319,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-02-24T00:00:00+00:00",
+   "exit_utc": "2025-02-24T20:00:00+00:00",
+   "side": 1,
+   "r": -1.001774631798702,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-02-25T00:00:00+00:00",
+   "exit_utc": "2025-03-02T16:00:00+00:00",
+   "side": -1,
+   "r": -1.0031065346104489,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-03-03T00:00:00+00:00",
+   "exit_utc": "2025-03-10T00:00:00+00:00",
+   "side": -1,
+   "r": 1.629557947232898,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-03-11T00:00:00+00:00",
+   "exit_utc": "2025-03-14T08:00:00+00:00",
+   "side": -1,
+   "r": -1.0032415559276386,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-03-15T00:00:00+00:00",
+   "exit_utc": "2025-03-22T00:00:00+00:00",
+   "side": -1,
+   "r": -0.19314810601923457,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-03-29T00:00:00+00:00",
+   "exit_utc": "2025-04-05T00:00:00+00:00",
+   "side": -1,
+   "r": 0.79057755049989,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-04-07T00:00:00+00:00",
+   "exit_utc": "2025-04-09T16:00:00+00:00",
+   "side": -1,
+   "r": -1.0037073574105466,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-04-10T00:00:00+00:00",
+   "exit_utc": "2025-04-17T00:00:00+00:00",
+   "side": -1,
+   "r": 0.1939249689726895,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-04-18T00:00:00+00:00",
+   "exit_utc": "2025-04-22T12:00:00+00:00",
+   "side": -1,
+   "r": -1.0035767116230967,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-04-25T00:00:00+00:00",
+   "exit_utc": "2025-05-02T00:00:00+00:00",
+   "side": 1,
+   "r": -0.16079366792183242,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-05-03T00:00:00+00:00",
+   "exit_utc": "2025-05-06T08:00:00+00:00",
+   "side": 1,
+   "r": -1.0024417953936011,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-05-09T00:00:00+00:00",
+   "exit_utc": "2025-05-16T00:00:00+00:00",
+   "side": 1,
+   "r": 0.1638938473438959,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-05-17T00:00:00+00:00",
+   "exit_utc": "2025-05-24T00:00:00+00:00",
+   "side": 1,
+   "r": -0.18242224019753178,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-05-25T00:00:00+00:00",
+   "exit_utc": "2025-06-01T00:00:00+00:00",
+   "side": -1,
+   "r": 1.1057670400037807,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-06-02T00:00:00+00:00",
+   "exit_utc": "2025-06-09T00:00:00+00:00",
+   "side": -1,
+   "r": 0.275058077562416,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-06-14T00:00:00+00:00",
+   "exit_utc": "2025-06-21T00:00:00+00:00",
+   "side": -1,
+   "r": 0.8231456424013751,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-06-22T00:00:00+00:00",
+   "exit_utc": "2025-06-23T20:00:00+00:00",
+   "side": -1,
+   "r": -1.004744394512865,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-06-24T00:00:00+00:00",
+   "exit_utc": "2025-06-29T20:00:00+00:00",
+   "side": -1,
+   "r": -1.0045319044889285,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-06-30T00:00:00+00:00",
+   "exit_utc": "2025-07-07T00:00:00+00:00",
+   "side": 1,
+   "r": -0.23990075371580816,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-07-08T00:00:00+00:00",
+   "exit_utc": "2025-07-14T12:00:00+00:00",
+   "side": 1,
+   "r": 2.9555135754321635,
+   "reason": "tp1",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-07-15T00:00:00+00:00",
+   "exit_utc": "2025-07-18T04:00:00+00:00",
+   "side": 1,
+   "r": 2.9537782353763746,
+   "reason": "tp1",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-07-19T00:00:00+00:00",
+   "exit_utc": "2025-07-22T04:00:00+00:00",
+   "side": 1,
+   "r": 2.956476459254059,
+   "reason": "tp1",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-07-23T00:00:00+00:00",
+   "exit_utc": "2025-07-23T12:00:00+00:00",
+   "side": 1,
+   "r": -1.003305532263541,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-07-24T00:00:00+00:00",
+   "exit_utc": "2025-07-30T16:00:00+00:00",
+   "side": 1,
+   "r": -1.0033935980330266,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-07-31T00:00:00+00:00",
+   "exit_utc": "2025-08-01T12:00:00+00:00",
+   "side": 1,
+   "r": -1.0030917641256745,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-08-02T00:00:00+00:00",
+   "exit_utc": "2025-08-08T20:00:00+00:00",
+   "side": 1,
+   "r": 2.958848993385522,
+   "reason": "tp1",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-08-09T00:00:00+00:00",
+   "exit_utc": "2025-08-16T00:00:00+00:00",
+   "side": 1,
+   "r": 1.051519111931198,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-08-17T00:00:00+00:00",
+   "exit_utc": "2025-08-24T00:00:00+00:00",
+   "side": 1,
+   "r": 1.56030679768694,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-08-25T00:00:00+00:00",
+   "exit_utc": "2025-08-26T04:00:00+00:00",
+   "side": 1,
+   "r": -1.0020292979572134,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-08-27T00:00:00+00:00",
+   "exit_utc": "2025-09-03T00:00:00+00:00",
+   "side": 1,
+   "r": -0.37827941773926804,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-09-04T00:00:00+00:00",
+   "exit_utc": "2025-09-11T00:00:00+00:00",
+   "side": 1,
+   "r": -0.06702324738453748,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-09-12T00:00:00+00:00",
+   "exit_utc": "2025-09-19T00:00:00+00:00",
+   "side": 1,
+   "r": 0.0729533186734391,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-09-20T00:00:00+00:00",
+   "exit_utc": "2025-09-22T04:00:00+00:00",
+   "side": 1,
+   "r": -1.0031731212428214,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-09-23T00:00:00+00:00",
+   "exit_utc": "2025-09-25T16:00:00+00:00",
+   "side": 1,
+   "r": -1.003728035533981,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-09-26T00:00:00+00:00",
+   "exit_utc": "2025-10-03T00:00:00+00:00",
+   "side": 1,
+   "r": 1.9899793252635714,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-10-04T00:00:00+00:00",
+   "exit_utc": "2025-10-10T16:00:00+00:00",
+   "side": 1,
+   "r": -1.0041257147659943,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-10-11T00:00:00+00:00",
+   "exit_utc": "2025-10-17T04:00:00+00:00",
+   "side": 1,
+   "r": -1.00297241870785,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-10-25T00:00:00+00:00",
+   "exit_utc": "2025-11-01T00:00:00+00:00",
+   "side": 1,
+   "r": -0.38073307909310794,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-11-02T00:00:00+00:00",
+   "exit_utc": "2025-11-03T12:00:00+00:00",
+   "side": 1,
+   "r": -1.0022661868614797,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-11-07T00:00:00+00:00",
+   "exit_utc": "2025-11-10T04:00:00+00:00",
+   "side": -1,
+   "r": -1.0034050065286977,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-11-11T00:00:00+00:00",
+   "exit_utc": "2025-11-18T00:00:00+00:00",
+   "side": -1,
+   "r": 1.8116035412463747,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-11-19T00:00:00+00:00",
+   "exit_utc": "2025-11-26T00:00:00+00:00",
+   "side": -1,
+   "r": 0.46824825416368426,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-11-27T00:00:00+00:00",
+   "exit_utc": "2025-12-04T00:00:00+00:00",
+   "side": -1,
+   "r": -0.9049683283211627,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-12-05T00:00:00+00:00",
+   "exit_utc": "2025-12-12T00:00:00+00:00",
+   "side": -1,
+   "r": 0.04291487171648399,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2025-12-15T00:00:00+00:00",
+   "exit_utc": "2025-12-22T00:00:00+00:00",
+   "side": -1,
+   "r": 0.7152061056841627,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-12-23T00:00:00+00:00",
+   "exit_utc": "2025-12-30T00:00:00+00:00",
+   "side": -1,
+   "r": 0.21159032758873048,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2025-12-31T00:00:00+00:00",
+   "exit_utc": "2026-01-04T04:00:00+00:00",
+   "side": -1,
+   "r": -1.0041728219213208,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-01-08T00:00:00+00:00",
+   "exit_utc": "2026-01-15T00:00:00+00:00",
+   "side": -1,
+   "r": -0.6591758357674122,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-01-16T00:00:00+00:00",
+   "exit_utc": "2026-01-23T00:00:00+00:00",
+   "side": -1,
+   "r": 1.7628911142086385,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-01-24T00:00:00+00:00",
+   "exit_utc": "2026-01-31T00:00:00+00:00",
+   "side": -1,
+   "r": 2.1032514852249715,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-02-01T00:00:00+00:00",
+   "exit_utc": "2026-02-05T20:00:00+00:00",
+   "side": -1,
+   "r": 2.9487286011983396,
+   "reason": "tp1",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-02-06T00:00:00+00:00",
+   "exit_utc": "2026-02-06T12:00:00+00:00",
+   "side": -1,
+   "r": -1.0050271819197751,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-02-07T00:00:00+00:00",
+   "exit_utc": "2026-02-14T00:00:00+00:00",
+   "side": -1,
+   "r": 0.09615128542940339,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-02-15T00:00:00+00:00",
+   "exit_utc": "2026-02-22T00:00:00+00:00",
+   "side": -1,
+   "r": 0.3173564450747778,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-02-23T00:00:00+00:00",
+   "exit_utc": "2026-02-25T16:00:00+00:00",
+   "side": -1,
+   "r": -1.0045522074668258,
+   "reason": "stop",
+   "vov_state": "unsettled",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-02-26T00:00:00+00:00",
+   "exit_utc": "2026-03-05T00:00:00+00:00",
+   "side": -1,
+   "r": -0.1480486196788591,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-03-06T00:00:00+00:00",
+   "exit_utc": "2026-03-13T00:00:00+00:00",
+   "side": -1,
+   "r": 0.10406640784441956,
+   "reason": "max_hold_10d",
+   "vov_state": "unsettled",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-03-14T00:00:00+00:00",
+   "exit_utc": "2026-03-16T04:00:00+00:00",
+   "side": -1,
+   "r": -1.0047214606449302,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-03-17T00:00:00+00:00",
+   "exit_utc": "2026-03-24T00:00:00+00:00",
+   "side": -1,
+   "r": 1.0999691209812787,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-03-25T00:00:00+00:00",
+   "exit_utc": "2026-04-01T00:00:00+00:00",
+   "side": -1,
+   "r": 0.7320973049158466,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-04-02T00:00:00+00:00",
+   "exit_utc": "2026-04-09T00:00:00+00:00",
+   "side": -1,
+   "r": 0.18298514126180337,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-04-10T00:00:00+00:00",
+   "exit_utc": "2026-04-16T16:00:00+00:00",
+   "side": -1,
+   "r": -1.0054099037258173,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-04-17T00:00:00+00:00",
+   "exit_utc": "2026-04-24T00:00:00+00:00",
+   "side": -1,
+   "r": 0.33239030177104895,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-04-25T00:00:00+00:00",
+   "exit_utc": "2026-05-02T00:00:00+00:00",
+   "side": -1,
+   "r": 0.47985517556005836,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-05-03T00:00:00+00:00",
+   "exit_utc": "2026-05-05T08:00:00+00:00",
+   "side": -1,
+   "r": -1.0061232037454513,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-05-06T00:00:00+00:00",
+   "exit_utc": "2026-05-08T16:00:00+00:00",
+   "side": -1,
+   "r": -1.0060709546382325,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-05-09T00:00:00+00:00",
+   "exit_utc": "2026-05-10T16:00:00+00:00",
+   "side": -1,
+   "r": -1.006410501895904,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-05-11T00:00:00+00:00",
+   "exit_utc": "2026-05-18T00:00:00+00:00",
+   "side": -1,
+   "r": 2.1627509301700036,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-05-19T00:00:00+00:00",
+   "exit_utc": "2026-05-26T00:00:00+00:00",
+   "side": -1,
+   "r": 0.23744159175715468,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-05-27T00:00:00+00:00",
+   "exit_utc": "2026-06-03T00:00:00+00:00",
+   "side": -1,
+   "r": 1.8866973668880735,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-06-04T00:00:00+00:00",
+   "exit_utc": "2026-06-11T00:00:00+00:00",
+   "side": -1,
+   "r": 1.4449157231531957,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-06-12T00:00:00+00:00",
+   "exit_utc": "2026-06-15T08:00:00+00:00",
+   "side": -1,
+   "r": -1.0050903161766715,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-06-16T00:00:00+00:00",
+   "exit_utc": "2026-06-23T00:00:00+00:00",
+   "side": -1,
+   "r": 0.7778038118441103,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-06-24T00:00:00+00:00",
+   "exit_utc": "2026-07-01T00:00:00+00:00",
+   "side": -1,
+   "r": 0.839900920416481,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-07-02T00:00:00+00:00",
+   "exit_utc": "2026-07-02T12:00:00+00:00",
+   "side": -1,
+   "r": -1.0050295380611793,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-07-03T00:00:00+00:00",
+   "exit_utc": "2026-07-10T00:00:00+00:00",
+   "side": -1,
+   "r": -0.0003613762288285869,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-07-11T00:00:00+00:00",
+   "exit_utc": "2026-07-15T08:00:00+00:00",
+   "side": -1,
+   "r": -1.0056652237366455,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-07-16T00:00:00+00:00",
+   "exit_utc": "2026-07-23T00:00:00+00:00",
+   "side": -1,
+   "r": -0.17833391616500738,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  },
+  {
+   "entry_utc": "2026-07-24T00:00:00+00:00",
+   "exit_utc": "2026-07-27T04:00:00+00:00",
+   "side": -1,
+   "r": -1.00641631378321,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-07-28T00:00:00+00:00",
+   "exit_utc": "2026-08-04T00:00:00+00:00",
+   "side": -1,
+   "r": 0.43690710542309635,
+   "reason": "max_hold_10d",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-08-05T00:00:00+00:00",
+   "exit_utc": "2026-08-11T08:00:00+00:00",
+   "side": -1,
+   "r": -1.0070409522095751,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-08-12T00:00:00+00:00",
+   "exit_utc": "2026-08-15T00:00:00+00:00",
+   "side": -1,
+   "r": -1.0072709195054368,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "compressed"
+  },
+  {
+   "entry_utc": "2026-08-16T00:00:00+00:00",
+   "exit_utc": "2026-08-19T12:00:00+00:00",
+   "side": -1,
+   "r": -1.0066702771011244,
+   "reason": "stop",
+   "vov_state": "calm",
+   "bb_state": "expanded"
+  }
+ ]
+}
