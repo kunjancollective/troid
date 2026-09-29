@@ -97,7 +97,10 @@ stage. Floating profit doesn't count toward it.
 ## Fees are a sizing input, not a footnote
 
 0.04% per side on **notional**, and notional scales inversely with stop distance. So
-the tighter the stop, the more of the risk budget goes to fees:
+the tighter the stop, the more of the risk budget goes to fees. The exit fee is charged
+on the exit notional, so at the stop the fee per unit is 0.04% × (entry + stop): a
+short, whose stop sits above entry, pays slightly more than a long at the same distance.
+The rounded shares below hold for either side:
 
 ```
 3.9% stop (1.5× daily ATR)  ->  ~2% of risk

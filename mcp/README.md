@@ -41,5 +41,8 @@ you bring; it does not produce one.
 
 `size_trade` reproduces `scripts/risk.py` exactly on its reference cases, including the
 one where equity sits below the crossover and the max-drawdown ceiling binds instead of
-the daily: quantity 1.6220951, notional 126,315.79, fees 101.05 (21.05% of risk),
-losses remaining 4.
+the daily: quantity 1.62158302, notional 126,275.91, fees 101.17 (21.08% of risk),
+losses remaining 4. The exit fee is priced at the stop, fee × (entry + stop), so the loss
+at the stop with both fees is the risk to the cent, long or short; losses remaining are
+the losses that leave equity above the floor, ceil(budget ÷ risk) − 1 (calculator
+audit, 2026-09-29).

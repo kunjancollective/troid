@@ -42,11 +42,14 @@ system will eventually kill the account regardless of edge. This calculation is 
 the single most useful output of the whole mode:
 
 ```
-survivable_streak = effective_budget / risk_per_trade
+survivable_streak = ceil(effective_budget / risk_per_trade) − 1
 ```
 
-If `survivable_streak` is less than the historical longest streak, risk per trade is
-too high. Full stop. Say it plainly and give the size that would survive it.
+That counts the losses that leave equity above the floor. Firms word a breach as
+reaching the limit, so a loss that lands exactly on it is not survived: $4,000 of
+room at $500 a trade survives 7, not 8. If `survivable_streak` is less than the
+historical longest streak, risk per trade is too high. Full stop. Say it plainly and
+give the size that would survive it.
 
 ## The leaks worth finding
 

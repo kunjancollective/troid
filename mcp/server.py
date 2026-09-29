@@ -112,8 +112,12 @@ def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget,
     # notional at the liquidation price. m = 1/leverage isolated, equity/notional cross. <= 0: already below maintenance.
     m = 1 / leverage if mode == "isolated" else (equity / notional if notional > 0 else None)
     liq = (m - MMR) / (1 - side * MMR) * 100 if m is not None else 1e9
+    # A long can't fall more than 100%: at 100% or more it has no liquidation above zero, and says so in place of the
+    # figure (cross with equity above the notional, isolated at 1x). A short can rise without limit; its figure stands.
+    none_above_zero = side > 0 and m is not None and liq >= 100 - 1e-9
+    liq_name = f"exchange liquidation ({mode})"
     order = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
-                    ("max loss floor", floor_pct), (f"exchange liquidation ({mode})", max(liq, 0))],
+                    ("max loss floor", floor_pct), (liq_name, max(liq, 0))],
                    key=lambda e: e[1])
     warn = []
     if order[0][0] != "your stop":
@@ -122,11 +126,12 @@ def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget,
     if mode == "cross" and liq > floor_pct:
         warn.append("Cross margin: nothing cuts a runaway position before the firm's floor. "
                     "Your stop is the only circuit breaker in front of it.")
-    if mode == "isolated" and liq < floor_pct:
+    if mode == "isolated" and liq < floor_pct and not none_above_zero:
         warn.append(f"Isolated margin: the exchange liquidates this position at {liq:.1f}% "
                     f"adverse for its own margin, before the firm's floor.")
     return {"margin_mode": mode, "first_to_bind": order[0][0],
-            "order": [{"event": e, "adverse_move_pct": round(v, 2) if v < 1e8 else None} for e, v in order],
+            "order": [{"event": e, "adverse_move_pct": "none above zero" if e == liq_name and none_above_zero
+                       else round(v, 2) if v < 1e8 else None} for e, v in order],
             "runaway_max_loss": round(notional / leverage if mode == "isolated" else min(notional, dd_budget), 2),
             "warnings": warn}
 
@@ -172,7 +177,9 @@ def size_trade(quota: float, equity: float, day_start_balance: float,
     risk = min(intended, cap)
     reduced = risk < intended - 1e-9
 
-    fee_unit = entry * FEE_PER_SIDE * 2
+    # The exit fee is charged on the exit notional, quantity x stop at the stop, so the fee per unit is
+    # fee x (entry + stop), and the loss at the stop with both fees is the risk to the cent, long or short.
+    fee_unit = FEE_PER_SIDE * (entry + stop)
     qty = risk / (d + fee_unit)
     notional = qty * entry
     margin = notional / leverage
@@ -181,7 +188,9 @@ def size_trade(quota: float, equity: float, day_start_balance: float,
     tgt = target if target else (entry + s * target_r * d if target_r else 0.0)
     rr = abs(tgt - entry) / d if tgt else None
     consumes = risk / b["effective_budget"] * 100
-    losses_left = math.floor(b["effective_budget"] / risk + 1e-9) if risk > 0 else 0
+    # Losses that leave equity above the floor: a breach is reaching the limit, so a loss that lands exactly on it
+    # isn't one more left ($4,000 at $500 leaves 7, not 8). The epsilon reads 4.000000000000001 as 4.
+    losses_left = math.ceil(b["effective_budget"] / risk - 1e-9) - 1 if risk > 0 else 0
 
     margin_pct = margin / equity * 100
     if margin_pct > MAX_MARGIN_PCT:
@@ -318,9 +327,12 @@ def explain_rule(topic: str) -> dict:
         "loss that survives the reset counts in full against the new day, because the prior "
         "day's profit does not carry over, so a position inside the limit just before the "
         "reset can breach just after it without price moving.",
-      "fees": "0.04% per side on notional, 0.08% round trip. Notional scales inversely with "
-        "stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). "
-        "At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%.",
+      "fees": "0.04% per side on notional: on the entry notional, and on the exit notional, "
+        "which at the stop is quantity x stop. So the fee per unit is f x (entry + stop), and "
+        "the fee share of risk is f(2 - s)/(s + f(2 - s)) on a long, f(2 + s)/(s + f(2 + s)) on a "
+        "short, s the stop distance as a fraction of entry. Notional scales inversely with stop "
+        "distance, so tight stops are punished hardest. At a 3.9% stop that's about 2% of risk; "
+        "at a 0.3% scalp stop about 21%, either side.",
       "leverage": "Leverage does not determine your loss — the stop does. risk = "
         "|entry-stop| x quantity, and leverage appears nowhere in it. What leverage changes "
         "is margin posted and liquidation distance. Under ISOLATED margin a long is liquidated "
@@ -357,9 +369,10 @@ def explain_rule(topic: str) -> dict:
       "ruin": "Under a proportional cap (risk at most c of the REMAINING budget), budget "
         "after n losses is B(1-c)^n — it approaches zero without reaching it, so ruin by "
         "realized losses is unreachable and the real failure mode is a stalled account. "
-        "Uncapped, a fixed fraction f of quota reaches the floor in floor(maxloss/f) losses: "
-        "12 at 0.5%, 6 at 1%, 3 at 2%. At a professional +0.35R edge, 1% uncapped blows up "
-        "68% of the time within a year; 2% is 100% (MODELLED: income_math.py). Under a cap, zero.",
+        "Uncapped, a fixed fraction f of quota reaches the floor in ceil(maxloss/f) losses: "
+        "12 at 0.5%, 6 at 1%, 3 at 2%, and reaching it is the breach. At a professional "
+        "+0.35R edge, 1% uncapped blows up 68% of the time within a year; 2% is 100% "
+        "(MODELLED: income_math.py). Under a cap, zero.",
       "min_days": "Five trading days minimum to clear a stage (ToU 9(a)). The challenge page "
         "displays 0. The contract governs. The bad failure mode is hitting your profit target "
         "in three days and being unable to clear the stage.",
@@ -395,22 +408,28 @@ def explain_rule(topic: str) -> dict:
 
 @mcp.tool()
 def asset_cost(price: float, atr: float, atr_multiple: float = 1.5,
-               risk: float = 500.0, leverage: float = 5.0) -> dict:
+               risk: float = 500.0, leverage: float = 5.0, side: str = "long") -> dict:
     """What a given asset costs you to trade, from its price and ATR.
 
-    Fee drag depends only on stop distance as a percentage of price — the instrument is
-    irrelevant. But with ATR-based stops the asset's normalised volatility sets that
-    percentage, so the asset decides your drag indirectly. Works on any instrument the
-    firm lists, crypto or otherwise.
+    Fee drag depends only on stop distance as a percentage of price, and slightly on the
+    side (the exit fee is charged at the stop, below entry on a long, above it on a short)
+    — the instrument is irrelevant. But with ATR-based stops the asset's normalised
+    volatility sets that percentage, so the asset decides your drag indirectly. Works on
+    any instrument the firm lists, crypto or otherwise.
+
+    side: "long" or "short", priced at entry = price.
     """
+    s = 1 if side.lower().startswith("l") else -1
     atr_pct = atr / price * 100
     stop_dist = atr_multiple * atr
     stop_frac = stop_dist / price
-    fee_unit = price * FEE_PER_SIDE * 2
+    stop = price - s * stop_dist
+    fee_unit = FEE_PER_SIDE * (price + stop)          # fee x (entry + stop), as size_trade prices it
     qty = risk / (stop_dist + fee_unit)
     notional = qty * price
-    drag = 2 * FEE_PER_SIDE / (stop_frac + 2 * FEE_PER_SIDE) * 100
-    min_stop_5 = 2 * FEE_PER_SIDE * 95 / 5
+    drag = fee_unit / (stop_dist + fee_unit) * 100
+    # the stop fraction x at which drag is D = 5%: f(2 - s*x)(1 - D) = D*x, so x = 2f(1 - D) / (D + s*f(1 - D))
+    min_stop_5 = 2 * FEE_PER_SIDE * 0.95 / (0.05 + s * FEE_PER_SIDE * 0.95)
     return {
         "atr_pct_of_price": round(atr_pct, 3),
         "stop_pct": round(stop_frac * 100, 3),
