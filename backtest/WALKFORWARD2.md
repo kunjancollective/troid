@@ -138,3 +138,452 @@ Reading it: the holdout is n = 72, -0.028R, 95% CI [-0.324R, +0.268R]: contains 
 
 ---
 
+## BNBUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/BNBUSDT_4h.csv`. Forward-filled bars in the file: 4. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 60 bars (major).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 37 | 4.6 | 38% | -0.111 | 0.203 | [-0.509, +0.286] | 0.81 |
+| 2023 | 48 | 4.0 | 33% | -0.159 | 0.177 | [-0.507, +0.189] | 0.72 |
+| 2024 | 54 | 4.5 | 44% | +0.131 | 0.197 | [-0.255, +0.517] | 1.23 |
+| 2025 (holdout) | 60 | 5.0 | 32% | -0.002 | 0.192 | [-0.377, +0.374] | 0.99 |
+| 2026 (holdout) | 32 | 3.6 | 31% | -0.378 | 0.162 | [-0.695, -0.062] | 0.41 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 139 | 4.3 | 39% | -0.034 | 0.112 | [-0.253, +0.185] | 0.93 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 92 | 4.5 | 32% | -0.133 | 0.138 | [-0.403, +0.137] | 0.78 |
+
+Holdout exits: max_hold_10d 27, stop 56, tp1 9.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 92 | -0.133 | 0.138 | [-0.403, +0.137] |
+| 3 months alone | 106 | -0.007 | 0.137 | [-0.276, +0.262] |
+| 6 months alone | 102 | +0.005 | 0.142 | [-0.273, +0.282] |
+| 9 months alone | 107 | -0.159 | 0.125 | [-0.404, +0.086] |
+| 12 months alone | 108 | -0.147 | 0.127 | [-0.395, +0.102] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 45 | +0.086 | [-0.356, +0.527] |
+| vol-of-vol: unsettled | 47 | -0.342 | [-0.652, -0.032] |
+| Bollinger width: compressed | 41 | -0.124 | [-0.526, +0.277] |
+| Bollinger width: expanded | 51 | -0.139 | [-0.508, +0.229] |
+
+- Calm minus unsettled: +0.428R, SE 0.275, 95% CI [-0.112, +0.967].
+- Compressed minus expanded: +0.015R, SE 0.278, 95% CI [-0.530, +0.560].
+- The two states agree (calm with compressed, unsettled with expanded) on 48% of the holdout's 536 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.05 | 0.10 | 0.05 | 0.30 | 0.15 |
+| sigma | 0.05 | 1.00 | 0.28 | 0.39 | 0.14 | 0.20 |
+| vov | 0.10 | 0.28 | 1.00 | 0.04 | 0.11 | 0.00 |
+| bb_width | 0.05 | 0.39 | 0.04 | 1.00 | 0.02 | 0.12 |
+| s1_trend | 0.30 | 0.14 | 0.11 | 0.02 | 1.00 | 0.15 |
+| s1_range_width | 0.15 | 0.20 | 0.00 | 0.12 | 0.15 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.05); vov in (worst |corr| 0.28). Bollinger width against what was admitted: worst |corr| 0.39 (under 0.5).
+
+Reading it: the holdout is n = 92, -0.133R, 95% CI [-0.403R, +0.137R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## SOLUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/SOLUSDT_4h.csv`. Forward-filled bars in the file: 4. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 60 bars (major).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 31 | 3.8 | 55% | +0.373 | 0.244 | [-0.105, +0.850] | 1.93 |
+| 2023 | 50 | 4.2 | 44% | +0.128 | 0.206 | [-0.276, +0.533] | 1.24 |
+| 2024 | 49 | 4.1 | 45% | +0.183 | 0.201 | [-0.211, +0.577] | 1.34 |
+| 2025 (holdout) | 51 | 4.3 | 33% | -0.155 | 0.169 | [-0.487, +0.176] | 0.73 |
+| 2026 (holdout) | 35 | 3.9 | 46% | +0.067 | 0.225 | [-0.374, +0.507] | 1.12 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 130 | 4.1 | 47% | +0.207 | 0.123 | [-0.035, +0.449] | 1.41 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 86 | 4.2 | 38% | -0.065 | 0.135 | [-0.330, +0.201] | 0.87 |
+
+Holdout exits: max_hold_10d 34, stop 45, tp1 7.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 86 | -0.065 | 0.135 | [-0.330, +0.201] |
+| 3 months alone | 96 | -0.091 | 0.132 | [-0.349, +0.167] |
+| 6 months alone | 96 | -0.111 | 0.128 | [-0.363, +0.140] |
+| 9 months alone | 97 | -0.191 | 0.119 | [-0.424, +0.041] |
+| 12 months alone | 97 | -0.093 | 0.127 | [-0.342, +0.156] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 42 | -0.276 | [-0.620, +0.067] |
+| vol-of-vol: unsettled | 44 | +0.137 | [-0.260, +0.534] |
+| Bollinger width: compressed | 32 | +0.055 | [-0.366, +0.477] |
+| Bollinger width: expanded | 54 | -0.136 | [-0.479, +0.206] |
+
+- Calm minus unsettled: -0.413R, SE 0.268, 95% CI [-0.938, +0.112].
+- Compressed minus expanded: +0.191R, SE 0.277, 95% CI [-0.352, +0.735].
+- The two states agree (calm with compressed, unsettled with expanded) on 45% of the holdout's 536 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.04 | 0.17 | 0.04 | 0.29 | 0.12 |
+| sigma | 0.04 | 1.00 | 0.28 | 0.35 | 0.08 | 0.20 |
+| vov | 0.17 | 0.28 | 1.00 | 0.10 | 0.02 | 0.16 |
+| bb_width | 0.04 | 0.35 | 0.10 | 1.00 | 0.01 | 0.06 |
+| s1_trend | 0.29 | 0.08 | 0.02 | 0.01 | 1.00 | 0.15 |
+| s1_range_width | 0.12 | 0.20 | 0.16 | 0.06 | 0.15 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.04); vov in (worst |corr| 0.28). Bollinger width against what was admitted: worst |corr| 0.35 (under 0.5).
+
+Reading it: the holdout is n = 86, -0.065R, 95% CI [-0.330R, +0.201R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## DOGEUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/DOGEUSDT_4h.csv`. Forward-filled bars in the file: 4. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 60 bars (major).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 35 | 4.3 | 37% | -0.099 | 0.221 | [-0.533, +0.335] | 0.83 |
+| 2023 | 45 | 3.8 | 40% | -0.024 | 0.203 | [-0.422, +0.375] | 0.95 |
+| 2024 | 56 | 4.7 | 39% | +0.054 | 0.180 | [-0.299, +0.407] | 1.10 |
+| 2025 (holdout) | 44 | 3.7 | 32% | -0.157 | 0.185 | [-0.519, +0.205] | 0.73 |
+| 2026 (holdout) | 41 | 4.6 | 44% | +0.035 | 0.206 | [-0.369, +0.440] | 1.06 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 136 | 4.2 | 39% | -0.011 | 0.114 | [-0.235, +0.213] | 0.97 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 84 | 4.1 | 38% | -0.053 | 0.139 | [-0.325, +0.219] | 0.90 |
+| after 2026-09-21 (live tail) | 1 | 4.2 | insufficient (n < 30) | | | | |
+
+Holdout exits: max_hold_10d 33, stop 45, tp1 6.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 84 | -0.053 | 0.139 | [-0.325, +0.219] |
+| 3 months alone | 93 | -0.050 | 0.132 | [-0.309, +0.208] |
+| 6 months alone | 96 | -0.126 | 0.122 | [-0.365, +0.113] |
+| 9 months alone | 92 | -0.000 | 0.131 | [-0.257, +0.256] |
+| 12 months alone | 90 | +0.009 | 0.132 | [-0.249, +0.267] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 43 | -0.122 | [-0.486, +0.242] |
+| vol-of-vol: unsettled | 41 | +0.020 | [-0.390, +0.429] |
+| Bollinger width: compressed | 34 | +0.136 | [-0.341, +0.614] |
+| Bollinger width: expanded | 50 | -0.181 | [-0.502, +0.139] |
+
+- Calm minus unsettled: -0.142R, SE 0.279, 95% CI [-0.690, +0.405].
+- Compressed minus expanded: +0.317R, SE 0.293, 95% CI [-0.258, +0.893].
+- The two states agree (calm with compressed, unsettled with expanded) on 49% of the holdout's 529 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.42 | 0.32 | 0.22 | 0.27 | 0.05 |
+| sigma | 0.42 | 1.00 | 0.35 | 0.40 | 0.08 | 0.17 |
+| vov | 0.32 | 0.35 | 1.00 | 0.06 | 0.17 | 0.01 |
+| bb_width | 0.22 | 0.40 | 0.06 | 1.00 | 0.18 | 0.16 |
+| s1_trend | 0.27 | 0.08 | 0.17 | 0.18 | 1.00 | 0.29 |
+| s1_range_width | 0.05 | 0.17 | 0.01 | 0.16 | 0.29 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.42); vov in (worst |corr| 0.35). Bollinger width against what was admitted: worst |corr| 0.40 (under 0.5).
+
+Reading it: the holdout is n = 84, -0.053R, 95% CI [-0.325R, +0.219R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## ADAUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/ADAUSDT_4h.csv`. Forward-filled bars in the file: 4. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 60 bars (major).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 34 | 4.2 | 50% | +0.189 | 0.227 | [-0.256, +0.634] | 1.41 |
+| 2023 | 52 | 4.3 | 37% | -0.106 | 0.175 | [-0.449, +0.236] | 0.81 |
+| 2024 | 42 | 3.5 | 40% | +0.060 | 0.203 | [-0.337, +0.458] | 1.11 |
+| 2025 (holdout) | 44 | 3.7 | 39% | -0.034 | 0.178 | [-0.384, +0.316] | 0.93 |
+| 2026 (holdout) | 40 | 4.5 | 48% | +0.160 | 0.216 | [-0.263, +0.582] | 1.30 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 128 | 4.0 | 41% | +0.027 | 0.114 | [-0.197, +0.250] | 1.04 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 83 | 4.0 | 43% | +0.071 | 0.139 | [-0.202, +0.344] | 1.13 |
+| after 2026-09-21 (live tail) | 1 | 4.2 | insufficient (n < 30) | | | | |
+
+Holdout exits: max_hold_10d 37, stop 41, tp1 5.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 83 | +0.071 | 0.139 | [-0.202, +0.344] |
+| 3 months alone | 90 | +0.017 | 0.129 | [-0.236, +0.270] |
+| 6 months alone | 92 | +0.060 | 0.137 | [-0.208, +0.328] |
+| 9 months alone | 87 | +0.172 | 0.140 | [-0.103, +0.447] |
+| 12 months alone | 90 | +0.019 | 0.130 | [-0.236, +0.274] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 45 | +0.022 | [-0.359, +0.402] |
+| vol-of-vol: unsettled | 38 | +0.130 | [-0.267, +0.526] |
+| Bollinger width: compressed | 35 | -0.005 | [-0.447, +0.437] |
+| Bollinger width: expanded | 48 | +0.126 | [-0.222, +0.475] |
+
+- Calm minus unsettled: -0.108R, SE 0.280, 95% CI [-0.657, +0.442].
+- Compressed minus expanded: -0.131R, SE 0.287, 95% CI [-0.694, +0.432].
+- The two states agree (calm with compressed, unsettled with expanded) on 53% of the holdout's 560 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.34 | 0.19 | 0.16 | 0.20 | 0.11 |
+| sigma | 0.34 | 1.00 | 0.18 | 0.37 | 0.04 | 0.10 |
+| vov | 0.19 | 0.18 | 1.00 | 0.05 | 0.09 | 0.03 |
+| bb_width | 0.16 | 0.37 | 0.05 | 1.00 | 0.14 | 0.15 |
+| s1_trend | 0.20 | 0.04 | 0.09 | 0.14 | 1.00 | 0.26 |
+| s1_range_width | 0.11 | 0.10 | 0.03 | 0.15 | 0.26 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.34); vov in (worst |corr| 0.19). Bollinger width against what was admitted: worst |corr| 0.37 (under 0.5).
+
+Reading it: the holdout is n = 83, +0.071R, 95% CI [-0.202R, +0.344R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## LTCUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/LTCUSDT_4h.csv`. Forward-filled bars in the file: 11. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 42 bars (minor).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 37 | 4.6 | 46% | +0.136 | 0.203 | [-0.261, +0.534] | 1.33 |
+| 2023 | 51 | 4.3 | 37% | -0.229 | 0.133 | [-0.491, +0.032] | 0.56 |
+| 2024 | 63 | 5.2 | 33% | -0.194 | 0.160 | [-0.508, +0.120] | 0.68 |
+| 2025 (holdout) | 47 | 3.9 | 43% | +0.098 | 0.172 | [-0.239, +0.434] | 1.23 |
+| 2026 (holdout) | 48 | 5.4 | 44% | -0.048 | 0.171 | [-0.384, +0.288] | 0.90 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 151 | 4.7 | 38% | -0.125 | 0.095 | [-0.311, +0.061] | 0.76 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 95 | 4.6 | 43% | +0.024 | 0.121 | [-0.213, +0.261] | 1.04 |
+
+Holdout exits: max_hold_10d 52, stop 38, tp1 5.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 95 | +0.024 | 0.121 | [-0.213, +0.261] |
+| 3 months alone | 107 | -0.036 | 0.108 | [-0.247, +0.175] |
+| 6 months alone | 109 | -0.129 | 0.101 | [-0.327, +0.068] |
+| 9 months alone | 107 | -0.066 | 0.105 | [-0.271, +0.139] |
+| 12 months alone | 108 | -0.018 | 0.108 | [-0.229, +0.194] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 54 | -0.073 | [-0.361, +0.216] |
+| vol-of-vol: unsettled | 41 | +0.151 | [-0.245, +0.548] |
+| Bollinger width: compressed | 50 | -0.102 | [-0.405, +0.201] |
+| Bollinger width: expanded | 45 | +0.164 | [-0.206, +0.533] |
+
+- Calm minus unsettled: -0.224R, SE 0.250, 95% CI [-0.715, +0.267].
+- Compressed minus expanded: -0.265R, SE 0.244, 95% CI [-0.743, +0.212].
+- The two states agree (calm with compressed, unsettled with expanded) on 53% of the holdout's 530 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.30 | 0.25 | 0.17 | 0.23 | 0.02 |
+| sigma | 0.30 | 1.00 | 0.32 | 0.43 | 0.06 | 0.06 |
+| vov | 0.25 | 0.32 | 1.00 | 0.12 | 0.02 | 0.04 |
+| bb_width | 0.17 | 0.43 | 0.12 | 1.00 | 0.02 | 0.14 |
+| s1_trend | 0.23 | 0.06 | 0.02 | 0.02 | 1.00 | 0.19 |
+| s1_range_width | 0.02 | 0.06 | 0.04 | 0.14 | 0.19 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.30); vov in (worst |corr| 0.32). Bollinger width against what was admitted: worst |corr| 0.43 (under 0.5).
+
+Reading it: the holdout is n = 95, +0.024R, 95% CI [-0.213R, +0.261R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## LINKUSDT: 10316 bars, 2022-01-14 -> 2026-09-29
+
+Data: `data/LINKUSDT_4h.csv`. Forward-filled bars in the file: 22. The first decision with every input: 2023-05-12 (bar 2903). Hold limit: 42 bars (minor).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2023 | 37 | 4.8 | 49% | +0.061 | 0.192 | [-0.315, +0.437] | 1.13 |
+| 2024 | 59 | 4.9 | 39% | -0.022 | 0.164 | [-0.344, +0.300] | 0.95 |
+| 2025 (holdout) | 56 | 4.7 | 43% | +0.026 | 0.158 | [-0.285, +0.336] | 1.05 |
+| 2026 (holdout) | 38 | 4.3 | 50% | +0.101 | 0.187 | [-0.267, +0.468] | 1.23 |
+| before the holdout, 2023-05-13 -> 2024-12-31 | 96 | 4.9 | 43% | +0.010 | 0.125 | [-0.234, +0.254] | 1.01 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 93 | 4.5 | 45% | +0.036 | 0.120 | [-0.199, +0.271] | 1.07 |
+| after 2026-09-21 (live tail) | 1 | 4.2 | insufficient (n < 30) | | | | |
+
+Holdout exits: max_hold_10d 51, stop 37, tp1 5.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 93 | +0.036 | 0.120 | [-0.199, +0.271] |
+| 3 months alone | 107 | +0.081 | 0.120 | [-0.153, +0.316] |
+| 6 months alone | 104 | +0.038 | 0.113 | [-0.183, +0.260] |
+| 9 months alone | 104 | -0.044 | 0.107 | [-0.254, +0.165] |
+| 12 months alone | 104 | +0.031 | 0.111 | [-0.188, +0.249] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 55 | +0.063 | [-0.266, +0.392] |
+| vol-of-vol: unsettled | 38 | -0.005 | [-0.332, +0.323] |
+| Bollinger width: compressed | 43 | -0.084 | [-0.430, +0.262] |
+| Bollinger width: expanded | 50 | +0.138 | [-0.183, +0.459] |
+
+- Calm minus unsettled: +0.068R, SE 0.237, 95% CI [-0.396, +0.532].
+- Compressed minus expanded: -0.223R, SE 0.241, 95% CI [-0.694, +0.249].
+- The two states agree (calm with compressed, unsettled with expanded) on 57% of the holdout's 541 trading decisions.
+
+**The confluence gate**, at 1236 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.48 | 0.22 | 0.23 | 0.30 | 0.17 |
+| sigma | 0.48 | 1.00 | 0.31 | 0.36 | 0.08 | 0.01 |
+| vov | 0.22 | 0.31 | 1.00 | 0.17 | 0.05 | 0.04 |
+| bb_width | 0.23 | 0.36 | 0.17 | 1.00 | 0.06 | 0.20 |
+| s1_trend | 0.30 | 0.08 | 0.05 | 0.06 | 1.00 | 0.28 |
+| s1_range_width | 0.17 | 0.01 | 0.04 | 0.20 | 0.28 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.48); vov in (worst |corr| 0.31). Bollinger width against what was admitted: worst |corr| 0.36 (under 0.5).
+
+Reading it: the holdout is n = 93, +0.036R, 95% CI [-0.199R, +0.271R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## AVAXUSDT: 10655 bars, 2021-11-18 -> 2026-09-29
+
+Data: `data/AVAXUSDT_4h.csv`. Forward-filled bars in the file: 32. The first decision with every input: 2023-03-17 (bar 2906). Hold limit: 42 bars (minor).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2023 | 50 | 5.3 | 48% | +0.080 | 0.174 | [-0.261, +0.421] | 1.17 |
+| 2024 | 43 | 3.6 | 33% | -0.278 | 0.151 | [-0.574, +0.018] | 0.51 |
+| 2025 (holdout) | 55 | 4.6 | 53% | +0.060 | 0.135 | [-0.204, +0.325] | 1.15 |
+| 2026 (holdout) | 46 | 5.2 | 48% | +0.046 | 0.168 | [-0.284, +0.375] | 1.09 |
+| before the holdout, 2023-03-18 -> 2024-12-31 | 93 | 4.3 | 41% | -0.086 | 0.118 | [-0.316, +0.145] | 0.83 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 101 | 4.9 | 50% | +0.054 | 0.106 | [-0.153, +0.261] | 1.12 |
+
+Holdout exits: max_hold_10d 62, stop 36, tp1 3.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 101 | +0.054 | 0.106 | [-0.153, +0.261] |
+| 3 months alone | 107 | +0.024 | 0.107 | [-0.186, +0.235] |
+| 6 months alone | 107 | -0.035 | 0.105 | [-0.240, +0.170] |
+| 9 months alone | 105 | +0.037 | 0.103 | [-0.165, +0.238] |
+| 12 months alone | 107 | +0.082 | 0.110 | [-0.134, +0.297] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 58 | -0.029 | [-0.289, +0.230] |
+| vol-of-vol: unsettled | 43 | +0.166 | [-0.172, +0.504] |
+| Bollinger width: compressed | 52 | -0.141 | [-0.423, +0.141] |
+| Bollinger width: expanded | 49 | +0.261 | [-0.035, +0.556] |
+
+- Calm minus unsettled: -0.195R, SE 0.217, 95% CI [-0.621, +0.231].
+- Compressed minus expanded: -0.402R, SE 0.209, 95% CI [-0.810, +0.007].
+- The two states agree (calm with compressed, unsettled with expanded) on 49% of the holdout's 591 trading decisions.
+
+**The confluence gate**, at 1292 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.55 | 0.40 | 0.28 | 0.29 | 0.18 |
+| sigma | 0.55 | 1.00 | 0.35 | 0.40 | 0.09 | 0.02 |
+| vov | 0.40 | 0.35 | 1.00 | 0.13 | 0.01 | 0.02 |
+| bb_width | 0.28 | 0.40 | 0.13 | 1.00 | 0.12 | 0.21 |
+| s1_trend | 0.29 | 0.09 | 0.01 | 0.12 | 1.00 | 0.31 |
+| s1_range_width | 0.18 | 0.02 | 0.02 | 0.21 | 0.31 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma OUT (worst |corr| 0.55); vov in (worst |corr| 0.40). Bollinger width against what was admitted: worst |corr| 0.28 (under 0.5).
+
+Reading it: the holdout is n = 101, +0.054R, 95% CI [-0.153R, +0.261R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+
+## XLMUSDT: 12584 bars, 2021-01-01 -> 2026-09-29
+
+Data: `data/XLMUSDT_4h.csv`. Forward-filled bars in the file: 45. The first decision with every input: 2022-04-29 (bar 2903). Hold limit: 42 bars (minor).
+
+| bucket | n | trades/mo | win | exp R | SE | 95% CI | PF |
+|---|---|---|---|---|---|---|---|
+| 2022 | 41 | 5.1 | 61% | +0.460 | 0.197 | [+0.074, +0.847] | 2.60 |
+| 2023 | 68 | 5.7 | 29% | -0.430 | 0.095 | [-0.616, -0.244] | 0.30 |
+| 2024 | 66 | 5.5 | 42% | +0.043 | 0.160 | [-0.271, +0.357] | 1.08 |
+| 2025 (holdout) | 51 | 4.3 | 39% | +0.031 | 0.168 | [-0.299, +0.361] | 1.06 |
+| 2026 (holdout) | 47 | 5.3 | 45% | -0.125 | 0.145 | [-0.410, +0.159] | 0.74 |
+| before the holdout, 2022-04-30 -> 2024-12-31 | 175 | 5.5 | 42% | -0.043 | 0.088 | [-0.216, +0.129] | 0.91 |
+| **holdout, 2025-01-01 -> 2026-09-21** | 98 | 4.7 | 42% | -0.044 | 0.112 | [-0.263, +0.175] | 0.90 |
+
+Holdout exits: max_hold_10d 51, stop 42, tp1 5.
+
+**The neighbourhood, on the holdout.** The ensemble is the strategy; each lookback alone is shown beside it, not chosen from.
+
+| signal | n | exp R | SE | 95% CI |
+|---|---|---|---|---|
+| ensemble of 3, 6, 9, 12 months (the strategy) | 98 | -0.044 | 0.112 | [-0.263, +0.175] |
+| 3 months alone | 110 | +0.045 | 0.118 | [-0.186, +0.276] |
+| 6 months alone | 111 | -0.162 | 0.095 | [-0.348, +0.023] |
+| 9 months alone | 111 | -0.039 | 0.105 | [-0.244, +0.167] |
+| 12 months alone | 111 | -0.080 | 0.103 | [-0.283, +0.122] |
+
+**The states, on the holdout's trades** (recorded at entry, never used to filter).
+
+| state | n | exp R | 95% CI |
+|---|---|---|---|
+| vol-of-vol: calm | 60 | +0.021 | [-0.279, +0.320] |
+| vol-of-vol: unsettled | 38 | -0.146 | [-0.455, +0.164] |
+| Bollinger width: compressed | 39 | -0.066 | [-0.393, +0.261] |
+| Bollinger width: expanded | 59 | -0.029 | [-0.323, +0.265] |
+
+- Calm minus unsettled: +0.166R, SE 0.220, 95% CI [-0.264, +0.597].
+- Compressed minus expanded: -0.037R, SE 0.224, 95% CI [-0.477, +0.403].
+- The two states agree (calm with compressed, unsettled with expanded) on 51% of the holdout's 544 trading decisions.
+
+**The confluence gate**, at 1614 decision bars: |corr| between the inputs.
+
+| | vote | sigma | vov | bb_width | s1_trend | s1_range_width |
+|---|---|---|---|---|---|---|
+| vote | 1.00 | 0.37 | 0.49 | 0.21 | 0.15 | 0.00 |
+| sigma | 0.37 | 1.00 | 0.55 | 0.43 | 0.08 | 0.18 |
+| vov | 0.49 | 0.55 | 1.00 | 0.18 | 0.06 | 0.12 |
+| bb_width | 0.21 | 0.43 | 0.18 | 1.00 | 0.20 | 0.12 |
+| s1_trend | 0.15 | 0.08 | 0.06 | 0.20 | 1.00 | 0.21 |
+| s1_range_width | 0.00 | 0.18 | 0.12 | 0.12 | 0.21 | 1.00 |
+
+Admitted in order (|corr| < 0.5 with every input already in): vote in (worst |corr| 0.00); sigma in (worst |corr| 0.37); vov OUT (worst |corr| 0.55). Bollinger width against what was admitted: worst |corr| 0.43 (under 0.5).
+
+Reading it: the holdout is n = 98, -0.044R, 95% CI [-0.263R, +0.175R]: contains zero. MEASURED on one asset; H1 and H2 are decided on the cross-section (SHADOW2.md).
+
+---
+

@@ -8,34 +8,44 @@
 
 The window: 2025-01-01 -> 2026-09-21, shadow-2's holdout (SHADOW2.md), trades bucketed by exit day, one continuous run per asset with challenge accounting off. Each cell: n · mean R [95% CI]. A bucket under 30 trades is insufficient, not a number. For shadow-1 on BTC, 2026 is its fit sample; every other asset and year is new to it.
 
-**2 assets qualify** (SHADOW2.md: at least 10 are needed to decide H1 and H2): **fewer than 10, so neither is decided**; the rows are the machinery's dry run.
+**10 assets qualify** (SHADOW2.md: at least 10 are needed to decide H1 and H2).
 
 | asset | class, hold | from | shadow-2 | shadow-1 | shadow-1, no regime filter | shadow-1, single entry |
 |---|---|---|---|---|---|---|
 | BTCUSDT | major, 60 bars | 2021-01-01 | 86 · -0.034 [-0.307, +0.240] | 195 · +0.011 [-0.044, +0.066] | 204 · +0.004 [-0.051, +0.058] | 240 · -0.055 [-0.171, +0.062] |
 | ETHUSDT | major, 60 bars | 2021-01-01 | 72 · -0.028 [-0.324, +0.268] | 169 · +0.011 [-0.046, +0.067] | 185 · +0.009 [-0.046, +0.064] | 231 · +0.001 [-0.121, +0.123] |
+| BNBUSDT | major, 60 bars | 2021-01-01 | 92 · -0.133 [-0.403, +0.137] | 204 · +0.040 [-0.013, +0.092] | 219 · +0.042 [-0.006, +0.090] | 239 · +0.031 [-0.097, +0.159] |
+| SOLUSDT | major, 60 bars | 2021-01-01 | 86 · -0.065 [-0.330, +0.201] | 167 · -0.010 [-0.066, +0.045] | 173 · -0.019 [-0.074, +0.037] | 197 · +0.065 [-0.069, +0.200] |
+| DOGEUSDT | major, 60 bars | 2021-01-01 | 84 · -0.053 [-0.325, +0.219] | 197 · -0.002 [-0.047, +0.043] | 209 · -0.002 [-0.045, +0.042] | 241 · +0.050 [-0.074, +0.175] |
+| ADAUSDT | major, 60 bars | 2021-01-01 | 83 · +0.071 [-0.202, +0.344] | 170 · -0.020 [-0.071, +0.032] | 181 · -0.005 [-0.057, +0.047] | 202 · +0.097 [-0.042, +0.236] |
+| LTCUSDT | minor, 42 bars | 2021-01-01 | 95 · +0.024 [-0.213, +0.261] | 214 · -0.036 [-0.081, +0.010] | 236 · -0.015 [-0.058, +0.029] | 251 · -0.109 [-0.217, -0.001] |
+| LINKUSDT | minor, 42 bars | 2022-01-14 | 93 · +0.036 [-0.199, +0.271] | 182 · -0.007 [-0.062, +0.048] | 191 · -0.014 [-0.065, +0.038] | 253 · -0.066 [-0.187, +0.055] |
+| AVAXUSDT | minor, 42 bars | 2021-11-18 | 101 · +0.054 [-0.153, +0.261] | 188 · -0.026 [-0.076, +0.024] | 200 · -0.016 [-0.062, +0.031] | 254 · -0.139 [-0.252, -0.026] |
+| XLMUSDT | minor, 42 bars | 2021-01-01 | 98 · -0.044 [-0.263, +0.175] | 193 · +0.014 [-0.041, +0.068] | 205 · +0.009 [-0.045, +0.062] | 241 · -0.005 [-0.125, +0.116] |
 
 **Pooled**, standard error clustered by entry day (the fixed method); by entry week beside it, for information.
 
 | | n | days | mean R | 95% CI (by day) | 95% CI (by week) |
 |---|---|---|---|---|---|
-| shadow-2 | 158 | 134 | -0.031 | [-0.256, +0.194] | [-0.277, +0.215] |
-| shadow-1 | 364 | 253 | +0.011 | [-0.033, +0.054] | [-0.037, +0.058] |
-| shadow-1, no regime filter | 389 | 265 | +0.006 | [-0.037, +0.049] | [-0.039, +0.052] |
-| shadow-1, single entry | 471 | 298 | -0.027 | [-0.119, +0.065] | [-0.129, +0.075] |
+| shadow-2 | 890 | 421 | -0.016 | [-0.141, +0.108] | [-0.175, +0.142] |
+| shadow-1 | 1879 | 521 | -0.002 | [-0.026, +0.021] | [-0.029, +0.024] |
+| shadow-1, no regime filter | 2003 | 524 | -0.000 | [-0.024, +0.023] | [-0.027, +0.026] |
+| shadow-1, single entry | 2349 | 552 | -0.018 | [-0.078, +0.042] | [-0.085, +0.050] |
 
-shadow-2's per-asset means (n ≥ 30), lowest to highest: -0.034, -0.028. Positive on 0 of 2.
+shadow-2's per-asset means (n ≥ 30), lowest to highest: -0.133, -0.065, -0.053, -0.044, -0.034, -0.028, +0.024, +0.036, +0.054, +0.071. Positive on 4 of 10.
 
 **The states** (shadow-2, pooled over the window).
 
 | split | difference in mean R | 95% CI (by day) | assets with 30+ in each state, same sign |
 |---|---|---|---|
-| vol-of-vol: calm minus unsettled (H2) | -0.236 | [-0.679, +0.207] | 0 of 2 |
-| Bollinger width: compressed minus expanded | +0.134 | [-0.295, +0.563] | 1 of 1 |
+| vol-of-vol: calm minus unsettled (H2) | -0.077 | [-0.264, +0.111] | 3 of 10 |
+| Bollinger width: compressed minus expanded | -0.037 | [-0.238, +0.165] | 4 of 9 |
 
-**Not in the cross-section:** BNB: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; XRP: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; SOL: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; TRX: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; HYPE: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; ZEC: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; DOGE: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; ADA: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; LTC: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; LINK: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; BCH: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; DOT: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; AVAX: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; XLM: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; ATOM: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; UNI: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; ETC: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; ALGO: no file: api.binance.us has no 4h history for it, or it hasn't been fetched; PAXG: no file: api.binance.us has no 4h history for it, or it hasn't been fetched.
+**Not in the cross-section:** XRP: 43.5% of bars forward-filled (at most 1%); TRX: 68.0% of bars forward-filled (at most 1%); HYPE: history starts 2025-06-06, after 2023-01-01; ZEC: 11.1% of bars forward-filled (at most 1%); BCH: 2.6% of bars forward-filled (at most 1%); DOT: 1.6% of bars forward-filled (at most 1%); ATOM: 1.8% of bars forward-filled (at most 1%); UNI: 6.7% of bars forward-filled (at most 1%); ETC: 10.9% of bars forward-filled (at most 1%); ALGO: 2.0% of bars forward-filled (at most 1%); PAXG: 38.3% of bars forward-filled (at most 1%).
 
 ## Verdicts, as SHADOW2.md fixed them
 
-- Undecided: 2 assets qualify, and the design needs at least 10. TradFi stays open (no binance.us feed).
+- **H1, shadow-2's expectancy: did not survive.** Pooled -0.016R, 95% CI [-0.141, +0.108] (by day); positive on 4 of 10 assets with 30+ trades.
+- **H2, the vol-of-vol state: did not survive.** Calm minus unsettled -0.077R, 95% CI [-0.264, +0.111]; same sign on 3 of 10.
+- shadow-1's regime filter and strength ladder, the components HANDOFF.md asks the cross-section about: the ablation columns above, read as a neighbourhood across assets, never as the best asset.
 - Every figure here is MEASURED. If neither survives, that is the finding.

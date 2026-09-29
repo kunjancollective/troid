@@ -162,7 +162,9 @@ on 2026, and on 2021–2025 it never saw it measures +0.008R on BTC (n=504) and 
 CI contains zero. Every strategy number in this repo is noise until something survives
 that test. troid-shadow-2 (`backtest/SHADOW2.md`, fixed before any run: 3-12 month time-series momentum, volatility
 targeting, the vol-of-vol state recorded) measures -0.034R on BTC's 2025-2026 holdout (n=86) and -0.028R on ETH's (n=72),
-CI contains zero; its H1 and H2 are decided on the cross-section (`backtest/cross_section.py`), which waits for data.
+CI contains zero. On the cross-section (`backtest/CROSSSECTION.md`, 2026-09-29: 10 qualifying crypto assets, SE
+clustered by entry day) neither of its hypotheses survived: pooled -0.016R, CI [-0.141, +0.108], positive on 4 of 10
+(H1); calm minus unsettled -0.077R, CI [-0.264, +0.111] (H2). MEASURED; shadow-2 gets no forward journal.
 
 ## Feeds
 

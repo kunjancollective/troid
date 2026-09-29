@@ -93,6 +93,10 @@ calendar. Verify data availability before building on any of them.
 
 shadow-2 takes HANDOFF.md's route (time-series momentum, volatility targeting, a vol-of-vol state) with this gate
 applied to its inputs: `SHADOW2.md`.
+On the cross-section (`CROSSSECTION.md`, 2026-09-29: ten crypto assets qualify; api.binance.us has no TradFi feed)
+neither of its hypotheses survived: pooled -0.016R, 95% CI [-0.141, +0.108], positive on 4 of 10 assets (H1); calm
+minus unsettled -0.077R, CI [-0.264, +0.111] (H2). Shadow-1 over the same assets and window: -0.002R, CI [-0.026,
++0.021]. All MEASURED.
 
 ## What would make it real
 
