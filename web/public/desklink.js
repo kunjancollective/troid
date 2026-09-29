@@ -1,9 +1,9 @@
 /* troid's desk: a result as a link. Every desk input rides in the URL fragment (/#f=bitfunded&p=1step&q=100000…).
    Browsers never send the part after # to a server, so a shared result reaches no server and no log; troid sets no
    cookies and runs no analytics. Opening a link restores the inputs and the desk recomputes with the rules troid has
-   today, and says so. A value the desk can't read (an unknown firm or challenge, a malformed number, a fragment
-   longer than MAX) is ignored and that input keeps its default; nothing fails. A link carries l=<language> only from
-   a page in a language that is live.
+   today, and says so. A value the desk can't read (an unknown firm or challenge, a malformed number, one outside the
+   desk's bounds, a fragment longer than MAX) is ignored and that input keeps its default; nothing fails. A link
+   carries l=<language> only from a page in a language that is live.
 
    encode() and decode() are pure (tested in web/test_desk_links.py); init() wires them to the desk in index.html. */
 (function (root) {
@@ -18,6 +18,11 @@
                 ["m", "mode", "mode"]];
   var SIDE = { "long": "1", "short": "-1" }, SIDE_KEY = { "1": "long", "-1": "short" };
   var MODE = { "cross": 1, "isolated": 1 };
+  // the desk's bounds (calculator audit F2, 2026-09-29): a link can carry any number, and one outside them counts as
+  // unreadable, so that input keeps its default rather than bringing a risk of −1% or leverage 0 into the desk
+  function gt0(x) { return x > 0; }
+  function pct(x) { return x > 0 && x <= 100; }
+  var BOUND = { q: gt0, en: gt0, st: gt0, rp: pct, cp: pct, lv: function (x) { return x >= 1; } };
   var OWN = new RegExp("(?:^|&)(?:f|p|l|" + FIELDS.map(function (x) { return x[0]; }).join("|") + ")=");
   var enc = encodeURIComponent;
 
@@ -60,7 +65,7 @@
       var x = byKey[k];
       if (!x) return;                                                       // a key this desk doesn't know: ignored
       if (g.bad) { d.bad++; return; }
-      if (x[2] === "num") { if (NUM.test(v) && isFinite(parseFloat(v))) d.values[x[1]] = v; else d.bad++; }
+      if (x[2] === "num") { if (NUM.test(v) && isFinite(parseFloat(v)) && (!BOUND[k] || BOUND[k](parseFloat(v)))) d.values[x[1]] = v; else d.bad++; }
       else if (x[2] === "side") { if (SIDE.hasOwnProperty(v)) d.values[x[1]] = SIDE[v]; else d.bad++; }
       else if (x[2] === "mode") { if (MODE.hasOwnProperty(v)) d.values[x[1]] = v; else d.bad++; }
     });

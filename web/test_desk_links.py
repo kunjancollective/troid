@@ -7,8 +7,10 @@
   open the copied link in a fresh page: every input and the whole result come back, with the shared-link notice.
 - The link: the inputs are in the fragment only (no query string), and no request to the server carries them.
 - Malformed fragments: bad numbers, an unknown side or margin mode, broken percent-encoding, repeated keys, markup
-  in a value, a fragment over the length cap, a plain anchor. Each bad field keeps its default, nothing throws, and the
-  desk still answers: a verdict, or with no entry (the desk starts with none) its first view.
+  in a value, a fragment over the length cap, a plain anchor, a number outside the desk's bounds (calculator audit F2:
+  quota, entry and stop above 0, risk % and budget cap % above 0 and at most 100, leverage at least 1). Each bad field
+  keeps its default, nothing throws, and the desk still answers: a verdict, or with no entry (the desk starts with
+  none) its first view.
 - A firm or challenge troid no longer lists (rotated out) opens with a notice and a working desk, not a broken page.
 - A language in the link counts only when it is live; the first edit after opening removes the notice and the fragment.
 """
@@ -156,6 +158,8 @@ def main():
             ("unknown keys ignored", "#zz=1&q=61000&__proto__=x&constructor=y", {"quota": "61000"}, 0),
             ("a plain anchor is not a desk link", "#firms", {}, None),
             ("empty values ignored", "#f=&p=&q=&e=", {}, 0),
+            ("outside the desk's bounds", "#f=bitfunded&p=1step&rp=-1&cp=150&lv=0&q=0&en=0&st=-5&e=90000", {"equity": "90000"}, 6),
+            ("just outside them", "#f=bitfunded&p=1step&rp=100.01&cp=0&lv=0.99&q=-100000&en=-77872", {}, 5),
         ]
         for name, frag, want, bad in cases:
             q = page(base + "/" + frag)
@@ -169,6 +173,15 @@ def main():
                 ok(f"malformed: {name}: says {bad} value(s) could not be read", nt is not None and f"({bad})" in nt, nt)
             ok(f"malformed: {name}: the desk still answers", answers(q))
             q.close()
+        q = page(base + "/")
+        edge = q.evaluate("() => DESKLINK.decode('#rp=100&cp=100&lv=1&q=0.01&en=0.0001&st=1', FIRMS, [])")
+        ok("the bounds' own edges are read: risk % and budget cap % 100, leverage 1, any quota, entry and stop above 0",
+           edge["bad"] == 0 and edge["values"] == {"riskPct": "100", "capPct": "100", "lev": "1", "quota": "0.01", "entry": "0.0001", "stop": "1"}, edge)
+        q.close()
+        q = page(base + "/" + "#f=bitfunded&p=1step&rp=-1&en=77872&st=74814")
+        ok("a link with a risk of −1%: the desk sizes at the default risk instead, and says one value was left at its default",
+           q.input_value("#riskPct") == defaults["riskPct"] and q.inner_text("#result .verdict").startswith("OK") and "(1)" in (notice(q) or ""), notice(q))
+        q.close()
         q = page(base + "/#" + "q=1&" * 200)
         ok("over the length cap: nothing read, and says so", inputs(q) == defaults and notice(q) == EN["index.js.shared_long"], notice(q))
         q.close()

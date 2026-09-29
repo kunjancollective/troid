@@ -54,12 +54,18 @@ check("DERIVED", "trailing 6% budget at a $104,000 high-water mark, equity at th
 check("DERIVED", "budget once the floor locks at initial (+6% reached), equity $106,000", 106000 - Q, 6000.0)
 print("             -> $97,917 is the day-start-basis number. It was wrong for Bitfunded and right for a day-start firm.")
 
-# Fee share of risk. Sizing solves risk = qty*(stop_dist + entry*fee*2), so
-#   fees/risk = (entry*2f) / (stop_dist + entry*2f) = 2f / (s + 2f), s = stop as a fraction
+# Fee share of risk. The desk prices the exit fee at the stop, the exit price (calculator audit F6, 2026-09-29): a unit's
+# fees are f*(entry + stop), and sizing solves risk = qty*(stop_dist + f*(entry + stop)), so with s the stop as a fraction
+#   fees/risk = f(2 - s) / (s + f(2 - s)) on a long (stop below entry), f(2 + s) / (s + f(2 + s)) on a short.
+# The figures troid publishes by stop alone (TROID.md, the MCP server) are the side-neutral 2f / (s + 2f), which lies
+# between the two; the FAQ states the long and the short at 3.9% and 0.3% (faq.fees.derived).
 print()
+_long = lambda s: FEE*(2 - s)/(s + FEE*(2 - s))*100
+_short = lambda s: FEE*(2 + s)/(s + FEE*(2 + s))*100
 for s, pub in [(0.039, 2.01), (0.015, 5.06), (0.003, 21.05)]:
     share = 2*FEE/(s + 2*FEE)*100
-    check("DERIVED", f"fee share of risk at a {s*100:.1f}% stop", share, pub, 5e-3, "%")
+    check("DERIVED", f"fee share of risk at a {s*100:.1f}% stop, side-neutral", share, pub, 5e-3, "%")
+    check("DERIVED", f"  ... between the desk's long ({_long(s):.2f}%) and short ({_short(s):.2f}%)", float(_long(s) < pub < _short(s)), 1.0)
 
 # Leverage independence: risk depends only on stop distance x quantity.
 print()
@@ -388,7 +394,8 @@ _ch = " ".join(_read("TROID-CHARACTER.md").split())
 _one_r = (77872 - 76580) * 0.3862
 check("DERIVED", "example R: 1R = 1,292 x 0.3862 is about $499", _one_r, 498.97, 1e-4, "")
 check("DERIVED", "example R: $998 is +2R", 998 / _one_r, 2.0, 1e-3, "R")
-check("DERIVED", "example R: the round-trip fee at 0.04% a side is about $24, the desk's 1R about $523", _one_r + 77872 * 0.0004 * 2 * 0.3862, 523.03, 1e-4, "")
+check("DERIVED", "example R: the round-trip fee at 0.04% a side (the exit's at the stop) is about $24, the desk's 1R about $523",
+      _one_r + (77872 + 76580) * 0.0004 * 0.3862, 522.83, 1e-4, "")
 check("DERIVED", "example R: eight $500 losses use up Bitfunded 1-Step's $4,000 daily limit", 0.04 * 100_000 / 500, 8.0, 0)
 _kelly = 0.45 - 0.55 / 2
 check("DERIVED", "example Kelly: p = 0.45, b = 2 gives 17.5%", _kelly * 100, 17.5, 1e-9, "%")
@@ -429,7 +436,7 @@ _Q, _E0, _EN_, _ST, _TR, _RP, _CP = 100_000, 100_000, 77_872, 74_814, 2, 0.5, 35
 _dist = _EN_ - _ST
 _room = _Q * _cp["daily_pct"] / 100                        # initial-balance daily limit, from a fresh day start
 _risk = _E0 * _RP / 100
-_notional = _risk / (_dist + _EN_ * _cp["fee_per_side_pct"] / 100 * 2) * _EN_
+_notional = _risk / (_dist + (_EN_ + _ST) * _cp["fee_per_side_pct"] / 100) * _EN_   # the exit fee at the stop (calculator audit F6)
 _mmr = 0.005
 _liq = (_E0 / _notional - _mmr) / (1 - _mmr) * 100
 for _lab, _v, _want, _txt in [
@@ -438,16 +445,24 @@ for _lab, _v, _want, _txt in [
         ("risk 0.5% of 100,000", _risk, 500, "$500"),
         (f"room: {_rf['name']} {_cp['label']} {_cp['daily_pct']:g}% daily limit on 100,000", _room, 4000, "$4,000"),
         ("budget cap 35% of $4,000", _room * _CP / 100, 1400, "$1,400"),
-        (f"notional: $500 ÷ (3,058 + 77,872 × {_cp['fee_per_side_pct']:g}% × 2) × 77,872", round(_notional), 12478, "$12,478"),
-        (f"margin at {_cp['max_leverage']:g}× (the firm's cap)", round(_notional / _cp["max_leverage"]), 2496, "$2,496"),
-        ("margin at 2×", round(_notional / 2), 6239, "$6,239"),
+        (f"notional: $500 ÷ (3,058 + (77,872 + 74,814) × {_cp['fee_per_side_pct']:g}%) × 77,872", round(_notional), 12483, "$12,483"),
+        (f"margin at {_cp['max_leverage']:g}× (the firm's cap)", round(_notional / _cp["max_leverage"]), 2497, "$2,497"),
+        ("margin at 2×", round(_notional / 2), 6242, "$6,242"),
         ("equity 101,200 − 300", 101_200 - 300, 100900, "equity 100,900"),
         ("day start: the last day's close with nothing open", 101_200 - 300, 100900, "day start 100,900"),
         ("high at rollover max(100,900, 101,300)", max(100_900, 101_300), 101300, "→ 101,300"),
         ("high-water mark after 104,000 then 102,500", max(104_000, 102_500), 104000, "still 104,000")]:
     check("DERIVED", f"glossary example: {_lab} = {_want:,} and the desk says so", float(_v == _want and _txt in _gi), 1.0)
 check("DERIVED", f"glossary example: under cross at {_cp['max_leverage']:g}×, the daily limit ({_room / _notional * 100:.2f}% away) comes long before "
-      f"liquidation ({_liq:.0f}% away)", float(_room / _notional * 100 < _liq / 10), 1.0)
+      f"liquidation ({_liq:.0f}% away: past 100%, which the desk shows as none above zero on a long)", float(_room / _notional * 100 < _liq / 10), 1.0)
+# the FAQ's fee arithmetic (faq.fees.derived): the long and the short at 3.9% and 0.3%, each stated, and the round figures
+# the answer gives (about 2%, 21%, $105) true of both
+for _s, _l, _h in [(0.039, "1.97%", "2.05%"), (0.003, "21.03%", "21.08%")]:
+    check("DERIVED", f"FAQ fees: at a {_s * 100:g}% stop the desk's arithmetic gives {_l} on a long and {_h} on a short, and the FAQ says so",
+          float(f"{_long(_s):.2f}%" == _l and f"{_short(_s):.2f}%" == _h and _l in _faqs and _h in _faqs), 1.0)
+check("DERIVED", "FAQ fees: about 2% at a 3.9% stop, 21% at 0.3%, and 21% of $500 ≈ $105, on a long and a short alike",
+      float(round(_long(0.039)) == round(_short(0.039)) == 2 and round(_long(0.003)) == round(_short(0.003)) == 21
+            and round(500 * _long(0.003) / 100) == round(500 * _short(0.003) / 100) == 105), 1.0)
 _tgt = _GC.cite(_rf, "target_pct", _cp["key"])
 check("SOURCED", f"glossary example: {_rf['name']} \"{_cp['label']}\" has a {_cp['target_pct']:g}% target, read {max(_tgt['o'])}",
       float(f"{_rf['name']} \"{_cp['label']}\" is a single phase with a {_cp['target_pct']:g}% target (read {max(_tgt['o'])})" in _gi), 1.0)

@@ -86,7 +86,8 @@
   }
 
   // the readout's breakers as a ladder, and its risk as a split bar: put into the result the desk just wrote, marked
-  // d2x (the redesign's own, which test_desk.py sets aside to compare the rest with the old desk's)
+  // d2x (the redesign's own, which test_desk.py sets aside to compare the rest with the old desk's). A breaker's 4th
+  // item is the words the desk shows in place of a figure ("none above zero")
   function paintReadout(R) {
     var r = $e("result"), notes = r.querySelector(".notes"), read = r.querySelector(".read");
     if (!notes || !read || !R.ord) return;
@@ -94,9 +95,9 @@
     var max = firmMax * 1.1, lq = R.ord.filter(function (o) { return o[2] === "liq"; })[0];
     if (lq && isFinite(lq[1]) && lq[1] <= max * 1.5) max = Math.max(max, lq[1] * 1.05);
     var rows = R.ord.map(function (o, i) {
-      var off = !isFinite(o[1]) || o[1] > max, bad = o[2] !== "stopd" && o[1] < R.sp, v = isFinite(o[1]) ? pc(o[1]) : "—";
+      var off = !isFinite(o[1]) || o[1] > max, bad = o[2] !== "stopd" && o[1] < R.sp, v = o[3] || (isFinite(o[1]) ? pc(o[1]) : "—");
       return '<div class="lr' + (i === 0 ? " first" : "") + (bad ? " bad" : "") + (off ? " off" : "") + '"><span class="ln">' + term(o[2], o[0]) +
-        (bad ? ' <span class="lx">' + S.l_before + "</span>" : "") + "</span>" + (off ? '<span class="lb"></span><span class="lv">' + F(S.l_off, { pct: v }) + "</span>" :
+        (bad ? ' <span class="lx">' + S.l_before + "</span>" : "") + "</span>" + (off ? '<span class="lb"></span><span class="lv">' + (o[3] || F(S.l_off, { pct: v })) + "</span>" :
         '<span class="lb"><i style="transform:scaleX(' + (o[1] / max).toFixed(4) + ')"></i></span><span class="lv">' + v + "</span>") + "</div>";
     });
     var lad = document.createElement("div");
@@ -179,7 +180,7 @@
       st.push([S.x3_h, F(x == null ? S.x3_none : S.x3_p, { product: esc(R.f.name + " " + p.label) }), x == null ? "" : code(how + " = " + $(x))]);
     }
     if (R.v === "OK" || R.v === "REDUCE") {
-      st.push([S.x4_h, S.x4_p, code(T.risk + " = min(" + $(R.eq) + " × " + R.rp + "%, " + $(R.eff) + " × " + R.cp + "%) = min(" + $(R.intended) + ", " + $(R.cap) + ") = " + $(R.risk))]);
+      st.push([S.x4_h, S.x4_p, code(T.risk + " = min(" + $(R.eq) + " × " + R.rp + "%, " + $(R.eff) + " × " + R.cp + "%) = min(" + $(R.intended) + ", " + $(R.cap) + ") = " + $(R.rb))]);
       st.push([S.x5_h, S.x5_p, code(T.size + " = " + $(R.risk) + " ÷ (" + n4(R.dist) + " + " + n4(R.fu) + ") = " + n4(R.qty)) +
         (R.feeKnown ? code(T.fees + " = " + $(R.fees) + " ÷ " + $(R.risk) + " = " + fx(R.fshare, 1) + "%") : "")]);
       st.push([S.x6_h, S.x6_p, code(F(S.x6_code, { notional: $(R.notional), lev: R.levUsed, margin: $(R.margin), risk: $(R.risk) }))]);
