@@ -170,6 +170,21 @@ async function applyEvent(c, args) {
 // already has. No custom_text: Stripe refuses it with Managed Payments ("You cannot use custom_text with Managed
 // Payments", the first sandbox checkout, 2026-09-28), so the handoff's copy (item 6) is on troid's /pro page and in the
 // product's description in Stripe, which Checkout shows.
+// Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it.
+// A price says so itself, tax_behavior "inclusive", which Stripe never lets change once set; so a price found inclusive
+// is remembered for the instance's life. In live mode a price that isn't is refused before Checkout opens (a buyer would
+// otherwise pay more than $19, against every page's "tax included"), and asked again next time, so fixing the price is
+// enough; in test mode, where nothing is charged, it is logged and the checkout goes on.
+const PRICE_TAX = new Map();
+async function priceTax(c, priceId) {
+  const k = c.mode + ":" + priceId;
+  if (PRICE_TAX.has(k)) return PRICE_TAX.get(k);
+  const p = await S.request(c.secretKey, "GET", "/v1/prices/" + encodeURIComponent(priceId));
+  const tb = (p && p.tax_behavior) || "unspecified";
+  if (tb === "inclusive" || c.mode !== "live") PRICE_TAX.set(k, tb);
+  return tb;
+}
+
 function checkoutParams(c, user, plan, origin, customer) {
   const params = {
     mode: "subscription",
@@ -237,4 +252,4 @@ function eventArgs(event) {
 }
 
 module.exports = { CHECKOUT_COPY, PRICE_ENV, HANDLED, config, report, json, bearer, refused, body, returnOrigin, rawBody, log,
-                   stripeError, stripeLog, signedIn, proStatus, applyEvent, checkoutParams, testClockCustomer, eventArgs };
+                   stripeError, stripeLog, signedIn, proStatus, applyEvent, checkoutParams, priceTax, testClockCustomer, eventArgs };

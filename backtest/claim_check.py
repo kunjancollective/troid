@@ -237,6 +237,8 @@ def e2_texts(F):
     """The contradictions the audit found, looked for on every page, TROID.md, the README and ask troid's context."""
     docs = {f"{p}.html": _plain((PUB / f"{p}.html").read_text()) for p in PAGES + ["sources"]}
     docs.update({t: (ROOT / t).read_text() for t in TEXTS if (ROOT / t).exists()})
+    # troid Pro's pages, served by a function rather than from web/public: the waitlist and the test-mode checkout page
+    docs.update({f"web/pro/{f.name}": _plain(f.read_text()) for f in sorted((ROOT / "web" / "pro").glob("*.html"))})
     # METHODOLOGY's corrections table quotes each error it corrects; its rows are the record, not claims
     docs["METHODOLOGY.md"] = re.sub(r"(?m)^\| \d{4}-\d{2}-\d{2} \|.*$", "", docs.get("METHODOLOGY.md", ""))
     fees = {f"{x:g}" for x in F["fee_pct"]["all"]}
@@ -285,10 +287,27 @@ def e2_texts(F):
             m = FIXED_LOCAL_RESET.search(t)
             if m:
                 out.append(("E2 the reset at a fixed local hour (state 16:00 UTC)", name, "", m.group(0), t[:160]))
+            m = PLUS_TAX.search(t)
+            if m:
+                out.append(("E2 'plus tax' (troid's prices include tax: $19 is what every buyer pays)", name, "", m.group(0), t[:160]))
     return out
 
 
 RETIRED_EDGE = re.compile(r"\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b", re.I)
+# Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it. So
+# never "plus tax", in English or in the phrasings the launch languages use for it (es, pt, fr, ru, id, zh, ar, hi, bn).
+PLUS_TAX = re.compile(
+    r"\bplus (applicable )?(sales )?(tax(es)?|VAT|GST)\b|\+\s?(applicable )?(sales )?(tax(es)?|VAT|GST)\b"
+    r"|\bexcl(\.|uding|usive of)\s?(applicable )?(sales )?(tax(es)?|VAT|GST)\b|\b(tax(es)?|VAT|GST) (not included|extra|excluded)\b"
+    r"|\bbefore (sales )?tax(es)?\b|\bpre-tax\b|\b(tax(es)?|VAT) (is |are )?added at checkout\b"
+    r"|\bm[aá]s (el )?(IVA|impuestos?)\b|\b(IVA|impuestos?) no incluidos?\b|\bmais (IVA|impostos?)\b|\bimpostos? n[aã]o inclu[ií]dos?\b"
+    r"|\bhors taxes?\b|\bplus (la )?TVA\b|\+\s?TVA\b|\bTVA non comprise\b|\d\s?(\$|€|USD)?\s?HT\b"
+    r"|плюс (налог|НДС)|без (учёта |учета )?(налога|НДС)|\+\s?НДС"
+    r"|\b(belum|tidak) termasuk pajak\b|\bditambah pajak\b"
+    r"|不含[税稅]|另加[税稅]|未含[税稅]|[税稅]金?另[计計]"
+    r"|غير شامل(ة)? (ل)?(ال)?ضريبة|\+\s?ضريبة"
+    r"|कर अतिरिक्त|कर शामिल नहीं|टैक्स अलग|टैक्स शामिल नहीं"
+    r"|কর আলাদা|কর অন্তর্ভুক্ত নয়|ট্যাক্স আলাদা", re.I)
 # a clock time labelled EDT or EST holds for one season only
 FIXED_LOCAL_RESET = re.compile(r"\bnoon\b[^.]{0,30}\bNew York\b|\bNew York\b[^.]{0,30}\bnoon\b|\b1[12]:00 (in )?(winter|summer)\b"
                                r"|\b\d{1,2}:\d{2}\s*(EDT|EST)\b", re.I)

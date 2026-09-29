@@ -2,7 +2,8 @@
 /* POST /api/pro/checkout {plan: "monthly" | "yearly"}, with "Authorization: Bearer <Supabase access token>" → {url}.
    A Stripe Checkout Session for troid Pro in subscription mode with Managed Payments on, so Stripe is the merchant of
    record and handles sales tax worldwide (handoff items 2, 3 and 6). The page sends the browser to the url; access
-   comes later, from the webhook, never from the success page. 409 when the account already has Pro. */
+   comes later, from the webhook, never from the success page. 409 when the account already has Pro. The price must
+   include tax (lib/pro.js priceTax): in live mode a price that doesn't closes checkout, 503, before anything is charged. */
 const P = require("../../lib/pro.js");
 const S = require("../../lib/stripe.js");
 
@@ -27,6 +28,16 @@ module.exports = async (req, res) => {
   }
   if (!user || !st) return P.json(res, 401, { error: "Sign in again." });
   if (st.pro) return P.json(res, 409, { error: "This account already has troid Pro. Manage it from the account page.", manage: true });
+
+  let tb;
+  try { tb = await P.priceTax(c, c.prices[plan]); } catch (e) {
+    P.stripeLog(c, "checkout", "price", e, { plan });
+    return P.json(res, 502, P.stripeError(c, e, "price"));
+  }
+  if (tb !== "inclusive") {
+    P.log({ route: "checkout", mode: c.mode, plan, error: "price not tax-inclusive", tax_behavior: tb });
+    if (c.mode === "live") return P.json(res, 503, { error: "troid Pro's checkout is closed for now: its price isn't set to include tax. Nothing was charged." });
+  }
 
   try {
     let customer = st.customer;                          // a returning subscriber keeps one Stripe customer

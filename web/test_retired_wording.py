@@ -9,6 +9,8 @@
   Sunday 1 November 2026 it is 11:00. So no fixed local hour for the reset, anywhere; a local hour appears only where it
   is computed for the date shown.
 - The phone menu stays labelled "data".
+- Prices include tax (the owner's addendum, 28 Sep 2026): $19 is what every buyer pays, so never "plus tax" or its
+  variants, in English or in any language file, on troid Pro's pages or in its Checkout copy.
 
 What is scanned is what goes live: the English strings and templates, the English pages as built, the repo's documents,
 the MCP server, the desk skill's references, and ask troid's prompt and reset explanation as they will go live (a copy
@@ -25,7 +27,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backtest"))
-from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET  # noqa: E402  (one definition, shared with the daily check)
+from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET, PLUS_TAX  # noqa: E402  (one definition, shared with the daily check)
 
 fails = 0
 
@@ -51,6 +53,14 @@ ok("the patterns catch every retired phrasing", all(RETIRED_EDGE.search(t) or FI
    [t for t in retired if not (RETIRED_EDGE.search(t) or FIXED_LOCAL_RESET.search(t))])
 ok("and pass what replaced them (a bare 'no edge at all' names the statistical null)", not any(RETIRED_EDGE.search(t) or FIXED_LOCAL_RESET.search(t) for t in kept),
    [t for t in kept if RETIRED_EDGE.search(t) or FIXED_LOCAL_RESET.search(t)])
+taxed = ["$19/month plus tax", "$19 + tax", "$19/month (excl. VAT)", "plus applicable taxes", "VAT is added at checkout", "19 € HT",
+         "US$19 más IVA", "mais impostos", "плюс НДС", "belum termasuk pajak", "不含税", "稅金另計", "غير شامل الضريبة", "कर अतिरिक्त", "কর আলাদা"]
+included = ["$19/month or $190/year, tax included.", "risco ÷ (distância do stop + taxa por unidade)", "19 $ TTC", "impuestos incluidos",
+            "stop + fee", "HTML", "taxonomy", "含税"]
+ok("the 'plus tax' pattern catches it in English and the launch languages", all(PLUS_TAX.search(t) for t in taxed),
+   [t for t in taxed if not PLUS_TAX.search(t)])
+ok("and passes 'tax included', a Portuguese 'taxa' (a fee) and the like", not any(PLUS_TAX.search(t) for t in included),
+   [t for t in included if PLUS_TAX.search(t)])
 
 # --- what goes live ---------------------------------------------------------------------------------------------------------
 def staged_or_live(name, live):
@@ -90,6 +100,18 @@ for name, s in texts.items():
             hits.append((name, m.group(0)))
 ok(f"none of {len(texts)} texts troid publishes or ask troid reads says 'no statistical edge' or gives the reset a fixed local hour",
    not hits, hits[:10])
+
+# prices include tax: every language file, troid Pro's pages and its Checkout copy too
+taxed_texts = dict(texts)
+for f in sorted((ROOT / "web" / "i18n").glob("*.json")):
+    for k, v in json.loads(f.read_text()).items():
+        if isinstance(v, str) and not k.startswith("_"):
+            taxed_texts[f"{f.name} {k}"] = v
+for f in [*(ROOT / "web" / "pro").glob("*.html"), ROOT / "web" / "lib" / "pro.js", ROOT / "web" / "public" / "llms.txt"]:
+    taxed_texts[str(f.relative_to(ROOT))] = f.read_text()
+tax_hits = [(name, m.group(0)) for name, s in taxed_texts.items() for m in PLUS_TAX.finditer(re.sub(r"\s+", " ", s))]
+ok(f"none of {len(taxed_texts)} texts, every language file and troid Pro's pages among them, says 'plus tax' (prices include tax)",
+   not tax_hits, tax_hits[:10])
 
 ok('the phone menu stays labelled "data" (launch handoff, section 0)', en.get("common.nav.menu") == "data", en.get("common.nav.menu"))
 

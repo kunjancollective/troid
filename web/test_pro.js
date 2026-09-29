@@ -54,8 +54,10 @@ let db = null, failApplyOnce = false, stripeFail = null, seqStripe = 0;
 const stripeCalls = [];
 const catalog = {                                             // what web/pro_prices.js reads
   products: [{ id: "prod_other", name: "Something else", active: true }, { id: "prod_pro", name: "troid Pro", active: true, tax_code: "txcd_offline" }],
-  prices: [{ id: PRICE_M, product: "prod_pro", currency: "usd", unit_amount: 1900, recurring: { interval: "month", interval_count: 1 }, tax_behavior: "exclusive" },
-           { id: PRICE_Y, product: "prod_pro", currency: "usd", unit_amount: 19000, recurring: { interval: "year", interval_count: 1 }, tax_behavior: "exclusive" }],
+  prices: [{ id: PRICE_M, product: "prod_pro", currency: "usd", unit_amount: 1900, recurring: { interval: "month", interval_count: 1 }, tax_behavior: "inclusive" },
+           { id: PRICE_Y, product: "prod_pro", currency: "usd", unit_amount: 19000, recurring: { interval: "year", interval_count: 1 }, tax_behavior: "inclusive" }],
+  // not troid Pro's: a price that adds tax on top, for the checkout's guard (prices include tax, the owner, 28 Sep 2026)
+  others: [{ id: "price_offlineExclusive", product: "prod_old", currency: "usd", unit_amount: 1900, recurring: { interval: "month", interval_count: 1 }, tax_behavior: "exclusive" }],
 };
 const isoRow = (r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v instanceof Date ? v.toISOString() : v]));
 async function readAll(req) { const c = []; for await (const x of req) c.push(x); return Buffer.concat(c).toString("utf8"); }
@@ -108,6 +110,10 @@ const stripeFake = http.createServer(async (req, res) => {
   if (!/^Bearer [rs]k_(test|live)_/.test(req.headers.authorization || "")) return send(res, 401, { error: { type: "invalid_request_error", message: "Invalid API Key provided" } });
   if (stripeFail && (!stripeFail.path || stripeFail.path === req.url)) { const f = stripeFail; stripeFail = null; return send(res, f.status, { error: f.error }); }
   if (req.method === "GET" && req.url.startsWith("/v1/products?")) return send(res, 200, { object: "list", data: catalog.products });
+  if (req.method === "GET" && /^\/v1\/prices\/[^/?]+$/.test(req.url)) {
+    const id = decodeURIComponent(req.url.slice("/v1/prices/".length)), p = [...catalog.prices, ...catalog.others].find((x) => x.id === id);
+    return p ? send(res, 200, { object: "price", ...p }) : send(res, 404, { error: { type: "invalid_request_error", code: "resource_missing", message: "No such price: '" + id + "'" } });
+  }
   if (req.method === "GET" && req.url.startsWith("/v1/prices?")) {
     const product = new URL(req.url, "http://x").searchParams.get("product");
     return send(res, 200, { object: "list", data: catalog.prices.filter((p) => p.product === product) });
@@ -304,6 +310,8 @@ async function main() {
   r = await call(checkout, { headers: auth("A"), body: { plan: "monthly" } });
   let sc = lastStripe(), f = sc && sc.form;
   ok("checkout: 200 with Stripe's hosted page", r.status === 200 && /^https:\/\/checkout\.stripe\.com\//.test(r.data.url), r.data);
+  ok("checkout: reads the price first and finds it includes tax (the owner, 28 Sep 2026: $19 is what every buyer pays)",
+     stripeCalls.map((x) => x.method + " " + x.path).join() === "GET /v1/prices/" + PRICE_M + ",POST /v1/checkout/sessions", stripeCalls.map((x) => x.path));
   ok("checkout: POST /v1/checkout/sessions with the key", sc.path === "/v1/checkout/sessions" && sc.headers.authorization === "Bearer " + SECRET_TEST);
   ok("checkout: Stripe-Version " + S.CHECKOUT_API_VERSION + " on this call", sc.headers["stripe-version"] === S.CHECKOUT_API_VERSION, sc.headers);
   ok("checkout: subscription mode, Managed Payments on, one monthly price", f.mode === "subscription" && f["managed_payments[enabled]"] === "true"
@@ -318,6 +326,10 @@ async function main() {
      !Object.keys(f).some((k) => /^(automatic_tax|payment_method_types|tax_id_collection|payment_method_configuration|customer_update)/.test(k)), Object.keys(f));
   await call(checkout, { headers: auth("A"), body: { plan: "yearly" } });
   ok("checkout: yearly uses the yearly price", lastStripe().form["line_items[0][price]"] === PRICE_Y);
+  const kTax = stripeCalls.length;
+  await call(checkout, { headers: auth("A"), body: { plan: "monthly" } });
+  ok("checkout: a price found tax-inclusive isn't read again (Stripe never changes it once set)",
+     stripeCalls.length === kTax + 1 && lastStripe().path === "/v1/checkout/sessions", stripeCalls.slice(kTax).map((x) => x.path));
   await call(checkout, { headers: { ...auth("A"), origin: "https://elsewhere.example" }, body: { plan: "monthly" } });
   ok("checkout: an origin that isn't troid's never becomes a return URL", lastStripe().form.cancel_url === ORIGIN + "/pro");
   env({ TROID_PRO_ORIGIN: undefined, VERCEL_BRANCH_URL: "troid-git-branch-team.vercel.app", VERCEL_URL: "troid-abc123-team.vercel.app" });
@@ -340,6 +352,38 @@ async function main() {
   const liveCfg = P.config({ ...ENV_ON, TROID_PRO: "live", STRIPE_SECRET_KEY: SECRET_LIVE, STRIPE_PUBLISHABLE_KEY: PK_LIVE,
                              SUPABASE_URL: "https://offline.supabase.co", STRIPE_API_BASE: undefined });
   ok("in live mode a buyer never sees Stripe's error text", liveCfg.on && !("stripe" in P.stripeError(liveCfg, { stripe: true, message: "x" })), liveCfg.problems);
+  {
+    const cfg0 = P.config, asLive = (price) => () => ({ ...cfg0(), mode: "live", secretKey: SECRET_LIVE, testClock: false,
+                                                          prices: { monthly: price, yearly: PRICE_Y } });
+    P.config = asLive("price_offlineExclusive");
+    const k2 = stripeCalls.length;
+    let lr, tl;
+    ({ v: lr, lines: tl } = await quiet(() => call(checkout, { headers: auth("A"), body: { plan: "monthly" } })));
+    ok("live mode: a price that adds tax on top closes checkout, 503, before any session (every page says tax included)",
+       lr.status === 503 && /isn't set to include tax\. Nothing was charged\./.test(lr.data.error)
+       && stripeCalls.slice(k2).map((x) => x.method + " " + x.path).join() === "GET /v1/prices/price_offlineExclusive", [lr, stripeCalls.slice(k2).map((x) => x.path)]);
+    ok("live mode: the refusal is logged with the price's tax behavior, and the price is asked again next time (fixing it is enough)",
+       tl.some((x) => /"error":"price not tax-inclusive"/.test(x) && /"tax_behavior":"exclusive"/.test(x) && /"mode":"live"/.test(x))
+       && (await quiet(() => call(checkout, { headers: auth("A"), body: { plan: "monthly" } }))).v.status === 503
+       && stripeCalls.slice(k2).filter((x) => x.path === "/v1/prices/price_offlineExclusive").length === 2, tl);
+    P.config = asLive(PRICE_M);
+    const k3 = stripeCalls.length;
+    lr = await call(checkout, { headers: auth("A"), body: { plan: "monthly" } });
+    ok("live mode: a tax-inclusive price opens checkout", lr.status === 200 && stripeCalls.slice(k3).map((x) => x.path).join().endsWith("/v1/checkout/sessions"),
+       [lr.status, stripeCalls.slice(k3).map((x) => x.path)]);
+    P.config = () => ({ ...cfg0(), prices: { monthly: "price_offlineExclusive", yearly: PRICE_Y } });
+    ({ v: lr, lines: tl } = await quiet(() => call(checkout, { headers: auth("A"), body: { plan: "monthly" } })));
+    ok("test mode: the same price is logged and checkout goes on (nothing is charged there)",
+       lr.status === 200 && tl.some((x) => /"error":"price not tax-inclusive"/.test(x) && /"mode":"test"/.test(x)), [lr.status, tl]);
+    P.config = cfg0;
+    P.config = asLive("price_offlineNeverSeen");
+    const k4 = stripeCalls.length;
+    ({ v: lr, lines: tl } = await quiet(() => call(checkout, { headers: auth("A"), body: { plan: "monthly" } })));
+    ok("a price Stripe can't find: 502, logged as the price call, Stripe's words kept from a live buyer, no session opened",
+       lr.status === 502 && !("stripe" in lr.data) && /Nothing was charged/.test(lr.data.error) && tl.some((x) => /"step":"price"/.test(x))
+       && !stripeCalls.slice(k4).some((x) => x.path === "/v1/checkout/sessions"), [lr.data, tl]);
+    P.config = cfg0;
+  }
   const { lines: liveLines } = await quiet(() => P.stripeLog(liveCfg, "checkout", "checkout session",
     Object.assign(new Error("Stripe's words, b@example.com"), { stripe: true, status: 400, type: "invalid_request_error" })));
   ok("in live mode the log keeps the call, type and code, never Stripe's words", liveLines.length === 1
@@ -600,6 +644,15 @@ async function main() {
   pr = await prices();
   ok("pro_prices.js: a price that isn't the handoff's fails, naming it", pr.code === 1 && pr.out.includes("is 180.00 USD; the handoff says 190.00 USD"), pr.out);
   catalog.prices[1].unit_amount = 19000;
+  catalog.prices[0].tax_behavior = "exclusive";
+  pr = await prices();
+  ok("pro_prices.js: a price that adds tax on top fails: archive it and create it again as inclusive",
+     pr.code === 1 && pr.out.includes(PRICE_M + " has tax behavior exclusive; troid's prices include tax") && /archive it and create the price again/.test(pr.out), pr.out);
+  catalog.prices[0].tax_behavior = "unspecified";
+  pr = await prices();
+  ok("pro_prices.js: a price with no tax behavior of its own fails too: set it to inclusive",
+     pr.code === 1 && pr.out.includes(PRICE_M + " has tax behavior unspecified") && /Set it to inclusive on the price/.test(pr.out), pr.out);
+  catalog.prices[0].tax_behavior = "inclusive";
   pr = await prices({ STRIPE_SECRET_KEY: "" });
   ok("pro_prices.js: without a key it says what to set, and calls nothing", pr.code === 2 && /Set STRIPE_SECRET_KEY/.test(pr.out));
 

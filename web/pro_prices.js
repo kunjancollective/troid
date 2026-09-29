@@ -4,8 +4,9 @@
    shell, never pasted anywhere:
        STRIPE_SECRET_KEY=<the restricted test key> node web/pro_prices.js
    It prints the product, its tax code and every active price, checks them against the handoff (troid Pro, USD 19.00 a
-   month and 190.00 a year, recurring), and prints the two lines to set in Vercel. Price IDs aren't secrets. Creates and
-   changes nothing; no Stripe-Version, so the account's default answers. Exit 0 when every check passes. */
+   month and 190.00 a year, recurring, tax included: tax behavior inclusive, the owner's decision of 28 Sep 2026), and
+   prints the two lines to set in Vercel. Price IDs aren't secrets. Creates and changes nothing; no Stripe-Version, so
+   the account's default answers. Exit 0 when every check passes. */
 const S = require("./lib/stripe.js");
 
 const WANT = { month: { amount: 1900, env: "STRIPE_PRICE_MONTHLY" }, year: { amount: 19000, env: "STRIPE_PRICE_YEARLY" } };
@@ -40,6 +41,12 @@ const money = (p) => (p.unit_amount == null ? "custom" : (p.unit_amount / 100).t
     if (p.currency !== "usd" || p.unit_amount !== want.amount) {
       good = false;
       console.log(`  ✗ ${p.id} is ${money(p)}; the handoff says ${(want.amount / 100).toFixed(2)} USD`);
+    }
+    if (p.tax_behavior !== "inclusive") {                  // prices include tax: $19 is what every buyer pays
+      good = false;
+      console.log(`  ✗ ${p.id} has tax behavior ${p.tax_behavior || "unspecified"}; troid's prices include tax, so it must be inclusive. ` +
+                  (p.tax_behavior === "exclusive" ? "Stripe never changes a price's tax behavior once set: archive it and create the price again with tax behavior inclusive."
+                                                  : "Set it to inclusive on the price (Stripe allows that once, from unspecified)."));
     }
     lines.push(`${want.env}=${p.id}`);
   }
