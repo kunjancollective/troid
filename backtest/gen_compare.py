@@ -456,7 +456,9 @@ def column(k, f, T):
 
 def render_compare(T, live):
     """troid's compare in T's language, as HTML (site_build.GENERATED). T is an i18n.Strings, live the published
-    language codes. English renders exactly as the page did before it was keyed."""
+    language codes. English renders exactly as the page did before it was keyed. Its title and description name the
+    firms from firms.json (site_build.page_T)."""
+    T = site_build.page_T(T, "compare")
     gov = site_build.governs_html(T, "legal.summary.citations")
     D = lambda key: html.escape(T.data(FIRMS.get(key, "")))   # noqa: E731
     ref_text = D("_reference_firm").replace("{conflicts}", str(len(reference().get("_conflicts_found") or [])))

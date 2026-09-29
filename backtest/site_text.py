@@ -25,6 +25,9 @@ FOOTER_TEXT = ("troid is a free informational tool, not financial or investment 
                "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
                "through its links; this does not affect the calculations or comparisons.")
 
+# troid's contact address: the terms, the FAQ and the structured data (site_build.jsonld) name it
+EMAIL = "hello@troid.ai"
+
 # The operator (owner decision, 24 Sep 2026): Kunjan Patel, an individual. Terms section 1 names him "the Operator".
 # A name, not prose: shown as it is on every page, in every language.
 COPYRIGHT = "© 2026 Kunjan Patel"

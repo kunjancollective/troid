@@ -25,6 +25,7 @@ And the rest of 5.1 (items 5 to 8):
   ledger's h1 is its name, troid's ledger.
 Reads files only. Spends nothing, calls no one.
 """
+import html
 import json
 import re
 import sys
@@ -72,7 +73,15 @@ def check(label, path, code, page):
     desc = T.attr(site_build.description_key(T, page))
     ok(f"{label}: one meta description, the page's own ({site_build.description_key(T, page)})",
        head.count('name="description"') == 1 and f'<meta name="description" content="{desc}">' in head)
+    if code == "en":
+        # the search audit's quick win 1: a title a result shows whole, a description that isn't cut
+        tl = len(html.unescape(re.search(r"<title>(.*?)</title>", head, re.S).group(1)))
+        dl = len(html.unescape(desc))
+        ok(f"{label}: title and description at search length (title {tl}, at most 66; description {dl}, 100 to 160)",
+           25 <= tl <= 66 and 100 <= dl <= 160, (tl, dl))
+    loc = site_build.i18n.BY_CODE[code]["og_locale"]
     for tag, pat in (("canonical", rf'<link rel="canonical" href="{re.escape(url)}">'),
+                     ("og:locale", rf'<meta property="og:locale" content="{re.escape(loc)}">'),
                      ("og:url", rf'<meta property="og:url" content="{re.escape(url)}">'),
                      ("og:type", r'<meta property="og:type" content="website">'),
                      ("og:site_name", r'<meta property="og:site_name" content="troid">'),
@@ -92,9 +101,11 @@ def check(label, path, code, page):
         return
     g = {x["@type"]: x for x in d.get("@graph", [])}
     org = g.get("Organization") or {}
-    ok(f"{label}: troid as an Organization, sameAs the footer's repo, X and Reddit links",
-       d.get("@context") == "https://schema.org" and org.get("name") == "troid" and org.get("sameAs") == SOCIAL, org)
-    ok(f"{label}: the WebSite, published by troid", (g.get("WebSite") or {}).get("publisher", {}).get("@id") == org.get("@id"))
+    ok(f"{label}: troid as an Organization, sameAs the footer's repo, X and Reddit links, with troid's address",
+       d.get("@context") == "https://schema.org" and org.get("name") == "troid" and org.get("sameAs") == SOCIAL
+       and org.get("email") == site_text.EMAIL, org)
+    ok(f"{label}: the WebSite, published by troid, in the page's language", (g.get("WebSite") or {}).get("publisher", {}).get("@id") == org.get("@id")
+       and (g.get("WebSite") or {}).get("inLanguage") == code, g.get("WebSite"))
     want = PAGE_TYPE.get(page)
     ok(f"{label}: the page's own entity ({want or 'none beyond the two'})",
        set(g) == {"Organization", "WebSite"} | ({want} if want else set()), sorted(g))

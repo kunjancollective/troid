@@ -72,8 +72,8 @@ for page, k in site_build.FIRM_PAGES.items():
     s = path.read_text()
     FT = site_build.page_T(T, page)
     url = site_build.BASE_URL + site_build.page_url("en", page)
-    ok(f"{page}: its title and h1 name the firm", f"<title>{html.escape(f['name'])}'s rules" in s.replace("&#x27;", "'")
-       and re.search(rf"<h1>{re.escape(f['name'])}'s rules</h1>", s) is not None)
+    ok(f"{page}: its title and h1 name the firm, from firms.json", f"<title>{FT(page + '.meta.title')}</title>" in s
+       and f["name"] in FT(page + ".meta.title") and re.search(rf"<h1>{re.escape(f['name'])}'s rules</h1>", s) is not None)
     ok(f"{page}: in the sitemap and llms.txt", f"<loc>{url}</loc>" in SITEMAP and f"]({url}): " in LLMS)
 
     # the rules: the compare column, without its sizing block and its foot

@@ -162,7 +162,8 @@ og.title,troid — the droid does the prop-firm math. You decide the trade.,,,"E
 og.tagline,The droid does the prop-firm math. You decide the trade.,,,ENGLISH CHANGED: translate it in reviewer_edit | 
 hypo.no_edge_short,troid's own strategy shows no measurable edge.,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 hypo.no_edge_tail,"Out of sample, on {n} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures {exp} per trade, standard error {se} — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {exp} {n} {se} exactly as written; keep every number exactly
-index.meta.title,troid's desk — prop-firm position size calculator,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.meta.title,"Prop firm position size calculator, both loss limits | troid",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.meta.description,"troid sizes a prop-firm trade against both loss ceilings, the daily limit and the max loss, reports which one binds, and nets out fees. Free, no orders.",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 index.hero.lede,"Most failed challenges end on a loss limit, not a missed target: 93.7% at
   <a href=""{L}/sources#onefunded_failures"">one firm that publishes its own figures</a>, below. troid computes both of your
   loss ceilings, reports which one actually binds, and sizes the trade net of fees.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
@@ -211,14 +212,16 @@ index.js.shared_firm,"The link names a firm troid doesn't list now ({firm}), so 
 index.js.shared_product,"The link names a challenge troid doesn't list for {firm} now ({product}), so the desk shows {shown}.",,,"NEW: translate it in reviewer_edit | keep {firm} {product} {shown} exactly as written; troid stays lowercase, in Latin letters"
 index.js.shared_bad,Values in the link that couldn't be read ({n}) were left at the desk's defaults.,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
 index.js.shared_long,"The link was too long to read, so the desk shows its defaults.",,,NEW: translate it in reviewer_edit | 
+compare.meta.title,{firms} rules | troid,,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
+compare.meta.description,"{firm_list} side by side: daily limit, max loss, target, price and fees, each with its document and troid's read date.",,,"NEW: translate it in reviewer_edit | keep {firm_list} exactly as written; troid stays lowercase, in Latin letters"
 compare.og.title,"troid's compare — prop-firm rules side by side, each with its source",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.og.description,"Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
 compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
 compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
-firm.meta.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
-firm.meta.description,"Every {firm} rule troid holds, from {firm}'s own documents: the daily and maximum loss and how each is measured, the daily reset, fees, leverage, holding limits and open positions, each with the section and the date troid read it.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.meta.title,"{firm} rules, sourced: drawdown, target, fees | troid",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
+firm.meta.description,"{firm}'s rules from its own documents: daily and max loss and how each is measured, reset, fees, leverage and hold limits, each with its read date.",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
 firm.og.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
 firm.og.description,"{firm}'s loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 firm.name,{firm}'s rules,,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
@@ -244,11 +247,17 @@ firm.changes.p,"SOURCED: each entry is the day troid found a change in {firm}'s 
 firm.changes.none,None logged yet.,,,NEW: translate it in reviewer_edit | 
 firm.next.h,The arithmetic,,,NEW: translate it in reviewer_edit | 
 firm.next.p,"<a href=""{H}"">troid's desk</a> sizes a trade on these rules: choose {firm} in its {field} field. <a href=""{L}/compare"">troid's compare</a> sets them beside the other firms'. <a href=""{L}/sources"">troid's sources</a> list every outside figure troid uses.",,,"NEW: translate it in reviewer_edit | keep {H} {L} {field} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
+ledger.meta.title,"troid's ledger: a simulated prop-firm account, every trade",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+ledger.meta.description,"troid's shadow account: every run and every closed trade of a simulated prop-firm strategy, losers included. Hypothetical performance, no money traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.title,"troid's ledger — the shadow account, every trade in public",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.og.description,"Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 ledger.ld.description,"Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.meta.title,troid's research: shadow-account tearsheet (hypothetical),,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+tearsheet.meta.description,"A quantstats tearsheet of troid's shadow-account journal: returns, drawdowns and ratios. Hypothetical performance, not a record of real trading.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 tearsheet.og.title,troid's research — tearsheet,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 tearsheet.og.description,"quantstats over the shadow account's journal. Hypothetical performance, not a record of real trading.",,,NEW: translate it in reviewer_edit | 
+dashboard.meta.title,"troid's research: a prop-firm strategy review, tiered",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+dashboard.meta.description,"troid's strategy review: walk-forward results and audit findings, each number with its tier and its source. Nothing on this page is a trade signal.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.og.title,troid's research — strategy review,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 dashboard.og.description,"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.",,,NEW: translate it in reviewer_edit | 
 dashboard.hero.meta,"MEASURED on BTCUSDT 4h bars from api.binance.us, one feed · under the rules of Bitfunded's 1-Step, Expert level, $100,000 · figures as of 21 Sep 2026",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
@@ -329,6 +338,8 @@ dashboard.next.src,"Source: the work order, <a href=""https://github.com/kunjanc
 dashboard.foot,"The sample: 1,539 4h bars, 8 Jan – 21 Sep 2026, api.binance.us (<code>backtest/data/btc_4h.csv</code>),
 one asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>), came back
 inside noise on BTC and ETH.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly
+faq.meta.title,"Prop firm pass rates, costs and loss limits, sourced | troid",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+faq.meta.description,"Prop-firm pass rates, the real cost of getting funded, why accounts fail and how sizing decides survival. Every figure carries its tier and its source.",,,NEW: translate it in reviewer_edit | 
 faq.og.title,troid — what the numbers actually say,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.og.description,"Pass rates, costs, why accounts fail and how sizing decides survival, each figure with its tier.",,,NEW: translate it in reviewer_edit | 
 faq.hero.updated,Last updated {date},,,ENGLISH CHANGED: translate it in reviewer_edit | keep {date} exactly as written
@@ -395,9 +406,12 @@ reader: a trader who cannot state an edge, an average win-to-loss ratio, and the
 sizing survives will find those out from a challenge ({fee} for {firm}'s {quota} {product}, read {date}) faster than from a
 spreadsheet at no cost.
 The base rates on this page are the rest of it.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {date} {fee} {firm} {product} {quota} exactly as written; troid stays lowercase, in Latin letters"
+terms.meta.title,"troid terms of use: a free prop-firm risk tool, not advice",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
 terms.draft,Effective {date}.,,,ENGLISH CHANGED: translate it in reviewer_edit | keep {date} exactly as written
+chat.meta.title,ask troid: a prop-firm rules assistant that cites its sources,,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+chat.meta.description,"ask troid answers prop-firm rule questions: each rule with its source and read date, the arithmetic done through tools, every number tiered. Not advice.",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.og.title,ask troid,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.og.description,"troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 chat.session.line,Session {id} — quote this if you contact troid about this conversation.,,,"NEW: translate it in reviewer_edit | keep {id} exactly as written; troid stays lowercase, in Latin letters"
@@ -504,7 +518,7 @@ desk2.js.tape_none,"No compared firm offers {sym}, so there are no firm rules to
 desk2.js.x_wait_none,Choose an asset from the list to see the rest.,,,NEW: translate it in reviewer_edit | 
 sources.tier.onefunded_failures,"SOURCED · OneFunded's own platform data, in its post “The Most Common Reasons Why Traders Fail Prop Firm Challenges”, published {published} (updated {updated}), read {read}. One firm's self-reported figures, not independently audited; the post gives no number of accounts or period. 93.7% is troid's sum of its 78.7% and 15.0%. <a href=""{L}/sources#onefunded_failures"">Sources</a>",,,"NEW: translate it in reviewer_edit | keep {L} {published} {read} {updated} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 sources.tier.fpfx_payouts,"SOURCED · FPFX Tech's data, reported by Finance Magnates, published {published}, read {read}. Industry data from a company that sells software to prop firms: not independent, not audited, the ten firms not named. <a href=""{L}/sources#fpfx_payouts"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {published} {read} exactly as written; keep the <…> tags and links as they are; translate only the words
-sources.meta.title,troid — sources,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+sources.meta.title,"troid's sources: every outside figure, its source and date",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 sources.meta.description,"Every outside figure troid's pages use: what it says, who produced it, who reported it, when it was published, when troid read it, and its caveat.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 sources.og.title,troid's sources,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 sources.og.description,"Every outside figure troid uses, with who produced it, when troid read it, and its caveat.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"

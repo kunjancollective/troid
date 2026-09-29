@@ -47,7 +47,7 @@ def published(page):
     return page != "pro" or bool(SITE.get("pro_waitlist"))
 FIRMS_JSON = json.loads((ROOT / "firms.json").read_text())
 # troid's page of each compared firm's rules (launch handoff 2026-09-26, 5.2 A): /firms/<slug>, rendered by gen_compare
-# from firms.json, its words the generic firm.* strings with the firm's name (FirmT), so no firm is named in en.json
+# from firms.json, its words the generic firm.* strings with the firm's name (page_T), so no firm is named in en.json
 FIRM_PAGES = {"firms/" + k.replace("_", "-"): k
               for k in sorted(k for k, f in FIRMS_JSON.items() if isinstance(f, dict) and "compare_product" in f)}
 PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources", *FIRM_PAGES]
@@ -77,13 +77,13 @@ def page_url(code, page):
     return f"/{page}" if code == "en" else f"/{code}/{page}"
 
 
-class _FirmKeys:
-    """en.json as a firm's page sees it: its own keys ({page}.meta.title, {page}.og.*, …) are the generic firm.* keys."""
-    def __init__(self, en, prefix):
-        self.en, self.p = en, prefix
+class _PageKeys:
+    """en.json as one page sees it: its own keys ({page}.meta.title, {page}.og.*, …) read the keys it maps them to."""
+    def __init__(self, en, prefix, to):
+        self.en, self.p, self.to = en, prefix, to
 
     def _k(self, key):
-        return "firm." + key[len(self.p):] if isinstance(key, str) and key.startswith(self.p) else key
+        return self.to + key[len(self.p):] if isinstance(key, str) and key.startswith(self.p) else key
 
     def __contains__(self, key):
         return self._k(key) in self.en
@@ -107,18 +107,20 @@ class _FirmKeys:
         return self.en.items()
 
 
-class FirmT:
-    """T for a firm's page (FIRM_PAGES): the page's own keys read the generic firm.* strings with {firm}, the firm's name
-    from firms.json. Everything else is T's, so the head, the share tags, the structured data and llms.txt work as on
-    any page."""
-    def __init__(self, T, page):
-        self._T, self._p = T, page + "."
-        self.firm = FIRMS_JSON[FIRM_PAGES[page]]["name"]
-        self.en = _FirmKeys(T.en, self._p)
+class PageT:
+    """T as one page reads it: the page's own keys ({page}.*) read the keys they map to, filled with the page's arguments
+    from firms.json, so no firm is named in en.json. A firm's page (FIRM_PAGES) reads the generic firm.* strings with
+    {firm}; troid's compare fills {firms} ("A vs B vs C") and {firm_list} ("A, B and C") in its own. Everything else is
+    T's, so the head, the share tags, the structured data and llms.txt work as on any page."""
+    def __init__(self, T, page, to, kw):
+        self._T, self._p, self._kw = T, page + ".", kw
+        self._to = to
+        self.en = _PageKeys(T.en, self._p, to)
+        self.firm = kw.get("firm")
 
     def _k(self, key, kw):
         if key.startswith(self._p):
-            return "firm." + key[len(self._p):], {"firm": self.firm, **kw}
+            return self._to + key[len(self._p):], {**self._kw, **kw}
         return key, kw
 
     def __call__(self, key, **kw):
@@ -133,9 +135,26 @@ class FirmT:
         return getattr(self._T, name)
 
 
+def compared_names():
+    """The compared firms' names, in troid's compare's order (alphabetical by key)."""
+    return [FIRMS_JSON[k]["name"] for k in FIRM_PAGES.values()]
+
+
 def page_T(T, page):
-    """T as page reads it: a firm's page gets FirmT."""
-    return FirmT(T, page) if page in FIRM_PAGES and not isinstance(T, FirmT) else T
+    """T as page reads it (PageT): a firm's page, and troid's compare, whose title and description name the firms."""
+    if isinstance(T, PageT):
+        return T
+    if page in FIRM_PAGES:
+        return PageT(T, page, "firm.", {"firm": FIRMS_JSON[FIRM_PAGES[page]]["name"]})
+    if page == "compare":
+        names = compared_names()
+        pair, last = T("index.js.list_comma"), T("compare.js.list_and")
+        acc = names[0]
+        for nm in names[1:-1]:
+            acc = pair.replace("{a}", acc).replace("{b}", nm)
+        firm_list = last.replace("{a}", acc).replace("{b}", names[-1]) if len(names) > 1 else acc
+        return PageT(T, page, "compare.", {"firms": " vs ".join(names), "firm_list": firm_list})
+    return T
 
 
 def features_on(T):
@@ -209,11 +228,10 @@ def head_extra(T, page, live):
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
         parts.append(f'<link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}">')
-    if T.code != "en":
-        parts.append(f'<meta property="og:locale" content="{lang["og_locale"]}">')
-        for c in live:
-            if c != T.code:
-                parts.append(f'<meta property="og:locale:alternate" content="{i18n.BY_CODE[c]["og_locale"]}">')
+    parts.append(f'<meta property="og:locale" content="{lang["og_locale"]}">')
+    for c in live:
+        if c != T.code:
+            parts.append(f'<meta property="og:locale:alternate" content="{i18n.BY_CODE[c]["og_locale"]}">')
     if lang.get("font"):
         fam = lang["font"].replace(" ", "+")
         parts.append(f'<link href="https://fonts.googleapis.com/css2?family={fam}:wght@400;500;600;700&display=swap" rel="stylesheet">')
@@ -289,8 +307,9 @@ def jsonld(T, page, text=""):
     org_id, site_id = BASE_URL + "/#organization", BASE_URL + "/#website"
     url = BASE_URL + page_url(T.code, page)
     graph = [{"@type": "Organization", "@id": org_id, "name": "troid", "url": BASE_URL + "/",
-              "logo": BASE_URL + "/apple-touch-icon.png", "sameAs": SAME_AS},
-             {"@type": "WebSite", "@id": site_id, "name": "troid", "url": BASE_URL + "/", "publisher": {"@id": org_id}}]
+              "logo": BASE_URL + "/apple-touch-icon.png", "email": site_text.EMAIL, "sameAs": SAME_AS},
+             {"@type": "WebSite", "@id": site_id, "name": "troid", "url": BASE_URL + "/", "inLanguage": T.code,
+              "publisher": {"@id": org_id}}]
     key = f"{page}.og" if f"{page}.og.title" in T.en else "og"
     title, desc = _plain(T(key + ".title")), _plain(T(key + ".description"))
     if page == "index":

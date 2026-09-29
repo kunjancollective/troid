@@ -1,6 +1,6 @@
 # troid
 
-> Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.
+> troid sizes a prop-firm trade against both loss ceilings, the daily limit and the max loss, reports which one binds, and nets out fees. Free, no orders.
 
 Free. Never places orders. troid's own strategy shows no measurable edge.
 
@@ -8,7 +8,7 @@ troid is a free informational tool, not financial or investment advice. troid do
 
 ## Pages
 
-- [troid's desk](https://troid.ai/): Prop-firm risk and compliance, computed. Size against both loss ceilings, net of fees.
+- [troid's desk](https://troid.ai/): troid sizes a prop-firm trade against both loss ceilings, the daily limit and the max loss, reports which one binds, and nets out fees. Free, no orders.
 - [troid's compare](https://troid.ai/compare): Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.
 - [troid's ledger](https://troid.ai/ledger): Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.
 - [troid's research](https://troid.ai/dashboard): The strategy review and the audit findings, each number with its tier. Nothing here is a signal.

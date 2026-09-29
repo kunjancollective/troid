@@ -95,7 +95,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `index.html` and `faq.html`, and each compared firm's page, `/firms/<slug>` (`firm.html`, `render_firm`): the compare
   column's rows without its sizing block or link, each other product's figures only beside that product's own source,
   the conflicts and the rule changes (`web/test_firm_pages.py`). Their words are the generic `firm.*` strings, the name
-  filled in (`site_build.FirmT`). Generic text never names a firm. Edit `firms.json`, not the HTML.
+  filled in (`site_build.page_T`, which also names the firms in `/compare`'s title and description). Generic text
+  never names a firm. Edit `firms.json`, not the HTML.
   The compare's columns are in the served page at its default inputs (`static_column`, figures by `backtest/jsnum.py`
   and languages.json `num`), the same HTML its script writes: a change to its `render()` changes `static_column()` too,
   and `web/test_compare_static.py` (Chromium, every language) proves the two equal.
