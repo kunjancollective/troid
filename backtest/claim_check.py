@@ -5,6 +5,9 @@ E1, every number on a public page has its tier and its source. A number in a pag
   - its section (the text between two headings) carries a tier label (SOURCED, DERIVED, MODELLED, MEASURED) and a source
     (a link, a read or publication date, a script or file troid publishes); or
   - its own paragraph cites a document with a read date ("read 2026-09-23"), or links to its entry on /sources; or
+  - it is in a cell of troid's compare whose provenance line names the firm's rules, the date troid read them and the
+    document ("Computed from Bitfunded 1-Step rules as published on 2026-09-23 — Terms of Use 9(a) …"), with nothing in
+    the cell "not yet recorded", or says the figure is the reader's own ("From your inputs; no firm rule used."); or
   - it is an input example (a glossary note's "Example …", "Also called …"), a formula (<code>), a date or time, a
     clause or section number; or
   - it is on the allow-list (claim_allow.json), with the reason it needs no source.
@@ -16,8 +19,10 @@ each figure is read from its own source (firms.json, the walk-forward results, t
 checked for the contradictions the audit found (a 1-Step at $799, "no edge", a trade frequency or holdout that
 isn't the measured one, a reset or fee that isn't the firm's).
 
-The static pages are read as the build writes them; what their scripts draw (the desk's result, troid's compare cells)
-is held to its sources elsewhere (the desk's provenance block, gen_compare's unsourced()).
+The static pages are read as the build writes them. troid's compare carries its cells in the page, sized at its default
+inputs (gen_compare.static_column, launch handoff 2026-09-26, 5.1 item 4), so they are read here like any text, and
+gen_compare's unsourced() still refuses a filled cell with no recorded source; what the desk's script draws is held to
+its sources elsewhere (its provenance block).
 """
 from __future__ import annotations
 
@@ -31,7 +36,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PUB = ROOT / "web" / "public"
 PAGES = ["index", "faq", "dashboard", "chat", "compare", "ledger", "terms"]   # sources is the evidence itself
-TEXTS = ["TROID.md", "README.md", "web/context/support.md", "web/context/TROID-CHARACTER.md", "METHODOLOGY.md"]
+# each compared firm's rule page (site_build.FIRM_PAGES, named the same way; read here from firms.json, since this module
+# imports nothing of troid's: troid-social loads it on its own for PLUS_TAX)
+PAGES += ["firms/" + k.replace("_", "-") for k, f in sorted(json.loads((ROOT / "firms.json").read_text()).items())
+          if isinstance(f, dict) and "compare_product" in f]
+TEXTS = ["TROID.md", "README.md", "web/context/support.md", "web/context/TROID-CHARACTER.md", "METHODOLOGY.md", "web/public/llms.txt"]
 
 TIER = re.compile(r"\b(SOURCED|DERIVED|MODELLED|MEASURED)\b")
 SOURCE = re.compile(r"\bread \d{4}-\d{2}-\d{2}|\bpublished\b|\bComputed from\b|\.py\b|\.md\b|\.json\b|\.csv\b|\bhref=|\bsha256\b", re.I)
@@ -46,7 +55,10 @@ SKIP = {"script", "style", "noscript", "svg", "template", "nav", "header", "foot
 
 
 CONTAINER_TAGS = {"section", "article", "aside"}
-CONTAINER_CLASSES = {"q", "panel", "stat", "hero", "disc", "discl", "hypo", "verdict"}
+CONTAINER_CLASSES = {"q", "panel", "stat", "hero", "disc", "discl", "hypo", "verdict", "r"}   # r: a cell of troid's compare
+# a compare cell's provenance line (gen_compare): the firm's rules as read on a date, from a named document; or the
+# reader's own inputs
+CELL = re.compile(r"\bComputed from .{1,160}? rules as published on \d{4}-\d{2}-\d{2}\b.{0,40}? — \S|\bFrom your inputs; no firm rule used\.", re.S)
 
 
 class _Blocks(HTMLParser):
@@ -159,11 +171,13 @@ def e1_page(page, allow):
     for sg in segs:
         body = " ".join(x["text"] + " " + x["code"] + " " + " ".join("href=" + h for h in x["links"]) for x in sg["blocks"])
         tiered = bool(TIER.search(body) and SOURCE.search(body))
+        cell = bool(CELL.search(body)) and "not yet recorded" not in body.lower()
         for b in sg["blocks"]:
             text = re.sub(r"\s+", " ", b["text"]).strip()
             if not text:
                 continue
-            why = ("tier and source in its box" if tiered else "a read date beside it" if READ.search(text)
+            why = ("tier and source in its box" if tiered else "its compare cell's provenance line" if cell
+                   else "a read date beside it" if READ.search(text)
                    else "its /sources entry" if any("/sources#" in h for h in b["links"])
                    else "an input example" if re.match(r"(Example|Also called)\b", text)
                    else "tier and source in its line" if TIER.search(text) and SOURCE.search(text + b["code"] + " ".join(b["links"])) else None)
@@ -227,6 +241,8 @@ def e2_texts(F):
     """The contradictions the audit found, looked for on every page, TROID.md, the README and ask troid's context."""
     docs = {f"{p}.html": _plain((PUB / f"{p}.html").read_text()) for p in PAGES + ["sources"]}
     docs.update({t: (ROOT / t).read_text() for t in TEXTS if (ROOT / t).exists()})
+    # troid Pro's pages, served by a function rather than from web/public: the waitlist and the test-mode checkout page
+    docs.update({f"web/pro/{f.name}": _plain(f.read_text()) for f in sorted((ROOT / "web" / "pro").glob("*.html"))})
     # METHODOLOGY's corrections table quotes each error it corrects; its rows are the record, not claims
     docs["METHODOLOGY.md"] = re.sub(r"(?m)^\| \d{4}-\d{2}-\d{2} \|.*$", "", docs.get("METHODOLOGY.md", ""))
     fees = {f"{x:g}" for x in F["fee_pct"]["all"]}
@@ -257,7 +273,48 @@ def e2_texts(F):
             for m in re.finditer(r"(0\.\d+)%(?:-| )per[- ]side", t):
                 if f"{float(m.group(1)):g}" not in fees:
                     out.append(("E2 fee per side", name, "", m.group(0), t[:160]))
+    # Retired wording (the owner's launch handoff, section 0): troid's result is "no measurable edge"; the reset is stated in
+    # UTC, never at a fixed local hour ("noon in New York" is wrong from 1 November 2026, when New York leaves daylight
+    # saving). ask troid's prompt files are read as they will go live: a copy staged in web/context/patch/ stands in for its
+    # live file until the patch's evaluation publishes it (CLAUDE.md), so the daily check passes on the staged fix.
+    nxt = dict(docs)
+    for name in ("TROID.md", "web/context/support.md", "web/context/TROID-CHARACTER.md"):
+        staged = ROOT / "web" / "context" / "patch" / Path(name).name
+        if name in nxt and staged.exists():
+            nxt[name] = staged.read_text()
+    for name, s in nxt.items():
+        for sent in re.split(r"(?<=[.!?])\s+|\n\n", s):
+            t = re.sub(r"\s+", " ", sent)
+            m = RETIRED_EDGE.search(t)
+            if m:
+                out.append(("E2 retired wording (troid's result is 'no measurable edge')", name, "", m.group(0), t[:160]))
+            m = FIXED_LOCAL_RESET.search(t)
+            if m:
+                out.append(("E2 the reset at a fixed local hour (state 16:00 UTC)", name, "", m.group(0), t[:160]))
+            m = PLUS_TAX.search(t)
+            if m:
+                out.append(("E2 'plus tax' (troid's prices include tax: $19 is what every buyer pays)", name, "", m.group(0), t[:160]))
     return out
+
+
+RETIRED_EDGE = re.compile(r"\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b", re.I)
+# Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it. So
+# never "plus tax", in English or in the phrasings the launch languages use for it (es, pt, fr, ru, id, zh, ar, hi, bn).
+PLUS_TAX = re.compile(
+    r"\bplus (applicable )?(sales )?(tax(es)?|VAT|GST)\b|\+\s?(applicable )?(sales )?(tax(es)?|VAT|GST)\b"
+    r"|\bexcl(\.|uding|usive of)\s?(applicable )?(sales )?(tax(es)?|VAT|GST)\b|\b(tax(es)?|VAT|GST) (not included|extra|excluded)\b"
+    r"|\bbefore (sales )?tax(es)?\b|\bpre-tax\b|\b(tax(es)?|VAT) (is |are )?added at checkout\b"
+    r"|\bm[aá]s (el )?(IVA|impuestos?)\b|\b(IVA|impuestos?) no incluidos?\b|\bmais (IVA|impostos?)\b|\bimpostos? n[aã]o inclu[ií]dos?\b"
+    r"|\bhors taxes?\b|\bplus (la )?TVA\b|\+\s?TVA\b|\bTVA non comprise\b|\d\s?(\$|€|USD)?\s?HT\b"
+    r"|плюс (налог|НДС)|без (учёта |учета )?(налога|НДС)|\+\s?НДС"
+    r"|\b(belum|tidak) termasuk pajak\b|\bditambah pajak\b"
+    r"|不含[税稅]|另加[税稅]|未含[税稅]|[税稅]金?另[计計]"
+    r"|غير شامل(ة)? (ل)?(ال)?ضريبة|\+\s?ضريبة"
+    r"|कर अतिरिक्त|कर शामिल नहीं|टैक्स अलग|टैक्स शामिल नहीं"
+    r"|কর আলাদা|কর অন্তর্ভুক্ত নয়|ট্যাক্স আলাদা", re.I)
+# a clock time labelled EDT or EST holds for one season only
+FIXED_LOCAL_RESET = re.compile(r"\bnoon\b[^.]{0,30}\bNew York\b|\bNew York\b[^.]{0,30}\bnoon\b|\b1[12]:00 (in )?(winter|summer)\b"
+                               r"|\b\d{1,2}:\d{2}\s*(EDT|EST)\b", re.I)
 
 
 def run():

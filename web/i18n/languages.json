@@ -1,15 +1,15 @@
 {
-  "_note": "The ten launch languages (HANDOFF-global-launch). A language is published only when web/i18n/{code}.json has _status 'live' (set by backtest/i18n_import.py from its reviewer's sheet). 'font' is the Google Fonts family loaded after Inter for that script; Plex Mono stays for numerals everywhere. 'intl' is the locale for Intl.NumberFormat / DateTimeFormat, always with Latin digits.",
+  "_note": "The ten launch languages (HANDOFF-global-launch). A language is published only when web/i18n/{code}.json has _status 'live' (set by backtest/i18n_import.py from its reviewer's sheet). 'font' is the Google Fonts family loaded after Inter for that script; Plex Mono stays for numerals everywhere. 'intl' is the locale for Intl.NumberFormat / DateTimeFormat, always with Latin digits. 'num' is how that locale writes a number (group and decimal separators, group sizes, the digits a number needs before it is grouped, the minus sign, the USD pattern with # for the number), recorded from the browser so backtest/jsnum.py can write a page's figures before its script runs; web/test_compare_static.py re-reads every locale in Chromium and fails when one no longer matches.",
   "languages": [
-    {"code": "en", "name": "English",          "dir": "ltr", "font": null,                   "og_locale": "en_US", "intl": "en-US"},
-    {"code": "zh", "name": "中文",              "dir": "ltr", "font": "Noto Sans SC",         "og_locale": "zh_CN", "intl": "zh-Hans-CN-u-nu-latn"},
-    {"code": "hi", "name": "हिन्दी",            "dir": "ltr", "font": "Noto Sans Devanagari", "og_locale": "hi_IN", "intl": "hi-IN-u-nu-latn"},
-    {"code": "es", "name": "Español",          "dir": "ltr", "font": null,                   "og_locale": "es_ES", "intl": "es-ES-u-nu-latn"},
-    {"code": "ar", "name": "العربية",          "dir": "rtl", "font": "Noto Sans Arabic",     "og_locale": "ar_AR", "intl": "ar-u-nu-latn"},
-    {"code": "fr", "name": "Français",         "dir": "ltr", "font": null,                   "og_locale": "fr_FR", "intl": "fr-FR-u-nu-latn"},
-    {"code": "bn", "name": "বাংলা",            "dir": "ltr", "font": "Noto Sans Bengali",    "og_locale": "bn_BD", "intl": "bn-BD-u-nu-latn"},
-    {"code": "pt", "name": "Português",        "dir": "ltr", "font": null,                   "og_locale": "pt_BR", "intl": "pt-BR-u-nu-latn"},
-    {"code": "ru", "name": "Русский",          "dir": "ltr", "font": null,                   "og_locale": "ru_RU", "intl": "ru-RU-u-nu-latn"},
-    {"code": "id", "name": "Bahasa Indonesia", "dir": "ltr", "font": null,                   "og_locale": "id_ID", "intl": "id-ID-u-nu-latn"}
+    {"code": "en", "name": "English",          "dir": "ltr", "font": null,                   "og_locale": "en_US", "intl": "en-US", "num": {"group": ",", "decimal": ".", "usd": "$#", "usd_neg": "-$#"}},
+    {"code": "zh", "name": "中文",              "dir": "ltr", "font": "Noto Sans SC",         "og_locale": "zh_CN", "intl": "zh-Hans-CN-u-nu-latn", "num": {"group": ",", "decimal": ".", "usd": "US$#", "usd_neg": "-US$#"}},
+    {"code": "hi", "name": "हिन्दी",            "dir": "ltr", "font": "Noto Sans Devanagari", "og_locale": "hi_IN", "intl": "hi-IN-u-nu-latn", "num": {"group": ",", "decimal": ".", "grouping": [3, 2], "usd": "$#", "usd_neg": "-$#"}},
+    {"code": "es", "name": "Español",          "dir": "ltr", "font": null,                   "og_locale": "es_ES", "intl": "es-ES-u-nu-latn", "num": {"group": ".", "decimal": ",", "min_grouping": 2, "usd": "#\u00a0US$", "usd_neg": "-#\u00a0US$"}},
+    {"code": "ar", "name": "العربية",          "dir": "rtl", "font": "Noto Sans Arabic",     "og_locale": "ar_AR", "intl": "ar-u-nu-latn", "num": {"group": ",", "decimal": ".", "minus": "\u200e-", "usd": "\u200f#\u00a0US$", "usd_neg": "\u200f\u200e-#\u00a0US$"}},
+    {"code": "fr", "name": "Français",         "dir": "ltr", "font": null,                   "og_locale": "fr_FR", "intl": "fr-FR-u-nu-latn", "num": {"group": "\u202f", "decimal": ",", "usd": "#\u00a0$US", "usd_neg": "-#\u00a0$US"}},
+    {"code": "bn", "name": "বাংলা",            "dir": "ltr", "font": "Noto Sans Bengali",    "og_locale": "bn_BD", "intl": "bn-BD-u-nu-latn", "num": {"group": ",", "decimal": ".", "grouping": [3, 2], "usd": "#\u00a0US$", "usd_neg": "-#\u00a0US$"}},
+    {"code": "pt", "name": "Português",        "dir": "ltr", "font": null,                   "og_locale": "pt_BR", "intl": "pt-BR-u-nu-latn", "num": {"group": ".", "decimal": ",", "usd": "US$\u00a0#", "usd_neg": "-US$\u00a0#"}},
+    {"code": "ru", "name": "Русский",          "dir": "ltr", "font": null,                   "og_locale": "ru_RU", "intl": "ru-RU-u-nu-latn", "num": {"group": "\u00a0", "decimal": ",", "usd": "#\u00a0$", "usd_neg": "-#\u00a0$"}},
+    {"code": "id", "name": "Bahasa Indonesia", "dir": "ltr", "font": null,                   "og_locale": "id_ID", "intl": "id-ID-u-nu-latn", "num": {"group": ".", "decimal": ",", "usd": "US$#", "usd_neg": "-US$#"}}
   ]
 }

@@ -46,7 +46,7 @@ def _style(T):
     """index.html's icon, og and font links and its stylesheet, with the ledger's own og title and description (a
     shared /ledger link previews as itself) and the language's og image."""
     og = site_build.og(T, "ledger")
-    s = STYLE
+    s = re.sub(r'<meta name="twitter:card"[^>]*>\n?', "", STYLE)     # head_extra writes the card, on every page
     for prop, val in (("og:image", og["image"]), ("og:title", og["title"]), ("og:description", og["description"])):
         s = re.sub(rf'(<meta property="{prop}" content=")[^"]*(">)', lambda m, v=val: m.group(1) + v + m.group(2), s, count=1)
     return s
@@ -232,14 +232,14 @@ def ledger_data():
     st = json.loads(STATE.read_text()) if STATE.exists() else {}
     cfg = json.loads(CFG.read_text())
     n = len(rows); wins = sum(1 for r in rows if float(r["pnl"])>0)
-    net = sum(float(r["pnl"]) for r in rows)
+    net = math.fsum(float(r["pnl"]) for r in rows)
     rs = [float(r["r"]) for r in rows]
-    exp = sum(rs)/n if n else 0
+    exp = math.fsum(rs)/n if n else 0
     se = statistics.stdev(rs)/math.sqrt(n) if n > 1 else 0.0
     noise30 = se*expected_max_normal(30)            # expected best of ~30 independent configs under a true zero edge
     flagged = sum(1 for r in rows if int(r.get("filled_bars") or 0) > 0)
-    gw = sum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
-    gl = -sum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
+    gw = math.fsum(float(r["pnl"]) for r in rows if float(r["pnl"])>0)
+    gl = -math.fsum(float(r["pnl"]) for r in rows if float(r["pnl"])<0)
     pf = gw/gl if gl else 0
     # this week / this month, by exit date
     now = dt.datetime.now(dt.timezone.utc)
@@ -273,11 +273,13 @@ def render_ledger(T, live):
             + T("ledger.warn.logged", live=len(d["logged_live"]), date=rows[0]["logged_utc"][:10] if rows else "—")
             + (" " + T("ledger.warn.flagged", n=d["flagged"]) if d["flagged"] else ""))
     status = word(T, "status", st["outcome"]) if st.get("outcome") else "—"
-    wk_r, mo_r = f'{sum(float(r["r"]) for r in wk):+.2f}R', f'{sum(float(r["r"]) for r in mo):+.2f}R'
+    # math.fsum, not sum: the exactly rounded total, the same on every Python (3.12's sum compensates and 3.11's
+    # doesn't, so a total at a tie, -0.775 over this month's 14 trades on 29 Sep 2026, showed -0.77 or -0.78 by version)
+    wk_r, mo_r = f'{math.fsum(float(r["r"]) for r in wk):+.2f}R', f'{math.fsum(float(r["r"]) for r in mo):+.2f}R'
     asof = T("ledger.hero.asof", asof=utc(T, st.get("as_of_bar_utc", "")) or "—",
              market=code(T, f'{cfg["instrument"]} {cfg["timeframe"]}'), profile=code(T, cfg["profile"]))
 
-    return f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
+    return site_build.finish(T, "ledger", f'''<!DOCTYPE html><html{site_build.html_attrs(T)}><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("ledger.meta.title")}</title>
 {_style(T)}
 <style>.k{{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}}
@@ -291,12 +293,16 @@ def render_ledger(T, live):
   margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}}
 .scroll{{overflow-x:auto;-webkit-overflow-scrolling:touch}}
 .tc{{margin-bottom:18px}}.tchart{{height:300px;border:1px solid var(--line);border-radius:3px;overflow:hidden}}
-.tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}</style>
+.tcap{{font-family:var(--mono);font-size:11px;color:var(--dim);margin:6px 0 0;line-height:1.6}}
+/* the page's heading is its name, troid's ledger (launch handoff 2026-09-26, 5.1 item 8), in the eyebrow's look; the
+   strategy's name under it keeps the headline's */
+h1.eyebrow{{line-height:inherit;max-width:none}}
+.name{{font-size:clamp(24px,4.4vw,30px);line-height:1.08;letter-spacing:-.035em;font-weight:700;margin:0 0 14px;max-width:24ch}}</style>
 {site_build.head_extra(T, "ledger", live)}</head><body><div class="wrap">
 {header(T, live)}
 {site_build.ticker(T)}
-<p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</p>
-<h1>{code(T, cfg["name"])}</h1>
+<h1 class="eyebrow" style="margin-top:28px;text-transform:none">{T("ledger.hero.h1")}</h1>
+<p class="name">{code(T, cfg["name"])}</p>
 <p class="lede">{T("ledger.hero.lede")}</p>
 <p class="meta">{asof}</p>
 <p class="meta" style="margin-top:-24px">{T("ledger.src.page")}</p>
@@ -332,7 +338,7 @@ def render_ledger(T, live):
 {trade_charts(T, rows)}
 
 <p class="foot">{T("ledger.foot.week")} · {T("ledger.foot.feed")} · {T("ledger.foot.journal")}<br>{site_text.footer_html(T)}</p>
-</div></body></html>'''
+</div></body></html>''')
 
 
 # The shadow loop runs every 4 hours (.github/workflows/shadow.yml, 20 minutes after each 4-hour bar closes). GitHub

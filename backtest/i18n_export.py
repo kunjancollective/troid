@@ -22,7 +22,7 @@ import i18n  # noqa: E402
 import site_build  # noqa: E402
 
 REVIEW = i18n.I18N / "review"
-ORDER = ["product.", "og.", "share.", "common.", "footer.", "legal.", "hypo.", "prov.", "index.", "compare.", "ledger.",
+ORDER = ["product.", "og.", "share.", "common.", "footer.", "legal.", "hypo.", "prov.", "index.", "compare.", "firm.", "ledger.",
          "dashboard.", "tearsheet.", "chat.", "faq.", "terms.", "data."]
 
 
@@ -70,7 +70,8 @@ def export(code, data):
     en = i18n.english()
     header, s = i18n.load(code)
     pos = {k: i for i, k in enumerate(en)}
-    rows = [(k, en[k]) for k in sorted(en, key=lambda k: rank(k, pos))] + [(k, v) for k, v in sorted(data.items())]
+    rows = ([(k, en[k]) for k in sorted(en, key=lambda k: rank(k, pos)) if not k.startswith(i18n.ENGLISH_ONLY)]
+            + [(k, v) for k, v in sorted(data.items())])
     check = header.get("_review_notes") or {}      # the drafter's questions for the reviewer, by key ('*': general)
     stale = set(i18n.stale(code)) if header.get("_drafted_from") else set()
     REVIEW.mkdir(parents=True, exist_ok=True)

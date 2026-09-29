@@ -3,14 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ask troid</title>
-<meta name="description" content="ask troid. troid's rule data with each rule's source and read date, arithmetic through tools, every number with its tier. Not financial advice.">
+<title>ask troid: a prop-firm rules assistant that cites its sources</title>
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:image" content="https://troid.ai/og/en.png">
 <meta property="og:title" content="ask troid">
 <meta property="og:description" content="troid's rule data with each rule's source and read date, arithmetic through tools. Not financial advice.">
-<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -200,8 +198,14 @@ button:disabled{opacity:.45;cursor:default}
 .box{border-inline-start:2px solid var(--warn);background:var(--surface2);padding:12px 14px;font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:14px}
 .off{border-inline-start-color:var(--bad)}
 </style>
+<meta name="description" content="ask troid answers prop-firm rule questions: each rule with its source and read date, the arithmetic done through tools, every number tiered. Not advice.">
 <link rel="canonical" href="https://troid.ai/chat">
 <meta property="og:url" content="https://troid.ai/chat">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="troid">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@tradingdroid">
+<meta property="og:locale" content="en_US">
 <style>
 .menu{display:none}
 @media (max-width:640px){
@@ -233,6 +237,7 @@ b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("a
 document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
 var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://troid.ai/#organization","name":"troid","url":"https://troid.ai/","logo":"https://troid.ai/apple-touch-icon.png","email":"hello@troid.ai","sameAs":["https://github.com/kunjancollective/troid","https://x.com/tradingdroid","https://www.reddit.com/user/tradingdroid/"]},{"@type":"WebSite","@id":"https://troid.ai/#website","name":"troid","url":"https://troid.ai/","inLanguage":"en","publisher":{"@id":"https://troid.ai/#organization"}}]}</script>
 </head>
 <body>
 
@@ -296,7 +301,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 
 <footer><div class="wrap">
 <!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end -->
 </div></footer>
 
@@ -308,7 +313,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
    and the session's delete token, which "delete this conversation" sends (and a retried first message, since
    the service lets a first message join a stored session only with its token). A delete asked for while an
    answer is on its way waits for it, so the answer cannot be kept again after the delete. */
-var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","delete_wait":"Deleting once the answer on its way arrives…","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
+var T={"copied":"copied","delete_failed":"It could not be deleted just now. Write to hello@troid.ai with the session ID and troid will delete it.","delete_none":"Nothing is kept for this session yet.","delete_wait":"Deleting once the answer on its way arrives…","deleted":"Deleted: troid no longer keeps this conversation. A new session has started.","ended":"This session has ended. Reloading the page starts a new one.","error":"error {status}","full":"This conversation has reached its limit of {n} questions. Reloading the page starts a new one.","resting_links":"<a href=\"/faq\">faq</a> · <a href=\"/sources\">sources</a>","status_firms":"{n} firms · ","status_off":"ask troid is switched off at the moment. troid's desk on the front page does the arithmetic.","status_on":"on · {firms}{limit} messages an hour · no memory between visits","switched_off":"switched off","tool_call_1":"{n} tool call · ","tool_call_n":"{n} tool calls · ","unreachable":"ask troid could not be reached.","waiting":"…"},LANG="en";
 function F(s,o){return s.replace(/\{(\w+)\}/g,function(m,k){return k in o?o[k]:m})}
 var hist=[],busy=false,ended=false,shown=false,sig=null,maxMsgs=20,FULL=F(T.full,{n:10}),SESSION="",delTok=null,disc="",onMsg="",pending=null,lost=false;
 function newSession(){var b=new Uint8Array(16);crypto.getRandomValues(b);
@@ -318,9 +323,13 @@ function el(id){return document.getElementById(id)}
 function add(cls,text){var d=document.createElement("div");d.className="msg "+cls;d.textContent=text;el("chat").appendChild(d);el("chat").scrollTop=el("chat").scrollHeight;return d}
 function setOn(on,msg){var s=el("status");s.className="box"+(on?"":" off");s.textContent=msg;el("q").disabled=!on;el("send").disabled=!on}
 function stop(msg){ended=true;setOn(false,msg)}
+/* at the day's cap (the service's launch caps) ask troid rests until 00:00 UTC: the box closes, and the FAQ and sources
+   are a tap away; the message the visitor typed stays in the box */
+function rest(msg){stop(msg);var a=document.createElement("span");a.innerHTML=" "+T.resting_links;el("status").appendChild(a)}
 fetch("/api/troid?lang="+LANG,{cache:"no-store"}).then(function(r){return r.json()}).then(function(s){
   if(s.max_messages){maxMsgs=s.max_messages;FULL=F(T.full,{n:Math.floor(maxMsgs/2)})}
   if(s.max_chars)el("q").maxLength=s.max_chars;
+  if(s.enabled&&s.resting){rest(s.resting_text);return}
   if(s.enabled&&s.disclosure){disc=s.disclosure;add("a",disc);shown=true}
   if(s.enabled){onMsg=F(T.status_on,{firms:s.context&&s.context.firms?F(T.status_firms,{n:s.context.firms.length}):"",limit:s.limit_per_hour});setOn(true,onMsg)}
   else setOn(false,T.status_off);
@@ -337,7 +346,7 @@ function send(){
       add("s",(j.tool_calls?F(j.tool_calls>1?T.tool_call_n:T.tool_call_1,{n:j.tool_calls}):"")+j.model);
       if(j.full||hist.length+1>maxMsgs)stop(FULL)}
     else{hist.pop();add("s",j.error||F(T.error,{status:st}));
-      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
+      if(j.restart)stop(j.error);else{if(!el("q").value)el("q").value=t;if(j.resting)rest(j.error);else if(st===503&&j.enabled===false)setOn(false,j.error||T.switched_off)}}
   }).catch(function(){w.remove();hist.pop();if(!el("q").value)el("q").value=t;add("s",T.unreachable)})
   .then(function(){busy=false;pending=null;if(!ended&&!el("q").disabled)el("send").disabled=false});
 }

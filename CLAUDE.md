@@ -55,10 +55,22 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
+- troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`), published since
+  gate 0 cleared (Vercel Pro, 2026-09-28): served at /pro only with `TROID_WAITLIST=on` and its key in Vercel, and
+  `site.json` `pro_waitlist` adds the FAQ's "Will troid charge?", the Terms' waitlist paragraph, /pro to the sitemap and
+  llms.txt. Each email's keys expire a year after its last join; nothing outlives that. Settings: `web/README.md`.
+  Prices include tax: $19 is what every buyer pays, and no page says "plus tax".
+- `web/api/pro/`, `web/api/stripe-webhook.js`, `web/lib/{pro,stripe}.js`, `web/pro/`, `supabase/migrations/` — troid Pro
+  through Stripe Managed Payments, **test mode only** until the launch gates clear (Vercel Pro, counsel, updated Terms, the
+  owner's approval): `TROID_PRO=test` is refused on production and with a live key. Access is granted by the webhook alone,
+  never by the success page; `web/test_pro.js` checks it against real Postgres (PGlite). Settings and runbook: `web/README.md`.
 - `TROID-CHARACTER.md` — how troid speaks and teaches; its first sections live in `TROID.md` (both copies), the rest in
   ask troid's prompt. A prompt change (TROID.md, support.md, the character, ask troid's guardrails or tools) is staged as
   the candidate (`web/context/candidate/`, `CANDIDATE_*` in `web/api/troid.js`) and runs `web/eval_character.js` against
   the live model with the candidate key before it is promoted, under the rule in "Promoting a candidate" below.
+- ask troid's launch caps (`TROID_DAILY_TURNS` across every visitor, counted in the store as a number; `TROID_VISITOR_TURNS`
+  per address, in memory) rest it until 00:00 UTC; each API key's expiry date is recorded in Vercel and reported by
+  `GET /api/troid` (`web/key_expiry.js` reads them from the Admin API). Settings: `web/README.md`.
 - ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
   never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
   written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.
@@ -73,11 +85,21 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   asset selected (the owner's rule, 2026-09-25; `test_desk.py` section 4b) — a tapped stock no firm lists sits in the
   field as "NVDA · not offered by troid's firms", with no chip and nothing sized;
   `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
-  sized as WebKit sizes them); `web/i18n/README.md` has the workflow.
+  sized as WebKit sizes them); `web/i18n/README.md` has the workflow. Every page's head comes from `site_build.head_extra()` (canonical,
+  og:type and site name, the X card) and its JSON-LD from `site_build.jsonld()`, which `finish()` places before `</head>`
+  for the templates and the generators alike; `write_seo()` writes `sitemap.xml` (a page's lastmod is the day its text
+  last changed) and `llms.txt`; `404.html` is English only (`i18n.ENGLISH_ONLY`); `web/test_seo_head.py` holds all of it.
 - `web/`, `business/`, `prompts/` — published pages, planning, build briefs. Everything
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
   the compare page, the firms panel and required disclaimers in the marked regions of
-  `index.html` and `faq.html`. Generic text never names a firm. Edit `firms.json`, not the HTML.
+  `index.html` and `faq.html`, and each compared firm's page, `/firms/<slug>` (`firm.html`, `render_firm`): the compare
+  column's rows without its sizing block or link, each other product's figures only beside that product's own source,
+  the conflicts and the rule changes (`web/test_firm_pages.py`). Their words are the generic `firm.*` strings, the name
+  filled in (`site_build.page_T`, which also names the firms in `/compare`'s title and description). Generic text
+  never names a firm. Edit `firms.json`, not the HTML.
+  The compare's columns are in the served page at its default inputs (`static_column`, figures by `backtest/jsnum.py`
+  and languages.json `num`), the same HTML its script writes: a change to its `render()` changes `static_column()` too,
+  and `web/test_compare_static.py` (Chromium, every language) proves the two equal.
 - `BRAND.md` — voice and visual tokens. troid never hypes; that is the brand.
 
 ## Promoting a candidate
@@ -109,7 +131,7 @@ and no number that isn't the question's, a tool's, or a step shown on the page.
 Evaluation spends its own budget. Keyed runs go out on `ANTHROPIC_API_KEY_EVAL` (the `troid-eval` workspace, its own
 limit), never the key visitors use; the runner refuses a keyed run while the deployment reports no evaluation key. If
 the organisation's credit runs out, ask troid stops answering visitors, not just tests. Between changes, run only the
-cases a change touches (`--only`); run every case (27 since d-keep, 2026-09-26) for the candidate and the live baseline
+cases a change touches (`--only`); run every case (28 since p-reset-local, 2026-09-28) for the candidate and the live baseline
 only when deciding a promotion. A single change the owner asks to ship on its own is staged in `web/context/patch/`
 instead (the live prompt with that file, `x-troid-variant: patch`, `EVAL_PATCH=1`), run on the cases it touches against
 the live baseline, and published when it adds no critical failure and no new kind of failure.

@@ -208,7 +208,9 @@ def main():
                         pg.on("pageerror", lambda e, pe=pe: pe.append(str(e)))
                         pg.goto(u + path, wait_until="load")
                         pg.wait_for_timeout(250)
-                        shots.append(Image.open(io.BytesIO(pg.screenshot(full_page=True))).convert("RGB"))
+                        # CSS transitions and animations settled (the desk's gauge moves its floors into place, the
+                        # wordmark's dot pulses): a screenshot mid-transition differed between two copies of the same page
+                        shots.append(Image.open(io.BytesIO(pg.screenshot(full_page=True, animations="disabled"))).convert("RGB"))
                         texts.append(pg.evaluate(TEXT) if a.design else pg.inner_text("body"))
                         errs.append(pe)
                         if w == WIDTHS[-1] and page_name == "index":

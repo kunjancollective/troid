@@ -25,12 +25,15 @@ FOOTER_TEXT = ("troid is a free informational tool, not financial or investment 
                "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
                "through its links; this does not affect the calculations or comparisons.")
 
+# troid's contact address: the terms, the FAQ and the structured data (site_build.jsonld) name it
+EMAIL = "hello@troid.ai"
+
 # The operator (owner decision, 24 Sep 2026): Kunjan Patel, an individual. Terms section 1 names him "the Operator".
 # A name, not prose: shown as it is on every page, in every language.
 COPYRIGHT = "© 2026 Kunjan Patel"
 
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
-         ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/terms", "terms"),
+         ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/sources", "sources"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
          ("https://www.reddit.com/user/tradingdroid/", "reddit")]
 
@@ -41,7 +44,7 @@ def holdout():
     return json.loads(p.read_text())["holdout"] if p.exists() else None
 
 
-NO_EDGE_SHORT = "troid's own strategy shows no statistical edge."
+NO_EDGE_SHORT = "troid's own strategy shows no measurable edge."
 
 
 def no_edge_sentence():
@@ -49,7 +52,7 @@ def no_edge_sentence():
     tail = (f" Out of sample, on {h['n']} BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures "
             f"{h['exp']:+.3f}R per trade, standard error {h['se']:.3f}R — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, "
             f"and not a fact about the future.") if h else ""
-    return "troid's own strategy shows no statistical edge." + tail
+    return "troid's own strategy shows no measurable edge." + tail
 
 
 def required_sentences():
@@ -59,9 +62,19 @@ def required_sentences():
     return [F[k]["required_disclaimer"].strip() for k in order if (F[k].get("required_disclaimer") or "").strip()]
 
 
+# /llms.txt (llmstxt.org; site_build.llms_txt), English only, for a language model reading the site: its headings and
+# the lines for the files an assistant can use. Each page's line is the page's own description (en.json). The lines are
+# troid's own words from elsewhere: og.description, index.doesnt.tools, METHODOLOGY.md's opening.
+LLMS = {"about": "Free. Never places orders.", "pages": "Pages", "assist": "For assistants", "optional": "Optional",
+        "troid_md": "troid's rules and arithmetic as one file — paste it into any assistant as a system prompt.",
+        "mcp": "The same for Claude Desktop or Cursor, with exact arithmetic.",
+        "methodology": "How numbers get onto a page, what tier each one carries, and every correction made since launch."}
+
+
 # The footer's link labels, keyed for translation (web/i18n/en.json); the English labels are LINKS above.
 LINK_KEYS = {"/": "product.desk", "/compare": "product.compare", "/ledger": "product.ledger", "/dashboard": "product.research",
-             "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq", "/terms": "common.link.terms",
+             "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq",
+             "/sources": "common.link.sources", "/terms": "common.link.terms",
              "https://github.com/kunjancollective/troid": "common.link.source", "https://x.com/tradingdroid": "common.link.x",
              "https://www.reddit.com/user/tradingdroid/": "common.link.reddit"}
 

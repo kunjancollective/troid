@@ -18,7 +18,7 @@
     "daily_loss_includes_unrealized": true,
     "_daily_note": "Bitfunded: realized loss of the day + floating loss of open positions vs a fixed daily% x initial. Auto-fails on FLOATING.",
     "daily_reset_utc_hour": 16,
-    "_reset_note": "00:00 UTC+8 = 16:00 UTC = 12:00 noon in New York (EDT). Reset lands MIDDAY local, not overnight. May take until 00:10 UTC+8 to apply.",
+    "_reset_note": "00:00 UTC+8 = 16:00 UTC, all year (a fixed offset; a local hour holds only for the date it was converted for). Lands mid-session in New York, not overnight. May take until 00:10 UTC+8 (16:10 UTC) to apply.",
     "max_total_drawdown_pct": 6,
     "drawdown_type": "static",
     "_dd_note": "Confirmed static: measured against account quota, not a high-water mark. Profit permanently widens the buffer.",

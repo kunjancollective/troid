@@ -111,9 +111,10 @@ h1{font-size:clamp(22px,3.4vw,28px);line-height:1.1;letter-spacing:-.03em;font-w
   nav::-webkit-scrollbar{display:none}nav>*{flex:none}nav a{position:relative}nav a::after{content:"";position:absolute;inset:-5px -9px}
 }
 .meta{font-family:var(--mono);font-size:11px;color:var(--dim);margin:0 0 30px;letter-spacing:.02em}
-h2{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
-h3{font-size:16px;margin:0 0 6px;font-weight:600}
-h3.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
+/* h2 a section, h3 a question or a disclaimer under it (launch handoff 2026-09-26, 5.1 item 8); each looks as it did */
+.q h3{font-size:17.5px;letter-spacing:-.015em;margin:0 0 9px;font-weight:600;line-height:1.3}
+h2{font-size:16px;margin:0 0 6px;font-weight:600}
+h2.sec,.eyebrow{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.14em;
   color:var(--dim);margin:34px 0 12px;font-weight:500}
 p{margin:0 0 11px}p:last-child{margin-bottom:0}
 ul,ol{margin:0 0 11px;padding-inline-start:20px}li{margin-bottom:6px}
@@ -154,8 +155,8 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 /* disclaimer */
 .disc{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.65;background:var(--surface);
   border:1px solid var(--line);border-radius:4px;padding:20px 22px;margin-top:10px}
-.disc h4{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
-.disc h4:first-child{margin-top:0}
+.disc h3{font-family:var(--sans);color:var(--ink);font-size:13px;margin:16px 0 6px}
+.disc h3:first-child{margin-top:0}
 .foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
   margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}
 </style>
@@ -175,43 +176,43 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 
 
 
-<h3 class="sec">{{ t("faq.sec.base") }}</h3>
+<h2 class="sec">{{ t("faq.sec.base") }}</h2>
 
 <div class="q">
-<h2>{{ t("faq.pass.q") }}</h2>
+<h3>{{ t("faq.pass.q") }}</h3>
 <p>{{ t("faq.pass.p1") }}</p>
 <p class="src">{{ src("fpfx_payouts") }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.cost.q") }}</h2>
+<h3>{{ t("faq.cost.q") }}</h3>
 <p>{{ t("faq.cost.p1") }}</p>
 <p>{{ t("faq.cost.p2") }}</p>
 <p class="src">{{ src("fpfx_payouts") }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.fail.q") }}</h2>
+<h3>{{ t("faq.fail.q") }}</h3>
 <p>{{ t("faq.fail.p1") }}</p>
 <p>{{ t("faq.fail.p2") }}</p>
 <p class="src">{{ src("onefunded_failures") }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.offer.q") }}</h2>
+<h3>{{ t("faq.offer.q") }}</h3>
 <p>{{ t("faq.offer.p1") }}</p>
 <p>{{ t("faq.offer.p2") }}</p>
 </div>
 
-<h3 class="sec">{{ t("faq.sec.rules") }}</h3>
+<h2 class="sec">{{ t("faq.sec.rules") }}</h2>
 
 <div class="q" id="prop-challenge">
-<h2>{{ t("faq.challenge.q") }}</h2>
+<h3>{{ t("faq.challenge.q") }}</h3>
 <p>{{ t("faq.challenge.p") }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.daily.q") }}</h2>
+<h3>{{ t("faq.daily.q") }}</h3>
 <p>{{ t("faq.daily.p1") }}</p>
 <p>{{ t("faq.daily.p2") }}</p>
 <p>{{ t("faq.daily.p3") }}</p>
@@ -219,14 +220,14 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 </div>
 
 <div class="q">
-<h2>{{ t("faq.reset.q") }}</h2>
+<h3>{{ t("faq.reset.q") }}</h3>
 <p>{{ t("faq.reset.p1") }}</p>
 <p>{{ t("faq.reset.p2") }}</p>
 <p class="src">{{ rules_src(["reset_utc", "floating_counts"]) }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.risk.q") }}</h2>
+<h3>{{ t("faq.risk.q") }}</h3>
 <p>{{ t("faq.risk.p1") }}</p>
 <p>{{ t("faq.risk.p2") }}</p>
 <p>{{ t("faq.risk.p3") }}</p>
@@ -234,75 +235,82 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 </div>
 
 <div class="q">
-<h2>{{ t("faq.fees.q") }}</h2>
+<h3>{{ t("faq.fees.q") }}</h3>
 <p>{{ t("faq.fees.p1") }}</p>
 <p>{{ t("faq.fees.p2") }}</p>
 <p class="src">{{ rules_src(["fee_per_side_pct", "max_leverage"], "faq.fees.derived") }}</p>
 </div>
 
-<h3 class="sec">{{ t("faq.sec.about") }}</h3>
+<h2 class="sec">{{ t("faq.sec.about") }}</h2>
 
 <div class="q">
-<h2>{{ t("faq.money.q") }}</h2>
+<h3>{{ t("faq.money.q") }}</h3>
 <p>{{ t("faq.money.p1") }}</p>
 <p>{{ t("faq.money.p2") }}</p>
 <p>{{ t("faq.money.p3") }}</p>
 </div>
 
+{% if pro_waitlist -%}
+<div class="q" id="charge">
+<h3>{{ t("faq.charge.q") }}</h3>
+<p>{{ t("faq.charge.p") }}</p>
+</div>
+
+{% endif -%}
 <div class="q">
-<h2>{{ t("faq.trust.q") }}</h2>
+<h3>{{ t("faq.trust.q") }}</h3>
 <p>{{ t("faq.trust.p1") }}</p>
 <p>{{ t("faq.trust.p2") }}</p>
 </div>
 
 <div class="q" id="ask-troid-conversations">
-<h2>{{ t("faq.keep.q") }}</h2>
+<h3>{{ t("faq.keep.q") }}</h3>
 <p>{{ t("faq.keep.p") }}</p>
 </div>
 
 <div class="q" id="tracking">
-<h2>{{ t("faq.track.q") }}</h2>
+<h3>{{ t("faq.track.q") }}</h3>
 <p>{{ t("faq.track.p") }}</p>
 </div>
 
 <div class="q" id="fill">
-<h2>{{ t("faq.fill.q") }}</h2>
+<h3>{{ t("faq.fill.q") }}</h3>
 <p>{{ t("faq.fill.p") }}</p>
 </div>
 
 <div class="q">
-<h2>{{ t("faq.worth.q") }}</h2>
+<h3>{{ t("faq.worth.q") }}</h3>
 <p>{{ t("faq.worth.p1", **ref_price) }}</p>
 <p>{{ t("faq.worth.p2") }}</p>
 </div>
 
-<h3 class="sec">{{ t("faq.sec.disclaimer") }}</h3>
+<h2 class="sec">{{ t("faq.sec.disclaimer") }}</h2>
 <div class="disc">
-<h4>{{ t("faq.disc.advice.h") }}</h4>
+<h3>{{ t("faq.disc.advice.h") }}</h3>
 <p>{{ t("faq.disc.advice.p") }}</p>
 
-<h4>{{ t("faq.disc.affiliate.h") }}</h4>
+<h3>{{ t("faq.disc.affiliate.h") }}</h3>
 <p>{{ t("faq.disc.affiliate.p") }}</p>
-<h4>{{ t("faq.disc.simulated.h") }}</h4>
+<h3>{{ t("faq.disc.simulated.h") }}</h3>
 <p>{{ t("faq.disc.simulated.p", question=t("faq.challenge.q")) }}</p>
 
-<h4>{{ t("faq.disc.hypo.h") }}</h4>
+<h3>{{ t("faq.disc.hypo.h") }}</h3>
 <p>{{ t("faq.disc.hypo.p") }}</p>
 
-<h4>{{ t("faq.disc.eval.h") }}</h4>
+<h3>{{ t("faq.disc.eval.h") }}</h3>
 <p>{{ t("faq.disc.eval.p1") }}</p>
 <p>{{ t("faq.disc.eval.p2") }}</p>
 <p>{{ t("faq.disc.eval.p3") }}</p>
 <p>{{ t("faq.disc.eval.p4") }}</p>
 <p>{{ t("faq.disc.eval.p5") }}</p>
 
-<h4>{{ t("faq.disc.risk.h") }}</h4>
+<h3>{{ t("faq.disc.risk.h") }}</h3>
 <p>{{ t("faq.disc.risk.p") }}</p>
 
-<h4>{{ t("faq.disc.software.h") }}</h4>
+<h3>{{ t("faq.disc.software.h") }}</h3>
 <p>{{ t("faq.disc.software.p") }}</p>
 
-<h4>{{ t("faq.disc.jurisdiction.h") }}</h4>
+<h3>{{ t("faq.disc.jurisdiction.h") }}</h3>
 <p>{{ t("faq.disc.jurisdiction.p") }}</p>
 </div>
 

@@ -3,14 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>troid's research — strategy review</title>
-
+<title>troid's research: a prop-firm strategy review, tiered</title>
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta property="og:image" content="https://troid.ai/og/en.png">
 <meta property="og:title" content="troid's research — strategy review">
 <meta property="og:description" content="The strategy review and the audit findings, each number with its tier. Nothing here is a signal.">
-<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -176,8 +174,14 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 .foot{font-family:var(--mono);font-size:11px;color:var(--dim);border-top:1px solid var(--line);
   margin-top:36px;padding-top:20px;line-height:1.8;text-align:start}
 </style>
+<meta name="description" content="troid's strategy review: walk-forward results and audit findings, each number with its tier and its source. Nothing on this page is a trade signal.">
 <link rel="canonical" href="https://troid.ai/dashboard">
 <meta property="og:url" content="https://troid.ai/dashboard">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="troid">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@tradingdroid">
+<meta property="og:locale" content="en_US">
 <style>
 .menu{display:none}
 @media (max-width:640px){
@@ -209,6 +213,7 @@ b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("a
 document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
 var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://troid.ai/#organization","name":"troid","url":"https://troid.ai/","logo":"https://troid.ai/apple-touch-icon.png","email":"hello@troid.ai","sameAs":["https://github.com/kunjancollective/troid","https://x.com/tradingdroid","https://www.reddit.com/user/tradingdroid/"]},{"@type":"WebSite","@id":"https://troid.ai/#website","name":"troid","url":"https://troid.ai/","inLanguage":"en","publisher":{"@id":"https://troid.ai/#organization"}},{"@type":"Article","@id":"https://troid.ai/dashboard#article","headline":"troid's research — strategy review","description":"The strategy review and the audit findings, each number with its tier. Nothing here is a signal.","url":"https://troid.ai/dashboard","mainEntityOfPage":"https://troid.ai/dashboard","image":"https://troid.ai/og/en.png","author":{"@id":"https://troid.ai/#organization"},"publisher":{"@id":"https://troid.ai/#organization"},"inLanguage":"en"}]}</script>
 </head>
 <body>
 <div class="wrap">
@@ -225,7 +230,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 <p class="meta">MEASURED on BTCUSDT 4h bars from api.binance.us, one feed · under the rules of Bitfunded's 1-Step, Expert level, $100,000 · figures as of 21 Sep 2026</p>
 
 <!-- hypo:start -->
-<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no statistical edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.</p></div>
+<div class="hypo" style="border-inline-start:2px solid var(--warn,#96661a);background:var(--surface2,#eef2f7);padding:12px 14px;margin:0 0 14px;font-family:var(--mono,ui-monospace,Menlo,monospace);font-size:11.5px;line-height:1.65;color:var(--dim,#5f6f86)"><div style="text-transform:uppercase;letter-spacing:.1em;font-size:9.5px;margin-bottom:6px">Hypothetical performance</div><p style="margin:0 0 8px;font:inherit">These results are based on simulated or hypothetical performance results that have certain inherent limitations. Unlike the results shown in an actual performance record, these results do not represent actual trading. Also, because these trades have not actually been executed, these results may have under-or over-compensated for the impact, if any, of certain market factors, such as lack of liquidity. Simulated or hypothetical trading programs in general are also subject to the fact that they are designed with the benefit of hindsight. No representation is being made that any account will or is likely to achieve profits or losses similar to these being shown.</p><p style="margin:0;font:inherit">troid&#x27;s own strategy shows no measurable edge. Out of sample, on 504 BTC trades from 1 January 2021 to 7 January 2026, which the parameters never saw, it measures +0.008R per trade, standard error 0.016R — a MEASURED figure (backtest/WALKFORWARD.md), inside noise, and not a fact about the future.</p></div>
 <!-- hypo:end -->
 
 <section class="verdict">
@@ -366,7 +371,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
     <div class="cell"><div class="k">Fees</div><div class="v">0.08%</div>
       <div class="n">round trip, on notional</div></div>
     <div class="cell"><div class="k">Reset</div><div class="v">16:00 UTC</div>
-      <div class="n">noon in New York, 11:00 in winter</div></div>
+      <div class="n">00:00 UTC+8, settled by 16:10 UTC</div></div>
   </div>
   <p style="margin-top:14px">The budget cap is not conservatism: it is what makes the account survivable. At
   <strong>+0.35R</strong>, a genuinely excellent system, naive sizing at 1% blows the account <strong>68%</strong> of the
@@ -406,7 +411,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 <p class="foot">The sample: 1,539 4h bars, 8 Jan – 21 Sep 2026, api.binance.us (<code>backtest/data/btc_4h.csv</code>),
 one asset, one regime. The holdout, 1 January 2021 to 7 January 2026 (<code>backtest/WALKFORWARD.md</code>), came back
 inside noise on BTC and ETH.<br><!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end --></p>
 
 </div>

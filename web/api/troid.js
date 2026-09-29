@@ -63,7 +63,10 @@
  *
  * Limits: about 20 messages an hour per address (IPv6 by /64), in memory, per instance — a brake, not
  * a wall. A per-instance ceiling on model calls an hour and a 50s deadline per message bound the
- * spend of any one instance. The real wall is the spend limit on the API key's workspace.
+ * spend of any one instance. The launch caps (TROID_DAILY_TURNS, TROID_VISITOR_TURNS): the messages answered in a
+ * UTC day across every visitor, counted in the store as a number and nothing else, and the messages one address may
+ * send in a UTC day, in memory like the hourly limit; past either, ask troid rests until 00:00 UTC. The real wall is
+ * the spend limit on the API key's workspace, and the key's own expiry (ANTHROPIC_API_KEY_EXPIRES, reported by GET).
  */
 const fs = require("fs");
 const path = require("path");
@@ -93,6 +96,19 @@ const ROUTE = { lookup: { model: MODEL_LOOKUP, max_tokens: 4096 },            //
 const num = (v, d) => (v != null && v !== "" && Number.isFinite(+v) ? +v : d);
 const LIMIT_PER_HOUR = 20;
 const CALLS_PER_HOUR = Math.max(0, num(process.env.TROID_CALLS_PER_HOUR, 300)); // model calls per instance an hour, all users; 0 stops spend
+// The launch caps (launch handoff 2026-09-26, 5.4), so a launch spike can't exhaust the production workspace: the
+// messages troid answers in a UTC day across every visitor (a count in the store under cap:<day>, a number and nothing
+// else), and the messages one address may send in a UTC day (in memory, per instance, as the hourly limit holds it).
+// Past either, ask troid rests until 00:00 UTC and says so. The operator's evaluation runs are held to neither. 0 rests
+// all day.
+const DAILY_TURNS = Math.max(0, num(process.env.TROID_DAILY_TURNS, 500));
+const VISITOR_TURNS = Math.max(0, num(process.env.TROID_VISITOR_TURNS, 40));
+const CAP_TTL_S = 172_800;                                                    // a day's count outlives its day by one
+// When each API key expires, as the Console shows it (the owner records it; a regular key can't read its own): the
+// service reports the days left, and warns from WARN_DAYS out. Keys expire with a 401 and can't be reactivated.
+const KEY_EXPIRES = process.env.ANTHROPIC_API_KEY_EXPIRES || "";
+const EVAL_KEY_EXPIRES = process.env.ANTHROPIC_API_KEY_EVAL_EXPIRES || "";
+const WARN_DAYS = 14;
 const MAX_TOOL_ROUNDS = 3;
 const MIN_CALL_MS = 5_000;                                                   // don't start a call with less than this left
 const MAX_RETRY_WAIT_MS = 10_000;                                            // a longer retry-after is answered "busy" at once
@@ -122,6 +138,7 @@ const EN = {
   "ask.err.unverified": "This conversation could not be verified. Reloading the page starts a new one.",
   "ask.err.timeout": "ask troid ran out of time on that one. Ask again, narrower.",
   "ask.err.busy": "ask troid is busy. Try again in a minute.",
+  "ask.err.resting": "ask troid is resting until 00:00 UTC; the FAQ and sources are open.",
   "ask.err.unreachable": "The model could not be reached. Try again in a minute.",
   "ask.err.misconfigured": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
   "ask.err.error": "ask troid hit an error. Try again in a minute.",
@@ -696,6 +713,13 @@ const CANDIDATE_RULES = {
 // the rules each candidate explanation states, where they differ from TOPIC_CITES
 const FLOAT_CITE = ["bitfunded", "floating_counts", null, "floating losses count toward the daily and maximum loss (Bitfunded)"];
 const CANDIDATE_TOPIC_CITES = {};
+// A patch's rule explanations (context/patch/README.md): explain_rule, for a request with x-troid-variant: patch, gets the
+// live RULES with these in their place and nothing of the candidate's. Publishing the patch folds each into RULES and
+// empties this object. The fourth patch (the owner's launch handoff, section 0): the reset stated in UTC, since "noon in
+// New York" holds only while New York keeps daylight saving (until 1 November 2026), and its example in UTC too.
+const PATCH_RULES = {
+  reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC all year (UTC+8 is a fixed offset). Not midnight. Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
+};
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -1157,8 +1181,9 @@ const CANDIDATE_RUN = {                                                  // a ca
   trade_math: tradeMathNext,
 };
 const RUN_NEXT = Object.assign({}, RUN, CANDIDATE_RUN);
+const RUN_PATCH = Object.assign({}, RUN, { explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, PATCH_RULES), TOPIC_CITES) });
 function runTool(name, input, variant) {
-  const run = variant === "candidate" ? RUN_NEXT : RUN;
+  const run = variant === "candidate" ? RUN_NEXT : variant === "patch" ? RUN_PATCH : RUN;
   try { return Object.hasOwn(run, name) ? run[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
@@ -1185,6 +1210,35 @@ function allow(key) {
     for (const k of HITS.keys()) { if (HITS.size <= MAX_KEYS) break; if (k !== key) HITS.delete(k); }
   }
   return true;
+}
+// A visitor's messages today, by the same address key, in memory. A full table drops other days' entries, then those
+// under the cap, then the oldest; a visitor at the cap today is dropped last.
+const DAY = new Map();
+const utcDay = () => new Date().toISOString().slice(0, 10);
+function visitorLeft(key) {
+  const d = DAY.get(key);
+  return !d || d[0] !== utcDay() || d[1] < VISITOR_TURNS;
+}
+function visitorUsed(key) {
+  const day = utcDay(), d = DAY.get(key);
+  DAY.delete(key); DAY.set(key, [day, d && d[0] === day ? d[1] + 1 : 1]);
+  for (const pass of [(v) => v[0] !== day, (v) => v[1] < VISITOR_TURNS, () => true])
+    for (const [k, v] of DAY) { if (DAY.size <= MAX_KEYS) return; if (k !== key && pass(v)) DAY.delete(k); }
+}
+// Days from today (UTC) to a recorded expiry date, or null where none is recorded or it doesn't read as a date.
+function daysLeft(when) {
+  const t = Date.parse(when);
+  return when && Number.isFinite(t) ? Math.floor((t - Date.parse(utcDay())) / 86400e3) : null;
+}
+function keyReport() {
+  const main = daysLeft(KEY_EXPIRES), ev = daysLeft(EVAL_KEY_EXPIRES), warnings = [];
+  for (const [name, d, set] of [["production API key", main, KEY], ["evaluation API key", ev, EVAL_KEY]]) {
+    if (!set) continue;
+    if (d == null) warnings.push(`no expiry date recorded for the ${name}`);
+    else if (d < 0) warnings.push(`the ${name} expired ${-d} day${d === -1 ? "" : "s"} ago`);
+    else if (d <= WARN_DAYS) warnings.push(`the ${name} expires in ${d} day${d === 1 ? "" : "s"}: rotate it`);
+  }
+  return { key_days_left: { main, eval: ev }, key_warnings: warnings };
 }
 function spendable() {                                        // the instance's ceiling on model calls an hour
   const now = Date.now();
@@ -1665,10 +1719,17 @@ module.exports = async (req, res) => {
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
                         rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length,
-                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null) };
-    return json(res, 200, { enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
+                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null),
+                        patch_rules: Object.keys(PATCH_RULES) };
+    // resting: today's answers are at the cap, or this address's are; the page says so before anyone types
+    let today = null;
+    if (isOn()) { try { [today] = await store([["GET", "cap:" + utcDay()]]); today = +today || 0; } catch (e) { today = null; } }
+    const resting = (today != null && today >= DAILY_TURNS) || !visitorLeft(clientKey(req));
+    return json(res, 200, Object.assign({ enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
+                            caps: { daily: DAILY_TURNS, per_visitor: VISITOR_TURNS }, resting,
+                            resting_text: resting ? S(lang, "ask.err.resting") : undefined,
                             models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
-                            disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate });
+                            disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate }, keyReport()));
   }
   if (req.method === "DELETE") {                                        // the page's own conversation, at once
     if (!storeOn() || Buffer.byteLength(TURN_KEY) < 32) return json(res, 503, { error: S(lang, "ask.err.not_configured") });
@@ -1711,7 +1772,21 @@ module.exports = async (req, res) => {
     catch (e) { return json(res, 503, { enabled: true, error: S(lang, "ask.err.error") }); }
     if (taken && !tokenOk(session, req.headers["x-troid-token"])) return json(res, 409, { restart: true, error: S(lang, "ask.err.session") });
   }
+  // The launch caps: this address's day, then everyone's. A message past either is turned away before any call, so
+  // neither logged nor kept. A store that can't count lets the message through, as a later message is answered when
+  // the store can't keep it; the log line says so, and the per-instance ceiling and the workspace's limit still hold.
+  let capError = false;
+  if (!operator) {
+    const who = clientKey(req), rest = () => json(res, 429, { resting: true, error: S(lang, "ask.err.resting") });
+    if (!visitorLeft(who)) return rest();
+    try {
+      const [n] = await store([["INCR", "cap:" + utcDay()], ["EXPIRE", "cap:" + utcDay(), CAP_TTL_S]]);
+      if (n > DAILY_TURNS) return rest();
+    } catch (e) { capError = true; }
+    visitorUsed(who);
+  }
   const log = { troid: "assistant", messages: 1 };                     // counts and flags only — never text, never an address
+  if (capError) log.cap_error = 1;
   if (variant === "candidate") log.candidate = 1;
   if (variant === "patch") log.patch = 1;
   if (operator) log.operator = 1;
@@ -1880,5 +1955,6 @@ module.exports._promptFirms = () => context().prompt_firms;   // for tests
 module.exports._hasFigure = hasFigure;                             // for tests: the candidate's service changes
 module.exports._closeWithNote = closeWithNote;
 module.exports._runTool = runTool;
+module.exports._patchRules = PATCH_RULES;
 module.exports._withSupportStep5 = withSupportStep5;
 module.exports._withSources = withSources;

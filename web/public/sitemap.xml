@@ -2,29 +2,54 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://troid.ai/</loc>
+    <lastmod>2026-09-28</lastmod><!-- text ff6848400fa76ab4 -->
   </url>
   <url>
     <loc>https://troid.ai/compare</loc>
+    <lastmod>2026-09-28</lastmod><!-- text c35507d5a4baf950 -->
   </url>
   <url>
     <loc>https://troid.ai/ledger</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 68fc53c0a9ea8f75 -->
   </url>
   <url>
     <loc>https://troid.ai/dashboard</loc>
+    <lastmod>2026-09-28</lastmod><!-- text 0d8e2d2a4f0d6820 -->
   </url>
   <url>
     <loc>https://troid.ai/tearsheet</loc>
+    <lastmod>2026-09-28</lastmod><!-- text 71deb0788d93eea3 -->
   </url>
   <url>
     <loc>https://troid.ai/chat</loc>
+    <lastmod>2026-09-28</lastmod><!-- text 7a35e95df6e4e365 -->
   </url>
   <url>
     <loc>https://troid.ai/faq</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 1344e0fa07b10ff2 -->
   </url>
   <url>
     <loc>https://troid.ai/terms</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 2649f678160e485a -->
   </url>
   <url>
     <loc>https://troid.ai/sources</loc>
+    <lastmod>2026-09-28</lastmod><!-- text 1793f995af9bff2e -->
+  </url>
+  <url>
+    <loc>https://troid.ai/firms/bitfunded</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 10d52eb24a359590 -->
+  </url>
+  <url>
+    <loc>https://troid.ai/firms/brightfunded</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 6385ece05b41ffe2 -->
+  </url>
+  <url>
+    <loc>https://troid.ai/firms/crypto-fund-trader</loc>
+    <lastmod>2026-09-29</lastmod><!-- text b159af1e4435e3c1 -->
+  </url>
+  <url>
+    <loc>https://troid.ai/pro</loc>
+    <lastmod>2026-09-29</lastmod><!-- text 8a368336cf0bb14b -->
   </url>
 </urlset>

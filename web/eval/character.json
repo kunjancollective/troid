@@ -306,6 +306,18 @@
    "_run1": "run 1 said 'the reset applies to both morning and afternoon as separate daily budgets', a garbled line of troid's own TROID.md. Added: never that; sourced."
   },
   {
+   "id": "p-reset-local",
+   "kind": "prop-rule",
+   "no_refusal": true,
+   "q": "I trade from New York. What time does Bitfunded's trading day reset for me?",
+   "all": [
+    "16:00",
+    "1 November|November 1|daylight|\\bDST\\b|standard time|depends on the date|for the date"
+   ],
+   "sourced": true,
+   "_added": "launch handoff section 0 (2026-09-28): 16:00 UTC is 12:00 in New York only while New York keeps daylight saving; from 1 November 2026 it is 11:00. A right answer gives the reset in UTC and a local hour only for a stated date; the runner's global retired-wording check refuses 'noon in New York'."
+  },
+  {
    "id": "p-hold",
    "kind": "prop-rule",
    "no_refusal": true,

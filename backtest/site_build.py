@@ -14,11 +14,14 @@ A template asks for strings by key; a key missing from en.json stops the build.
 """
 from __future__ import annotations
 import argparse
+import hashlib
 import html
 import json
 import re
 import shutil
 import sys
+from datetime import datetime, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -32,8 +35,22 @@ ROOT = HERE.parent
 PUB = ROOT / "web" / "public"
 TEMPLATES = ROOT / "web" / "templates"
 SITE = json.loads((ROOT / "web" / "i18n" / "site.json").read_text())
-STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources"]   # rendered here; compare, ledger, tearsheet by their generators
-PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources"]
+STATIC = ["index", "faq", "dashboard", "chat", "terms", "sources", "404"]   # rendered here; compare, ledger, tearsheet by their generators
+NOT_FOUND = "404"   # web/public/404.html, which Vercel serves for any address with no page: English only, not in the sitemap
+# Pages rendered for a function to serve, never into web/public: troid Pro's waitlist (launch handoff 6.4 step 1), which
+# web/api/pro/page.js serves at /pro only while TROID_WAITLIST is on. site.json pro_waitlist adds it to the sitemap and
+# llms.txt and the FAQ's "Will troid charge?" (6.3, gate 0: publish it once Vercel's plan allows a commercial page).
+PRIVATE = {"pro": ROOT / "web" / "pro" / "waitlist.html"}
+
+
+def published(page):
+    return page != "pro" or bool(SITE.get("pro_waitlist"))
+FIRMS_JSON = json.loads((ROOT / "firms.json").read_text())
+# troid's page of each compared firm's rules (launch handoff 2026-09-26, 5.2 A): /firms/<slug>, rendered by gen_compare
+# from firms.json, its words the generic firm.* strings with the firm's name (page_T), so no firm is named in en.json
+FIRM_PAGES = {"firms/" + k.replace("_", "-"): k
+              for k in sorted(k for k, f in FIRMS_JSON.items() if isinstance(f, dict) and "compare_product" in f)}
+PAGES = ["index", "compare", "ledger", "dashboard", "tearsheet", "chat", "faq", "terms", "sources", *FIRM_PAGES]
 BASE_URL = "https://troid.ai"
 
 ENV = Environment(loader=FileSystemLoader(str(TEMPLATES)), autoescape=False, keep_trailing_newline=True,
@@ -58,6 +75,86 @@ def page_url(code, page):
     if page == "index":
         return "/" if code == "en" else f"/{code}"
     return f"/{page}" if code == "en" else f"/{code}/{page}"
+
+
+class _PageKeys:
+    """en.json as one page sees it: its own keys ({page}.meta.title, {page}.og.*, …) read the keys it maps them to."""
+    def __init__(self, en, prefix, to):
+        self.en, self.p, self.to = en, prefix, to
+
+    def _k(self, key):
+        return self.to + key[len(self.p):] if isinstance(key, str) and key.startswith(self.p) else key
+
+    def __contains__(self, key):
+        return self._k(key) in self.en
+
+    def __getitem__(self, key):
+        return self.en[self._k(key)]
+
+    def get(self, key, default=None):
+        return self.en.get(self._k(key), default)
+
+    def __iter__(self):
+        return iter(self.en)
+
+    def __len__(self):
+        return len(self.en)
+
+    def keys(self):
+        return self.en.keys()
+
+    def items(self):
+        return self.en.items()
+
+
+class PageT:
+    """T as one page reads it: the page's own keys ({page}.*) read the keys they map to, filled with the page's arguments
+    from firms.json, so no firm is named in en.json. A firm's page (FIRM_PAGES) reads the generic firm.* strings with
+    {firm}; troid's compare fills {firms} ("A vs B vs C") and {firm_list} ("A, B and C") in its own. Everything else is
+    T's, so the head, the share tags, the structured data and llms.txt work as on any page."""
+    def __init__(self, T, page, to, kw):
+        self._T, self._p, self._kw = T, page + ".", kw
+        self._to = to
+        self.en = _PageKeys(T.en, self._p, to)
+        self.firm = kw.get("firm")
+
+    def _k(self, key, kw):
+        if key.startswith(self._p):
+            return self._to + key[len(self._p):], {**self._kw, **kw}
+        return key, kw
+
+    def __call__(self, key, **kw):
+        k, kw = self._k(key, kw)
+        return self._T(k, **kw)
+
+    def attr(self, key, **kw):
+        k, kw = self._k(key, kw)
+        return self._T.attr(k, **kw)
+
+    def __getattr__(self, name):
+        return getattr(self._T, name)
+
+
+def compared_names():
+    """The compared firms' names, in troid's compare's order (alphabetical by key)."""
+    return [FIRMS_JSON[k]["name"] for k in FIRM_PAGES.values()]
+
+
+def page_T(T, page):
+    """T as page reads it (PageT): a firm's page, and troid's compare, whose title and description name the firms."""
+    if isinstance(T, PageT):
+        return T
+    if page in FIRM_PAGES:
+        return PageT(T, page, "firm.", {"firm": FIRMS_JSON[FIRM_PAGES[page]]["name"]})
+    if page == "compare":
+        names = compared_names()
+        pair, last = T("index.js.list_comma"), T("compare.js.list_and")
+        acc = names[0]
+        for nm in names[1:-1]:
+            acc = pair.replace("{a}", acc).replace("{b}", nm)
+        firm_list = last.replace("{a}", acc).replace("{b}", names[-1]) if len(names) > 1 else acc
+        return PageT(T, page, "compare.", {"firms": " vs ".join(names), "firm_list": firm_list})
+    return T
 
 
 def features_on(T):
@@ -99,21 +196,42 @@ def runtime(T):
             + ';</script>\n<script src="/i18n.js"></script>')
 
 
+# troid's own accounts: the footer's links to the repo, X and Reddit (site_text.LINKS), which the structured data names
+# as troid's (sameAs) and the X card credits (twitter:site)
+SAME_AS = [u for u, _ in site_text.LINKS if u.startswith("https://")]
+X_HANDLE = "@" + next(u for u in SAME_AS if u.startswith("https://x.com/")).rstrip("/").rsplit("/", 1)[-1]
+
+
+def description_key(T, page):
+    """The key of a page's meta description (launch handoff 2026-09-26, 5.1 item 1): {page}.meta.description where
+    en.json has one, else the line the page previews with when shared ({page}.og.description), else the site's. The
+    search audit's strings go in as {page}.meta.description."""
+    return next(k for k in (f"{page}.meta.description", f"{page}.og.description", "og.description") if k in T.en)
+
+
 def head_extra(T, page, live):
-    """The page's canonical URL on troid.ai (and og:url), then hreflang alternates, the language's og tags and
-    font. The alternates, og locale, font and i18n.css appear on English only once a second language is live."""
+    """The page's meta description (description_key), its canonical URL on troid.ai (and og:url), its type and site
+    name, the X card (summary with the large
+    image, troid's X account: every page, the tearsheet included; launch handoff 2026-09-26, 5.1 item 3), then hreflang
+    alternates, the language's og tags and font. The alternates, og locale, font and i18n.css appear on English only
+    once a second language is live."""
     lang = T.lang
     url = BASE_URL + page_url(T.code, page)
-    parts = [f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
-    if len(live) > 1:
+    if page == NOT_FOUND:                   # the page for an address with no page: not indexed, no URL of its own
+        parts = ['<meta name="robots" content="noindex">']
+    else:
+        parts = [f'<meta name="description" content="{T.attr(description_key(T, page))}">',
+                 f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
+    parts += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
+              '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
+    if len(live) > 1 and page != NOT_FOUND:
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
         parts.append(f'<link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}">')
-    if T.code != "en":
-        parts.append(f'<meta property="og:locale" content="{lang["og_locale"]}">')
-        for c in live:
-            if c != T.code:
-                parts.append(f'<meta property="og:locale:alternate" content="{i18n.BY_CODE[c]["og_locale"]}">')
+    parts.append(f'<meta property="og:locale" content="{lang["og_locale"]}">')
+    for c in live:
+        if c != T.code:
+            parts.append(f'<meta property="og:locale:alternate" content="{i18n.BY_CODE[c]["og_locale"]}">')
     if lang.get("font"):
         fam = lang["font"].replace(" ", "+")
         parts.append(f'<link href="https://fonts.googleapis.com/css2?family={fam}:wght@400;500;600;700&display=swap" rel="stylesheet">')
@@ -135,9 +253,117 @@ def og(T, page=None):
     return {"image": img, "title": T.attr(key + ".title"), "description": T.attr(key + ".description")}
 
 
+def _plain(s):
+    """A string as text: tags dropped, entities read, spaces collapsed."""
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", s or ""))).strip()
+
+
+class _FAQ(HTMLParser):
+    """The FAQ page's questions (each div.q's heading) and answers (the paragraphs under it, its source line
+    included), as the page shows them."""
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.pairs, self.depth, self.part, self.buf = [], 0, None, []
+
+    def handle_starttag(self, t, a):
+        if t == "div":
+            if self.depth:
+                self.depth += 1
+            elif "q" in (dict(a).get("class") or "").split():
+                self.depth = 1
+                self.pairs.append({"q": "", "a": []})
+        elif self.depth and t in ("h2", "h3"):
+            self.part, self.buf = "q", []
+        elif self.depth and t == "p":
+            self.part, self.buf = "a", []
+
+    def handle_endtag(self, t):
+        if not self.depth:
+            return
+        if t == "div":
+            self.depth -= 1
+        elif t in ("h2", "h3") and self.part == "q":
+            self.pairs[-1]["q"] = _plain("".join(self.buf)); self.part = None
+        elif t == "p" and self.part == "a":
+            self.pairs[-1]["a"].append(_plain("".join(self.buf))); self.part = None
+
+    def handle_data(self, d):
+        if self.part:
+            self.buf.append(d)
+
+
+def faq_pairs(text):
+    p = _FAQ()
+    p.feed(text)
+    return [(x["q"], "\n\n".join(a for a in x["a"] if a)) for x in p.pairs if x["q"]]
+
+
+def jsonld(T, page, text=""):
+    """The page's structured data, one @graph (launch handoff 2026-09-26, 5.1 item 2). On every page troid as an
+    Organization, its sameAs the repo, X and Reddit accounts the footer links, and the WebSite; then the page's own
+    entity: the desk a WebApplication, free; the FAQ a FAQPage, each question with its answer as the page shows it;
+    the ledger a Dataset, described as simulated; the research page an Article; the sources a CollectionPage listing
+    each source. Every string is the page's own, in its language; a figure appears only as the page states it."""
+    org_id, site_id = BASE_URL + "/#organization", BASE_URL + "/#website"
+    url = BASE_URL + page_url(T.code, page)
+    graph = [{"@type": "Organization", "@id": org_id, "name": "troid", "url": BASE_URL + "/",
+              "logo": BASE_URL + "/apple-touch-icon.png", "email": site_text.EMAIL, "sameAs": SAME_AS},
+             {"@type": "WebSite", "@id": site_id, "name": "troid", "url": BASE_URL + "/", "inLanguage": T.code,
+              "publisher": {"@id": org_id}}]
+    key = f"{page}.og" if f"{page}.og.title" in T.en else "og"
+    title, desc = _plain(T(key + ".title")), _plain(T(key + ".description"))
+    if page == "index":
+        graph.append({"@type": "WebApplication", "@id": url + "#desk", "name": T("product.desk"), "url": url,
+                      "description": _plain(T("index.meta.description")), "applicationCategory": "FinanceApplication",
+                      "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": True,
+                      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+                      "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page == "faq":
+        graph.append({"@type": "FAQPage", "@id": url + "#faq", "url": url, "name": title, "inLanguage": T.code,
+                      "isPartOf": {"@id": site_id},
+                      "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+                                     for q, a in faq_pairs(text)]})
+    elif page == "ledger":
+        repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
+        raw = repo.replace("https://github.com/", "https://raw.githubusercontent.com/") + "/main/backtest/journal.csv"
+        graph.append({"@type": "Dataset", "@id": url + "#dataset", "name": title, "url": url,
+                      "description": _plain(T("ledger.ld.description")), "creator": {"@id": org_id},
+                      "publisher": {"@id": org_id}, "isAccessibleForFree": True, "license": repo + "/blob/main/LICENSE",
+                      "inLanguage": T.code,
+                      "distribution": [{"@type": "DataDownload", "encodingFormat": "text/csv", "contentUrl": raw}]})
+    elif page == "dashboard":
+        graph.append({"@type": "Article", "@id": url + "#article", "headline": title, "description": desc, "url": url,
+                      "mainEntityOfPage": url, "image": og(T, page)["image"], "author": {"@id": org_id},
+                      "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page in FIRM_PAGES:
+        graph.append({"@type": "WebPage", "@id": url + "#page", "url": url, "name": title, "description": desc,
+                      "about": {"@type": "Organization", "name": FIRMS_JSON[FIRM_PAGES[page]]["name"]},
+                      "isPartOf": {"@id": site_id}, "publisher": {"@id": org_id}, "inLanguage": T.code})
+    elif page == "sources":
+        items = [{"@type": "ListItem", "position": i + 1,
+                  "item": {k: v for k, v in (("@type", "CreativeWork"), ("name", x.get("title")), ("url", x.get("url")),
+                                             ("publisher", {"@type": "Organization", "name": x["publisher"]} if x.get("publisher") else None),
+                                             ("author", {"@type": "Person", "name": x["author"]} if x.get("author") else None),
+                                             ("datePublished", x.get("published"))) if v}}
+                 for i, x in enumerate(sources.SOURCES.values())]
+        graph.append({"@type": "CollectionPage", "@id": url + "#sources", "url": url, "name": title, "description": desc,
+                      "isPartOf": {"@id": site_id}, "inLanguage": T.code,
+                      "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": items}})
+    body = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
+    return '<script type="application/ld+json">' + body.replace("</", "<\\/") + "</script>"
+
+
+def finish(T, page, text):
+    """A page as published: its structured data (jsonld()) just before </head>. Every page comes through here: the
+    templates (render()) and the generators (compare, ledger, the tearsheet)."""
+    i = text.find("</head>")
+    return text if i < 0 else text[:i] + jsonld(T, page, text) + "\n" + text[i:]
+
+
 def switcher(T, page, live):
-    """Each published language, named in its own script. Nothing while only English is published."""
-    if len(live) < 2:
+    """Each published language, named in its own script. Nothing while only English is published, and nothing on the
+    page for an address with no page (it is published in English only)."""
+    if len(live) < 2 or page == NOT_FOUND:
         return ""
     items = []
     for c in live:
@@ -378,7 +604,7 @@ def common(T, page, live, preview=False):
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
             "country_box": country_box(T), "avail_attr": avail_attr(T),
-            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES}
+            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "pro_waitlist": published("pro")}
 
 
 def country_box(T):
@@ -428,7 +654,7 @@ def render(template, T, page, live, preview=False, **extra):
     ctx.update(extra)
     text = ENV.get_template(template).render(**ctx)
     prev = out_path(T.code, page)
-    return dated(text, prev.read_text() if prev.exists() else None)
+    return finish(T, page, dated(text, prev.read_text() if prev.exists() else None))
 
 
 def extra_context(T):
@@ -452,6 +678,8 @@ def render_page(page, T, live, preview=False, ctx=None):
         return render(f"{page}.html", T, page, live, preview, **(ctx if ctx is not None else extra_context(T)))
     if page == "tearsheet" and T.code == "en" and not getattr(T, "pseudo", False):
         return None
+    if page in FIRM_PAGES:
+        return __import__("gen_compare").render_firm(T, live, page, preview)
     mod_name, fn_name = GENERATED[page]
     fn = getattr(__import__(mod_name), fn_name, None)
     return fn(T, live) if fn else None
@@ -464,7 +692,7 @@ def render_static(codes, out=None, preview=False):
         T = i18n.Strings(code, fallback=preview)
         ctx = extra_context(T)
         for page in STATIC:
-            if not (TEMPLATES / f"{page}.html").exists():
+            if not (TEMPLATES / f"{page}.html").exists() or (page == NOT_FOUND and code != "en"):
                 continue                                    # not converted yet: the page in public/ stays as it is
             p = out_path(code, page, out)
             p.parent.mkdir(parents=True, exist_ok=True)
@@ -472,31 +700,90 @@ def render_static(codes, out=None, preview=False):
             if not p.exists() or p.read_text() != text:
                 p.write_text(text)
                 written.append(str(p.relative_to(out if out else PUB)))
+        if code == "en" and out is None:
+            for page, p in PRIVATE.items():
+                # no price tape: TradingView's embed runs in the page, and this page takes an email
+                text = render(f"{page}.html", T, page, live, preview, **dict(ctx, ticker=""))
+                if not p.exists() or p.read_text() != text:
+                    p.write_text(text)
+                    written.append(str(p.relative_to(ROOT)))
         if T.missing:
             print(f"  {code}: {len(T.missing)} string(s) fell back to English (draft preview)")
     return written
 
 
-def write_seo(out=None):
-    """robots.txt (allow all, with the sitemap line) and sitemap.xml: every published page in every live language,
-    with its hreflang alternates once a second language is live. Written with each build."""
+def body_text(s):
+    """A page's body as a reader reads it: scripts, styles, drawings, comments and tags dropped, spaces collapsed. A
+    page's lastmod moves when this moves, not on a change to its head or to quantstats' fresh SVG ids."""
+    i = s.lower().find("<body")
+    b = s[i:] if i >= 0 else s
+    b = re.sub(r"<(script|style|svg|noscript|template)\b.*?</\1\s*>", " ", b, flags=re.S | re.I)
+    b = re.sub(r"<!--.*?-->", " ", b, flags=re.S)
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", b))).strip()
+
+
+# a URL's lastmod as the sitemap last wrote it, with the hash of the page's text on that date
+LASTMOD = re.compile(r"<loc>([^<]+)</loc>\s*<lastmod>(\d{4}-\d{2}-\d{2})</lastmod><!-- text ([0-9a-f]{16}) -->")
+
+
+def llms_txt():
+    """/llms.txt (llmstxt.org): what troid is and where each page and file is, for a language model reading the site.
+    English. Each page's line is its own description (en.json: its structured-data description where it has one, the
+    ledger's "Simulated: …", else the one it previews with when shared, else its meta description), the rest
+    site_text.LLMS and the footer's words, so the file changes when the pages do."""
+    T, L = i18n.Strings("en"), site_text.LLMS
+    names = {"index": "product.desk", "compare": "product.compare", "ledger": "product.ledger", "dashboard": "product.research",
+             "tearsheet": "common.link.tearsheet", "chat": "product.ask", "faq": "common.link.faq", "sources": "common.link.sources",
+             "terms": "common.link.terms", "pro": "pro.hero.eyebrow"}
+
+    def line(page):
+        P = page_T(T, page)
+        k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
+                 if k in P.en)
+        name = P(names[page]) if page in names else P(f"{page}.name")
+        return f"- [{name}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
+    repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
+    ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
+    out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
+           f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
+           f"## {L['pages']}", "", *[line(p) for p in PAGES + [p for p in PRIVATE if published(p)]], "",
+           f"## {L['assist']}", "",
+           f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
+           f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
+           f"- [METHODOLOGY.md]({BASE_URL}/METHODOLOGY.md): {L['methodology']}", "",
+           f"## {L['optional']}", "", *[f"- [{name}]({u})" for u, name in ext], ""]
+    return "\n".join(out)
+
+
+def write_seo(out=None, today=None):
+    """robots.txt (allow all, with the sitemap line), llms.txt, and sitemap.xml: every published page in every live
+    language, with its hreflang alternates once a second language is live, and its lastmod: the day its text last
+    changed (body_text), kept from the sitemap as last written while the text's hash is the same, else today (UTC).
+    Written with each build."""
     base = Path(out) if out else PUB
     live = targets()
+    old = base / "sitemap.xml"
+    prev = {m.group(1): (m.group(2), m.group(3)) for m in LASTMOD.finditer(old.read_text())} if old.exists() else {}
+    today = today or datetime.now(timezone.utc).date().isoformat()
     urls = []
     for code in live:
-        for page in PAGES:
-            if not out_path(code, page, out).exists() and not (code == "en" and page == "tearsheet"):
+        for page in PAGES + [p for p in PRIVATE if published(p) and code == "en"]:
+            f = PRIVATE[page] if page in PRIVATE else out_path(code, page, out)
+            if not f.exists() and not (code == "en" and page == "tearsheet"):
                 continue
             alts = ""
             if len(live) > 1:
                 alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}"/>' for c in live)
                 alts += f'\n    <xhtml:link rel="alternate" hreflang="x-default" href="{BASE_URL}{page_url("en", page)}"/>'
-            urls.append(f"  <url>\n    <loc>{BASE_URL}{page_url(code, page)}</loc>{alts}\n  </url>")
+            loc = BASE_URL + page_url(code, page)
+            h = hashlib.sha256(body_text(f.read_text()).encode()).hexdigest()[:16] if f.exists() else "0" * 16
+            lm = prev[loc][0] if loc in prev and prev[loc][1] == h else today
+            urls.append(f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{lm}</lastmod><!-- text {h} -->{alts}\n  </url>")
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
                'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
     robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
     written = []
-    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots)):
+    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())):
         f = base / name
         if not f.exists() or f.read_text() != text:
             f.write_text(text); written.append(name)
@@ -534,7 +821,7 @@ def main():
         live = targets(preview=True)
         for code in codes:
             T = i18n.Strings(code, fallback=True)
-            for page in GENERATED:
+            for page in [*GENERATED, *FIRM_PAGES]:
                 text = render_page(page, T, live, preview=True)
                 if text is not None:
                     q = out_path(code, page, out); q.parent.mkdir(parents=True, exist_ok=True); q.write_text(text)

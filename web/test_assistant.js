@@ -275,6 +275,18 @@ const rs = RT("explain_rule", { topic: "reset" }, "live");
 ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
    /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
    && rs.sources.every((x) => x.document_section && x.read_on.length), rs);
+{ // the fourth patch (context/patch/README.md, launch handoff section 0): the reset in UTC; the live text stays until it publishes
+  const rp = RT("explain_rule", { topic: "reset" }, "patch");
+  const tail = (s) => s.slice(s.indexOf("Because of the platform's settlement process"));
+  ok("patch: the reset in UTC all year, a local hour only for the date it was converted for, its example in UTC; no fixed New York hour",
+     /16:00 UTC all year/.test(rp.explanation) && /only for the date it was converted for/.test(rp.explanation)
+     && /a loss at 15:45 UTC and a loss at 16:15 UTC/.test(rp.explanation) && !/\bnoon\b|\bEDT\b|\bEST\b|1[12]:00 in (winter|summer)/.test(rp.explanation)
+     && rp.sources.length === 3 && rp.sources.every((x) => x.document_section && x.read_on.length), rp);
+  ok("patch: the rest of the reset explanation is the live one's word for word, and the live one is untouched until the patch publishes",
+     tail(rp.explanation).replace("mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC", "mid-session, so a loss at 11:45 and a loss at 12:15 EDT")
+       === tail(rs.explanation) && Object.keys(handler._patchRules).join() === "reset", tail(rp.explanation).slice(0, 240));
+  ok("patch: the candidate keeps the live reset until the patch publishes into RULES",
+     RT("explain_rule", { topic: "reset" }, "candidate").explanation === rs.explanation); }
 const dd = RT("explain_rule", { topic: "drawdown" }, "live");
 ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
    /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)
@@ -553,7 +565,8 @@ ok("guardrails: troid never trades; troid's own strategy out of sample first eve
 const http = require("http");
 const calls = [];
 let script = null;            // (body) => { status, json, delay, headers }
-// Upstash's REST API, as much of it as troid uses: POST /multi-exec with RPUSH, EXPIRE, DEL. Keys with their TTLs.
+// Upstash's REST API, as much of it as troid uses: POST /multi-exec with RPUSH, EXPIRE, DEL, EXISTS, and INCR and GET
+// for the day's count. Keys with their TTLs.
 const KV = new Map(), KV_CALLS = [];
 let kvDown = false;
 const kv = http.createServer((req, res) => {
@@ -567,6 +580,8 @@ const kv = http.createServer((req, res) => {
       if (op === "EXPIRE") { const e = KV.get(key); if (!e) return { result: 0 }; e.ttl = +a[0]; return { result: 1 }; }
       if (op === "DEL") return { result: KV.delete(key) ? 1 : 0 };
       if (op === "EXISTS") return { result: KV.has(key) ? 1 : 0 };
+      if (op === "INCR") { const e = KV.get(key) || { n: 0, ttl: -1 }; e.n = (e.n || 0) + 1; KV.set(key, e); return { result: e.n }; }
+      if (op === "GET") { const e = KV.get(key); return { result: e && e.n != null ? String(e.n) : null }; }
       return { error: "unknown command" };
     }));
   });
@@ -902,6 +917,58 @@ fake.listen(18765, async () => {
     res4 = fakeRes(); await h({ method: "GET", headers: {} }, res4);
     ok("no store configured → off: 503, no upstream call, GET says enabled false", r.status === 503 && r.j.enabled === false && calls.length === before && JSON.parse(res4.body).enabled === false, r);
     process.env.KV_REST_API_URL = KVU;
+
+    // 10b. the launch caps (launch handoff 2026-09-26, 5.4): the day's answers across every visitor, one address's day
+    const day = new Date().toISOString().slice(0, 10), capKey = "cap:" + day, RESTING = "ask troid is resting until 00:00 UTC; the FAQ and sources are open.";
+    const OPK = "o".repeat(40), getJ = async (hh, ip) => { const g = fakeRes(); await hh({ method: "GET", headers: ip ? { "x-real-ip": ip } : {} }, g); return JSON.parse(g.body); };
+    KV.delete(capKey);
+    h = fresh({ TROID_DAILY_TURNS: "2", TROID_VISITOR_TURNS: "100", TROID_CANDIDATE_KEY: OPK });
+    script = () => msg("end_turn", [{ type: "text", text: "ok" }]);
+    let gj = await getJ(h, "192.0.2.64");
+    ok("daily cap: GET before the cap says not resting, and carries no resting text", gj.resting === false && gj.resting_text === undefined, gj);
+    const c1 = await call(h, [U("1")], { disclosed: true }, { ip: "192.0.2.61" }), c2 = await call(h, [U("2")], { disclosed: true }, { ip: "192.0.2.62" });
+    before = calls.length; LOGS.length = 0;
+    r = await call(h, [U("3")], { disclosed: true }, { ip: "192.0.2.63" });
+    ok("daily cap: two answered, the third rests until 00:00 UTC (429), no upstream call, not logged",
+       c1.status === 200 && c2.status === 200 && r.status === 429 && r.j.resting === true && r.j.error === RESTING && calls.length === before && !LOGS.length, [c1.status, c2.status, r, LOGS]);
+    ok("daily cap: the count is a number under cap:<UTC day>, two days to live, with no address beside it",
+       KV.get(capKey) && KV.get(capKey).n === 3 && KV.get(capKey).ttl === 172800 && [...KV.keys()].every((k) => !/192\.0\.2/.test(k)), [...KV.entries()].filter(([k]) => k.startsWith("cap:")));
+    gj = await getJ(h, "192.0.2.64");
+    ok("GET says resting, in the service's words, with the caps", gj.resting === true && gj.resting_text === RESTING && gj.caps.daily === 2 && gj.caps.per_visitor === 100, gj);
+    r = await call(h, [U("4")], { disclosed: true }, { headers: { "x-troid-candidate": OPK, "x-troid-variant": "live" }, ip: "192.0.2.65" });
+    ok("daily cap: the operator's evaluation runs are held to neither cap", r.status === 200 && KV.get(capKey).n === 3, [r.status, KV.get(capKey)]);
+    r = await call(h, [A("x")], {}, { ip: "192.0.2.66" });
+    ok("daily cap: a malformed request is turned away before it counts", r.status === 400 && KV.get(capKey).n === 3, KV.get(capKey));
+    KV.delete(capKey);
+    h = fresh({ TROID_DAILY_TURNS: "100", TROID_VISITOR_TURNS: "2" });
+    for (let i = 0; i < 2; i++) await call(h, [U("v" + i)], { disclosed: true }, { ip: "192.0.2.71" });
+    before = calls.length;
+    r = await call(h, [U("v2")], { disclosed: true }, { ip: "192.0.2.71" });
+    ok("visitor cap: an address's third message today rests (429), no upstream call, and doesn't count in the day's total",
+       r.status === 429 && r.j.resting === true && r.j.error === RESTING && calls.length === before && KV.get(capKey).n === 2, [r, KV.get(capKey)]);
+    const other = await call(h, [U("w")], { disclosed: true }, { ip: "192.0.2.72" });
+    ok("visitor cap: another address is answered", other.status === 200, other.status);
+    ok("visitor cap: GET is resting for that address only", (await getJ(h, "192.0.2.71")).resting === true && (await getJ(h, "192.0.2.73")).resting === false);
+    h = fresh({ TROID_DAILY_TURNS: "0" }); before = calls.length;
+    r = await call(h, [U("1")], { disclosed: true }, { ip: "192.0.2.81" });
+    ok("a daily cap of 0 rests all day: no upstream call", r.status === 429 && r.j.resting === true && calls.length === before, r);
+    h = fresh({ TROID_DAILY_TURNS: "100", TROID_VISITOR_TURNS: "100" });
+    kvDown = true; LOGS.length = 0;
+    r = await call(h, [U("hi"), A("there"), U("and?")], { session: S2, disclosed: true }, { ip: "192.0.2.82" });
+    kvDown = false;
+    ok("a store that can't count lets a later message through; the log line says so", r.status === 200 && JSON.parse(LOGS[0]).cap_error === 1, [r.status, LOGS]);
+    // the API keys' expiry, as the owner records it from the Console
+    const inDays = (d) => new Date(Date.parse(day) + d * 86400e3).toISOString().slice(0, 10);
+    h = fresh({ ANTHROPIC_API_KEY_EXPIRES: inDays(25), ANTHROPIC_API_KEY_EVAL_EXPIRES: inDays(5), ANTHROPIC_API_KEY_EVAL: "eval-test-key" });
+    gj = await getJ(h);
+    ok("key expiry: GET reports each key's days left, and warns from 14 days out", gj.key_days_left.main === 25 && gj.key_days_left.eval === 5
+       && gj.key_warnings.length === 1 && gj.key_warnings[0] === "the evaluation API key expires in 5 days: rotate it", gj);
+    h = fresh({ ANTHROPIC_API_KEY_EXPIRES: inDays(-2), ANTHROPIC_API_KEY_EVAL_EXPIRES: "" });
+    gj = await getJ(h);
+    ok("key expiry: an expired key and a key with no date recorded are each named", gj.key_days_left.main === -2 && gj.key_days_left.eval === null
+       && gj.key_warnings.includes("the production API key expired 2 days ago") && gj.key_warnings.includes("no expiry date recorded for the evaluation API key"), gj);
+    ok("key expiry: GET never carries a key", !JSON.stringify(gj).includes("test-key") && !JSON.stringify(gj).includes("eval-test-key"));
+    for (const k of ["TROID_DAILY_TURNS", "TROID_VISITOR_TURNS", "TROID_CANDIDATE_KEY", "ANTHROPIC_API_KEY_EXPIRES", "ANTHROPIC_API_KEY_EVAL_EXPIRES", "ANTHROPIC_API_KEY_EVAL"]) delete process.env[k];
 
     // 9. the candidate prompt: only with the key; not limited per address, not stored; signed apart from the live prompt
     before = calls.length;
