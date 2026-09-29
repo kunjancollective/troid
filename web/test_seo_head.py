@@ -251,7 +251,8 @@ def rest():
     ok("headings: the FAQ skips no level going down", all(b - a <= 1 for a, b in zip(lv, lv[1:])), lv)
     G = (site_build.PUB / "ledger.html").read_text()
     h1 = re.findall(r"<h1[^>]*>(.*?)</h1>", G, re.S)
-    ok("headings: the ledger's h1 is its name, troid's ledger", h1 == [T("product.ledger")], h1)
+    ok("headings: the ledger's h1 names it, as the search audit's quick win 8 has it (troid's ledger: the shadow account)",
+       h1 == [T("ledger.hero.h1")] and T("ledger.hero.h1").startswith(T("product.ledger")), h1)
 
 
 def pro_waitlist():

@@ -299,7 +299,7 @@ h1.eyebrow{{line-height:inherit;max-width:none}}
 {site_build.head_extra(T, "ledger", live)}</head><body><div class="wrap">
 {header(T, live)}
 {site_build.ticker(T)}
-<h1 class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.ledger")}</h1>
+<h1 class="eyebrow" style="margin-top:28px;text-transform:none">{T("ledger.hero.h1")}</h1>
 <p class="name">{code(T, cfg["name"])}</p>
 <p class="lede">{T("ledger.hero.lede")}</p>
 <p class="meta">{asof}</p>

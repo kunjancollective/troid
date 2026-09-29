@@ -533,6 +533,7 @@
  "firm.next.p": "<a href=\"{H}\">troid's desk</a> sizes a trade on these rules: choose {firm} in its {field} field. <a href=\"{L}/compare\">troid's compare</a> sets them beside the other firms'. <a href=\"{L}/sources\">troid's sources</a> list every outside figure troid uses.",
  "ledger.meta.title": "troid's ledger: a simulated prop-firm account, every trade",
  "ledger.meta.description": "troid's shadow account: every run and every closed trade of a simulated prop-firm strategy, losers included. Hypothetical performance, no money traded.",
+ "ledger.hero.h1": "troid's ledger: the shadow account",
  "ledger.og.title": "troid's ledger — the shadow account, every trade in public",
  "ledger.og.description": "Every run and every closed trade of troid's shadow account, drawn. Hypothetical: no money is traded.",
  "ledger.ld.description": "Simulated: every run and every closed trade of troid's shadow account, on api.binance.us bars. Hypothetical results: no money is traded, and nothing here is a signal.",
