@@ -1787,6 +1787,24 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 1-Phase $100k price (clause not recorded)"
+          },
+          "drawdown": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
+          },
+          "locks_at_initial_after_pct": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
+          },
+          "hwm_basis": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
           }
         },
         "2phase": {
@@ -1807,6 +1825,12 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+          },
+          "drawdown": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases)"
           }
         },
         "instant": {
