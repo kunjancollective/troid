@@ -42,7 +42,10 @@
  * than it breaks). Staged with them (2026-09-30, the owner's approval): the calculator audit's F5, F6 and F7 (audit/SPEC.md),
  * so the candidate's tools agree with troid's desk and the MCP server — a unit's fees are fee × (entry + stop), losses
  * left are ceil(budget ÷ risk) − 1, and a long's liquidation at 100% or more is "none above zero" (size_trade(a, true),
- * MATH_NEXT, TRADE_MATH_TOOL_NEXT, CANDIDATE_RULES.fees and .ruin, context/candidate/TROID.md and TROID-CHARACTER.md).
+ * MATH_NEXT, TRADE_MATH_TOOL_NEXT, CANDIDATE_RULES.fees and .ruin, context/candidate/TROID.md and TROID-CHARACTER.md);
+ * and, the owner's decisions of the same day, F1 (a margin above equity cut to fit, with D6's lowest leverage cap it rests
+ * on), R6 (a long's floor 100% or more below entry "not reached above zero") and the fourth patch's two wordings
+ * (CANDIDATE_RULES.reset, context/candidate/TROID.md).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -513,8 +516,9 @@ function check_budget(a) {
   return out;
 }
 
-// next: the candidate's arithmetic (CANDIDATE_RUN), the calculator audit's F5, F6 and F7 as troid's desk does them
-// (audit/SPEC.md); without it, the live arithmetic, unchanged. Promotion drops the flag and keeps the next branch.
+// next: the candidate's arithmetic (CANDIDATE_RUN), the calculator audit's F1, F5, F6 and F7 and the review's R5 and R6
+// as troid's desk does them (audit/SPEC.md); without it, the live arithmetic, unchanged. Promotion drops the flag and
+// keeps the next branch.
 function size_trade(a, next) {
   const b = budgets(a);
   if (b.error) return b;
@@ -545,7 +549,7 @@ function size_trade(a, next) {
   const used = _used.slice();
   if (feeKnown) used.push(["fee", `fee ${p.fee}% per side`]);
   else { base.pending.push("fee_per_side"); notes.push("fee per side pending for this firm — size shown before fees"); }
-  let levCap = p.lev, levUsed = lev, levKey = "lev";
+  let levCap = p.lev, levUsed = lev, levKey = "lev", held = null;
   if (p.levb) {
     const band = p.levb.find((x) => (x.max_quota == null || _quota <= x.max_quota) && (x.min_quota == null || _quota >= x.min_quota));
     levCap = band ? band.lev : null; p._band_pv = band ? band.pv : null; levKey = "lev_band";
@@ -556,41 +560,50 @@ function size_trade(a, next) {
   } else {
     base.pending.push("max_leverage");
     if (p.levb) {
-      const top = Math.max(...p.levb.map((x) => x.lev));
+      // the desk's D6 (next): held to the lowest cap the firm records, not the highest, since the margin check (F1) rests
+      // on the leverage used (Crypto Fund Trader between $25,000 and $50,000: 5×, not 100×)
+      const top = next ? Math.min(...p.levb.map((x) => x.lev)) : Math.max(...p.levb.map((x) => x.lev));
       notes.push(`no leverage class recorded for a $${_quota.toLocaleString()} account — cap pending at this size`);
-      if (lev > top) { levUsed = top; notes.push(`leverage held to ${top}×, the highest cap this firm records`); }
+      if (lev > top) { levUsed = held = top; notes.push(`leverage held to ${top}×, the ${next ? "lowest" : "highest"} cap this firm records`); }
     }
   }
   base.sources = sourcesFor(p, used);
   // F6 (next): the exit fee is charged on the exit notional, quantity × stop at the stop, so a unit's fees are
   // fee × (entry + stop) and the loss at the stop is the risk to the cent, long or short
-  const fu = next ? fee * (entry + stop) : entry * fee * 2, qty = risk / (dist + fu), notional = qty * entry, margin = notional / levUsed;
-  const fees = qty * fu, fshare = fees / risk * 100, target = entry + side * tR * dist, loss = qty * (dist + fu);
+  const fu = next ? fee * (entry + stop) : entry * fee * 2, qty0 = risk / (dist + fu), m0 = qty0 * entry / levUsed;
+  // F1 (next): a margin above equity can't be opened, so the size is cut to what equity carries at this leverage, and the
+  // loss at the stop falls with it: $100,000 at 5× carries $500,000 of notional at most. Live sizes past it.
+  const cut = !!next && m0 > eq + 1e-9, qty = cut ? eq * levUsed / entry : qty0, notional = qty * entry, margin = notional / levUsed;
+  const fees = qty * fu, target = entry + side * tR * dist, loss = qty * (dist + fu), lost = next ? loss : risk, fshare = fees / lost * 100;
   // F7 (next): losses that leave equity above the floor. Firms word a breach as reaching the limit, so a loss that lands
   // exactly on it is not one more left ($4,000 at $500 leaves 7, not 8). The epsilon reads 4.000000000000001 as 4.
-  const consumes = risk / b.effective_budget * 100, left = next ? Math.ceil(b.effective_budget / risk - 1e-9) - 1 : Math.floor(b.effective_budget / risk + 1e-9);
+  const consumes = lost / b.effective_budget * 100, left = next ? Math.ceil(b.effective_budget / loss - 1e-9) - 1 : Math.floor(b.effective_budget / risk + 1e-9);
   working.push({ step: "intended risk", formula: `equity × ${rpIn}%`, value: r2(intended) },
                { step: "cap", formula: `budget × ${cpIn}%`, value: r2(cap) },
                { step: "risk", formula: "min(intended, cap)", value: r2(risk) },
                { step: "stop distance", formula: "|entry − stop|", value: r4(dist) },
                { step: "fee per unit", formula: feeKnown ? (next ? `(entry + stop) × ${p.fee}%` : `entry × ${p.fee}% × 2`) : "fee per side pending: taken as 0, size before fees", value: r4(fu) },
-               { step: "quantity", formula: feeKnown ? "risk ÷ (stop distance + fee per unit)" : "risk ÷ stop distance", value: Math.round(qty * 1e6) / 1e6 },
+               { step: "quantity", formula: cut ? "equity × leverage used ÷ entry: cut to fit the margin" : feeKnown ? "risk ÷ (stop distance + fee per unit)" : "risk ÷ stop distance", value: Math.round(qty * 1e6) / 1e6 },
                { step: "notional", formula: "quantity × entry", value: r2(notional) },
-               { step: "leverage used", formula: levCap == null ? "your leverage; cap pending" : `min(your ${lev}×, cap ${levCap}×)`, value: levUsed },
+               { step: "leverage used", formula: levCap == null ? (next && held != null ? `your leverage; cap pending (held to ${held}×, the lowest cap recorded for this firm)` : "your leverage; cap pending") : `min(your ${lev}×, cap ${levCap}×)`, value: levUsed },
                { step: "margin", formula: "notional ÷ leverage used", value: r2(margin) });
+  if (next) working.push({ step: "margin check", formula: cut ? `margin at the risk-based size > equity: size cut to equity × ${levUsed}× ÷ entry` : "margin at the risk-based size ≤ equity", value: r2(m0) });
   if (feeKnown) working.push({ step: "fees", formula: "quantity × fee per unit", value: r2(fees) });
   if (next) working.push({ step: "loss at the stop", formula: "quantity × (stop distance + fee per unit)", value: r2(loss) });
   working.push({ step: "budget used", formula: "risk ÷ budget", value: r2(consumes) + "%" },
                { step: "losses left", formula: next ? "ceil(budget ÷ risk) − 1" : "floor(budget ÷ risk)", value: left },
                { step: "target", formula: `entry ${side > 0 ? "+" : "−"} ${tR} × stop distance`, value: r2(target) });
-  base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? (next ? `(stop distance + (entry + stop) × ${p.fee}%)` : `(stop distance + entry × ${p.fee}% × 2)`) : "stop distance");
+  base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? (next ? `(stop distance + (entry + stop) × ${p.fee}%)` : `(stop distance + entry × ${p.fee}% × 2)`) : "stop distance")
+    + (cut ? `; margin at the risk-based size > equity: size cut to equity × ${levUsed}× ÷ entry` : "");
   // R5 (next, extends F7): a loss that takes the whole room reaches the limit, which fails the account (only at a 100% cap)
   if (next && left < 1) {
     return { verdict: "BLOCK", reasons: [`a loss at this stop would take the whole room and reach the ${b.binding}, which fails the account — set the budget cap below 100%`],
              ...base, formula: b.formula };
   }
   if (feeKnown && fshare > 15) notes.push(`fees are ${fshare.toFixed(0)}% of risk — stop tight enough that costs dominate`);
-  if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it`);
+  // F1 (next): the margin cut says what equity carries and what the trade then risks, and a budget cut before it says both
+  if (cut) notes.push(`cut to fit the margin: at ${levUsed}× the account carries at most ${(eq * levUsed).toFixed(2)} notional, so this trade risks ${loss.toFixed(2)}`);
+  if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it` + (cut ? `; the margin then cut it to ${loss.toFixed(2)}` : ""));
   notes.push(`${left} more losses at this size before ${b.binding} trips`);
   const sp = dist / entry * 100;
   // MMR 0.5% is troid's assumption, not a firm rule. The exchange liquidates when the margin behind the position falls to
@@ -611,22 +624,28 @@ function size_trade(a, next) {
   if (a.budget_cap_pct == null) assumed.push("budget cap " + cpIn + "% of the binding budget — troid's default, not an input you gave");
   if (a.target_r == null) assumed.push("target " + tR + "R — troid's default, not an input you gave");
   const ord = [["your stop", sp]], fname = p.dd === "trailing" && !b.trailing_locked ? "trailing floor" : "max-loss floor";
-  if (b.daily_budget != null) ord.push(["daily limit", b.daily_budget / notional * 100]);
-  if (b.dd_budget != null) ord.push([fname, b.dd_budget / notional * 100]);
-  ord.push([`exchange liquidation (${mode})`, none ? Infinity : Math.max(liq, 0)]);
-  if (b.daily_budget != null) working.push({ step: "daily-limit distance", formula: "daily budget ÷ notional", value: r2(b.daily_budget / notional * 100) + "%" });
-  if (b.dd_budget != null) working.push({ step: fname + " distance", formula: "drawdown budget ÷ notional", value: r2(b.dd_budget / notional * 100) + "%" });
+  // R6 (next, extends F5): nor can a long's floor be reached above zero when it sits 100% or more below entry: it says so
+  // in place of the figure and sorts after every finite distance, as troid's desk does. A short's stands as computed.
+  const far = (x) => !!next && side > 0 && x >= 100 - 1e-9, FAR = "not reached above zero — a fall to zero stays inside it";
+  const dP = b.daily_budget != null ? b.daily_budget / notional * 100 : null, ddP = b.dd_budget != null ? b.dd_budget / notional * 100 : null;
+  if (dP != null) ord.push(far(dP) ? ["daily limit", Infinity, FAR] : ["daily limit", dP]);
+  if (ddP != null) ord.push(far(ddP) ? [fname, Infinity, FAR] : [fname, ddP]);
+  ord.push(none ? [`exchange liquidation (${mode})`, Infinity, NONE] : [`exchange liquidation (${mode})`, Math.max(liq, 0)]);
+  if (dP != null) working.push({ step: "daily-limit distance", formula: "daily budget ÷ notional", value: far(dP) ? FAR : r2(dP) + "%" });
+  if (ddP != null) working.push({ step: fname + " distance", formula: "drawdown budget ÷ notional", value: far(ddP) ? FAR : r2(ddP) + "%" });
   working.push({ step: `exchange liquidation (${mode})`, formula: fl, value: liq <= 0 ? "0% — below maintenance at entry" : none ? NONE : r2(liq) + "%" });
   ord.sort((x, y) => x[1] - y[1]);
   if (ord[0][0] !== "your stop") notes.push(`DANGER — ${ord[0][0]} binds at ${ord[0][1].toFixed(2)}% adverse, inside your stop`);
   else if (mode === "cross") notes.push("cross: nothing cuts a runaway before the firm's floor — your stop is the only breaker in front of it");
   else if (none) notes.push(`isolated at ${levUsed}×: no liquidation above zero — the position's own margin covers a fall to zero`);
   else notes.push(`isolated: exchange liquidates at ${liq.toFixed(1)}% for the position's own margin, before the floor`);
-  return { verdict: reduced ? "REDUCE" : "OK", quantity: Math.round(qty * 1e6) / 1e6, notional: r2(notional),
-           margin: r2(margin), leverage_used: levUsed, risk: r2(risk), fees: feeKnown ? r2(fees) : null,
+  // risk (next): what the trade risks, the loss at the stop, as the desk's readout shows it; the budget's risk (the working
+  // row "risk") until F1 cuts the size, then less
+  return { verdict: reduced || cut ? "REDUCE" : "OK", quantity: Math.round(qty * 1e6) / 1e6, notional: r2(notional),
+           margin: r2(margin), leverage_used: levUsed, risk: r2(next ? loss : risk), fees: feeKnown ? r2(fees) : null,
            fee_share_of_risk_pct: feeKnown ? r2(fshare) : null, stop_distance_pct: r2(sp), target: r2(target),
            ...(next ? { loss_at_stop: r2(loss) } : {}), consumes_pct_of_budget: r2(consumes), losses_remaining: left,
-           circuit_breakers: ord.map(([e, v]) => ({ event: e, adverse_move_pct: none && e === `exchange liquidation (${mode})` ? NONE : isFinite(v) ? r2(v) : null })),
+           circuit_breakers: ord.map(([e, v, t]) => ({ event: e, adverse_move_pct: t != null ? t : isFinite(v) ? r2(v) : null })),
            assumptions: assumed, definitions: DEFINITIONS, ...base, working, notes };
 }
 
@@ -747,6 +766,9 @@ const CANDIDATE_TOPIC_CITES = {};
 const PATCH_RULES = {
   reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC all year (UTC+8 is a fixed offset). Not midnight. Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
 };
+// The candidate carries the fourth patch's reset too (the owner, 2026-09-30: the old wording out of the candidate now, so
+// its evaluation doesn't run on text that would be rejected anyway). Whichever publishes first, the other drops it.
+CANDIDATE_RULES.reset = PATCH_RULES.reset;
 // The rules each explain_rule topic states, with the document and the date troid read them: [firm, field, product, rule].
 // A product's own limits cite that product (the 1-Step, the one the explanations use). Clauses no rule field carries
 // cite their document through refSources.
@@ -1061,7 +1083,7 @@ function trade_math(a, math, formulas) {
 // MATH_FORMULAS.
 const MATH_FORMULAS_NEXT = Object.assign({}, MATH_FORMULAS, {
   r_multiple: "1R = |entry − stop| × quantity (troid's desk adds both fees: + fee × (entry + stop) × quantity, the exit fee charged at the stop); R of a result = result ÷ 1R",
-  position_size: "quantity = risk ÷ (|entry − stop| + fee × (entry + stop)); notional = quantity × entry; margin = notional ÷ leverage; the loss at the stop = quantity × (|entry − stop| + fee × (entry + stop)) = risk",
+  position_size: "quantity = risk ÷ (|entry − stop| + fee × (entry + stop)); notional = quantity × entry; margin = notional ÷ leverage; the loss at the stop = quantity × (|entry − stop| + fee × (entry + stop)) = risk. With equity: a margin above it can't be opened, so quantity = equity × leverage ÷ entry, cut to fit, and the loss at the stop is less than the risk",
   fee_share: "fee share of risk = f × (2 − s) ÷ (s + f × (2 − s)) on a long, f × (2 + s) ÷ (s + f × (2 + s)) on a short; side-neutral approximation, both fees at the entry price: 2f ÷ (s + 2f). f = fee per side, s = stop distance as a fraction of entry",
   losses_to_limit: "losses left = ceil(budget ÷ risk) − 1: the losses that leave equity above the limit; the loss that reaches it = ceil(budget ÷ risk)",
 });
@@ -1086,24 +1108,33 @@ const MATH_NEXT = Object.assign({}, MATH, {
   },
   position_size(x, a) {
     const risk = x("risk", { gt: 0 }), entry = x("entry", { gt: 0 }), stop = x("stop", { gt: 0 });
-    const mf = mathFee(x, a), fee = mf.fee, lev = x("leverage", { gt: 0, max: 200, optional: true });
+    const mf = mathFee(x, a), fee = mf.fee, lev = x("leverage", { gt: 0, max: 200, optional: true }), eq = x("equity", { gt: 0, optional: true });
     const dist = Math.abs(entry - stop);
     if (!(dist > 0)) throw new MathInputError("entry and stop are the same price");
-    const fu = (fee || 0) / 100 * (entry + stop), q = risk / (dist + fu);
+    const fu = (fee || 0) / 100 * (entry + stop), q0 = risk / (dist + fu);
+    // the calculator audit's F1: a margin above equity can't be opened, so the size is cut to what equity carries at this
+    // leverage, and the loss at the stop falls with it, as troid's desk does. Checked when equity and leverage are given
+    const m0 = lev != null ? q0 * entry / lev : null, cut = m0 != null && eq != null && m0 > eq + 1e-9, q = cut ? eq * lev / entry : q0;
     const w = [{ step: "stop distance", formula: "|entry − stop|", value: rd(dist) },
                { step: "fee per unit", formula: fee == null ? "no fee given: 0" : "(entry + stop) × " + fee + "%", value: rd(fu) },
-               { step: "quantity", formula: "risk ÷ (stop distance + fee per unit)", value: rd(q) },
+               { step: "quantity", formula: cut ? "equity × leverage ÷ entry: cut to fit the margin" : "risk ÷ (stop distance + fee per unit)", value: rd(q) },
                { step: "notional", formula: "quantity × entry", value: rd(q * entry, 2) }];
     const result = { quantity: rd(q), notional: rd(q * entry, 2) };
-    if (fee != null) {
-      w.push({ step: "fees", formula: "quantity × fee per unit", value: rd(q * fu, 2) }, { step: "loss at the stop", formula: "quantity × (stop distance + fee per unit)", value: rd(q * (dist + fu), 2) });
-      Object.assign(result, { fees: rd(q * fu, 2), loss_at_stop: rd(q * (dist + fu), 2) });
+    if (fee != null || cut) {
+      if (fee != null) w.push({ step: "fees", formula: "quantity × fee per unit", value: rd(q * fu, 2) });
+      w.push({ step: "loss at the stop", formula: fee != null ? "quantity × (stop distance + fee per unit)" : "quantity × stop distance", value: rd(q * (dist + fu), 2) });
+      Object.assign(result, fee != null ? { fees: rd(q * fu, 2) } : {}, { loss_at_stop: rd(q * (dist + fu), 2) });
     }
     if (lev != null) { w.push({ step: "margin", formula: "notional ÷ " + lev, value: rd(q * entry / lev, 2) }); result.margin = rd(q * entry / lev, 2); }
+    if (lev != null && eq != null) w.push({ step: "margin check", formula: cut ? `margin at the risk-based size > equity ${rd(eq, 2)}: size cut to equity × ${lev}× ÷ entry` : `margin at the risk-based size ≤ equity ${rd(eq, 2)}`, value: rd(m0, 2) });
+    if (cut) result.cut_to_fit_margin = true;
     return { working: w, result, sources: mf.sources,
              note: [fee == null ? "No fee was given, so none is counted; a firm's fee makes the quantity smaller." :
+                      cut ? "The exit fee is charged at the stop, so both fees are in the loss at the stop." :
                       "The exit fee is charged at the stop, so the loss at the stop, both fees in it, is the risk, long or short.",
-                    lev != null ? "Leverage sets the margin posted, not the quantity: the loss at the stop is the same at any leverage." : ""].filter(Boolean).join(" ") };
+                    cut ? `Cut to fit the margin: at ${lev}× equity of ${rd(eq, 2)} carries at most ${rd(eq * lev, 2)} of notional, so this size risks ${rd(q * (dist + fu), 2)}, less than the ${rd(risk, 2)} given.` :
+                    lev != null ? "Leverage sets the margin posted, not the quantity: the loss at the stop is the same at any leverage" +
+                      (eq != null ? ", while the margin fits in equity." : "; troid's desk cuts a size whose margin is above equity to what equity carries, so give equity to check it.") : ""].filter(Boolean).join(" ") };
   },
   fee_share(x, a) {
     const mf = mathFee(x, a);
@@ -1153,12 +1184,13 @@ const TRADE_MATH_TOOL = { name: "trade_math",
 const TRADE_MATH_TOOL_NEXT = Object.assign({}, TRADE_MATH_TOOL, {
   description: TRADE_MATH_TOOL.description
     .replace("position_size (risk, entry, stop; optional fee_per_side_pct or firm and product, leverage for the margin)",
-             "position_size (risk, entry, and stop, or stop_pct with side; optional fee_per_side_pct or firm and product, leverage for the margin; a unit's fees are fee × (entry + stop), so the loss at the stop is the risk)")
+             "position_size (risk, entry, and stop, or stop_pct with side; optional fee_per_side_pct or firm and product, leverage for the margin, equity with leverage to check the margin fits; a unit's fees are fee × (entry + stop), so the loss at the stop is the risk, unless the margin at that size is above equity: then the size is cut to equity × leverage ÷ entry and the loss is less, as troid's desk does)")
     .replace("fee_share (stop_pct; fee_per_side_pct, or firm and product)",
              "fee_share (stop_pct; fee_per_side_pct, or firm and product; optional side: without it, the long and short shares and the side-neutral approximation)")
     .replace("losses_to_limit (budget, risk)", "losses_to_limit (budget, risk: the losses left that keep equity above the limit, as troid's desk counts them, and the loss that reaches it)"),
   input_schema: Object.assign({}, TRADE_MATH_TOOL.input_schema, { properties: Object.assign({}, TRADE_MATH_TOOL.input_schema.properties, {
-    side: { type: "string", enum: ["long", "short"], description: "for fee_share, and position_size with stop_pct: the exit fee is charged at the stop, below entry on a long, above it on a short" } }) }),
+    side: { type: "string", enum: ["long", "short"], description: "for fee_share, and position_size with stop_pct: the exit fee is charged at the stop, below entry on a long, above it on a short" },
+    equity: { type: "number", description: "for position_size with leverage: the account's equity. A margin above it can't be opened, so the size is cut to equity × leverage ÷ entry" } }) }),
 });
 const FIRM_RULES_TOOL = { name: "firm_rules",
   description: "A firm product's rules as troid has recorded them — daily and maximum loss, profit target, minimum trading days, the challenge fee, split, drawdown type, daily limit basis, trading fee, leverage cap — each with the document and the date troid read it, or marked pending. Use it to state or compare a product's rules; never state one from memory.",

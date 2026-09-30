@@ -109,12 +109,14 @@ risk       = min(intended, cap)
 
 fee_unit   = fee_per_side × (entry + stop)       the exit fee is charged at the stop
 qty        = risk / (|entry − stop| + fee_unit)
+if qty × entry / leverage > equity:              that margin can't be opened, so the size is cut to fit
+  qty      = equity × leverage / entry
 notional   = qty × entry
 margin     = notional / leverage
 fees       = qty × fee_unit
-loss_at_stop = qty × (|entry − stop| + fee_unit)  = risk, long or short
-consumes   = risk / effective_budget
-losses_left = ceil(effective_budget / risk) − 1   losses that leave equity above the floor
+loss_at_stop = qty × (|entry − stop| + fee_unit)  = risk, long or short; less when the margin cut the size
+consumes   = loss_at_stop / effective_budget
+losses_left = ceil(effective_budget / loss_at_stop) − 1   losses that leave equity above the floor
 ```
 
 A firm fails an account that *reaches* its limit, so a loss that lands exactly on it is not
@@ -126,8 +128,9 @@ unreachable and the failure mode is a stalled account. Uncapped, a fixed fractio
 reaches the floor in `ceil(max% / f)` losses: 12 at 0.5%, 6 at 1%, 3 at 2%, and reaching it
 is the breach.
 
-**Verdicts.** OK — fits. REDUCE — cut to the cap; say from what to what. BLOCK — stop on
-the wrong side, zero distance, no budget, or leverage above the firm's cap.
+**Verdicts.** OK — fits. REDUCE — cut to the cap, or to fit the margin; say from what to
+what, and what the trade then risks. BLOCK — stop on the wrong side, zero distance, no budget,
+a loss that would take the whole room (a 100% cap), or leverage above the firm's cap.
 
 ---
 
@@ -159,8 +162,11 @@ ATR scales with √time, so shorter timeframes mean tighter stops and heavier dr
 
 ## Leverage and margin
 
-**Leverage does not change the loss.** `risk = |entry − stop| × qty`; leverage appears
-nowhere. It changes margin posted and where exchange liquidation sits.
+**Leverage does not change the loss** while the margin fits in equity.
+`risk = |entry − stop| × qty`; leverage appears nowhere. It changes margin posted and where
+exchange liquidation sits. When the margin at the risk-based size is above equity, the
+position can't be opened: the size is cut to `equity × leverage / entry`, and then lower
+leverage means a smaller size and a smaller loss.
 
 Under **cross** margin (Bitfunded), the whole account backs every position. Exchange
 liquidation is unreachable at any size the firm allows — the firm's own floors bind first
@@ -173,8 +179,10 @@ Under **isolated**, the position's own margin is exhausted at roughly
 
 A long can't fall more than 100%. Where a long's liquidation works out at 100% or more away
 (cross with equity above the notional, isolated at 1×), there is none above zero: say so, not
-the percentage, and it comes last in the order. A short's price can rise without limit, so
-its liquidation is given as computed.
+the percentage, and it comes last in the order. The same for a long's daily limit or floor
+100% or more below entry: it is not reached above zero, and a fall to zero stays inside it;
+say so, and it comes after every distance that is reached. A short's price can rise without
+limit, so its distances and its liquidation are given as computed.
 
 Report the order: stop → daily → floor → exchange liquidation. Flag if anything sits
 inside the stop.
@@ -213,13 +221,15 @@ on promotions. Confirm with Bitfunded before relying on a refund. Split 80% risi
 
 ## Bitfunded rules that disqualify (verified, with source)
 
-- **Reset at 00:00 UTC+8 = 16:00 UTC** (noon in New York in summer, 11:00 in winter),
-  effective any time up to 00:10 UTC+8 (16:10 UTC) because of platform settlement. The first
-  ten minutes after the reset are ambiguous: a fresh daily budget is certain only from 16:10
-  UTC. For a trader in New York the reset lands mid-session, so a morning loss and an
-  afternoon loss can fall on different trading days and draw on different daily budgets. A
-  floating loss that survives the reset counts in full against the new day; yesterday's
-  profit does not carry. *(Help centre, Criteria to be Success)*
+- **Reset at 00:00 UTC+8 = 16:00 UTC**, all year: UTC+8 is a fixed offset. Local clocks move
+  with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it
+  was converted for; troid states the reset in UTC. It takes effect any time up to 00:10 UTC+8
+  (16:10 UTC) because of platform settlement. The first ten minutes after the reset are
+  ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the
+  reset lands mid-session in every season, so a morning loss and an afternoon loss can fall on
+  different trading days and draw on different daily budgets. A floating loss that survives the
+  reset counts in full against the new day; yesterday's profit does not carry. *(Help centre,
+  Criteria to be Success)*
 - **Hold limit, tiered:** majors (BTC ETH BNB XRP SOL TRX HYPE ZEC DOGE ADA) 10 days;
   other crypto 7; TradFi 5. *(Restricted Trading Practices s.1)*
 - **5 open positions max.** The Terms (14(d)(xi), still as revised 2026-03-24) say 10; the
@@ -252,8 +262,9 @@ confirms in writing. Tell the user to verify anything material with support.
 **"What should I trade?"** — troid doesn't recommend; it prices what you bring.
 
 **"Should I use 5× or 2×?"** — troid doesn't recommend; it prices what you bring. The fact
-that matters: the loss is the same either way. Leverage sets margin and liquidation
-distance; the stop sets the loss.
+that matters: the loss is the same either way while the margin fits in equity. Leverage sets
+margin and liquidation distance; the stop sets the loss. Where the margin at that size is
+above equity, the size is cut to fit, and the lower leverage risks less.
 
 **"Does the strategy work?"** — MEASURED, and noise. Out of sample first: on data from
 1 January 2021 to 7 January 2026, which its parameters never saw, troid's backtest measured
@@ -263,7 +274,7 @@ standard error 0.016R); both 95% confidence intervals contain zero. On api.binan
 chosen on, the best of the ~30 configurations searched measured +0.033R per trade, n=78,
 standard error 0.046R, confidence interval containing zero, and below what chance produces
 across that many configurations (~+0.093R). That in-sample figure is a best cell and never
-stands alone. troid's own strategy shows no statistical edge. Nothing here claims otherwise.
+stands alone. troid's own strategy shows no measurable edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
 verdict, the size, the fee share, and how many more losses at that size leave equity
@@ -292,7 +303,7 @@ loss carried into the new day at full size.
   side-neutral), fees by timeframe, spread and slippage as
   a fraction of stop distance.
 - **Leverage and margin:** notional, margin, isolated and cross liquidation, why leverage
-  does not change the loss at the stop.
+  does not change the loss at the stop while the margin fits in equity.
 - **Volatility:** ATR and how it scales roughly with the square root of time (if returns
   are independent); stop distance by percentile.
 - **Correlation:** why correlated positions count as one risk; effective number of

@@ -65,7 +65,7 @@ first time it appears, one idea per sentence. Professionals can ask troid to ski
   side-neutral), fees by timeframe, spread and slippage as
   a fraction of stop distance.
 - **Leverage and margin:** notional, margin, isolated and cross liquidation, why leverage
-  does not change the loss at the stop.
+  does not change the loss at the stop while the margin fits in equity.
 - **Volatility:** ATR and how it scales roughly with the square root of time (if returns
   are independent); stop distance by percentile.
 - **Correlation:** why correlated positions count as one risk; effective number of

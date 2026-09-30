@@ -255,6 +255,46 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
      && typeof liqOf(crossShort).adverse_move_pct === "number" && liqOf(crossShort).adverse_move_pct > 100
      && liqOf(c2).adverse_move_pct === 75.15 && typeof liqOf(RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.998 }, "candidate")).adverse_move_pct === "number",
      [liqOf(crossLong), liqOf(iso1), liqOf(crossShort), liqOf(c2)]);
+  // F1 (the calculator audit, 2026-09-29): a margin above equity can't be opened, so the size is cut to what equity carries
+  // at this leverage. Every figure below is the audit model's (audit/model.py), worked independently of this code
+  const tight = { ...fresh, side: "long", entry: 60000, stop: 59990, leverage: 5 };
+  const f1 = RC("size_trade", tight, "candidate"), f1l = RC("size_trade", tight, "live");
+  ok("candidate F1: long 60,000/59,990 at 5× on $100,000: the risk-based size needs $103,455.41 of margin, so it is cut to 8.333333 ($500,000 at 5×) and risks $483.30, REDUCE, 8 losses left; live sizes 8.62069 on $103,448.28 of margin",
+     f1.verdict === "REDUCE" && f1.quantity === 8.333333 && f1.notional === 500000 && f1.margin === 100000 && f1.risk === 483.3 && f1.loss_at_stop === 483.3
+     && f1.fees === 399.97 && f1.consumes_pct_of_budget === 12.08 && f1.losses_remaining === 8
+     && W(f1, "quantity").formula === "equity × leverage used ÷ entry: cut to fit the margin" && W(f1, "risk").value === 500
+     && W(f1, "margin check").value === 103455.41 && W(f1, "margin check").formula === "margin at the risk-based size > equity: size cut to equity × 5× ÷ entry"
+     && f1.notes.includes("cut to fit the margin: at 5× the account carries at most 500000.00 notional, so this trade risks 483.30")
+     && /; margin at the risk-based size > equity: size cut to equity × 5× ÷ entry$/.test(f1.formula)
+     && f1l.verdict === "OK" && f1l.quantity === 8.62069 && f1l.margin === 103448.28 && f1l.risk === 500 && !W(f1l, "margin check"),
+     [f1.verdict, f1.quantity, f1.risk, f1.losses_remaining, W(f1, "margin check"), f1l.quantity]);
+  const both = RC("size_trade", { ...BF, quota: 100000, equity: 95000, day_start: 95000, side: "long", entry: 60000, stop: 59999, leverage: 4 }, "candidate");
+  ok("candidate F1 after a budget cut: $475 cut to $350 by the drawdown budget, then the margin cuts the size to 6.333333 ($380,000 at 4×), risking $310.33, 3 losses left; a size that fits has its margin check and no cut",
+     both.verdict === "REDUCE" && both.quantity === 6.333333 && both.risk === 310.33 && both.losses_remaining === 3
+     && both.notes.includes("cut from 475.00 to 350.00 — max drawdown budget caps it; the margin then cut it to 310.33")
+     && W(c2, "margin check").formula === "margin at the risk-based size ≤ equity" && W(c2, "margin check").value === 25255.18 && W(c2, "quantity").formula === "risk ÷ (stop distance + fee per unit)",
+     [both.verdict, both.quantity, both.risk, both.losses_remaining, both.notes]);
+  // the desk's D6, which F1's margin check rests on: Crypto Fund Trader records no leverage class between $25,000 and
+  // $50,000, so the desk holds leverage to the lowest cap it records (5×), not the highest (100×)
+  const cftMid = { firm: "crypto_fund_trader", product: "1phase", quota: 30000, equity: 30000, side: "long", entry: 60000, stop: 59990, leverage: 200 };
+  const d6 = RC("size_trade", cftMid, "candidate"), d6l = RC("size_trade", cftMid, "live");
+  ok("candidate D6 with F1: Crypto Fund Trader at $30,000 and 200× is held to 5× (the lowest cap recorded), so the size is cut to 2.5 units ($150,000), risking $122.49, 9 losses left; live holds it to 100× and sizes 3.061224",
+     d6.verdict === "REDUCE" && d6.leverage_used === 5 && d6.quantity === 2.5 && d6.margin === 30000 && d6.risk === 122.49 && d6.losses_remaining === 9
+     && d6.notes.includes("leverage held to 5×, the lowest cap this firm records") && W(d6, "leverage used").formula === "your leverage; cap pending (held to 5×, the lowest cap recorded for this firm)"
+     && d6l.leverage_used === 100 && d6l.quantity === 3.061224 && d6l.notes.includes("leverage held to 100×, the highest cap this firm records") && W(d6l, "leverage used").formula === "your leverage; cap pending",
+     [d6.verdict, d6.leverage_used, d6.quantity, d6.risk, d6.losses_remaining, d6l.leverage_used]);
+  // R6 (the review, 2026-09-30): a long's floor 100% or more below entry is not reached above zero, and sorts after every
+  // distance that is reached; a short's is shown as computed
+  const FAR = "not reached above zero — a fall to zero stays inside it", brk = (r) => r.circuit_breakers.map((b) => b.event + " " + b.adverse_move_pct).join(" → ");
+  const r6 = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 54000 }, "candidate"), r6l = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 54000 }, "live");
+  const r6w = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 40000 }, "candidate"), r6s = RC("size_trade", { ...fresh, side: "short", entry: 60000, stop: 66000 }, "candidate");
+  ok("candidate R6: a long 60,000/54,000's max-loss floor at 120.91% reads \"not reached above zero\" and sorts after the daily limit (80.61%); a 33% stop's daily limit too; a short's floor 121.01% as computed; live 120.96%",
+     brk(r6) === "your stop 10 → daily limit 80.61 → max-loss floor " + FAR + " → exchange liquidation (cross) none above zero"
+     && W(r6, "max-loss floor distance").value === FAR && W(r6, "daily-limit distance").value === "80.61%"
+     && brk(r6w) === "your stop 33.33 → daily limit " + FAR + " → max-loss floor " + FAR + " → exchange liquidation (cross) none above zero"
+     && W(r6s, "max-loss floor distance").value === "121.01%" && r6s.circuit_breakers.find((b) => b.event === "max-loss floor").adverse_move_pct === 121.01
+     && r6l.circuit_breakers.find((b) => b.event === "max-loss floor").adverse_move_pct === 120.96 && W(r6l, "max-loss floor distance").value === "120.96%",
+     [brk(r6), brk(r6w), brk(r6s), brk(r6l)]);
   const TM = (x, v) => RC("trade_math", x, v);
   const ltl = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "candidate"), ltlL = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "live");
   ok("candidate trade_math losses_to_limit: 7 losses left and the 8th reaches the limit, as the desk counts; live's losses_that_fit still 8",
@@ -271,6 +311,18 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   ok("candidate trade_math position_size: ref2's short at 1.621583, its loss at the stop 480, from stop_pct with side or the stop price; live 1.622095",
      psC.result.quantity === 1.621583 && psC.result.notional === 126275.91 && psC.result.margin === 25255.18 && psC.result.loss_at_stop === 480 && !psC.assumptions
      && psP.result.quantity === 1.621583 && psL.result.quantity === 1.622095 && /fee × \(entry \+ stop\)/.test(psC.formula), [psC.result, psP.result, psL.result]);
+  // F1 in position_size: with equity and leverage, a margin above equity is cut to fit, as the desk and size_trade do
+  const pf = { calc: "position_size", risk: 500, entry: 60000, stop: 59990, ...BF, leverage: 5 };
+  const pCut = TM({ ...pf, equity: 100000 }, "candidate"), pFit = TM({ ...pf, equity: 110000 }, "candidate"), pNo = TM(pf, "candidate"), pLive = TM({ ...pf, equity: 100000 }, "live");
+  ok("candidate trade_math position_size: with equity 100,000 at 5× the size is cut to 8.333333, its loss at the stop $483.30, and says so; at 110,000 it fits (8.621284, $500); with no equity it asks for it; live ignores equity",
+     pCut.result.quantity === 8.333333 && pCut.result.loss_at_stop === 483.3 && pCut.result.margin === 100000 && pCut.result.cut_to_fit_margin === true
+     && pCut.working.find((w) => w.step === "margin check").value === 103455.41 && /Cut to fit the margin: at 5× equity of 100000 carries at most 500000 of notional, so this size risks 483\.3, less than the 500 given\./.test(pCut.note)
+     && pFit.result.quantity === 8.621284 && pFit.result.loss_at_stop === 500 && !("cut_to_fit_margin" in pFit.result) && /≤ equity 110000/.test(pFit.working.find((w) => w.step === "margin check").formula)
+     && pNo.result.quantity === 8.621284 && !pNo.working.some((w) => w.step === "margin check") && /give equity to check it/.test(pNo.note)
+     && pLive.result.quantity === 8.62069 && !("cut_to_fit_margin" in pLive.result) && /equity × leverage ÷ entry/.test(pCut.formula)
+     && /equity with leverage to check the margin fits/.test(handler._toolsFor("candidate").find((t) => t.name === "trade_math").description)
+     && handler._toolsFor("candidate").find((t) => t.name === "trade_math").input_schema.properties.equity && !handler._toolsFor("live").find((t) => t.name === "trade_math").input_schema.properties.equity,
+     [pCut.result, pFit.result, pNo.result, pLive.result]);
   const rm = TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "candidate");
   ok("candidate trade_math r_multiple: the character's example, 1R $498.97 and $522.83 with both fees (≈ $523, as the example says); live $523.03",
      rm.result.one_r === 498.97 && rm.result.one_r_with_fees === 522.83 && TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "live").result.one_r_with_fees === 523.03, rm.result);
@@ -281,8 +333,18 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
      && /ceil\(maxloss\/f\) losses/.test(ruC) && !/floor\(maxloss/.test(ruC) && /floor\(maxloss\/f\)/.test(RC("explain_rule", { topic: "ruin" }, "live").explanation), feC);
   const TR = require("fs").readFileSync(require("path").join(__dirname, "context", "candidate", "TROID.md"), "utf8");
   ok("candidate TROID.md: fee_unit = fee × (entry + stop), losses_left = ceil(…) − 1, the side-aware fee share and its table, a long's liquidation none above zero; no floor(…) or entry × fee × 2 left",
-     /fee_unit   = fee_per_side × \(entry \+ stop\)/.test(TR) && /losses_left = ceil\(effective_budget \/ risk\) − 1/.test(TR) && /0\.3% stop  →  21\.03%   21\.08%    21\.05%/.test(TR)
+     /fee_unit   = fee_per_side × \(entry \+ stop\)/.test(TR) && /losses_left = ceil\(effective_budget \/ loss_at_stop\) − 1/.test(TR) && /0\.3% stop  →  21\.03%   21\.08%    21\.05%/.test(TR)
      && /there is none above zero/.test(TR) && !/floor\(/.test(TR) && !/× 2\n/.test(TR) && !/21\.1%/.test(TR), TR.length);
+  // the calculator audit's F1 and the review's R6 (2026-09-30), and the fourth patch's two wordings, which the owner had
+  // brought into the candidate at once
+  const PT = require("fs").readFileSync(require("path").join(__dirname, "context", "patch", "TROID.md"), "utf8");
+  const resetOf = (t) => t.slice(t.indexOf("- **Reset at 00:00 UTC+8"), t.indexOf("Criteria to be Success)*", t.indexOf("- **Reset at 00:00 UTC+8")));
+  ok("candidate TROID.md: the margin cut (qty = equity × leverage / entry, the loss then less), leverage leaving the loss alone only while the margin fits, a long's floors past 100% not reached above zero; the patch's reset paragraph word for word and \"no measurable edge\"",
+     /if qty × entry \/ leverage > equity:/.test(TR) && /qty      = equity × leverage \/ entry/.test(TR) && /less when the margin cut the size/.test(TR)
+     && /consumes   = loss_at_stop \/ effective_budget/.test(TR) && /\*\*Leverage does not change the loss\*\* while the margin fits in equity/.test(TR)
+     && /daily limit or floor\n100% or more below entry: it is not reached above zero/.test(TR) && /REDUCE — cut to the cap, or to fit the margin/.test(TR)
+     && resetOf(TR) === resetOf(PT) && resetOf(TR).length > 400 && /shows no measurable edge/.test(TR)
+     && !/noon in New York|statistical edge|1[12]:00 in (winter|summer)/.test(TR), resetOf(TR).slice(0, 120));
 }
 
 // --- troid's character: promoted after evaluation run 9 (web/eval/runs/); nothing is staged, so the candidate is the live prompt
@@ -359,8 +421,11 @@ ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separat
   ok("patch: the rest of the reset explanation is the live one's word for word, and the live one is untouched until the patch publishes",
      tail(rp.explanation).replace("mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC", "mid-session, so a loss at 11:45 and a loss at 12:15 EDT")
        === tail(rs.explanation) && Object.keys(handler._patchRules).join() === "reset", tail(rp.explanation).slice(0, 240));
-  ok("patch: the candidate keeps the live reset until the patch publishes into RULES",
-     RT("explain_rule", { topic: "reset" }, "candidate").explanation === rs.explanation); }
+  // the owner, 2026-09-30: the old wording out of the candidate now, so its evaluation doesn't run on text that would be
+  // rejected anyway; whichever publishes first, the other drops it
+  const rc = RT("explain_rule", { topic: "reset" }, "candidate");
+  ok("patch: the candidate carries the patch's reset, word for word, with the same sources; live keeps its own until the patch publishes",
+     rc.explanation === rp.explanation && JSON.stringify(rc.sources) === JSON.stringify(rp.sources) && rs.explanation !== rp.explanation && /noon in New York/.test(rs.explanation)); }
 const dd = RT("explain_rule", { topic: "drawdown" }, "live");
 ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
    /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)
@@ -1078,8 +1143,8 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown,fees"
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
        && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 24 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;

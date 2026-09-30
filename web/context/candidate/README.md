@@ -12,7 +12,7 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
-## Staged 2026-09-30: the calculator audit's F5, F6 and F7
+## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
 
 The owner approved staging these, and the evaluation that follows, so ask troid's tools agree with troid's desk and the
 MCP server (`audit/SPEC.md`; the desk, `mcp/server.py` and `risk.py` on `claude/beautiful-johnson-ewrv1a`). The live
@@ -37,26 +37,57 @@ prompt and tools are unchanged: every live and patch tool result, schema and sys
 - **F5, liquidation.** A long whose liquidation works out at 100% or more (−1e-9) shows "none above zero" in
   `circuit_breakers`, the working row and, isolated, the note ("isolated at 1×: no liquidation above zero — …"), and
   sorts last; a short as computed.
-- **Prompt files.** `TROID.md` here: the live copy with the sizing block (fee_unit, loss_at_stop, losses_left), the
-  ruin line, the fee share by side with its table (long, short, side-neutral) and the 5% threshold by side, a long's
-  liquidation "none above zero", "how many more losses at that size leave equity above the binding ceiling", and the
-  "Costs" line of "What troid knows". It is the live `web/public/TROID.md`, not the patch's: as with explain_rule's reset,
-  the candidate keeps the live reset text until the patch publishes; when it does, bring the patch's two changes (the
-  reset paragraph in UTC, "no measurable edge") into this copy. `TROID-CHARACTER.md`: the same "Costs" line, and the R
-  example's fees "to open at entry and to close at the stop" and "8 − 1 = 7 losses of that size leave you above it".
+- **F1, the margin cut** (added 30 Sep, the owner: "Otherwise it could still suggest a size the account can't open").
+  When the margin at the risk-based size is above equity (+1e-9), the size is cut to equity × leverage used ÷ entry and
+  the loss at the stop falls with it: a fresh $100,000 1-Step, long 60,000 with its stop at 59,990 at 5×, needs
+  $103,455.41 of margin at the risk-based 8.62 units, so it is cut to 8.333333 ($500,000, all that $100,000 carries at
+  5×), risking $483.30, REDUCE, 8 losses left. `size_trade(a, true)`: the quantity row's formula ("equity × leverage used
+  ÷ entry: cut to fit the margin"), a "margin check" row after "margin" on every sized trade (the margin at the
+  risk-based size, and whether it fits), the size formula's "; margin at the risk-based size > equity: size cut to equity
+  × 5× ÷ entry", the note "cut to fit the margin: at 5× the account carries at most … notional, so this trade risks …"
+  (and a budget cut before it ends "; the margin then cut it to …"), REDUCE; `risk` is the loss at the stop, as the
+  desk's readout shows it, and fee share, budget used and losses left are over it. trade_math's `position_size` takes
+  `equity` (with `leverage`) and cuts the same way (`cut_to_fit_margin`, a "margin check" row, the note); with leverage
+  and no equity it says the desk cuts a margin above equity and to give equity to check it.
+- **The desk's D6, which F1 rests on.** Crypto Fund Trader records no leverage class between $25,000 and $50,000: the
+  desk holds leverage there to the lowest cap the firm records (5×), and the candidate now does too (it held to the
+  highest, 100×, so its margin check would almost never have cut): $30,000 at 200×, long 60,000 with its stop at 59,990,
+  is held to 5× and cut to 2.5 units, risking $122.49. The note says "the lowest cap this firm records"; the working row
+  "your leverage; cap pending (held to 5×, the lowest cap recorded for this firm)". trade_math already refused leverage
+  above the lowest cap there.
+- **R6, a long's floors past 100%.** A long's daily-limit or floor distance at 100% or more (−1e-9) reads "not reached
+  above zero — a fall to zero stays inside it" in `circuit_breakers` and the working row, and sorts after every distance
+  that is reached: long 60,000 with its stop at 54,000, the max-loss floor at 120.91%. A short's as computed. trade_math
+  computes no floor distance, so R6 is size_trade's alone.
+- Every figure above, and the combined case (a $475 risk cut to $350 by the drawdown budget, then to 6.333333 units
+  and $310.33 by the margin at 4×), is the audit model's (`audit/model.py`), worked independently of this code.
+- **Prompt files.** `TROID.md` here: the live copy with the sizing block (fee_unit, the margin cut, loss_at_stop,
+  consumes and losses_left over it), the verdicts (REDUCE to fit the margin; R5's BLOCK), the ruin line, the fee share by
+  side with its table (long, short, side-neutral) and the 5% threshold by side, leverage leaving the loss alone "while
+  the margin fits in equity" (the leverage section, "Should I use 5× or 2×?" and "What troid knows"), a long's
+  liquidation "none above zero" and its floors past 100% "not reached above zero", "how many more losses at that size
+  leave equity above the binding ceiling", and the "Costs" line of "What troid knows". And the fourth patch's two
+  wordings, brought in at once (the owner, 30 Sep: "Otherwise the test runs on text you'd reject anyway"): the reset
+  paragraph in UTC, word for word from `../patch/TROID.md`, and "no measurable edge". explain_rule's reset is the
+  patch's too (`CANDIDATE_RULES.reset = PATCH_RULES.reset`). Whichever publishes first, the other drops its copy.
+  `TROID-CHARACTER.md`: the same "Costs" and "Leverage and margin" lines, and the R example's fees "to open at entry and
+  to close at the stop" and "8 − 1 = 7 losses of that size leave you above it".
 
-Not staged: F1 (a margin above equity cut to fit), R6 (a long's floor distance past 100%, "not reached above zero") and
-the audit's other fixes; ask troid's size_trade still shows a long's floor distance past 100% as computed.
+Not staged: the audit's F2 to F4. F2's input bounds are the desk's fields; F3's loosest reading sizes a product whose
+drawdown type is pending, where size_trade answers PENDING and sizes nothing. F4 raises a typed high-water mark to the
+quota, and to equity on a firm that trails on equity; size_trade takes the one it is given, so a high-water mark typed
+below equity on BrightFunded gives a looser floor than the desk's. No evaluation question gives one.
 
 **Eval cases this touches:** p-size (size_trade), ex-r (r_multiple, the example's losses), b-stop (position_size,
-the fee-per-unit formula), b-leverage (position_size's margin, liquidation), o-montecarlo (explain_rule ruin) and
-p-crossover (size_trade may be called). **p-size's check `1\.622` will fail under the candidate:** every saved run wrote
-the tool's six decimals (1.622095), and the candidate's quantity is 1.621583, which matches only if a reply rounds it
-to 1.622. Left as it is (the task was not to loosen a check); the owner decides whether to change it to the new figure,
-knowing the live baseline then fails it. No other case's expected figure changes.
+the fee-per-unit formula), b-leverage (position_size's margin and the margin cut, liquidation), o-montecarlo
+(explain_rule ruin) and p-crossover (size_trade may be called); the patch's wordings touch p-reset, p-reset-local and
+q-stats, which the full runs cover. **p-size's check** is the owner's (30 Sep): 1.621583, the candidate's quantity
+(1.62158301918), or any correct rounding of it to 3 or more decimals (1.622, 1.6216, 1.621583), not 1.62. The live
+tools' 1.622095, which every saved run wrote, is refused: the live baseline fails p-size unless a reply rounds to
+1.622. No other case's expected figure changes.
 
 **After deploying**, check the deployment stages it: `curl -s https://troid.ai/api/troid | jq .candidate` (staged holds
-TROID.md and TROID-CHARACTER.md; rules end with fees; run includes size_trade and trade_math). Then:
+TROID.md and TROID-CHARACTER.md; rules end with fees, reset; run includes size_trade and trade_math). Then:
 
 ```
 # the cases it touches, the candidate and the live baseline on the same questions
