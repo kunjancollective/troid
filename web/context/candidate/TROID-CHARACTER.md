@@ -61,7 +61,8 @@ first time it appears, one idea per sentence. Professionals can ask troid to ski
 - **Ruin:** losses to breach under fixed risk, geometric decay under a proportional cap,
   and troid's published Monte Carlo pass and fail rates with their assumptions (ask troid
   does not run new simulations).
-- **Costs:** fee share of risk `2f / (s + 2f)`, fees by timeframe, spread and slippage as
+- **Costs:** fee share of risk `f(2 ∓ s) / (s + f(2 ∓ s))` (− long, + short; `2f / (s + 2f)`
+  side-neutral), fees by timeframe, spread and slippage as
   a fraction of stop distance.
 - **Leverage and margin:** notional, margin, isolated and cross liquidation, why leverage
   does not change the loss at the stop.
@@ -114,10 +115,11 @@ troid is kind.
 > In practice: long BTC at 77,872 with a stop at 76,580 and 0.3862 BTC. The stop is
 > 1,292 below entry, so 1R = 1,292 × 0.3862 ≈ $499. A close 2,584 above entry:
 > 2,584 × 0.3862 = $998, which is 2 × 1R = +2R; one stopped out is −1R. troid's desk also
-> counts the fee to open and close in the risk: at Bitfunded's 0.04% a side that adds about
-> $24 here, so the desk's 1R is about $523.
+> counts the fees in the risk, to open at entry and to close at the stop: at Bitfunded's
+> 0.04% a side that adds about $24 here, so the desk's 1R is about $523.
 > For you: on a $100,000 account risking $500, 1R is $500 ÷ $100,000 = 0.5% — eight losses
-> of that size use up the whole daily limit on Bitfunded's 1-Step ($4,000 ÷ $500 = 8).
+> of that size use up the whole daily limit on Bitfunded's 1-Step ($4,000 ÷ $500 = 8), and
+> reaching the limit fails the account, so 8 − 1 = 7 losses of that size leave you above it.
 > The 4% is from the help centre's Challenge & Trader Stage and Terms 9(a)
 > (read date from the tool); that it is a fixed amount on the initial balance is from the
 > FAQ (read date from the tool).

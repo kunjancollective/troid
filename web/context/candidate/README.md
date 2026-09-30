@@ -12,6 +12,72 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-09-30: the calculator audit's F5, F6 and F7
+
+The owner approved staging these, and the evaluation that follows, so ask troid's tools agree with troid's desk and the
+MCP server (`audit/SPEC.md`; the desk, `mcp/server.py` and `risk.py` on `claude/beautiful-johnson-ewrv1a`). The live
+prompt and tools are unchanged: every live and patch tool result, schema and system block was compared with main's,
+12,714 of them, and none differs.
+
+- **F6, fees.** A unit's fees are fee × (entry + stop), the exit fee priced at the stop (was entry × fee × 2), so the
+  loss at the stop is the risk to the cent, long or short. `size_trade(a, true)` (its fee-per-unit row, its size formula,
+  a new "loss at the stop" row and `loss_at_stop`); trade_math's `position_size` (with `fees` and `loss_at_stop`; a
+  `stop_pct` with a fee is priced from `side`, worked as a long when no side is given and listed among troid's
+  assumptions) and `r_multiple` ("fees in and out", 1R with fees $522.83 on the character's example, was $523.03);
+  `fee_share` takes `side` and, without it, gives the long, the short and the side-neutral approximation
+  2f ÷ (s + 2f), labelled as such (0.3% stop: 21.03%, 21.08%, 21.05%). The schema is `TRADE_MATH_TOOL_NEXT` (a `side`
+  property; the description). `CANDIDATE_RULES.fees`. Reference case 2 (short, $96,000, 0.3% stop, $480): qty 1.621583,
+  notional 126,275.91, margin at 5× 25,255.18, fees 101.17 (21.08%), losses left 4 (was 1.622095, 126,315.79,
+  25,263.16, 101.05, 21.05%); its cross liquidation 75.15% (was 75.12%, the notional changed).
+- **F7, losses left.** ceil(budget ÷ risk − 1e-9) − 1, the losses that leave equity above the limit (was
+  floor(budget ÷ risk + 1e-9)): a fresh $100,000 1-Step at $500 leaves 7, not 8. `size_trade` (and, as the desk's R5,
+  BLOCK when a loss would take the whole room, reached only at a 100% cap); trade_math's `losses_to_limit` gives
+  `losses_left`, `room_left_after` and `loss_that_reaches_limit` (was `losses_that_fit`, the floor);
+  `CANDIDATE_RULES.ruin` says ceil(maxloss/f), reaching it the breach.
+- **F5, liquidation.** A long whose liquidation works out at 100% or more (−1e-9) shows "none above zero" in
+  `circuit_breakers`, the working row and, isolated, the note ("isolated at 1×: no liquidation above zero — …"), and
+  sorts last; a short as computed.
+- **Prompt files.** `TROID.md` here: the live copy with the sizing block (fee_unit, loss_at_stop, losses_left), the
+  ruin line, the fee share by side with its table (long, short, side-neutral) and the 5% threshold by side, a long's
+  liquidation "none above zero", "how many more losses at that size leave equity above the binding ceiling", and the
+  "Costs" line of "What troid knows". It is the live `web/public/TROID.md`, not the patch's: as with explain_rule's reset,
+  the candidate keeps the live reset text until the patch publishes; when it does, bring the patch's two changes (the
+  reset paragraph in UTC, "no measurable edge") into this copy. `TROID-CHARACTER.md`: the same "Costs" line, and the R
+  example's fees "to open at entry and to close at the stop" and "8 − 1 = 7 losses of that size leave you above it".
+
+Not staged: F1 (a margin above equity cut to fit), R6 (a long's floor distance past 100%, "not reached above zero") and
+the audit's other fixes; ask troid's size_trade still shows a long's floor distance past 100% as computed.
+
+**Eval cases this touches:** p-size (size_trade), ex-r (r_multiple, the example's losses), b-stop (position_size,
+the fee-per-unit formula), b-leverage (position_size's margin, liquidation), o-montecarlo (explain_rule ruin) and
+p-crossover (size_trade may be called). **p-size's check `1\.622` will fail under the candidate:** every saved run wrote
+the tool's six decimals (1.622095), and the candidate's quantity is 1.621583, which matches only if a reply rounds it
+to 1.622. Left as it is (the task was not to loosen a check); the owner decides whether to change it to the new figure,
+knowing the live baseline then fails it. No other case's expected figure changes.
+
+**After deploying**, check the deployment stages it: `curl -s https://troid.ai/api/troid | jq .candidate` (staged holds
+TROID.md and TROID-CHARACTER.md; rules end with fees; run includes size_trade and trade_math). Then:
+
+```
+# the cases it touches, the candidate and the live baseline on the same questions
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --only p-size,ex-r,b-stop,b-leverage,o-montecarlo,p-crossover --out web/eval/runs/<date>-f5f7-candidate
+EVAL_CANDIDATE_KEY=… EVAL_LIVE=1 node web/eval_character.js https://troid.ai --only p-size,ex-r,b-stop,b-leverage,o-montecarlo,p-crossover --out web/eval/runs/<date>-f5f7-live
+
+# to decide a promotion: every case (28), three candidate runs and the live baseline, each read into <run>.read.json (_errors)
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run17
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run18
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run19
+EVAL_CANDIDATE_KEY=… EVAL_LIVE=1 node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run20
+node web/eval_character.js --promotion --candidate 17,18,19 --live 20
+```
+
+The full runs evaluate everything staged here together, runs 10 to 16's fixes with F5 to F7. Promotion folds
+`size_trade`'s `next` branch in (dropping the flag), `MATH_NEXT` and `MATH_FORMULAS_NEXT` into `MATH` and
+`MATH_FORMULAS`, `TRADE_MATH_TOOL_NEXT` into `TRADE_MATH_TOOL`, `CANDIDATE_RULES` into `RULES`, and moves `TROID.md`
+into `web/public/TROID.md` and the root copy, `TROID-CHARACTER.md` into `web/context/` and the root copy; the live
+checks in `web/test_assistant.js` (reference case 2, "the live smoke figures", losses left 8) then move to these figures,
+and METHODOLOGY's three audit rows (on the audit branch) drop "ask troid's size_trade has not followed yet".
+
 troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt), run 11
 (this candidate, 21 of 24, six errors), run 12 (22 of 24, four), run 13 (22 of 24, three), run 14 (22 of 24, five) and run 15 (23 of 24, seven): four guardrails, explain_rule's ruin, crossover and drawdown texts with the
 rules they state (`CANDIDATE_TOPIC_CITES`), the tools in `CANDIDATE_RUN` (the floating-loss rule with its source, the

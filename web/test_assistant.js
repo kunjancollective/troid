@@ -216,6 +216,75 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
    && /out of range/.test(M({ calc: "recovery", drawdown_pct: 100 }).error) && /impossible/.test(M({ calc: "effective_bets", positions: 4, correlation: -0.5 }).error)
    && /same price/.test(M({ calc: "r_multiple", entry: 5, stop: 5, quantity: 1 }).error) && /unknown firm/.test(M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2, firm: "ftmo", product: "x" }).error));
 
+// --- the calculator audit's F5, F6 and F7 (audit/SPEC.md, troid's desk 2026-09-29), staged for the candidate only:
+// ask troid's tools agree with troid's desk and the MCP server; the live tools are unchanged (the checks above)
+{ const RC = handler._runTool, BF = { firm: "bitfunded", product: "1step" };
+  const ref2 = { ...BF, quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003, target_r: 2 };
+  const c2 = RC("size_trade", ref2, "candidate"), l2 = RC("size_trade", ref2, "live"), W = (r, st) => r.working.find((w) => w.step === st);
+  ok("candidate F6 ref2: qty 1.621583, notional 126,275.91, margin 25,255.18, fees 101.17 (21.08%), losses left 4, loss at the stop 480; live still 1.622095",
+     c2.verdict === "OK" && c2.quantity === 1.621583 && c2.notional === 126275.91 && c2.margin === 25255.18 && c2.fees === 101.17 && c2.fee_share_of_risk_pct === 21.08
+     && c2.losses_remaining === 4 && c2.loss_at_stop === 480 && W(c2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(c2, "loss at the stop").value === 480
+     && W(c2, "losses left").formula === "ceil(budget ÷ risk) − 1" && /\(stop distance \+ \(entry \+ stop\) × 0\.04%\)$/.test(c2.formula)
+     && l2.quantity === 1.622095 && l2.fees === 101.05 && !("loss_at_stop" in l2) && W(l2, "fee per unit").formula === "entry × 0.04% × 2" && W(l2, "losses left").formula === "floor(budget ÷ risk)",
+     [c2.quantity, c2.notional, c2.margin, c2.fees, c2.fee_share_of_risk_pct, c2.losses_remaining, c2.loss_at_stop]);
+  const sp = RC("size_trade", { ...ref2, stop: undefined, stop_pct: 0.3, risk_pct: 0.5 }, "candidate");
+  ok("candidate F6: p-size's question (stop_pct 0.3 on the short) gives ref2's figures", sp.quantity === 1.621583 && sp.fees === 101.17 && sp.losses_remaining === 4, [sp.quantity, sp.fees]);
+  // F6: the loss at the stop, both fees in it (the entry fee on quantity × entry, the exit fee on quantity × stop), is the risk to the cent
+  const lossAt = (r, e, st) => r.quantity * Math.abs(e - st) + 0.0004 * r.quantity * e + 0.0004 * r.quantity * st;
+  const fresh = { ...BF, quota: 100000, equity: 100000, entry: 77872, risk_pct: 0.5 };
+  const cases = [["long", 77872 * 0.99], ["short", 77872 * 1.01], ["long", 77872 * 0.998], ["short", 77872 * 1.002]].map(([side, stop]) => {
+    const c = RC("size_trade", { ...fresh, side, stop }, "candidate"), l = RC("size_trade", { ...fresh, side, stop }, "live");
+    return { side, c: +lossAt(c, 77872, stop).toFixed(2), l: +lossAt(l, 77872, stop).toFixed(2), at: c.loss_at_stop }; });
+  ok("candidate F6: the loss at the stop is $500.00 long or short (1% and 0.2% stops); live's short was $500.19 and $500.14, its long under $500",
+     cases.every((x) => x.c === 500 && x.at === 500) && cases[1].l === 500.19 && cases[3].l === 500.14 && cases[0].l < 500 && cases[2].l < 500, cases);
+  const f7 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "candidate"), f7l = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "live");
+  ok("candidate F7: a fresh $100,000 1-Step at $500 risk leaves 7 losses, not 8 (the 8th reaches the $4,000 daily limit); live still 8",
+     f7.risk === 500 && f7.losses_remaining === 7 && f7.notes.includes("7 more losses at this size before daily loss limit trips") && f7l.losses_remaining === 8, [f7.losses_remaining, f7l.losses_remaining]);
+  const r5 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99, risk_pct: 10, budget_cap_pct: 100 }, "candidate");
+  ok("candidate F7 (the desk's R5): a loss that takes the whole room at a 100% cap is BLOCK, naming the limit it reaches; live sizes it with 1 loss left",
+     r5.verdict === "BLOCK" && /take the whole room and reach the daily loss limit, which fails the account/.test(r5.reasons[0]) && !("quantity" in r5)
+     && RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99, risk_pct: 10, budget_cap_pct: 100 }, "live").losses_remaining === 1, r5);
+  const liqOf = (r) => r.circuit_breakers.find((b) => /liquidation/.test(b.event));
+  const crossLong = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "candidate"), crossLongL = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "live");
+  const iso1 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9, margin_mode: "isolated", leverage: 1 }, "candidate");
+  const crossShort = RC("size_trade", { ...fresh, side: "short", stop: 77872 * 1.1 }, "candidate");
+  ok("candidate F5: a cross long past 100% shows \"none above zero\" and sorts last (live 2,025.63%); isolated at 1× says the margin covers a fall to zero; a short, and a long whose notional is above equity, as computed",
+     liqOf(crossLong).adverse_move_pct === "none above zero" && crossLong.circuit_breakers[crossLong.circuit_breakers.length - 1] === liqOf(crossLong)
+     && W(crossLong, "exchange liquidation (cross)").value === "none above zero" && liqOf(crossLongL).adverse_move_pct === 2025.63
+     && liqOf(iso1).adverse_move_pct === "none above zero" && iso1.notes.includes("isolated at 1×: no liquidation above zero — the position's own margin covers a fall to zero")
+     && typeof liqOf(crossShort).adverse_move_pct === "number" && liqOf(crossShort).adverse_move_pct > 100
+     && liqOf(c2).adverse_move_pct === 75.15 && typeof liqOf(RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.998 }, "candidate")).adverse_move_pct === "number",
+     [liqOf(crossLong), liqOf(iso1), liqOf(crossShort), liqOf(c2)]);
+  const TM = (x, v) => RC("trade_math", x, v);
+  const ltl = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "candidate"), ltlL = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "live");
+  ok("candidate trade_math losses_to_limit: 7 losses left and the 8th reaches the limit, as the desk counts; live's losses_that_fit still 8",
+     ltl.result.losses_left === 7 && ltl.result.loss_that_reaches_limit === 8 && ltl.result.room_left_after === 500 && !("losses_that_fit" in ltl.result)
+     && TM({ calc: "losses_to_limit", budget: 2000, risk: 480 }, "candidate").result.losses_left === 4 && ltlL.result.losses_that_fit === 8, [ltl.result, ltlL.result]);
+  const fsN = TM({ calc: "fee_share", stop_pct: 0.3, ...BF }, "candidate"), fsS = TM({ calc: "fee_share", stop_pct: 0.3, ...BF, side: "short" }, "candidate");
+  ok("candidate trade_math fee_share: 21.03% long, 21.08% short, 21.05% labelled side-neutral; with a side, that side's; live 21.05% with no side",
+     fsN.result.fee_share_long_pct === 21.03 && fsN.result.fee_share_short_pct === 21.08 && fsN.result.fee_share_side_neutral_pct === 21.05
+     && fsN.working.some((w) => /side-neutral/.test(w.step)) && fsS.result.fee_share_pct === 21.08 && fsS.result.side === "short"
+     && TM({ calc: "fee_share", stop_pct: 3.9, ...BF, side: "long" }, "candidate").result.fee_share_pct === 1.97
+     && TM({ calc: "fee_share", stop_pct: 0.3, ...BF }, "live").result.fee_share_pct === 21.05, [fsN.result, fsS.result]);
+  const psC = TM({ calc: "position_size", risk: 480, entry: 77872, stop_pct: 0.3, side: "short", ...BF, leverage: 5 }, "candidate");
+  const psP = TM({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, ...BF }, "candidate"), psL = TM({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, ...BF }, "live");
+  ok("candidate trade_math position_size: ref2's short at 1.621583, its loss at the stop 480, from stop_pct with side or the stop price; live 1.622095",
+     psC.result.quantity === 1.621583 && psC.result.notional === 126275.91 && psC.result.margin === 25255.18 && psC.result.loss_at_stop === 480 && !psC.assumptions
+     && psP.result.quantity === 1.621583 && psL.result.quantity === 1.622095 && /fee × \(entry \+ stop\)/.test(psC.formula), [psC.result, psP.result, psL.result]);
+  const rm = TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "candidate");
+  ok("candidate trade_math r_multiple: the character's example, 1R $498.97 and $522.83 with both fees (≈ $523, as the example says); live $523.03",
+     rm.result.one_r === 498.97 && rm.result.one_r_with_fees === 522.83 && TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "live").result.one_r_with_fees === 523.03, rm.result);
+  const feC = RC("explain_rule", { topic: "fees" }, "candidate").explanation, feL = RC("explain_rule", { topic: "fees" }, "live").explanation;
+  const ruC = RC("explain_rule", { topic: "ruin" }, "candidate").explanation;
+  ok("candidate explain_rule: fees priced f × (entry + stop), per side, 2f/(s + 2f) named side-neutral; ruin in ceil(maxloss/f) losses, reaching it the breach; live unchanged",
+     /f × \(entry \+ stop\)/.test(feC) && /side-neutral approximation/.test(feC) && /f\(2 \+ s\)\/\(s \+ f\(2 \+ s\)\) on a short/.test(feC) && /Fee share of risk = 2f\/\(s\+2f\)/.test(feL)
+     && /ceil\(maxloss\/f\) losses/.test(ruC) && !/floor\(maxloss/.test(ruC) && /floor\(maxloss\/f\)/.test(RC("explain_rule", { topic: "ruin" }, "live").explanation), feC);
+  const TR = require("fs").readFileSync(require("path").join(__dirname, "context", "candidate", "TROID.md"), "utf8");
+  ok("candidate TROID.md: fee_unit = fee × (entry + stop), losses_left = ceil(…) − 1, the side-aware fee share and its table, a long's liquidation none above zero; no floor(…) or entry × fee × 2 left",
+     /fee_unit   = fee_per_side × \(entry \+ stop\)/.test(TR) && /losses_left = ceil\(effective_budget \/ risk\) − 1/.test(TR) && /0\.3% stop  →  21\.03%   21\.08%    21\.05%/.test(TR)
+     && /there is none above zero/.test(TR) && !/floor\(/.test(TR) && !/× 2\n/.test(TR) && !/21\.1%/.test(TR), TR.length);
+}
+
 // --- troid's character: promoted after evaluation run 9 (web/eval/runs/); nothing is staged, so the candidate is the live prompt
 const fs0 = require("fs"), path0 = require("path");
 // run 16's number and formula lints read the tools' real results, which the older tests' emulated tools don't carry:
@@ -228,10 +297,15 @@ const liveSys = handler._systemBlocks("en", "live"), candSys = handler._systemBl
 const candText = liveSys.map((b) => b.text).join("\n");
 // run 10's candidate: the live prompt plus two guardrails, the same tools (their staged implementations are CANDIDATE_RUN's)
 const CG = handler._candidateGuardrails;
-ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm); the same tools",
-   CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "") === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
+// the calculator audit's F5-F7 (2026-09-30): TROID.md staged (context/candidate/TROID.md) in place of the live one
+const LIVE_TROID = fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8");
+const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidate", "TROID.md"), "utf8");
+// the calculator audit's F6/F7 (2026-09-30): the same tools but trade_math's schema, which adds side and says how fees and losses left are counted
+const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
+ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm); the same tools but trade_math's schema",
+   CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
-   && JSON.stringify(handler._toolsFor("candidate")) === JSON.stringify(handler._toolsFor("live")));
+   && sameBut("candidate") === sameBut("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join());
 // the staged character (the owner's review of run 16): its examples carry no read date, only "(read date from the
 // tool)", and every number in them comes from the question, a tool or a step shown on the page
 { const N = require("./api/_numbers.js"), ex = (t) => t.split("## Examples")[1].split("## Where this plugs in")[0];
@@ -424,8 +498,11 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
 { const r13 = require("./eval/runs/2026-09-24-run13.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const pc = RT("trade_math", { calc: "position_size", risk: 500, entry: 77872, stop_pct: 1.5, firm: "bitfunded", product: "1step", leverage: 5 }, "candidate");
   const pl = RT("trade_math", { calc: "position_size", risk: 500, entry: 77872, stop_pct: 1.5, firm: "bitfunded", product: "1step", leverage: 5 }, "live");
-  ok("candidate trade_math: a stop of 1.5% on 77,872 is a distance of 1,168.08, quantity 0.406379 with the fee; live still asks for a stop price (run 13, b-stop)",
-     pc.working[0].value === 1168.08 && pc.result.quantity === 0.406379 && /same for a long or a short/.test(pc.note) && /needs stop/.test(pl.error), [pc.working[0], pc.result, pl.error]);
+  // the calculator audit's F6 (2026-09-30): the exit fee is charged at the stop, so with a fee the side sets the quantity:
+  // no side given is worked as a long, among troid's assumptions (was 0.406379, both fees at entry, "the same for a long or a short")
+  ok("candidate trade_math: a stop of 1.5% on 77,872 is a distance of 1,168.08, quantity 0.406534 with the fee, worked as a long and said so; live still asks for a stop price (run 13, b-stop)",
+     pc.working[0].value === 1168.08 && pc.result.quantity === 0.406534 && pc.result.loss_at_stop === 500 && /worked as a long/.test(pc.note)
+     && /^side long — troid's default/.test(pc.assumptions[0]) && /needs stop/.test(pl.error), [pc.working[0], pc.result, pl.error]);
   const SN = handler._saidNotRepeated;
   ok("candidate: text written before a tool call stays unless the final answer gives its method sections again (run 13, b-stop; run 3, ex-r's definition stays)",
      SN(["**Formula:** q = r ÷ d. **Why it works:** the stop sets the loss."], "**Formula:** q = r ÷ (d + f). **Why it works:** …").length === 0
@@ -1001,8 +1078,8 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin text, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown"
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown,fees"
        && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 24 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
