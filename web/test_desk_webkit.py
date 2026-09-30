@@ -139,8 +139,15 @@ def main():
         pg.wait_for_timeout(150)
         n1 = pg.evaluate(NOTE)
         ok("a tap on ETH in the tape's still row opens its \"use as entry\" note", not n1["hidden"] and n1["owner"] == "ETH", n1)
-        pg.tap(".hero .lede")                                   # the page's own text, nothing on it to tap
+        # a tap outside it, on the page's own text with nothing on it to tap: the headline. (It was the lede until the
+        # lede carried a link to /sources: the tap at its centre followed the link, and the check read another page.)
+        here = pg.url
+        bare = pg.evaluate("""()=>{const r=document.querySelector('.hero h1').getBoundingClientRect(),
+          e=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);return !!e&&!e.closest('a,button,input,select,summary,[data-pop]')}""")
+        ok("the tap outside lands on plain text: the headline's centre is no link or control", bare)
+        pg.tap(".hero h1")
         pg.wait_for_timeout(150)
+        ok("and the page stays where it is", pg.url == here, pg.url)
         n2 = pg.evaluate(NOTE)
         ok("the tape's \"use as entry\" note closes on a tap outside it", n2["hidden"], n2)
         if not n2["hidden"]:
