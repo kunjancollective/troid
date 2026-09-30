@@ -7,7 +7,8 @@ calls no one.
   python web/test_audit_line.py
 
 - Passed: "Calculators audited 4 Oct 2026 · 1,023 checks passed · report", the link to that week's report on GitHub.
-- Failed: "… · found 2 mismatches · report", said as plainly.
+- Failed: "… · mismatches found: 2 · report", said as plainly, and one mismatch reads as plainly as two: the count
+  stands after a colon, so no language needs a plural form for it.
 - Hidden when /audit.json is missing, isn't JSON, or doesn't hold together (checks ≠ passed + failed, a date that isn't
   one, a report not named for its week, a commit that isn't one, a count that isn't a whole number).
 - An old audit shows its date as it is, with no other wording.
@@ -122,13 +123,14 @@ def main():
         ok("no page error", not errs, errs)
         ctx.close()
 
-        # failed
-        ctx, pg, errs = page(doc(passed=1021, failed=2))
-        s = pg.evaluate(LINES)
-        ok("failed: 'Calculators audited 4 Oct 2026 · found 2 mismatches · report'",
-           not s["hidden"] and s["text"] == f"Calculators audited {intl['en-GB']['d']} · found 2 mismatches · report"
-           and s["href"] == REPO + "audit/reports/2026-W40.md", s)
-        ctx.close()
+        # failed, two and one
+        for k in (2, 1):
+            ctx, pg, errs = page(doc(passed=1023 - k, failed=k))
+            s = pg.evaluate(LINES)
+            ok(f"failed: 'Calculators audited 4 Oct 2026 · mismatches found: {k} · report'",
+               not s["hidden"] and s["text"] == f"Calculators audited {intl['en-GB']['d']} · mismatches found: {k} · report"
+               and s["href"] == REPO + "audit/reports/2026-W40.md", s)
+            ctx.close()
 
         # an old audit: its date as it is, nothing added
         ctx, pg, errs = page(doc(date="2026-08-30", week="2026-W35", report="audit/reports/2026-W35.md"))

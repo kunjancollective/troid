@@ -310,11 +310,22 @@ troid's assumption, and the block says so.
 that script's reference cases and reproduces them to 4 decimal places, including the case
 where equity sits below the crossover and the max-drawdown ceiling binds instead of the
 daily. **If you change the arithmetic in one, change it in the other and re-check.** The
-calculator audit of 29 Sep 2026 changed both the same way, and the MCP server with them:
+calculator audit of 29 Sep 2026 changed both in three places, and the MCP server with them:
 the fee per unit is fee × (entry + stop), the exit fee priced at the stop; losses left are
 ceil(budget ÷ risk) − 1, the losses that leave equity above the floor; a long's exchange
-liquidation at 100% or more reads "none above zero". Both reference cases were re-checked
-against risk.py that day.
+liquidation at 100% or more reads "none above zero" and sorts last among the breakers. Both
+reference cases were re-checked against risk.py that day.
+
+Not every change of that audit is in the port. One is the desk's alone: when the margin at
+the risk-based size is more than equity, the desk cuts the size to equity × leverage ÷ entry
+and returns REDUCE (audit F1); risk.py returns BLOCK ("Margin … exceeds equity"), and the
+MCP server BLOCKs sooner, at a margin above 65% of capital, so on those inputs the desk and
+the port disagree by design (Bitfunded 1-Step, $100,000, 0.5% risk, long 77,872 with a 0.01%
+stop at 5×: the margin at the risk-based size is $111,116; the desk cuts and says REDUCE,
+risk.py says BLOCK). Two more touch firms the port doesn't model: a pending drawdown
+type sized against the static floor (F3) and Crypto Fund Trader's uncovered leverage class
+held to 5× (D6). risk.py and the MCP server size Bitfunded's profiles only, whose drawdown
+type and leverage cap are recorded, so neither changes a figure they produce.
 
 The firm and challenge selects are filled from `firms.json` by `backtest/gen_compare.py`,
 which writes the `FIRMS` object into the `<!-- profiles:start/end -->` region. The port

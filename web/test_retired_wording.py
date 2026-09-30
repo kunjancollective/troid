@@ -70,7 +70,11 @@ sold = ["BrightFunded · #1 by reviews", "#{n} by reviews", "their promos apply 
         "discount code <b>{code}</b> — cheaper through this link", "discount code <b>platinum5</b>",
         "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price.",
         "where a code is shown it&#x27;s cheaper through the affiliate link, where it isn&#x27;t it&#x27;s the same price",
-        "They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code is shown."]
+        "They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code is shown.",
+        # close variants of the same (review 2026-09-30): the pattern is phrase by phrase, so each form is named
+        "troid's links cost you nothing", "BrightFunded · #1 by verified reviews", "promotions apply through troid",
+        "discount code <b>TROID</b>", "Bitfunded, our reference firm", "Bitfunded, the reference firm on troid's compare",
+        "Bitfunded is our reference firm"]
 unsold = ["troid's links and codes don't raise the price.", "BrightFunded challenges · affiliate link · code platinum5",
           "Crypto Fund Trader challenges · affiliate link · code <b>platinum5</b>",
           "128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21).",
@@ -78,7 +82,8 @@ unsold = ["troid's links and codes don't raise the price.", "BrightFunded challe
           "Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions.", "€497 (€347.90 promo)",
           "Directory attributes - country, years, reviews, promos - are propfirmmatch's table",
           "promotion_policy", "tracked through FirstPromoter", "entry and stop are the same price, so 1R is zero",
-          "Never give an affiliate link or a discount code; point to troid's compare"]
+          "Never give an affiliate link or a discount code; point to troid's compare",
+          "#1 by verified review volume on propfirmmatch", "a discount code is a firm's own offer, stated beside it"]
 ok("the selling pattern catches every retired phrasing (rank, promos, discount, cheaper, same price)", all(RETIRED_SELLING.search(t) for t in sold),
    [t for t in sold if not RETIRED_SELLING.search(t)])
 ok("and passes the fact that replaced them and the records that only look like them", not any(RETIRED_SELLING.search(t) for t in unsold),

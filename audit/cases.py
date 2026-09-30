@@ -90,13 +90,22 @@ def regressions():
     r("F2", "stop 0", "bitfunded", "1step", {"v": "BLOCK", "range": ["stop"]}, stop=0)
     r("F2", "no entry yet, risk -1%: blocked all the same", "bitfunded", "1step", {"v": "BLOCK", "range": ["risk_pct"]},
       entry="", stop="", riskPct=-1)
+    r("F2", "entry typed, no stop yet, risk -1%: blocked all the same", "bitfunded", "1step",
+      {"v": "BLOCK", "range": ["risk_pct"]}, stop="", riskPct=-1)
     r("F2", "risk 0%, cap 0% and leverage 0 together, each named", "bitfunded", "1step",
       {"v": "BLOCK", "range": ["risk_pct", "cap_pct", "leverage"]}, riskPct=0, capPct=0, lev=0)
-    r("F2", "the edges are in range: risk 100%, cap 100%, leverage 1", "bitfunded", "1step", {"v": "REDUCE", "lev_used": 1},
-      riskPct=100, capPct=100, lev=1)
-    # F3: the handoff's case
+    # the edges one at a time: risk 100% with cap 100% is a loss that takes the whole room, which SPEC.md's R5 refuses
+    # for its own reason, so each edge is shown in range on a trade that can still be sized
+    r("F2", "the edges are in range: risk 100%, leverage 1", "bitfunded", "1step", {"v": "REDUCE", "range": None, "lev_used": 1},
+      riskPct=100, lev=1)
+    r("F2", "the edges are in range: cap 100%", "bitfunded", "1step", {"v": "OK", "range": None}, capPct=100)
+    # F3: the handoff's case. At a 100% cap the loss takes the whole room, which SPEC.md's R5 refuses (BLOCK) where the
+    # handoff sized it (REDUCE); the floor and the room are F3's, the same under both
     r("F3", "CFT Instant $10k at $9,500: the room is at most $100", "crypto_fund_trader", "instant",
-      {"v": "REDUCE", "ddF": 9400, "eff": 100, "risk": 100}, quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=100)
+      {"ddF": 9400, "eff": 100, "risk": 100, "v": "BLOCK", "blocks": ["reaches"], "link": True},
+      quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=100)
+    r("F3", "CFT Instant $10k at $9,500, a 50% cap: sized against the loosest floor", "crypto_fund_trader", "instant",
+      {"v": "REDUCE", "ddF": 9400, "eff": 100, "risk": 50}, quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=50)
     # F4
     r("F4", "BrightFunded: high-water mark $100,000 typed, equity $103,000", "brightfunded", "1step",
       {"hwm": 103000, "ddF": 97000, "hwm_raised": "equity"}, hwm=100000, equity=103000, daystart=103000)
@@ -122,7 +131,9 @@ def regressions():
     # F7
     r("F7", "risk an exact quarter of the room: 3 losses left", "bitfunded", "1step", {"left": 3}, capPct=25, riskPct=5)
     r("F7", "risk 30% of the room: 3 losses left", "bitfunded", "1step", {"left": 3}, capPct=30, riskPct=5)
-    r("F7", "risk the whole room: none left", "bitfunded", "1step", {"left": 0}, capPct=100, riskPct=5)
+    # the whole room: F7 leaves none, and SPEC.md's R5 then refuses the trade
+    r("F7", "risk the whole room", "bitfunded", "1step", {"risk": 4000, "left": 0, "v": "BLOCK", "blocks": ["reaches"]},
+      capPct=100, riskPct=5)
     # D6
     r("D6", "CFT $30k at 200x: held to 5x", "crypto_fund_trader", "1phase", {"lev_used": 5, "lev_held": 5}, quota=30000,
       equity=30000, daystart=30000, lev=200)
@@ -130,7 +141,75 @@ def regressions():
       equity=40000, daystart=40000, lev=10)
     r("D6", "CFT $30k at 3x: below the lowest cap, not held", "crypto_fund_trader", "1phase", {"lev_used": 3}, quota=30000,
       equity=30000, daystart=30000, lev=3)
+    # the binding limit (SPEC.md: daily when dB <= ddB): a tie, each side of it, and the notes that name it. On
+    # Bitfunded's 1-Step, $100k, the floors are day start - $4,000 and $94,000 (exact in floating point, both sides)
+    r("bind", "a tie: day start $98,000, both budgets $5,000, the daily limit binds", "bitfunded", "1step",
+      {"dB": 5000, "ddB": 5000, "eff": 5000}, equity=99000, daystart=98000)
+    r("bind", "day start $97,000: the daily budget $6,000 is wider, the max drawdown binds", "bitfunded", "1step",
+      {"dB": 6000, "ddB": 5000, "eff": 5000}, equity=99000, daystart=97000)
+    r("bind", "day start $99,000: the daily budget $4,000 is narrower, the daily limit binds", "bitfunded", "1step",
+      {"dB": 4000, "ddB": 5000, "eff": 4000}, equity=99000, daystart=99000)
+    r("bind", "a tie, blocked: the reasons and the binding limit named", "bitfunded", "1step",
+      {"v": "BLOCK", "dB": 5000, "ddB": 5000}, equity=99000, daystart=98000, stop=60600)
+    # the isolated note (F5): a 1x long has no liquidation above zero, so it gets n_isolated_none and not n_isolated;
+    # a 3x short has one, and gets n_isolated
+    r("F5", "isolated long at 1x, cross-checked against the notes", "bitfunded", "1step", {"liq_none": True},
+      mode="isolated", lev=1, stop=59700)
+    r("F5", "isolated short at 3x: liquidation shown, n_isolated", "bitfunded", "1step", {"liq_none": False},
+      mode="isolated", lev=3, side=-1, stop=60300)
+    # SPEC.md's changes after the review (2026-09-30)
+    # R1/R2: equity and day start bounded; an account out of range computes nothing and gives no link (R4)
+    r("R1", "equity 0", "bitfunded", "1step", {"v": "BLOCK", "range": ["equity"], "dF": None, "link": False}, equity=0)
+    r("R1", "day start blank: refused, not a daily floor of -$4,000", "bitfunded", "1step",
+      {"v": "BLOCK", "range": ["daystart"], "dF": None, "account_range": True}, daystart="")
+    r("R1", "every account field and the risk out of range, in SPEC.md's order", "bitfunded", "1step",
+      {"v": "BLOCK", "range": ["quota", "equity", "daystart", "risk_pct"], "blocks": None}, quota=0, equity=-1,
+      daystart=0, riskPct=0, stop=60600)
+    r("R1", "equity 0 on a breached-looking account: the range, never b_breached", "bitfunded", "1step",
+      {"v": "BLOCK", "range": ["equity"], "blocks": None}, equity=0, daystart=90000)
+    r("R1", "a high-water mark of 0 is still none", "brightfunded", "1step", {"v": "OK", "range": None, "hwm": 100000}, hwm=0)
+    # R4: a range BLOCK has no link row; a trade's own BLOCK keeps it
+    r("R4", "risk out of range: no link row", "bitfunded", "1step", {"v": "BLOCK", "link": False, "account_range": False},
+      riskPct=101)
+    r("R4", "stop on the wrong side: the link row kept", "bitfunded", "1step", {"v": "BLOCK", "blocks": ["long"], "link": True},
+      stop=60600)
+    # R5: a 100% cap with the intended risk under the room is sized; at or over it, refused
+    r("R5", "a 100% cap, intended $500 under the $4,000 room: sized", "bitfunded", "1step", {"v": "OK", "left": 7}, capPct=100)
+    r("R5", "a 100% cap, intended $5,000 over the $4,000 room: refused", "bitfunded", "1step",
+      {"v": "BLOCK", "blocks": ["reaches"], "risk": 4000, "eff": 4000}, capPct=100, riskPct=5)
+    # R6: a long whose budgets exceed the notional: $100 at risk on a 50% stop is a $200 position
+    r("R6", "a long, a 50% stop: neither floor reached above zero", "bitfunded", "1step",
+      {"v": "OK", "ddist_none": True, "fdist_none": True}, stop=30000, riskPct=0.1, capPct=2.5)
+    r("R6", "the short twin: shown as computed", "bitfunded", "1step",
+      {"ddist_none": False, "fdist_none": False}, side=-1, stop=90000, riskPct=0.1, capPct=2.5)
+    # R7: a pending drawdown type (CFT Instant) has no crossover; a recorded one (Bitfunded) does
+    r("R7", "CFT Instant: drawdown type pending", "crypto_fund_trader", "instant", {"dd_pending": True, "dd_loosest": True},
+      quota=10000, equity=10000, daystart=10000)
+    r("R7", "Bitfunded 1-Step: drawdown type recorded", "bitfunded", "1step", {"dd_pending": False})
+    # R8: the handoff's 10-point stop at 2%, a 35% cap: the cap cuts $2,000 to $1,400 (35% of the $4,000 room), then the margin cuts the size
+    r("R8", "cut by the cap, then the margin: n_cut_margin", "bitfunded", "1step",
+      {"v": "REDUCE", "cut": True, "cut_note": "n_cut_margin", "intended": 2000, "risk": 1400, "qty": 8.3333333,
+       "loss": 483.30}, stop=59990, riskPct=2)
+    r("R8", "cut by the margin alone: no cap note", "bitfunded", "1step", {"v": "REDUCE", "cut": True, "cut_note": None},
+      stop=59990)
+    r("R8", "cut by the cap alone: n_cut", "bitfunded", "1step", {"v": "REDUCE", "cut": False, "cut_note": "n_cut"},
+      riskPct=2)
     return R
+
+
+def states(FJ=None):
+    """The desk's two states with no verdict (review finding 15): no entry yet (EMPTY, the account only) and an entry
+    with no stop (SET, "Set your stop"), and a breached account with no entry, which is EMPTY, not BLOCK. They join the
+    run once the model derives those states; until then the model gives them a verdict the desk rightly doesn't, and
+    the audit would report a correct desk. The model's change is the owner's review (README, "Changing the model"), so
+    these wait for it rather than a rule written here."""
+    S = [_case("state-1", "regression", "states: entry typed, no stop, valid inputs: SET", "bitfunded", "1step",
+               {"v": "SET"}, stop=""),
+         _case("state-2", "regression", "states: no entry, no stop, valid inputs: EMPTY", "bitfunded", "1step",
+               {"v": "EMPTY"}, entry="", stop=""),
+         _case("state-3", "regression", "states: a breached account, no entry: EMPTY, not BLOCK", "bitfunded", "1step",
+               {"v": "EMPTY"}, entry="", stop="", equity=94000)]
+    return S if all(M.model(c["firm"], c["product"], c["x"], FJ).get("v") == c["pin"]["v"] for c in S) else []
 
 
 # the desk's own grid (backtest/i18n_equiv.DESK_GRID's six rows), on every product the desk offers
@@ -179,7 +258,7 @@ def rand(week, n=1000, FJ=None):
 
 
 def all_cases(week, n=1000, FJ=None):
-    return edges() + regressions() + grid(FJ) + rand(week, n, FJ)
+    return edges() + regressions() + states(FJ) + grid(FJ) + rand(week, n, FJ)
 
 
 MONEY = {"loss", "margin0", "margin", "notional", "dF", "ddF", "dB", "ddB", "eff", "risk", "intended", "cap", "hwm", "hi"}
@@ -216,7 +295,9 @@ if __name__ == "__main__":
     bad = pin_check(cs)
     for b in bad:
         print("PIN  ", *b)
-    print(f"{len(cs)} cases for {wk}: {len(edges())} edge, {len(regressions())} regression, {len(grid())} grid, "
-          f"{len(cs) - len(edges()) - len(regressions()) - len(grid())} random; "
-          f"{sum(len(c['pin']) for c in cs)} pinned figures, {len(bad)} off")
+    ns = len(states())
+    print(f"{len(cs)} cases for {wk}: {len(edges())} edge, {len(regressions()) + ns} regression, {len(grid())} grid, "
+          f"{len(cs) - len(edges()) - len(regressions()) - ns - len(grid())} random; "
+          f"{sum(len(c['pin']) for c in cs)} pinned figures, {len(bad)} off"
+          + ("" if ns else "; the EMPTY and SET regressions wait for the model to derive those states"))
     sys.exit(1 if bad else 0)

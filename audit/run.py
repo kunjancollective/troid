@@ -19,8 +19,9 @@ The report also lists the rules with no recorded source, the pending rules and r
   python3 audit/run.py --no-write         # print the result, write nothing
   python3 audit/run.py --no-write --revert all   # diagnosis: the seed's derivations, to show the harness is clean
 
-Exit 0 when every check passed, 1 on any mismatch, 2 when the audit itself can't run (a pinned figure the model
-misses, a page with no desk).
+Exit 0 when every check passed, 1 on any mismatch, 2 when the audit itself couldn't run: a bad argument, a pinned
+figure the model misses, a page with no desk, a preview that won't build, a browser that won't start, any crash. A 2
+writes nothing, so a workflow can tell "the audit found mismatches" from "there is no audit this week".
 """
 from __future__ import annotations
 
@@ -34,6 +35,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import traceback
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -125,6 +127,26 @@ def pieces(tpl):
     return [norm(p) for p in re.split(r"\{[A-Za-z_]+\}", t) if norm(p)]
 
 
+def fill(tpl, text):
+    """The figures a page wrote into one of its strings: {placeholder: what stands there} when `text` is exactly `tpl`
+    with its placeholders filled (tags dropped, bidirectional marks and runs of spaces ignored), else None. Stricter
+    than says(): the literal words must be all there is, and each figure can then be read and compared."""
+    if tpl is None:
+        return None
+    t = norm(html.unescape(re.sub(r"<[^>]+>", "", tpl)).translate(BIDI))
+    rx, names = "", []
+    for i, part in enumerate(re.split(r"\{([A-Za-z_]+)\}", t)):
+        if not i % 2:
+            rx += re.escape(part)
+        elif part in names:
+            rx += f"(?P={part})"
+        else:
+            names.append(part)
+            rx += f"(?P<{part}>.+?)"
+    m = re.fullmatch(rx, norm((text or "").translate(BIDI)))
+    return m.groupdict() if m else None
+
+
 def says(text, tpl):
     pos = 0
     for p in pieces(tpl):
@@ -137,34 +159,111 @@ def says(text, tpl):
 
 # ------------------------------------------------------------------------------------------------ comparing one case
 LAB = [("dF", ["index.js.daily_floor"]), ("ddF", ["index.js.dd_floor"]), ("dB", ["index.js.st_daily_budget"]),
-       ("ddB", ["index.js.st_dd_budget"]), ("intended", ["index.js.st_intended"]), ("cap", ["index.js.st_cap"]),
+       ("ddB", ["index.js.st_dd_budget"]), ("hwm", ["index.js.st_hwm"]), ("hi", ["index.js.st_hi"]),
+       ("intended", ["index.js.st_intended"]), ("cap", ["index.js.st_cap"]),
        ("risk", ["index.js.risk"]), ("dist", ["index.js.st_dist"]), ("fpu", ["index.js.st_fpu"]),
        ("qty", ["index.js.st_qty"]), ("notional", ["index.js.st_notional"]), ("lev_used", ["index.js.st_lev_used"]),
        ("margin", ["index.js.margin"]), ("margin0", ["index.js.st_margin_check"]), ("fees", ["index.js.fees"]),
        ("loss", ["index.js.st_loss"]), ("used", ["index.js.budget_used"]), ("left", ["index.js.st_left"]),
        ("target", ["index.js.st_target"]), ("ddist", ["index.js.st_daily_dist"]),
        ("fdist", ["index.js.st_dd_dist", "index.js.st_trailing_dist"])]
-BEFORE_SIZING = {"dF", "ddF", "dB", "ddB", "intended", "cap", "risk"}     # shown, when present, on a blocked trade
-RANGE_LABEL = {"quota": "index.calc.quota", "risk_pct": "index.calc.risk_pct", "cap_pct": "index.calc.cap_pct",
-               "leverage": "index.calc.leverage", "entry": "index.calc.entry", "stop": "index.calc.stop"}
+ACCOUNT = {"dF", "ddF", "dB", "ddB", "hwm", "hi"}      # the account's rows: in every state past the range check
+BEFORE_SIZING = ACCOUNT | {"intended", "cap", "risk"}  # compared, when present, on a trade that isn't sized
+RANGE_LABEL = {"quota": "index.calc.quota", "equity": "index.calc.equity", "daystart": "index.calc.daystart",
+               "risk_pct": "index.calc.risk_pct", "cap_pct": "index.calc.cap_pct", "leverage": "index.calc.leverage",
+               "entry": "index.calc.entry", "stop": "index.calc.stop"}
 RANGE_WHY = {"gt0": "index.js.b_gt0", "pct": "index.js.b_pct", "lev": "index.js.b_lev"}
-BLOCK_WHY = {"long": "index.js.b_long", "short": "index.js.b_short", "zero": "index.js.b_zero", "breached": "index.js.b_breached"}
+BLOCK_WHY = {"long": "index.js.b_long", "short": "index.js.b_short", "zero": "index.js.b_zero", "breached": "index.js.b_breached",
+             "reaches": "index.js.b_reaches"}                # a reason the model names otherwise is index.js.b_<name>
+
+DOLLAR = 0.0051        # a dollar figure is written to the cent: half a cent, and float slack, whatever the account's size
+PCT2 = 0.0051          # a percentage written to two decimals
+# The places the desk writes a target price to (index.html's st_target row and the readout's "tgt"). Two decimals say
+# nothing about a sub-dollar asset's target (0.08016 and the entry, 0.08, both show 0.08), so the review's finding 14
+# moves the desk to n4, six decimals; this becomes 6 in the same commit, and the audit then holds the target as it
+# holds the entry and the stop. Set lower than the desk writes, the check only loosens; set higher, a right desk fails.
+TARGET_PLACES = 2
 
 
 def tol(key, e):
-    """The seed's tolerances: a cent for dollars, 0.05 points for budget used (one decimal shown), 1e-6 (relative
-    where larger) for a quantity, a fee per unit or a stop distance."""
+    """How far a figure the page writes may sit from the model's: dollars and the working table's percentages to half a
+    cent (an absolute band: a relative one let a $100k account's floor sit 9 cents off), budget used to 0.05 points
+    (one decimal shown), a quantity, a fee per unit or a stop distance to 1e-6 (relative where larger)."""
     if key == "used":
         return 0.051
     if key in ("qty", "fpu", "dist"):
         return max(1e-6, abs(e) * 1e-6)
-    return max(0.006, abs(e) * 1e-6)
+    return DOLLAR
+
+
+def tol_target(g, fmt, e):
+    """A target price: half a unit in the last place it is written to, never coarser than TARGET_PLACES decimals."""
+    return max(half_ulp(g, fmt, TARGET_PLACES), abs(e) * 1e-9) + 1e-9
 
 
 def fmt_x(v):
     if isinstance(v, float):
         return f"{v:.6f}".rstrip("0").rstrip(".") if math.isfinite(v) else str(v)
     return str(v)
+
+
+def rawnum(s, fmt):
+    """A number the page prints as JavaScript's String() does (a leverage, a typed percentage, a count), or failing
+    that, in its locale's format."""
+    t = (s or "").translate(BIDI).strip().rstrip("×x%").strip()
+    try:
+        return float(t)
+    except ValueError:
+        return parse(s, fmt)
+
+
+def near(g, e, t, fmt):
+    v = parse(g, fmt)
+    return v is not None and e is not None and math.isfinite(e) and abs(v - e) <= t
+
+
+def applies(key, r):
+    """Whether the product's rules put this account row in the table: the high-water mark on a trailing drawdown, the
+    high at rollover on a daily limit set from it."""
+    if key == "hwm":
+        return r["dd"] == "trailing"
+    if key == "hi":
+        return r["basis"] == "max_balance_equity"
+    return True
+
+
+def binding(exp):
+    """Which limit binds: the daily one when its budget is at most the drawdown's (SPEC.md: dB ≤ ddB → daily)."""
+    dB, ddB = exp.get("dB"), exp.get("ddB")
+    return "daily" if dB is not None and (ddB is None or dB <= ddB) else "dd"
+
+
+def floor_none(exp, key, x, L):
+    """The words a floor distance is shown as instead of a number, or None. A long can't fall more than 100%, so a
+    floor that far below the entry isn't reached above zero (SPEC.md R6, which extends F5's rule to the floors), once
+    the page's language has the words for it (index.js.v_floor_none); before that the desk writes the number."""
+    v = exp.get(key)
+    if v is None or M.num(x.get("side", 1)) <= 0 or v < 100 - 1e-9:
+        return None
+    return L.plain("index.js.v_floor_none")
+
+
+def breakers(exp, entry, r, x, L):
+    """[(label, adverse %, words shown instead of the number or None)] in the order the page must list its circuit
+    breakers: stop, daily limit, floor and exchange liquidation, least adverse first; one a long can't reach sorts last,
+    as infinity, in that order (JavaScript's sort is stable, like Python's)."""
+    trl = r["dd"] == "trailing" and not exp.get("locked")
+    mode = L.plain("index.js.isolated" if x.get("mode") == "isolated" else "index.js.cross")
+    ords = [(L.plain("index.js.br_stop"), exp["dist"] / entry * 100, None)]
+    for key, bkey, lab in (("ddist", "dB", L.plain("index.js.br_daily")),
+                           ("fdist", "ddB", L.plain("index.js.trailing_floor" if trl else "index.js.dd_floor"))):
+        if exp.get(bkey) is not None:
+            nw = floor_none(exp, key, x, L)
+            ords.append((lab, math.inf if nw else exp[key], nw))
+    liq_lab = norm(html.unescape(re.sub(r"<[^>]+>", "", (L("index.js.br_liq") or "")).replace("{mode}", mode or "")))
+    liq_none = L.plain("index.js.v_liq_none") if exp.get("liq_none") else None
+    ords.append((liq_lab, math.inf if liq_none else max(exp["liq"], 0), liq_none))
+    return sorted(ords, key=lambda o: o[1])
 
 
 def compare(exp, got, L):
@@ -185,28 +284,55 @@ def compare(exp, got, L):
         return bad
     if exp.get("range"):                                     # F2: each field named
         for fld in exp["range"]:
-            why, lab = L(RANGE_WHY[M.RANGE[fld]]), L.plain(RANGE_LABEL[fld])
+            why, lab = L(RANGE_WHY[M.RANGE[fld]]), L.plain(RANGE_LABEL.get(fld, f"index.calc.{fld}"))
             if why is None or lab is None:
-                bad.append(("string", RANGE_WHY[M.RANGE[fld]], "not in en.json"))
+                bad.append(("string", f"{RANGE_WHY[M.RANGE[fld]]} / {RANGE_LABEL.get(fld, fld)}", "not in en.json"))
                 continue
             want = norm(html.unescape(re.sub(r"<[^>]+>", "", why.replace("{field}", lab))))
             if want not in text:
                 bad.append((f"reason: {fld}", want, text[:160]))
         return bad
 
+    x = got.get("x") or {}
+    entry = M.num(x.get("entry", ""))
+    r = M.rules(got["want_firm"], got["want_product"])
     rows = {}
-    for r in got["rows"]:
-        if len(r) == 3:
-            rows.setdefault(norm(r[0]), (norm(r[1]), norm(r[2])))
+    for row in got["rows"]:
+        if len(row) == 3:
+            rows.setdefault(norm(row[0]), (norm(row[1]), norm(row[2])))
     sized = exp["v"] in ("OK", "REDUCE")
     if exp["v"] == "BLOCK":
         for b in exp.get("blocks", []):
-            if L(BLOCK_WHY[b]) is None or not says(text, L(BLOCK_WHY[b])):
-                bad.append((f"reason: {b}", L.plain(BLOCK_WHY[b]) or BLOCK_WHY[b], text[:160]))
+            k = BLOCK_WHY.get(b, f"index.js.b_{b}")
+            if L(k) is None or not says(text, L(k)):
+                bad.append((f"reason: {b}", L.plain(k) or k, text[:160]))
+
+    # the binding limit, by name, and the room it leaves: in the table's binding row in every state, and in the verdict
+    # line wherever there is one (a wrong name there reads through the verdict, the notes and the explainer)
+    want_bind = L.plain("index.js.bind_daily" if binding(exp) == "daily" else "index.js.bind_dd")
+    lab_b = L.plain("index.js.st_binding")
+    if lab_b not in rows:
+        bad.append((f"row: {lab_b}", want_bind, "missing"))
+    else:
+        g = rows[lab_b][1]
+        head, _, fig = g.rpartition(" · ")
+        if head != want_bind:
+            bad.append((lab_b, want_bind, g))
+        if not near(fig, exp["eff"], DOLLAR, L.num):
+            bad.append((f"{lab_b} (room)", fmt_x(exp["eff"]), g))
+    vt = norm((got.get("vtxt") or "").translate(BIDI))
+    if exp["v"] == "BLOCK":
+        if vt != want_bind:
+            bad.append(("verdict line (binding)", want_bind, vt))
+    elif exp["v"] in ("OK", "REDUCE", "SET"):
+        f = fill(L("index.js.v_txt"), vt)
+        if f is None or norm(f["bind"]) != want_bind or not near(f["room"], exp["eff"], DOLLAR, L.num):
+            bad.append(("verdict line", f"{want_bind} · {fmt_x(exp['eff'])}", vt))
+
     got_v = {}
     for key, keys in LAB:
         e = exp.get(key)
-        if e is None or (not sized and key not in BEFORE_SIZING):
+        if e is None or (not sized and key not in BEFORE_SIZING) or not applies(key, r):
             continue
         labs = [L.plain(k) for k in keys]
         if all(l is None for l in labs):
@@ -214,22 +340,32 @@ def compare(exp, got, L):
             continue
         lab = next((l for l in labs if l in rows), None)
         if lab is None:
-            if sized:
+            if sized or key in ACCOUNT:
                 bad.append((f"row: {labs[0] or keys[0]}", fmt_x(e), "missing"))
             continue
         formula, g = rows[lab]
+        nw = floor_none(exp, key, x, L) if key in ("ddist", "fdist") else None
+        if nw is not None:                                   # a long's floor it can't reach (R6): words, not a number
+            if g != nw:
+                bad.append((labs[0], nw, g))
+            continue
         if key in ("fees", "dist"):
             g0 = g.split("(")[0]
         else:
             g0 = g
-        gv = parse(g0, L.num)
+        gv = rawnum(g0, L.num) if key in ("lev_used", "left") else parse(g0, L.num)
         got_v[key] = (gv, half_ulp(g0, L.num, 6 if key in ("qty", "dist", "fpu") else 0))
-        if gv is None or not math.isfinite(e) or abs(gv - e) > tol(key, e):
+        t = tol_target(g0, L.num, e) if key == "target" else tol(key, e)
+        if gv is None or not math.isfinite(e) or abs(gv - e) > t:
             bad.append((labs[0], fmt_x(e), g))
+        if key == "dist":                                    # its share of the entry, in parentheses
+            m = re.search(r"\(([^)]*)\)", g)
+            want = e / entry * 100 if entry else math.nan
+            if not near(m.group(1) if m else None, want, PCT2, L.num):
+                bad.append((f"{labs[0]} (% of entry)", fmt_x(want), g))
         if key == "fees" and exp.get("fshare") is not None:
             m = re.search(r"\(([^)]*)\)", g)
-            sv = parse(m.group(1).split()[0] if m else None, L.num)
-            if sv is None or not math.isfinite(exp["fshare"]) or abs(sv - exp["fshare"]) > 0.006:
+            if not near(m.group(1).split()[0] if m else None, exp["fshare"], PCT2, L.num):
                 bad.append((f"{labs[0]} (share of risk)", fmt_x(exp["fshare"]), g))
         if key == "margin0":                                 # F1: the row says which way the check went
             want = L("index.js.f_margin_cut" if exp.get("cut") else "index.js.f_margin_fits")
@@ -259,17 +395,120 @@ def compare(exp, got, L):
             none = L.plain("index.js.v_liq_none")
             if none is None or g != none:
                 bad.append(("liquidation", none or "index.js.v_liq_none", g))
-            elif got.get("brk") and none not in norm(got["brk"]):
-                bad.append(("liquidation (breakers)", none, norm(got["brk"])[:120]))
-        else:
-            gv = parse(g, L.num)
-            if gv is None or not math.isfinite(e) or abs(gv - e) > 0.006:
-                bad.append(("liquidation", fmt_x(e), g))
+        elif not near(g, e, PCT2, L.num):
+            bad.append(("liquidation", fmt_x(e), g))
 
-    # F1: the verdict says the margin cut the size
-    if exp.get("cut") and not says(text, L("index.js.vs_margin") or "\x00"):
-        bad.append(("verdict sentence", L.plain("index.js.vs_margin") or "index.js.vs_margin", text[:160]))
+    loss = exp.get("loss", exp.get("risk"))           # the loss at the stop (the risk, with F6 reverted for diagnosis)
+    fee_known = exp.get("fee_known")
+    pend_w = L.plain("index.js.pending")
+
+    # the readout: the six cells a trader reads first, each figure and the line under it
+    cells = {}
+    for k, val, sub in got.get("read") or []:
+        cells.setdefault(norm(k), (norm(val), norm(sub)))
+    stop_pct = exp["dist"] / entry * 100 if entry else math.nan
+    for key, e, t, sub_key, sub_want in (
+            ("index.js.size", exp["qty"], tol("qty", exp["qty"]), None, exp["notional"]),
+            ("index.js.margin", exp["margin"], DOLLAR,
+             "index.js.s_lev_pending" if exp.get("cap_l") is None else "index.js.s_lev", {"lev": exp["lev_used"]}),
+            ("index.js.risk", loss, DOLLAR, "index.js.s_incl_fees" if fee_known else "index.js.s_fees_pending",
+             {"fees": exp["fees"]} if fee_known else {}),
+            ("index.js.fees", exp["fshare"] if fee_known else None, 0.0501, None, None),
+            ("index.js.stop", stop_pct, PCT2, "index.js.s_tgt", {"price": exp["target"]}),
+            ("index.js.budget_used", exp["used"], 0.5001, "index.js.s_floor", {"floor": exp.get("ddF")})):
+        lab = L.plain(key)
+        if lab not in cells:
+            bad.append((f"readout: {lab or key}", fmt_x(e) if e is not None else pend_w, "missing"))
+            continue
+        gv, gs = cells[lab]
+        if e is None:                                        # a fee troid hasn't recorded: pending, not a number
+            if gv != pend_w:
+                bad.append((f"readout: {lab}", pend_w, gv))
+        elif not near(gv, e, t, L.num):
+            bad.append((f"readout: {lab}", fmt_x(e), gv))
+        if sub_key is None:
+            if sub_want is not None and not near(gs, sub_want, DOLLAR, L.num):
+                bad.append((f"readout: {lab} (under it)", fmt_x(sub_want), gs))
+            continue
+        f = fill(L(sub_key), gs)
+        ok = f is not None
+        for ph, w in (sub_want or {}).items():
+            if not ok:
+                break
+            if w is None:                                    # a pending floor
+                ok = norm(f[ph]) == pend_w
+            elif ph == "lev":
+                ok = rawnum(f[ph], L.num) == w
+            elif ph == "price":
+                ok = near(f[ph], w, tol_target(f[ph], L.num, w), L.num)
+            else:
+                ok = near(f[ph], w, DOLLAR, L.num)
+        if not ok:
+            bad.append((f"readout: {lab} (under it)", ", ".join(f"{k} {fmt_x(w)}" for k, w in (sub_want or {}).items())
+                        or L.plain(sub_key), gs))
+
+    # the verdict sentence, figure by figure: F1's margin cut, the budget cap's cut, or the fit
+    rp, cp = M.num(x.get("riskPct")), M.num(x.get("capPct"))
+    if exp.get("cut"):
+        key, want = "index.js.vs_margin", {"lev": exp["lev_used"], "max": exp["lev_max"], "risk": loss}
+    elif exp["v"] == "REDUCE":
+        key, want = "index.js.vs_reduce", {"pct": rp, "intended": exp["intended"], "risk": exp["risk"], "cap": cp}
+    else:
+        key, want = "index.js.vs_ok", {"risk": loss, "cap": cp, "room": exp["eff"], "bind": want_bind}
+    vs = norm(got.get("vsent"))
+    f = fill(L(key), vs)
+    if f is None:
+        bad.append(("verdict sentence", L.plain(key) or key, vs[:160]))
+    else:
+        for ph, w in want.items():
+            if isinstance(w, str):
+                ok = norm(f[ph]) == w
+            elif ph in ("lev", "pct", "cap"):
+                ok = rawnum(f[ph], L.num) is not None and abs(rawnum(f[ph], L.num) - w) <= 1e-9
+            else:
+                ok = near(f[ph], w, DOLLAR, L.num)
+            if not ok:
+                bad.append((f"verdict sentence {{{ph}}}", fmt_x(w), f[ph]))
+
+    # the circuit breakers, each at its own distance, least adverse first
+    order = breakers(exp, entry, r, x, L)
+    brk = norm((got.get("brk") or "").translate(BIDI))
+    head = L.plain("index.js.breakers") or ""
+    segs = [norm(s) for s in (brk[len(head):] if brk.startswith(head) else brk).split("→") if norm(s)]
+    seen = []
+    for s in segs:
+        lab = max((o[0] for o in order if o[0] and s.startswith(o[0])), key=len, default=None)
+        if lab is None:
+            bad.append(("breakers", " → ".join(o[0] for o in order), brk[:160]))
+            break
+        val = norm(s[len(lab):])
+        want, none = next((o[1], o[2]) for o in order if o[0] == lab)
+        if none is not None:
+            if val != none:
+                bad.append((f"breakers: {lab}", none, val))
+            gv = math.inf
+        else:
+            gv = parse(val, L.num)
+            if gv is None or abs(gv - want) > PCT2:
+                bad.append((f"breakers: {lab}", f"{want:.2f}%", val))
+        seen.append((lab, math.inf if gv is None else gv))
+    if sorted(l for l, _ in seen) != sorted(o[0] for o in order):
+        bad.append(("breakers (which)", " → ".join(o[0] for o in order), brk[:160]))
+    elif any(b[1] < a[1] - 1e-9 for a, b in zip(seen, seen[1:])):
+        bad.append(("breakers (order)", " → ".join(o[0] for o in order), brk[:160]))
+
     # the notes a fix adds, where the case calls for them
+    notes = [norm((n or "").translate(BIDI)) for n in got.get("notes") or []]
+
+    def note(key, t=0.0501, **want):
+        """The note `key` among the page's notes, with these figures in it (a percentage within `t`)."""
+        for n in notes:
+            f = fill(L(key), n)
+            if f is not None and all((norm(f[k]) == w) if isinstance(w, str) else
+                                     (rawnum(f[k], L.num) == w if k in ("n", "lev") else near(f[k], w, t, L.num))
+                                     for k, w in want.items()):
+                return True
+        return False
     for flag, key in (("hwm_raised", None), ("hi_raised", "index.js.n_hi_raised"), ("dd_loosest", "index.js.n_dd_loosest"),
                       ("lev_held", "index.js.n_lev_held")):
         if not exp.get(flag):
@@ -278,6 +517,28 @@ def compare(exp, got, L):
             key = "index.js.n_hwm_raised_equity" if exp["hwm_raised"] == "equity" else "index.js.n_hwm_raised"
         if L(key) is None or not says(text, L(key)):
             bad.append((f"note: {key.split('.')[-1]}", L.plain(key) or key, "not shown"))
+    # losses left, with the binding limit named (F7)
+    if exp.get("left") is not None and not note("index.js.n_left", n=exp["left"], bind=want_bind):
+        bad.append(("note: n_left", fmt_x(exp["left"]) + " · " + want_bind, " | ".join(notes)[:160]))
+    # the breaker that bites first: DANGER when it isn't the stop; else cross's warning, or isolated's liquidation, which
+    # a long at 1x doesn't have (F5). A near tie between the first two is left alone: either reading is the page's to make
+    tie = len(order) > 1 and abs(order[0][1] - order[1][1]) < 1e-7
+    if not tie:
+        first, pct, _ = order[0]
+        if first != L.plain("index.js.br_stop"):
+            if not note("index.js.n_danger", PCT2, what=first, pct=pct):
+                bad.append(("note: n_danger", f"{first} {pct:.2f}%", " | ".join(notes)[:160]))
+        elif x.get("mode") == "isolated":
+            if exp.get("liq_none"):
+                if not note("index.js.n_isolated_none", lev=exp["lev_used"]):
+                    bad.append(("note: n_isolated_none", L.plain("index.js.n_isolated_none"), " | ".join(notes)[:160]))
+                if any(fill(L("index.js.n_isolated"), n) is not None for n in notes):
+                    bad.append(("note: n_isolated", "absent (no liquidation above zero)", "shown"))
+            elif not note("index.js.n_isolated", pct=exp["liq"]):
+                bad.append(("note: n_isolated", f"{exp['liq']:.1f}%", " | ".join(notes)[:160]))
+        elif norm((L.plain("index.js.n_cross") or "").translate(BIDI)) not in notes:
+            bad.append(("note: n_cross", L.plain("index.js.n_cross"), " | ".join(notes)[:160]))
+
     # the page against itself: its quantity × (its stop distance + its fee per unit) is its loss at the stop, to the
     # cent, allowing only for the places each figure is written to (the loss to the cent, the others to six decimals)
     vals = [got_v.get(k) for k in ("qty", "dist", "fpu", "loss")]
@@ -309,9 +570,12 @@ DRIVE = """(cs)=>cs.map(([f,p,x])=>{
   const set=(k,v)=>{const e=document.getElementById(k);if(e)e.value=v};let err=null;
   try{set('firm',f);fillProfiles();set('profile',p);toggleInputs();['hwm','hirollover'].forEach(k=>set(k,''));
     for(const k in x)set(k,String(x[k]));render();}catch(e){err=String(e&&e.message||e)}
-  const R=document.getElementById('result'),vd=R.querySelector('.verdict');
+  const R=document.getElementById('result'),vd=R.querySelector('.verdict'),tx=(e)=>e?e.textContent:'';
   return {rows:[...R.querySelectorAll('details.work tr')].map(r=>[...r.children].map(td=>td.textContent)),
-    v:vd?((vd.className.match(/\\bv(OK|REDUCE|BLOCK)\\b/)||[])[1]||null):null,text:R.textContent,
+    v:vd?((vd.className.match(/\\bv(OK|REDUCE|BLOCK|SET)\\b/)||[])[1]||null):(R.querySelector('.d2empty')?'EMPTY':null),
+    text:R.textContent,vsent:tx(vd&&vd.querySelector('.vsent')),vtxt:tx(vd&&vd.querySelector('.vtxt')),
+    read:[...R.querySelectorAll('.read .cell')].map(c=>['.k','.v','.s'].map(s=>tx(c.querySelector(s)))),
+    notes:[...R.querySelectorAll('.notes > div:not(.brk)')].map(tx),
     brk:[...R.querySelectorAll('.brk')].map(e=>e.textContent).join(' '),prov:(R.querySelector('.prov')||{}).textContent||'',
     where:[document.getElementById('firm').value,document.getElementById('profile').value],err}})"""
 CHUNK = 25
@@ -340,7 +604,7 @@ def drive(browser, url, cases, states):
                         "&&typeof FIRMS==='object'&&!!document.getElementById('result')")
     if not ready:
         ctx.close()
-        raise SystemExit(f"audit: {url} has no desk to drive (render, fillProfiles, toggleInputs, FIRMS, #result)")
+        cant(f"{url} has no desk to drive (render, fillProfiles, toggleInputs, FIRMS, #result)")
     firms_page = pg.evaluate("()=>JSON.parse(JSON.stringify(FIRMS))")
     out = []
     for i in range(0, len(cases), CHUNK):
@@ -348,7 +612,7 @@ def drive(browser, url, cases, states):
         n0 = len(errs)
         res = pg.evaluate(DRIVE, [[c["firm"], c["product"], c["x"]] for c in chunk])
         for c, r in zip(chunk, res):
-            r["want_firm"], r["want_product"] = c["firm"], c["product"]
+            r["want_firm"], r["want_product"], r["x"] = c["firm"], c["product"], c["x"]
             if len(errs) > n0 and not r["err"]:
                 r["err"] = "page error while this batch ran: " + errs[-1][:200]
             out.append(r)
@@ -502,12 +766,18 @@ def report_md(R):
       f"regressions for F1–F7 and D6; the desk's grid, {len(C.GRID)} rows on each of the {g['grid'] // len(C.GRID)} "
       f"products the desk offers ({g['grid']}); {g['random']:,} random cases seeded by `{R['seed']}`. Before any page "
       f"was driven, the model was held to the {R['pins']} figures the edge cases and regressions pin by hand.")
-    w("- **Each case** (one check per page): the verdict; every figure in the working table (floors, budgets, intended "
-      "risk, cap, risk, stop distance, fee per unit, quantity, notional, leverage used, margin, the margin check, fees "
-      "and their share, the loss at the stop, budget used, losses left, target, the limit distances, liquidation) to "
-      "the cent for dollars, 1e-6 for quantities and prices, 0.05 points for budget used; a blocked trade's reasons, "
-      "each out-of-range field named; the notes and formulas a fix adds; and the page against itself: its quantity × "
-      "(stop distance + fee per unit) equals its loss at the stop, to the cent.")
+    w("- **Each case** (one check per page): the verdict; every figure in the working table (floors, budgets, the "
+      "high-water mark and the high at rollover where the product has them, the binding limit by name and its room, "
+      "intended risk, cap, risk, stop distance and its share of the entry, fee per unit, quantity, notional, leverage "
+      "used, margin, the margin check, fees and their share, the loss at the stop, budget used, losses left, target, "
+      "the limit distances, liquidation); the readout's six cells and the line under each (size and notional, margin "
+      "and leverage, risk and fees, fee share, stop and target, budget used and floor); the verdict sentence and the "
+      "verdict line, each figure in them; the circuit breakers, each distance and their order; the notes: losses left "
+      "with the binding limit named, the breaker that bites first, and those a fix adds. Dollars to the cent (half a "
+      "cent, whatever the account's size), quantities, fees per unit and stop distances to 1e-6, a target to "
+      f"{TARGET_PLACES} decimals, percentages to the places shown, budget used to 0.05 points in the table. A "
+      "blocked trade's reasons, each out-of-range field named; the formulas a fix adds; and the page against itself: "
+      "its quantity × (stop distance + fee per unit) equals its loss at the stop, to the cent.")
     w(f"- **Data checks.** The page's inline `FIRMS` against `firms.json`, every calc field of every product, on each "
       f"page ({R['n_firms_checks']}); on the English page, each product's provenance: every rule the desk sizes with "
       f"cites its source, or is named in \"Source not yet recorded for …\", as `firms.json` records it ({R['n_prov_checks']}).")
@@ -612,7 +882,32 @@ def git(*a):
     return subprocess.run(["git", *a], cwd=ROOT, capture_output=True, text=True).stdout.strip()
 
 
+class CantRun(Exception):
+    """The audit couldn't run: exit 2, write nothing."""
+
+
+def cant(msg):
+    raise CantRun(msg)
+
+
 def main():
+    """Exit 0, 1 or 2 (the module's docstring). argparse's own errors already exit 2; everything else that stops the
+    run before its result is written, whatever raised it, exits 2 as well, never 1, which means mismatches."""
+    try:
+        code = _main()
+    except CantRun as e:
+        print(f"audit: couldn't run: {e}", file=sys.stderr)
+        sys.exit(2)
+    except SystemExit:
+        raise
+    except BaseException:                                    # a crash, the browser, a preview build, Ctrl-C
+        traceback.print_exc()
+        print("audit: couldn't run (above); nothing written", file=sys.stderr)
+        sys.exit(2)
+    sys.exit(code)
+
+
+def _main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--week", help="ISO week, e.g. 2026-W40 (default: this week, UTC); seeds the random cases")
     ap.add_argument("--n", type=int, default=1000, help="random cases (default 1000)")
@@ -626,14 +921,14 @@ def main():
 
     week = a.week or this_week()
     if not WEEK.match(week):
-        sys.exit(f"audit: --week must look like 2026-W40, not {week!r}")
+        cant(f"--week must look like 2026-W40, not {week!r}")
     revert = tuple(M.ITEMS if a.revert == "all" else [x.strip() for x in a.revert.split(",")]) if a.revert else ()
     if any(x not in M.ITEMS for x in revert):
-        sys.exit(f"audit: --revert takes {', '.join(M.ITEMS)} or all")
+        cant(f"--revert takes {', '.join(M.ITEMS)} or all")
     write = not a.no_write and not revert
     langs = [x.strip() for x in a.pages.split(",") if x.strip()]
     if any(x not in PATHS for x in langs):
-        sys.exit(f"audit: --pages takes {', '.join(PATHS)}")
+        cant(f"--pages takes {', '.join(PATHS)}")
     now = dt.datetime.now(dt.timezone.utc)
     FJ = M.firms()
     cases = C.all_cases(week, a.n, FJ)
@@ -642,8 +937,7 @@ def main():
     if pins:
         for p in pins:
             print("PIN  ", *p)
-        print(f"audit: the model misses {len(pins)} pinned figure(s); the model or the case needs the owner's review")
-        sys.exit(2)
+        cant(f"the model misses {len(pins)} pinned figure(s); the model or the case needs the owner's review")
 
     from playwright.sync_api import sync_playwright
     states = prov_states(FJ)
@@ -651,8 +945,10 @@ def main():
     with tempfile.TemporaryDirectory() as tmp, sync_playwright() as pw:
         roots = {"en": Path(a.site)}
         if "ar" in langs:           # a draft: rendered for the run, never into web/public
-            subprocess.run([sys.executable, str(ROOT / "backtest" / "site_build.py"), "--preview", tmp, "--langs", "ar"],
-                           cwd=ROOT, check=True, capture_output=True)
+            b = subprocess.run([sys.executable, str(ROOT / "backtest" / "site_build.py"), "--preview", tmp, "--langs", "ar"],
+                               cwd=ROOT, capture_output=True, text=True)
+            if b.returncode:
+                cant(f"the /ar preview didn't build (site_build.py --preview exited {b.returncode}):\n{b.stderr[-2000:]}")
             roots["ar"] = Path(tmp)
         browser = launch(pw)
         for lang in langs:
@@ -689,7 +985,11 @@ def main():
                 passed += 1
 
     rr = P.rules_read(FJ)
-    R = {"date": now.date().isoformat(), "week": week, "seed": week, "commit": git("rev-parse", "HEAD"),
+    commit = git("rev-parse", "HEAD")
+    if write and not re.fullmatch(r"[0-9a-f]{40}", commit):
+        # audit.js hides a line whose commit isn't one: an audit.json without it would publish nothing, silently
+        cant(f"git rev-parse HEAD gave {commit!r}, not a commit; the result would name no tree")
+    R = {"date": now.date().isoformat(), "week": week, "seed": week, "commit": commit,
          "dirty": bool(git("status", "--porcelain")), "checks": passed + failed, "passed": passed, "failed": failed,
          "cases": len(cases), "pages": [PATHS[x] for x in langs], "revert": list(revert),
          "groups": {g: sum(1 for c in cases if c["group"] == g) for g in ("edge", "regression", "grid", "random")},
@@ -730,7 +1030,7 @@ def main():
         jp.parent.mkdir(parents=True, exist_ok=True)
         jp.write_text(json.dumps(out, indent=1) + "\n")
         print(f"wrote {jp} and {rp}")
-    sys.exit(1 if failed else 0)
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

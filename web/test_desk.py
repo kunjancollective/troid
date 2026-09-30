@@ -133,13 +133,14 @@ def _key(k, en):
 
 def as_old(h):
     """The new desk's result, figures masked, written as the old desk wrote it: the new rows out, the named rewordings
-    back, "none above zero" a percentage again, the loosest reading's label and note out."""
+    back, "none above zero" and a long's floor "not reached above zero" (the review, 2026-09-30) percentages again, the
+    loosest reading's label and note out."""
     h = mask(h)
     for k in NEW_ROWS:
         h = re.sub(r"<tr><td>" + re.escape(EN[k]) + r"</td>.*?</tr>", "", h)
     for k in REWORDED:
         h = h.replace(_key(k, EN), _key(k, EN0))
-    h = h.replace(_key("index.js.n_isolated_none", EN), _key("index.js.n_isolated", EN0)).replace(EN["index.js.v_liq_none"], "#%")
+    h = h.replace(_key("index.js.n_isolated_none", EN), _key("index.js.n_isolated", EN0)).replace(EN["index.js.v_liq_none"], "#%").replace(EN["index.js.v_floor_none"], "#%")
     h = h.replace(_key("index.js.f_dd_loosest", EN), _key("index.js.f_dd_static", EN0))
     return h.replace("<div>" + _key("index.js.n_dd_loosest", EN) + "</div>", "").replace('<div class="notes"></div>', "")
 
@@ -240,13 +241,20 @@ def main():
                 past = a[4]["side"] == "1" and lo[0].endswith("%") and float(lo[0].rstrip("%").replace(",", "")) >= 100
                 if past != (ln[0] == EN["index.js.v_liq_none"]):
                     liq.append((a[:3], lo[0], ln[0]))
+            for lab in (EN["index.js.st_daily_dist"], EN["index.js.st_dd_dist"], EN["index.js.st_trailing_dist"]):
+                fo, fn = [r[2] for r in a[3]["rows"] if r[0] == lab], [r[2] for r in c[3]["rows"] if r[0] == lab]
+                if fo:
+                    past = a[4]["side"] == "1" and float(fo[0].rstrip("%").replace(",", "")) >= 100
+                    if past != (fn[0] == EN["index.js.v_floor_none"]):
+                        liq.append((a[:3], lab, fo[0], fn[0]))
             rr = {r[0]: r for r in c[3]["rows"]}
             if EN["index.js.st_loss"] in rr and not (rr[EN["index.js.st_qty"]][1] == EN["index.js.f_qty_margin"] or rr[EN["index.js.st_loss"]][2] == rr["risk"][2]):
                 loss.append((a[:3], rr["risk"][2], rr[EN["index.js.st_loss"]][2]))
         ok("the figures the audit didn't change are the old desk's in every state: inputs, floors, budgets, binding, intended risk, cap, "
            "risk, stop distance, leverage used (held to the lowest recorded cap where no class covers the quota), budget used, target",
            not moved, moved[:4])
-        ok("\"none above zero\" exactly where a long's liquidation was at or past 100%; shorts and nearer ones as computed", not liq, liq[:4])
+        ok("\"none above zero\" exactly where a long's liquidation was at or past 100%, and a long's floor distances \"not reached above zero\" "
+           "exactly where they were (the review, 2026-09-30); shorts and nearer ones as computed", not liq, liq[:4])
         ok("in every sized state, the loss at the stop is the risk to the cent", not loss, loss[:4])
         ok("no page error across the 84 states", not errs, errs)
         ctx.close()
@@ -647,30 +655,52 @@ def main():
            and r["rows"][CHECK][1] == r["rows"]["margin"][1] and r["rows"][QTY][0] == E("index.js.f_qty"), r["rows"].get(CHECK))
 
         # F2: out of range is BLOCK, naming the field, and its step card is flagged
-        attrs = pg.evaluate("()=>Object.fromEntries(['quota','entry','stop','riskPct','capPct','lev'].map(i=>{const e=document.getElementById(i);return [i,[e.min,e.max]]}))")
-        ok("F2: the fields carry the bounds: quota, entry, stop min 0; risk % and budget cap % 0 to 100; leverage min 1",
-           attrs == {"quota": ["0", ""], "entry": ["0", ""], "stop": ["0", ""], "riskPct": ["0", "100"], "capPct": ["0", "100"], "lev": ["1", ""]}, attrs)
+        attrs = pg.evaluate("()=>Object.fromEntries(['quota','equity','daystart','entry','stop','riskPct','capPct','lev'].map(i=>{const e=document.getElementById(i);return [i,[e.min,e.max]]}))")
+        ok("F2: the fields carry the bounds: quota, equity, day start, entry, stop min 0; risk % and budget cap % 0 to 100; leverage min 1",
+           attrs == {"quota": ["0", ""], "equity": ["0", ""], "daystart": ["0", ""], "entry": ["0", ""], "stop": ["0", ""], "riskPct": ["0", "100"],
+                     "capPct": ["0", "100"], "lev": ["1", ""]}, attrs)
+        # the account's fields with a day start below equity, so that no budget is spent and only the range check can flag
+        # the account card; for them the whole sentence, so a false "already breached" beside it fails (the review,
+        # 2026-09-30). An entry or a stop out of range keeps the trade's other reasons (a stop now above entry)
         for fid, bad, key, lab, card in [("riskPct", -1, "b_pct", "risk_pct", "st-risk"), ("capPct", 150, "b_pct", "cap_pct", "st-risk"),
                                          ("lev", 0, "b_lev", "leverage", "st-risk"), ("quota", 0, "b_gt0", "quota", "st-account"),
+                                         ("equity", 0, "b_gt0", "equity", "st-account"), ("daystart", "", "b_gt0", "daystart", "st-account"),
                                          ("entry", 0, "b_gt0", "entry", "st-trade"), ("stop", -5, "b_gt0", "stop", "st-trade")]:
             reason = E("index.js." + key).format(field=E("index.calc." + lab))
-            r = desk(**dict({"entry": 77872, "stop": 74814}, **{fid: bad}))
-            ok(f"F2: {E('index.calc.' + lab)} {bad}: BLOCK, \"{reason}\", the {card[3:]} card flagged",
-               r["v"] == "vBLOCK" and reason in r["sent"] and reason in r["notes"] and r["cards"] == [card] and not r["cells"], r)
+            r = desk(**dict({"entry": 77872, "stop": 74814, "daystart": 99000}, **{fid: bad}))
+            ok(f"F2: {E('index.calc.' + lab)} {bad if bad != '' else 'blank'}: BLOCK, exactly \"{reason}\", the {card[3:]} card flagged, no link",
+               r["v"] == "vBLOCK" and (r["sent"] == E("index.js.vs_block").format(reasons=reason) if card == "st-account" else reason in r["sent"])
+               and reason in r["notes"] and r["cards"] == [card]
+               and not r["cells"] and not pg.query_selector("#result [data-copy-link]"), r)
+        r = desk(quota=-100000)
+        g = pg.evaluate("document.getElementById('gauge').getAttribute('aria-label')")
+        ok("F2: a refused quota computes no floor: none in the working table or on the gauge (the review, 2026-09-30)",
+           r["v"] == "vBLOCK" and E("index.js.daily_floor") not in r["rows"] and E("index.js.dd_floor") not in r["rows"]
+           and "floor" not in g and not r["prov"], (g, r["rows"]))
         r = desk(riskPct=-1)
         ok("F2: before an entry is typed too", r["v"] == "vBLOCK" and r["sent"] == E("index.js.vs_block").format(
             reasons=E("index.js.b_pct").format(field=E("index.calc.risk_pct"))) and r["cards"] == ["st-risk"], r)
         r = desk(entry=77872, stop=74814)
         ok("F2: back in range, the desk sizes again and no card is flagged", r["v"] == "vOK" and not r["cards"], r["cards"])
 
-        # F3: a pending drawdown type with a known max is sized against the static floor, the loosest reading
+        # F3: a pending drawdown type with a known max is sized against the static floor, the loosest reading. The
+        # handoff's case is at a 100% cap, whose risk would take the whole $100 of room: since the review (2026-09-30)
+        # that is refused (the cap case below), so the sizing is read at 50%
         m = FIRMS["crypto_fund_trader"]["products"]["instant"]["max_pct"]
+        loosest = E("index.js.f_dd_loosest").format(m=f"{m:g}")
         r = desk(firm="crypto_fund_trader", prod="instant", quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=100, entry=77872, stop=74814)
         ok(f"F3: CFT Instant, $10,000, equity and day start $9,500, 2% at a 100% cap: the {m:g}% max loss's floor at $9,400 binds, room $100, "
-           "the risk at most $100, and the note says which reading it is",
-           r["rows"]["max-loss floor"] == [E("index.js.f_dd_loosest").format(m=f"{m:g}"), "$9,400.00"] and r["rows"]["binding"][1].endswith("$100.00")
-           and usd(r["cells"]["risk"]) <= 100 and E("index.js.n_dd_loosest").format(m=f"{m:g}") in r["notes"]
-           and E("index.js.n_dd_pending") not in r["notes"] and E("index.js.u_dd") not in r["prov"], r)
+           "and a risk of the whole room is refused",
+           r["rows"]["max-loss floor"] == [loosest, "$9,400.00"] and r["rows"]["binding"][1].endswith("$100.00") and r["v"] == "vBLOCK", r)
+        r = desk(firm="crypto_fund_trader", prod="instant", quota=10000, equity=9500, daystart=9500, riskPct=2, capPct=50, entry=77872, stop=74814)
+        how, gfloor = pg.inner_text("#xs"), pg.text_content("#gx-floor")
+        ok("F3: at a 50% cap the risk is $50, the note says which reading it is, and so do the explainer and the floor's note; "
+           "the explainer shows no crossover for a pending type (the review, 2026-09-30)",
+           r["rows"]["max-loss floor"] == [loosest, "$9,400.00"] and r["cells"]["risk"] == "$50.00"
+           and E("index.js.n_dd_loosest").format(m=f"{m:g}") in r["notes"] and E("index.js.n_dd_pending") not in r["notes"]
+           and E("index.js.u_dd") not in r["prov"] and loosest in how and loosest in gfloor
+           and E("desk2.js.x3_pending").split("{product}")[1] in how
+           and E("desk2.js.x3_none").split("{product}")[1] not in how, (how, gfloor, r))
 
         # F4: a high-water mark or a high at rollover below what the account has reached is raised, and says so
         r = desk(firm="brightfunded", prod="1step", equity=103000, daystart=103000, hwm=100000)
@@ -724,7 +754,52 @@ def main():
         ok(f"CFT 1-Phase, $30,000 at 200×: no class recorded at this size, so leverage is held to {low}×, the lowest cap the firm records",
            r["rows"]["leverage used"] == [E("index.js.f_lev_pending_held").format(lev=low), f"{low}×"]
            and E("index.js.n_lev_held").format(lev=low) in r["notes"] and r["cells"]["margin"] == r["rows"]["margin"][1], r)
+        # the review's cases (2026-09-30), each read from the page. A margin cut: the explainer shows the cut, never "the
+        # loss is the same either way", and every figure called the trade's risk is the loss its cell shows
+        r = desk(entry=60000, stop=59990)
+        loss, how = r["rows"][LOSS][1], pg.inner_text("#xs")
+        gr = pg.text_content("#gx-risk")
+        ok("F1 in the explainer: the margin set the size, the loss at the stop is the verdict's, no \"either way\"",
+           E("desk2.js.x6_code").rsplit("}", 1)[1].strip() not in how and E("desk2.js.x6_h_cut") in how and loss in how
+           and r["rows"][CHECK][1] in how and "8.333333" in how and loss in r["sent"], how)
+        ok("F1: the risk note ends on the loss, and the provenance gives the margin's formula",
+           gr == E("index.js.gx_risk_cut").format(intended="$500.00", cap="$1,400.00", rb="$500.00", lev=5, risk=loss)
+           and E("index.js.f_margin_cut").format(lev=5) in r["prov"], (gr, r["prov"]))
+        ok("the leverage note says the loss is unchanged only while the margin fits", E("glossary.leverage.what") in pg.text_content("#g-leverage")
+           and "margin fits" in E("glossary.leverage.what"))
+        r = desk(entry=60000, stop=59990, riskPct=2, capPct=25)
+        loss, gr = r["rows"][LOSS][1], pg.text_content("#gx-risk")
+        ok("both cuts at once (budget cap, then margin): the note and the risk note end on the loss the verdict states",
+           E("index.js.n_cut_margin").format(**{"from": "$2,000.00", "to": "$1,000.00", "bind": E("index.js.bind_daily"), "loss": loss}) in r["notes"]
+           and not any(x == E("index.js.n_cut").format(**{"from": "$2,000.00", "to": "$1,000.00", "bind": E("index.js.bind_daily")}) for x in r["notes"])
+           and gr.endswith(loss + ".") and loss in r["sent"] and r["cells"]["risk"] == loss, (r["notes"], gr))
+        # a 100% cap whose risk takes the whole room: the loss would land on the floor, which F7 counts as a breach
+        r = desk(entry=60000, stop=59000, riskPct=5, capPct=100)
+        ok("a 100% cap with the whole room at risk: BLOCK, the reason names the limit and the cap, the risk card flagged, the link kept",
+           r["v"] == "vBLOCK" and r["sent"] == E("index.js.vs_block").format(reasons=E("index.js.b_reaches").format(bind=E("index.js.bind_daily")))
+           and r["cards"] == ["st-risk"] and not r["cells"] and pg.query_selector("#result [data-copy-link]") is not None, r)
+        r = desk(entry=60000, stop=59000, riskPct=5, capPct=99)
+        ok("at 99% it sizes, one loss left", r["v"] == "vREDUCE" and r["rows"]["losses left"][1] == "1" and not r["cards"], r["rows"].get("losses left"))
+        # a long's floor more than 100% below entry isn't reached above zero; a short's is shown as computed
+        FN, DDD = E("index.js.v_floor_none"), E("index.js.st_dd_dist")
+        r = desk(entry=60000, stop=54000)
+        fl_hidden = pg.evaluate("document.getElementById('gx-floor').parentNode.hidden")
+        ok("a long's max-loss floor 120.91% below entry: \"not reached above zero\" in the table, the breakers and the ladder; its live line hidden; "
+           "the daily limit's 80.61% as computed", r["rows"][DDD][1] == FN and FN in r["brk"] and FN in r["lad"] and fl_hidden
+           and r["rows"][E("index.js.st_daily_dist")][1] == "80.61%", (r["rows"].get(DDD), r["brk"], r["lad"]))
+        r = desk(side="-1", entry=60000, stop=66000)
+        v = r["rows"][DDD][1]
+        ok("a short's floor distance past 100% is shown as computed", v.endswith("%") and float(v.rstrip("%").replace(",", "")) > 100 and FN not in r["brk"], v)
         ok("no page error in the audit's cases", not errs, errs)
+        ctx.close()
+        # a tapped stock no firm lists, with a field out of range: the readout stays, the reason is named, the gauge blocks
+        ctx, pg, errs = page(f"{DESK}?tvwidgetsymbol=NASDAQ:NVDA#desk")
+        pg.fill("#riskPct", "-1")
+        pg.wait_for_timeout(40)
+        res, reason = pg.inner_text("#result"), E("index.js.b_pct").format(field=E("index.calc.risk_pct"))
+        ok("a tapped NVDA with Risk % −1: \"No compared firm offers NVDA…\", then the reason; the gauge's BLOCK line",
+           res.startswith(E("desk2.js.tape_none").format(sym="NVDA")) and reason in res
+           and pg.evaluate("document.getElementById('gauge').className") == "gauge sBLOCK" and not errs, (res[:300], errs))
         ctx.close()
 
         size = sum((PUB / f).stat().st_size for f in ("ticker.js", "calendar.js", "desk2.js"))

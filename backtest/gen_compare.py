@@ -218,6 +218,7 @@ def js_data(k, f, T):
     qs = f.get("_open_questions") or []
     return {"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
+        "lock": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
                      **{b["cite"]: cite(f, b["cite"]) for b in (c.get("lev_bands") or []) if "max_leverage" not in pc}),
         "levb": None if "max_leverage" in pc else c.get("lev_bands"),
@@ -387,8 +388,11 @@ def static_column(d, T, inputs=DEFAULTS):
         h += row(J["row_cross"], usd(cross), pv(K, F(J["f_cross"], {"cf": cf})))
         # Which ceiling binds, not a breach: after floor(room / risk) losses the balance is still at or above the
         # crossover, and at the crossover itself the desk's tie-break names the daily limit, so an exact multiple keeps
-        # its count here.
-        h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk), "pct": fx(rp * 100, 2)})
+        # its count here. That is why this stays floor() and is not the ceil() − 1 of the row below. The epsilon points
+        # the same way as the tie-break: room and risk come out of float products, so an exact multiple can arrive as
+        # 3.9999999999999942 (quota 12345, 0.5%, 4%/6%) or 7.99999999999997 (100000, 0.5%, 4%/8%), and floor() alone
+        # would drop the loss the tie-break keeps.
+        h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk + 1e-9), "pct": fx(rp * 100, 2)})
                  if room > 0 and risk > 0 else "—", pv(K, J["f_losses"]))
         # Losses that leave equity above the max-loss floor. A loss that lands exactly on it is a breach (firms word a
         # breach as reaching the limit, and troid's simulators count bal <= floor as failure), so an exact multiple
@@ -400,11 +404,19 @@ def static_column(d, T, inputs=DEFAULTS):
         h += row(J["row_room"], '<span class="pend">' + J["v_room_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_cross"], '<span class="pend">' + J["v_cross_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_losses"], '<span class="pend">' + J["v_losses_trail"] + '</span>', pv(["drawdown_type"]))
-        h += row(J["row_survive"], F(J["v_survive_trail"], {"n": math.ceil(Q * m / risk - 1e-9) - 1}) if risk > 0 else "—",
-                 pv(["max_pct", "drawdown_type"], J["f_survive"]))
+        # A trailing floor sits a fixed quota × max% below the high-water mark (firms.json _trailing_trap), so the count
+        # holds at every new high and falls below it; where the product locks the floor at the starting balance, room
+        # grows again past the lock. The lock clause is shown only for a product whose calc states one.
+        surv = F(J["v_survive_trail"], {"n": math.ceil(Q * m / risk - 1e-9) - 1})
+        if f.get("lock") is not None:
+            surv += F(J["v_survive_lock"], {"lock": S(f["lock"])})
+        h += row(J["row_survive"], surv if risk > 0 else "—", pv(["max_pct", "drawdown_type"], J["f_survive"]))
     else:
         h += row(J["row_room"], P) + row(J["row_cross"], P) + row(J["row_losses"], P) + row(J["row_survive"], P)
     if p.get("fee_per_side_pct") is not None:
+        # The compare has no side input, so this is the side-neutral share, both fees priced at the entry price. The desk
+        # prices the exit fee at the stop (calculator audit F6): a long's share is a little lower, a short's a little
+        # higher, and the neutral figure lies between them (verify_claims.py checks that). f_fee says so on the page.
         fee = p["fee_per_side_pct"] / 100
         drag = 2 * fee / (s + 2 * fee) * 100 if s > 0 else 0
         h += row(F(J["row_fee_at"], {"stop": fx(s * 100, 2)}), F(J["v_fee"], {"drag": fx(drag, 1), "fee": p["fee_per_side_pct"]}),
@@ -583,13 +595,14 @@ function render(){{
       var room=Q-cross;
       h+=row(T.row_room,$(room)+" ("+fx((room/Q*100),1)+"%)",pv(f,K,F(T.f_room,{{cf:cf}})));
       h+=row(T.row_cross,$(cross),pv(f,K,F(T.f_cross,{{cf:cf}})));
-      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
+      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk+1e-9),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
       h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.ceil(Q*m/risk-1e-9)-1}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else if(derivable&&!isStatic){{
       h+=row(T.row_room,'<span class="pend">'+T.v_room_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_cross,'<span class="pend">'+T.v_cross_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_losses,'<span class="pend">'+T.v_losses_trail+'</span>',pv(f,["drawdown_type"]));
-      h+=row(T.row_survive,risk>0?F(T.v_survive_trail,{{n:Math.ceil(Q*m/risk-1e-9)-1}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
+      var surv=F(T.v_survive_trail,{{n:Math.ceil(Q*m/risk-1e-9)-1}});if(f.lock!=null)surv+=F(T.v_survive_lock,{{lock:String(f.lock)}});
+      h+=row(T.row_survive,risk>0?surv:"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else{{
       h+=row(T.row_room,P);h+=row(T.row_cross,P);h+=row(T.row_losses,P);h+=row(T.row_survive,P);
     }}

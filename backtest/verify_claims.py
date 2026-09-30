@@ -504,7 +504,10 @@ _ps = _ilu.spec_from_file_location("audit_provenance", _ROOT / "audit" / "proven
 _PV = _ilu.module_from_spec(_ps); _ps.loader.exec_module(_PV)
 _rr = _PV.rules_read()
 _rl = _re.search(r'id="rulesread" data-from="([\d-]+)" data-to="([\d-]+)"', _read("web/public/index.html"))
-if _SB.SITE.get("calc_audit"):
+if _SB.SITE.get("calc_audit") and _rr is None:
+    # no read date for any rule the desk sizes with: the line has nothing true to say, and this says so, not a crash
+    check("SOURCED", "desk: 'Rules read' has firms.json read dates for the rules the desk sizes with (none recorded)", 0.0, 1.0)
+elif _SB.SITE.get("calc_audit"):
     check("SOURCED", f"desk: 'Rules read' spans firms.json's read dates of the rules the desk sizes with ({_rr['from']} to {_rr['to']})",
           float(bool(_rl) and _rl.groups() == (_rr["from"], _rr["to"])
                 and _en["desk2.audit.rules"].replace("{range}", f"{_rr['from']} – {_rr['to']}") in _index), 1.0)
@@ -517,7 +520,19 @@ if _aj.exists():
         _a = _json.loads(_aj.read_text())
     except ValueError:
         _a = {}
-    _ints = all(isinstance(_a.get(k), int) and _a.get(k) >= 0 for k in ("checks", "passed", "failed"))
+    _a = _a if isinstance(_a, dict) else {}
+    _n = lambda v: isinstance(v, int) and not isinstance(v, bool) and v >= 0
+    _ints = all(_n(_a.get(k)) for k in ("checks", "passed", "failed"))
+    # what audit.js asks of the file before it shows the line (web/public/audit.js): a file it would hide passes nothing
+    # here, so a merged audit whose line stays hidden for a week is caught on the day it merges
+    try:
+        _day = bool(_re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(_a.get("date", "")))) and bool(_dt.date.fromisoformat(_a["date"]))
+    except ValueError:
+        _day = False
+    check("DERIVED", f"audit.json: holds together as the desk's line reads it (date {_a.get('date')!r}, week {_a.get('week')!r}, "
+          f"a 40-hex commit, whole counts, at least one check)", float(
+        _day and bool(_re.fullmatch(r"\d{4}-W\d{2}", str(_a.get("week", ""))))
+        and bool(_re.fullmatch(r"[0-9a-f]{40}", str(_a.get("commit", "")))) and _ints and _a["checks"] >= 1), 1.0)
     check("DERIVED", f"audit.json: checks = passed + failed ({_a.get('checks')} = {_a.get('passed')} + {_a.get('failed')})",
           float(_ints and _a["checks"] == _a["passed"] + _a["failed"]), 1.0)
     _rp = str(_a.get("report", ""))

@@ -341,7 +341,8 @@ function verdict(v,tag,sent,txt){
 function term(id,text){return '<button type="button" class="term" data-tip="g-'+id+'" aria-describedby="g-'+id+'">'+text+'</button>'}
 /* The readout's notes carry a live line: this result's own numbers in the note's sentence (data-live). Numbers come
    from the result or the inputs only (i18n_equiv.py --design checks every desk state). */
-function gx(id,o){var e=el("gx-"+id);if(!e)return;e.textContent=o==null?"":F(e.getAttribute(o.pending?"data-pending":"data-live"),o);e.parentNode.hidden=o==null}
+function gx(id,o,s){var e=el("gx-"+id);if(!e)return;e.textContent=o==null?"":F(s||e.getAttribute(o.pending?"data-pending":"data-live"),o);e.parentNode.hidden=o==null}
+function nd(a){return a.length?'<div class="notes">'+a.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':""}
 /* The leverage field starts at min(5, the product's recorded cap) (2c) and follows the product while it still holds
    that default; a value the trader typed, or a shared link's, stays. levCapFor gives the cap at this quota. */
 var levAuto="5";
@@ -370,23 +371,24 @@ function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").val
 /* The desk's bounds (calculator audit F2, 2026-09-29): a value no account or trade can have is refused before anything
    is sized, and the reason names its field by the label it has on the page (LAB). Each used to give a confident
    verdict: risk −1% "fits", leverage 0 a margin of $∞, a 150% cap a risk the daily limit sits inside. Entry and stop
-   count once typed; an empty one is a step not taken yet. Each reason comes with the step card it flags. */
-var LAB={{ {"quota": t("index.calc.quota"), "riskPct": t("index.calc.risk_pct"), "capPct": t("index.calc.cap_pct"), "lev": t("index.calc.leverage"), "entry": t("index.calc.entry"), "stop": t("index.calc.stop")}|tojson }};
+   count once typed; an empty one is a step not taken yet. Each reason comes with the step card it flags. Equity and day
+   start too (the review, 2026-09-30): a blank day start read as 0 and silently dropped the daily limit. */
+var LAB={{ {"quota": t("index.calc.quota"), "equity": t("index.calc.equity"), "daystart": t("index.calc.daystart"), "riskPct": t("index.calc.risk_pct"), "capPct": t("index.calc.cap_pct"), "lev": t("index.calc.leverage"), "entry": t("index.calc.entry"), "stop": t("index.calc.stop")}|tojson }};
 function bounds(){
   var b=[],gt0=function(id,card){if(!(n(id)>0))b.push([F(T.b_gt0,{field:LAB[id]}),card])},
     pct=function(id){var x=n(id);if(!(x>0&&x<=100))b.push([F(T.b_pct,{field:LAB[id]}),"st-risk"])};
-  gt0("quota","st-account");pct("riskPct");pct("capPct");
+  gt0("quota","st-account");gt0("equity","st-account");gt0("daystart","st-account");pct("riskPct");pct("capPct");
   if(!(n("lev")>=1))b.push([F(T.b_lev,{field:LAB.lev}),"st-risk"]);
   if(el("entry").value.trim())gt0("entry","st-trade");
   if(el("stop").value.trim())gt0("stop","st-trade");
   return b;
 }
 /* A result, then the step cards: desk2.js flags the account and trade cards for its own reasons as it paints (a breached
-   floor, a stop to set or on the wrong side); a field out of range flags its card too, and the risk card only for that */
+   floor, a stop to set or on the wrong side); a field out of range flags its card too, and the risk card only for that
+   or for the card compute() names (a 100% cap whose loss would reach the floor) */
 function render(){
-  var b=bounds();
-  compute(b.map(function(x){return x[0]}));
-  ["st-account","st-trade","st-risk"].forEach(function(c){var on=b.some(function(x){return x[1]===c});if(on||c==="st-risk")el(c).classList.toggle("err",on)});
+  var b=bounds(),k=compute(b.map(function(x){return x[0]}));
+  ["st-account","st-trade","st-risk"].forEach(function(c){var on=c===k||b.some(function(x){return x[1]===c});if(on||c==="st-risk")el(c).classList.toggle("err",on)});
 }
 function compute(rng){
   var wOpen=!!document.querySelector("#result details.work[open]");
@@ -406,6 +408,12 @@ function compute(rng){
   var steps=[[T.st_inputs,T.f_inputs_account,$(quota)+" · "+$(eq)+" · "+$(ds)],
              [T.st_inputs,T.f_inputs_trade,(side>0?T.long:T.short)+" · "+n4(entry)+" · "+n4(stop)+" · "+tR],
              [T.st_inputs,T.f_inputs_risk,n("riskPct")+"% · "+n("capPct")+"% · "+lev+"× · "+modeT]];
+  // an account out of range (F2) has no floor: every floor and budget is computed from the quota, equity and day start,
+  // and a refused one used to add a false "already breached" and a floor of its own to the gauge (the review, 2026-09-30).
+  // The inputs and the reasons only; a range BLOCK offers no link, since a link can't carry the value it refused
+  if(!(quota>0&&eq>0&&ds>0)){
+    el("result").innerHTML=(DESK2.none()||verdict("BLOCK",T.v_block,F(T.vs_block,{reasons:rng.join("; ")}),esc(f.name+" · "+p.label)))+nd(rng)+working(steps,wOpen);
+    DESK2.paint({v:"BLOCK",blocks:rng,f:f,p:p,quota:quota,eq:eq});return}
   // daily floor, by the firm's basis
   var dFloor=null,fd="",fdd="";
   if(p.basis==="initial"){dFloor=ds-quota*dpct;fd=F(T.f_daily_initial,{d:p.d});}                    // fixed amount from the initial balance
@@ -427,8 +435,11 @@ function compute(rng){
   // alone, and could risk more than any reading of the max loss leaves
   else if(p.dd==null&&p.m!=null){ddFloor=quota*(1-mpct);fdd=F(T.f_dd_static,{m:p.m});loose=true;}
   else pend.push("drawdown type");
+  // the floor's formula as shown on its own (table, explainer, its note) says which reading it is; the room's formula
+  // keeps the plain one, so it doesn't carry the suffix twice
+  var fddS=loose?F(T.f_dd_loosest,{m:p.m}):fdd;
   if(dFloor!=null){steps.push([T.daily_floor,fd,$(dFloor)]);steps.push([T.st_daily_budget,T.f_daily_budget,$(eq-dFloor)]);}
-  if(ddFloor!=null){steps.push([T.dd_floor,loose?F(T.f_dd_loosest,{m:p.m}):fdd,$(ddFloor)]);steps.push([T.st_dd_budget,T.f_dd_budget,$(eq-ddFloor)]);}
+  if(ddFloor!=null){steps.push([T.dd_floor,fddS,$(ddFloor)]);steps.push([T.st_dd_budget,T.f_dd_budget,$(eq-ddFloor)]);}
   var formula=(dFloor!=null&&ddFloor!=null)?F(T.f_room_both,{fd:fd,fdd:fdd}):
     (dFloor!=null?F(T.f_room_daily,{fd:fd}):F(T.f_room_dd,{fdd:fdd}));
   // the rules this result actually used: only rules that have a value (a pending rule is pending, not unsourced)
@@ -438,9 +449,9 @@ function compute(rng){
     if(p.dd==="trailing"){if(p.locks!=null)used.push(["locks",F(T.u_locks,{locks:p.locks})]);if(p.hwm!=null)used.push(["hwm",T.u_hwm]);}}
   var dB=dFloor==null?null:eq-dFloor,ddB=ddFloor==null?null:eq-ddFloor,h="";
   if(dB==null&&ddB==null){                            // nothing recorded to size against; a field out of range still says so
-    h=verdict("BLOCK",rng.length?T.v_block:T.v_pending,rng.length?F(T.vs_block,{reasons:rng.join("; ")}):T.vs_pending,F(T.pending_txt,{firm:f.name,product:p.label}))+linkRow()+
-      '<div class="notes">'+rng.concat([T.pending_note]).map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>';
-    el("result").innerHTML=DESK2.none()||h;DESK2.paint({v:"PENDING"});return;
+    h=verdict("BLOCK",rng.length?T.v_block:T.v_pending,rng.length?F(T.vs_block,{reasons:rng.join("; ")}):T.vs_pending,F(T.pending_txt,{firm:f.name,product:p.label}))+(rng.length?"":linkRow())+
+      nd(rng.concat([T.pending_note]));
+    el("result").innerHTML=DESK2.none()?DESK2.none()+nd(rng):h;DESK2.paint({v:"PENDING"});return;
   }
   var bind,eff,one=(dB==null||ddB==null);
   if(dB==null){bind=T.bind_dd;eff=ddB;notes.push(T.n_basis_pending);}
@@ -454,19 +465,20 @@ function compute(rng){
   // the gauge and the explainer get this result (desk2.js). No entry yet: the account only. An entry with no stop: "Set your
   // stop", never BLOCK (ticker v2 E); troid never fills a stop in. A tapped stock no firm lists: the account only, whatever
   // the entry and stop, and the readout says there are no firm rules to size it against
-  var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fdd,eff:eff,bind:bind,locked:locked,
+  var B={f:f,p:p,quota:quota,eq:eq,dFloor:dFloor,ddFloor:ddFloor,dB:dB,ddB:ddB,fd:fd,fdd:fddS,eff:eff,bind:bind,locked:locked,
     ddName:p.dd==="trailing"&&!locked?T.trailing_floor:T.dd_floor},none=DESK2.none();
+  // a range BLOCK offers no link: the link leaves a refused value at its default, so it would open as another result
   function blocked(bl){steps.push(bindStep);
-    el("result").innerHTML=verdict("BLOCK",T.v_block,F(T.vs_block,{reasons:bl.join("; ")}),bind)+linkRow()+'<div class="notes">'+
+    el("result").innerHTML=verdict("BLOCK",T.v_block,F(T.vs_block,{reasons:bl.join("; ")}),bind)+(rng.length?"":linkRow())+'<div class="notes">'+
       bl.map(function(b){return "<div>"+b+"</div>"}).join("")+'</div>'+provBlock(f,p,used,formula)+working(steps,wOpen);
     DESK2.paint(Object.assign(B,{v:"BLOCK",blocks:bl}));}
-  // a field out of range: BLOCK before an entry or a stop is typed too (a tapped stock no firm lists aside: nothing is
-  // sized for it whatever is typed)
+  // a field out of range: BLOCK before an entry or a stop is typed too. A tapped stock no firm lists keeps its readout,
+  // since nothing is sized for it whatever is typed, with the reasons under it and the gauge's BLOCK line (the review,
+  // 2026-09-30: the reason used to appear nowhere)
   if(rng.length&&!none&&!(el("entry").value.trim()&&el("stop").value.trim())){blocked(rng);return}
   if(none||!el("entry").value.trim()){steps.push(bindStep);             // no entry yet: the account only, no verdict
-    el("result").innerHTML=(none||DESK2.empty())+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
-      provBlock(f,p,used,formula)+working(steps,wOpen);
-    DESK2.paint(Object.assign(B,{v:"EMPTY"}));return}
+    el("result").innerHTML=(none||DESK2.empty())+nd(rng.concat(notes))+provBlock(f,p,used,formula)+working(steps,wOpen);
+    DESK2.paint(Object.assign(B,{v:rng.length?"BLOCK":"EMPTY",blocks:rng}));return}
   if(!el("stop").value.trim()){steps.push(bindStep);
     el("result").innerHTML=DESK2.set(f,p,bind,eff)+linkRow()+(notes.length?'<div class="notes">'+notes.map(function(x){return "<div>"+x+"</div>"}).join("")+'</div>':"")+
       provBlock(f,p,used,formula)+working(steps,wOpen);
@@ -495,7 +507,7 @@ function compute(rng){
   // a unit's fees: the entry fee on the entry price and the exit fee on the exit price, the stop, the way an exchange
   // charges them (calculator audit F6, 2026-09-29: both used to be priced at entry, which under-counted a short's).
   // The loss at the stop is then the risk to the cent, long or short
-  var fu=fee*(entry+stop),qty=risk/(dist+fu),m0=qty*entry/levUsed;
+  var fu=fee*(entry+stop),qty=risk/(dist+fu),q0=qty,m0=qty*entry/levUsed;
   // a margin above equity can't be opened (F1): the size is cut to what equity carries at this leverage, and says so
   var cut=m0>eq+1e-9;
   if(cut)qty=eq*levUsed/entry;
@@ -503,6 +515,9 @@ function compute(rng){
   // losses left: those that leave equity above the floor (F7). A firm fails the account that reaches its limit, so the
   // loss that lands exactly on it isn't one of them
   var consumes=loss/eff*100,left=Math.ceil(eff/loss-1e-9)-1;
+  // none left: a 100% cap whose loss takes the whole room lands on the floor, which fails the account (F7's own rule).
+  // Refused like a breach, naming the cap, rather than sized as "cut to fit" (the review, 2026-09-30)
+  if(left<1){blocked([F(T.b_reaches,{bind:bind})]);return "st-risk"}
   steps.push(bindStep);
   steps.push([T.st_intended,F(T.f_intended,{pct:n("riskPct")}),$(intended)]);
   steps.push([T.st_cap,F(T.f_cap,{pct:n("capPct")}),$(cap)]);
@@ -521,7 +536,7 @@ function compute(rng){
   steps.push([T.st_left,T.f_left,String(left)]);
   steps.push([T.st_target,F(side>0?T.f_target_long:T.f_target_short,{r:tR}),tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})]);
   if(feeKnown&&fshare>15)notes.push(F(T.n_fees_high,{pct:fx(fshare,0)}));
-  if(reduced)notes.push(F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
+  if(reduced)notes.push(cut?F(T.n_cut_margin,{from:$(intended),to:$(risk),bind:bind,loss:$(loss)}):F(T.n_cut,{from:$(intended),to:$(risk),bind:bind}));
   notes.push(F(T.n_left,{n:term("left",String(left)),bind:bind}));
   // circuit breakers: adverse move at which each thing stops you. MMR is troid's assumption, not a firm rule.
   var sp=dist/entry*100,liq,fl;
@@ -530,9 +545,12 @@ function compute(rng){
   liq=isFinite(mB)?(mB-MMR)/(1-side*MMR)*100:Infinity;
   fl=F(mode==="isolated"?T.f_liq_isolated:T.f_liq_cross,{mmr:MMR*100,sign:sg});
   var ord=[[T.br_stop,sp,"stopd"]];                                  // [label, adverse %, its glossary term]
-  if(dB!=null){ord.push([T.br_daily,dB/notional*100,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,pc(dB/notional*100)]);}
-  if(ddB!=null){var trl=p.dd==="trailing"&&!locked;ord.push([trl?T.trailing_floor:T.dd_floor,ddB/notional*100,"floor"]);
-    steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,pc(ddB/notional*100)]);}
+  // a long can't fall more than 100%, so a floor that far below entry isn't reached above zero (F5's rule, applied to the
+  // floors in the review, 2026-09-30); a short's is shown as computed
+  var far=function(x){return side>0&&x>=100-1e-9},dP=dB==null?0:dB/notional*100,ddP=ddB==null?0:ddB/notional*100;
+  if(dB!=null){ord.push(far(dP)?[T.br_daily,Infinity,"daily",T.v_floor_none]:[T.br_daily,dP,"daily"]);steps.push([T.st_daily_dist,T.f_daily_dist,far(dP)?T.v_floor_none:pc(dP)]);}
+  if(ddB!=null){var trl=p.dd==="trailing"&&!locked,tn=trl?T.trailing_floor:T.dd_floor;ord.push(far(ddP)?[tn,Infinity,"floor",T.v_floor_none]:[tn,ddP,"floor"]);
+    steps.push([trl?T.st_trailing_dist:T.st_dd_dist,T.f_dd_dist,far(ddP)?T.v_floor_none:pc(ddP)]);}
   var liqName=F(T.br_liq,{mode:modeT});
   // a long can't fall more than 100%: at or past it there is no liquidation price above zero (F5), in the table, the
   // breakers, the ladder (the 4th item, which desk2.js prints as it is) and the note. A short's can sit any distance
@@ -545,7 +563,7 @@ function compute(rng){
   else if(mode==="cross")notes.push(T.n_cross);
   else notes.push(nil?F(T.n_isolated_none,{lev:levUsed}):F(T.n_isolated,{pct:fx(liq,1)}));
   var brk=ord.map(function(e){return term(e[2],e[0])+" "+(e[3]||(isFinite(e[1])?fx(e[1],2)+"%":"—"))}).join("  →  ");
-  var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee});
+  var sizeF=F(feeKnown?T.f_size:T.f_size_nofee,{risk:n("riskPct"),cap:n("capPct"),fee:p.fee})+(cut?"; "+F(T.f_margin_cut,{lev:levUsed}):"");
   var v=reduced||cut?"REDUCE":"OK";
   var sent=cut?F(T.vs_margin,{lev:levUsed,max:$(eq*levUsed),risk:$(loss)}):
     reduced?F(T.vs_reduce,{pct:n("riskPct"),intended:$(intended),risk:$(risk),cap:n("capPct")}):
@@ -568,18 +586,19 @@ function compute(rng){
   gx("room",{eq:$(eq),floor:$(bFloor),room:$(eff)});
   gx("size",{risk:$(loss),dist:n4(dist),fu:n4(fu),qty:n4(qty),entry:n4(entry),notional:$(notional)});
   gx("margin",{notional:$(notional),lev:levUsed,margin:$(margin)});
-  gx("risk",{intended:$(intended),cap:$(cap),risk:$(risk)});
+  // under a margin cut the note ends on the figure its cell shows, the loss (the review, 2026-09-30)
+  gx("risk",cut?{intended:$(intended),cap:$(cap),rb:$(risk),lev:levUsed,risk:$(loss)}:{intended:$(intended),cap:$(cap),risk:$(risk)},cut?T.gx_risk_cut:null);
   gx("fees",feeKnown?{fees:$(fees),risk:$(loss),share:pc(fshare)}:{pending:1});
   gx("stopd",{entry:n4(entry),stop:n4(stop),dist:n4(dist),pct:pc(dist/entry*100),target:tl(target,{minimumFractionDigits:2,maximumFractionDigits:2})});
   gx("budget",{risk:$(loss),room:$(eff),pct:fx(consumes,1)+"%"});
   gx("left",{room:$(eff),risk:$(loss),left:String(left)});
-  gx("daily",dB!=null?{floor:$(dFloor),formula:fd,room:$(dB),pct:pc(dB/notional*100)}:null);
-  gx("floor",ddB!=null?{floor:$(ddFloor),formula:fdd,room:$(ddB),pct:pc(ddB/notional*100)}:null);
+  gx("daily",dB!=null&&!far(dP)?{floor:$(dFloor),formula:fd,room:$(dB),pct:pc(dP)}:null);
+  gx("floor",ddB!=null&&!far(ddP)?{floor:$(ddFloor),formula:fddS,room:$(ddB),pct:pc(ddP)}:null);
   gx("liq",!nil&&liq>0&&isFinite(liq)?{pct:pc(liq),formula:fl}:null);
   el("result").innerHTML=h;
   // the gauge draws the loss at the stop, against the intended risk when the verdict cut it; the explainer's risk step
-  // takes the risk before any margin cut (rb)
-  DESK2.paint(Object.assign(B,{v:v,risk:loss,rb:risk,intended:intended,cap:cap,reduced:v==="REDUCE",feeKnown:feeKnown,fu:fu,qty:qty,notional:notional,
+  // takes the risk before any margin cut (rb), and a cut's step the risk-based size, its margin and the most equity carries
+  DESK2.paint(Object.assign(B,{v:v,risk:loss,rb:risk,cut:cut,q0:q0,m0:m0,mx:eq*levUsed,intended:intended,cap:cap,reduced:v==="REDUCE",feeKnown:feeKnown,fu:fu,qty:qty,notional:notional,
     margin:margin,levUsed:levUsed,fees:fees,fshare:fshare,dist:dist,entry:entry,stop:stop,side:side,target:target,ord:ord,liq:liq,sp:sp,
     mode:mode,rp:n("riskPct"),cp:n("capPct")}));
 }
@@ -587,7 +606,7 @@ el("firm").addEventListener("change",fillProfiles);el("quota").addEventListener(
 ["quota","equity","daystart","hirollover","hwm","side","entry","stop","targetR","riskPct","capPct","lev","mode"]
  .forEach(function(i){el(i).addEventListener("input",render)});
 fillFirms();
-DESKLINK.init({T:T,F:F,esc:esc,firms:FIRMS,live:{{ live|tojson }},lang:"{{ code }}",fillProfiles:fillProfiles,toggleInputs:toggleInputs,render:render});
+DESKLINK.init({T:T,F:F,esc:esc,lab:LAB,firms:FIRMS,live:{{ live|tojson }},lang:"{{ code }}",fillProfiles:fillProfiles,toggleInputs:toggleInputs,render:render});
 </script>
 </body>
 </html>

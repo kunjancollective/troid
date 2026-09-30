@@ -116,8 +116,11 @@ def _breakers(mode, side, entry, stop, equity, notional, leverage, daily_budget,
     # figure (cross with equity above the notional, isolated at 1x). A short can rise without limit; its figure stands.
     none_above_zero = side > 0 and m is not None and liq >= 100 - 1e-9
     liq_name = f"exchange liquidation ({mode})"
+    # With none above zero the liquidation never stops you, so it sorts last, as troid's desk sorts it (review
+    # 2026-09-30: sorted by its raw 100%+ figure it came ahead of a max-loss floor past 100%, one that can bind). The
+    # output below names it before its infinite figure would be read.
     order = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
-                    ("max loss floor", floor_pct), (liq_name, max(liq, 0))],
+                    ("max loss floor", floor_pct), (liq_name, float("inf") if none_above_zero else max(liq, 0))],
                    key=lambda e: e[1])
     warn = []
     if order[0][0] != "your stop":

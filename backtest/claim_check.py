@@ -333,15 +333,18 @@ RETIRED_EDGE = re.compile(r"\bno (statistical(ly significant)?|demonstrable|demo
 # FirstPromoter are records, not selling. An apostrophe may reach it escaped, as the built pages write it.
 _APOS = r"(?:'|’|&#x27;|&#39;)"
 RETIRED_SELLING = re.compile(
-    r"#\s?(\d+|\{n\}) by reviews?\b|\b(their|its own) promos\b|\bpromos? apply\b|\bbuy[- ]one[- ]get[- ]one\b"
+    # "#1 by verified reviews" is the same rank; "#1 by verified-review volume" is firms.json's nomination record
+    r"#\s?(\d+|\{n\}) by (verified )?reviews?\b(?![- ]volume)|\b(their|its own) promos\b|\bpromo(tion)?s? apply\b"
+    r"|\bbuy[- ]one[- ]get[- ]one\b"
     rf"|\bno code needed\b|\bapply through (this|the|troid{_APOS}s) (affiliate )?link\b"
-    r"|\bdiscount code:? (<b>)?(\{code\}|(?=[A-Za-z]*\d)[A-Za-z0-9]{4,})"         # a code sold as a discount, not the noun
+    # a code sold as a discount, not the noun: any code set in bold, the placeholder, or a bare code with a digit in it
+    r"|\bdiscount code:? (<b>[^<]+</b>|\{code\}|(<b>)?(?=[A-Za-z]*\d)[A-Za-z0-9]{4,})"
     rf"|\bcheaper (through|via|with) (this|the|troid{_APOS}s|an?) (affiliate )?(link|code)\b"
-    rf"|\b(it{_APOS}s|it is|direct(ly)? is) the same price\b|\bsame price (direct|where)\b|\bcosts? you nothing extra\b"
+    rf"|\b(it{_APOS}s|it is|direct(ly)? is) the same price\b|\bsame price (direct|where)\b|\bcosts? you nothing\b"
     # and no special standing for Bitfunded: it is "the first firm troid verified from its own documents", not "the
     # reference firm troid verified first" (the owner's call, 29 Sep 2026). METHODOLOGY's "One reference firm, chosen for
     # verification depth" and the compare's "one reference firm + two by external ranking" wait for the owner.
-    r"|\b(is|as) the reference firm\b|\bthe reference firm troid\b|\breference[- ]firm standing\b"
+    r"|(\b(is|as)|,) (our|the) reference firm\b|\bthe reference firm troid\b|\breference[- ]firm standing\b"
     r"|\breference firm[^.]{0,12}\bBitfunded\b|\bearns the same standing\b", re.I)
 # Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it. So
 # never "plus tax", in English or in the phrasings the launch languages use for it (es, pt, fr, ru, id, zh, ar, hi, bn).

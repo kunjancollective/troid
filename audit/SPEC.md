@@ -134,6 +134,80 @@ intended = intended, reduced = (verdict REDUCE).
 Daily floors, the binding tie-break (dB ≤ ddB → daily), the circuit-breaker ordering, isolated/cross formulas,
 MMR 0.5%, the compare's "losses before max loss binds", ask troid's tools (they follow via the candidate process).
 
+## Changes after the review, 2026-09-30
+
+The desk was reviewed after the audit's first run; these rules change what the desk shows, so the model follows them
+from here, not from the desk's code. They need the owner's review like any change to this file. Each rule names its
+i18n keys (English text in quotes). Where a rule below and an earlier section differ, the rule below holds.
+
+**R1. Equity and day start are bounded (extends F2).** Two more reasons, in this order among F2's: quota, equity, day
+start, risk %, budget cap %, leverage, entry, stop.
+- eq ≤ 0 → "Equity must be more than 0" (index.js.b_gt0, field index.calc.equity "Equity")
+- ds ≤ 0 → "Day start must be more than 0" (index.js.b_gt0, field index.calc.daystart "Day start")
+A blank field reads as 0 and is refused (a blank day start used to drop the daily limit silently: dF = −d·q). The
+account card st-account is flagged. HTML: equity and daystart get min="0". desklink.js: keys e and ds must be > 0.
+hwm and hirollover are unchanged (0 there means "none").
+
+**R2. An account out of range computes nothing from it (F2).** When q ≤ 0, eq ≤ 0 or ds ≤ 0: no floor, budget, binding
+or size is computed. Verdict BLOCK, sentence index.js.vs_block with every range reason (R1's order, joined by "; "),
+and no other reason (no stop-side reason, never index.js.b_breached); the notes are the reasons; the working table is
+the three index.js.st_inputs rows only; no provenance block; no link row (R4). The gauge draws no floor: its line is
+desk2.js.g_line_block and its aria-label is that line alone. With a tapped stock no firm lists, the readout is R3's.
+Elsewhere (the account in range) index.js.b_breached can no longer come from a refused quota.
+
+**R3. A tapped stock no firm lists, with a field out of range (F2).** The readout stays desk2.js.tape_none (nothing is
+sized for the stock, whatever is typed) and the range reasons follow it as notes, before the account's own notes. No
+verdict. The gauge is BLOCK (desk2.js.g_line_block, the reasons) when there is a range reason, EMPTY otherwise; when
+the product records neither floor, the gauge stays PENDING and the reasons still follow the readout.
+
+**R4. Links and range errors.** The copy-link row (index.js.share_copy) is left out of every result that has a range
+reason (F2 and R1), since a link can't carry the refused value and would open as another result. Every other BLOCK
+(stop on the wrong side, zero distance, breached, R5) keeps it, as do SET, OK, REDUCE and the pending BLOCK without a
+range reason. desklink.js decode(): a number outside the bounds keeps the input's default and is counted in `out`
+(the input ids, in the link's order), not in `bad`; `bad` counts only malformed values. The notice adds
+index.js.shared_range = "Values in the link outside the desk's bounds ({fields}) were left at the desk's defaults."
+with {fields} the fields' labels (index.calc.*) joined by index.js.list_comma, before index.js.shared_bad.
+
+**R5. A loss that takes the whole room is refused (F7).** After loss and left are computed: when left < 1 (that is,
+ceil(eff / loss − 1e-9) − 1 ≤ 0, reached only at a 100% cap with intended ≥ eff), BLOCK with the reason
+index.js.b_reaches = "a loss at this stop would take the whole room and reach the {bind}, which fails the account —
+set the budget cap below 100%" ({bind} = the binding label, index.js.bind_daily or bind_dd). The sentence is
+index.js.vs_block; the notes are the reason; the working table is the inputs, floors, budgets and binding rows (as every
+BLOCK); the provenance block without the size formula; the link row kept; the risk card st-risk flagged. The F2 bound
+cp ≤ 100 is unchanged. The handoff's F3 case (CFT Instant, 2% at a 100% cap, room $100) is now this BLOCK.
+
+**R6. A long's floor distances at or past 100% (extends F5).** For s = +1: dP = dB / notional · 100 and
+ddP = ddB / notional · 100. When one is ≥ 100 − 1e-9 its value is index.js.v_floor_none = "not reached above zero — a
+fall to zero stays inside it", in place of the percentage: in the working table (index.js.st_daily_dist, st_dd_dist or
+st_trailing_dist), in the breakers line, and as the ladder's 4th item; it sorts after every finite distance. That
+term's glossary live line (daily or floor) is hidden. Shorts are shown as computed, as before.
+
+**R7. The loosest reading, everywhere the floor's formula is shown (extends F3).** In F3's case the max-loss floor's
+formula is index.js.f_dd_loosest in the working table (as before), in the explainer's floors step and in the floor's
+glossary live line {formula}. The room's provenance formula (index.js.f_room_both / f_room_dd) keeps f_dd_static. The
+explainer's crossover step for any product whose drawdown type is null is desk2.js.x3_pending = "On {product} troid has
+not recorded the drawdown type, so no crossover is shown." in place of x3_none.
+
+**R8. A margin cut, everywhere the risk is described (extends F1).** When F1 cut the size:
+- The budget-cap note, when riskB < intended too: index.js.n_cut_margin = "cut from {from} to {to} — {bind} budget caps
+  it; the margin then cut it to {loss}" ({from} = intended, {to} = riskB, {loss} = loss) in place of index.js.n_cut.
+- The risk term's live line: index.js.gx_risk_cut = "the smaller of {intended} and {cap}: {rb}; the margin then cut the
+  size to fit at {lev}×, so the trade risks {risk}." ({rb} = riskB, {lev} = levUsed, {risk} = loss) in place of
+  glossary.risk.live.
+- The provenance formula ends "; " + index.js.f_margin_cut with {lev} = levUsed, after the size formula.
+- The explainer: the size step shows `size = riskB ÷ (dist + fu) = qty0`, then desk2.js.x5_cut = "margin = {q0} ×
+  {entry} ÷ {lev}× = {m0}, more than equity {eq}: size = {eq} × {lev}× ÷ {entry} = {qty}", then the fee share over the
+  loss; the leverage step is desk2.js.x6_h_cut "Why leverage changes the loss here", x6_p_cut, and x6_code_cut = "at
+  {lev}× the account carries at most {max} notional; the loss at the stop is {qty} × ({dist} + {fu}) = {risk}"
+  ({max} = eq · levUsed, {risk} = loss) in place of x6_h, x6_p and x6_code ("… either way"), which stay for a trade
+  the margin didn't cut.
+- glossary.leverage.what = "How much position each dollar of margin controls. It changes margin and liquidation
+  distance — not the loss at your stop, while the margin fits in your equity. When it doesn't, the size is cut to fit,
+  and lower leverage means a smaller loss."
+
+Not changed by the review, and left for the owner: the floor distances are budget ÷ notional, net of no fee (a fee-net
+distance would put a 100% cap's daily limit on the stop exactly); R5 refuses that case instead.
+
 ## The audit's output (audit/run.py)
 
 web/public/audit.json:

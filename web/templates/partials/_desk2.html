@@ -24,8 +24,8 @@
           <div class="span2"><label for="firm">{{ term("firm", t("index.calc.firm")) }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm" aria-label="{{ t.attr("index.calc.firm") }}"></select></div>
           <div class="span2"><label for="profile">{{ term("challenge", t("index.calc.challenge")) }}</label><select id="profile"></select></div>
           <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" min="0" value="100000"></div>
-          <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" value="100000"></div>
-          <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" value="100000"></div>
+          <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" min="0" value="100000"></div>
+          <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" min="0" value="100000"></div>
           <div id="hiWrap" style="display:none"><label for="hirollover">{{ term("hirollover", t("index.calc.hirollover")) }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
           <div id="hwmWrap" style="display:none"><label for="hwm">{{ term("hwm", t("index.calc.hwm")) }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
         </div>

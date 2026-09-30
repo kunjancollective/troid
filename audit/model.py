@@ -30,6 +30,32 @@ item of the handoff as audit/SPEC.md (the contract the desk and this model were 
   F6  The loss at the stop, qty·dist + qty·entry·fee + qty·stop·fee (the seed's true_loss), is a figure the desk
       now shows, so it is compared.
 
+The desk was reviewed after the audit's first run, and audit/SPEC.md's "Changes after the review, 2026-09-30" changed
+what it must show. The model follows those rules from SPEC.md alone, never from the desk's code (for the owner's
+review, like every change here):
+
+  R1  Equity and day start must be more than 0: two more range reasons, and every reason in SPEC.md's order (quota,
+      equity, day start, risk %, budget cap %, leverage, entry, stop). A blank reads as 0 and is refused; a blank day
+      start used to drop the daily limit to −daily% × quota. The high-water mark and high at rollover are unchanged
+      (0 there is "none").
+  R2  An account out of range (quota, equity or day start) computes nothing: the model returns the range reasons and
+      no floor, budget, binding or size, and no other reason. (The F2 early return already did; `account_range` now
+      says which kind of range BLOCK it is.)
+  R4  `link`: whether the copy-link row belongs in the result. Out of every result with a range reason; kept on every
+      other BLOCK (R5's among them), on OK, REDUCE and the pending BLOCK.
+  R5  After the loss and losses left: left < 1 (a loss that takes the whole room) is BLOCK with the reason `reaches`
+      (index.js.b_reaches, the binding limit named) and the risk card flagged. The figures before sizing are the ones
+      compared, as on every BLOCK; the sized ones stay in the dict for diagnosis.
+  R6  `ddist_none` / `fdist_none`: a long's daily-limit or floor distance at or past 100% of the notional is "not
+      reached above zero" (index.js.v_floor_none), sorted after every finite distance. A short is shown as computed.
+  R7  `dd_pending`: the drawdown type is null, so the explainer's crossover step is desk2.js.x3_pending. It changes
+      no figure; F3's `dd_loosest` still marks the loosest floor.
+  R8  `cut_note`: when F1 cut the size and the budget cap cut the risk too, the cap's note is index.js.n_cut_margin
+      (from intended to the risk, then the loss), not index.js.n_cut; `n_cut` when only the cap cut it, None when
+      neither did.
+  R3 (a tapped stock no firm lists) has no input here: the model sizes an account and a trade, never a tapped symbol,
+      so it is the desk's tests' to hold (web/test_desk.py), not this model's.
+
 `revert` is for diagnosis only: it names handoff items whose seed derivation to use instead, so audit/run.py can say
 which item a mismatch is about (a page that matches the model with F6 reverted still uses the pre-F6 fee). It never
 decides whether a check passes.
@@ -42,7 +68,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 MMR = 0.005          # exchange maintenance margin: troid's assumption, no firm source (SPEC.md)
-ITEMS = ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "D6")
+ITEMS = ("F1", "F2", "F3", "F4", "F5", "F6", "F7", "D6", "R1", "R5")
 _FJ = None
 
 
@@ -120,7 +146,8 @@ def _div(a, b):
     return float("nan") if not a else math.copysign(float("inf"), a)
 
 
-RANGE = {"quota": "gt0", "risk_pct": "pct", "cap_pct": "pct", "leverage": "lev", "entry": "gt0", "stop": "gt0"}
+# SPEC.md R1's order: the account, then the trade
+RANGE = {"quota": "gt0", "equity": "gt0", "daystart": "gt0", "risk_pct": "pct", "cap_pct": "pct", "leverage": "lev", "entry": "gt0", "stop": "gt0"}
 
 
 def model(firm, prod, x, FJ=None, revert=()):
@@ -140,6 +167,12 @@ def model(firm, prod, x, FJ=None, revert=()):
         bad = []
         if q <= 0:
             bad.append("quota")
+        if "R1" not in revert:
+            # R1: a blank equity or day start reads as 0 and is refused, never sized against a floor of −daily% × quota
+            if eq <= 0:
+                bad.append("equity")
+            if ds <= 0:
+                bad.append("daystart")
         if not 0 < rp <= 100:
             bad.append("risk_pct")
         if not 0 < cp <= 100:
@@ -151,7 +184,12 @@ def model(firm, prod, x, FJ=None, revert=()):
         if given(x.get("stop")) and stop <= 0:
             bad.append("stop")
         if bad:
-            return {"v": "BLOCK", "range": bad}
+            # R2: an account out of range computes nothing, and gives no reason but its range; R4: no link row, since
+            # a link can't carry the refused value
+            return {"v": "BLOCK", "range": bad, "account_range": any(b in ("quota", "equity", "daystart") for b in bad),
+                    "link": False}
+    out["link"] = True                  # R4: every result without a range reason keeps the copy-link row
+    out["dd_pending"] = r["dd"] is None  # R7: the explainer says no crossover is shown
 
     # F4: the high-water mark and the high at rollover can't be below what the account has already been
     hwm = H if H > 0 else max(eq, q)
@@ -258,4 +296,12 @@ def model(firm, prod, x, FJ=None, revert=()):
         out.update(margin0=margin0, cut=cut, lev_max=eq * lev_used)
     if "F6" not in revert:
         out["loss"] = true_loss
+    # R8: the budget cap's note, when the margin then cut the size too
+    out["cut_note"] = ("n_cut_margin" if cut else "n_cut") if risk < intended - 1e-9 else None
+    # R6: a long can't fall more than 100%, so a floor that far below the entry isn't reached above zero
+    for k in ("ddist", "fdist"):
+        out[k + "_none"] = side > 0 and out[k] is not None and out[k] >= 100 - 1e-9
+    # R5: a loss that takes the whole room reaches the binding limit, which fails the account: refused, not sized
+    if "R5" not in revert and left is not None and left < 1:
+        out["v"] = "BLOCK"; out["blocks"] = ["reaches"]; out["flag"] = "st-risk"
     return out

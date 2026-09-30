@@ -123,9 +123,11 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
     liq_pct = max(liq_pct, 0.0)                                   # 0: already below maintenance
     none_above_zero = side > 0 and math.isfinite(liq_pct) and liq_pct >= 100 - 1e-9
     liq_name = f"exchange liquidation ({mode})"
+    # A long's liquidation with none above zero never stops you, so it sorts last, as troid's desk sorts it (review
+    # 2026-09-30: sorted by its raw 100%+ figure it came ahead of a max-loss floor past 100%, one that can bind).
     events = sorted([("your stop", stop_pct), ("daily loss limit", daily_pct),
                      ("max loss floor", floor_pct),
-                     (liq_name, liq_pct)], key=lambda e: e[1])
+                     (liq_name, float("inf") if none_above_zero else liq_pct)], key=lambda e: e[1])
     first = events[0][0]
     warnings = []
     if first != "your stop":
@@ -139,8 +141,8 @@ def circuit_breakers(cfg: dict, side: int, entry: float, stop: float, qty: float
         warnings.append(f"Isolated margin: the exchange would liquidate this position at "
                         f"{liq_pct:.1f}% adverse for its own ${notional/leverage:,.0f} margin, "
                         f"before the firm's floor. A runaway costs the margin, not the account.")
-    # The order keeps its sort by the computed figure (as troid's desk sorts it); a long's liquidation at 100% or
-    # more is reported as "none above zero" in place of a percentage it can't reach.
+    # Every other event keeps its sort by the computed figure (as troid's desk sorts them); a long's liquidation at 100%
+    # or more, sorted last above, is reported as "none above zero" in place of a percentage it can't reach.
     if none_above_zero:
         events = [(n, "none above zero" if n == liq_name else v) for n, v in events]
     return {"margin_mode": mode, "order": events, "first_to_bind": first,

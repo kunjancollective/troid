@@ -25,10 +25,14 @@ python3 audit/run.py --no-write --revert all   # diagnosis: the model with the s
 ```
 
 It needs Playwright's Chromium (`/opt/pw-browsers/chromium` where it exists, Playwright's own otherwise) and jinja2 for
-the `/ar` preview. It exits 0 when every check passed, 1 on any mismatch, 2 when it couldn't run (the model misses a
-pinned figure, or a page has no desk).
+the `/ar` preview. It exits 0 when every check passed, 1 on any mismatch, and 2 when it couldn't run: a bad argument,
+a pinned figure the model misses, a page with no desk, an `/ar` preview that won't build, a browser that won't start,
+any crash. A 2 writes nothing. The workflow counts a run as written only when this week's `audit.json` and report are
+both on disk and `audit.json` names the week.
 
-A check is one case on one page (its verdict and every figure it shows), plus each data check: the page's inline
+A check is one case on one page (its verdict and every figure it shows: the working table, the readout's six cells
+and the line under each, the verdict sentence and line, the binding limit by name, the circuit breakers and their
+order, and the notes that carry a figure), plus each data check: the page's inline
 `FIRMS` equals `firms.json` for every calc field of every product, and every rule the desk sizes with is cited with its
 source in the provenance block, or named in "Source not yet recorded for …", as `firms.json` records it. The report
 also lists the rules with no recorded source, the pending rules, and read dates older than 45 days.
@@ -36,6 +40,22 @@ also lists the rules with no recorded source, the pending rules, and read dates 
 Each mismatch is labelled with the handoff items that account for it: the smallest set of items whose earlier
 (the seed's) derivation makes the page match. The label helps read a report; it never decides a check. `--revert`
 runs the whole audit on those earlier derivations, to show the harness is otherwise clean; it writes nothing.
+
+## Setting up (once, in the repository's settings)
+
+The Sunday run commits to `audit/<week>` and opens a pull request with the workflow's own token. Two settings make
+that, and "a pull request with a failing audit can't merge", hold:
+
+- **Settings > Actions > General > Workflow permissions**: turn on "Allow GitHub Actions to create and approve pull
+  requests". It is off by default, and in an organisation the organisation's setting must allow it too. Without it
+  `gh pr create` is refused: the week's audit waits on its branch, and a week with mismatches still opens its issue,
+  which says the pull request wasn't opened.
+- **Settings > Rules (or Branches) on `main`**: require the status check `audit` (the workflow's job). Without it a
+  pull request whose audit failed can still be merged.
+
+A week run again replaces the branch only while it holds nothing but troid-audit's own commits: a commit anyone else
+pushed to `audit/<week>` stops the run with an error, and the push is leased on the commit it read, so a branch that
+moved meanwhile is refused too.
 
 ## Changing the model
 
@@ -48,7 +68,7 @@ hand goes in `cases.py` as a pin, and `run.py` refuses to drive a page until the
 ## On the desk
 
 `web/public/audit.js` fills the line under the desk from `/audit.json`: "Calculators audited 4 Oct 2026 · 1,023 checks
-passed · report", or "… found 2 mismatches · report", linked to the week's report on GitHub. The line is hidden when
+passed · report", or "… mismatches found: 2 · report", linked to the week's report on GitHub. The line is hidden when
 the file is missing or doesn't hold together; an old audit shows its date as it is. "Rules read …" is a separate
 claim, on its own line, written at build time from `firms.json`. `web/i18n/site.json` `calc_audit` takes both off the
 page. Tests: `python web/test_audit_line.py`; `backtest/verify_claims.py` holds `audit.json` to its report and the
