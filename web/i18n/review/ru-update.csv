@@ -53,9 +53,9 @@ glossary.risk_pct.formula,risk = equity × risk %,,,NEW: translate it in reviewe
 glossary.cap_pct.what,"troid's own safety rule, not a firm's: one trade may use at most this share of the room left before your nearest limit.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 glossary.cap_pct.ex,"$4,000 of room at 35 → no single trade risks more than $1,400. After losses the room shrinks, so each trade shrinks with it instead of breaching the floor.",,,NEW: translate it in reviewer_edit | keep every number exactly
 glossary.cap_pct.formula,risk ≤ room × budget cap %,,,NEW: translate it in reviewer_edit | 
-glossary.leverage.what,How much position each dollar of margin controls. It changes margin and liquidation distance — not the loss at your stop.,,,NEW: translate it in reviewer_edit | 
+glossary.leverage.what,"How much position each dollar of margin controls. It changes margin and liquidation distance — not the loss at your stop, while the margin fits in your equity. When it doesn't, the size is cut to fit, and lower leverage means a smaller loss.",,,NEW: translate it in reviewer_edit | 
 glossary.leverage.also,"5x, 1:5, margin multiplier",,,NEW: translate it in reviewer_edit | shown in English on every page: these are the words on the firms' dashboards; no translation needed; keep every number exactly
-glossary.leverage.ex,"a $12,478 position at 5× ties up $2,496 of margin. At 2× it ties up $6,239 — same loss at the stop either way.",,,NEW: translate it in reviewer_edit | keep every number exactly
+glossary.leverage.ex,"a $12,483 position at 5× ties up $2,497 of margin. At 2× it ties up $6,242 — same loss at the stop either way.",,,NEW: translate it in reviewer_edit | keep every number exactly
 glossary.leverage.formula,margin = notional ÷ leverage,,,NEW: translate it in reviewer_edit | 
 glossary.mode.what,Cross: your whole account backs every position. Isolated: each position has its own margin and can be liquidated on its own.,,,NEW: translate it in reviewer_edit | 
 glossary.mode.also,cross margin / shared margin; isolated margin / position margin,,,NEW: translate it in reviewer_edit | shown in English on every page: these are the words on the firms' dashboards; no translation needed
@@ -87,7 +87,7 @@ glossary.risk.formula,"risk = min(equity × risk %, room × budget cap %)",,,NEW
 glossary.risk.live,the smaller of {intended} and {cap}: {risk}.,,,NEW: translate it in reviewer_edit | keep {cap} {intended} {risk} exactly as written
 glossary.fees.what,The share of your risk the exchange takes. Tighter stops make it larger.,,,NEW: translate it in reviewer_edit | 
 glossary.fees.also,"commission, trading fees, taker fee",,,NEW: translate it in reviewer_edit | shown in English on every page: these are the words on the firms' dashboards; no translation needed
-glossary.fees.formula,2f ÷ (stop % + 2f),,,NEW: translate it in reviewer_edit | keep every number exactly
+glossary.fees.formula,f × (entry + stop) ÷ (stop distance + f × (entry + stop)),,,NEW: translate it in reviewer_edit | 
 glossary.fees.live,{fees} of {risk} = {share}.,,,NEW: translate it in reviewer_edit | keep {fees} {risk} {share} exactly as written
 glossary.fees.pending,"This product's fee isn't recorded yet, so fees aren't counted.",,,NEW: translate it in reviewer_edit | 
 glossary.stopd.what,"How far your stop is from entry, as a share of the entry price. Under it, the price your target R reaches.",,,NEW: translate it in reviewer_edit | 
@@ -98,8 +98,8 @@ glossary.budget.what,How much of the room left this one trade would use.,,,NEW: 
 glossary.budget.also,share of remaining drawdown,,,NEW: translate it in reviewer_edit | shown in English on every page: these are the words on the firms' dashboards; no translation needed
 glossary.budget.formula,budget used = risk ÷ room,,,NEW: translate it in reviewer_edit | 
 glossary.budget.live,{risk} ÷ {room} = {pct}.,,,NEW: translate it in reviewer_edit | keep {pct} {risk} {room} exactly as written
-glossary.left.what,How many losses of this size before the binding limit trips.,,,NEW: translate it in reviewer_edit | 
-glossary.left.formula,floor(room ÷ risk),,,NEW: translate it in reviewer_edit | 
+glossary.left.what,How many more losses of this size your equity can take and stay above the binding limit. A loss that would reach the limit isn't counted: firms fail an account that reaches it.,,,NEW: translate it in reviewer_edit | 
+glossary.left.formula,ceil(room ÷ risk) − 1,,,NEW: translate it in reviewer_edit | keep every number exactly
 glossary.left.live,{room} ÷ {risk} → {left}.,,,NEW: translate it in reviewer_edit | keep {left} {risk} {room} exactly as written
 glossary.breakers.what,"Everything that can stop a losing trade, in the order it would happen as price moves against you.",,,NEW: translate it in reviewer_edit | 
 glossary.daily.what,The most the firm lets you lose in one trading day. Cross it and the account fails.,,,NEW: translate it in reviewer_edit | 
@@ -168,7 +168,7 @@ index.hero.lede,"Most failed challenges end on a loss limit, not a missed target
   <a href=""{L}/sources#onefunded_failures"">one firm that publishes its own figures</a>, below. troid computes both of your
   loss ceilings, reports which one actually binds, and sizes the trade net of fees.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 index.why3.link,why these {n}?,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
-index.why3.p,"troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
+index.why3.p,"troid compares {n} firms: {firm}, the first firm troid verified from its own documents, and the {others} crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.",,,"NEW: translate it in reviewer_edit | keep {firm} {n} {others} exactly as written; troid stays lowercase, in Latin letters"
 index.why3.how,How firms are chosen →,,,NEW: translate it in reviewer_edit | 
 index.why3.ask,"Want another firm? <a href=""{href}"">Ask troid.</a>",,,"NEW: translate it in reviewer_edit | keep {href} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 index.why3.ask_q,Can troid add another firm to its compare? The one I'd like is ,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
@@ -176,10 +176,10 @@ index.lev.first_one,"5× is the most {firms} allows on crypto (its own documents
 index.lev.first_many,"5× is the most {firms} allow on crypto (their own documents, read {date}), so it's the starting point.",,,NEW: translate it in reviewer_edit | keep {date} {firms} exactly as written; keep every number exactly
 index.lev.pending,troid has no recorded cap for {firms} yet.,,,"NEW: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
 index.lev.firm_product,{firm}'s {product},,,NEW: translate it in reviewer_edit | keep {firm} {product} exactly as written
-index.firms.why,"{firm} is the reference firm because troid verified it first, not because it ranks highest.
+index.firms.why,"{firm} is the first firm troid verified from its own documents; it is listed for that, not for a review rank.
     Each rule on troid's compare shows the firm document and the date troid read it, or says its source is not yet
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
-    firms it compares; where a code is shown it's cheaper through the affiliate link, where it isn't it's the same price.
+    firms it compares; troid's links and codes don't raise the price.
     troid computes, you choose.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch (read {date}).,,,ENGLISH CHANGED: translate it in reviewer_edit | keep {date} {n} {rating} exactly as written
 index.stats.failures.n,93.7%,,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
@@ -200,10 +200,36 @@ index.does.p,"Computes both loss ceilings and reports the binding one. Sizes pos
 index.doesnt.verify,"Every figure here shows its tier and source; the arithmetic reproduces in
   <code>verify_claims.py</code>, which re-derives each published number from first principles and tags it by
   tier — derived, sourced, modelled, or measured. A measured number is never stated as fact.",,,ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words
+index.js.f_dd_loosest,"quota × (1 − {m}%): the loosest reading, drawdown type pending",,,NEW: translate it in reviewer_edit | keep {m} exactly as written; keep every number exactly
 index.js.vs_ok,"Fits. This trade risks {risk}, within troid's cap of {cap}% of the {room} left before your {bind}.",,,"NEW: translate it in reviewer_edit | keep {bind} {cap} {risk} {room} exactly as written; troid stays lowercase, in Latin letters"
 index.js.vs_reduce,"Cut to fit. Your {pct}% would risk {intended}; troid sized it down to {risk}, {cap}% of the room left.",,,"NEW: translate it in reviewer_edit | keep {cap} {intended} {pct} {risk} exactly as written; troid stays lowercase, in Latin letters"
+index.js.vs_margin,"Cut to fit the margin: at {lev}× the account carries at most {max} notional, so this trade risks {risk}.",,,NEW: translate it in reviewer_edit | keep {lev} {max} {risk} exactly as written
 index.js.vs_block,Can't be sized: {reasons}.,,,NEW: translate it in reviewer_edit | keep {reasons} exactly as written
 index.js.vs_pending,Can't be sized yet: troid has not recorded the rules this needs.,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+index.js.n_dd_loosest,drawdown type pending — sized against the loosest reading of the {m}% max loss; a trailing floor would be tighter,,,NEW: translate it in reviewer_edit | keep {m} exactly as written
+index.js.n_hwm_raised,high-water mark raised from {typed} to {hwm}: it can't be below the quota,,,NEW: translate it in reviewer_edit | keep {hwm} {typed} exactly as written
+index.js.n_hwm_raised_equity,"high-water mark raised from {typed} to {hwm}: this firm trails on equity, so it can't be below your equity",,,NEW: translate it in reviewer_edit | keep {hwm} {typed} exactly as written
+index.js.n_hi_raised,high at rollover raised from {typed} to {hi}: it can't be below the day start,,,NEW: translate it in reviewer_edit | keep {hi} {typed} exactly as written
+index.js.b_gt0,{field} must be more than 0,,,NEW: translate it in reviewer_edit | keep {field} exactly as written; keep every number exactly
+index.js.b_pct,{field} must be more than 0 and at most 100,,,NEW: translate it in reviewer_edit | keep {field} exactly as written; keep every number exactly
+index.js.b_lev,{field} must be at least 1,,,NEW: translate it in reviewer_edit | keep {field} exactly as written; keep every number exactly
+index.js.b_reaches,"a loss at this stop would take the whole room and reach the {bind}, which fails the account — set the budget cap below 100%",,,NEW: translate it in reviewer_edit | keep {bind} exactly as written; keep every number exactly
+index.js.n_lev_held,"leverage held to {lev}×, the lowest cap this firm records",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {lev} exactly as written
+index.js.f_fpu,(entry + stop) × {fee}%,,,ENGLISH CHANGED: translate it in reviewer_edit | keep {fee} exactly as written
+index.js.f_qty_margin,equity × leverage used ÷ entry: cut to fit the margin,,,NEW: translate it in reviewer_edit | 
+index.js.f_lev_pending_held,"your leverage; cap pending (held to {lev}×, the lowest cap recorded for this firm)",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {lev} exactly as written
+index.js.st_margin_check,margin check,,,NEW: translate it in reviewer_edit | 
+index.js.f_margin_fits,margin at the risk-based size ≤ equity,,,NEW: translate it in reviewer_edit | 
+index.js.f_margin_cut,margin at the risk-based size > equity: size cut to equity × {lev}× ÷ entry,,,NEW: translate it in reviewer_edit | keep {lev} exactly as written
+index.js.st_loss,loss at the stop,,,NEW: translate it in reviewer_edit | 
+index.js.f_loss,quantity × (stop distance + fee per unit),,,NEW: translate it in reviewer_edit | 
+index.js.f_left,ceil(budget ÷ risk) − 1,,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+index.js.n_cut_margin,cut from {from} to {to} — {bind} budget caps it; the margin then cut it to {loss},,,NEW: translate it in reviewer_edit | keep {bind} {from} {loss} {to} exactly as written
+index.js.gx_risk_cut,"the smaller of {intended} and {cap}: {rb}; the margin then cut the size to fit at {lev}×, so the trade risks {risk}.",,,NEW: translate it in reviewer_edit | keep {cap} {intended} {lev} {rb} {risk} exactly as written
+index.js.v_liq_none,none above zero,,,NEW: translate it in reviewer_edit | 
+index.js.v_floor_none,not reached above zero — a fall to zero stays inside it,,,NEW: translate it in reviewer_edit | 
+index.js.n_isolated_none,isolated at {lev}×: no liquidation above zero — the position’s own margin covers a fall to zero,,,NEW: translate it in reviewer_edit | keep {lev} exactly as written
+index.js.f_size,"size = min(equity × {risk}%, room × {cap}%) ÷ (stop distance + (entry + stop) × {fee}%)",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {cap} {fee} {risk} exactly as written
 index.js.share_copy,Copy link to this result,,,NEW: translate it in reviewer_edit | 
 index.js.share_copied,"Link copied. Your inputs ride after the # in it, and browsers never send that part to a server.",,,NEW: translate it in reviewer_edit | 
 index.js.share_manual,Copy this link:,,,NEW: translate it in reviewer_edit | 
@@ -211,6 +237,7 @@ index.js.shared,Opened from a shared link. Numbers are the sharer's inputs; rule
 index.js.shared_firm,"The link names a firm troid doesn't list now ({firm}), so the desk shows {shown} with the link's numbers.",,,"NEW: translate it in reviewer_edit | keep {firm} {shown} exactly as written; troid stays lowercase, in Latin letters"
 index.js.shared_product,"The link names a challenge troid doesn't list for {firm} now ({product}), so the desk shows {shown}.",,,"NEW: translate it in reviewer_edit | keep {firm} {product} {shown} exactly as written; troid stays lowercase, in Latin letters"
 index.js.shared_bad,Values in the link that couldn't be read ({n}) were left at the desk's defaults.,,,NEW: translate it in reviewer_edit | keep {n} exactly as written
+index.js.shared_range,Values in the link outside the desk's bounds ({fields}) were left at the desk's defaults.,,,NEW: translate it in reviewer_edit | keep {fields} exactly as written
 index.js.shared_long,"The link was too long to read, so the desk shows its defaults.",,,NEW: translate it in reviewer_edit | 
 compare.meta.title,{firms} rules | troid,,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {firms} exactly as written; troid stays lowercase, in Latin letters"
 compare.meta.description,"{firm_list} side by side: daily limit, max loss, target, price and fees, each with its document and troid's read date.",,,"NEW: translate it in reviewer_edit | keep {firm_list} exactly as written; troid stays lowercase, in Latin letters"
@@ -220,6 +247,12 @@ compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: t
 compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
 compare.conflicts.troid,troid shows {what}.,,,"NEW: translate it in reviewer_edit | keep {what} exactly as written; troid stays lowercase, in Latin letters"
+compare.js.v_survive_trail,"{n} at the high-water mark, fewer below it",,,ENGLISH CHANGED: translate it in reviewer_edit | keep {n} exactly as written
+compare.js.v_survive_lock,"; more once the floor locks at the starting balance, after +{lock}%",,,NEW: translate it in reviewer_edit | keep {lock} exactly as written
+compare.js.v_fee,~{drag}% of risk ({fee}%/side),,,ENGLISH CHANGED: translate it in reviewer_edit | keep {drag} {fee} exactly as written
+compare.js.f_survive,ceil(quota × max% ÷ risk) − 1,,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+compare.js.f_fee,"fee share ≈ 2 × fee ÷ (stop % + 2 × fee), both fees at the entry price: the compare takes no side, and the exit fee is really charged at the stop, so a long's share is a little lower and a short's a little higher",,,ENGLISH CHANGED: translate it in reviewer_edit | keep every number exactly
+compare.js.foot_code,code <b>{code}</b>,,,ENGLISH CHANGED: translate it in reviewer_edit | keep {code} exactly as written; keep the <…> tags and links as they are; translate only the words
 firm.meta.title,"{firm} rules, sourced: drawdown, target, fees | troid",,,"NEW: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
 firm.meta.description,"{firm}'s rules from its own documents: daily and max loss and how each is measured, reset, fees, leverage and hold limits, each with its read date.",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
 firm.og.title,"{firm}'s rules, each with its source",,,NEW: translate it in reviewer_edit | keep {firm} exactly as written
@@ -372,6 +405,11 @@ twelve months. At 2%, <span class=""stat"">100%</span>: every simulated year. Ca
 <em>remaining</em> budget rather than a fixed slice of the balance took all of those to
 0%.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.risk.src,"MODELLED: 20,000 simulated years of 30 trades a month, 45% won at 2:1, under a 4% daily limit fixed on the $100,000 start and a 6% static floor; the cap is 35% of the remaining budget a trade. True under these assumptions only. <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/income_math.py"">income_math.py</a>",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
+faq.money.p2,"troid is an independent affiliate of the firms it compares. When
+someone buys a challenge through one of its links or codes, that firm pays troid a commission. It's
+paid on the purchase, not on your result — troid would be paid if you failed. That's worth knowing, and worth
+weighing everything on this site against. troid's links and codes don't raise the price. Which firms,
+and the criterion for choosing them, is stated on <a href=""{L}/compare"">troid's compare</a> and reviewed quarterly.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 faq.charge.q,Will troid charge?,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 faq.charge.p,"Not for what is free now: troid's desk, troid's compare, the sources, troid's ledger, ask troid at its normal limit and desk links stay free. <a href=""{L}/pro"">troid Pro</a>, in preparation, will add saved accounts, rule-change alerts, a journal check that reads your trade file in your browser, and a higher ask troid limit, at $19/month or $190/year, tax included. It takes no payment yet. A subscription pays troid only while the tool stays useful; an affiliate commission pays whether a trader passes or fails, so moving troid's income toward Pro shrinks that conflict of interest.",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 faq.trust.p2,"<a href=""{L}/ledger"">troid's ledger</a> publishes its own results every four hours, losses included.
@@ -407,6 +445,8 @@ reader: a trader who cannot state an edge, an average win-to-loss ratio, and the
 sizing survives will find those out from a challenge ({fee} for {firm}'s {quota} {product}, read {date}) faster than from a
 spreadsheet at no cost.
 The base rates on this page are the rest of it.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {date} {fee} {firm} {product} {quota} exactly as written; troid stays lowercase, in Latin letters"
+faq.worth.p2,"<a href=""{L}/compare"">troid's compare</a> has the affiliate links and codes, and the criterion for which firms are
+on it. They're how troid is funded, and they don't raise the price.",,,"ENGLISH CHANGED: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 terms.meta.title,"troid terms of use: a free prop-firm risk tool, not advice",,,"ENGLISH CHANGED: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 terms.og.title,troid — terms of use,,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 terms.og.description,"A free informational tool, not advice. Verify every number with the firm before trading.",,,NEW: translate it in reviewer_edit | 
@@ -451,6 +491,9 @@ desk2.card.account,your account,,,NEW: translate it in reviewer_edit |
 desk2.card.trade,your trade,,,NEW: translate it in reviewer_edit | 
 desk2.card.risk,your risk,,,NEW: translate it in reviewer_edit | 
 desk2.card.error,check this step,,,NEW: translate it in reviewer_edit | 
+desk2.audit.pass,"Calculators audited {date} · {n} checks passed · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
+desk2.audit.fail,"Calculators audited {date} · mismatches found: {n} · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
+desk2.audit.rules,Rules read {range},,,NEW: translate it in reviewer_edit | keep {range} exactly as written
 desk2.asset,Asset,,,NEW: translate it in reviewer_edit | 
 desk2.group.crypto,Crypto,,,NEW: translate it in reviewer_edit | 
 desk2.group.commodities,Commodities,,,NEW: translate it in reviewer_edit | 
@@ -499,6 +542,7 @@ desk2.js.x2_p,Whichever floor is nearer binds. The dollars between your equity a
 desk2.js.x3_h,The crossover,,,NEW: translate it in reviewer_edit | 
 desk2.js.x3_p,"On {product}, on a fresh day, the two floors swap at one equity: above it the daily floor binds, below it the max-loss floor does.",,,NEW: translate it in reviewer_edit | keep {product} exactly as written
 desk2.js.x3_none,"On {product} the floors move with your balance, so they don't swap at one fixed equity.",,,NEW: translate it in reviewer_edit | keep {product} exactly as written
+desk2.js.x3_pending,"On {product} troid has not recorded the drawdown type, so no crossover is shown.",,,"NEW: translate it in reviewer_edit | keep {product} exactly as written; troid stays lowercase, in Latin letters"
 desk2.js.x4_h,What one trade may risk,,,NEW: translate it in reviewer_edit | 
 desk2.js.x4_p,"Your risk % of equity, cut to troid's cap: at most that share of the room left. After losses the room shrinks, and each trade with it.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
 desk2.js.x5_h,"Size, net of fees",,,NEW: translate it in reviewer_edit | 
@@ -506,6 +550,10 @@ desk2.js.x5_p,"Fees are paid on the whole position, in and out, so they come out
 desk2.js.x6_h,Why leverage doesn't change the loss,,,NEW: translate it in reviewer_edit | 
 desk2.js.x6_p,The loss at the stop is size × stop distance: leverage isn't in it. Leverage sets how much margin the position ties up.,,,NEW: translate it in reviewer_edit | 
 desk2.js.x6_code,at 1× the margin would be {notional}; at {lev}× it is {margin}; the loss at the stop is {risk} either way,,,NEW: translate it in reviewer_edit | keep {lev} {margin} {notional} {risk} exactly as written; keep every number exactly
+desk2.js.x5_cut,"margin = {q0} × {entry} ÷ {lev}× = {m0}, more than equity {eq}: size = {eq} × {lev}× ÷ {entry} = {qty}",,,NEW: translate it in reviewer_edit | keep {entry} {eq} {lev} {m0} {q0} {qty} exactly as written
+desk2.js.x6_h_cut,Why leverage changes the loss here,,,NEW: translate it in reviewer_edit | 
+desk2.js.x6_p_cut,"The margin the risk-based size needs is more than your equity, so the size is what equity carries at this leverage. At lower leverage the size would be smaller, and so would the loss at the stop.",,,NEW: translate it in reviewer_edit | 
+desk2.js.x6_code_cut,at {lev}× the account carries at most {max} notional; the loss at the stop is {qty} × ({dist} + {fu}) = {risk},,,NEW: translate it in reviewer_edit | keep {dist} {fu} {lev} {max} {qty} {risk} exactly as written
 desk2.js.x_wait,Enter your entry and stop above to see the rest.,,,NEW: translate it in reviewer_edit | 
 desk2.price_ph,0.00,,,NEW: translate it in reviewer_edit | keep every number exactly
 desk2.js.empty,Enter your entry and stop to size a trade.,,,NEW: translate it in reviewer_edit | 
@@ -547,7 +595,7 @@ sources.rules.p,"Every firm rule troid states — loss limits, fees, hold limits
 tier.rules,"SOURCED · {firm}: {docs}. <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
 tier.rules_derived,"SOURCED · {firm}: {docs}. DERIVED · {derived} <a href=""{L}/sources#rules"">Sources</a>",,,NEW: translate it in reviewer_edit | keep {L} {derived} {docs} {firm} exactly as written; keep the <…> tags and links as they are; translate only the words
 faq.daily.derived,"troid's arithmetic on the $100,000 account: 4% × $100,000 = $4,000; the floor, $100,000 × (1 − 6%) = $94,000; the crossover, $100,000 × (1 − 6% + 4%) = $98,000, $2,000 below the start.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
-faq.fees.derived,"troid's arithmetic: a trade sized so that the stop plus fees loses the risk budget pays 0.08% ÷ (stop% + 0.08%) of it in fees, 0.04% on entry and 0.04% on exit: 0.08 ÷ 3.98 ≈ 2% for a 3.9% stop, 0.08 ÷ 0.38 ≈ 21% for a 0.3% stop, and 21% of $500 ≈ $105.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
+faq.fees.derived,"troid's arithmetic: a trade sized so that the stop plus fees loses the risk budget pays 0.04% of the entry price going in and 0.04% of the stop price going out. On a long with a 3.9% stop that is 0.04% × (2 − 0.039) = 0.0784% of the entry, and 0.0784 ÷ (3.9 + 0.0784) ≈ 1.97% of the risk (2.05% on a short, whose stop is above the entry): ≈ 2%. With a 0.3% stop, 0.0799 ÷ 0.3799 ≈ 21.03% (21.08% on a short): ≈ 21%, and 21% of $500 ≈ $105.",,,"NEW: translate it in reviewer_edit | keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.verdict.src,"MEASURED · the sample: <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code> from 1,539 4h bars, 8 Jan – 21 Sep 2026 (<code>data/btc_4h.csv</code>); the holdout: <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/WALKFORWARD.md"">WALKFORWARD.md</a>.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.xref.src,"MEASURED on the sample · <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code>; <code>verify_claims.py</code> re-derives the ladder quantity and the trade frequency. DERIVED · the +1.24R: $6,250 ÷ $500 ÷ 10.1.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
 dashboard.variants.src,"MEASURED on the sample, 0.5% risk a trade, continuous run · <a href=""https://github.com/kunjancollective/troid/blob/main/backtest/RESULTS.md"">RESULTS.md</a>, generated by <code>gen_results.py</code>. n = 33 to 89 trades a row, one asset, one regime.",,,"NEW: translate it in reviewer_edit | keep the <…> tags and links as they are; translate only the words; keep every number exactly; troid stays lowercase, in Latin letters"
