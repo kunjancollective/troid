@@ -16,7 +16,7 @@ item of the handoff as audit/SPEC.md (the contract the desk and this model were 
       at rollover is never below the day start. (The seed took a typed value as it was.) A raised mark's note names the
       bound that set it: equity's only when the mark became the equity. (SPEC.md said "when both apply, the equity
       one"; below both a quota and an equity under it, the mark is the quota, and equity's note would misstate why.
-      Clarified 2026-09-29 at integration, before any audit was published: for the owner's review.)
+      Clarified 2026-09-29 at integration, before any audit was published; approved by the owner 30 Sep 2026.)
   F3  A pending drawdown type with the max loss known is bounded by quota × (1 − max%), the loosest reading of the
       rule: a trailing floor is never lower than the static one. (The seed left that floor unknown.)
   F6  Fee per unit is fee × (entry + stop): the exit fee priced at the stop, the way an exchange charges it. (The seed
@@ -34,6 +34,7 @@ The desk was reviewed after the audit's first run, and audit/SPEC.md's "Changes 
 what it must show. The model follows those rules from SPEC.md alone, never from the desk's code (for the owner's
 review, like every change here):
 
+  R1-R8 (audit/SPEC.md, "Changes after the review"), approved by the owner 30 Sep 2026:
   R1  Equity and day start must be more than 0: two more range reasons, and every reason in SPEC.md's order (quota,
       equity, day start, risk %, budget cap %, leverage, entry, stop). A blank reads as 0 and is refused; a blank day
       start used to drop the daily limit to −daily% × quota. The high-water mark and high at rollover are unchanged

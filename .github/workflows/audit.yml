@@ -7,7 +7,7 @@ name: audit — the desk's arithmetic, re-derived
 # by the thing it audits.
 #
 # Every pull request runs it, and one that touches neither the desk, firms.json nor the audit passes at once, so the
-# check can be required. On Sundays, and by hand, it also commits web/public/audit.json and audit/reports/<week>.md to
+# check can be required (not yet: the owner revisits that after launch). On Sundays, and by hand, it also commits web/public/audit.json and audit/reports/<week>.md to
 # the branch audit/<week> and opens a pull request for the owner to merge; a week with mismatches opens an issue, once.
 # It never pushes to main, places nothing and touches no account.
 #

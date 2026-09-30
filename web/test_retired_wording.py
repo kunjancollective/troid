@@ -93,14 +93,17 @@ standing = ["troid compares {n} firms: {firm}, the reference firm troid verified
             "{firm} is the reference firm because troid verified it first, not because it ranks highest.",
             "Bitfunded is the reference firm, not the top-ranked one.", "Another firm verified to the same depth earns the same standing.",
             "One reference firm \\u2014 Bitfunded, verified first \\u2014 and the next firms", "One reference firm — Bitfunded, verified first —",
-            "The reference-firm standing comes from verification, not directory rank."]
+            "The reference-firm standing comes from verification, not directory rank.",
+            # the owner's decision, 30 Sep 2026: the rest of the standing goes too
+            "One reference firm, chosen for verification depth, not rank.", "alphabetical · one reference firm + two by external ranking · reviewed {date}",
+            "Bitfunded · reference", "Same price direct, and troid says so."]
 plain = ["troid compares {n} firms: {firm}, the first firm troid verified from its own documents, and the {others} crypto firms",
-         "One reference firm, chosen for verification depth, not rank.", "alphabetical · one reference firm + two by external ranking · reviewed {date}",
-         "Bitfunded · reference", "troid's reference account (a $100,000 Bitfunded 1-Step)",
-         "It is on troid's compare because troid verified it first, not for a directory rank."]
+         "Bitfunded, the first firm troid verified from its own documents.", "alphabetical · three firms · reviewed {date}",
+         "troid's links and codes don't raise the price, and troid says so.", "troid's reference account (a $100,000 Bitfunded 1-Step)",
+         "It is on troid's compare because troid verified it first, not for a directory rank.", "the reference price troid quotes"]
 ok("the selling pattern catches the reference firm's special standing", all(RETIRED_SELLING.search(t) for t in standing),
    [t for t in standing if not RETIRED_SELLING.search(t)])
-ok("and passes the plain fact, and what waits for the owner (METHODOLOGY, the compare's meta line, the label)",
+ok("and passes the plain fact that replaced it (METHODOLOGY, the compare's meta line, BRAND.md)",
    not any(RETIRED_SELLING.search(t) for t in plain), [t for t in plain if RETIRED_SELLING.search(t)])
 
 # --- what goes live ---------------------------------------------------------------------------------------------------------
@@ -114,7 +117,7 @@ texts = {f"en.json {k}": v for k, v in en.items() if isinstance(v, str) and not 
 files = ([*(ROOT / "web" / "templates").rglob("*.html"), *(ROOT / "web" / "public").glob("*.html"), *(ROOT / "web" / "public" / "firms").glob("*.html"),
           ROOT / "README.md", ROOT / "web" / "public" / "llms.txt", ROOT / "backtest" / "STRATEGY.md", ROOT / "backtest" / "WALKFORWARD.md", ROOT / "mcp" / "server.py",
           *(ROOT / ".claude" / "skills" / "prop-trading-desk").rglob("*.md"), ROOT / ".claude" / "skills" / "prop-trading-desk" / "config.example.json",
-          ROOT / "backtest" / "bitfunded_config.json", ROOT / "firms.json",
+          ROOT / "backtest" / "bitfunded_config.json", ROOT / "firms.json", ROOT / "BRAND.md",
           staged_or_live("TROID.md", ROOT / "web" / "public" / "TROID.md"),
           staged_or_live("support.md", ROOT / "web" / "context" / "support.md"),
           staged_or_live("TROID-CHARACTER.md", ROOT / "web" / "context" / "TROID-CHARACTER.md")])

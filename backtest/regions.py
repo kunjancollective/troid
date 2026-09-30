@@ -53,12 +53,11 @@ def _panel_read(f, what):
 def panel_cell(k, f, T=None):
     T = _strings(T)
     p = f["compare_product"]; name = html.escape(f["name"])
-    # The review ranking chooses which firms troid covers (firms.json _criterion); it is not a standing troid gives a
-    # firm, so the panel shows no rank beside a name (the owner's independence stance, 29 Sep 2026). The dated review
-    # count below stays: it is the criterion's own figure, with its read date.
+    # No standing beside a name: not a review rank (the ranking only chooses which firms troid covers, firms.json
+    # _criterion) and not "reference" for the firm troid verified first (the owner's independence stance, 29-30 Sep
+    # 2026). The dated review count below stays: it is the criterion's own figure, with its read date.
     rank = RANK.get(f["name"])
-    role = T("index.firms.reference") if f.get("reference") else ""
-    head = f"{name} · {role}" if role else name
+    head = name
     # One rule for every firm, the reference firm included: how many of the compare's rules are filled and how many
     # have a recorded source; a firm's own one-line summary (panel_summary), where it has one, sits above the count.
     n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))

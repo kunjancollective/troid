@@ -137,7 +137,8 @@ MMR 0.5%, the compare's "losses before max loss binds", ask troid's tools (they 
 ## Changes after the review, 2026-09-30
 
 The desk was reviewed after the audit's first run; these rules change what the desk shows, so the model follows them
-from here, not from the desk's code. They need the owner's review like any change to this file. Each rule names its
+from here, not from the desk's code. The owner reviewed and approved R1–R8 and the F4 clarification on 30 Sep 2026,
+R5 included (a 100% cap whose loss lands on the floor is a BLOCK). Each rule names its
 i18n keys (English text in quotes). Where a rule below and an earlier section differ, the rule below holds.
 
 **R1. Equity and day start are bounded (extends F2).** Two more reasons, in this order among F2's: quota, equity, day

@@ -43,15 +43,17 @@ runs the whole audit on those earlier derivations, to show the harness is otherw
 
 ## Setting up (once, in the repository's settings)
 
-The Sunday run commits to `audit/<week>` and opens a pull request with the workflow's own token. Two settings make
-that, and "a pull request with a failing audit can't merge", hold:
+The Sunday run commits to `audit/<week>` and opens a pull request with the workflow's own token. One setting makes
+that work; a second would make "a pull request with a failing audit can't merge" hold, and waits (below):
 
 - **Settings > Actions > General > Workflow permissions**: turn on "Allow GitHub Actions to create and approve pull
   requests". It is off by default, and in an organisation the organisation's setting must allow it too. Without it
   `gh pr create` is refused: the week's audit waits on its branch, and a week with mismatches still opens its issue,
   which says the pull request wasn't opened.
-- **Settings > Rules (or Branches) on `main`**: require the status check `audit` (the workflow's job). Without it a
-  pull request whose audit failed can still be merged.
+- **Settings > Rules (or Branches) on `main`**: require the status check `audit` (the workflow's job). Not yet: the
+  owner decided on 30 Sep 2026 to leave it optional until after launch. Until then a pull request whose audit failed
+  shows a red check but can still be merged. When it is required, shadow.yml, calendar.yml and data.yml (which push
+  straight to main) need a bypass.
 
 A week run again replaces the branch only while it holds nothing but troid-audit's own commits: a commit anyone else
 pushed to `audit/<week>` stops the run with an error, and the push is leased on the commit it read, so a branch that

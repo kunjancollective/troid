@@ -35,7 +35,7 @@ page said so the same day.
 
 ## Firm selection
 
-One reference firm, chosen for verification depth, not rank. Two rotating slots by an
+Bitfunded, the first firm troid verified from its own documents. Two rotating slots by an
 external, public, checkable ranking, reviewed quarterly. Alphabetical on the page. No
 score or badge of troid's own, no recommendation. The link for each appears when its affiliate
 agreement exists and its daily, max, target and price cells each have a recorded source; until then it is held.
