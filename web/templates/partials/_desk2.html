@@ -3,7 +3,8 @@
    entry and stop start empty (0.00 is a placeholder), the settings with their defaults. They sit in three step cards
    (your account, your trade, your risk). The gauge comes first so a phone can pin it under the tape while the desk is on screen; from 1100 px it
    stands between the fields and the readout. #/assetnote holds the two lines the Asset field changes: the firm's hold
-   limit and whether it lists the asset. #/how is the explainer, the same numbers step by step. #}
+   limit and whether it lists the asset. #/how is the explainer, the same numbers step by step. The fields' min and max
+   are the desk's bounds (calculator audit F2, 2026-09-29); render() holds them too, and refuses 0 where min is 0. #}
 </div>
 <div class="wrap wide">
 <div class="panel d2" id="desk">
@@ -22,9 +23,9 @@
         <div class="grid g2">
           <div class="span2"><label for="firm">{{ term("firm", t("index.calc.firm")) }}<button type="button" class="why3" data-pop="p-why3" aria-expanded="false" aria-controls="p-why3">{{ t("index.why3.link", n=n_firms) }}</button></label><select id="firm" aria-label="{{ t.attr("index.calc.firm") }}"></select></div>
           <div class="span2"><label for="profile">{{ term("challenge", t("index.calc.challenge")) }}</label><select id="profile"></select></div>
-          <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" value="100000"></div>
-          <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" value="100000"></div>
-          <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" value="100000"></div>
+          <div><label for="quota">{{ term("quota", t("index.calc.quota")) }}</label><input id="quota" type="number" min="0" value="100000"></div>
+          <div><label for="equity">{{ term("equity", t("index.calc.equity")) }}</label><input id="equity" type="number" min="0" value="100000"></div>
+          <div><label for="daystart">{{ term("daystart", t("index.calc.daystart")) }}</label><input id="daystart" type="number" min="0" value="100000"></div>
           <div id="hiWrap" style="display:none"><label for="hirollover">{{ term("hirollover", t("index.calc.hirollover")) }}</label><input id="hirollover" type="number" placeholder="{{ t.attr("index.calc.hirollover_ph") }}"></div>
           <div id="hwmWrap" style="display:none"><label for="hwm">{{ term("hwm", t("index.calc.hwm")) }}</label><input id="hwm" type="number" placeholder="{{ t.attr("index.calc.hwm_ph") }}"></div>
         </div>
@@ -35,18 +36,18 @@
           <div class="span2"><label for="asset">{{ term("asset", t("desk2.asset")) }}</label><div class="fi"><select id="asset">{{ asset_options }}</select><i class="flash" aria-hidden="true"></i></div></div>
           <div><label for="side">{{ term("side", t("index.calc.side")) }}</label><select id="side"><option value="1">{{ t("index.js.long") }}</option>
             <option value="-1">{{ t("index.js.short") }}</option></select></div>
-          <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><div class="fi"><input id="entry" type="number" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"><i class="flash" aria-hidden="true"></i></div>
+          <div><label for="entry">{{ term("entry", t("index.calc.entry")) }}</label><div class="fi"><input id="entry" type="number" min="0" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"><i class="flash" aria-hidden="true"></i></div>
             <div class="chip" id="chip"><button type="button" class="chipb" id="chipb" hidden></button><span class="chipm" id="chipm" hidden></span></div></div>
-          <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"></div>
+          <div><label for="stop">{{ term("stop", t("index.calc.stop")) }}</label><input id="stop" type="number" min="0" step="any" inputmode="decimal" placeholder="{{ t.attr("desk2.price_ph") }}"></div>
           <div><label for="targetR">{{ term("target_r", t("index.calc.target_r")) }}</label><input id="targetR" type="number" step="any" value="2"></div>
         </div>
       </details>
       <details class="step" id="st-risk" open>
         <summary><span class="sk">{{ t("desk2.card.risk") }}</span><span class="ss" id="ss-risk"></span><span class="se">{{ t("desk2.card.error") }}</span></summary>
         <div class="grid g2">
-          <div><label for="riskPct">{{ term("risk_pct", t("index.calc.risk_pct")) }}</label><input id="riskPct" type="number" step="any" value="0.5"></div>
-          <div><label for="capPct">{{ term("cap_pct", t("index.calc.cap_pct")) }}</label><input id="capPct" type="number" step="any" value="35"></div>
-          <div><label for="lev">{{ term("leverage", t("index.calc.leverage")) }}</label><input id="lev" type="number" step="any" value="5"></div>
+          <div><label for="riskPct">{{ term("risk_pct", t("index.calc.risk_pct")) }}</label><input id="riskPct" type="number" min="0" max="100" step="any" value="0.5"></div>
+          <div><label for="capPct">{{ term("cap_pct", t("index.calc.cap_pct")) }}</label><input id="capPct" type="number" min="0" max="100" step="any" value="35"></div>
+          <div><label for="lev">{{ term("leverage", t("index.calc.leverage")) }}</label><input id="lev" type="number" min="1" step="any" value="5"></div>
           <div><label for="mode">{{ term("mode", t("index.calc.mode")) }}</label><select id="mode"><option value="cross">{{ t("index.js.cross") }}</option>
             <option value="isolated">{{ t("index.js.isolated") }}</option></select></div>
         </div>
@@ -55,6 +56,16 @@
     <div class="d2out">
       <div class="anote" id="assetnote"></div>
       <div id="result"></div>
+      {%- if calc_audit %}
+      {#- the weekly calculator audit (audit/run.py) and, on its own line, when troid read the rules the desk sizes with:
+          audit.js fills the first from /audit.json (hidden until it loads and holds together) and dates both in the
+          page's language; the second is written here from firms.json, ISO dates until the script runs #}
+      <p class="audit" id="audit" hidden data-pass="{{ t.attr("desk2.audit.pass") }}" data-fail="{{ t.attr("desk2.audit.fail") }}" data-repo="https://github.com/kunjancollective/troid/blob/main/" data-intl="{{ "en-GB" if code == "en" else intl }}"></p>
+      {%- if rules_read %}
+      <p class="audit" id="rulesread" data-from="{{ rules_read["from"] }}" data-to="{{ rules_read["to"] }}" data-t="{{ t.attr("desk2.audit.rules") }}" data-intl="{{ "en-GB" if code == "en" else intl }}">{{ t("desk2.audit.rules", range=rules_read["from"] ~ " – " ~ rules_read["to"]) }}</p>
+      {%- endif %}
+      <script src="/audit.js" defer></script>
+      {%- endif %}
     </div>
   </div>
   <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>

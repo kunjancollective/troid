@@ -57,7 +57,7 @@ Day Trader Challenge is out of scope and says so.
 ## Compensation, how troid talks about it
 
 Disclosed always, never sold. The link is framed as reciprocity: if the tool earned its
-place, using it is how the work stays free. Same price direct, and troid says so. No
+place, using it is how the work stays free. troid's links and codes don't raise the price, and troid says so. No
 percentages on the page — the requirement is disclosing the connection, not the rate.
 
 Accuracy is not a conversion tactic. The moment a number is shaded to earn a click, the

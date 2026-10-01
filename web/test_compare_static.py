@@ -6,7 +6,10 @@ page's HTML, and the compare's rule columns were empty until the script ran).
 
 - The page as served, before any script: each firm's column carries its rules, its sizing at the default inputs and
   its foot, every value with its provenance line (Bitfunded's 1-Step: 4% · $4,000 daily, 6% · $6,000 max, the ceilings
-  swapping at $98,000, 4 losses at 0.50% before max loss binds, 12 survivable from a fresh start).
+  swapping at $98,000, 4 losses at 0.50% before max loss binds, 11 survivable from a fresh start: the 12th $500 loss
+  lands on the $94,000 floor, and reaching it is a breach, calculator audit 2026-09-29, F7). An exact multiple keeps its
+  count before max loss binds (quota 12345 at 0.50% reads 4, in the static column and in render()), and a trailing
+  column's survivable count is at the high-water mark, with the lock named only where the product records one.
 - Static equals the script: in Chromium, every language rendered with drafts (site_build.py --preview), English also
   with the reading aids on (site.json english_features, launch day), each firm's rows and foot as the page carries them
   equal the rows and foot its render() writes at the default inputs, HTML for HTML.
@@ -160,14 +163,30 @@ def main():
     # ---------------------------------------------------------------- the page before any script
     s, cols = served_text(url + "/compare")
     b = cols["bitfunded"]
-    for want in ("4% · $4,000", "6% · $6,000", "$98,000", "$2,000 (2.0%)", "4 at 0.50%", "12 from a fresh start",
-                 "$500 (0.50%)", "16:00–16:10", "Computed from Bitfunded 1-Step rules as published on",
+    for want in ("4% · $4,000", "6% · $6,000", "$98,000", "$2,000 (2.0%)", "4 at 0.50%", "11 from a fresh start",
+                 "ceil(quota × max% ÷ risk) − 1", "$500 (0.50%)", "16:00–16:10", "Computed from Bitfunded 1-Step rules as published on",
                  "Rules change without notice. Verify with the firm before trading."):
         ok(f"served HTML, no script: Bitfunded's column reads {want!r}", want in b, b[:400])
     for k in gen_compare.ORDER:
         f = gen_compare.FIRMS[k]
         ok(f"served HTML, no script: {f['name']}'s column carries its rules, sizing and provenance",
            "pending" not in cols[k][:12] and "Computed from " + f["name"] in cols[k] and "$500 (0.50%)" in cols[k], cols[k][:300])
+    # "losses before max loss binds" is floor(room ÷ risk) with an epsilon (review 2026-09-30): at quota 12345 and 0.5%
+    # the quotient comes out 3.9999999999999942, and floor() alone showed 3 where the crossover's tie-break keeps 4.
+    T_en, d_bf = i18n.Strings("en"), gen_compare.js_data("bitfunded", gen_compare.FIRMS["bitfunded"], i18n.Strings("en"))
+    at = dict(gen_compare.DEFAULTS, quota=12345)
+    ok("an exact multiple of room over risk keeps its count: quota 12345 at 0.50% on Bitfunded's 1-Step reads 4, not 3",
+       "4 at 0.50%" in gen_compare.static_column(d_bf, T_en, at)[0])
+    # a trailing column says the count holds at the high-water mark, and names the lock only where the product has one
+    for k in gen_compare.ORDER:
+        d = gen_compare.js_data(k, gen_compare.FIRMS[k], T_en)
+        lock = d.get("lock")
+        trailing = not str(d["p"].get("drawdown_type") or "static").startswith("static")
+        ok(f"{d['name']}: losses survivable {'at the high-water mark' if trailing else 'from a fresh start'}"
+           f"{', with the lock at +' + str(lock) + '%' if trailing and lock is not None else ''}",
+           ("at the high-water mark, fewer below it" in cols[k]) == trailing
+           and (f"locks at the starting balance, after +{lock}%" in cols[k]) == (trailing and lock is not None)
+           and "fewer after any profit" not in cols[k], cols[k][:600])
     for k, x in gen_compare.DEFAULTS.items():
         ok(f"the {k} input opens at the value the columns are written at ({jsnum.js_str(x)})",
            re.search(rf'<input id="{k}" type="number"[^>]*value="{re.escape(jsnum.js_str(x))}"', s) is not None)
@@ -195,6 +214,19 @@ def main():
                     ok(f"{code}: {k} {part} as served equal what render() writes at the default inputs",
                        st is not None and st == js and len(st) > (400 if part == "rows" else 20), first_diff(st, js))
             ok(f"{code}: no script error", not errors, errors[:2])
+
+        # ------------------------------------------------------------ away from the defaults, the script and static agree
+        # quota 12345 at 0.5%: the exact multiple floor() alone dropped (review 2026-09-30); render() must keep it too
+        pg.goto(url + "/compare")
+        pg.wait_for_function("() => document.getElementById('rows-' + ORDER[0]).children.length > 0")
+        pg.fill("#quota", "12345")
+        pg.dispatch_event("#quota", "input")
+        js = pg.evaluate("() => document.getElementById('rows-bitfunded').innerHTML")
+        st = gen_compare.static_column(d_bf, T_en, at)
+        # (rows, foot); read back through the DOM, as the page's own copy is above, so "&" and "&amp;" compare equal
+        st = pg.evaluate("(h) => { const e = document.createElement('div'); e.innerHTML = h; return e.innerHTML; }", st[0])
+        ok("in Chromium at quota 12345, 0.50%: render() writes Bitfunded's \"4 at 0.50%\", as static_column() does",
+           "4 at 0.50%" in js and js == st, first_diff(st, js))
 
         # ------------------------------------------------------------ the number formats, against Chromium
         pg.goto(url + "/compare")

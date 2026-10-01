@@ -7,8 +7,11 @@
   open the copied link in a fresh page: every input and the whole result come back, with the shared-link notice.
 - The link: the inputs are in the fragment only (no query string), and no request to the server carries them.
 - Malformed fragments: bad numbers, an unknown side or margin mode, broken percent-encoding, repeated keys, markup
-  in a value, a fragment over the length cap, a plain anchor. Each bad field keeps its default, nothing throws, and the
-  desk still answers: a verdict, or with no entry (the desk starts with none) its first view.
+  in a value, a fragment over the length cap, a plain anchor, a number outside the desk's bounds (calculator audit F2:
+  quota, equity, day start, entry and stop above 0, risk % and budget cap % above 0 and at most 100, leverage at least
+  1). Each bad field keeps its default, nothing throws, and the desk still answers: a verdict, or with no entry (the
+  desk starts with none) its first view. A value out of bounds is named by its field in the notice, never counted as
+  unreadable, and a range BLOCK offers no link (it couldn't carry the refused value; the review, 2026-09-30).
 - A firm or challenge troid no longer lists (rotated out) opens with a notice and a working desk, not a broken page.
 - A language in the link counts only when it is live; the first edit after opening removes the notice and the fragment.
 """
@@ -37,7 +40,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
     def send_head(self):
         SEEN.append(self.path)
-        if self.path.split("?")[0] == "/status.json":             # the status light: not under test
+        if self.path.split("?")[0] in ("/status.json", "/audit.json"):   # the status light, the audit line: not under test
             self.send_error(404)
             return None
         last = self.path.split("?")[0].rsplit("/", 1)[-1]
@@ -156,8 +159,15 @@ def main():
             ("unknown keys ignored", "#zz=1&q=61000&__proto__=x&constructor=y", {"quota": "61000"}, 0),
             ("a plain anchor is not a desk link", "#firms", {}, None),
             ("empty values ignored", "#f=&p=&q=&e=", {}, 0),
+            ("outside the desk's bounds", "#f=bitfunded&p=1step&rp=-1&cp=150&lv=0&q=0&en=0&st=-5&e=90000",
+             {"equity": "90000"}, ["risk_pct", "cap_pct", "leverage", "quota", "entry", "stop"]),
+            ("just outside them", "#f=bitfunded&p=1step&rp=100.01&cp=0&lv=0.99&q=-100000&en=-77872&e=0&ds=-1",
+             {}, ["risk_pct", "cap_pct", "leverage", "quota", "entry", "equity", "daystart"]),
         ]
         for name, frag, want, bad in cases:
+            if isinstance(bad, list):                  # out of bounds: named by field, in the link's order, not "couldn't be read"
+                labs = [EN["index.calc." + x] for x in bad]
+                bad = ("out", EN["index.js.shared_range"].format(fields=", ".join(labs)))
             q = page(base + "/" + frag)
             got = inputs(q)
             exp = dict(defaults, **want)
@@ -165,10 +175,35 @@ def main():
             nt = notice(q)
             if bad is None:
                 ok(f"malformed: {name}: no notice", nt is None, nt)
+            elif isinstance(bad, tuple):
+                ok(f"malformed: {name}: names the fields outside the bounds, and none as unreadable",
+                   nt is not None and bad[1] in nt and "couldn't be read" not in nt, [nt, bad[1]])
             elif bad:
                 ok(f"malformed: {name}: says {bad} value(s) could not be read", nt is not None and f"({bad})" in nt, nt)
             ok(f"malformed: {name}: the desk still answers", answers(q))
             q.close()
+        q = page(base + "/")
+        edge = q.evaluate("() => DESKLINK.decode('#rp=100&cp=100&lv=1&q=0.01&en=0.0001&st=1&e=0.01&ds=0.01', FIRMS, [])")
+        ok("the bounds' own edges are read: risk % and budget cap % 100, leverage 1, any quota, equity, day start, entry and stop above 0",
+           edge["bad"] == 0 and not edge["out"] and edge["values"] == {"riskPct": "100", "capPct": "100", "lev": "1", "quota": "0.01", "entry": "0.0001",
+                                                                   "stop": "1", "equity": "0.01", "daystart": "0.01"}, edge)
+        q.close()
+        q = page(base + "/" + "#f=bitfunded&p=1step&rp=-1&en=77872&st=74814")
+        rng = EN["index.js.shared_range"].format(fields=EN["index.calc.risk_pct"])
+        ok("a link with a risk of −1%: the desk sizes at the default risk instead, and says Risk % was outside the bounds",
+           q.input_value("#riskPct") == defaults["riskPct"] and q.inner_text("#result .verdict").startswith("OK") and notice(q) == shared + rng, notice(q))
+        q.close()
+        # a range BLOCK offers no link: its link would open as another result (the review, 2026-09-30); other BLOCKs do
+        q = page(base + "/")
+        trade(q)
+        q.fill("#riskPct", "-1")
+        ok("a range BLOCK (risk −1%): no copy-link button", q.inner_text("#result .verdict").startswith("BLOCK")
+           and not q.query_selector("[data-copy-link]"), q.inner_text("#result")[:200])
+        q.fill("#riskPct", "0.5")
+        q.fill("#stop", "80000")
+        ok("a stop on the wrong side: BLOCK, with its link (it reopens as the same refusal)", q.inner_text("#result .verdict").startswith("BLOCK")
+           and q.query_selector("[data-copy-link]") is not None)
+        q.close()
         q = page(base + "/#" + "q=1&" * 200)
         ok("over the length cap: nothing read, and says so", inputs(q) == defaults and notice(q) == EN["index.js.shared_long"], notice(q))
         q.close()

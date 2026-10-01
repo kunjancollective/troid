@@ -1,9 +1,10 @@
 /* troid's desk: a result as a link. Every desk input rides in the URL fragment (/#f=bitfunded&p=1step&q=100000…).
    Browsers never send the part after # to a server, so a shared result reaches no server and no log; troid sets no
    cookies and runs no analytics. Opening a link restores the inputs and the desk recomputes with the rules troid has
-   today, and says so. A value the desk can't read (an unknown firm or challenge, a malformed number, a fragment
-   longer than MAX) is ignored and that input keeps its default; nothing fails. A link carries l=<language> only from
-   a page in a language that is live.
+   today, and says so. A value the desk can't read (an unknown firm or challenge, a malformed number, a fragment longer
+   than MAX) is ignored and that input keeps its default; nothing fails. A number outside the desk's bounds keeps its
+   default too, and the notice names its field rather than calling it unreadable (the review, 2026-09-30). A link
+   carries l=<language> only from a page in a language that is live.
 
    encode() and decode() are pure (tested in web/test_desk_links.py); init() wires them to the desk in index.html. */
 (function (root) {
@@ -18,6 +19,12 @@
                 ["m", "mode", "mode"]];
   var SIDE = { "long": "1", "short": "-1" }, SIDE_KEY = { "1": "long", "-1": "short" };
   var MODE = { "cross": 1, "isolated": 1 };
+  // the desk's bounds (calculator audit F2, 2026-09-29; equity and day start from the review, 2026-09-30): a link can
+  // carry any number, and one outside them keeps that input's default rather than bringing a risk of −1% or leverage 0
+  // into the desk. It is counted apart from an unreadable one (out: the input ids), so the notice can name the field
+  function gt0(x) { return x > 0; }
+  function pct(x) { return x > 0 && x <= 100; }
+  var BOUND = { q: gt0, e: gt0, ds: gt0, en: gt0, st: gt0, rp: pct, cp: pct, lv: function (x) { return x >= 1; } };
   var OWN = new RegExp("(?:^|&)(?:f|p|l|" + FIELDS.map(function (x) { return x[0]; }).join("|") + ")=");
   var enc = encodeURIComponent;
 
@@ -37,11 +44,11 @@
   // Returns null when the fragment is not a desk link: empty, a plain anchor such as #firms or #desk, or one carrying
   // only someone else's parameters (TradingView adds its own after the tape's #desk: "desk&utm_source=…"). A desk link
   // names at least one of its own keys (f, p, l or an input's). Otherwise
-  // {firm, product, lang, values: {input id: string}, unknownFirm, unknownProduct, bad, tooLong}.
+  // {firm, product, lang, values: {input id: string}, unknownFirm, unknownProduct, bad, out: [input id], tooLong}.
   function decode(hash, firms, live) {
     var h = String(hash || "").replace(/^#/, "");
     if (!OWN.test(h)) return null;
-    var d = { firm: null, product: null, lang: null, values: {}, unknownFirm: null, unknownProduct: null, bad: 0, tooLong: false };
+    var d = { firm: null, product: null, lang: null, values: {}, unknownFirm: null, unknownProduct: null, bad: 0, out: [], tooLong: false };
     if (h.length > MAX) { d.tooLong = true; return d; }
     var got = Object.create(null);                                        // no prototype: a key named __proto__ is just a key
     h.split("&").forEach(function (kv) {
@@ -60,7 +67,11 @@
       var x = byKey[k];
       if (!x) return;                                                       // a key this desk doesn't know: ignored
       if (g.bad) { d.bad++; return; }
-      if (x[2] === "num") { if (NUM.test(v) && isFinite(parseFloat(v))) d.values[x[1]] = v; else d.bad++; }
+      if (x[2] === "num") {
+        if (!(NUM.test(v) && isFinite(parseFloat(v)))) d.bad++;
+        else if (BOUND[k] && !BOUND[k](parseFloat(v))) d.out.push(x[1]);
+        else d.values[x[1]] = v;
+      }
       else if (x[2] === "side") { if (SIDE.hasOwnProperty(v)) d.values[x[1]] = SIDE[v]; else d.bad++; }
       else if (x[2] === "mode") { if (MODE.hasOwnProperty(v)) d.values[x[1]] = v; else d.bad++; }
     });
@@ -124,6 +135,8 @@
       if (d.unknownFirm !== null) lines.push(F(T.shared_firm, { firm: esc(d.unknownFirm || "?"), shown: esc(firm.name) }));
       else if (d.unknownProduct !== null) lines.push(F(T.shared_product, { firm: esc(firm.name), product: esc(d.unknownProduct || "?"),
                                                                              shown: esc(firm.products[el("profile").value].label) }));
+      if (d.out.length) lines.push(F(T.shared_range, { fields: d.out.map(function (id) { return esc((o.lab || {})[id] || id); })
+        .reduce(function (a, b) { return F(T.list_comma, { a: a, b: b }); }) }));
       if (d.bad) lines.push(F(T.shared_bad, { n: d.bad }));
     }
     box.innerHTML = lines.map(function (x) { return "<div>" + x + "</div>"; }).join("");

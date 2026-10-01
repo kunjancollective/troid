@@ -200,7 +200,7 @@ def main():
                         ctx = b.new_context(viewport={"width": w, "height": 900}, device_scale_factor=1)
                         ctx.route("**/*", lambda r: r.abort() if not r.request.url.startswith("http://127.0.0.1") else r.continue_())
                         # the wordmark's status light depends on the time of day; both sides get no status, so a still dot
-                        ctx.route("**/status.json", lambda r: r.fulfill(status=404, body=""))
+                        ctx.route("**/{status,audit}.json", lambda r: r.fulfill(status=404, body=""))
                         # ask troid's page shows a random session ID; both sides get the same bytes
                         ctx.add_init_script("crypto.getRandomValues=function(a){for(var i=0;i<a.length;i++)a[i]=i*37&255;return a}")
                         pg = ctx.new_page()

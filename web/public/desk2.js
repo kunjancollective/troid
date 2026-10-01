@@ -1,23 +1,14 @@
-/* troid's desk, the home page's since 2026-09-25 (partials/_desk2.html; design handoff 2026-09-24, section 4; ticker v2
-   handoff, sections E and F; v3, section D). The desk's own script sizes the trade, exactly as on the live desk, and
-   hands each result to DESK2.paint; everything here draws that result and never computes a figure of its own beyond
-   placing it: positions on the gauge and ladder are the result's numbers to scale, and the explainer's lines are its
-   numbers with their formulas. Words come from web/i18n (T2, desk2.js.*; T, the desk's own). Firm data comes from
-   firms.json through DESK2DATA (regions.desk2_context): which firms list each asset, as what, on which page, read when,
-   and each firm's hold limit with its source.
-   - The Asset field changes two lines only: the firm's hold limit and whether it lists the asset. The size is the same.
-   - The entry field's chip is the crypto asset's spot price from /api/ticker (Binance.US), asked every 15 s while the
-     desk is on screen; a tap puts it in the entry. Gold, oil and stocks: their quotes are TradingView's, in its frame,
-     so the field points to the tape instead. A tapped tape symbol (?tvwidgetsymbol=) opens this page with it selected.
-   - The price on the chip is always the price of the asset in the field, and a price enters the entry only with its
-     own asset selected (the owner's Android test, 2026-09-25: a tapped NVDA left BTC selected, and the chip offered
-     BTC's price for what the reader took for an Nvidia trade).
-   - A tapped stock no firm lists (NVDA) is in the field as a temporary option, "NVDA · not offered by troid's firms":
-     no line about another asset, no chip, and the readout says there are no firm rules to size it against. Choosing
-     another asset removes the option.
-   - A new entry from the chip or the tape that leaves the stop on the wrong side, or more than 25% away, clears the
-     stop: the desk then says "Set your stop". troid never suggests one.
-   - Motion is transform and opacity only, and reduced motion shows the end frame (the CSS). */
+/* troid's desk, the home page's since 2026-09-25 (partials/_desk2.html; design handoff 2026-09-24, s.4; ticker v2 E-F;
+   v3 D). index.html's script sizes the trade and hands each result to DESK2.paint; this file draws it and computes no
+   figure of its own: the gauge and ladder place the result's numbers to scale, the explainer shows them with their
+   formulas. Words: T2 (desk2.js.*) and T (index.js.*). Firm data: DESK2DATA (regions.desk2_context), from firms.json.
+   - The Asset field changes two lines only, the hold limit and whether the firm lists it; never the size.
+   - The entry chip is the crypto asset's spot price from /api/ticker (Binance.US), every 15 s while on screen. Gold,
+     oil and stocks are quoted in TradingView's frame, so the field points to the tape. The chip's price is always the
+     asset in the field's (the owner's Android test, 2026-09-25: a tapped NVDA left BTC's price on offer).
+   - A tapped stock no firm lists sits in the field as "NVDA · not offered by troid's firms": no chip, nothing sized.
+   - A new entry that leaves the stop on the wrong side, or over 25% away, clears it ("Set your stop"); troid never
+     suggests one. Motion is transform and opacity only; reduced motion shows the end frame (the CSS). */
 (function () {
   var D = window.DESK2DATA, S = window.T2, prices = {}, src = "Binance.US", cleared = false, tapeOnly = null, tapeSel = null, tapeMiss = false, last = null;
   function $e(id) { return document.getElementById(id); }
@@ -82,11 +73,12 @@
       gauge.setAttribute("aria-label", F(S.g_aria, { eq: $(R.eq), floors: floors.join(", "), line: line }));
     }
     gauge.querySelector(".gline").textContent = line;
-    if (R.v === "PENDING") gauge.setAttribute("aria-label", line);
+    if (R.v === "PENDING" || R.eff == null) gauge.setAttribute("aria-label", line);   // no floor to name (an account out of range)
   }
 
   // the readout's breakers as a ladder, and its risk as a split bar: put into the result the desk just wrote, marked
-  // d2x (the redesign's own, which test_desk.py sets aside to compare the rest with the old desk's)
+  // d2x (the redesign's own, which test_desk.py sets aside to compare the rest with the old desk's). A breaker's 4th
+  // item is the words the desk shows in place of a figure ("none above zero")
   function paintReadout(R) {
     var r = $e("result"), notes = r.querySelector(".notes"), read = r.querySelector(".read");
     if (!notes || !read || !R.ord) return;
@@ -94,9 +86,9 @@
     var max = firmMax * 1.1, lq = R.ord.filter(function (o) { return o[2] === "liq"; })[0];
     if (lq && isFinite(lq[1]) && lq[1] <= max * 1.5) max = Math.max(max, lq[1] * 1.05);
     var rows = R.ord.map(function (o, i) {
-      var off = !isFinite(o[1]) || o[1] > max, bad = o[2] !== "stopd" && o[1] < R.sp, v = isFinite(o[1]) ? pc(o[1]) : "—";
+      var off = !isFinite(o[1]) || o[1] > max, bad = o[2] !== "stopd" && o[1] < R.sp, v = o[3] || (isFinite(o[1]) ? pc(o[1]) : "—");
       return '<div class="lr' + (i === 0 ? " first" : "") + (bad ? " bad" : "") + (off ? " off" : "") + '"><span class="ln">' + term(o[2], o[0]) +
-        (bad ? ' <span class="lx">' + S.l_before + "</span>" : "") + "</span>" + (off ? '<span class="lb"></span><span class="lv">' + F(S.l_off, { pct: v }) + "</span>" :
+        (bad ? ' <span class="lx">' + S.l_before + "</span>" : "") + "</span>" + (off ? '<span class="lb"></span><span class="lv">' + (o[3] || F(S.l_off, { pct: v })) + "</span>" :
         '<span class="lb"><i style="transform:scaleX(' + (o[1] / max).toFixed(4) + ')"></i></span><span class="lv">' + v + "</span>") + "</div>";
     });
     var lad = document.createElement("div");
@@ -166,7 +158,7 @@
   // the explainer: the result's own numbers, step by step, with the formula each came from
   function paintHow(R) {
     var st = [], p = R.p, code = function (s) { return "<code>" + s + "</code>"; };
-    if (R.v !== "PENDING") {
+    if (R.eff != null) {                               // floors to show: not pending, the account in range
       var fl = [];
       if (R.dFloor != null) fl.push(code(T.daily_floor + " = " + R.fd + " = " + $(R.dFloor)));
       if (R.ddFloor != null) fl.push(code(R.ddName + " = " + R.fdd + " = " + $(R.ddFloor)));
@@ -176,13 +168,16 @@
       var x = null, how = "";
       if (p.dd === "static" && p.basis === "initial" && R.dFloor != null) { x = R.quota * (1 - p.m / 100 + p.d / 100); how = $(R.quota) + " × (1 − " + p.m + "% + " + p.d + "%)"; }
       else if (p.dd === "static" && p.basis === "day_start" && R.ddFloor != null) { x = R.ddFloor / (1 - p.d / 100); how = $(R.ddFloor) + " ÷ (1 − " + p.d + "%)"; }
-      st.push([S.x3_h, F(x == null ? S.x3_none : S.x3_p, { product: esc(R.f.name + " " + p.label) }), x == null ? "" : code(how + " = " + $(x))]);
+      st.push([S.x3_h, F(x == null ? (p.dd == null ? S.x3_pending : S.x3_none) : S.x3_p, { product: esc(R.f.name + " " + p.label) }), x == null ? "" : code(how + " = " + $(x))]);
     }
     if (R.v === "OK" || R.v === "REDUCE") {
-      st.push([S.x4_h, S.x4_p, code(T.risk + " = min(" + $(R.eq) + " × " + R.rp + "%, " + $(R.eff) + " × " + R.cp + "%) = min(" + $(R.intended) + ", " + $(R.cap) + ") = " + $(R.risk))]);
-      st.push([S.x5_h, S.x5_p, code(T.size + " = " + $(R.risk) + " ÷ (" + n4(R.dist) + " + " + n4(R.fu) + ") = " + n4(R.qty)) +
+      st.push([S.x4_h, S.x4_p, code(T.risk + " = min(" + $(R.eq) + " × " + R.rp + "%, " + $(R.eff) + " × " + R.cp + "%) = min(" + $(R.intended) + ", " + $(R.cap) + ") = " + $(R.rb))]);
+      // a margin cut (F1): leverage then sets the size and the loss, so "either way" would be false (review, 2026-09-30)
+      var o = { rb: $(R.rb), q0: n4(R.q0), m0: $(R.m0), eq: $(R.eq), lev: R.levUsed, entry: n4(R.entry), qty: n4(R.qty), max: $(R.mx),
+        dist: n4(R.dist), fu: n4(R.fu), risk: $(R.risk), notional: $(R.notional), margin: $(R.margin) };
+      st.push([S.x5_h, S.x5_p, code(T.size + " = " + $(R.rb) + " ÷ (" + o.dist + " + " + o.fu + ") = " + o.q0) + (R.cut ? code(F(S.x5_cut, o)) : "") +
         (R.feeKnown ? code(T.fees + " = " + $(R.fees) + " ÷ " + $(R.risk) + " = " + fx(R.fshare, 1) + "%") : "")]);
-      st.push([S.x6_h, S.x6_p, code(F(S.x6_code, { notional: $(R.notional), lev: R.levUsed, margin: $(R.margin), risk: $(R.risk) }))]);
+      st.push(R.cut ? [S.x6_h_cut, S.x6_p_cut, code(F(S.x6_code_cut, o))] : [S.x6_h, S.x6_p, code(F(S.x6_code, o))]);
     } else st.push(["", R.v === "BLOCK" ? S.x_wait_block : only() ? S.x_wait_none : S.x_wait, ""]);
     $e("xs").innerHTML = st.map(function (s) { return "<li>" + (s[0] ? "<h3>" + s[0] + "</h3>" : "") + "<p>" + s[1] + "</p>" + s[2] + "</li>"; }).join("");
   }

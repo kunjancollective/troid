@@ -792,6 +792,22 @@
     "tc"
    ],
    "evidence": "MT5 bar for US residents: T&C 7.3 and 7.1(xvi). 'None listed' for other countries rests on the owner's statement in HANDOFF-global-launch §4 ('CFT: none listed, MT5 barred for US'); the repo's earlier 'none listed' echoed propfirmmatch (_leads_third_party). Clause not recorded."
+  },
+  {
+   "field": "drawdown_type / drawdown / locks_at_initial_after_pct / hwm_basis",
+   "product": "* and 1phase",
+   "src": [
+    "tc_0926"
+   ],
+   "evidence": "Calculator audit, 29 Sep 2026 (D3). firms.json provenance.sources.tc_0926, the Terms and Conditions fetched from a sandbox on 2026-09-26 (sha256 of the page b7b66c6b5ec56041, recorded in eb936e7), quotes 8(ii): 'At no time during the ‘1 Phase’ Evaluation Process or Final Stage have you registered losses ... which exceeded in total 4% of your balance at 12:05 AM UTC or 6% based on the maximum demo balance until you make a 6% demo profit, at which point your trailing drawdown will remain static at the account’s opening balance.' One clause carries each field. 'your trailing drawdown' and '6% based on the maximum demo balance' give calc.drawdown 'trailing' (a firm-level key that takes effect for 1phase only: 2phase overrides it with 'static', instant with null). 'the maximum demo balance' gives calc.hwm_basis 'balance': the high-water mark is the highest balance, not equity. 'until you make a 6% demo profit, at which point your trailing drawdown will remain static at the account’s opening balance' gives calc.locks_at_initial_after_pct 6. The clause does not say whether the 6% is of the opening or of the maximum balance; the lock landing on the opening balance at exactly +6% fits 6% of the opening balance, which is what the desk computes (high-water mark − 6% × quota). Read as 6% of the maximum balance, the floor would sit at 99.64% of the opening balance at +6% before the lock lifted it. The compare cell drawdown_type ('trailing → static at initial after +6%') has cited this source through provenance.fields.drawdown_type since eb936e7. The three calculator fields are recorded under provenance.products.1phase, not in fields: 2phase and instant don't override locks or hwm, so a firm-level cite would credit 8(ii) to products it doesn't cover. Not re-read from here: troid's egress proxy blocks cryptofundtrader.com (2026-09-29), so this maps the recorded text, not the live page."
+  },
+  {
+   "field": "drawdown",
+   "product": "2phase",
+   "src": [
+    "tc_0926"
+   ],
+   "evidence": "Calculator audit, 29 Sep 2026 (D4). firms.json provenance.sources.tc_0926 (as above) quotes 8(i): 'At no time during the ‘2 Phases’ Evaluation or ‘Ascend’ Evaluation Process or Final Stage account have you registered losses ... which exceeded in total 5% of your balance at 12:05 AM UTC or 10% of the initial demo balance.' A limit measured against the initial demo balance, with none of 8(ii)'s trailing or maximum-balance wording, is a static floor at 90% of the initial balance: calc.products.2phase.drawdown 'static', products.2phase.drawdown_type 'static from initial', max_pct 10. Recorded at provenance.products.2phase.drawdown: the product sets drawdown itself, so the firm-level cite never reaches it. 2phase inherits locks 6 and hwm 'balance' from calc, which have no effect on a static floor and stay unsourced for it. Instant stays pending: no recorded clause names Instant (calc.products.instant.drawdown null). Not re-read from here: troid's egress proxy blocks cryptofundtrader.com (2026-09-29), so this maps the recorded text, not the live page."
   }
  ],
  "crypto_fund_trader_unmapped": [
@@ -813,27 +829,32 @@
   {
    "field": "drawdown_type",
    "product": "*",
-   "why": "compare_product.drawdown_type reads 'trailing → static at initial after +6%'. It comes from products.1phase.drawdown_type ('trailing from max demo balance until +6% profit, then static at opening balance') and the firm-level drawdown_type ('product-dependent: 1-phase trailing-then-static ...'). Neither cites a clause or names a document. The earlier evidence misread _comparability_note. 'numbers in the T&C' is one of the comparability points. '1-phase trailing-then-static' sits in a separate sentence, 'Structural differences the model handles: ...', which names no document; that list also includes the 00:05 reset, which is cited separately to 8.i–8.ii, so the list is a list of model features, not a source record. Without that reading, the only remaining argument is elimination (the T&C is the only verified_from), and this mapping rejects elimination for price, consistency_rule and news_rule. The 'contains the numbers' annotation reaches the percentages, not the trailing/static mechanism. Skeptic 2's correction applied; skeptic 1's keep-by-inference not accepted because the task forbids guessing. To map this: re-read the T&C and record the clause."
+   "why": "compare_product.drawdown_type reads 'trailing → static at initial after +6%'. It comes from products.1phase.drawdown_type ('trailing from max demo balance until +6% profit, then static at opening balance') and the firm-level drawdown_type ('product-dependent: 1-phase trailing-then-static ...'). Neither cites a clause or names a document. The earlier evidence misread _comparability_note. 'numbers in the T&C' is one of the comparability points. '1-phase trailing-then-static' sits in a separate sentence, 'Structural differences the model handles: ...', which names no document; that list also includes the 00:05 reset, which is cited separately to 8.i–8.ii, so the list is a list of model features, not a source record. Without that reading, the only remaining argument is elimination (the T&C is the only verified_from), and this mapping rejects elimination for price, consistency_rule and news_rule. The 'contains the numbers' annotation reaches the percentages, not the trailing/static mechanism. Skeptic 2's correction applied; skeptic 1's keep-by-inference not accepted because the task forbids guessing. To map this: re-read the T&C and record the clause.",
+   "superseded": "2026-09-29: superseded by the 'drawdown_type / drawdown / locks_at_initial_after_pct / hwm_basis' 1-Phase entry in crypto_fund_trader (T&C 8(ii), recorded in tc_0926; calculator audit D3)."
   },
   {
    "field": "drawdown",
    "product": "1phase",
-   "why": "calc.drawdown 'trailing' is a firm-level calc key, but it takes effect only for 1phase: 2phase overrides it with 'static', and instant overrides it with null, which is pending and left out. Its source, products.1phase.drawdown_type, has no clause or document, so attribution to the T&C would be by elimination only (see drawdown_type). Product scoped to 1phase per skeptic 1, and moved to unmapped per skeptic 2."
+   "why": "calc.drawdown 'trailing' is a firm-level calc key, but it takes effect only for 1phase: 2phase overrides it with 'static', and instant overrides it with null, which is pending and left out. Its source, products.1phase.drawdown_type, has no clause or document, so attribution to the T&C would be by elimination only (see drawdown_type). Product scoped to 1phase per skeptic 1, and moved to unmapped per skeptic 2.",
+   "superseded": "2026-09-29: superseded by the 'drawdown_type / drawdown / locks_at_initial_after_pct / hwm_basis' 1-Phase entry in crypto_fund_trader (T&C 8(ii), recorded in tc_0926; calculator audit D3)."
   },
   {
    "field": "drawdown",
    "product": "2phase",
-   "why": "calc.products.2phase.drawdown 'static' comes from products.2phase.drawdown_type 'static from initial' and the firm-level '... 2-phase static'. Neither has a clause or a document annotation, so attribution to the T&C would be by elimination only (see drawdown_type). Skeptic 2's correction applied."
+   "why": "calc.products.2phase.drawdown 'static' comes from products.2phase.drawdown_type 'static from initial' and the firm-level '... 2-phase static'. Neither has a clause or a document annotation, so attribution to the T&C would be by elimination only (see drawdown_type). Skeptic 2's correction applied.",
+   "superseded": "2026-09-29: superseded by the 'drawdown' 2-Phase entry in crypto_fund_trader (T&C 8(i), recorded in tc_0926; calculator audit D4)."
   },
   {
    "field": "locks_at_initial_after_pct",
    "product": "1phase",
-   "why": "calc.locks_at_initial_after_pct 6 is the '+6%' in products.1phase.drawdown_type ('trailing ... until +6% profit, then static at opening balance'). That is the point where a 6% trail reaches the opening balance, so the number exists only as part of the trailing-then-static rule, which has no recorded source (see drawdown_type). The 6 itself is already mapped, as 1phase max_pct. A T&C cite under the lock alone would imply the mechanism is sourced. profiles_js also copies the value into 2phase and instant, where it has no effect (static and pending)."
+   "why": "calc.locks_at_initial_after_pct 6 is the '+6%' in products.1phase.drawdown_type ('trailing ... until +6% profit, then static at opening balance'). That is the point where a 6% trail reaches the opening balance, so the number exists only as part of the trailing-then-static rule, which has no recorded source (see drawdown_type). The 6 itself is already mapped, as 1phase max_pct. A T&C cite under the lock alone would imply the mechanism is sourced. profiles_js also copies the value into 2phase and instant, where it has no effect (static and pending).",
+   "superseded": "2026-09-29: superseded by the 'drawdown_type / drawdown / locks_at_initial_after_pct / hwm_basis' 1-Phase entry in crypto_fund_trader (T&C 8(ii), recorded in tc_0926; calculator audit D3)."
   },
   {
    "field": "hwm_basis",
    "product": "1phase",
-   "why": "calc.hwm_basis 'balance' is read from the phrase 'trailing from max demo balance' in products.1phase.drawdown_type, which has no clause or document. The earlier supplementary cite, the uploaded HANDOFF-2026-09-22 ('CFT's on balance'), is not on the admissible evidence list and is a work order in any case. web/api/troid.js:243 ('CFT's trails on balance') names no document either. The 'contains the numbers' annotation cannot cover a balance-versus-equity choice. Skeptic 2's correction applied. profiles_js also copies the value into 2phase and instant, where it has no effect."
+   "why": "calc.hwm_basis 'balance' is read from the phrase 'trailing from max demo balance' in products.1phase.drawdown_type, which has no clause or document. The earlier supplementary cite, the uploaded HANDOFF-2026-09-22 ('CFT's on balance'), is not on the admissible evidence list and is a work order in any case. web/api/troid.js:243 ('CFT's trails on balance') names no document either. The 'contains the numbers' annotation cannot cover a balance-versus-equity choice. Skeptic 2's correction applied. profiles_js also copies the value into 2phase and instant, where it has no effect.",
+   "superseded": "2026-09-29: superseded by the 'drawdown_type / drawdown / locks_at_initial_after_pct / hwm_basis' 1-Phase entry in crypto_fund_trader (T&C 8(ii), recorded in tc_0926; calculator audit D3)."
   },
   {
    "field": "refund",
@@ -940,6 +961,12 @@
    "read_on": "2026-09-21",
    "doc_dated": "2026-03-30",
    "evidence": "DERIVED, NOT A RECORDED READ DATE. crypto_fund_trader.verified_on is null and verified is false, so the date is bracketed from other records. Upper bound (GIT COMMIT DATE): `git log -S'cryptofundtrader.com/terms-and-conditions' -- firms.json` returns a834dea, 2026-09-21 22:28:33 UTC, message 'snapshot from the other sandbox (2026-09-21 22:15 UTC)'. That commit added the URL and every CFT rule value together, and no rule value has changed since: diffing a834dea against the working tree changes only _link_live_note, _required_disclaimer_note, affiliate_agreement, affiliate_payout, calc, link_live, panel_note, required_disclaimer and required_disclaimer_source. Lower bound (same-day dated records): the root commit 2384dc8 (2026-09-21 16:51 UTC) has no crypto_fund_trader key and no _external_ranking_snapshot, and its backtest/HANDOFF.md heading reads 'Firm verification — BrightFunded and Breakout'. CFT was nominated from _external_ranking_snapshot (date '2026-09-21'; _why_candidate quotes its '109 at 4.1'). _leads_third_party (source dated '2026-09-21') says it 'Corroborates the T&C', so the T&C had been read by then. Records NOT used as the read date: _last_review '2026-09-21', because it was already in 2384dc8 before CFT existed in the file and is the firm-list review date (the earlier mapping wrongly cited it as corroboration, and both skeptics are right about this); affiliate_agreement.read '2026-09-21' and _link_note 'Recorded 2026-09-21', because they date the affiliate terms and link, which are other documents; e4fd09f (2026-09-22), because it only added the calc block restating the 2026-09-21 values and is a code date. Display rule: show this as 'read by 2026-09-21 (commit date)', never as a verified_on value. Not corroborated live: WebFetch of the URL returned EGRESS_BLOCKED, so none of the cited clauses (5.1, 5.8, s.6, 7.1(xiii), 7.1(xvi), 7.3, 8.i–8.ii) has been checked against the live page."
+  },
+  {
+   "id": "tc_0926",
+   "read_on": "2026-09-26",
+   "doc_dated": null,
+   "evidence": "RECORDED READ: firms.json provenance.sources.tc_0926.read_via, 'fetched from a sandbox on 2026-09-26 (sha256 of the page b7b66c6b5ec56041)', with the text of 8(i), 8(ii), 5.9, 7.1 xxiv, 7.1 xxi and section 6 quoted; added in eb936e7 (2026-09-26 02:11 UTC). The same URL as tc, kept as its own source so tc keeps its date. Not re-read from here: troid's egress proxy blocks cryptofundtrader.com (2026-09-29), so this maps the recorded text, not the live page."
   }
  ]
 }

@@ -1,0 +1,70 @@
+{
+ "date": "2026-09-30",
+ "week": "2026-W40",
+ "commit": "ceb3e89d7e120727ebde087c2b734387e0be0eb4",
+ "checks": 2342,
+ "passed": 2342,
+ "failed": 0,
+ "report": "audit/reports/2026-W40.md",
+ "pages": [
+  "/",
+  "/ar"
+ ],
+ "cases": 1153,
+ "seed": "2026-W40",
+ "rules_read": {
+  "from": "2026-09-18",
+  "to": "2026-09-26"
+ },
+ "stale_rules": [],
+ "unsourced_rules": [
+  {
+   "firm": "bitfunded",
+   "product": "2step_s1",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "2step_s2",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "express",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "express",
+   "rule": "max_leverage",
+   "value": 5
+  },
+  {
+   "firm": "bitfunded",
+   "product": "instant",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "trader_1step",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "trader_express",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  },
+  {
+   "firm": "bitfunded",
+   "product": "trader_2step",
+   "rule": "fee_per_side_pct",
+   "value": 0.04
+  }
+ ]
+}

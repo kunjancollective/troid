@@ -1,7 +1,7 @@
 {
-  "_criterion": "One reference firm \u2014 Bitfunded, verified first \u2014 and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
+  "_criterion": "Bitfunded, the first firm troid verified from its own documents, and the next firms by verified-review volume on propfirmmatch.com/crypto, an external, public ranking whose methodology discloses its affiliate model and states rankings cannot be bought, with its own stated limitation that higher volume does not automatically mean better. Alphabetical, no cap. A firm is listed once its affiliate terms allow a comparison. Each rule shows the firm document and the date troid read it, says its source is not yet recorded, or shows pending while troid has no value.",
   "_order": "alphabetical, always. No ranking, no score, no recommended badge.",
-  "_disclosure": "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price. Commission structures differ. troid computes; you choose.",
+  "_disclosure": "troid's links and codes don't raise the price. Commission structures differ. troid computes; you choose.",
   "_rule": "Every rule field carries its provenance (document, section, read date) or the site says its source is not yet recorded. A null field is pending. A firm's verified flag is true only when its rules are traced to its own primary documents (Terms + help centre, checked against each other); today only Bitfunded is marked so, and some of its cells still lack a recorded source.",
   "bitfunded": {
     "name": "Bitfunded",
@@ -116,7 +116,6 @@
     "affiliate_url": "https://www.bitfunded.com/client/register?regid=3022050068",
     "affiliate_rate_first": "12% (confirmed on Affiliate Structure page 2026-09-21)",
     "affiliate_rate_repeat": "3%",
-    "_promo_note": "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
     "compare_product": {
       "key": "1step",
       "label": "1-Step",
@@ -1358,7 +1357,7 @@
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
   },
-  "_reference_firm": "Bitfunded is the reference firm, not the top-ranked one. It is the firm troid verified first from primary documents, where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so. Another firm verified to the same depth earns the same standing.",
+  "_reference_firm": "Bitfunded is the first firm troid verified from its own documents. It is where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so.",
   "_external_ranking_snapshot": {
     "source": "propfirmmatch.com/crypto/prop-firm-reviews",
     "date": "2026-09-21",
@@ -1602,7 +1601,7 @@
           "max_leverage": 5
         }
       },
-      "_leverage_note": "See _lev_bands_note. troid's desk applies the band for the quota entered.",
+      "_leverage_note": "See _lev_bands_note. troid's desk applies the band for the quota entered, and the lowest recorded cap (1:5) where no band covers it.",
       "lev_bands": [
         {
           "max_quota": 25000,
@@ -1615,7 +1614,7 @@
           "cite": "max_leverage_advanced"
         }
       ],
-      "_lev_bands_note": "Leverage follows account class, not product: Student (<= $25k) 1:5, Advanced ($50k+) 1:100. Between $25k and $50k no class is recorded, so the cap is pending there. Instant is $2.5k-$10k only, so its cap is 1:5 at every size it sells."
+      "_lev_bands_note": "Leverage follows account class, not product: Student (<= $25k) 1:5, Advanced ($50k+) 1:100. Between $25k and $50k no class is recorded, so the cap is pending there, and troid's desk holds the leverage to the lowest recorded cap, 1:5 (calculator audit, 29 Sep 2026; it held to the highest, 1:100, before). Why the lowest: once the desk cuts a size to fit the margin, the leverage decides whether a size fits, and the tightest recorded cap is the reading that never shows a size the account can't carry. A lead, not a source: CFT's trading-conditions page (cryptofundtrader.com/trading-conditions/) reportedly sells 1-Phase at $5k, $10k and $25k and 2-Phase at $1k, $5k, $10k and $25k below the Advanced sizes, so no 1- or 2-Phase account between $25k and $50k. That comes from a search summary on 2026-09-29, unverified: the page is blocked from troid's build environment. If a read confirms it, the gap never occurs at a size CFT sells. Instant is $2.5k-$10k only, so its cap is 1:5 at every size it sells."
     },
     "provenance": {
       "_note": "Where each rule was read and when. Every computed number on the site cites this block: 'as published on <read_on>'. read_on is the date troid read the document; doc_dated is the document's own date where recorded. A field with a value but no entry here renders 'source not yet recorded'. Built 2026-09-23 from repo evidence only (firms_evidence.json).",
@@ -1788,6 +1787,24 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 1-Phase $100k price (clause not recorded)"
+          },
+          "drawdown": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
+          },
+          "locks_at_initial_after_pct": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
+          },
+          "hwm_basis": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
           }
         },
         "2phase": {
@@ -1808,6 +1825,12 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
+          },
+          "drawdown": {
+            "src": [
+              "tc_0926"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases)"
           }
         },
         "instant": {
@@ -1856,7 +1879,7 @@
     "tradeify_247": "US-based, <10 reviews, <1 year."
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
-  "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). The reference-firm standing comes from verification, not directory rank.",
+  "_bitfunded_directory_note": "Bitfunded is not listed on propfirmmatch's crypto directory (checked 2026-09-21). It is on troid's compare because troid verified it first, not for a directory rank.",
   "_link_rule": "A firm's link appears once troid's operator has confirmed the affiliate terms allow it and the firm's daily limit, max loss, profit target and price each have a recorded source. Until then the link is held. Other cells show 'pending' individually. US availability is always shown as its own row.",
   "_schema_note": "Field set borrows from propfirmmatch's per-firm schema (integration/execution type, restricted countries, payment and payout methods, dated rule changes) and adds what they leave empty: the rules themselves, and the computation against the reader's own sizing.",
   "_troid_social": {

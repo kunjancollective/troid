@@ -1,0 +1,223 @@
+name: audit — the desk's arithmetic, re-derived
+
+# The weekly calculator audit (HANDOFF-calculator-audit, 2026-09-29). audit/model.py reads firms.json and derives every
+# figure troid's desk shows by itself; audit/run.py drives the built desk in Chromium, the English page and the
+# right-to-left /ar (a draft preview), through the seed's edge cases, a regression for each fix, the desk's grid and
+# 1,000 cases seeded by the ISO week, and compares. Nothing in audit/ imports the desk's code: the audit is not written
+# by the thing it audits.
+#
+# Every pull request runs it, and one that touches neither the desk, firms.json nor the audit passes at once, so the
+# check can be required (not yet: the owner revisits that after launch). On Sundays, and by hand, it also commits web/public/audit.json and audit/reports/<week>.md to
+# the branch audit/<week> and opens a pull request for the owner to merge; a week with mismatches opens an issue, once.
+# It never pushes to main, places nothing and touches no account.
+#
+# Two repository settings it needs (audit/README.md, "Setting up"): Settings > Actions > General > Workflow permissions,
+# "Allow GitHub Actions to create and approve pull requests" (and the organisation's, if it has one), without which
+# `gh pr create` is refused and the week's audit waits on its branch; and a branch rule on main requiring the status
+# check "audit", without which a pull request with a failing audit can still be merged.
+#
+# run.py exits 0 (every check passed), 1 (mismatches) or 2 (it couldn't run: a bad argument, a crash, a preview that
+# wouldn't build; nothing written). The run counts as written only when this week's audit.json and report both exist
+# and audit.json names the week, whatever the code said.
+
+on:
+  schedule:
+    - cron: "0 22 * * 0"          # Sundays 22:00 UTC
+  pull_request:                   # every pull request: the first step decides whether it touches the desk
+  workflow_dispatch:              # by hand from the Actions tab, and by the publish job on audit/<week>
+    inputs:
+      week:
+        description: "ISO week to audit, e.g. 2026-W40 (empty: this week)"
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: audit-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      week: ${{ steps.run.outputs.week }}
+      wrote: ${{ steps.run.outputs.wrote }}
+      failed: ${{ steps.run.outputs.failed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2              # a pull request's merge commit and its base: what the change touched
+
+      # the desk's code, the rules it reads, the words the audit finds its rows by, and what writes them
+      - name: Does this change touch the desk?
+        id: scope
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "desk=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed="$(git diff --name-only HEAD^1 HEAD)"
+          printf '%s\n' "$changed"
+          if printf '%s\n' "$changed" | grep -qE '^(web/templates/index\.html|web/templates/partials/_desk2\.html|web/public/index\.html|web/public/desk2\.js|web/public/desklink\.js|firms\.json|web/i18n/(en|ar|languages)\.json|backtest/(regions|gen_compare|site_build|i18n)\.py|audit/.*|\.github/workflows/audit\.yml)$'; then
+            echo "desk=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "desk=false" >> "$GITHUB_OUTPUT"
+            echo "the desk, firms.json and the audit are untouched: nothing to audit"
+          fi
+
+      - uses: actions/setup-python@v5
+        if: steps.scope.outputs.desk == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Playwright and its Chromium; jinja2 for the /ar preview
+        if: steps.scope.outputs.desk == 'true'
+        run: |
+          python -m pip install --quiet playwright "jinja2>=3.1"
+          python -m playwright install --with-deps chromium
+
+      - name: The audit
+        id: run
+        if: steps.scope.outputs.desk == 'true'
+        env:
+          WEEK: ${{ inputs.week }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          if [ -z "$WEEK" ]; then
+            # a Sunday run the scheduler starts late still audits Sunday's week
+            if [ "$EVENT" = "schedule" ]; then WEEK="$(date -u -d '-6 hours' +%G-W%V)"; else WEEK="$(date -u +%G-W%V)"; fi
+          fi
+          echo "week=$WEEK" >> "$GITHUB_OUTPUT"
+          # only this run's result can count: nothing left from a merged week, or from a run that stopped halfway
+          rm -f web/public/audit.json "audit/reports/$WEEK.md"
+          set +e
+          python audit/run.py --week "$WEEK"
+          code=$?
+          set -e
+          # 0 or 1 counts only with this week's audit.json and report both on disk; anything else is "couldn't run"
+          if [ "$code" = "0" ] || [ "$code" = "1" ]; then
+            if [ -f "audit/reports/$WEEK.md" ] \
+               && failed="$(WEEK="$WEEK" python -c 'import json, os; d = json.load(open("web/public/audit.json")); assert d["week"] == os.environ["WEEK"]; print(int(d["failed"]))')"; then
+              echo "wrote=true" >> "$GITHUB_OUTPUT"
+              echo "failed=$failed" >> "$GITHUB_OUTPUT"
+            else
+              echo "::error::run.py exited $code, but this week's audit.json and report aren't both there: treated as not run"
+              code=2
+            fi
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.run.outputs.wrote == 'true'
+        with:
+          name: audit
+          path: |
+            web/public/audit.json
+            audit/reports/${{ steps.run.outputs.week }}.md
+
+      - name: A mismatch fails the check, and so does an audit that couldn't run
+        if: steps.scope.outputs.desk == 'true'
+        env:
+          CODE: ${{ steps.run.outputs.code }}
+        run: |
+          case "$CODE" in
+            0) ;;
+            1) echo "::error::the calculator audit found mismatches: its report is in this run's 'audit' artifact"; exit 1 ;;
+            *) echo "::error::the calculator audit couldn't run (exit ${CODE:-none}); nothing was written: see the step's log"; exit 1 ;;
+          esac
+
+  publish:
+    needs: audit
+    # Sunday's run and a run by hand, from main only: the run dispatched on audit/<week> audits that branch and stops
+    if: always() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && needs.audit.outputs.wrote == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write               # the branch audit/<week>, never main
+      pull-requests: write
+      issues: write
+      actions: write                # to dispatch the audit on that branch
+    env:
+      GH_TOKEN: ${{ github.token }}
+      WEEK: ${{ needs.audit.outputs.week }}
+      FAILED: ${{ needs.audit.outputs.failed }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              # main's history: which of the branch's commits are not on main yet
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: audit
+
+      # before anything that can fail: the issue step below reads these whatever became of the branch and the PR
+      - name: The week's totals
+        run: |
+          summary="$(python3 -c 'import json; d = json.load(open("web/public/audit.json")); print("{:,} checks, {:,} passed, {:,} failed".format(d["checks"], d["passed"], d["failed"]))')"
+          echo "SUMMARY=$summary" >> "$GITHUB_ENV"
+          echo "REPORT=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (the 'audit' artifact)" >> "$GITHUB_ENV"
+
+      - name: Commit the week's audit to audit/<week>
+        id: push
+        run: |
+          branch="audit/$WEEK"
+          git config user.name "troid-audit"
+          git config user.email "audit@troid.ai"
+          git switch -c "$branch"
+          git add web/public/audit.json "audit/reports/$WEEK.md"
+          git commit -m "audit: $WEEK — $SUMMARY"
+          # The week run again replaces troid-audit's own earlier commit for it, and nothing else. What the branch holds
+          # is read once, here: if anyone else has committed to it (the owner's fix or note on the open PR), it is left
+          # alone and this run stops; and the push is leased on that same commit, so it is refused if the branch moved
+          # after it was read. An empty lease means the branch must not exist yet.
+          old="$(git ls-remote origin "refs/heads/$branch" | cut -f1)"
+          if [ -n "$old" ]; then
+            git fetch --quiet origin "$old"
+            others="$(git log --format='%ae' "$old" --not origin/main | grep -vx 'audit@troid.ai' || true)"
+            if [ -n "$others" ]; then
+              echo "::error::$branch has commits not made by troid-audit ($(printf '%s' "$others" | sort -u | tr '\n' ' ')); not replacing it"
+              exit 1
+            fi
+          fi
+          git push --force-with-lease="refs/heads/$branch:$old" origin "refs/heads/$branch:refs/heads/$branch"
+          echo "REPORT=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/blob/$branch/audit/reports/$WEEK.md" >> "$GITHUB_ENV"
+
+      - name: Open or update the pull request for the owner
+        id: pr
+        run: |
+          branch="audit/$WEEK"
+          body="The weekly calculator audit for $WEEK: $SUMMARY. Report: $REPORT
+
+          Merging publishes web/public/audit.json, which the line under troid's desk reads, and the report it links. Nothing else changes. Opened by .github/workflows/audit.yml."
+          if [ "$(gh pr list --head "$branch" --base main --state open --json number --jq length)" != "0" ]; then
+            gh pr edit "$branch" --title "audit: $WEEK — $SUMMARY" --body "$body"
+          else
+            gh pr create --base main --head "$branch" --title "audit: $WEEK — $SUMMARY" --body "$body"
+          fi
+          # a pull request opened with GITHUB_TOKEN starts no pull_request workflow, so its audit check runs from here
+          gh workflow run audit.yml --ref "$branch" -f week="$WEEK"
+
+      # whatever became of the branch and the pull request: a week with mismatches is never silent. A pull request
+      # that couldn't be opened (the repository setting above) is said in the issue
+      - name: A week with mismatches opens an issue, once
+        if: always() && needs.audit.outputs.failed != '0' && needs.audit.outputs.failed != ''
+        env:
+          PUSHED: ${{ steps.push.outcome }}
+          OPENED: ${{ steps.pr.outcome }}
+        run: |
+          summary="${SUMMARY:-$FAILED failed}"
+          report="${REPORT:-$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID}"
+          note="The line under the desk says so from the day its pull request is merged."
+          if [ "$PUSHED" != "success" ]; then
+            note="The branch audit/$WEEK wasn't written (see the run's log); the report is in the run's 'audit' artifact."
+          elif [ "$OPENED" != "success" ]; then
+            note="The pull request for audit/$WEEK wasn't opened (see the run's log; audit/README.md, \"Setting up\")."
+          fi
+          if [ -z "$(gh issue list --state all --search "\"audit: $WEEK\" in:title" --json number --jq '.[].number')" ]; then
+            gh issue create --title "audit: $WEEK — mismatches found: $FAILED" \
+              --body "The calculator audit for $WEEK found mismatches ($summary). Report: $report. $note"
+          fi

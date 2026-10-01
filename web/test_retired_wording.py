@@ -11,11 +11,14 @@
 - The phone menu stays labelled "data".
 - Prices include tax (the owner's addendum, 28 Sep 2026): $19 is what every buyer pays, so never "plus tax" or its
   variants, in English or in any language file, on troid Pro's pages or in its Checkout copy.
+- troid is independent (the owner, 29 Sep 2026): affiliate links stay, disclosed, and the selling language goes. No rank
+  beside a firm's name ("#1 by reviews"), no pitch for a firm's promos, no "cheaper through this link" or "same price
+  direct"; what stays is the fact, "troid's links and codes don't raise the price".
 
 What is scanned is what goes live: the English strings and templates, the English pages as built, the repo's documents,
 the MCP server, the desk skill's references, and ask troid's prompt and reset explanation as they will go live (a copy
 staged in web/context/patch/ stands in for its live file until the patch's evaluation publishes it, as in
-backtest/claim_check.py, which the daily loop runs with the same two patterns).
+backtest/claim_check.py, which the daily loop runs with the same patterns).
 """
 import datetime as dt
 import json
@@ -27,7 +30,7 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backtest"))
-from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET, PLUS_TAX  # noqa: E402  (one definition, shared with the daily check)
+from claim_check import RETIRED_EDGE, FIXED_LOCAL_RESET, PLUS_TAX, RETIRED_SELLING  # noqa: E402  (one definition, shared with the daily check)
 
 fails = 0
 
@@ -61,6 +64,47 @@ ok("the 'plus tax' pattern catches it in English and the launch languages", all(
    [t for t in taxed if not PLUS_TAX.search(t)])
 ok("and passes 'tax included', a Portuguese 'taxa' (a fee) and the like", not any(PLUS_TAX.search(t) for t in included),
    [t for t in included if PLUS_TAX.search(t)])
+# the selling language the owner retired on 29 Sep 2026, and the records that only look like it (firms.json is scanned whole)
+sold = ["BrightFunded · #1 by reviews", "#{n} by reviews", "their promos apply here",
+        "Bitfunded runs its own promos (buy-one-get-one and similar) and they apply through this link \u2014 no code needed.",
+        "discount code <b>{code}</b> — cheaper through this link", "discount code <b>platinum5</b>",
+        "Where a code is shown, it's cheaper through the affiliate link; where it isn't, it's the same price.",
+        "where a code is shown it&#x27;s cheaper through the affiliate link, where it isn&#x27;t it&#x27;s the same price",
+        "They're how troid is funded, and they cost you nothing extra. Direct is the same price where no code is shown.",
+        # close variants of the same (review 2026-09-30): the pattern is phrase by phrase, so each form is named
+        "troid's links cost you nothing", "BrightFunded · #1 by verified reviews", "promotions apply through troid",
+        "discount code <b>TROID</b>", "Bitfunded, our reference firm", "Bitfunded, the reference firm on troid's compare",
+        "Bitfunded is our reference firm"]
+unsold = ["troid's links and codes don't raise the price.", "BrightFunded challenges · affiliate link · code platinum5",
+          "Crypto Fund Trader challenges · affiliate link · code <b>platinum5</b>",
+          "128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21).",
+          "#1 by verified-review volume on propfirmmatch (128 at 4.5).",
+          "Help centre \u2014 2-Step only, with the 3rd withdrawal, not on promotions.", "€497 (€347.90 promo)",
+          "Directory attributes - country, years, reviews, promos - are propfirmmatch's table",
+          "promotion_policy", "tracked through FirstPromoter", "entry and stop are the same price, so 1R is zero",
+          "Never give an affiliate link or a discount code; point to troid's compare",
+          "#1 by verified review volume on propfirmmatch", "a discount code is a firm's own offer, stated beside it"]
+ok("the selling pattern catches every retired phrasing (rank, promos, discount, cheaper, same price)", all(RETIRED_SELLING.search(t) for t in sold),
+   [t for t in sold if not RETIRED_SELLING.search(t)])
+ok("and passes the fact that replaced them and the records that only look like them", not any(RETIRED_SELLING.search(t) for t in unsold),
+   [t for t in unsold if RETIRED_SELLING.search(t)])
+# Bitfunded's special standing (the owner's call, 29 Sep 2026): "the first firm troid verified from its own documents"
+standing = ["troid compares {n} firms: {firm}, the reference firm troid verified first, and the {others} crypto firms",
+            "{firm} is the reference firm because troid verified it first, not because it ranks highest.",
+            "Bitfunded is the reference firm, not the top-ranked one.", "Another firm verified to the same depth earns the same standing.",
+            "One reference firm \\u2014 Bitfunded, verified first \\u2014 and the next firms", "One reference firm — Bitfunded, verified first —",
+            "The reference-firm standing comes from verification, not directory rank.",
+            # the owner's decision, 30 Sep 2026: the rest of the standing goes too
+            "One reference firm, chosen for verification depth, not rank.", "alphabetical · one reference firm + two by external ranking · reviewed {date}",
+            "Bitfunded · reference", "Same price direct, and troid says so."]
+plain = ["troid compares {n} firms: {firm}, the first firm troid verified from its own documents, and the {others} crypto firms",
+         "Bitfunded, the first firm troid verified from its own documents.", "alphabetical · three firms · reviewed {date}",
+         "troid's links and codes don't raise the price, and troid says so.", "troid's reference account (a $100,000 Bitfunded 1-Step)",
+         "It is on troid's compare because troid verified it first, not for a directory rank.", "the reference price troid quotes"]
+ok("the selling pattern catches the reference firm's special standing", all(RETIRED_SELLING.search(t) for t in standing),
+   [t for t in standing if not RETIRED_SELLING.search(t)])
+ok("and passes the plain fact that replaced it (METHODOLOGY, the compare's meta line, BRAND.md)",
+   not any(RETIRED_SELLING.search(t) for t in plain), [t for t in plain if RETIRED_SELLING.search(t)])
 
 # --- what goes live ---------------------------------------------------------------------------------------------------------
 def staged_or_live(name, live):
@@ -73,7 +117,7 @@ texts = {f"en.json {k}": v for k, v in en.items() if isinstance(v, str) and not 
 files = ([*(ROOT / "web" / "templates").rglob("*.html"), *(ROOT / "web" / "public").glob("*.html"), *(ROOT / "web" / "public" / "firms").glob("*.html"),
           ROOT / "README.md", ROOT / "web" / "public" / "llms.txt", ROOT / "backtest" / "STRATEGY.md", ROOT / "backtest" / "WALKFORWARD.md", ROOT / "mcp" / "server.py",
           *(ROOT / ".claude" / "skills" / "prop-trading-desk").rglob("*.md"), ROOT / ".claude" / "skills" / "prop-trading-desk" / "config.example.json",
-          ROOT / "backtest" / "bitfunded_config.json", ROOT / "firms.json",
+          ROOT / "backtest" / "bitfunded_config.json", ROOT / "firms.json", ROOT / "BRAND.md",
           staged_or_live("TROID.md", ROOT / "web" / "public" / "TROID.md"),
           staged_or_live("support.md", ROOT / "web" / "context" / "support.md"),
           staged_or_live("TROID-CHARACTER.md", ROOT / "web" / "context" / "TROID-CHARACTER.md")])
@@ -100,6 +144,9 @@ for name, s in texts.items():
             hits.append((name, m.group(0)))
 ok(f"none of {len(texts)} texts troid publishes or ask troid reads says 'no statistical edge' or gives the reset a fixed local hour",
    not hits, hits[:10])
+sell_hits = [(name, m.group(0)) for name, s in texts.items() for m in RETIRED_SELLING.finditer(re.sub(r"\s+", " ", s))]
+ok(f"none of {len(texts)} texts sells a firm: no rank beside its name, no promo pitch, no 'cheaper' or 'same price' (troid is independent)",
+   not sell_hits, sell_hits[:10])
 
 # prices include tax: every language file, troid Pro's pages and its Checkout copy too
 taxed_texts = dict(texts)

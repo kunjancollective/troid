@@ -76,13 +76,13 @@ intended = risk_pct_of_balance/100 × balance
 cap      = max_risk_pct_of_daily_budget/100 × max(effective_budget, 0)
 risk     = min(intended, cap)
 d        = |entry − stop|
-fee_unit = entry × fee_pct_per_side/100 × 2
+fee_unit = fee_pct_per_side/100 × (entry + stop)   # the exit fee is charged on the notional at the stop
 qty      = risk / (d + fee_unit)
 qty      = min(qty, max_leverage × equity / entry)
 notional = qty × entry ; margin = notional / max_leverage
 fees     = qty × fee_unit ; fee_share = fees / risk × 100
 consumes = risk / effective_budget × 100
-losses_remaining = floor(effective_budget / risk)
+losses_remaining = ceil(effective_budget / risk − 1e-9) − 1   # a loss landing exactly on the floor is a breach
 rr       = |target − entry| / d
 ```
 Verdict: BLOCK if effective_budget <= 0, stop on the wrong side, d = 0, or (no target and
@@ -115,9 +115,9 @@ compute from `pos_entry` and the floor directly:
 daily_breach_price = pos_entry − side × ((day_start − quota × daily_loss_pct/100 − balance_ex_position) / pos_qty)
 ```
 Simplify however you like, but verify against a hand calculation in the README: for a
-long of 0.1602 BTC from 77,872 on a fresh $100k account, the daily breach is where
-floating loss = $4,000, i.e. 77,872 − 4,000/0.1602 = 52,902; the dd breach is
-77,872 − 6,000/0.1602 = 40,417. (That these are far below any sane stop is the point: it
+long of 0.1603 BTC (0.160304 unrounded) from 77,872 on a fresh $100k account, the daily breach is
+where floating loss = $4,000, i.e. 77,872 − 4,000/0.160304 ≈ 52,919; the dd breach is
+77,872 − 6,000/0.160304 ≈ 40,443. (That these are far below any sane stop is the point: it
 shows the stop, not the account, is what's live at this size.)
 - Bitfunded is CROSS margin, so exchange liquidation is unreachable and the two breach lines
   are the complete liquidation picture. Do not draw a separate exchange-liquidation line.
@@ -134,13 +134,17 @@ Theme-aware colours; no hardcoded white/black text.
 
 ## Acceptance tests — must match to the cent / 4 dp
 
+The figures below are `risk.py --json size` at the calculator audit of 29 Sep 2026 (the exit fee
+priced at the stop, and a loss that lands on the floor not counted as one left). If risk.py changes,
+regenerate them from it; never edit them by hand.
+
 **Case 1.** quota 100000, balance 100000, equity 100000, day_start 100000, static,
 Plan, long, entry 77872, stop_price 74814, target_r 2.
 ```
 verdict OK           binding: daily loss limit
 daily_budget 4000.00   dd_budget 6000.00
-risk 500.00   qty 0.1602   notional 12478.30   margin 2495.66
-fees 9.98 (2.0% of risk)   consumes 12.5%   losses_remaining 8
+risk 500.00   qty 0.1603   notional 12483.19   margin 2496.64
+fees 9.79 (2.0% of risk)   consumes 12.5%   losses_remaining 7
 stop distance 3.927%   rr 2.00
 ```
 
@@ -150,8 +154,8 @@ entry 77872, stop_pct 0.3, target_r 2.
 verdict OK           binding: max drawdown
 daily_budget 4000.00   dd_budget 2000.00
 intended 480.00   cap 700.00   risk 480.00
-qty 1.6221   notional 126315.79   margin 25263.16
-fees 101.05 (21.1% of risk)  -> fee warning shown
+qty 1.6216   notional 126275.91   margin 25255.18
+fees 101.17 (21.1% of risk)  -> fee warning shown
 consumes 24.0%   losses_remaining 4
 stop 78105.62   rr 2.00
 ```

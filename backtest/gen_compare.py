@@ -22,7 +22,7 @@ A change to render() is a change to static_column(), and the test says so.
 
 The page renders once per published language (render_compare; site_build.py). Its words come from
 web/i18n (compare.*, and the script's compare.js.*); text from firms.json (labels, rule values, the
-criterion, link rule and disclosure, promo notes, open questions) goes through T.data, so a reviewed
+criterion, link rule and disclosure, open questions) goes through T.data, so a reviewed
 translation of it shows and anything unreviewed stays in English. Rule-source names stay in English.
 """
 from __future__ import annotations
@@ -218,6 +218,7 @@ def js_data(k, f, T):
     qs = f.get("_open_questions") or []
     return {"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
+        "lock": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
                      **{b["cite"]: cite(f, b["cite"]) for b in (c.get("lev_bands") or []) if "max_leverage" not in pc}),
         "levb": None if "max_leverage" in pc else c.get("lev_bands"),
@@ -225,7 +226,6 @@ def js_data(k, f, T):
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": code if link_ok else None,
-        "promo": T.data(f.get("_promo_note")) if link_ok else None,
         "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}
 
 
@@ -386,19 +386,37 @@ def static_column(d, T, inputs=DEFAULTS):
         room = Q - cross
         h += row(J["row_room"], usd(room) + " (" + fx(room / Q * 100, 1) + "%)", pv(K, F(J["f_room"], {"cf": cf})))
         h += row(J["row_cross"], usd(cross), pv(K, F(J["f_cross"], {"cf": cf})))
-        h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk), "pct": fx(rp * 100, 2)})
+        # Which ceiling binds, not a breach: after floor(room / risk) losses the balance is still at or above the
+        # crossover, and at the crossover itself the desk's tie-break names the daily limit, so an exact multiple keeps
+        # its count here. That is why this stays floor() and is not the ceil() − 1 of the row below. The epsilon points
+        # the same way as the tie-break: room and risk come out of float products, so an exact multiple can arrive as
+        # 3.9999999999999942 (quota 12345, 0.5%, 4%/6%) or 7.99999999999997 (100000, 0.5%, 4%/8%), and floor() alone
+        # would drop the loss the tie-break keeps.
+        h += row(J["row_losses"], F(J["v_losses"], {"n": math.floor(room / risk + 1e-9), "pct": fx(rp * 100, 2)})
                  if room > 0 and risk > 0 else "—", pv(K, J["f_losses"]))
-        h += row(J["row_survive"], F(J["v_survive"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
+        # Losses that leave equity above the max-loss floor. A loss that lands exactly on it is a breach (firms word a
+        # breach as reaching the limit, and troid's simulators count bal <= floor as failure), so an exact multiple
+        # counts one fewer, as on the desk (calculator audit 2026-09-29, F7). The epsilon reads a quotient of
+        # 12.000000000000002 as 12, not 13.
+        h += row(J["row_survive"], F(J["v_survive"], {"n": math.ceil(Q * m / risk - 1e-9) - 1}) if risk > 0 else "—",
                  pv(["max_pct", "drawdown_type"], J["f_survive"]))
     elif derivable and not is_static:
         h += row(J["row_room"], '<span class="pend">' + J["v_room_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_cross"], '<span class="pend">' + J["v_cross_trail"] + '</span>', pv(["drawdown_type"]))
         h += row(J["row_losses"], '<span class="pend">' + J["v_losses_trail"] + '</span>', pv(["drawdown_type"]))
-        h += row(J["row_survive"], F(J["v_survive_trail"], {"n": math.floor(Q * m / risk)}) if risk > 0 else "—",
-                 pv(["max_pct", "drawdown_type"], J["f_survive"]))
+        # A trailing floor sits a fixed quota × max% below the high-water mark (firms.json _trailing_trap), so the count
+        # holds at every new high and falls below it; where the product locks the floor at the starting balance, room
+        # grows again past the lock. The lock clause is shown only for a product whose calc states one.
+        surv = F(J["v_survive_trail"], {"n": math.ceil(Q * m / risk - 1e-9) - 1})
+        if f.get("lock") is not None:
+            surv += F(J["v_survive_lock"], {"lock": S(f["lock"])})
+        h += row(J["row_survive"], surv if risk > 0 else "—", pv(["max_pct", "drawdown_type"], J["f_survive"]))
     else:
         h += row(J["row_room"], P) + row(J["row_cross"], P) + row(J["row_losses"], P) + row(J["row_survive"], P)
     if p.get("fee_per_side_pct") is not None:
+        # The compare has no side input, so this is the side-neutral share, both fees priced at the entry price. The desk
+        # prices the exit fee at the stop (calculator audit F6): a long's share is a little lower, a short's a little
+        # higher, and the neutral figure lies between them (verify_claims.py checks that). f_fee says so on the page.
         fee = p["fee_per_side_pct"] / 100
         drag = 2 * fee / (s + 2 * fee) * 100 if s > 0 else 0
         h += row(F(J["row_fee_at"], {"stop": fx(s * 100, 2)}), F(J["v_fee"], {"drag": fx(drag, 1), "fee": p["fee_per_side_pct"]}),
@@ -421,11 +439,11 @@ def static_column(d, T, inputs=DEFAULTS):
     h += rr(J["row_price"], "price") + rr(J["row_refund"], "refund") + rr(J["row_split"], "split")
     h += rr(J["row_us"], "us_available")
     if f["url"]:
+        # One line: the link, "affiliate link" and the code, as the index's firms panel has it. The link is disclosed,
+        # never sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026).
         foot = F(J["foot_link"], {"url": f["url"], "name": f["name"]})
         if f["code"]:
-            foot += "<br>" + F(J["foot_code"], {"code": f["code"]})
-        if f["promo"]:
-            foot += '<br><span style="color:var(--dim)">' + f["promo"] + '</span>'
+            foot += " · " + F(J["foot_code"], {"code": f["code"]})
         if f["req"]:
             foot += '<div class="req">' + f["req"] + '</div>'
         if features:
@@ -577,13 +595,14 @@ function render(){{
       var room=Q-cross;
       h+=row(T.row_room,$(room)+" ("+fx((room/Q*100),1)+"%)",pv(f,K,F(T.f_room,{{cf:cf}})));
       h+=row(T.row_cross,$(cross),pv(f,K,F(T.f_cross,{{cf:cf}})));
-      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
-      h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.floor(Q*m/risk)}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
+      h+=row(T.row_losses,room>0&&risk>0?F(T.v_losses,{{n:Math.floor(room/risk+1e-9),pct:fx((rp*100),2)}}):"—",pv(f,K,T.f_losses));
+      h+=row(T.row_survive,risk>0?F(T.v_survive,{{n:Math.ceil(Q*m/risk-1e-9)-1}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else if(derivable&&!isStatic){{
       h+=row(T.row_room,'<span class="pend">'+T.v_room_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_cross,'<span class="pend">'+T.v_cross_trail+'</span>',pv(f,["drawdown_type"]));
       h+=row(T.row_losses,'<span class="pend">'+T.v_losses_trail+'</span>',pv(f,["drawdown_type"]));
-      h+=row(T.row_survive,risk>0?F(T.v_survive_trail,{{n:Math.floor(Q*m/risk)}}):"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
+      var surv=F(T.v_survive_trail,{{n:Math.ceil(Q*m/risk-1e-9)-1}});if(f.lock!=null)surv+=F(T.v_survive_lock,{{lock:String(f.lock)}});
+      h+=row(T.row_survive,risk>0?surv:"—",pv(f,["max_pct","drawdown_type"],T.f_survive));
     }}else{{
       h+=row(T.row_room,P);h+=row(T.row_cross,P);h+=row(T.row_losses,P);h+=row(T.row_survive,P);
     }}
@@ -599,8 +618,7 @@ function render(){{
     h+=rr(f,T.row_us,"us_available");
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
-      if(f.code)foot+='<br>'+F(T.foot_code,{{code:f.code}});
-      if(f.promo)foot+='<br><span style="color:var(--dim)">'+f.promo+'</span>';
+      if(f.code)foot+=' · '+F(T.foot_code,{{code:f.code}});
       if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
     if(f.open_n)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'+F(f.open_n>1?T.foot_open_n:T.foot_open_1,{{n:f.open_n,first:f.open1}})+'</div>';

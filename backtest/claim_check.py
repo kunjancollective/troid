@@ -17,12 +17,14 @@ Also refused: "source not yet recorded" in a headline or a stat tile, and the wo
 E2, one set of canonical figures (figures.json) that every page, TROID.md, the README and ask troid's context agree with:
 each figure is read from its own source (firms.json, the walk-forward results, the frozen sample), and the pages are
 checked for the contradictions the audit found (a 1-Step at $799, "no edge", a trade frequency or holdout that
-isn't the measured one, a reset or fee that isn't the firm's).
+isn't the measured one, a reset or fee that isn't the firm's), and for the selling language troid retired on 29 Sep 2026
+(RETIRED_SELLING: a firm's rank beside its name, a promo pitch, "cheaper through this link").
 
 The static pages are read as the build writes them. troid's compare carries its cells in the page, sized at its default
 inputs (gen_compare.static_column, launch handoff 2026-09-26, 5.1 item 4), so they are read here like any text, and
 gen_compare's unsourced() still refuses a filled cell with no recorded source; what the desk's script draws is held to
-its sources elsewhere (its provenance block).
+its sources elsewhere (its provenance block), and so is the calculator audit's line that audit.js draws under the desk
+from web/public/audit.json (verify_claims.py holds its counts to the report it links).
 """
 from __future__ import annotations
 
@@ -316,10 +318,34 @@ def e2_texts(F):
             m = PLUS_TAX.search(t)
             if m:
                 out.append(("E2 'plus tax' (troid's prices include tax: $19 is what every buyer pays)", name, "", m.group(0), t[:160]))
+            m = RETIRED_SELLING.search(t)
+            if m:
+                out.append(("E2 selling language (troid is independent: its links are disclosed, never sold)", name, "", m.group(0), t[:160]))
     return out
 
 
 RETIRED_EDGE = re.compile(r"\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b", re.I)
+# troid is independent (the owner, 29 Sep 2026): its affiliate links are disclosed, never sold. So no rank a firm holds
+# beside its name ("#1 by reviews": the ranking only chooses which firms are covered), no pitch for a firm's own promos,
+# and no "cheaper through this link" or "same price direct": the fact that stays is that troid's links and codes don't
+# raise the price. Phrase by phrase, because firms.json is scanned whole: its nomination notes ("#1 by verified-review
+# volume"), a refund "not on promotions", a "€347.90 promo" price and an affiliate programme's promotion_policy or
+# FirstPromoter are records, not selling. An apostrophe may reach it escaped, as the built pages write it.
+_APOS = r"(?:'|’|&#x27;|&#39;)"
+RETIRED_SELLING = re.compile(
+    # "#1 by verified reviews" is the same rank; "#1 by verified-review volume" is firms.json's nomination record
+    r"#\s?(\d+|\{n\}) by (verified )?reviews?\b(?![- ]volume)|\b(their|its own) promos\b|\bpromo(tion)?s? apply\b"
+    r"|\bbuy[- ]one[- ]get[- ]one\b"
+    rf"|\bno code needed\b|\bapply through (this|the|troid{_APOS}s) (affiliate )?link\b"
+    # a code sold as a discount, not the noun: any code set in bold, the placeholder, or a bare code with a digit in it
+    r"|\bdiscount code:? (<b>[^<]+</b>|\{code\}|(<b>)?(?=[A-Za-z]*\d)[A-Za-z0-9]{4,})"
+    rf"|\bcheaper (through|via|with) (this|the|troid{_APOS}s|an?) (affiliate )?(link|code)\b"
+    rf"|\b(it{_APOS}s|it is|direct(ly)? is) the same price\b|\bsame price (direct|where)\b|\bcosts? you nothing\b"
+    # and no special standing for Bitfunded: it is "the first firm troid verified from its own documents", not "the
+    # reference firm troid verified first", not "one reference firm" and no "reference" label (the owner, 29-30 Sep 2026)
+    r"|(\b(is|as)|,) (our|the) reference firm\b|\bthe reference firm troid\b|\breference[- ]firm standing\b"
+    r"|\breference firm[^.]{0,12}\bBitfunded\b|\bearns the same standing\b|\bone reference firm\b"
+    r"|\bby external ranking\b|\bchosen for verification depth\b|· reference\b", re.I)
 # Prices include tax (the owner, 2026-09-28): $19 is what every buyer pays, and Managed Payments takes the tax out of it. So
 # never "plus tax", in English or in the phrasings the launch languages use for it (es, pt, fr, ru, id, zh, ar, hi, bn).
 PLUS_TAX = re.compile(

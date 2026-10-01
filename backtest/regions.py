@@ -53,9 +53,11 @@ def _panel_read(f, what):
 def panel_cell(k, f, T=None):
     T = _strings(T)
     p = f["compare_product"]; name = html.escape(f["name"])
+    # No standing beside a name: not a review rank (the ranking only chooses which firms troid covers, firms.json
+    # _criterion) and not "reference" for the firm troid verified first (the owner's independence stance, 29-30 Sep
+    # 2026). The dated review count below stays: it is the criterion's own figure, with its read date.
     rank = RANK.get(f["name"])
-    role = T("index.firms.reference") if f.get("reference") else (T("index.firms.rank", n=rank[0]) if rank else "")
-    head = f"{name} · {role}" if role else name
+    head = name
     # One rule for every firm, the reference firm included: how many of the compare's rules are filled and how many
     # have a recorded source; a firm's own one-line summary (panel_summary), where it has one, sits above the count.
     n = sum(1 for x in FIELDS if p.get(x) is not None); m = sum(1 for x in FIELDS if sourced(f, x, p))
@@ -75,8 +77,7 @@ def panel_cell(k, f, T=None):
         code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")
         bits = [f'<a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">{T("index.firms.challenges", firm=name)}</a>',
                 T("index.firms.affiliate")]
-        if code: bits.append(T("index.firms.code", code=html.escape(code)))
-        if f.get("_promo_note"): bits.append(T("index.firms.promos"))
+        if code: bits.append(T("index.firms.code", code=html.escape(code)))   # the link, disclosed; no pitch beside it
         hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
         link = f'\n      <div class="s" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
         if (f.get("required_disclaimer") or "").strip():                # the firm's own wording, beside its link (2d)
@@ -343,6 +344,37 @@ def _calendar_read():
     return json.loads(p.read_text()).get("read", "") if p.exists() else ""
 
 
+def desk_rules_read():
+    """{'from', 'to'}: the first and the last date troid last read a rule the desk sizes with, for the "Rules read" line
+    under the desk (calculator audit, 2026-09-29; a different claim from the audit's). The rules are, for every product
+    the desk offers, its daily and max loss, the daily basis, the drawdown type (with its lock and high-water-mark basis
+    where it trails), the fee and the leverage cap or each band of caps, each cited as the desk cites it; a rule read
+    twice counts at its latest read. A pending rule has no value and an unsourced one no date, so neither moves the
+    range. audit/provenance.py derives the same range from firms.json by its own rules; verify_claims.py holds the two
+    equal."""
+    dates = []
+    for k, f in FIRMS.items():
+        c = f.get("calc") if isinstance(f, dict) else None
+        for pk, pc in ((c or {}).get("products") or {}).items():
+            pr = (f.get("products") or {}).get(pk) or {}
+            if pr.get("daily_pct") is None or pr.get("max_pct") is None:
+                continue
+
+            def val(x):
+                return pc[x] if x in pc else c.get(x)
+            cites = [cite(f, "daily_pct", pk, fallback=False), cite(f, "max_pct", pk, fallback=False)]
+            fields = ["daily_basis", "drawdown", "fee_per_side_pct"]
+            if val("drawdown") == "trailing":
+                fields += ["locks_at_initial_after_pct", "hwm_basis"]
+            cites += [cite(f, x, pk, fallback=x not in pc) for x in fields if val(x) is not None]
+            if "max_leverage" not in pc and c.get("lev_bands"):
+                cites += [cite(f, b["cite"], pk) for b in c["lev_bands"]]
+            elif val("max_leverage") is not None:
+                cites.append(cite(f, "max_leverage", pk, fallback="max_leverage" not in pc))
+            dates += [max(x["o"]) for x in cites if x and x["o"]]
+    return {"from": min(dates), "to": max(dates)} if dates else None
+
+
 def ref_price():
     """The reference firm's compare product and its fee, with the date troid read the fee (the FAQ's "Is a challenge
     worth buying?"; challenge-proof audit, B1: the FAQ said $799, the 2-Step's, beside the 1-Step troid compares)."""
@@ -374,5 +406,5 @@ def template_context(T):
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
             "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
             "affiliate_notices": affiliate_notices_html(T), "n_firms": len(ORDER), "term": term, "ref_price": ref_price(),
-            "ranking": FIRMS["_external_ranking_snapshot"], "calendar_read": _calendar_read(),
+            "ranking": FIRMS["_external_ranking_snapshot"], "calendar_read": _calendar_read(), "rules_read": desk_rules_read(),
             "rules_src": lambda fields, derived=None: rules_src(T, fields, derived), **desk2_context(T)}

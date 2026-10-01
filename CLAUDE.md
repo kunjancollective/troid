@@ -56,6 +56,16 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `tape-capture.yml`, by hand, taps every symbol on the live TradingView tape in three browsers and records the link it
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
+- `audit/` — the weekly calculator audit (HANDOFF-calculator-audit, 2026-09-29): the audit is not written by the thing
+  it audits. `model.py` re-derives every figure troid's desk shows from `firms.json` and first principles, never from the
+  desk's code; a change to its derivations needs the owner's review, and a mismatch is never the reason for one.
+  `run.py` drives the built desk in Chromium (English and the right-to-left /ar draft preview) through `cases.py`'s edge
+  cases, a regression per fix, the desk's grid and 1,000 cases seeded by the ISO week, and writes
+  `web/public/audit.json` and `audit/reports/<week>.md`; `audit/SPEC.md` is the contract the desk and the model were
+  written from, separately; `.github/workflows/audit.yml` runs it on every pull request (passing at once when nothing
+  the desk reads changed: its code, `firms.json`, the words it finds rows by, the generators, `audit/`) and on Sundays
+  at 22:00 UTC, when it commits the result to `audit/<week>` and opens a pull request for the owner, never to main. The desk shows it in
+  `audit.js`'s line, with "Rules read" on its own line (`site.json` `calc_audit`).
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`), published since
   gate 0 cleared (Vercel Pro, 2026-09-28): served at /pro only with `TROID_WAITLIST=on` and its key in Vercel, and
@@ -81,7 +91,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   when `web/i18n/{lang}.json` is `_status: live`, set by `i18n_import.py` from its native reviewer's sheet.
   `i18n_equiv.py` proves English unchanged (`--design`: a presentation change leaves every text and figure, the desk's
   84 states among them); the desk is `partials/_desk2.html` + `web/public/desk2.js` (redesigned 2026-09-25, `/desk-preview`
-  now redirects to `/`; `web/test_desk.py` holds its 84 states to the old desk's, served from git, and
+  now redirects to `/`; `web/test_desk.py` holds its 84 states to the desk the calculator audit checked (9c8d447, served
+  from git with today's rules), every figure masked and only the audit's named changes applied, and
   `web/test_desk_webkit.py` runs it as an iPhone lays it out on GitHub's WebKit, `.github/workflows/webkit.yml`);
   the price on the entry chip always belongs to the asset in the Asset field, and a price enters Entry only with its own
   asset selected (the owner's rule, 2026-09-25; `test_desk.py` section 4b) — a tapped stock no firm lists sits in the
