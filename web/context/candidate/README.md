@@ -12,6 +12,103 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
+
+The owner approved staging these, and the evaluation that follows, so ask troid's tools agree with troid's desk and the
+MCP server (`audit/SPEC.md`; the desk, `mcp/server.py` and `risk.py` on `claude/beautiful-johnson-ewrv1a`). The live
+prompt and tools are unchanged: every live and patch tool result, schema and system block was compared with main's,
+12,714 of them, and none differs.
+
+- **F6, fees.** A unit's fees are fee × (entry + stop), the exit fee priced at the stop (was entry × fee × 2), so the
+  loss at the stop is the risk to the cent, long or short. `size_trade(a, true)` (its fee-per-unit row, its size formula,
+  a new "loss at the stop" row and `loss_at_stop`); trade_math's `position_size` (with `fees` and `loss_at_stop`; a
+  `stop_pct` with a fee is priced from `side`, worked as a long when no side is given and listed among troid's
+  assumptions) and `r_multiple` ("fees in and out", 1R with fees $522.83 on the character's example, was $523.03);
+  `fee_share` takes `side` and, without it, gives the long, the short and the side-neutral approximation
+  2f ÷ (s + 2f), labelled as such (0.3% stop: 21.03%, 21.08%, 21.05%). The schema is `TRADE_MATH_TOOL_NEXT` (a `side`
+  property; the description). `CANDIDATE_RULES.fees`. Reference case 2 (short, $96,000, 0.3% stop, $480): qty 1.621583,
+  notional 126,275.91, margin at 5× 25,255.18, fees 101.17 (21.08%), losses left 4 (was 1.622095, 126,315.79,
+  25,263.16, 101.05, 21.05%); its cross liquidation 75.15% (was 75.12%, the notional changed).
+- **F7, losses left.** ceil(budget ÷ risk − 1e-9) − 1, the losses that leave equity above the limit (was
+  floor(budget ÷ risk + 1e-9)): a fresh $100,000 1-Step at $500 leaves 7, not 8. `size_trade` (and, as the desk's R5,
+  BLOCK when a loss would take the whole room, reached only at a 100% cap); trade_math's `losses_to_limit` gives
+  `losses_left`, `room_left_after` and `loss_that_reaches_limit` (was `losses_that_fit`, the floor);
+  `CANDIDATE_RULES.ruin` says ceil(maxloss/f), reaching it the breach.
+- **F5, liquidation.** A long whose liquidation works out at 100% or more (−1e-9) shows "none above zero" in
+  `circuit_breakers`, the working row and, isolated, the note ("isolated at 1×: no liquidation above zero — …"), and
+  sorts last; a short as computed.
+- **F1, the margin cut** (added 30 Sep, the owner: "Otherwise it could still suggest a size the account can't open").
+  When the margin at the risk-based size is above equity (+1e-9), the size is cut to equity × leverage used ÷ entry and
+  the loss at the stop falls with it: a fresh $100,000 1-Step, long 60,000 with its stop at 59,990 at 5×, needs
+  $103,455.41 of margin at the risk-based 8.62 units, so it is cut to 8.333333 ($500,000, all that $100,000 carries at
+  5×), risking $483.30, REDUCE, 8 losses left. `size_trade(a, true)`: the quantity row's formula ("equity × leverage used
+  ÷ entry: cut to fit the margin"), a "margin check" row after "margin" on every sized trade (the margin at the
+  risk-based size, and whether it fits), the size formula's "; margin at the risk-based size > equity: size cut to equity
+  × 5× ÷ entry", the note "cut to fit the margin: at 5× the account carries at most … notional, so this trade risks …"
+  (and a budget cut before it ends "; the margin then cut it to …"), REDUCE; `risk` is the loss at the stop, as the
+  desk's readout shows it, and fee share, budget used and losses left are over it. trade_math's `position_size` takes
+  `equity` (with `leverage`) and cuts the same way (`cut_to_fit_margin`, a "margin check" row, the note); with leverage
+  and no equity it says the desk cuts a margin above equity and to give equity to check it.
+- **The desk's D6, which F1 rests on.** Crypto Fund Trader records no leverage class between $25,000 and $50,000: the
+  desk holds leverage there to the lowest cap the firm records (5×), and the candidate now does too (it held to the
+  highest, 100×, so its margin check would almost never have cut): $30,000 at 200×, long 60,000 with its stop at 59,990,
+  is held to 5× and cut to 2.5 units, risking $122.49. The note says "the lowest cap this firm records"; the working row
+  "your leverage; cap pending (held to 5×, the lowest cap recorded for this firm)". trade_math already refused leverage
+  above the lowest cap there.
+- **R6, a long's floors past 100%.** A long's daily-limit or floor distance at 100% or more (−1e-9) reads "not reached
+  above zero — a fall to zero stays inside it" in `circuit_breakers` and the working row, and sorts after every distance
+  that is reached: long 60,000 with its stop at 54,000, the max-loss floor at 120.91%. A short's as computed. trade_math
+  computes no floor distance, so R6 is size_trade's alone.
+- Every figure above, and the combined case (a $475 risk cut to $350 by the drawdown budget, then to 6.333333 units
+  and $310.33 by the margin at 4×), is the audit model's (`audit/model.py`), worked independently of this code.
+- **Prompt files.** `TROID.md` here: the live copy with the sizing block (fee_unit, the margin cut, loss_at_stop,
+  consumes and losses_left over it), the verdicts (REDUCE to fit the margin; R5's BLOCK), the ruin line, the fee share by
+  side with its table (long, short, side-neutral) and the 5% threshold by side, leverage leaving the loss alone "while
+  the margin fits in equity" (the leverage section, "Should I use 5× or 2×?" and "What troid knows"), a long's
+  liquidation "none above zero" and its floors past 100% "not reached above zero", "how many more losses at that size
+  leave equity above the binding ceiling", and the "Costs" line of "What troid knows". And the fourth patch's two
+  wordings, brought in at once (the owner, 30 Sep: "Otherwise the test runs on text you'd reject anyway"): the reset
+  paragraph in UTC, word for word from `../patch/TROID.md`, and "no measurable edge". explain_rule's reset is the
+  patch's too (`CANDIDATE_RULES.reset = PATCH_RULES.reset`). Whichever publishes first, the other drops its copy.
+  `TROID-CHARACTER.md`: the same "Costs" and "Leverage and margin" lines, and the R example's fees "to open at entry and
+  to close at the stop" and "8 − 1 = 7 losses of that size leave you above it".
+
+Not staged: the audit's F2 to F4. F2's input bounds are the desk's fields; F3's loosest reading sizes a product whose
+drawdown type is pending, where size_trade answers PENDING and sizes nothing. F4 raises a typed high-water mark to the
+quota, and to equity on a firm that trails on equity; size_trade takes the one it is given, so a high-water mark typed
+below equity on BrightFunded gives a looser floor than the desk's. No evaluation question gives one.
+
+**Eval cases this touches:** p-size (size_trade), ex-r (r_multiple, the example's losses), b-stop (position_size,
+the fee-per-unit formula), b-leverage (position_size's margin and the margin cut, liquidation), o-montecarlo
+(explain_rule ruin) and p-crossover (size_trade may be called); the patch's wordings touch p-reset, p-reset-local and
+q-stats, which the full runs cover. **p-size's check** is the owner's (30 Sep): 1.621583, the candidate's quantity
+(1.62158301918), or any correct rounding of it to 3 or more decimals (1.622, 1.6216, 1.621583), not 1.62. The live
+tools' 1.622095, which every saved run wrote, is refused: the live baseline fails p-size unless a reply rounds to
+1.622. No other case's expected figure changes.
+
+**After deploying**, check the deployment stages it: `curl -s https://troid.ai/api/troid | jq .candidate` (staged holds
+TROID.md and TROID-CHARACTER.md; rules end with fees, reset; run includes size_trade and trade_math). Then:
+
+```
+# the cases it touches, the candidate and the live baseline on the same questions
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --only p-size,ex-r,b-stop,b-leverage,o-montecarlo,p-crossover --out web/eval/runs/<date>-f5f7-candidate
+EVAL_CANDIDATE_KEY=… EVAL_LIVE=1 node web/eval_character.js https://troid.ai --only p-size,ex-r,b-stop,b-leverage,o-montecarlo,p-crossover --out web/eval/runs/<date>-f5f7-live
+
+# to decide a promotion: every case (28), three candidate runs and the live baseline, each read into <run>.read.json (_errors)
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run17
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run18
+EVAL_CANDIDATE_KEY=… node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run19
+EVAL_CANDIDATE_KEY=… EVAL_LIVE=1 node web/eval_character.js https://troid.ai --out web/eval/runs/<date>-run20
+node web/eval_character.js --promotion --candidate 17,18,19 --live 20
+```
+
+The full runs evaluate everything staged here together, runs 10 to 16's fixes with F5 to F7. Promotion folds
+`size_trade`'s `next` branch in (dropping the flag), `MATH_NEXT` and `MATH_FORMULAS_NEXT` into `MATH` and
+`MATH_FORMULAS`, `TRADE_MATH_TOOL_NEXT` into `TRADE_MATH_TOOL`, `CANDIDATE_RULES` into `RULES`, and moves `TROID.md`
+into `web/public/TROID.md` and the root copy, `TROID-CHARACTER.md` into `web/context/` and the root copy; the live
+checks in `web/test_assistant.js` (reference case 2, "the live smoke figures", losses left 8) then move to these figures,
+and METHODOLOGY's three audit rows (on the audit branch) drop "ask troid's size_trade has not followed yet".
+
 troid's character was promoted after evaluation run 9. Staged now, from the reads of run 10 (the live prompt), run 11
 (this candidate, 21 of 24, six errors), run 12 (22 of 24, four), run 13 (22 of 24, three), run 14 (22 of 24, five) and run 15 (23 of 24, seven): four guardrails, explain_rule's ruin, crossover and drawdown texts with the
 rules they state (`CANDIDATE_TOPIC_CITES`), the tools in `CANDIDATE_RUN` (the floating-loss rule with its source, the

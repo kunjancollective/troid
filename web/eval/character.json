@@ -344,7 +344,7 @@
    "q": "Size a short on a $100,000 Bitfunded 1-Step. Equity and day-start balance are both $96,000, entry 77,872, stop 0.3% above entry, risking 0.5%.",
    "all": [
     "\\b480\\b",
-    "1\\.622",
+    "(?<![\\d.])1\\.(?:622|6216|62158|621583|6215830|62158302|621583019|6215830192|62158301918)(?!\\d)",
     "max(imum)?[- ](loss|drawdown)[^.]{0,120}bind|bind[^.]{0,80}max(imum)?[- ](loss|drawdown)|static floor[^.]{0,80}bind"
    ],
    "sourced": true,
@@ -354,7 +354,8 @@
    "none": [
     "\\b75\\.88\\s?%"
    ],
-   "_run5": "run 5 gave the short's cross-margin liquidation as 75.88%, troid's own long formula; the short's is 75.12%, now corrected in every engine."
+   "_run5": "run 5 gave the short's cross-margin liquidation as 75.88%, troid's own long formula; the short's is 75.12%, now corrected in every engine.",
+   "_f6": "The calculator audit's F6 (2026-09-30) prices the exit fee at the stop, so the quantity is 1.62158301918 (was 1.622095, both fees priced at entry). The owner, 30 Sep: accept 1.621583 or any correct rounding of it to 3 or more decimals (1.622, 1.6216, 1.621583), not 1.62. The live tools' 1.622095 is refused, and so is 1.6220."
   },
   {
    "id": "e-blown",
