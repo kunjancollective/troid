@@ -97,6 +97,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   the price on the entry chip always belongs to the asset in the Asset field, and a price enters Entry only with its own
   asset selected (the owner's rule, 2026-09-25; `test_desk.py` section 4b) — a tapped stock no firm lists sits in the
   field as "NVDA · not offered by troid's firms", with no chip and nothing sized;
+  the affiliate line by the desk (the owner, 2026-10-01; `regions.desk_aff_html`, `#affl`) is one element, never in the
+  verdict, readout or working: under the result on a phone, under the Your risk card from 1100 px, the selected firm's
+  line only and only when its link is live, the same in every state (`web/test_desk_aff.py`);
   `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
   sized as WebKit sizes them); `web/i18n/README.md` has the workflow. Every page's head comes from `site_build.head_extra()` (canonical,
   og:type and site name, the X card) and its JSON-LD from `site_build.jsonld()`, which `finish()` places before `</head>`

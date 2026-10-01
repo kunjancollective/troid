@@ -87,7 +87,6 @@ index.firms.why,"{firm} is the first firm troid verified from its own documents;
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
     firms it compares; troid's links and codes don't raise the price.
     troid computes, you choose.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
-index.firms.reference,reference,مرجعية,,
 index.firms.filled,{n} of {total} rules filled · {m} sourced,القواعد المُعبّأة: {n} من {total} · بمصدر مسجّل: {m},,"CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {m} {n} {total} exactly as written"
 index.firms.pending,verification pending,التحقق معلّق,,
 index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch (read {date}).,,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | CHECK FIRST: Number agreement: to avoid Arabic count-noun agreement with variable {n}, several strings use a 'label: {n}' pattern (index.firms.filled, index.firms.reviews, index.js.n_left, compare.col.tag, ledger.cell.trades_r, chat.js.status_firms, chat.js.tool_call_*, compare.js.foot_open_*). Others keep '{n} صفقة/رسالة/حرف' (ledger.warn.measure_*, hypo.no_edge_tail, tearsheet.head.sample, ask.err.limit, ask.err.too_long), which is only correct for n of 11 or more. Please check against the real values. | keep {date} {n} {rating} exactly as written"
@@ -304,7 +303,7 @@ compare.og.description,"Daily limit, max loss, target, price and fees for each f
 compare.hero.h1,"Three firms, your numbers.",ثلاث شركات، وأرقامك أنت.,,
 compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.",أدخل إعدادات الحجم مرة واحدة. يُظهر كل عمود ما تكلّفه هذه الإعدادات وفق قواعد تلك الشركة. كل خانة تُظهر وثيقة الشركة والتاريخ الذي قرأها فيه troid، أو تذكر <em>معلّق</em>، أو تذكر أن مصدرها لم يُسجَّل بعد. لا تُمنح أي درجات تقييم.,,"keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},بالترتيب الأبجدي · شركة مرجعية واحدة + شركتان حسب تصنيف خارجي · رُوجعت في {date},,keep {date} exactly as written
+compare.hero.meta,alphabetical · three firms · reviewed {date},,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
 compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
@@ -1097,6 +1096,10 @@ desk2.card.error,check this step,,,NEW: translate it in reviewer_edit |
 desk2.audit.pass,"Calculators audited {date} · {n} checks passed · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
 desk2.audit.fail,"Calculators audited {date} · mismatches found: {n} · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
 desk2.audit.rules,Rules read {range},,,NEW: translate it in reviewer_edit | keep {range} exactly as written
+desk2.aff.why,"troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+desk2.aff.link,"<a href=""{url}"" rel=""sponsored noopener"" target=""_blank"">{firm} challenges ↗</a> · affiliate link",,,NEW: translate it in reviewer_edit | keep {firm} {url} exactly as written; keep the <…> tags and links as they are; translate only the words
+desk2.aff.code,code {code},,,NEW: translate it in reviewer_edit | keep {code} exactly as written
+desk2.aff.funded,"<a href=""{L}/faq#money"">how troid is funded</a>",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 desk2.asset,Asset,,,NEW: translate it in reviewer_edit | 
 desk2.group.crypto,Crypto,,,NEW: translate it in reviewer_edit | 
 desk2.group.commodities,Commodities,,,NEW: translate it in reviewer_edit | 

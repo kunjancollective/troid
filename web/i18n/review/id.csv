@@ -89,7 +89,6 @@ index.firms.why,"{firm} is the first firm troid verified from its own documents;
     recorded. Which firm gets verified next follows propfirmmatch's review ranking; the page has no cap. troid is an independent affiliate of the
     firms it compares; troid's links and codes don't raise the price.
     troid computes, you choose.",,,"ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {firm} exactly as written; troid stays lowercase, in Latin letters"
-index.firms.reference,reference,acuan,,
 index.firms.filled,{n} of {total} rules filled · {m} sourced,{n} dari {total} aturan terisi · {m} bersumber,,keep {m} {n} {total} exactly as written
 index.firms.pending,verification pending,menunggu verifikasi,,"CHECK FIRST: 'pending' is kept as a loanword: index.js.pending, compare.js.pending, index.js.v_pending 'PENDING', the index.js.n_*_pending notes, and the <em>pending</em> quoted in compare.hero.lede. The alternatives are 'tertunda' or 'menunggu'. index.firms.pending uses 'menunggu verifikasi'."
 index.firms.reviews,{n} verified reviews at {rating} on propfirmmatch (read {date}).,,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} {n} {rating} exactly as written
@@ -309,7 +308,7 @@ compare.hero.h1,"Three firms, your numbers.","Tiga perusahaan, angka Anda.",,
 compare.hero.lede,"Enter your sizing once. Each column shows what that sizing costs under that firm's rules. Every cell
 shows the firm document and the date troid read it, says <em>pending</em>, or says its source is not yet recorded. Nothing is scored.","Masukkan sizing Anda sekali. Setiap kolom menunjukkan berapa biaya sizing tersebut di bawah aturan perusahaan itu. Setiap sel
 menampilkan dokumen perusahaan dan tanggal troid membacanya, menyatakan <em>pending</em>, atau menyatakan bahwa sumbernya belum tercatat. Tidak ada yang diberi skor.",,"CHECK FIRST: 'pending' is kept as a loanword: index.js.pending, compare.js.pending, index.js.v_pending 'PENDING', the index.js.n_*_pending notes, and the <em>pending</em> quoted in compare.hero.lede. The alternatives are 'tertunda' or 'menunggu'. index.firms.pending uses 'menunggu verifikasi'. | keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
-compare.hero.meta,alphabetical · one reference firm + two by external ranking · reviewed {date},urut abjad · satu perusahaan acuan + dua menurut peringkat eksternal · ditinjau {date},,keep {date} exactly as written
+compare.hero.meta,alphabetical · three firms · reviewed {date},,,ENGLISH CHANGED after the draft: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.h,Where {firm}'s own documents disagree · {n} logged,,,NEW: translate it in reviewer_edit | keep {firm} {n} exactly as written
 compare.conflicts.read,read {date},,,NEW: translate it in reviewer_edit | keep {date} exactly as written
 compare.conflicts.unread,no read recorded,,,NEW: translate it in reviewer_edit | 
@@ -1177,6 +1176,10 @@ desk2.card.error,check this step,,,NEW: translate it in reviewer_edit |
 desk2.audit.pass,"Calculators audited {date} · {n} checks passed · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
 desk2.audit.fail,"Calculators audited {date} · mismatches found: {n} · <a href=""{href}"">report</a>",,,NEW: translate it in reviewer_edit | keep {date} {href} {n} exactly as written; keep the <…> tags and links as they are; translate only the words
 desk2.audit.rules,Rules read {range},,,NEW: translate it in reviewer_edit | keep {range} exactly as written
+desk2.aff.why,"troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.",,,"NEW: translate it in reviewer_edit | troid stays lowercase, in Latin letters"
+desk2.aff.link,"<a href=""{url}"" rel=""sponsored noopener"" target=""_blank"">{firm} challenges ↗</a> · affiliate link",,,NEW: translate it in reviewer_edit | keep {firm} {url} exactly as written; keep the <…> tags and links as they are; translate only the words
+desk2.aff.code,code {code},,,NEW: translate it in reviewer_edit | keep {code} exactly as written
+desk2.aff.funded,"<a href=""{L}/faq#money"">how troid is funded</a>",,,"NEW: translate it in reviewer_edit | keep {L} exactly as written; keep the <…> tags and links as they are; translate only the words; troid stays lowercase, in Latin letters"
 desk2.asset,Asset,,,NEW: translate it in reviewer_edit | 
 desk2.group.crypto,Crypto,,,NEW: translate it in reviewer_edit | 
 desk2.group.commodities,Commodities,,,NEW: translate it in reviewer_edit | 

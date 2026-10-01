@@ -195,6 +195,7 @@ input,select{min-width:0;max-width:100%}
 .cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.cell .s.aff{font-size:11px}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
 .notes div{padding-inline-start:14px;position:relative}
 .notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
@@ -366,7 +367,11 @@ function levCapFor(p,quota){
   return null;
 }
 function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
-function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
+// the affiliate line by the desk: the selected firm's line only, the whole line hidden for a firm with no live link; the
+// same in every state, since only the firm selector moves it
+function deskAff(){var a=el("affl");if(!a)return;var k=el("firm").value,on=false;
+  a.querySelectorAll("[data-aff]").forEach(function(d){var m=d.getAttribute("data-aff")===k;d.hidden=!m;on=on||m});a.hidden=!on}
+function fillProfiles(){deskAff();var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
 function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none";levDefault()}
 /* The desk's bounds (calculator audit F2, 2026-09-29): a value no account or trade can have is refused before anything
    is sized, and the reason names its field by the label it has on the page (LAB). Each used to give a confident
