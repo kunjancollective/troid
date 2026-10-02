@@ -494,7 +494,7 @@ def render_compare(T, live):
 .r .pv code{{font-size:9.5px;padding:0 3px}}.r .l{{color:var(--dim)}}.r .v{{font-variant-numeric:tabular-nums;text-align:end;margin-inline-start:auto;min-width:0;overflow-wrap:break-word}}
 .r.sec{{background:var(--surface2);color:var(--dim);font-size:9.5px;text-transform:uppercase;letter-spacing:.12em;padding:6px 16px}}
 .pend{{color:var(--dim);font-style:italic}}
-.colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;line-height:1.7;background:var(--surface2)}}
+.colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--surface2)}}
 .colfoot .req{{margin-top:8px;color:var(--dim);font-size:10.5px;line-height:1.6}}
 .inputs{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}}
 @media(max-width:640px){{.inputs{{grid-template-columns:1fr 1fr}}}}

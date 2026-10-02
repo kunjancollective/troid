@@ -209,6 +209,7 @@ input,select{min-width:0;max-width:100%}
 .cell .v{font-family:var(--mono);font-size:17px;font-weight:500;
   font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 .cell .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);margin-top:3px}
+.cell .s.aff{font-size:11px}
 .notes{margin-top:12px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
 .notes div{padding-inline-start:14px;position:relative}
 .notes div::before{content:"\2192";position:absolute;inset-inline-start:0;color:var(--signal)}
@@ -316,10 +317,20 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .gauge.sPENDING .gdot,.gauge.sPENDING .gfl,.gauge.sPENDING .glab{opacity:0}
 .gseg.over{background:var(--block)}
 .d2in,.d2out{min-width:0}
+/* the affiliate line: under the result on a phone (the output's own lines become the column's, ordered), under the
+   Your risk card from 1100 px; its link and label a size up from the desk's 11px */
+.affl{min-width:0;margin:12px 0 0;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
+.affl[hidden],.affl>[hidden]{display:none}
+.affl p{margin:0}.affl .al{margin-top:6px;font-size:11.5px}.affl .al a{display:inline-block;padding:4px 0}
+.affl .req{margin-top:4px;font-size:10.5px;line-height:1.6}
+@media (max-width:1099.98px){
+  .d2g{display:flex;flex-direction:column}.d2out{display:contents}
+  .gauge{order:0}.d2in{order:1}#assetnote,#result{order:2}.affl{order:3}#audit,#rulesread{order:4}
+}
 @media (min-width:1100px){
-  .d2g{display:grid;grid-template-columns:minmax(0,390px) 214px minmax(0,1fr);gap:0 20px;align-items:start}
-  .d2in{grid-column:1;grid-row:1}.d2out{grid-column:3;grid-row:1}
-  .gauge{grid-column:2;grid-row:1;top:16px;margin:0;padding:0;background:none;border:0}
+  .d2g{display:grid;grid-template-columns:minmax(0,390px) 214px minmax(0,1fr);grid-template-rows:auto 1fr;gap:0 20px;align-items:start}
+  .d2in{grid-column:1;grid-row:1}.d2out{grid-column:3;grid-row:1/span 2}.affl{grid-column:1;grid-row:2;margin-top:2px}
+  .gauge{grid-column:2;grid-row:1/span 2;top:16px;margin:0;padding:0;background:none;border:0}
   .gtr{height:380px}.gtr>*{top:0}
   .gax{left:84px;width:2px;height:100%}
   .gfl{left:68px;width:34px;height:2px;margin:-1px 0 0}
@@ -485,6 +496,19 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
       <p class="audit" id="rulesread" data-from="2026-09-18" data-to="2026-09-26" data-t="Rules read {range}" data-intl="en-GB">Rules read 2026-09-18 – 2026-09-26</p>
       <script src="/audit.js" defer></script>
     </div>
+    <div class="affl" id="affl">
+  <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
+  <div data-aff="bitfunded">
+    <p class="al"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener" target="_blank">Bitfunded challenges ↗</a> · affiliate link · <a href="/faq#money">how troid is funded</a></p>
+  </div>
+  <div data-aff="brightfunded" hidden>
+    <p class="al"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener" target="_blank">BrightFunded challenges ↗</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA · <a href="/faq#money">how troid is funded</a></p>
+  </div>
+  <div data-aff="crypto_fund_trader" hidden>
+    <p class="al"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener" target="_blank">Crypto Fund Trader challenges ↗</a> · affiliate link · code platinum5 · <a href="/faq#money">how troid is funded</a></p>
+    <p class="req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></p>
+  </div>
+</div>
   </div>
   <div class="pop" id="p-why3" hidden><p>troid compares 3 firms: Bitfunded, the first firm troid verified from its own documents, and the 2 crypto firms with the most verified reviews on propfirmmatch. Rankings are reviewed quarterly. A firm's rules appear only after troid has read them in the firm's own documents; a rule not yet read shows “pending”.</p><p><a href="/compare#chosen">How firms are chosen →</a></p>
     <p>Want another firm? <a href="/chat#q=Can%20troid%20add%20another%20firm%20to%20its%20compare%3F%20The%20one%20I%27d%20like%20is%20">Ask troid.</a></p></div>
@@ -539,19 +563,19 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
       <div class="s">SOURCED · its own documents, read 2026-09-23; each rule with its section on <a href="/compare">troid's compare</a></div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
       <div class="s">Where troid&#x27;s ledger runs. Each rule&#x27;s source and read date is on troid&#x27;s compare.</div>
-      <div class="s" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link</div>
+      <div class="s aff" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link</div>
     </div>
     <div class="cell">
       <div class="k">BrightFunded</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules filled · 15 sourced</div>
       <div class="s">128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21). Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
-      <div class="s" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
+      <div class="s aff" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
     </div>
     <div class="cell">
       <div class="k">Crypto Fund Trader</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
       <div class="s">109 verified reviews at 4.1 on propfirmmatch (read 2026-09-21). Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input. (its own documents, read 2026-09-21)</div>
-      <div class="s" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
+      <div class="s aff" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
       <div class="s req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></div>
     </div>
   </div>
@@ -691,7 +715,11 @@ function levCapFor(p,quota){
   return null;
 }
 function fillFirms(){var s=el("firm");s.innerHTML="";Object.keys(FIRMS).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=FIRMS[k].name;s.appendChild(o)});fillProfiles()}
-function fillProfiles(){var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
+// the affiliate line by the desk: the selected firm's line only, the whole line hidden for a firm with no live link; the
+// same in every state, since only the firm selector moves it
+function deskAff(){var a=el("affl");if(!a)return;var k=el("firm").value,on=false;
+  a.querySelectorAll("[data-aff]").forEach(function(d){var m=d.getAttribute("data-aff")===k;d.hidden=!m;on=on||m});a.hidden=!on}
+function fillProfiles(){deskAff();var f=FIRMS[el("firm").value],s=el("profile");s.innerHTML="";Object.keys(f.products).forEach(function(k){var o=document.createElement("option");o.value=k;o.textContent=f.products[k].label;s.appendChild(o)});toggleInputs();render()}
 function toggleInputs(){var p=FIRMS[el("firm").value].products[el("profile").value];el("hwmWrap").style.display=p.dd==="trailing"?"":"none";el("hiWrap").style.display=p.basis==="max_balance_equity"?"":"none";levDefault()}
 /* The desk's bounds (calculator audit F2, 2026-09-29): a value no account or trade can have is refused before anything
    is sized, and the reason names its field by the label it has on the page (LAB). Each used to give a confident

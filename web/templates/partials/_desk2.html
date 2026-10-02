@@ -4,7 +4,9 @@
    (your account, your trade, your risk). The gauge comes first so a phone can pin it under the tape while the desk is on screen; from 1100 px it
    stands between the fields and the readout. #/assetnote holds the two lines the Asset field changes: the firm's hold
    limit and whether it lists the asset. #/how is the explainer, the same numbers step by step. The fields' min and max
-   are the desk's bounds (calculator audit F2, 2026-09-29); render() holds them too, and refuses 0 where min is 0. #}
+   are the desk's bounds (calculator audit F2, 2026-09-29); render() holds them too, and refuses 0 where min is 0.
+   #affl, the affiliate line (regions.desk_aff_html), is the grid's last child: under the result on a phone, under the
+   Your risk card from 1100 px, the same element moved by CSS. #}
 </div>
 <div class="wrap wide">
 <div class="panel d2" id="desk">
@@ -67,6 +69,7 @@
       <script src="/audit.js" defer></script>
       {%- endif %}
     </div>
+    {{ desk_aff }}
   </div>
   <div class="pop" id="p-why3" hidden><p>{{ why_these }}</p><p><a href="{{ L }}/compare#chosen">{{ t("index.why3.how") }}</a></p>
     <p>{{ t("index.why3.ask", href=L + "/chat#q=" + (t("index.why3.ask_q")|urlencode)) }}</p></div>
