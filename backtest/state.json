@@ -1,7 +1,7 @@
 {
   "strategy": "troid-shadow-1",
-  "as_of_bar_utc": "2026-10-04T08:00:00+00:00",
-  "last_close": 85302.69,
+  "as_of_bar_utc": "2026-10-04T12:00:00+00:00",
+  "last_close": 85281.0,
   "outcome": "running",
   "balance": 100945.57,
   "trades_total": 85,
