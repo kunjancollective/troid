@@ -799,7 +799,17 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      kept21.length === 1 && /^R is the dollar loss/.test(kept21[0]) && /\*\*Why it works:\*\* −1R means the same on any account\.$/.test(kept21[0]) && !/Pricing an example/.test(kept21[0])
      && handler._hasGeneralFormula(shown21) && /\bR (is|means|stands for|measures)\b/.test(shown21) && !handler._hasGeneralFormula(fin21)
      && !SN(["R is the loss at the stop. Getting those now:"], "R is the loss at the stop.\n\nFormula: 1R = |entry − stop| × q").length
-     && JSON.stringify(SN(["R is the loss at the stop. Here is an example:"], fin21)) === JSON.stringify(["R is the loss at the stop."]), kept21); }
+     && JSON.stringify(SN(["R is the loss at the stop. Here is an example:"], fin21)) === JSON.stringify(["R is the loss at the stop."]), kept21);
+  // run 22, o-montecarlo: a block written before the tool call that ends "Let's get the expectancy figure." goes when the
+  // final answer stands alone, and a "Let's" sentence with no figure never reaches the reader
+  const r22mc = require("./eval/runs/2026-10-05-run22.json").results.find((c) => c.id === "o-montecarlo").reply, fin22 = r22mc.slice(r22mc.indexOf("**Answer:**"));
+  const said22 = ["ask troid does not run simulations, with any inputs — so no new Monte Carlo can be run for the numbers given.\n\nWhat troid can do instead:\n\n1. Compute the closed-form expectancy through trade_math.\n2. Quote troid's published Monte Carlo results alongside it.\n\nLet's get the expectancy figure."];
+  const TP = handler._inThirdPerson, FP = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^Speak of troid in the third person/.test(n));
+  ok("candidate: a lead-in to the tool call in the first person goes with its block when the final answer stands alone, and a 'Let's' sentence with no figure goes; one with a figure stays for the lint, which reads the candidate only (run 22, o-montecarlo)",
+     !SN(said22, fin22).length && TP(fin22).startsWith("No new Monte Carlo was run") && !/\blet['’]s\b/i.test(TP(r22mc))
+     && TP("Let's get the figure.\n\nE = 0.21R.") === "E = 0.21R." && TP("Let's say equity is $100,000. Then E = 0.21R.") === "Let's say equity is $100,000. Then E = 0.21R."
+     && TP("Answer the question first.") === "Answer the question first." && FP("Let me price it: 0.21R", "candidate") && !FP("Let me price it: 0.21R", "live")
+     && JSON.stringify(SN(said21, fin21)) === JSON.stringify(kept21), [SN(said22, fin22), TP(fin22).slice(0, 80)]); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1270,7 +1280,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 11 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 34 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 35 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
