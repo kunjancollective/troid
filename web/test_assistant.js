@@ -78,10 +78,10 @@ ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 
    && /Challenge & Trader Stage/.test(r.sources[0].document_section) && /9\(a\)/.test(r.sources[0].document_section) && !/Criteria/.test(r.sources[0].document_section) && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee still says not yet recorded",
+ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee cites Criteria to be Success, read 2026-10-04 (no product restriction)",
    ["daily 5%", "max 10%", "leverage cap 5×"].every((k) => { const s = r.sources.find((x) => x.rule === k).document_section || "";
      return /Two Steps Evaluation table/.test(s) && /Terms of Use 9\(a\), 2 Steps Challenges/.test(s) && !/clause not recorded/.test(s); })
-   && r.sources.find((x) => x.rule === "fee 0.04% per side").source === "not yet recorded", r.sources);
+   && (() => { const x = r.sources.find((y) => y.rule === "fee 0.04% per side"); return /Criteria to be Success/.test(x.document_section) && /no product restriction/.test(x.document_section) && x.read_on.join() === "2026-10-04"; })(), r.sources);
 r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
 ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
 for (const [pk, d, m] of [["trader_1step", 4, 6], ["trader_express", 3, 3], ["trader_2step", 5, 8]]) {
@@ -110,7 +110,7 @@ const cite = (rule) => (r.sources.find((x) => x.rule === rule) || {}).cite;
 ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23"
    && cite("max 6%") === "max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23"
    && cite("drawdown type (static)") === "drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18"
-   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23"
+   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04"
    && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21", r.sources);
 ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r.assumptions.length === 5 && r.assumptions.some((x) => /^margin mode cross — troid's default.*no recorded source/.test(x))
    && r.assumptions.some((x) => /^leverage 5× — troid's default/.test(x)) && r.assumptions.some((x) => /^budget cap 35% /.test(x)) && r.assumptions.some((x) => /^target 2R /.test(x))
@@ -364,10 +364,54 @@ const LIVE_TROID = fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"),
 const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidate", "TROID.md"), "utf8");
 // the calculator audit's F6/F7 (2026-09-30): the same tools but trade_math's schema, which adds side and says how fees and losses left are counted
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
-ok("candidate: the live prompt plus four guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm); the same tools but trade_math's schema",
-   CG.length === 4 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && candSys[0].text.includes(CG[3]) && /names no favourite/.test(CG[3])
-   && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && /add up across its stages/.test(CG[1]) && /hello@troid\.ai is for/.test(CG[2])
-   && sameBut("candidate") === sameBut("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join());
+// the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
+const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
+ok("candidate: the live prompt plus six guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 6 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+   && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
+   && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
+   && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets"
+   && /firm-level rules/.test(handler._toolsFor("candidate").find((t) => t.name === "firm_rules").description) && !/firm-level/.test(handler._toolsFor("live").find((t) => t.name === "firm_rules").description));
+// the live test of 2026-10-04: firm_assets (BTC and the one stock named, TSLA, each with its hold limit, read 2026-09-24),
+// firm_rules' firm-level rules dated from provenance (max open positions read 2026-09-21, re-read 24 and 26), the ladder's
+// two numbers labelled and the firm's wording where recorded, and the read-date lint
+{ const fa = handler._runTool("firm_assets", { firm: "bitfunded" }, "candidate"), row = (s) => fa.listed.find((x) => x.symbol === s);
+  ok("candidate firm_assets: BTC (Major Crypto Assets, 10 days) and TSLA (Traditional Trading Pairs, 5 days, the one stock named), each from Restricted Trading Practices read 2026-09-24",
+     row("BTC").as_listed === "BTC (Major Crypto Assets)" && row("BTC").hold_limit_days === 10 && row("TSLA").as_listed === "TSLA (Traditional Trading Pairs)"
+     && row("TSLA").hold_limit_days === 5 && [row("BTC"), row("TSLA")].every((x) => x.source.read_on === "2026-09-24" && /Restricted Trading Practices/.test(x.source.document))
+     && fa.named_by_group.stocks.join() === "TSLA" && /the one named is TSLA/.test(fa.note) && /never that troid has no list/.test(fa.note), fa);
+  const nv = handler._runTool("firm_assets", { firm: "bitfunded", symbol: "nvda" }, "candidate");
+  ok("candidate firm_assets: an asset no page names (NVDA) is unrecorded either way, never 'not offered'", nv.asked && nv.asked.listed === false && /no record that the firm offers it, and none that it doesn't/.test(nv.asked.detail), nv.asked);
+  ok("live: no firm_assets", !handler._toolsFor("live").some((t) => t.name === "firm_assets") && !!handler._runTool("firm_assets", { firm: "bitfunded" }, "live").error);
+  const fr = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), frl = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "live");
+  const mo = fr.sources.find((x) => /^open positions at once/.test(x.rule));
+  ok("candidate firm_rules: max open positions 5 from Restricted Trading Practices s.3, read 2026-09-21 (re-read 2026-09-24, 2026-09-26 and 2026-10-04), never 2026-09-23; live unchanged",
+     fr.rules.some((x) => /^open positions at once/.test(x.rule) && x.value === 5) && mo.read_on.join() === "2026-09-21" && /s\.3, read 2026-09-21 \(the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04\)/.test(mo.cite)
+     && !/2026-09-23/.test(mo.cite) && !frl.rules.some((x) => /open positions/.test(x.rule)), mo);
+  ok("candidate firm_rules: the hold limit by tier (10, 7, 5 days)", ["Major Crypto Assets", "Minor Crypto Assets", "Traditional Trading Pairs"].map((t) => (fr.rules.find((x) => x.rule.includes(t)) || {}).value).join() === "10,7,5");
+  const lad = fr.concentration_ladder, ins = handler._runTool("firm_rules", { firm: "bitfunded", product: "instant" }, "candidate").concentration_ladder;
+  const exl = handler._runTool("firm_rules", { firm: "bitfunded", product: "express" }, "candidate").concentration_ladder;
+  ok("candidate firm_rules: the concentration ladder per product in the firm's words (owner's read 2026-10-04): 2-Step 65-74% '50% payout penalty' … 96-100% '70%'; Instant from 55%; Express none recorded; never a 'cut'",
+     lad.steps.map((x) => x.exposure_from_pct + "-" + x.exposure_to_pct + ":" + x.firm_wording).join() === "65-74:50% payout penalty,75-89:60% payout penalty,90-95:65% payout penalty,96-100:70% payout penalty"
+     && ins.steps.map((x) => x.exposure_from_pct + ":" + x.payout_penalty_pct).join() === "55:50,65:55,75:60,90:65,96:70" && !exl.steps.length && /no concentration ladder recorded/.test(exl.note)
+     && /never call it a cut/.test(lad.reading) && /Excessive Risk Concentration \('All In' Trading\), read 2026-10-04/.test(lad.source), [lad, ins, exl]);
+  const cc = (pk, m) => handler._runTool("check_compliance", { firm: "bitfunded", product: pk, margin_pct_of_capital: m }, "candidate").findings.filter((x) => /Concentration/.test(x.rule));
+  ok("candidate check_compliance: 60% on Instant is '50% payout penalty' (the Instant ladder, read 2026-10-04); 60% on the 1-Step is under its 65% start; 70% on Express has no ladder recorded",
+     /"50% payout penalty"/.test(cc("instant", 60)[0].detail) && cc("instant", 60)[0].sources[0].read_on === "2026-10-04" && !cc("1step", 60).length
+     && cc("express", 70)[0].severity === "info" && /No concentration ladder recorded/.test(cc("express", 70)[0].detail));
+  const exr = handler._runTool("firm_rules", { firm: "bitfunded", product: "express" }, "candidate").sources;
+  ok("firm_rules: Express's daily 3, max 3, leverage 1:5 and every product's 0.04% fee cite the help centre read 2026-10-04 (Criteria to be Success, Challenge & Trader Stage)",
+     ["daily loss limit %", "maximum loss %", "leverage cap", "trading fee per side %"].every((r) => (exr.find((x) => x.rule.startsWith(r)) || { read_on: [] }).read_on.includes("2026-10-04"))
+     && ["1step", "2step_s1", "2step_s2", "express", "instant", "trader_1step", "trader_express", "trader_2step"].every((pk) =>
+       (handler._runTool("firm_rules", { firm: "bitfunded", product: pk }, "live").sources.find((x) => /^trading fee per side/.test(x.rule)) || {}).read_on.includes("2026-10-04")), exr);
+  const tl = [{ name: "firm_rules", result: fr }, { name: "firm_assets", result: fa }], dn = (t) => handler._lintNotesFor(t, "candidate", tl, "q").filter((n) => /read dates are not/.test(n));
+  ok("candidate lint: a read date the tools didn't give for that rule (the live test's 'read 2026-09-23' beside max open positions) is sent back; the right one, a re-read of the same page, and the 1-Step's 23 September limits pass; live has none",
+     dn("Bitfunded allows 5 open positions at once (Restricted Trading Practices s.3, read 2026-09-23).").length === 1
+     && !dn("Bitfunded allows 5 open positions at once (Restricted Trading Practices s.3, read 2026-09-21).").length
+     && !dn("Its open positions cap is 5, read 2026-09-24.").length && !dn("The daily loss limit is 5% (help centre, Terms of Use 9(a), read 2026-09-23).").length
+     && !dn("TSLA is listed as a Traditional Trading Pair, hold limit 5 days (Restricted Trading Practices, read 24 September 2026).").length
+     && dn("The hold limit for BTC is 10 days (read 2026-09-30).").length === 1
+     && !handler._lintNotesFor("Bitfunded allows 5 open positions (read 2026-09-23).", "live", tl, "q").some((n) => /read dates are not/.test(n))); }
 // the staged character (the owner's review of run 16): its examples carry no read date, only "(read date from the
 // tool)", and every number in them comes from the question, a tool or a step shown on the page
 { const N = require("./api/_numbers.js"), ex = (t) => t.split("## Examples")[1].split("## Where this plugs in")[0];
@@ -455,7 +499,7 @@ ok("a figure: list numbering (1. 2.) is not one", !HF("1. an input that differed
 const fr = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
 ok("firm_rules: a product's rules, each with its document and read date, pending or not yet recorded where troid has none",
    fr.rules.find((r) => r.rule === "maximum loss %").value === 8 && fr.sources.find((x) => /^maximum loss % 8/.test(x.rule)).read_on.join() === "2026-09-23"
-   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).source === "not yet recorded" && /^SOURCED/.test(fr.tier)
+   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).read_on.join() === "2026-10-04" && /^SOURCED/.test(fr.tier)
    && /pending product/.test(RT("firm_rules", { firm: "brightfunded", product: "2step_bright" }, "candidate").error), fr);
 const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step" });
 ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
@@ -519,7 +563,9 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
 // crossover and drawdown; BrightFunded's EUR price through firm_rules; the Instant's minimum days unrecorded (live data)
 { const toolsFrom = (c) => { const reply = String(c.reply || ""), i = reply.indexOf("Sources, each with the date troid read it:");
     const srcs = i < 0 ? [] : reply.slice(i).split("\n\nTier")[0].split("\n").filter((l) => /^- /.test(l)).map((l) => { const parts = l.slice(2).split(" — ");
-      return /not yet recorded/.test(parts.slice(1).join(" — ")) ? { rule: parts[0], source: "not yet recorded" } : { rule: parts[0], read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
+      // the document and section too, as a tool's source gives them (the read-date lint matches a clause's section to them)
+      return /not yet recorded/.test(parts.slice(1).join(" — ")) ? { rule: parts[0], source: "not yet recorded" }
+        : { rule: parts[0], document_section: parts.slice(1).join(" — ").replace(/,\s*read [^]*$/, ""), read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
     return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
   const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
   const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n));
@@ -1143,9 +1189,9 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints; no new tools) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 4 && !gc.tools.length && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,check_budget,size_trade,trade_math" && gc.lints === 24 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 6 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 25 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
