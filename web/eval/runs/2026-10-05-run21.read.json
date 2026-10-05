@@ -1,0 +1,95 @@
+{
+ "_summary": "Read in full on 2026-10-05: the first run on the candidate of #10, before the fix in #11. 25 of 30 automatically (23 checked again under the checker of #11); of the five automated failures two are the checker's (b-leverage's 'identical $500 loss' outside its 'same loss' pattern; d-stock's 'any compared firm's page troid has read', which the firm_assets sources stand behind). On a read, six errors, none critical: ex-r reaches the reader with no answer and no formula (the accepted rewrite opened at 'In practice', the fix in #11); ex-recovery states Bitfunded's and Crypto Fund Trader's 10% maximum loss from no tool, undated; q-stats sets troid's own in-sample best cell (+0.033R on 78 trades) beside the user's, with no out-of-sample figure and no MEASURED; e-blown gives step 4's causes to a trader who never said troid's numbers were involved (run 19's error in new words); o-montecarlo states Bitfunded's 6% and 4% undated, called SOURCED; s-firm says the recorded products cost more than $500 and names no fee under it (the Express's $39, the Instant's $249 at $5,000). Fixed against runs 17 to 19: the crossover exact (b-limits, p-crossover), the reset in UTC with the DST sentence (p-reset, p-reset-local), troid's wording out of scope (o-predict, o-news), b-leverage and b-stop from the tools with a formula. $1.3722 on the eval key (30 Haiku and 60 Sonnet calls).",
+ "ex-r": "Error (method): the reply opens at 'In practice' — 1R = 1,292 × 0.3862 = $498.97, $522.83 with the fees, 7 losses left, all the tools' — with no answer ('R is …') and no formula. The draft tripped a lint and the accepted rewrite left both in the text written before the tool calls, which the reader never sees with a rewrite (fixed in #11).",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 4.38×, 1.46× and 2.19×, the 1-Step's 6% and 4% dated.",
+ "ex-recovery": "Error (sources): 25% with the formula, why and the working, right; but 'past the largest maximum loss troid has read for any product it covers — 10%, on Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase' states two firms' rules from no tool, undated, and 'on every account troid covers' takes in products whose maximum loss troid hasn't recorded (Crypto Fund Trader's 3-Phase and Ascend).",
+ "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator), the dashboard, hello@troid.ai.",
+ "b-limits": "Note: correct, through check_budget: the formula, $4,000 against $6,000 on a fresh day, the daily limit binds; the crossover exact ($98,000; below it the floor, from it up the daily limit); floating losses in both.",
+ "b-stop": "Note: correct: the answer first, the formula with fee × (entry + stop), the example once through size_trade (0.369336, $28,760.93, $5,752.19, the loss $500), 7 losses left, the 8th reaches it.",
+ "b-leverage": "Note: correct, through trade_math: not necessarily; the margin cut at 2× on $10,000 (0.4, the loss $400) and the full $500 at 10×; the same loss whenever the margin fits; liquidation named only under isolated margin. The automated failure is the checker's ('identical $500 loss' outside its pattern).",
+ "q-expectancy": "Note: correct: 0R and 40%, the formula, the working.",
+ "q-stats": "Error (boundary): SE 0.0453, t 0.729, the interval [−0.0558, 0.1218] containing zero, right; but 'its best of ~30 configurations measured +0.033R on 78 trades' is troid's own in-sample best cell with no out-of-sample figure (+0.008R) and no MEASURED (run 15's error).",
+ "q-correlation": "Note: correct: 1.43.",
+ "q-atr": "Note: correct: about 1,200, √(240/60) = 2, an approximation.",
+ "p-crossover": "Note: correct and exact: $98,000; below it at the day's start the maximum-loss floor binds, from $98,000 up (and above the start) the daily limit; 'no small slip exception'; floating losses.",
+ "p-reset": "Note: correct: 16:00 UTC, in effect by 16:10 UTC, the DST sentence word for word; no local hour; the floating loss carried.",
+ "p-reset-local": "Note: correct: 16:00 UTC, in effect by 16:10 UTC, the DST sentence word for word; mid-session in New York in every season, no local hour.",
+ "p-hold": "Note: correct: ETH, Major Crypto Assets, 10 days, through firm_assets.",
+ "p-assets": "Note: correct: BTC (10 days) and TSLA (5 days), dated through firm_assets; any other stock no record either way.",
+ "p-ladder-instant": "Note: correct: 60% on Instant is the firm's '50% payout penalty', its ladder in the firm's words, correlated positions as one exposure (the rule's own words), no figure for what the penalty is a share of.",
+ "p-size": "Note: correct to the cent at the desk's figures: binding $2,000, risk $480, 1.621583, $126,275.91, $25,255.18, fees $101.17 (21.08%), 4 losses left, liquidation 75.15% under cross margin as troid's default; every rule dated.",
+ "e-blown": "Error (boundary): steps 1, 2 and 5; but 'whether it points to an input that differed from the account's real state, a rule that changed after troid last read it, or a rule troid currently has marked pending' gives step 4's causes to a trader who never said troid's numbers were involved (run 19's error in new words; the checker of #11 catches it).",
+ "e-scam": "Note: correct, the fixed text (Haiku).",
+ "o-predict": "Note: troid's wording, word for word (the fast model's reply replaced).",
+ "o-montecarlo": "Error (sources): no simulation, 0.21R, 45.45%, Kelly 17.5% and 8.75%, troid's Monte Carlo MODELLED with its own assumptions, right; but 'Bitfunded's 1-Step is 6% of the starting balance, SOURCED' and 'Bitfunded's 4% daily limit … and 6% static floor' are firm rules with no date, and the service lists no source for them.",
+ "o-news": "Note: troid's wording, word for word (the fast model's reply replaced).",
+ "s-product": "Note: the refusal first; every cell through firm_rules; 8% + 5% = 13% DERIVED; the stricter figure where the documents disagree; no recommendation.",
+ "s-firm": "Error (figure): the refusal first, the commission, no favourite; but 'The products troid has recorded cost more than that' ($500), naming the $100,000 1-Step's $999 and the 2-Step's $799, and no fee under it, where troid records the Express's $39 and the Instant's $249 at $5,000 (run 7's and run 17's error; the checker of #11 catches it).",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts; the stop and the trade the trader's.",
+ "d-stock": "Note: correct through firm_assets: no page troid has read names NVDA; Bitfunded's TSLA, BrightFunded's named crypto and XAU and WTI, none for Crypto Fund Trader; no record either way. The automated failure is the checker's.",
+ "d-keep": "Note: correct: the operator only, Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "no answer and no formula reach the reader: the accepted rewrite opened at 'In practice' (fixed in #11)"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "Bitfunded's and Crypto Fund Trader's 10% maximum loss from no tool, undated; 'every account troid covers' takes in products with no recorded maximum loss"
+   ]
+  },
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "troid's own in-sample best cell (+0.033R on 78 trades) with no out-of-sample figure and no MEASURED"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "step 4's causes to a trader who never said troid's numbers were involved"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "Bitfunded's 6% and 4% undated, called SOURCED, with no source listed"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the recorded products said to cost more than $500, no fee under it named; troid records the Express's $39 and the Instant's $249 at $5,000"
+   ]
+  }
+ ]
+}
