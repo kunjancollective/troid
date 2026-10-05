@@ -789,7 +789,17 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const SN = handler._saidNotRepeatedNext, FIN = "In practice: risking $500 at entry 77,872 with stop 76,580, quantity = 500 ÷ (1,292 + 61.78) = 0.369336.";
   ok("candidate: what troid wrote before a tool call goes when the answer works the same figures again (run 18, b-stop); a lead-in with other figures stays",
      !SN(["Risking $500 at entry 77,872 with stop 76,580: quantity = 500 ÷ (1,292 + 61.78) = 0.369336."], FIN).length
-     && SN(["At a 0.3% stop on 96,000 of equity, troid sizes it next."], FIN).length === 1); }
+     && SN(["At a 0.3% stop on 96,000 of equity, troid sizes it next."], FIN).length === 1);
+  // run 21, ex-r: the final answer opened at "In practice"; its answer and formula, written before the tool call, stay
+  const fin21 = body17(require("./eval/runs/2026-10-05-run21.json").results.find((c) => c.id === "ex-r")).trim();
+  const said21 = ["R is the dollar loss if the trade's stop is hit, one unit to compare trades on.\n\n**Formula:** 1R = |entry − stop| × quantity, with the fees in and out.\n\n**Why it works:** −1R means the same on any account. Pricing an example through the tool:",
+    "Long BTC at 77,872 with a stop at 76,580: 1R = 1,292 × 0.3862 = $498.97."];
+  const kept21 = SN(said21, fin21), shown21 = [...kept21, fin21].join("\n\n");
+  ok("candidate: a final answer that opens at 'In practice' keeps the answer and formula written before the tool call, without the lead-in to the call or the example it gives again (run 21, ex-r); one that opens with its own answer drops them as before",
+     kept21.length === 1 && /^R is the dollar loss/.test(kept21[0]) && /\*\*Why it works:\*\* −1R means the same on any account\.$/.test(kept21[0]) && !/Pricing an example/.test(kept21[0])
+     && handler._hasGeneralFormula(shown21) && /\bR (is|means|stands for|measures)\b/.test(shown21) && !handler._hasGeneralFormula(fin21)
+     && !SN(["R is the loss at the stop. Getting those now:"], "R is the loss at the stop.\n\nFormula: 1R = |entry − stop| × q").length
+     && JSON.stringify(SN(["R is the loss at the stop. Here is an example:"], fin21)) === JSON.stringify(["R is the loss at the stop."]), kept21); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1421,9 +1431,13 @@ fake.listen(18765, async () => {
     ok("candidate: a draft that says troid takes the risk is written again once, with the service's note, and only the rewrite is shown (run 8, b-stop)",
        r.status === 200 && calls.length === before + 3 && /troid never trades/.test(lastOf(calls[before + 2])) && /the trader risks/.test(r.j.reply) && !/troid is willing/.test(r.j.reply)
        && lintLog.linted === 1, [r.j.reply, calls.slice(before).map((c) => c.model), lintLog]);
+    ok("candidate: the rewrite's note says the reader sees only the answer written now (run 21, ex-r: the rewrite opened at 'In practice', its answer left before the tool calls)",
+       lastOf(calls[before + 2]).includes("The reader sees only the answer you write now"), lastOf(calls[before + 2]));
     before = calls.length;
     r = await call(hc, [U("Why does troid need my stop? I risk $500.")], { disclosed: true });
     ok("live, beside it: the same since the promotion (written again once)", r.status === 200 && calls.length === before + 3 && /the trader risks/.test(r.j.reply), r.j.reply);
+    ok("live, beside it: its rewrite note is as it was", typeof lastOf(calls[before + 2]) === "string" && /write the whole answer again/.test(lastOf(calls[before + 2]))
+       && !lastOf(calls[before + 2]).includes("The reader sees only"), lastOf(calls[before + 2]));
     script = (b) => {
       const l = lastOf(b);
       if (typeof l === "string" && l.includes("write the whole answer again")) return msg("max_tokens", [{ type: "text", text: "Risk is the dollar am" }]);

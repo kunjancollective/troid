@@ -2064,13 +2064,30 @@ CANDIDATE_LINTS.push(
   [(t) => OUTSIDE_KIND_RX.test(t),
    "Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service). For where a price is going or what is moving the market, give troid's wording, word for word: \"" + OUT_OF_SCOPE_REPLY + "\""]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
-// final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice")
+// final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
+// A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
+// the tool call (run 21, ex-r: "R is …" and the formula went with their block, and the reader got neither): then each
+// paragraph stays that the final answer doesn't give again, without the lead-in to the call.
+const LATE_OPEN_RX = /^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation)\b/i;
+const workedFigures = (t) => NUMBERS.numbersIn(stripSources(String(t)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).filter((n) => n.dec > 0 || n.v >= 10);
 function saidNotRepeatedNext(said, final) {
   const later = new Set(NUMBERS.numbersIn(final).map((n) => n.v));
-  return saidNotRepeated(said, final).filter((b) => {
-    const ns = NUMBERS.numbersIn(stripSources(String(b)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).filter((n) => n.dec > 0 || n.v >= 10);
-    return !(ns.length >= 2 && ns.every((n) => later.has(n.v)));
-  });
+  const repeated = (t) => { const ns = workedFigures(t); return ns.length >= 2 && ns.every((n) => later.has(n.v)); };
+  if (!LATE_OPEN_RX.test(String(final))) return saidNotRepeated(said, final).filter((b) => !repeated(b));
+  const labels = new Set((String(final).match(METHOD_RX) || []).map((x) => x.toLowerCase()));
+  // the lead-in to the call: the block's last sentence, when it ends with ":" ("… Pricing it now:")
+  const withoutLeadIn = (p) => {
+    const lines = p.split("\n");
+    if (!/:\s*$/.test(p) || hasGeneralFormula(lines[lines.length - 1])) return p;
+    const last = sentencesOf(lines.pop());
+    last.pop();
+    return [...lines, last.join(" ")].join("\n").trim();
+  };
+  return said.map((b) => {
+    const ps = String(b).split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+    if (ps.length) ps[ps.length - 1] = withoutLeadIn(ps[ps.length - 1]);
+    return ps.filter((p) => p && !(p.match(METHOD_RX) || []).some((x) => labels.has(x.toLowerCase())) && !repeated(p)).join("\n\n");
+  }).filter(Boolean);
 }
 // the user's question written back as a heading (run 18, b-stop: "Why does troid need your stop price to size a trade?")
 const QNORM = (s) => String(s).toLowerCase().replace(/\byour\b/g, "my").replace(/\byou\b/g, "i").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
@@ -2166,6 +2183,9 @@ function saidNotRepeated(said, final) {
 // the model's rewrite of a draft the user never saw, announced ("Retracting the earlier version of this answer"): the
 // sentence goes (run 12, s-firm)
 const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about it, about a retraction or about a rewrite.)";
+// the candidate's rewrite is the whole reply: what troid wrote before a tool call isn't shown with it (run 21, ex-r: the
+// rewrite opened at "In practice", its answer and formula left in the text before the calls)
+const UNSEEN_SAID = "\n(The reader sees only the answer you write now, none of what you wrote before or between the tool calls: write it whole, from its one-line answer on.)";
 const REWRITE_TALK_RX = /[^.\n]*\b(retract(ing|ed|s)?|(earlier|previous|first|prior) (version|draft|answer)|rewrit(e|ten|ing) (of )?(this|the) answer)\b[^.\n]*[.:]\s*/gi;
 const withoutRewriteTalk = (reply) => reply.replace(REWRITE_TALK_RX, "").replace(/\n{3,}/g, "\n\n").trim();
 const lintNotesFor = (t, variant, tools, asked, last) => lintNotes(t).concat(variant === "candidate"
@@ -2440,7 +2460,7 @@ module.exports = async (req, res) => {
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
-          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + (variant === "candidate" ? UNSEEN_DRAFT : "") });
+          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + (variant === "candidate" ? UNSEEN_DRAFT + UNSEEN_SAID : "") });
           said.length = 0;                                              // the rewrite is the whole answer
           const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator));
           if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
