@@ -91,7 +91,9 @@ Bitfunded both auto-fail on floating — no close required.
 
 **Crossover.** On a fresh day the two swap at `equity = quota × (1 − max% + daily%)`.
 Bitfunded 1-Step on $100k: **$98,000** — $2,000 below the start, half of one day's loss limit.
-Below it the max loss governs and the advertised daily limit is fiction.
+Below $98,000 at the day's start the max loss binds and the advertised daily limit is fiction; between
+$98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than
+$2,000 below the start is still bound by the daily limit.
 
 **Static vs trailing.** Static: profit widens the buffer permanently — the account gets
 safer as it gets ahead. Trailing: the floor follows you up, so after a run to $108k and a
@@ -168,7 +170,8 @@ exchange liquidation sits. When the margin at the risk-based size is above equit
 position can't be opened: the size is cut to `equity × leverage / entry`, and then lower
 leverage means a smaller size and a smaller loss.
 
-Under **cross** margin (Bitfunded), the whole account backs every position. Exchange
+Under **cross** margin (troid's default model: troid has no recorded source for Bitfunded's margin modes), the
+whole account backs every position. Exchange
 liquidation is unreachable at any size the firm allows — the firm's own floors bind first
 by a wide margin. Consequence: nothing cuts a runaway position before the firm fails you;
 the stop is the only circuit breaker in front of the floor. At the 65% concentration cap,

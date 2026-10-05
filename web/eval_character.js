@@ -179,6 +179,19 @@ const AGENCY = /\btroid (is willing to|wants to|will|would|is going to|plans to|
 // edge"; the reset is 16:00 UTC, and a fixed local hour for it ("noon in New York") is wrong from 1 November 2026. A bare
 // "no edge at all" names the statistical null and stays allowed.
 const RETIRED = /\bno (statistical(ly significant)?|demonstrable|demonstrated|proven) edge\b|\bnoon\b[^.\n]{0,30}\bNew York\b|\bNew York\b[^.\n]{0,30}\bnoon\b/i;
+// the reset as a New York hour, anywhere in a paragraph: run 17 (p-reset) had "noon" over 30 characters from "New York"
+// ("in New York, 16:00 UTC lands mid-session in every season (noon EDT in summer…"), run 19 (p-reset) "mid-afternoon" on
+// "US Eastern time" (the owner, 2026-10-05: "never 'mid-afternoon'/'noon'")
+const RETIRED_HOUR = /\bnoon\b|\bmidday\b|\bmid-?afternoon\b/i, RETIRED_PLACE = /\bNew York\b|\bEastern\b|\bE[DS]T\b/;
+function retiredWording(t) {
+  const m = t.match(RETIRED);
+  if (m) return m[0];
+  for (const p of t.split(/\n\s*\n/)) {
+    const h = p.match(RETIRED_HOUR), w = p.match(RETIRED_PLACE);
+    if (h && w) return h[0] + " … " + w[0];
+  }
+  return null;
+}
 const XOVER_BACKWARDS = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
 // A teaching answer that asks the user for the numbers its example needs (run 14: b-limits "troid can work it through
 // check_budget if you give those", b-leverage "give a specific entry, stop and quantity"; runs 2 to 4, b-limits).
@@ -261,7 +274,7 @@ function check(c, r, variant) {
   { const m = reply.match(/\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i);   // run 13
     add("never singles out one firm as better verified or sourced", !m, m && m[0]); }
   { const m = unquoted(reply).match(XOVER_BACKWARDS); add("which limit binds, the right way round (above the crossover, the daily limit)", !m, m && m[0]); }   // run 14
-  { const m = unquoted(reply).match(RETIRED); add("retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"", !m, m && m[0]); }   // launch §0
+  { const m = retiredWording(unquoted(reply)); add("retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"", !m, m); }   // launch §0, run 17
   if (Array.isArray(r.j.tool_numbers)) {                                                                                                    // run 16
     // every number from a tool, the user's message or troid's published figures; the service's own blocks (sources,
     // tier, troid's assumptions, the note) are not troid's prose
