@@ -2044,6 +2044,7 @@ function repeatedWorking(t) {
 }
 // 5. A place named by kind for prices or news (run 17, o-news: "the exchanges and news services themselves"; run 18,
 //    o-predict: "a market data service or news outlet"; run 20, live: "A news site, an exchange, or a data platform")
+const FIRST_PERSON_RX = /\blet['’]s\b|\blet me\b|\bI['’](m|ll|ve|d)\b/i;
 const OUTSIDE_KIND_RX = /\b(check|consult|see|use|visit|try|look at|look to|turn to|points? to|refer to|go to|head to)\b[^.\n]{0,40}\b(news (sites?|outlets?|services?|sources?|feeds?|apps?)|market[- ]data (services?|providers?|platforms?|sites?)|data (platforms?|providers?|services?)|financial (data|news)|charting (platforms?|sites?|tools?)|price (feeds?|sites?|trackers?)|(crypto )?exchanges?\b(?!\s*(liquidat|['’]s|fees?|margin|rates?)))|\b(news (sites?|outlets?|services?|sources?)|market[- ]data (services?|providers?|platforms?)|data platforms?)\b[^.\n]{0,40}\b(will have|have|has|carry|carries|show|shows|cover|covers)\b/i;
 CANDIDATE_LINTS.push(
   [(t, tools, asked) => labelledFigureSlips(t, tools, asked).length > 0,
@@ -2062,7 +2063,9 @@ CANDIDATE_LINTS.push(
    "Work one example through a tool this turn (trade_math for arithmetic; check_budget or explain_rule on troid's reference account, a $100,000 Bitfunded 1-Step, for a firm's limits) and give the figures it computed, once."],
   [(t) => repeatedWorking(t), "The worked example is given twice: give it once, after the formula."],
   [(t) => OUTSIDE_KIND_RX.test(t),
-   "Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service). For where a price is going or what is moving the market, give troid's wording, word for word: \"" + OUT_OF_SCOPE_REPLY + "\""]);
+   "Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service). For where a price is going or what is moving the market, give troid's wording, word for word: \"" + OUT_OF_SCOPE_REPLY + "\""],
+  // run 22, o-montecarlo: "Let's get the expectancy figure." (first person; inThirdPerson removes one with no figure)
+  [(t) => FIRST_PERSON_RX.test(t), "Speak of troid in the third person: no \"let's\", \"let me\" or \"I\". Say what troid computes (\"troid computes …\"), and lead into nothing: give the answer."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
 // final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
@@ -2070,17 +2073,22 @@ CANDIDATE_LINTS.push(
 // paragraph stays that the final answer doesn't give again, without the lead-in to the call.
 const LATE_OPEN_RX = /^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation)\b/i;
 const workedFigures = (t) => NUMBERS.numbersIn(stripSources(String(t)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).filter((n) => n.dec > 0 || n.v >= 10);
+// a lead-in to the tool call: a sentence ending with ":" ("… Getting those now:"), one in the first person ("Let's get the
+// expectancy figure.", run 22, o-montecarlo, above an answer that said it all again) or one announcing the call
+const LEAD_IN_RX = /:\s*(\*\*|__)?\s*$|^\W*(let['’]s|let me|I['’]ll|I will|we['’]ll|we will)\b|^\W*(getting|checking|pricing|computing|calculating|running|pulling|fetching|looking (it|that|those|them) up|working (it|that|this|those) (out|through))\b/i;
+const lastSentence = (b) => { const ls = String(b).trim().split("\n"); return sentencesOf(ls[ls.length - 1]).pop() || ""; };
 function saidNotRepeatedNext(said, final) {
   const later = new Set(NUMBERS.numbersIn(final).map((n) => n.v));
   const repeated = (t) => { const ns = workedFigures(t); return ns.length >= 2 && ns.every((n) => later.has(n.v)); };
-  if (!LATE_OPEN_RX.test(String(final))) return saidNotRepeated(said, final).filter((b) => !repeated(b));
+  // the final answer stands alone: a block that only leads into the call goes, whatever it says before the lead-in
+  if (!LATE_OPEN_RX.test(String(final))) return saidNotRepeated(said, final).filter((b) => !repeated(b) && !LEAD_IN_RX.test(lastSentence(b)));
   const labels = new Set((String(final).match(METHOD_RX) || []).map((x) => x.toLowerCase()));
-  // the lead-in to the call: the block's last sentence, when it ends with ":" ("… Pricing it now:")
+  // the lead-in to the call: the block's last sentences while they lead in ("… Pricing it now:")
   const withoutLeadIn = (p) => {
     const lines = p.split("\n");
-    if (!/:\s*$/.test(p) || hasGeneralFormula(lines[lines.length - 1])) return p;
+    if (hasGeneralFormula(lines[lines.length - 1])) return p;
     const last = sentencesOf(lines.pop());
-    last.pop();
+    while (last.length && LEAD_IN_RX.test(last[last.length - 1])) last.pop();
     return [...lines, last.join(" ")].join("\n").trim();
   };
   return said.map((b) => {
@@ -2088,6 +2096,17 @@ function saidNotRepeatedNext(said, final) {
     if (ps.length) ps[ps.length - 1] = withoutLeadIn(ps[ps.length - 1]);
     return ps.filter((p) => p && !(p.match(METHOD_RX) || []).some((x) => labels.has(x.toLowerCase())) && !repeated(p)).join("\n\n");
   }).filter(Boolean);
+}
+// troid in the third person (run 22, o-montecarlo: "Let's get the expectancy figure." reached the reader): a sentence
+// that opens "Let's" or "Let me" and carries no figure goes; a leading "Answer:" label goes too (the form announced)
+function inThirdPerson(reply) {
+  const body = String(reply).split("\n").map((l) => {
+    if (!/\blet['’]s\b|\blet me\b/i.test(l)) return l;
+    const lead = (l.match(/^\s*([-*•]|\d+[.)])\s+/) || [""])[0], parts = sentencesOf(l.slice(lead.length));
+    const kept = parts.filter((s) => !(/^\W*(let['’]s|let me)\b/i.test(s) && !/\d/.test(s)));
+    return kept.length === parts.length ? l : kept.length ? lead + kept.join(" ") : "";
+  }).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n");
+  return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
 }
 // the user's question written back as a heading (run 18, b-stop: "Why does troid need your stop price to size a trade?")
 const QNORM = (s) => String(s).toLowerCase().replace(/\byour\b/g, "my").replace(/\byou\b/g, "i").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
@@ -2494,7 +2513,7 @@ module.exports = async (req, res) => {
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
         // only, and a question about prices or news gets troid's wording
-        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(reply, lastUser), lastUser), lastUser, toolLog);
+        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(inThirdPerson(reply), lastUser), lastUser), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -2576,5 +2595,6 @@ module.exports._withoutEchoedQuestion = withoutEchoedQuestion;
 module.exports._resetInUtcOnly = resetInUtcOnly;
 module.exports._outOfScopeFixed = outOfScopeFixed;
 module.exports._hasGeneralFormula = hasGeneralFormula;
+module.exports._inThirdPerson = inThirdPerson;
 module.exports.OUT_OF_SCOPE_REPLY = OUT_OF_SCOPE_REPLY;
 module.exports.DST_SENTENCE = DST_SENTENCE;

@@ -59,6 +59,15 @@ rewrite's note says the reader sees only what is written now (`UNSEEN_SAID`), an
 part of the method keeps the paragraphs written before the tool call that it doesn't give again, without the lead-in to
 the call (`saidNotRepeatedNext`). Run 22 was stopped after 8 cases, on the candidate before them, and left no record.
 
+Runs 22 and 23 on that candidate (run 24 stopped after 3 cases: from 14:14 UTC the evaluation key was refused, HTTP 400,
+the troid-eval workspace's limit by the day's spend, about $10). Run 22's o-montecarlo kept a lead-in to its tool call
+above the answer, "Let's get the expectancy figure.": first person, critical, and the refusal given twice. The owner
+approved a third change: when the final answer stands alone, a block written before the tool call that ends leading
+into it ("Let's …", "Let me …", "Getting …", or a ":") goes; a "Let's" or "Let me" sentence with no figure never reaches
+the reader, and one with a figure is sent back by a first-person lint (`inThirdPerson`, `FIRST_PERSON_RX`); a leading
+"Answer:" label goes. Over every saved reply it changes three: run 2's "Answer:", run 22's "Let's" and the live subset
+run's "Let's compute it".
+
 ## Staged 2026-10-05: the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step, "can I trade BTC and a stock?")
 
 - **What a firm lets you trade.** The rules tools never gave the model firms.json `_asset_universe`, so it said troid has
