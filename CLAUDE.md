@@ -100,6 +100,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   the affiliate line by the desk (the owner, 2026-10-01; `regions.desk_aff_html`, `#affl`) is one element, never in the
   verdict, readout or working: under the result on a phone, under the Your risk card from 1100 px, the selected firm's
   line only and only when its link is live, the same in every state (`web/test_desk_aff.py`);
+  every affiliate link, wherever a page shows one, sits in `data-geo="<firm>"` and shows only once `/api/where` (Vercel's
+  country header) puts the visitor outside that firm's lists in `geo.json` (its own terms, from firms.json's
+  `availability.excluded`; the embargo and law lists for every firm; the owner, 2026-10-03), hidden on any failure
+  (fail closed), never changing a figure (`backtest/geo.py`, `web/public/geo.js`, `web/test_geo.py`);
   `phone_check.py` proves no page runs off a phone (375/390 px at 100–130% text, form controls
   sized as WebKit sizes them); `web/i18n/README.md` has the workflow. Every page's head comes from `site_build.head_extra()` (canonical,
   og:type and site name, the X card) and its JSON-LD from `site_build.jsonld()`, which `finish()` places before `</head>`

@@ -35,6 +35,7 @@ import i18n
 import jsnum
 import site_build
 import site_text
+import geo
 FIRMS = json.loads((HERE.parent / "firms.json").read_text())
 BRAND = (HERE.parent / "web" / "public" / "index.html").read_text()
 STYLE = BRAND[BRAND.index('<link rel="icon"'):BRAND.index("</style>") + 8]
@@ -216,7 +217,7 @@ def js_data(k, f, T):
             if t != p[x]:
                 pt[x] = t
     qs = f.get("_open_questions") or []
-    return {"name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
+    return {"key": k, "name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
         "lock": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
@@ -226,7 +227,8 @@ def js_data(k, f, T):
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
         "code": code if link_ok else None,
-        "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None}
+        "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None,
+        "geo": T("common.geo.hidden") if link_ok else None}
 
 
 def js(k, f, T):
@@ -448,6 +450,9 @@ def static_column(d, T, inputs=DEFAULTS):
             foot += '<div class="req">' + f["req"] + '</div>'
         if features:
             foot = '<div data-avail-link>' + foot + '</div>'
+        # shown only where the visitor's country allows the link (geo.json; plan 5.3), else the message; the script
+        # below writes the same wrapper
+        foot = geo.wrap(T, f["key"], foot)
     else:
         foot = '<span class="pend">' + F(J["foot_held"], {"name": f["name"]}) + '</span>'
     if f["open_n"]:
@@ -496,6 +501,7 @@ def render_compare(T, live):
 .pend{{color:var(--dim);font-style:italic}}
 .colfoot{{padding:14px 16px 16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:12px;line-height:1.7;background:var(--surface2)}}
 .colfoot .req{{margin-top:8px;color:var(--dim);font-size:10.5px;line-height:1.6}}
+.colfoot .geono{{color:var(--dim)}}
 .inputs{{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}}
 @media(max-width:640px){{.inputs{{grid-template-columns:1fr 1fr}}}}
 /* a value that doesn't fit beside its label takes the next line, and nothing is wider than a phone (design handoff
@@ -619,7 +625,8 @@ function render(){{
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
       if(f.code)foot+=' · '+F(T.foot_code,{{code:f.code}});
-      if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}}}
+      if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}
+      foot='<div data-geo="'+f.key+'">'+foot+'</div><div class="geono" data-geo-no="'+f.key+'">'+f.geo+'</div>';}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
     if(f.open_n)foot+='<div style="margin-top:8px;color:var(--dim);font-size:10.5px">'+F(f.open_n>1?T.foot_open_n:T.foot_open_1,{{n:f.open_n,first:f.open1}})+'</div>';
     document.getElementById("rows-"+k).innerHTML=h;document.getElementById("foot-"+k).innerHTML=foot;

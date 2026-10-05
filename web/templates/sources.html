@@ -235,6 +235,26 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 <p>{{ t("sources.calendar.p", read=calendar_read) }}</p>
 </section>
 
+{#- where troid's affiliate links are hidden: geo.json, its three lists (backtest/geo.py; plan 5.3). Its words are
+    English, as recorded; the labels are translated. #}
+<section class="src" id="geo">
+<h2>{{ t("sources.geo.h") }}</h2>
+<p>{{ t("sources.geo.p", decided=GEO.decided) }}</p>
+{% for key, l in GEO.lists.items() %}
+<h3 id="geo-{{ key|replace("_", "-") }}" lang="en">{{ l.title|e }}</h3>
+<table class="kv">
+<tr><th>{{ t("sources.geo.l.applies") }}</th><td lang="en">{{ l.applies_to|e }}</td></tr>
+<tr><th>{{ t("sources.geo.l.countries") }}</th><td lang="en">
+{%- if l.get("firms") %}{% for fk, cc in l.firms.items() %}{{ geo_names[fk]|e }}: {% if cc %}{% for c in cc %}{{ GEO.names[c]|e }} ({{ c }}){% if not loop.last %}, {% endif %}{% endfor %}{% else %}{{ t("sources.geo.l.none") }}{% endif %}{% if not loop.last %}<br>{% endif %}{% endfor %}
+{%- elif l.get("entries") %}<ul>{% for c in l.countries %}<li>{{ GEO.names[c]|e }} ({{ c }}): {{ l.entries[c].why|e }}{% if l.entries[c].get("url") %} · <a href="{{ l.entries[c].url|e }}" rel="noopener">{{ t("sources.geo.l.text") }}</a>{% endif %}</li>{% endfor %}</ul>
+{%- else %}{% for c in l.countries %}{{ GEO.names[c]|e }} ({{ c }}){% if not loop.last %}, {% endif %}{% endfor %}{% endif %}</td></tr>
+<tr><th>{{ t("sources.geo.l.basis") }}</th><td lang="en">{{ l.basis|e }}</td></tr>
+{% if l.get("source") %}<tr><th>{{ t("sources.geo.l.source") }}</th><td lang="en"><a href="{{ l.source.url|e }}" rel="noopener">{{ l.source.publisher|e }}: {{ l.source.title|e }}</a></td></tr>{% endif %}
+<tr><th>{{ t("sources.l.caveat") }}</th><td lang="en">{{ l.caveat|e }}</td></tr>
+</table>
+{% endfor %}
+</section>
+
 <section class="src" id="rules">
 <h2>{{ t("sources.rules.h") }}</h2>
 <p>{{ t("sources.rules.p") }}</p>

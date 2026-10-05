@@ -318,10 +318,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .gseg.over{background:var(--block)}
 .d2in,.d2out{min-width:0}
 /* the affiliate line: under the result on a phone (the output's own lines become the column's, ordered), under the
-   Your risk card from 1100 px; its link and label a size up from the desk's 11px */
+   Your risk card from 1100 px; its link and label 13px (the owner, 2026-10-05), the rest the desk's 11px */
 .affl{min-width:0;margin:12px 0 0;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
 .affl[hidden],.affl>[hidden]{display:none}
-.affl p{margin:0}.affl .al{margin-top:6px;font-size:11.5px}.affl .al a{display:inline-block;padding:4px 0}
+.affl p{margin:0}.affl .al{margin-top:6px;font-size:13px}.affl .al a{display:inline-block;padding:4px 0}
+.affl .geono a{display:inline-block;padding:4px 0}
 .affl .req{margin-top:4px;font-size:10.5px;line-height:1.6}
 @media (max-width:1099.98px){
   .d2g{display:flex;flex-direction:column}.d2out{display:contents}
@@ -414,6 +415,9 @@ b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("a
 document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
 var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
+<style>[data-geo],[data-geo-no]{display:none!important}[data-geo][hidden],[data-geo-no][hidden]{display:none!important}</style>
+<script>window.TROID_GEO={"hide":{"bitfunded":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY"],"brightfunded":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY","VN"],"crypto_fund_trader":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY"]},"timeout":3000};</script>
+<script src="/geo.js" async></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://troid.ai/#organization","name":"troid","url":"https://troid.ai/","logo":"https://troid.ai/apple-touch-icon.png","email":"hello@troid.ai","sameAs":["https://github.com/kunjancollective/troid","https://x.com/tradingdroid","https://www.reddit.com/user/tradingdroid/"]},{"@type":"WebSite","@id":"https://troid.ai/#website","name":"troid","url":"https://troid.ai/","inLanguage":"en","publisher":{"@id":"https://troid.ai/#organization"}},{"@type":"WebApplication","@id":"https://troid.ai/#desk","name":"troid's desk","url":"https://troid.ai/","description":"troid sizes a prop-firm trade against both loss ceilings, the daily limit and the max loss, reports which one binds, and nets out fees. Free, no orders.","applicationCategory":"FinanceApplication","operatingSystem":"Any","browserRequirements":"Requires JavaScript","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@id":"https://troid.ai/#organization"},"inLanguage":"en"}]}</script>
 </head>
 <body>
@@ -497,16 +501,27 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
       <script src="/audit.js" defer></script>
     </div>
     <div class="affl" id="affl">
-  <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
   <div data-aff="bitfunded">
-    <p class="al"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener" target="_blank">Bitfunded challenges ↗</a> · affiliate link · <a href="/faq#money">how troid is funded</a></p>
+    <div data-geo="bitfunded">
+      <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
+      <p class="al"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener" target="_blank">Bitfunded challenges ↗</a> · affiliate link · <a href="/faq#money">how troid is funded</a></p>
+    </div>
+    <div class="geono" data-geo-no="bitfunded">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
   </div>
   <div data-aff="brightfunded" hidden>
-    <p class="al"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener" target="_blank">BrightFunded challenges ↗</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA · <a href="/faq#money">how troid is funded</a></p>
+    <div data-geo="brightfunded">
+      <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
+      <p class="al"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener" target="_blank">BrightFunded challenges ↗</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA · <a href="/faq#money">how troid is funded</a></p>
+    </div>
+    <div class="geono" data-geo-no="brightfunded">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
   </div>
   <div data-aff="crypto_fund_trader" hidden>
-    <p class="al"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener" target="_blank">Crypto Fund Trader challenges ↗</a> · affiliate link · code platinum5 · <a href="/faq#money">how troid is funded</a></p>
-    <p class="req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></p>
+    <div data-geo="crypto_fund_trader">
+      <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
+      <p class="al"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener" target="_blank">Crypto Fund Trader challenges ↗</a> · affiliate link · code platinum5 · <a href="/faq#money">how troid is funded</a></p>
+      <p class="req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></p>
+    </div>
+    <div class="geono" data-geo-no="crypto_fund_trader">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
   </div>
 </div>
   </div>
@@ -563,20 +578,29 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
       <div class="s">SOURCED · its own documents, read 2026-09-23; each rule with its section on <a href="/compare">troid's compare</a></div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
       <div class="s">Where troid&#x27;s ledger runs. Each rule&#x27;s source and read date is on troid&#x27;s compare.</div>
+      <div data-geo="bitfunded">
       <div class="s aff" style="margin-top:8px"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener">Bitfunded challenges</a> · affiliate link</div>
+      </div>
+      <div class="s geono" data-geo-no="bitfunded">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
     </div>
     <div class="cell">
       <div class="k">BrightFunded</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">15 of 18 rules filled · 15 sourced</div>
       <div class="s">128 verified reviews at 4.5 on propfirmmatch (read 2026-09-21). Rules go on this page only after they&#x27;re read from BrightFunded&#x27;s own documents.</div>
+      <div data-geo="brightfunded">
       <div class="s aff" style="margin-top:8px"><a href="https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA" rel="sponsored noopener">BrightFunded challenges</a> · affiliate link · code YQfyv0bgQtOZMHTXOSAoAA</div>
+      </div>
+      <div class="s geono" data-geo-no="brightfunded">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
     </div>
     <div class="cell">
       <div class="k">Crypto Fund Trader</div>
       <div class="v" style="font-size:14px;margin:4px 0;color:var(--dim)">17 of 18 rules filled · 17 sourced</div>
       <div class="s">109 verified reviews at 4.1 on propfirmmatch (read 2026-09-21). Leverage up to 100× on Advanced accounts ($50k+) and 5× on Student and Instant accounts, per its Terms and Conditions — the breaker model takes that as an input. (its own documents, read 2026-09-21)</div>
+      <div data-geo="crypto_fund_trader">
       <div class="s aff" style="margin-top:8px"><a href="https://cryptofundtrader.com?_by=kunjan-4560ae" rel="sponsored noopener">Crypto Fund Trader challenges</a> · affiliate link · code platinum5</div>
       <div class="s req"><span>Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.</span></div>
+      </div>
+      <div class="s geono" data-geo-no="crypto_fund_trader">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
     </div>
   </div>
 <!-- firms:end -->

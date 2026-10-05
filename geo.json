@@ -1,0 +1,46 @@
+{
+  "_what": "Where troid hides its affiliate links (launch handoff 5.3; the owner's decision, 2026-10-03). A link is hidden in a country on any of the three lists below; the calculator, the compare and every figure are the same in every country. /api/where gives the visitor's country (Vercel's x-vercel-ip-country); every affiliate link waits for it and stays hidden when it can't be read (fail closed). A VPN defeats this: it is a good-faith measure, not a guarantee (/faq#regions). Read by backtest/geo.py, which builds the pages' check, and by the /sources page; web/test_geo.py holds it.",
+  "decided": "2026-10-03",
+  "decided_by": "the owner, on troid's recommendation (launch handoff 5.3)",
+  "names": {
+    "AE": "United Arab Emirates", "BD": "Bangladesh", "CN": "China", "CU": "Cuba", "EG": "Egypt", "FR": "France",
+    "ID": "Indonesia", "IN": "India", "IR": "Iran", "KP": "North Korea", "SY": "Syria", "VN": "Vietnam"
+  },
+  "lists": {
+    "firm_terms": {
+      "title": "The firm's own terms",
+      "applies_to": "that firm's link",
+      "basis": "The countries each firm's own terms exclude, as troid recorded them in firms.json (availability.excluded), with the document and the date troid read it there. A country troid didn't read in the firm's terms (availability.not_from_terms) never hides a link, and neither does an exclusion for one trading platform (availability.platform: MT5 for US residents), which the calculator states instead.",
+      "firms": {
+        "bitfunded": [],
+        "brightfunded": ["CU", "IR", "KP", "SY", "VN"],
+        "crypto_fund_trader": []
+      },
+      "caveat": "Bitfunded's Terms list no excluded countries (4(b) puts local law on the trader); a third-party review lists some, which troid hasn't read in Bitfunded's own documents, so they hide nothing."
+    },
+    "embargo": {
+      "title": "Comprehensive embargoes",
+      "applies_to": "every firm's link",
+      "countries": ["CU", "IR", "KP", "SY"],
+      "basis": "Jurisdictions under comprehensive US sanctions programmes. troid sends no one there to buy from any firm, whatever the firm's terms say.",
+      "source": {"publisher": "U.S. Department of the Treasury, Office of Foreign Assets Control", "title": "Sanctions Programs and Country Information", "url": "https://ofac.treasury.gov/sanctions-programs-and-country-information"},
+      "caveat": "A country-level list: a sanctioned region inside a country (Crimea, for one) can't be told apart by the visitor's country, and isn't listed."
+    },
+    "law": {
+      "title": "Local law on promoting these products",
+      "applies_to": "every firm's link",
+      "countries": ["CN", "BD", "FR", "AE", "IN", "ID", "EG"],
+      "basis": "Countries where troid's launch research found that promoting prop challenges or paying offshore trading venues is restricted. troid recommended hiding the links there until counsel says otherwise; the owner decided it on 2026-10-03.",
+      "entries": {
+        "CN": {"why": "mainland China's ban on crypto trading services, reaffirmed in November 2025"},
+        "BD": {"why": "Bangladesh's foreign-exchange law bars residents from paying offshore crypto and forex venues"},
+        "FR": {"why": "article 4 of the 9 June 2023 influencer law bans promoting financial contracts and digital-asset services without AMF registration or authorisation", "url": "https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000051556880"},
+        "AE": {"why": "SCA Resolution 10 of 2025 requires a licence to publish financial content to UAE audiences", "url": "https://www.pinsentmasons.com/out-law/news/uae-new-licensing-regime-finfluencers"},
+        "IN": {"why": "the RBI's alert list of unauthorised forex platforms; FEMA penalties fall on residents who trade on them", "url": "https://www.federal.bank.in/documents/10180/57401/RBI+updates+the+Alert+List+of+unauthorised+forex+trading+platforms.pdf/195bdc35-05bf-2681-7706-d0ba96e1848d?t=1763966281714"},
+        "ID": {"why": "Bappebti's licensing regime, under which unlicensed forex domains are routinely blocked"},
+        "EG": {"why": "Egypt's licence requirement for financial promotion (Law 194 of 2020)"}
+      },
+      "caveat": "troid's research (September 2026) summarised these; not every primary text was read (the UAE article and Egypt's Law 194/2020 were not), and counsel hasn't reviewed the list. A country without a link here has the research's summary only."
+    }
+  }
+}

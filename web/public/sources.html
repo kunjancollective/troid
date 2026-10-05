@@ -318,6 +318,38 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 <h2>The release calendar</h2>
 <p>The calendar strip under troid's desk shows scheduled US releases from the agencies' own schedules: the Bureau of Labor Statistics (CPI, PPI, jobs, JOLTS), the Bureau of Economic Analysis and the Federal Reserve. troid reads them every Monday; the dates shown were read 2026-09-28. No forecasts.</p>
 </section>
+<section class="src" id="geo">
+<h2>Where troid's affiliate links are hidden</h2>
+<p>troid hides a firm's affiliate link in a country on any of these three lists (geo.json, decided 2026-10-03); the desk, the compare and every figure are the same everywhere. troid reads the country from the visitor's network and hides every link when it can't. A VPN defeats it: this is good faith, not a guarantee (<a href="/faq#regions">the FAQ's answer</a>).</p>
+
+<h3 id="geo-firm-terms" lang="en">The firm&#39;s own terms</h3>
+<table class="kv">
+<tr><th>Hides</th><td lang="en">that firm&#39;s link</td></tr>
+<tr><th>Countries</th><td lang="en">Bitfunded: none<br>BrightFunded: Cuba (CU), Iran (IR), North Korea (KP), Syria (SY), Vietnam (VN)<br>Crypto Fund Trader: none</td></tr>
+<tr><th>Why</th><td lang="en">The countries each firm&#39;s own terms exclude, as troid recorded them in firms.json (availability.excluded), with the document and the date troid read it there. A country troid didn&#39;t read in the firm&#39;s terms (availability.not_from_terms) never hides a link, and neither does an exclusion for one trading platform (availability.platform: MT5 for US residents), which the calculator states instead.</td></tr>
+
+<tr><th>Caveat</th><td lang="en">Bitfunded&#39;s Terms list no excluded countries (4(b) puts local law on the trader); a third-party review lists some, which troid hasn&#39;t read in Bitfunded&#39;s own documents, so they hide nothing.</td></tr>
+</table>
+
+<h3 id="geo-embargo" lang="en">Comprehensive embargoes</h3>
+<table class="kv">
+<tr><th>Hides</th><td lang="en">every firm&#39;s link</td></tr>
+<tr><th>Countries</th><td lang="en">Cuba (CU), Iran (IR), North Korea (KP), Syria (SY)</td></tr>
+<tr><th>Why</th><td lang="en">Jurisdictions under comprehensive US sanctions programmes. troid sends no one there to buy from any firm, whatever the firm&#39;s terms say.</td></tr>
+<tr><th>Source</th><td lang="en"><a href="https://ofac.treasury.gov/sanctions-programs-and-country-information" rel="noopener">U.S. Department of the Treasury, Office of Foreign Assets Control: Sanctions Programs and Country Information</a></td></tr>
+<tr><th>Caveat</th><td lang="en">A country-level list: a sanctioned region inside a country (Crimea, for one) can&#39;t be told apart by the visitor&#39;s country, and isn&#39;t listed.</td></tr>
+</table>
+
+<h3 id="geo-law" lang="en">Local law on promoting these products</h3>
+<table class="kv">
+<tr><th>Hides</th><td lang="en">every firm&#39;s link</td></tr>
+<tr><th>Countries</th><td lang="en"><ul><li>China (CN): mainland China&#39;s ban on crypto trading services, reaffirmed in November 2025</li><li>Bangladesh (BD): Bangladesh&#39;s foreign-exchange law bars residents from paying offshore crypto and forex venues</li><li>France (FR): article 4 of the 9 June 2023 influencer law bans promoting financial contracts and digital-asset services without AMF registration or authorisation · <a href="https://www.legifrance.gouv.fr/loda/article_lc/LEGIARTI000051556880" rel="noopener">source</a></li><li>United Arab Emirates (AE): SCA Resolution 10 of 2025 requires a licence to publish financial content to UAE audiences · <a href="https://www.pinsentmasons.com/out-law/news/uae-new-licensing-regime-finfluencers" rel="noopener">source</a></li><li>India (IN): the RBI&#39;s alert list of unauthorised forex platforms; FEMA penalties fall on residents who trade on them · <a href="https://www.federal.bank.in/documents/10180/57401/RBI+updates+the+Alert+List+of+unauthorised+forex+trading+platforms.pdf/195bdc35-05bf-2681-7706-d0ba96e1848d?t=1763966281714" rel="noopener">source</a></li><li>Indonesia (ID): Bappebti&#39;s licensing regime, under which unlicensed forex domains are routinely blocked</li><li>Egypt (EG): Egypt&#39;s licence requirement for financial promotion (Law 194 of 2020)</li></ul></td></tr>
+<tr><th>Why</th><td lang="en">Countries where troid&#39;s launch research found that promoting prop challenges or paying offshore trading venues is restricted. troid recommended hiding the links there until counsel says otherwise; the owner decided it on 2026-10-03.</td></tr>
+
+<tr><th>Caveat</th><td lang="en">troid&#39;s research (September 2026) summarised these; not every primary text was read (the UAE article and Egypt&#39;s Law 194/2020 were not), and counsel hasn&#39;t reviewed the list. A country without a link here has the research&#39;s summary only.</td></tr>
+</table>
+
+</section>
 
 <section class="src" id="rules">
 <h2>Firm rules</h2>
