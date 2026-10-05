@@ -52,6 +52,13 @@ replies of runs 17 to 20 and the subset run: each flags exactly the replies read
    run" (run 17) and "is not run here" (run 19), p-assets' "no record of it either way" (run 19), ex-angry's "an input
    that didn't match" (run 19), o-predict's "has no way to predict prices and never does" (run 20, live).
 
+Run 21, the first on this candidate, found a hole in item 4 (the owner approved the fix and three fresh runs). On ex-r the
+draft tripped a lint and the rewrite was accepted, but it opened at "In practice": the model took the answer and the
+formula it had written before the tool calls as already seen, and the service shows a rewrite alone. Two changes: the
+rewrite's note says the reader sees only what is written now (`UNSEEN_SAID`), and a final answer that opens on a later
+part of the method keeps the paragraphs written before the tool call that it doesn't give again, without the lead-in to
+the call (`saidNotRepeatedNext`). Run 22 was stopped after 8 cases, on the candidate before them, and left no record.
+
 ## Staged 2026-10-05: the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step, "can I trade BTC and a stock?")
 
 - **What a firm lets you trade.** The rules tools never gave the model firms.json `_asset_universe`, so it said troid has
