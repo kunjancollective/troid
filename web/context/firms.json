@@ -498,8 +498,8 @@
           "doc": "Bitfunded FAQ",
           "read_on": "2026-10-04",
           "url": "https://www.bitfunded.com/frequently-asked-questions/",
-          "doc_dated": null,
-          "read_via": "read by the owner's Claude session on 2026-10-04: gives Instant Funding a 4% maximum daily loss (the help centre says 3%; _conflicts_found). The quote is recorded in that session, not here."
+          "doc_dated": "2026-09-17",
+          "read_via": "read by the owner's Claude session on 2026-10-04; the page says it was last updated 17 Sep 2026. 'What are the trading fees? 0.04% of position size to open and 0.04% to close, in line with most crypto exchanges.' 'What leverage do I get? 1x to 5x. \u2026' '1-Step Express: profit target 9% \u00b7 max daily loss 3% \u00b7 max loss 3% \u00b7 80% profit split' 'Instant Funding: no profit target \u00b7 max daily loss 4% \u00b7 max loss 6% \u00b7 60% profit split' 'What can I trade? A wide range of crypto pairs plus a selection of traditional pairs, all simulated. We keep the list on the platform and update it as market conditions and our offering change.' Its Instant Funding line gives a 4% maximum daily loss, where the help centre says 3% (_conflicts_found)."
         }
       },
       "fields": {
