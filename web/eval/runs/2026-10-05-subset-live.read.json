@@ -1,0 +1,95 @@
+{
+ "_summary": "Read in full on 2026-10-05. The live prompt through the operator key (EVAL_LIVE=1) on the same eight cases. 2 of 8 automatically. On a read, seven errors, two critical. p-size gives the user's size, margin, fees and liquidation at the live tools' fee convention, both fees priced at entry: 1.622095 units where troid's desk gives 1.621583, the calculator audit's F6, which the owner's line of 30 Sep refuses. o-montecarlo says 'Let's' twice. The same convention puts ex-r's 1R with fees at $523.03 (the desk's $522.83) and b-stop's quantity at 0.369195 (0.369336). p-assets says troid has no list of Bitfunded's assets (the owner's live test of 2026-10-04). $0.4694 on the eval key.",
+ "ex-r": "Error (math, sources): 1R = $498.97 right; the fees are the live tools' (both at entry: $24.06, 1R $523.03, where troid's desk, the exit fee at the stop, gives $23.86 and $522.83: the audit's F6); '$1,046.06', '$500' and '0.5%' come from no tool (the $100,000 account risking $500 is the reply's own).",
+ "b-stop": "Error (math, form): the method is all there (the answer first, the formula, why, the example, what it means, the tier), but the figures are the live tools' F6 ones: fee per unit 62.2976, 0.369195 units, $28,749.96, margin $5,749.99, where the desk gives 61.7808, 0.369336, $28,760.93 and $5,752.19. 'Working an example the trader brought (already computed above, repeated as the tool returned it)' calls troid's example the trader's and points to a computation the reader never saw.",
+ "b-leverage": "Note: correct through trade_math: no, the loss is the same ($500); 0.386997 units, $30,136.22, margin $15,068.11 at 2x and $3,013.62 at 10x; no firm named (no fee). It doesn't say the loss stays the same only while the margin fits in equity (the candidate's F1), which this example never reaches.",
+ "p-crossover": "Error (rule, sources): $98,000, the formula, which limit binds the right way round and 'half of one day's $4,000 loss limit' right; but 'the daily ceiling (quota − $4,000 + today's net P&L)' misstates the daily floor, which is the day's start less $4,000; and $4,000 and $94,000 come from no tool.",
+ "p-assets": "Error (rule, sources): no firm_assets (the live prompt has none). It says 'troid has not recorded a document that lists which specific assets or stock symbols Bitfunded actually offers', where firms.json records BTC (Major Crypto Assets) and TSLA (Traditional Trading Pairs) from Restricted Trading Practices read 2026-09-24: the owner's live-test failure of 2026-10-04. It never names TSLA, and gives '5 open positions, per Restricted Trading Practices s.3' with no read date.",
+ "p-ladder-instant": "Error (sources): the Instant ladder right (55–64% → 50% payout penalty, 60% in the first step), but from the prompt's firm data rather than a tool (check_compliance gave the 50% at 55%), and dated 2026-09-21, the read that recorded one firm-wide ladder; the per-product ladder is the read of 2026-10-04. 'applied at payout review, not an account failure in itself' says more than the firm's words do (as the candidate's 'not a disqualifying one').",
+ "p-size": "Error (critical, the user's position): every figure is the live tools' F6 one: 1.622095 units (the desk 1.621583), notional $126,315.79 ($126,275.91), margin $25,263.16 ($25,255.18), fees $101.05 and 21.05% ($101.17, 21.08%), cross liquidation 75.12% (75.15%). The owner's line of 30 Sep: the live baseline fails p-size unless a reply rounds to 1.622. The two budgets, the binding $2,000, $480 and 4 losses left are right. 'Leverage used: 5× (your input/cap)' calls troid's default the user's input.",
+ "o-montecarlo": "Error (critical, first person): no simulation, 0.21R, 21R and 45.45% right; but 'Let's compute it' and 'Let's get the exact-form expectancy first' (first person), the lead-in to the tool call left above the answer, 'Answer first:' (the method's own words) and 'through trade_math' (a tool named).",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "missing date or source"
+   ],
+   "detail": [
+    "the live tools' fee convention (F6) in a teaching example: 1R with fees $523.03, the desk's $522.83",
+    "$1,046.06, $500 and 0.5% from no tool"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "the live tools' fee convention (F6) in a teaching example: 0.369195 units, the desk's 0.369336",
+    "troid's example called the trader's; points at a computation the reader never saw"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "missing date or source"
+   ],
+   "detail": [
+    "misstated formula: the daily floor as quota − $4,000 + today's net P&L",
+    "$4,000 and $94,000 from no tool"
+   ]
+  },
+  {
+   "case": "p-assets",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "missing date or source"
+   ],
+   "detail": [
+    "says troid has no list of Bitfunded's assets; TSLA never named",
+    "5 open positions undated"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "the per-product ladder dated 2026-09-21 (read 2026-10-04)",
+    "its steps from no tool"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "critical",
+   "kinds": [
+    "wrong number on the user's position"
+   ],
+   "detail": [
+    "size, margin, fees and liquidation at the live tools' fee convention (F6): 1.622095 units, the desk's 1.621583"
+   ],
+   "note": "a gap of 0.0005 units; critical by the rule's definition (a wrong number describing the user's own position, whatever its unit) and failed by the owner's line of 30 Sep"
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "critical",
+   "kinds": [
+    "says \"I\"",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "\"Let's\" twice",
+    "'Answer first:', trade_math named, the lead-in left above the answer"
+   ]
+  }
+ ]
+}

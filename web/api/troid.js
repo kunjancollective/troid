@@ -45,7 +45,10 @@
  * MATH_NEXT, TRADE_MATH_TOOL_NEXT, CANDIDATE_RULES.fees and .ruin, context/candidate/TROID.md and TROID-CHARACTER.md);
  * and, the owner's decisions of the same day, F1 (a margin above equity cut to fit, with D6's lowest leverage cap it rests
  * on), R6 (a long's floor 100% or more below entry "not reached above zero") and the fourth patch's two wordings
- * (CANDIDATE_RULES.reset, context/candidate/TROID.md).
+ * (CANDIDATE_RULES.reset, context/candidate/TROID.md). And from the read of runs 17 to 19 (2026-10-05, the owner's six
+ * fixes): five guardrails, the crossover stated exactly (CANDIDATE_RULES.crossover), nine lints that read what the reader
+ * sees, and three backstops on the reply (the question not written back, the reset in UTC with the DST sentence, troid's
+ * wording for a question about prices or news).
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -212,6 +215,21 @@ const CANDIDATE_GUARDRAILS = [
   // verified most completely" to a beginner asking which firm is best
   "A stop given or chosen as a percent goes to the tool as stop_pct (size_trade, or trade_math's position_size): never work out a stop price yourself. Never single out one firm, as better verified, sourced or trusted than another: troid earns a commission and names no favourite.",
 ];
+// The read of evaluation runs 17 to 19 (2026-10-05, the owner's six fixes): b-leverage gave a full size's margin as
+// "$100,000" and "$200,000" (it was $500,000; $200,000 was the notional after the margin cut), said liquidation sits
+// further from entry at 10× than at 2×, and called cross margin Bitfunded's; p-reset and p-reset-local gave New York's
+// hour by season ("noon EDT in summer, 11:00 EST in winter", "mid-afternoon"); p-crossover said the maximum-loss floor
+// governs after "even a small amount" (only below $98,000); b-limits and b-leverage wrote no formula, b-limits worked no
+// example and b-stop gave its example twice; the fast model sent the reader to "a market data service or news outlet".
+const OUT_OF_SCOPE_REPLY = "ask troid does not browse and has no live data: it has no live price, never predicts one, and doesn't follow the news. " +
+  "troid prices what you bring: an entry, a stop and an account, against the firm's own rules.";
+const DST_SENTENCE = "Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for.";
+CANDIDATE_GUARDRAILS.push(
+  "In a leverage or margin answer, every size, notional, margin and liquidation figure is one a tool returned this turn for that very thing, beside the leverage it belongs to: work each leverage through trade_math (position_size, with an equity) or size_trade and quote its quantity, notional and margin as the result gives them, never a figure worked out from another. A liquidation distance is size_trade's (among its circuit breakers); where no tool gives one, say it in words: higher leverage brings an isolated position's liquidation closer to entry, and under cross margin leverage doesn't move it. Cross margin is troid's default model; troid has no recorded source for Bitfunded's margin modes.",
+  "Bitfunded's reset is given in UTC only: 16:00 UTC, in effect by 16:10 UTC, followed by this sentence, word for word: \"" + DST_SENTENCE + "\" Never a local hour, by season or otherwise: no noon, midday or mid-afternoon, no EDT or EST.",
+  "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit: never \"even a small amount\" or \"any slip\". The daily floor is the day's start less the daily amount, never a static floor from the quota.",
+  "A question about how something is calculated or works (what R means, why the stop sets the size, how the two limits differ, what leverage changes) gets, after its one-line answer, the formula written out with an equals sign and its terms, then one worked example whose figures a tool computed this turn. Give the example once: never before the answer, never again after it.",
+  "A question about where a price is going, what is moving the market or the news gets this reply, word for word, and nothing else: \"" + OUT_OF_SCOPE_REPLY + "\" Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service).");
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
@@ -749,7 +767,9 @@ const CANDIDATE_RULES = {
     "they are troid's inputs, not the user's, and the figures do not carry over to other inputs.",
   // run 11, b-limits: the floating-loss rule, from TROID.md, beside explain_rule's crossover and drawdown with no source
   // line; both explanations state it now, so the service lists its source under them
-  crossover: RULES.crossover + " Both of Bitfunded's ceilings count floating losses: an open position that reaches either one fails the account, with no close needed.",
+  // the read of runs 17 and 19 (p-crossover: the floor said to govern after "even a small amount"): stated exactly
+  crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below $98,000 at the day's start the max-loss floor binds, and the 4% daily limit is not the constraint that day; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover." +
+    " Both of Bitfunded's ceilings count floating losses: an open position that reaches either one fails the account, with no close needed.",
   drawdown: RULES.drawdown + " Bitfunded's floor counts floating losses: an open position that reaches it fails the account, with no close needed.",
   // the calculator audit's F6 (troid's desk, 2026-09-29): the exit fee is charged at the stop, not at entry
   fees: "Bitfunded: 0.04% per side on notional: on the entry notional, and on the exit notional, which at the stop is quantity × stop. So a unit's fees " +
@@ -1897,6 +1917,228 @@ CANDIDATE_LINTS.push(
    (t, tools, asked) => "These read dates are not the ones a tool gave this turn for the rule beside them: " + unsourcedReadDates(t, tools, asked).join("; ") +
      ". Every date troid read a rule comes from the tool that gave the rule (firm_rules, firm_assets, explain_rule, check_budget, size_trade, check_compliance): " +
      "get the rule through it and give its date exactly, or leave the date to the sources the service writes under the answer. Never write a read date yourself."]);
+// The read of evaluation runs 17 to 19 (2026-10-05, the owner's six fixes). These lints read what the reader sees: the final
+// answer and what troid wrote before a tool call that the reply keeps (saidNotRepeatedNext), never a lead-in it drops
+// (run 19, b-leverage: its formula sat in a lead-in that never reached the reader).
+// 1. b-leverage. A size, notional, margin or liquidation figure is one a tool returned this turn for that very thing: the
+//    read-date lint's rule, for numbers (run 17: "$200,000 at full size" as a margin, the tool's notional after the cut).
+const FIG_KINDS = { margin: /\bmargins?\b/i, notional: /\bnotional\b/i, quantity: /\b(quantity|quantities|units?|position size)\b/i, liquidation: /\bliquidat\w*/i };
+const FIG_OTHER = /\b(equity|risk(ed|s)?|loss(es)?|fees?|entry|stop|target|budget|floor|balance|quota|price|distance|crossover|account|profit|limit|leverage|cap)\b/i;
+const kindOfLabel = (s) => Object.keys(FIG_KINDS).find((k) => FIG_KINDS[k].test(s)) || null;
+// what the tools returned for each kind: their result fields, working steps and circuit breakers by name; a liquidation
+// distance also from a tool's prose just after the word (explain_rule: "~20% at 5x"). Never other prose: run 17's own note
+// ("Cut to fit the margin: at 2× equity of 100000 carries at most 200000 of notional") would pass its error.
+function toolFigures(tools) {
+  const by = { margin: [], notional: [], quantity: [], liquidation: [] };
+  const add = (k, v) => { const x = typeof v === "number" ? v : +String(v).replace(/[,$%×\s]/g, ""); if (k && Number.isFinite(x)) by[k].push(x); };
+  const walk = (o, key) => {
+    if (Array.isArray(o)) return o.forEach((x) => walk(x, key));
+    if (o && typeof o === "object") {
+      const label = o.step || o.event;
+      if (label != null) for (const f of ["value", "adverse_move_pct"]) if (f in o) add(kindOfLabel(String(label)), o[f]);
+      for (const [k2, v] of Object.entries(o)) if (!["value", "adverse_move_pct"].includes(k2) || label == null) walk(v, k2);
+      return;
+    }
+    if (typeof o === "number" && key) add(kindOfLabel(String(key).replace(/_/g, " ")), o);
+    if (typeof o === "string") for (const m of o.matchAll(/\bliquidat\w*/gi))
+      for (const n of o.slice(m.index, m.index + 200).matchAll(/(\d[\d,]*(?:\.\d+)?)\s?%/g)) add("liquidation", n[1]);
+  };
+  for (const t of tools || []) { walk(t.result); walk(t.input); }
+  return by;
+}
+const FIG_NUM_RX = /(?<![\w.,])(\$\s?)?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+|\d{4,})(\s?[kK](?![a-zA-Z]))?(\s?%)?/g;
+// each figure the reply writes beside one of the four kinds that no tool gave for that kind: [{ s, kind }]. A figure's
+// thing is the label before it in its clause, or one just after it with nothing between ("$100,000 of margin"); an
+// equation's result is named by the left side of the equation's first "=" ("margin = notional ÷ 5 = $25,255.18").
+const wordsIn = (x) => (String(x).match(/[A-Za-z]{2,}/g) || []).length;
+function labelledFigureSlips(t, tools, asked) {
+  const have = toolFigures(tools), user = NUMBERS.numbersIn(String(asked || "")).map((n) => n.v), out = [];
+  const near = (v, dec, k, scale) => have[k].some((a) => Math.abs(v - a) <= (scale > 1 ? scale / 2 : 0.5 * 10 ** -dec) + 1e-9);
+  const body = stripSources(String(t)).replace(/\*\*|__|`/g, "").replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ");
+  for (const sent of body.split(/(?<=[.!?])\s+|\n+/)) {
+    const labels = [];
+    for (const m of sent.matchAll(/\b[A-Za-z][A-Za-z-]*\b/g)) {
+      const k = kindOfLabel(m[0]) || (FIG_OTHER.test(m[0]) && m[0].length > 2 ? "other" : null);
+      if (k) labels.push({ k, i: m.index, j: m.index + m[0].length });
+    }
+    const lastChecked = (a, b) => { const ls = labels.filter((l) => l.i >= a && l.j <= b && l.k !== "other"); return ls.length ? ls[ls.length - 1].k : null; };
+    for (const m of sent.matchAll(FIG_NUM_RX)) {
+      const p = m.index, q = p + m[0].length, raw = m[2], pct = !!m[4], scale = m[3] ? 1000 : 1;
+      const v = +raw.replace(/,/g, "") * scale, dec = (raw.split(".")[1] || "").length;
+      const before = sent.slice(0, p).replace(/[\s$]+$/, ""), after = sent.slice(q);
+      if (/^\s?(×|x\b|-?(step|phase)\b)/i.test(after) || /\b1:$/.test(before) || user.some((u) => Math.abs(u - v) < 1e-9)) continue;   // a leverage, a product, the user's own
+      if (/[×÷+−\-\/*(]$/.test(before) || /^\s*[×÷+−\/*)]/.test(after)) continue;   // inside an expression: the number lint reads those
+      let kind = null;
+      if (pct) {
+        if (/\bliquidat\w*[^.]{0,60}$/i.test(sent.slice(0, p)) || /^[^.]{0,30}\bliquidat/i.test(after)) kind = "liquidation";
+      } else if (/[=≈]$/.test(before)) {
+        // walk left over the equation: each stretch between two "=" that holds no clause break and few words is part of it
+        let e = before.length - 1, lhsFrom = 0;
+        for (;;) {
+          const prev = e > 0 ? Math.max(before.lastIndexOf("=", e - 1), before.lastIndexOf("≈", e - 1)) : -1;
+          const seg = before.slice(prev + 1, e);
+          if (prev < 0 || /[,;:]|\s—\s/.test(seg) || wordsIn(seg) > 6) {
+            const cut = Math.max(seg.lastIndexOf(","), seg.lastIndexOf(";"), seg.lastIndexOf(":"), seg.lastIndexOf(" — "));
+            lhsFrom = prev + 1 + (cut < 0 ? 0 : cut + 1);
+            break;
+          }
+          e = prev;
+        }
+        kind = lastChecked(lhsFrom, e);
+      } else {
+        let best = null;
+        for (const l of labels) {
+          let d;
+          if (l.j <= p) { if (/[;:]/.test(sent.slice(l.j, p))) continue; d = p - l.j; }
+          else if (l.i >= q) { if (/[()[\],;:—]/.test(sent.slice(q, l.i))) continue; d = (l.i - q) * 1.25; }
+          else continue;
+          if (d <= 40 && (!best || d < best.d)) best = { k: l.k, d };
+        }
+        kind = best && best.k;
+      }
+      if (kind && kind !== "other" && (kind !== "liquidation" || pct) && !near(v, dec, kind, scale)) out.push({ s: m[0].trim(), kind });
+    }
+  }
+  return out;
+}
+// liquidation the wrong way round (run 18, b-leverage: "at 10× … liquidation sits further from entry … than at 2×")
+const LIQ_BACKWARDS_RX = /\b((higher|more|greater|bigger) leverage|10\s?[x×])[^.\n;]{0,80}\bliquidat\w*\b[^.\n;]{0,40}\b(further|farther|more distant)\b|\bliquidat\w*\b[^.\n;]{0,60}\b(further|farther)\b[^.\n;]{0,60}\b(at|with|under) ((higher|more) leverage|10\s?[x×])|\b((lower|less) leverage|2\s?[x×])\b[^.\n;]{0,60}\bliquidat\w*\b[^.\n;]{0,30}\bcloser\b/i;
+// cross margin called Bitfunded's (run 19, b-leverage: "as Bitfunded does"): troid has no source for its margin modes
+const CROSS_FIRM_RX = /\bcross\b[^.\n]{0,80}\bas Bitfunded does\b|\bBitfunded\b[^.\n]{0,40}\b(uses|offers|runs|is on|applies|has)\b[^.\n]{0,20}\bcross[- ]?margin\b|\bcross[- ]?margin\b[^.\n]{0,5}\(Bitfunded\)/i;
+// 2. The reset in UTC only (runs 17 and 19, p-reset and p-reset-local): no local hour, by season or otherwise
+const RESET_CTX_RX = /\b(reset|resets|trading day|rollover|rolls over)\b/i;
+const LOCAL_HOUR_RX = /\bnoon\b|\bmid-?(afternoon|morning|day)\b|\bmidday\b|\b(early|late) (morning|afternoon|evening)\b|\b(EDT|EST)\b|\bEastern (Daylight|Standard)( Time)?\b|\b(1[0-2]|[1-9])(:[0-5]\d)?\s?(a\.?m\.?|p\.?m\.?)(?![a-z])|\b(1[0-2]|0?[1-9]):[0-5]\d\b(?![^.\n]{0,12}\bUTC)|\bin (summer|winter)\b|\b(summer|winter) time\b/i;
+const resetCtx = (t, asked) => RESET_CTX_RX.test(String(asked || "")) || (RESET_CTX_RX.test(t) && /\b16:00\b/.test(t));
+// 3. The crossover exactly (runs 17 and 19: the floor said to govern after "even a small amount", "even modestly"; run 18:
+//    "both static floors measured from the account's quota")
+const XOVER_SMALL_RX = /\b(even|any)\b[^.\n]{0,40}\b(small|modest(ly)?|slight(ly)?|little|minor)\b[^.\n]{0,120}\b(max(imum)?[- ]?(loss|drawdown)|floor)\b|\b(max(imum)?[- ]?(loss|drawdown)|floor)\b[^.\n]{0,80}\b(even|any)\b[^.\n]{0,30}\b(small|modest(ly)?|slight(ly)?|little|minor)\b|\bboth\b[^.\n]{0,30}\bstatic floors?\b/i;
+// 4. "How is X calculated": the formula, then one worked example from a tool, said once (run 19: b-limits and b-leverage
+//    wrote no formula, b-limits worked no example; run 18: b-stop gave its example twice)
+const HOWCALC_RX = /\bhow (is|are|do|does|did|would|can)\b[^?\n]{0,80}\b(calculat|comput|work|determin|measur|scal|figur|set|size)\w*|\bwhat['’]?s the difference\b|\bwhat (is|are) the difference\b|\bdifference between\b|\bwhy (does|do|is|are)\b|\bwhat does\b[^?\n]{0,40}\bmean\b|\bdo I lose more\b/i;
+// a formula: a "=" (or "≈") whose right side names a term (a letter that isn't a unit) and has an operator, not a worked instance
+function hasGeneralFormula(t) {
+  for (const line of String(t).replace(/\*\*|__|`/g, "").split("\n")) {
+    const at = line.search(/[=≈]/);
+    if (at < 0) continue;
+    const rhs = line.slice(at + 1).split(/[=≈]/)[0];
+    if (/[×÷+−\-\/·√|*]|\b(min|max|ceil|floor)\b/.test(rhs) && /(?<![\d.,])(?!(?:R|x|BTC|ETH|USD|EUR|UTC|units?|days?|per|trade|trades)\b)[A-Za-zα-ωρσμ][A-Za-z_]*/.test(rhs)) return true;
+  }
+  return false;
+}
+// one figure a tool computed (not one it was given) in the reply: a worked example
+function workedFromTool(t, tools) {
+  const got = new Set(NUMBERS.toolNumbers((tools || []).map((x) => ({ input: null, result: x.result }))).map(Number));
+  return NUMBERS.numbersIn(stripSources(String(t)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).some((n) => (n.dec > 0 || n.v >= 100) && !(n.dec === 0 && n.v >= 1900 && n.v <= 2100) && got.has(n.v));
+}
+// the same worked equation twice: its operands and its result written again (run 18, b-stop: "quantity = 500 ÷ (1,292 +
+// 61.78) = 0.369336" above the answer and again under "In practice")
+const NUM_EQ_RX = /((?:\$?\d[\d,]*(?:\.\d+)?\s*\)?\s*(?:[×÷+−*\/]|\s-\s)\s*\(?\s*)+\$?\d[\d,]*(?:\.\d+)?\s*\)?)\s*[=≈]\s*\$?(\d[\d,]*(?:\.\d+)?)/g;
+function repeatedWorking(t) {
+  const seen = new Set();
+  for (const m of stripSources(String(t)).replace(/\*\*|__|`/g, "").matchAll(NUM_EQ_RX)) {
+    const key = NUMBERS.numbersIn(m[1]).map((n) => n.v).join("|") + "=" + m[2].replace(/,/g, "");
+    if (seen.has(key)) return true;
+    seen.add(key);
+  }
+  return false;
+}
+// 5. A place named by kind for prices or news (run 17, o-news: "the exchanges and news services themselves"; run 18,
+//    o-predict: "a market data service or news outlet"; run 20, live: "A news site, an exchange, or a data platform")
+const OUTSIDE_KIND_RX = /\b(check|consult|see|use|visit|try|look at|look to|turn to|points? to|refer to|go to|head to)\b[^.\n]{0,40}\b(news (sites?|outlets?|services?|sources?|feeds?|apps?)|market[- ]data (services?|providers?|platforms?|sites?)|data (platforms?|providers?|services?)|financial (data|news)|charting (platforms?|sites?|tools?)|price (feeds?|sites?|trackers?)|(crypto )?exchanges?\b(?!\s*(liquidat|['’]s|fees?|margin|rates?)))|\b(news (sites?|outlets?|services?|sources?)|market[- ]data (services?|providers?|platforms?)|data platforms?)\b[^.\n]{0,40}\b(will have|have|has|carry|carries|show|shows|cover|covers)\b/i;
+CANDIDATE_LINTS.push(
+  [(t, tools, asked) => labelledFigureSlips(t, tools, asked).length > 0,
+   (t, tools, asked) => "These figures are not what a tool gave this turn for the thing beside them: " +
+     labelledFigureSlips(t, tools, asked).slice(0, 6).map((x) => x.s + " as " + x.kind).join(", ") +
+     ". Get each size, notional, margin and liquidation figure from trade_math (position_size, with an equity) or size_trade, for the leverage it belongs to, and quote it as the result gives it; where no tool gives one, say it in words."],
+  [(t) => LIQ_BACKWARDS_RX.test(t), "Higher leverage brings an isolated position's liquidation closer to entry (about entry ÷ leverage away), never further; under cross margin leverage doesn't move it."],
+  [(t) => CROSS_FIRM_RX.test(t), "troid has no recorded source for Bitfunded's margin modes: cross margin is troid's default model. Say so, and never call it the firm's."],
+  [(t, tools, asked) => resetCtx(t, asked) && LOCAL_HOUR_RX.test(stripSources(t)),
+   "Give Bitfunded's reset in UTC only: 16:00 UTC, in effect by 16:10 UTC, then this sentence, word for word: \"" + DST_SENTENCE + "\" No local hour: no noon, midday or mid-afternoon, no EDT or EST."],
+  [(t) => XOVER_SMALL_RX.test(t),
+   "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit, and the daily floor is the day's start less the daily amount, never a static floor from the quota."],
+  [(t, tools, asked, last) => HOWCALC_RX.test(String(last || asked || "")) && !SUPPORT_OPENER.test(t) && !hasGeneralFormula(t),
+   "The question asks how something is worked out: after the one-line answer, write the formula out with an equals sign and its terms (quantity = risk ÷ (|entry − stop| + fee per unit), say), then one worked example from a tool."],
+  [(t, tools, asked, last) => HOWCALC_RX.test(String(last || asked || "")) && !SUPPORT_OPENER.test(t) && !workedFromTool(t, tools),
+   "Work one example through a tool this turn (trade_math for arithmetic; check_budget or explain_rule on troid's reference account, a $100,000 Bitfunded 1-Step, for a firm's limits) and give the figures it computed, once."],
+  [(t) => repeatedWorking(t), "The worked example is given twice: give it once, after the formula."],
+  [(t) => OUTSIDE_KIND_RX.test(t),
+   "Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service). For where a price is going or what is moving the market, give troid's wording, word for word: \"" + OUT_OF_SCOPE_REPLY + "\""]);
+// what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
+// final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice")
+function saidNotRepeatedNext(said, final) {
+  const later = new Set(NUMBERS.numbersIn(final).map((n) => n.v));
+  return saidNotRepeated(said, final).filter((b) => {
+    const ns = NUMBERS.numbersIn(stripSources(String(b)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).filter((n) => n.dec > 0 || n.v >= 10);
+    return !(ns.length >= 2 && ns.every((n) => later.has(n.v)));
+  });
+}
+// the user's question written back as a heading (run 18, b-stop: "Why does troid need your stop price to size a trade?")
+const QNORM = (s) => String(s).toLowerCase().replace(/\byour\b/g, "my").replace(/\byou\b/g, "i").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
+function withoutEchoedQuestion(reply, lastUser) {
+  const q = QNORM(lastUser);
+  if (q.split(" ").length < 4) return reply;
+  return reply.split("\n").filter((l) => QNORM(l.replace(/^\s*(#+|\*\*|__)\s*|\s*(\*\*|__)\s*$/g, "")) !== q).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+// the reset's backstop: a local hour the rewrite kept goes (a bracket holding one, then any sentence with one), the
+// reset in UTC leads, and the DST sentence is there once (the owner, 2026-10-05: "only 16:00 UTC plus the patch's
+// DST-safe sentence")
+const RESET_LEAD = "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC all year, in effect by 16:10 UTC.";
+// a question that asks when the reset is (p-reset, p-reset-local), not one that only mentions it
+const RESET_TIME_ASK_RX = /\b(when|what time|what hour|which hour)\b[^?\n]{0,60}\b(reset|resets|rollover|roll over|trading day|new day)\b|\b(reset|resets|rollover|trading day)\b[^?\n]{0,60}\b(when|what time|in UTC|local|for me|my time|time ?zone)\b/i;
+// a sentence ends at ".", "!" or "?" before a space or the end of the line, never inside "i.e." or "e.g." (run 20,
+// p-reset-local: "…00:10 UTC+8, i.e. 16:00–16:10 UTC.")
+const SENT_END_RX = /(?<!\b(?:i\.e|e\.g|vs|cf|approx|etc))[.!?](?:\*\*|__|\*|_)?(?=\s|$)/g;
+function sentencesOf(line) {
+  const out = [];
+  let from = 0;
+  for (const m of line.matchAll(SENT_END_RX)) { out.push(line.slice(from, m.index + m[0].length)); from = m.index + m[0].length; }
+  out.push(line.slice(from));
+  return out.map((s) => s.trim()).filter(Boolean);
+}
+// 16:00 UTC as a reply gives it: the hour, or the window from it (run 18, p-reset-local: "16:00–16:10 UTC")
+const UTC1600_RX = /\b16:00(?:\s?UTC\b|\s?[–-]\s?16:10\s?UTC\b)/;
+// the DST sentence in the reply's own words (run 18: "New York's clock moves with daylight saving, but UTC doesn't, so the
+// New York hour for the reset isn't constant across the year"): it gives way to the sentence itself
+const DST_OWN_RX = /\b(clocks?|time)\b[^.\n]{0,40}\b(moves?|shifts?|changes?)\b[^.\n]{0,20}\bdaylight saving\b/i;
+function resetInUtcOnly(reply, lastUser) {
+  const local = resetCtx(reply, lastUser) && LOCAL_HOUR_RX.test(reply);
+  if (!local && !(RESET_TIME_ASK_RX.test(String(lastUser || "")) && UTC1600_RX.test(reply))) return reply;
+  let body = reply;
+  if (local) {
+    const keepLine = (line) => {
+      const x = line.replace(new RegExp("\\s*\\((?=[^()]*(" + LOCAL_HOUR_RX.source + "))[^()]*\\)", "gi"), "");
+      const lead = (x.match(/^\s*([-*•]|\d+[.)])\s+/) || [""])[0], parts = sentencesOf(x.slice(lead.length)), kept = parts.filter((s) => !LOCAL_HOUR_RX.test(s));
+      return kept.length === parts.length ? x : kept.length ? lead + kept.join(" ") : "";
+    };
+    body = body.split("\n").map((l) => (LOCAL_HOUR_RX.test(l) ? keepLine(l) : l)).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n").trim();
+    // the sentence that gave the reset can be the one that went (run 17, p-reset-local: "resets at 16:00–16:10 UTC, which
+    // converts to noon Eastern in summer"): then troid's own sentence leads
+    if (!body.split("\n").some((l) => sentencesOf(l).some((s) => /\breset/i.test(s) && UTC1600_RX.test(s)))) body = RESET_LEAD + "\n\n" + body;
+  }
+  const flat = (s) => s.replace(/[’‘]/g, "'");
+  if (!flat(body).includes(DST_SENTENCE)) {
+    const lines = body.split("\n"), own = lines.findIndex((l) => DST_OWN_RX.test(l));
+    if (own >= 0) {
+      const label = (lines[own].match(/^\s*(?:[-*•]\s+)?(?:\*\*[^*\n]+\*\*|__[^_\n]+__)\s*/) || [""])[0];
+      lines[own] = label + sentencesOf(lines[own].slice(label.length)).map((s) => (DST_OWN_RX.test(s) ? DST_SENTENCE : s)).join(" ");
+    } else {
+      const at = lines.findIndex((l) => UTC1600_RX.test(l));
+      if (at >= 0) {
+        const l = lines[at], from = l.search(UTC1600_RX);
+        const end = [...l.matchAll(SENT_END_RX)].find((m) => m.index >= from);
+        lines[at] = end ? l.slice(0, end.index + end[0].length) + " " + DST_SENTENCE + l.slice(end.index + end[0].length) : l.replace(/\s*$/, ". " + DST_SENTENCE);
+      }
+    }
+    body = lines.join("\n");
+  }
+  return body.replace(/\n{3,}/g, "\n\n").trim();
+}
+// 5. A question about where a price is going, what moves the market or the news, answered with no tool: troid's wording,
+//    word for word (run 18, o-predict, the fast model: "consult a market data service or news outlet")
+const OUT_OF_SCOPE_ASK_RX = /\bwhere will\b|\bwhere['’]?s\b[^?\n]{0,30}\b(going|headed)\b|\bwill (the )?(price|bitcoin|btc|eth|ether|crypto|market|it)\b[^?.\n]{0,40}\b(go|be|hit|reach|rise|fall|drop|pump|dump|trade|moon|crash)\b|\bpredict|\bforecast|\bprice (target|prediction)s?\b|\bwhat['’]?s (moving|driving)\b|\bwhat is (moving|driving)\b|\bwhy (is|did|has) (the )?(market|bitcoin|btc|eth|crypto|price)\b[^?.\n]{0,25}\b(up|down|moving|pump|dump|fall|fell|rise|rose|drop|crash)\w*|\b(crypto|market|bitcoin|btc)\b[^?.\n]{0,25}\bnews\b|\bnews\b[^?.\n]{0,25}\b(today|this week)\b|\bheadlines?\b/i;
+const IN_SCOPE_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader|CFT|FTMO|Topstep|rules?|reset|limit|drawdown|news trading|desk|tape|fill|size|stop|entry)\b/i;
+const outOfScopeFixed = (reply, lastUser, toolLog) =>
+  (!(toolLog || []).length && OUT_OF_SCOPE_ASK_RX.test(String(lastUser || "")) && !IN_SCOPE_RX.test(String(lastUser || "")) ? OUT_OF_SCOPE_REPLY : reply);
 // support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
 // leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
 const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;
@@ -1926,8 +2168,8 @@ function saidNotRepeated(said, final) {
 const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about it, about a retraction or about a rewrite.)";
 const REWRITE_TALK_RX = /[^.\n]*\b(retract(ing|ed|s)?|(earlier|previous|first|prior) (version|draft|answer)|rewrit(e|ten|ing) (of )?(this|the) answer)\b[^.\n]*[.:]\s*/gi;
 const withoutRewriteTalk = (reply) => reply.replace(REWRITE_TALK_RX, "").replace(/\n{3,}/g, "\n\n").trim();
-const lintNotesFor = (t, variant, tools, asked) => lintNotes(t).concat(variant === "candidate"
-  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked)).map(([, note]) => (typeof note === "function" ? note(t, tools || [], asked) : note)) : []);
+const lintNotesFor = (t, variant, tools, asked, last) => lintNotes(t).concat(variant === "candidate"
+  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked, last)).map(([, note]) => (typeof note === "function" ? note(t, tools || [], asked, last) : note)) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
   notes.map((n) => "- " + n).join("\n") + ")";
 const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
@@ -2193,7 +2435,8 @@ module.exports = async (req, res) => {
     // each. If the rewrite can't finish in time, or fails, the draft stands.
     if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
       const asked = messages.filter((m) => m.role === "user").map((m) => m.content).join("\n");   // every number the user gave
-      const notes = lintNotesFor([...said, textOf(resp)].join("\n\n"), variant, toolLog, asked);
+      const seen = (s, f) => (variant === "candidate" ? [...saidNotRepeatedNext(s, f), f] : [...s, f]).join("\n\n");   // what the reader sees
+      const notes = lintNotesFor(seen(said, textOf(resp)), variant, toolLog, asked, lastUser);
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
@@ -2204,7 +2447,7 @@ module.exports = async (req, res) => {
           // the candidate's: a rewrite that trips more notes than the draft, or fixes none of them, doesn't replace it
           // (subset run of 2026-09-24, o-montecarlo: the rewrite lost the draft's answer and still wrote no formula)
           if (variant === "candidate") {
-            const key = (n) => String(n).slice(0, 60), again = lintNotesFor([...said, textOf(r2)].join("\n\n"), variant, toolLog, asked).map(key);
+            const key = (n) => String(n).slice(0, 60), again = lintNotesFor(seen(said, textOf(r2)), variant, toolLog, asked, lastUser).map(key);
             if (again.length > notes.length || notes.every((n) => again.includes(key(n)))) throw new Error("rewrite no better");
           }
           resp = r2; log.linted = 1;
@@ -2216,7 +2459,7 @@ module.exports = async (req, res) => {
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
     else {
-      reply = [...(variant === "candidate" ? saidNotRepeated(said, textOf(resp)) : said), textOf(resp)].filter(Boolean).join("\n\n");
+      reply = [...(variant === "candidate" ? saidNotRepeatedNext(said, textOf(resp)) : said), textOf(resp)].filter(Boolean).join("\n\n");
       // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
       // that is the session-ended text word for word (in any published language) is treated the same way.
       if (isSentinelOnly(reply) || isEnded(reply)) {
@@ -2229,6 +2472,9 @@ module.exports = async (req, res) => {
         if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
         if (reply && variant === "candidate" && lang === "en") reply = withSupportStep4(reply, lastUser);
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
+        // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
+        // only, and a question about prices or news gets troid's wording
+        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(reply, lastUser), lastUser), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -2304,3 +2550,11 @@ module.exports._runTool = runTool;
 module.exports._patchRules = PATCH_RULES;
 module.exports._withSupportStep5 = withSupportStep5;
 module.exports._withSources = withSources;
+module.exports._labelledFigureSlips = labelledFigureSlips;
+module.exports._saidNotRepeatedNext = saidNotRepeatedNext;
+module.exports._withoutEchoedQuestion = withoutEchoedQuestion;
+module.exports._resetInUtcOnly = resetInUtcOnly;
+module.exports._outOfScopeFixed = outOfScopeFixed;
+module.exports._hasGeneralFormula = hasGeneralFormula;
+module.exports.OUT_OF_SCOPE_REPLY = OUT_OF_SCOPE_REPLY;
+module.exports.DST_SENTENCE = DST_SENTENCE;

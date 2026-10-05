@@ -12,6 +12,46 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-05 (second): the read of runs 17 to 19, the owner's six fixes
+
+On top of the candidate below (candidate only; the live and patch prompts, tools, tool results and lints were compared
+with main's, 1,801 of them over 575 saved replies, and none differs). Each lint reads what the reader sees: the final
+answer and what troid wrote before a tool call that the reply keeps, never a lead-in it drops (run 19's b-leverage had
+its formula in a lead-in that never reached the reader). Nine new lints; `web/test_assistant.js` holds each to the
+replies of runs 17 to 20 and the subset run: each flags exactly the replies read as its error, and none on live.
+
+1. **b-leverage.** A guardrail: every size, notional, margin and liquidation figure is one a tool returned this turn
+   for that very thing, beside its leverage. A lint, the read-date lint's rule for numbers: a figure written beside one
+   of the four (the label before it in its clause, one right after it, or an equation's left side) that no tool gave
+   for that kind is sent back (run 17: "$200,000" as the 2× margin, the tool's notional after the cut). Two more: the
+   liquidation the wrong way round (run 18: further at 10× than at 2×), and cross margin called Bitfunded's (run 19, "as
+   Bitfunded does": troid has no recorded source for its margin modes; the candidate's TROID.md now says so).
+2. **The reset.** A guardrail: 16:00 UTC, in effect by 16:10 UTC, then the patch's sentence word for word ("Local clocks
+   move with daylight saving and UTC doesn't, …"). A lint on a local hour where the reset is in question (noon, midday,
+   mid-afternoon, EDT/EST, an am/pm or 1–12 o'clock hour not in UTC, "in summer/winter"), and a backstop: a bracket or
+   sentence holding one goes, troid's sentence leads if the reset's own sentence went (run 17), and the DST sentence is
+   there once, in place of the reply's own words for it (run 18), never splitting "i.e. 16:00–16:10 UTC" (run 20).
+3. **The crossover.** The guardrail, `CANDIDATE_RULES.crossover` and the candidate's TROID.md state it exactly: below
+   $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds,
+   and above the start too. A lint on "even a small amount", "even modestly" and "both static floors" (runs 17 to 19).
+4. **How questions.** A guardrail: after the one-line answer, the formula with an equals sign and its terms, then one
+   example a tool computed, once. Lints: no formula, no figure a tool computed, the same worked equation twice (run 18's
+   b-stop); a lead-in whose worked figures the answer gives again goes, and so does the question written back as a
+   heading (run 18).
+5. **Out of scope.** A question about where a price is going, what moves the market or the news, answered with no
+   tool, gets troid's wording word for word (`OUT_OF_SCOPE_REPLY`, from the live guardrail, support.md section 9 and
+   TROID.md): "ask troid does not browse and has no live data: it has no live price, never predicts one, and doesn't
+   follow the news. troid prices what you bring: an entry, a stop and an account, against the firm's own rules." A lint
+   on a place named by kind (runs 17 and 18: "news services", "a market data service or news outlet").
+6. **The checker** (`web/eval_character.js`, `web/eval/character.json`). Its three misses fixed: the reset's retired
+   hour now anywhere in a paragraph (noon, midday or mid-afternoon with New York, Eastern, EDT or EST); s-firm's fee
+   guard reads "$50k+" as no fee under $500; e-blown's causes now include "since troid last read it". Checked again:
+   run 17 25 → 22 of 30, run 19 23 → 21, run 20 (live) 19, unchanged: the misses, and nothing else. The six false
+   failures stay as they are (the owner: list them, don't loosen them): p-size's `ceil(2,000/480) − 1 = 4` (the subset
+   run, run 19), b-leverage's "the same either way" (the subset run, run 17), o-montecarlo's "not something troid can
+   run" (run 17) and "is not run here" (run 19), p-assets' "no record of it either way" (run 19), ex-angry's "an input
+   that didn't match" (run 19), o-predict's "has no way to predict prices and never does" (run 20, live).
+
 ## Staged 2026-10-05: the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step, "can I trade BTC and a stock?")
 
 - **What a firm lets you trade.** The rules tools never gave the model firms.json `_asset_universe`, so it said troid has
@@ -40,6 +80,23 @@ and a person's read finds no error" after run 16. Promotion is one commit: the f
   both entry and exit", with no product restriction, now cites all 8 products; Challenge & Trader Stage's Express (3%,
   3%, 9%, 1:5) and Instant (3%, 6%, 1:5); the daily reset at 00:00 (UTC+8), which is the recorded 16:00 UTC. The
   Instant daily loss conflicts (FAQ 4%, help centre 3%) and is logged in `_conflicts_found`; troid keeps 3%.
+
+**Evaluated 2026-10-05** (`web/eval/runs/2026-10-05-*`, $5.70 on the eval key in all, at the runner's prices). The six
+cases the calculator changes touch and the two new ones, candidate against live: 6 and 2 of 8 automatically; on a read
+the candidate one error (b-stop, its answer last), the live prompt seven, two critical (p-size at the live tools' fee
+convention, 1.622095; o-montecarlo's "Let's"). Every case, three candidate runs and the live baseline: runs 17, 18 and
+19 passed 25, 29 and 23 of 30 automatically and had 9, 6 and 7 failing cases on a read, none critical; run 20 (live) 19
+automatically, 13 on a read, one critical (p-size). `--promotion --candidate 17,18,19 --live 20`: (a) and (b) met
+(7.33 against 13.00), (c) not: incomplete method (run 19's b-limits and b-leverage, no formula) and repeated text (run
+18's b-stop) are kinds run 20 doesn't have. Not promoted: the owner's decision. The new cases were right in all three
+runs (p-assets BTC and TSLA, dated; p-ladder-instant the firm's "50% payout penalty"; the live prompt failed both).
+Recurring in the candidate's runs: New York's reset hour given by season (p-reset-local in 17 and 19, p-reset in 17;
+run 18 declined to give one, "not a figure any tool here returns"), the crossover overstated ("even a small amount",
+"even modestly": the floor governs only below $98,000), b-leverage's worked example (a different error in each run),
+and out-of-scope replies pointing outside by kind (Haiku). The reads found the checker wrong both ways: it fails p-size's
+`ceil(2,000/480) − 1 = 4` (read without the ceiling), b-leverage's "the same either way", o-montecarlo's "not something
+troid can run" and p-assets' "no record of it either way"; it passes "noon" more than 30 characters from "New York" and
+s-firm's fees above $500 when "$50k+" appears.
 
 ## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
 

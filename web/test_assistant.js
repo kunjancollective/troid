@@ -352,6 +352,9 @@ const fs0 = require("fs"), path0 = require("path");
 // run 16's number and formula lints read the tools' real results, which the older tests' emulated tools don't carry:
 // those tests leave them out, and the number lint is tested on its own below
 const NEW16 = /^Every number in the answer comes from|^A teaching answer writes its formula|^Write the formula in symbols|^The answer opens by pointing/;   // run 16 and the subset run of 2026-09-24
+// the read of runs 17 to 19 (2026-10-05): nine lints the older runs' replies were never written against; the older tests
+// leave them out, and they are tested on runs 17 to 20's replies below
+const NEW1005 = /^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -366,10 +369,13 @@ const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidat
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
 // the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
 const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
-ok("candidate: the live prompt plus six guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
-   CG.length === 6 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+ok("candidate: the live prompt plus eleven guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 11 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
    && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
+   && CG.some((g) => /a tool returned this turn for that very thing/.test(g) && /no recorded source for Bitfunded's margin modes/.test(g))
+   && CG.some((g) => g.includes(handler.DST_SENTENCE) && /no noon, midday or mid-afternoon/.test(g)) && CG.some((g) => /below \$98,000 at the day's start the maximum-loss floor binds/.test(g) && /even a small amount/.test(g))
+   && CG.some((g) => /the formula written out with an equals sign/.test(g) && /Give the example once/.test(g)) && CG.some((g) => g.includes(handler.OUT_OF_SCOPE_REPLY))
    && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets"
    && /firm-level rules/.test(handler._toolsFor("candidate").find((t) => t.name === "firm_rules").description) && !/firm-level/.test(handler._toolsFor("live").find((t) => t.name === "firm_rules").description));
 // the live test of 2026-10-04: firm_assets (BTC and the one stock named, TSLA, each with its hold limit, read 2026-09-24),
@@ -568,7 +574,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
         : { rule: parts[0], document_section: parts.slice(1).join(" — ").replace(/,\s*read [^]*$/, ""), read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
     return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
   const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
-  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n));
+  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n) && !NEW1005.test(n));
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
   ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
@@ -722,6 +728,68 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("candidate: troid's assumptions are listed once, by the service (p-size's own list of them goes); live keeps both",
      !/Assumptions troid supplied/.test(psC) && /troid's assumptions, not the firm's rules: margin mode cross/.test(psC) && /Circuit-breaker order/.test(psC)
      && /Assumptions troid supplied/.test(psL), psC.slice(-500)); }
+// the read of runs 17 to 19 (2026-10-05, the owner's six fixes), on the replies of runs 17 to 20 and the subset run: each
+// new lint flags exactly the replies a person read as its error, the live prompt none; the backstops on the replies
+{ const RUNS = ["subset-candidate", "subset-live", "run17", "run18", "run19", "run20"];
+  const R17 = Object.fromEntries(RUNS.map((n) => [n, require("./eval/runs/2026-10-05-" + n + ".json").results]));
+  const at17 = (n, id) => R17[n].find((c) => c.id === id), body17 = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
+  // the tools as the run reports them: the numbers in their results, under no name (the labelled-figure lint is tested on real tool runs below)
+  const tools17 = (c) => (c.tools_used || []).map((name, i) => ({ name, input: {}, result: i === 0 ? Object.fromEntries((c.tool_numbers || []).map((v, j) => ["n" + j, Number(v)])) : {} }));
+  const KINDS = { liq: /^Higher leverage brings/, cross: /^troid has no recorded source for Bitfunded's margin/, reset: /^Give Bitfunded's reset in UTC only/,
+    xover: /^State the crossover exactly/, formula: /^The question asks how something is worked out/, worked: /^Work one example through a tool/,
+    repeat: /^The worked example is given twice/, outside: /^Name no place for prices/ };
+  const hits = [], onLive = [];
+  for (const n of RUNS) for (const c of R17[n]) {
+    const ks = Object.keys(KINDS).filter((k) => handler._lintNotesFor(body17(c), "candidate", tools17(c), c.q, c.q).some((m) => KINDS[k].test(m)));
+    if (ks.length) hits.push(n + " " + c.id + " " + ks.join("+"));
+    if (handler._lintNotesFor(body17(c), "live", tools17(c), c.q, c.q).some((m) => NEW1005.test(m))) onLive.push(n + " " + c.id);
+  }
+  ok("candidate lints (the read of runs 17 to 19): the crossover's 'even a small amount', the reset's local hours, liquidation the wrong way round, cross margin called Bitfunded's, a how question with no formula or no example from a tool, the example given twice, a place named by kind for prices or news; nothing else in runs 17 to 20 and the subset run, and nothing on live",
+     hits.join("; ") === ["subset-candidate b-stop formula", "run17 p-crossover xover", "run17 p-reset reset", "run17 p-reset-local reset", "run17 o-news outside",
+       "run18 b-stop repeat", "run18 b-leverage liq", "run18 p-crossover xover", "run18 o-predict outside", "run19 b-limits formula+worked", "run19 b-leverage cross+formula",
+       "run19 p-crossover xover", "run19 p-reset reset", "run19 p-reset-local reset", "run20 p-reset reset", "run20 p-reset-local reset", "run20 o-predict outside"].join("; ") && !onLive.length, [hits, onLive]);
+  // the labelled-figure lint on the tools each reply's figures came from, run again
+  const T17 = (name, a) => ({ name, input: a, result: RT(name, a, "candidate") }), ps = (o) => T17("trade_math", Object.assign({ calc: "position_size" }, o));
+  const lev = { run17: [ps({ risk: 20000, entry: 70000, stop_pct: 2, leverage: 2, equity: 100000, side: "long" }), ps({ risk: 20000, entry: 70000, stop_pct: 2, leverage: 10, equity: 100000, side: "long" })],
+    run18: [ps({ risk: 500, entry: 77872, stop: 76580, leverage: 10, equity: 100000 }), ps({ risk: 500, entry: 77872, stop: 76580, leverage: 2, equity: 100000 })],
+    run19: [ps({ risk: 500, entry: 77872, stop: 76580, leverage: 2, equity: 100000 }), ps({ risk: 500, entry: 77872, stop: 76580, leverage: 10, equity: 100000 })],
+    "subset-live": [ps({ risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps({ risk: 500, entry: 77872, stop: 76580, leverage: 10 })],
+    run20: [ps({ risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps({ risk: 500, entry: 77872, stop: 76580, leverage: 10 })] };
+  const st = T17("size_trade", { firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop_pct: 0.3, risk_pct: 0.5 });
+  const bs = [ps({ risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step", side: "long" }), ps({ risk: 500, entry: 77872, stop: 76000, firm: "bitfunded", product: "1step", side: "long" }), ps({ risk: 500, entry: 77872, stop: 76580 })];
+  const rm = [T17("trade_math", { calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, firm: "bitfunded", product: "1step", result: 1000 })];
+  const slips = (n, id, tools) => handler._labelledFigureSlips(body17(at17(n, id)), tools, at17(n, id).q);
+  const others = ["run17", "run18", "run19"].flatMap((n) => [slips(n, "p-size", [st]), slips(n, "b-stop", bs), slips(n, "ex-r", rm)]);
+  ok("candidate figure lint: run 17's b-leverage, '$200,000' as the 2× margin (the tool's notional after the cut; its margin is $100,000), is asked to quote the tool; the other b-leverage, p-size, b-stop and ex-r replies are not",
+     JSON.stringify(slips("run17", "b-leverage", lev.run17)) === JSON.stringify([{ s: "$200,000", kind: "margin" }])
+     && ["run18", "run19", "subset-live", "run20"].every((n) => !slips(n, "b-leverage", lev[n]).length) && others.every((x) => !x.length), [slips("run17", "b-leverage", lev.run17), others]);
+  ok("figure lint: a figure beside its kind that no tool gave for it is named; the tool's own, a leverage, the user's number and an operand are not",
+     handler._labelledFigureSlips("At 2×, margin = $30,136.22 ÷ 2 = $15,068.11, and the quantity is 0.386997.", lev.run19, "10x or 2x?").length === 0
+     && JSON.stringify(handler._labelledFigureSlips("At 2×, margin is $16,000.", lev.run19, "q")) === JSON.stringify([{ s: "$16,000", kind: "margin" }])
+     && handler._labelledFigureSlips("≈1.43 independent bets.", [], "q").length === 0 && handler._labelledFigureSlips("Risking $2,500 of margin.", [], "I risk $2,500").length === 0);
+  // the backstops
+  const fixed = (c) => handler._outOfScopeFixed(handler._resetInUtcOnly(handler._withoutEchoedQuestion(c.reply, c.q), c.q), c.q, (c.tools_used || []).map((name) => ({ name })));
+  const resets = ["run17", "run18", "run19", "run20"].flatMap((n) => ["p-reset", "p-reset-local"].map((id) => [n + " " + id, body17({ reply: fixed(at17(n, id)) })]));
+  const LOCAL = /\bnoon\b|\bmid-?afternoon\b|\bmidday\b|\b(EDT|EST)\b|\bEastern (Daylight|Standard)\b|\b1[12]:00\b(?! UTC)|\bin (summer|winter)\b/i;
+  ok("candidate reset backstop: runs 17 to 20's reset answers keep 16:00 UTC and the DST sentence once, word for word (in place of the reply's own words for it, run 18), and no local hour; 'i.e. 16:00–16:10 UTC' is one sentence still (run 20)",
+     resets.every(([, t]) => /\b16:00(–16:10)? UTC\b/.test(t) && t.split(handler.DST_SENTENCE).length === 2 && !LOCAL.test(t))
+     && /i\.e\. 16:00–16:10 UTC\. Local clocks move/.test(resets.find(([k]) => k === "run20 p-reset-local")[1])
+     && /^Bitfunded's trading day resets at 00:00 UTC\+8, which is 16:00 UTC all year, in effect by 16:10 UTC\. Local clocks/.test(resets.find(([k]) => k === "run17 p-reset-local")[1])
+     && /\*\*Why it matters:\*\* Local clocks move with daylight saving/.test(resets.find(([k]) => k === "run18 p-reset-local")[1]),
+     resets.filter(([, t]) => !(/\b16:00(–16:10)? UTC\b/.test(t) && t.split(handler.DST_SENTENCE).length === 2 && !LOCAL.test(t))));
+  const others17 = RUNS.flatMap((n) => R17[n].filter((c) => !/^(p-reset|p-reset-local|o-predict|o-news)$/.test(c.id) && c.id !== "b-stop").map((c) => [n + " " + c.id, fixed(c) === c.reply]));
+  ok("candidate backstops: o-predict and o-news, answered with no tool, get troid's wording word for word; every other reply in runs 17 to 20 is left as it was",
+     ["run17", "run18", "run19", "run20"].every((n) => ["o-predict", "o-news"].every((id) => fixed(at17(n, id)) === handler.OUT_OF_SCOPE_REPLY))
+     && others17.every(([, same]) => same) && handler._outOfScopeFixed("x", "Where will Bitcoin's price be next week?", [{ name: "trade_math" }]) === "x"
+     && handler._outOfScopeFixed("x", "Will the price hit my stop before the reset?", []) === "x", others17.filter(([, same]) => !same).map(([k]) => k));
+  const b18 = at17("run18", "b-stop");
+  ok("candidate: the question written back as a heading goes (run 18, b-stop), and nothing else does",
+     /^Why does troid need (my|your) stop price to size a trade\?$/im.test(b18.reply) && !/^\W*Why does troid need (my|your) stop price/im.test(handler._withoutEchoedQuestion(b18.reply, b18.q))
+     && handler._withoutEchoedQuestion(b18.reply, b18.q).length > b18.reply.length - 80 && handler._withoutEchoedQuestion("Why?\n\nBecause.", "Why does troid need my stop price to size a trade?") === "Why?\n\nBecause.");
+  const SN = handler._saidNotRepeatedNext, FIN = "In practice: risking $500 at entry 77,872 with stop 76,580, quantity = 500 ÷ (1,292 + 61.78) = 0.369336.";
+  ok("candidate: what troid wrote before a tool call goes when the answer works the same figures again (run 18, b-stop); a lead-in with other figures stays",
+     !SN(["Risking $500 at entry 77,872 with stop 76,580: quantity = 500 ÷ (1,292 + 61.78) = 0.369336."], FIN).length
+     && SN(["At a 0.3% stop on 96,000 of equity, troid sizes it next."], FIN).length === 1); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1172,13 +1240,14 @@ fake.listen(18765, async () => {
     script = () => msg("end_turn", [{ type: "text", text: "R is the amount risked on one trade. Not financial advice. Verify with the firm before acting." }]);
     KV_CALLS.length = 0; before = calls.length;
     let cs;
-    for (let i = 0; i < 22; i++) cs = await call(hc, [U("What does R mean?")], { disclosed: true }, { headers: { "x-troid-candidate": CK }, ip: "198.51.100.200" });
+    // "What is R?", not "What does R mean?": the candidate asks a how question's draft for its formula once more (the read of runs 17 to 19)
+    for (let i = 0; i < 22; i++) cs = await call(hc, [U("What is R?")], { disclosed: true }, { headers: { "x-troid-candidate": CK }, ip: "198.51.100.200" });
     ok("candidate: 22 messages from one address in an hour, all answered (the operator's runs are not held to a visitor's limit)", cs.status === 200 && calls.length === before + 22, cs.status);
     ok("candidate: the reply says so, and nothing is stored or checked in the store", cs.j.variant === "candidate" && !KV_CALLS.length && ![...KV.keys()].includes("conv:" + cs.j.session), [cs.j.variant, KV_CALLS]);
     const cc = calls[calls.length - 1];
     ok("candidate: the model gets the staged file (and trade_math, live since the promotion)", cc.system.length === 5 && cc.system[0].text.includes(MARK) && /^# troid's character/.test(cc.system[1].text)
        && cc.tools.some((t) => t.name === "trade_math"), cc.system.map((b) => b.text.slice(0, 30)));
-    const hist = [U("What does R mean?"), A(cs.j.reply), U("and 2R?")];
+    const hist = [U("What is R?"), A(cs.j.reply), U("and 2R?")];
     r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: its signed history continues under the candidate", r.status === 200 && r.j.variant === "candidate", r);
     r = await call(hc, hist, { session: cs.j.session, sig: cs.j.sig, disclosed: true });
@@ -1189,9 +1258,9 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 6 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 25 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 11 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 34 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;

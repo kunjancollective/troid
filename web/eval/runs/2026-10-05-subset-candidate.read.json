@@ -1,0 +1,23 @@
+{
+ "_summary": "Read in full on 2026-10-05, against TROID-CHARACTER.md's pass criterion and the promotion rule's severities (CLAUDE.md). The candidate as staged on 2026-10-05 (firm_assets, Bitfunded's firm-level rules dated from provenance, the concentration ladder per product, with the calculator audit's F1, F5 to F7 and D6 and the fixes of runs 10 to 16) on the six cases the calculator changes touch and the two new ones. 6 of 8 automatically. Both automated failures are the checker's: p-size's 'ceil(2,000/480) − 1 = 4' was read without its ceiling, and b-leverage's 'the loss at the stop is the same either way' fell outside the pattern. On a read, one error, major: b-stop (incomplete method). $0.6778 on the eval key.",
+ "ex-r": "Note: correct through trade_math: 1R = 1,292 × 0.3862 = $498.97, the fees to open at entry and to close at the stop $23.86, 1R with fees $522.83, $1,000 = 1.913R; the fee dated; no firm limit stated.",
+ "b-stop": "Error (method): the figures are right through trade_math (fee per unit 61.78 on entry plus stop, 0.369336 units, $28,760.93, fees $22.82, the loss at the stop $500), but the answer isn't first: the reply opens on the worked example, never introduced as one, as if the trade were the user's ('Risking $500 with entry 77,872 and stop 76,580: …'). The formula appears only with its numbers in ('quantity = 500 ÷ (1,292 + 61.78)'), and the answer itself comes last ('half of the division that produces the position size').",
+ "b-leverage": "Note: correct through trade_math: no, the loss at the stop is the same while the margin fits in equity; the formula and why; worked at 2× on the 1-Step (its 5× cap said, dated) and at 10× with no firm: 0.771891 units, $46,313.45, margin $23,156.72 and $4,631.34, the loss $500 both ways; the margin cut stated. The automated failure is the pattern's: it wants 'same loss' or 'no … change', and the reply says 'the loss at the stop is the same either way'.",
+ "p-crossover": "Note: correct through explain_rule and check_budget: $98,000, the floors $96,000 and $94,000 on a fresh day, $2,000 below the start, half the $4,000 daily budget, which limit binds the right way round, floating losses dated. 'the same distance below the account' follows 'the day's starting balance', so it is the right distance. The sources block lists the 4% and 6% twice (the service's, from two tools).",
+ "p-assets": "Note: correct through firm_assets: BTC (Major Crypto Assets, 10 days) and TSLA, the one stock Bitfunded's page names (Traditional Trading Pairs, 5 days), Restricted Trading Practices read 2026-09-24; an unlisted stock unrecorded either way, never 'not offered'. Clumsy: 'listed, as \"BTC (Major Crypto Assets),\" tier Major Crypto Assets'.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% falls in Instant's 55–64% step, a '50% payout penalty' in the firm's words, the whole Instant ladder, read 2026-10-04. 'troid does not characterize what that penalty is a share of beyond the firm's own words, and it is not described as a cut' describes the firm's wording. 'concentration is a payout-side rule, not a disqualifying one' says more than the firm's words do; the live prompt says the same ('not an account failure in itself').",
+ "p-size": "Note: every figure right through size_trade: stop 78,105.616, fee per unit 62.391, 1.621583 units, $126,275.91, margin $25,255.18, fees $101.17 (21.08%), budgets $4,000 and $2,000, the drawdown binding below the $98,000 crossover, 24%, 4 losses left, liquidation 75.15%. The automated failure is the checker's: it read 'ceil(2,000/480) − 1 = 4' without the ceiling.",
+ "o-montecarlo": "Note: correct: no simulation, said once; 0.21R, 21R, 45.45%, Kelly 17.5% and half 8.75% beside the 1-Step's 6% (dated); troid's published Monte Carlo quoted with its own assumptions (68% at 1%, 100% at 2%, 0% capped; MODELLED), kept apart from the user's inputs.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "the answer last, not first; the formula only with its numbers in"
+   ]
+  }
+ ]
+}

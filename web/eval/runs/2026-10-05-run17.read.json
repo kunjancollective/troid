@@ -1,0 +1,134 @@
+{
+ "_summary": "Read in full on 2026-10-05, against TROID-CHARACTER.md's pass criterion and the promotion rule's severities (CLAUDE.md). The candidate as staged on 2026-10-05, on all 30 cases, 40 s apart. 25 of 30 automatically; two of the five automated failures are the checker's (b-leverage's 'stays the same either way' outside the pattern; o-montecarlo's 'not something troid can run' matching 'troid can run'). On a read, nine errors, none critical, all major. p-crossover says the maximum-loss floor governs after 'even a small amount' is given back (only below $98,000). b-leverage gives the 2× margin of its full-size example wrongly ($100,000, then $200,000; it is $500,000). p-reset and p-reset-local give New York's hour by season ('noon EDT in summer, 11:00 EST in winter'), the wording the fourth patch retired, against the candidate's own TROID.md and explain_rule. o-news points outside by kind and to the firm's dashboard. s-product quotes two blogs' fees from no tool. s-firm says troid has read no fee under $100,000's, hiding the Express's $39 and the Instant's $249 at $5,000 (run 7's error, which the check missed on '$50k+'). u-topstep states Crypto Fund Trader's drawdown undated. d-stock (Haiku) states three firms' stock lists, two of which troid hasn't read, and promises 'troid will add it'. Fixed since runs 9 to 16: ex-r's daily limit now comes dated through the tools. $1.1124 on the eval key (30 Haiku and 56 Sonnet calls).",
+ "ex-r": "Note: correct through trade_math, firm_rules and check_budget: 1R = $498.97, fees $23.86 (the exit fee at the stop), 1R with fees $522.83; on a fresh $100,000 1-Step the 4% daily budget of $4,000 dated through the tools, ceil(4,000 ÷ 522.83) = 8 reaches the limit, 7 losses leave equity above it with $340.19 of room. The error runs 9 to 16 shared, the daily limit undated, is gone.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 4.38× for full Kelly, 1.46× and 2.19× for half Kelly, the 1-Step's 6% and 4% dated.",
+ "ex-recovery": "Note: correct: 25%, beside the largest maximum loss troid has read, 10% (Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase), with sources.",
+ "ex-angry": "Note: correct: the opener, the inputs, the three causes once, the dashboard and hello@troid.ai.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the formulas, the $96,000 and $94,000 floors, $4,000 binding, the $98,000 crossover the right way round, trailing products named by product. 'the maximum loss allows $6,000 more total' reads oddly (it allows $6,000 in all).",
+ "b-stop": "Note: correct through trade_math: the answer first, the formula with the fee per unit on entry plus stop, why; 0.386997 units and $30,136.22 with no fee, 0.25 and 1 at stops 2,000 and 500 below; the fee's effect said in words.",
+ "b-leverage": "Error (math): the answer, the formula and why are right, and the margin cut is the example's subject: a $20,000 risk at a 2% stop from 70,000 is 14.285714 units, $1,000,000 notional; at 10× the margin is $100,000, inside $100,000 of equity, so the loss is $20,000; at 2× the size is cut to 2.857143 units and the loss is $4,000. But the 2× paragraph gives the full size's margin as '$100,000' and then '$200,000 at full size': it is $500,000 ($200,000 is the notional after the cut). 'the risk you specified' calls troid's example the user's. The automated failure is the pattern's ('stays the same either way').",
+ "q-expectancy": "Note: correct: 0R and 40%, both formulas, costs said to come on top.",
+ "q-stats": "Note: correct: SE 0.0453R, t 0.729, the interval [−0.0558R, +0.1218R]; troid's out-of-sample +0.008R on BTC and ETH first, MEASURED, then the in-sample best of about 30, MEASURED and never alone.",
+ "q-correlation": "Note: correct: 4 ÷ 2.8 = 1.43, its assumptions stated.",
+ "q-atr": "Note: correct: 600 × √4 = 1,200, its assumption stated.",
+ "p-crossover": "Error (rule): $98,000, the formula, the floors on a fresh day, $2,000 below the start and floating losses dated are right; but 'So a trader who has given back even a small amount already needs to size against the maximum-loss floor' is wrong for any day that starts between $98,000 and $100,000, where the daily limit still binds (at a $99,000 day start the daily room is $4,000 and the drawdown room $5,000): a reader who sizes against the floor there sizes past the daily limit. Run 19 says the same ('slipped even modestly').",
+ "p-reset": "Error (wording): 16:00 UTC, 16:00–16:10 and the floating loss carried in full, sourced; but 'noon EDT in summer, 11:00 EST in winter' for New York is the retired wording: the candidate's TROID.md and explain_rule both say a local hour holds only for the date it was converted for, and give none. The runner's retired-wording check missed it ('noon' 50 characters from 'New York').",
+ "p-reset-local": "Error (wording): 16:00–16:10 UTC and the settlement window right, sourced, and 'not a fixed New York hour year-round'; but it gives 'noon Eastern in summer (EDT) and 11:00 Eastern in winter (EST)', by season rather than for a stated date, and never names 1 November, when New York leaves daylight saving. The launch handoff's right answer is a local hour only for a stated date.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days, Restricted Trading Practices s.1 read 2026-09-24. Clumsy: 'listed as \"ETH (Major Crypto Assets),\" tier Major Crypto Assets'.",
+ "p-assets": "Note: correct through firm_assets: BTC (10 days) and TSLA, the one stock a page troid has read names (5 days), read 2026-09-24; another stock unrecorded either way.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in Instant's 55–64% step, a '50% payout penalty' in the firm's words, the whole ladder, distinct from the 1-Step and 2-Step's from 65%, read 2026-10-04; troid has no basis for what the penalty is taken against beyond those words.",
+ "p-size": "Note: every figure right through size_trade (1.621583 units, $126,275.91, margin $25,255.18, fees $101.17 and 21.08%, 4 losses left, 75.15%). The liquidation is labelled 'MODELLED' beside its assumption; it is computed, not simulated (DERIVED under troid's assumed maintenance margin).",
+ "e-blown": "Note: steps 1, 2 and 5, no step 4 causes; its general points (the crossover, floating losses, the reset) name no firm and no figure, like run 8's; 'accounts usually fail for one of a few reasons' is a frequency with nothing behind it.",
+ "e-scam": "Note: the scam reply word for word (Haiku).",
+ "o-predict": "Note: no live data, no prediction, no place named (Haiku); 'the firm's own documents are the record' for prices is odd.",
+ "o-montecarlo": "Note: correct: no simulation; 0.21R, 45.45% and 21R through trade_math; troid's published Monte Carlo with its assumptions (68% at 1%, 100% at 2%, 0% capped; MODELLED), kept apart from the user's inputs. The automated failure is the pattern's: 'not something troid can run' matched 'troid can run'.",
+ "o-news": "Error (boundary): no live data; but it points outside by kind ('troid points to the exchanges and news services themselves') and calls 'the firm's own dashboard and a live exchange' the record for anything time-sensitive (Haiku).",
+ "s-product": "Error (sources): the refusal first; the table and its read dates right; 8% + 5% = 13% against 10%, both ceilings tighter on the 1-Step. But 'a May 2026 blog says $599, a September 2025 blog says $799' comes from no tool and carries no read date, and the $799 is the one troid's record explains (the 2-Step Expert's fee), so 'the other figures are not reconciled' is wrong for it. 'from the tool results above' points at results the reader never saw.",
+ "s-firm": "Error (rule): the refusal first, no product singled out, each $100,000 fee sourced; but 'troid hasn't read those smaller-size price tables, so it can't state them' is wrong: troid records Bitfunded's Express at $39 and Instant at $249 at $5,000 (TROID.md's profiles; no source recorded), so a beginner with $500 is left with only fees above it, run 7's error. The check missed it: '$50k+' satisfied its guard.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Error (sources): Topstep unread, correctly; then, unasked, Crypto Fund Trader's drawdown by product (the 1-Phase trails and locks, the 2-Phase static) with no source and no read date.",
+ "d-fill": "Note: correct: section 9's facts, no price, no stop offered, no place named.",
+ "d-stock": "Error (rule, boundary): NVDA not on the pages troid has read, 'not offered by troid's firms' in the field and no rules to size it against, right; but 'Bitfunded, BrightFunded and Crypto Fund Trader each name their own set of stocks' states lists troid hasn't read (it records one stock, Bitfunded's TSLA; Crypto Fund Trader names none), 'an asset no firm lets you trade' says more than troid knows, and 'write to hello@troid.ai and troid will add it' is a promise (Haiku).",
+ "d-keep": "Note: correct: the operator only for the stored conversations, each message sent to Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the full size's margin at 2× given as $100,000 and $200,000 (it is $500,000) in troid's own example",
+    "troid's example called the user's ('the risk you specified')"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the maximum-loss floor said to govern after 'even a small' loss; it governs only below $98,000"
+   ]
+  },
+  {
+   "case": "p-reset",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "New York's hour by season, the retired wording, against TROID.md and explain_rule"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "New York's hour by season, not for a stated date; 1 November never named"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind",
+    "the firm's dashboard as the record for market moves"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source",
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "the blogs' $599 and $799 from no tool, undated",
+    "the $799 called unreconciled; troid's record explains it",
+    "points at tool results the reader never saw"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "says troid has read no fee below the $100,000 level; it records the Express's $39 and the Instant's $249 at $5,000"
+   ]
+  },
+  {
+   "case": "u-topstep",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "Crypto Fund Trader's drawdown rule stated unasked, undated"
+   ]
+  },
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "boundary wording"
+   ],
+   "detail": [
+    "stock lists stated for firms troid hasn't read them for",
+    "'an asset no firm lets you trade'",
+    "a promise: 'troid will add it'"
+   ]
+  }
+ ]
+}
