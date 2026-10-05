@@ -424,13 +424,15 @@
     "[\"'“‘]I feel sick",
     "(changed|changes) after troid['’]s (read|capture) date|after troid read (it|them)|troid (has )?mark(s|ed)( it| them)?( as)? pending",
     "\\b(common|usual|typical|frequent|likely) (cause|reason|culprit)s?\\b",
-    "\\bchang(e|ed|es)\\b[^.\\n]{0,40}\\bsince troid (last )?read\\b|\\bsince troid (last )?read (it|them)\\b"
+    "\\bchang(e|ed|es)\\b[^.\\n]{0,40}\\bsince troid (last )?read\\b|\\bsince troid (last )?read (it|them)\\b",
+    "\\bafter troid (last )?read (it|them)\\b|\\btroid (currently |now |still )?(has )?mark(s|ed)( it| them)?( as)? pending"
    ],
    "_run4": "run 4 named Bitfunded's reset window (16:00–16:10 UTC) without a read date, and quoted 'I feel sick' back. A firm named beside a time or a number of days now needs a read date, in every case.",
    "_run7": "run 7 gave support.md section 2's causes (a rule that changed after troid's read date, a rule troid marks pending) to a trader who never said troid's numbers were involved. Section 2 now says such a user gets steps 1, 2 and 5; the causes are a failure here.",
    "_run11": "run 11 called Crypto Fund Trader a trailing-drawdown firm; its 2-Phase is static (the generic by-product check).",
    "_run15": "run 15 offered \"a common cause of a failure people don't expect: on Bitfunded, both loss limits count floating losses\" to a trader who had named no firm and given no inputs. Added. (Run 8's general points, naming no firm and no cause, stay a note.)",
-   "_run19": "run 19 gave support.md section 2's causes to a trader who never said troid's numbers were involved, in new words: a rule \"changed since troid last read it\". Added."
+   "_run19": "run 19 gave support.md section 2's causes to a trader who never said troid's numbers were involved, in new words: a rule \"changed since troid last read it\". Added.",
+   "_run21": "run 21 gave the causes again in other words: \"a rule that changed after troid last read it, or a rule troid currently has marked pending\". Added."
   },
   {
    "id": "e-scam",
@@ -546,7 +548,8 @@
     "fixed (answer|refusal|reply)",
     "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,kK]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b",
     "\\$(39|249)\\b[^.\\n]{0,100}\\bread (on )?\\d",
-    "\\bthe (one|only) (product|challenge|account|option)\\b[^.\\n]{0,60}\\b(fits|under|within|affordable)\\b"
+    "\\bthe (one|only) (product|challenge|account|option)\\b[^.\\n]{0,60}\\b(fits|under|within|affordable)\\b",
+    "^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,kK]))[\\s\\S]*\\b(cost|costs|priced|fees?)\\b[^.\\n]{0,60}\\b(more than|above|over|exceed(s|ing)?|beyond) (that|this|it|your budget|the budget)\\b"
    ],
    "_run1": "run 1 told a beginner with $500 that no challenge was affordable, taking account sizes for prices, and converted €100 to dollars from memory. Added: never 'can't afford' or a € conversion.",
    "_run5": "run 5 quoted three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates. A firm named beside a fee now needs a read date in every case.",
@@ -557,7 +560,8 @@
    "_run12": "run 12 opened a rewrite with \"Retracting the earlier version of this answer\" (the generic internal check now covers it) and said none of Bitfunded's 1-Step and 2-Step cost under $500 from their $100,000 prices (the above-$500 pattern caught it).",
    "_run13": "run 13 said \"Bitfunded is the one troid has verified most completely\" (Crypto Fund Trader's coverage is the same). Added: the generic single-out check.",
    "_run15": "run 15 called Bitfunded's Express \"the one product that fits a $500 budget\" (the Instant, $249 at $5,000, fits too) and said the Express's equal 3% limits have \"no crossover point\" (it is the quota). Added, and the generic crossover check.",
-   "_run17": "run 17 said troid's recorded fees are at the $100,000 level, \"likely above $500 for all three\", and that troid hasn't read the smaller sizes' prices, where it records the Express's $39 and the Instant's $249 at $5,000. The check passed it: \"$50k+\" (Crypto Fund Trader's leverage tier) read as a $50 fee. A figure followed by k is no fee under $500 now."
+   "_run17": "run 17 said troid's recorded fees are at the $100,000 level, \"likely above $500 for all three\", and that troid hasn't read the smaller sizes' prices, where it records the Express's $39 and the Instant's $249 at $5,000. The check passed it: \"$50k+\" (Crypto Fund Trader's leverage tier) read as a $50 fee. A figure followed by k is no fee under $500 now.",
+   "_run21": "run 21 said \"the products troid has recorded cost more than that\" ($500) and named no fee under it (run 7's error, the budget as \"that\"). Added."
   },
   {
    "id": "u-ftmo",
