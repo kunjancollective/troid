@@ -76,10 +76,11 @@
 .gseg.over{background:var(--block)}
 .d2in,.d2out{min-width:0}
 /* the affiliate line: under the result on a phone (the output's own lines become the column's, ordered), under the
-   Your risk card from 1100 px; its link and label a size up from the desk's 11px */
+   Your risk card from 1100 px; its link and label 13px (the owner, 2026-10-05), the rest the desk's 11px */
 .affl{min-width:0;margin:12px 0 0;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
 .affl[hidden],.affl>[hidden]{display:none}
-.affl p{margin:0}.affl .al{margin-top:6px;font-size:11.5px}.affl .al a{display:inline-block;padding:4px 0}
+.affl p{margin:0}.affl .al{margin-top:6px;font-size:13px}.affl .al a{display:inline-block;padding:4px 0}
+.affl .geono a{display:inline-block;padding:4px 0}
 .affl .req{margin-top:4px;font-size:10.5px;line-height:1.6}
 @media (max-width:1099.98px){
   .d2g{display:flex;flex-direction:column}.d2out{display:contents}

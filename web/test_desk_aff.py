@@ -7,8 +7,9 @@ result; the same element moved by CSS. Only the selected firm's line shows, and 
 the sentence, "<firm> challenges ↗ · affiliate link", "· code X" where the firm has one, "· how troid is funded" (the
 FAQ's answer). It reads the same in every state (empty, OK, REDUCE, BLOCK, pending) and changes only with the firm
 selector. rel="sponsored noopener", a new tab, nothing tracked. The link and its label are a size up from the desk's
-small text (11px -> 11.5px), and the firms panel's and the compare's links a size up from theirs (10.5px -> 11px,
-11.5px -> 12px). At 390 px nothing runs off sideways and the link is no mis-tap beside an input.
+small text (13px since 2026-10-05, the owner: 11.5px read too close to the 11px around it), and the firms panel's
+and the compare's links a size up from theirs (10.5px -> 11px, 11.5px -> 12px). Where the visitor's country hides the
+link (geo.json; web/test_geo.py) the line is the message instead; here /api/where answers US, where every link shows. At 390 px nothing runs off sideways and the link is no mis-tap beside an input.
 
     python web/test_desk_aff.py
 """
@@ -86,7 +87,7 @@ def main():
     ok("one #affl in the page", raw.count('id="affl"') == 1)
     ok("a line for each firm whose link is live, and none for the rest",
        all(f'data-aff="{k}"' in raw for k in live) and all(f'data-aff="{k}"' not in raw for k in ORDER if k not in live), live)
-    seg = raw[raw.index('id="affl"'):raw.index("</div>\n", raw.index('data-aff="' + live[-1] + '"')) + 6] if live else ""
+    seg = raw[raw.index('id="affl"'):raw.index("\n</div>", raw.index('data-aff="' + live[-1] + '"')) + 7] if live else ""
     ok("each link is rel=\"sponsored noopener\" and opens a new tab",
        seg.count('rel="sponsored noopener" target="_blank"') == len(live), seg[:400])
     ok("nothing tracked: no query string added to a firm's link, no ping, no onclick",
@@ -114,6 +115,8 @@ def main():
 
             def handler(r):
                 u = r.request.url.split("?")[0]
+                if u.endswith("/api/where"):            # a country where every firm's link shows
+                    return r.fulfill(status=200, content_type="application/json", body='{"country":"US"}')
                 if u.endswith(("/status.json", "/calendar.json", "/audit.json")) or "/api/ticker" in u:
                     if u.endswith("/audit.json"):
                         return r.fulfill(status=200, content_type="application/json", body=(PUB / "audit.json").read_text())
@@ -126,6 +129,7 @@ def main():
             pg.on("pageerror", lambda e: errs.append(str(e)))
             pg.goto(url + "/", wait_until="load")
             pg.wait_for_timeout(400)
+            pg.wait_for_function("document.documentElement.getAttribute('data-geo-state')==='known'", timeout=5000)
             return ctx, pg, errs
 
         # every state, every firm, at a desktop width: the line is the selected firm's and the same in each state
@@ -205,13 +209,14 @@ def main():
         size = pg.evaluate("()=>{const g=s=>getComputedStyle(document.querySelector(s)).fontSize;"
                            "return {al:g('#affl [data-aff]:not([hidden]) .al'),a:g('#affl [data-aff]:not([hidden]) .al a'),"
                            "aw:g('#affl .aw'),audit:g('#rulesread'),panel:g('.cell .s.aff')}}")
-        ok("the link and 'affiliate link' are 11.5px, a size up from the desk's 11px small text, and the same as each other",
-           size["al"] == size["a"] == "11.5px" and size["audit"] == size["aw"] == "11px", size)
+        ok("the link and 'affiliate link' are 13px, the same as each other, against the desk's 11px small text",
+           size["al"] == size["a"] == "13px" and size["audit"] == size["aw"] == "11px", size)
         ok("the firms panel's affiliate links: 11px, a size up from 10.5px", size["panel"] == "11px", size)
         ctx.close()
 
         ctx, pg, errs = page(1280)
         pg.goto(url + "/compare", wait_until="load")
+        pg.wait_for_function("document.documentElement.getAttribute('data-geo-state')==='known'", timeout=5000)
         pg.wait_for_timeout(300)
         cf = pg.evaluate("()=>[...document.querySelectorAll('.colfoot a[rel~=sponsored]')].map(a=>getComputedStyle(a).fontSize)")
         ok("the compare's affiliate links: 12px, a size up from 11.5px", cf and set(cf) == {"12px"}, cf)

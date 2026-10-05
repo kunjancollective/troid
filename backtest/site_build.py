@@ -29,6 +29,7 @@ sys.path.insert(0, str(HERE))
 import i18n  # noqa: E402
 import site_text  # noqa: E402
 import sources  # noqa: E402
+import geo  # noqa: E402
 from jinja2 import Environment, FileSystemLoader, StrictUndefined  # noqa: E402
 
 ROOT = HERE.parent
@@ -354,10 +355,15 @@ def jsonld(T, page, text=""):
 
 
 def finish(T, page, text):
-    """A page as published: its structured data (jsonld()) just before </head>. Every page comes through here: the
-    templates (render()) and the generators (compare, ledger, the tearsheet)."""
+    """A page as published: its structured data (jsonld()) just before </head>, and geo.head() where it carries an
+    affiliate link. Every page comes through here: the templates (render()) and the generators (compare, ledger, the
+    tearsheet)."""
     i = text.find("</head>")
-    return text if i < 0 else text[:i] + jsonld(T, page, text) + "\n" + text[i:]
+    if i < 0:
+        return text
+    # a page with an affiliate link waits for the visitor's country before showing it (geo.py, geo.js; plan 5.3)
+    gh = geo.head() if 'data-geo="' in text[i:] else ""
+    return text[:i] + gh + jsonld(T, page, text) + "\n" + text[i:]
 
 
 def switcher(T, page, live):
@@ -604,7 +610,8 @@ def common(T, page, live, preview=False):
             "governs_for": lambda key=None: governs_html(T, key),
             "intl": T.lang["intl"], "site_text": site_text,
             "country_box": country_box(T), "avail_attr": avail_attr(T),
-            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "pro_waitlist": published("pro"),
+            "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "GEO": geo.GEO, "geo_names": {k: f["name"] for k, f in json.loads((ROOT / "firms.json").read_text()).items()
+                                                     if not k.startswith("_") and isinstance(f, dict) and "name" in f}, "pro_waitlist": published("pro"),
             "calc_audit": bool(SITE.get("calc_audit"))}
 
 

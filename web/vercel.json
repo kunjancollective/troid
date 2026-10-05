@@ -31,6 +31,9 @@
     "api/ticker.js": {
       "maxDuration": 10
     },
+    "api/where.js": {
+      "maxDuration": 5
+    },
     "api/pro/page.js": {
       "includeFiles": "pro/*.html",
       "maxDuration": 10

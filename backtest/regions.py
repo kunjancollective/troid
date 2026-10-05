@@ -14,6 +14,7 @@ import re
 import i18n
 import site_build
 import site_text
+import geo
 from gen_compare import FIRMS, ORDER, FIELDS, RANK, cite, sourced, link_live, required_span   # noqa: F401
 
 
@@ -79,9 +80,11 @@ def panel_cell(k, f, T=None):
                 T("index.firms.affiliate")]
         if code: bits.append(T("index.firms.code", code=html.escape(code)))   # the link, disclosed; no pitch beside it
         hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
-        link = f'\n      <div class="s aff" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
+        inner = f'\n      <div class="s aff" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
         if (f.get("required_disclaimer") or "").strip():                # the firm's own wording, beside its link (2d)
-            link += f'\n      <div class="s req"{hold}>{required_span(T, f)}</div>'
+            inner += f'\n      <div class="s req"{hold}>{required_span(T, f)}</div>'
+        # shown only where the visitor's country allows it (geo.json; plan 5.3), else the message
+        link = "\n      " + geo.wrap(T, k, inner + "\n      ", msg_cls="s geono", sep="\n      ")
     return f'    <div class="cell"{site_build.avail_attr(T)(k)}>\n      <div class="k">{head}</div>\n      {v}{note}{link}\n    </div>'
 
 
@@ -96,9 +99,10 @@ def desk_aff_html(T=None):
     places under the result on a phone and under the Your risk card from 1100 px, never inside the verdict, readout or
     working. It holds a line per firm whose link is live; the desk's script shows only the selected firm's (deskAff in
     index.html) and hides the whole element for a firm with none, so it reads the same in every state. The link and
-    "affiliate link" are a size up from the desk's small text; the firm's required wording sits under its link."""
+    "affiliate link" are 13px; the firm's required wording sits under its link. Each firm's sentence, link and wording
+    show only where the visitor's country allows the link (geo.json; plan 5.3), and the message in their place where
+    it doesn't, or where the country can't be read."""
     T = _strings(T)
-    hold = " data-avail-link" if site_build.features_on(T) else ""
     first = next((k for k in ORDER if any(((FIRMS[k].get("calc") or {}).get("products") or {}).values())), None)
     rows = []
     for k in ORDER:
@@ -110,13 +114,13 @@ def desk_aff_html(T=None):
         if code:
             bits.append(T("desk2.aff.code", code=html.escape(code)))
         bits.append(T("desk2.aff.funded"))
-        req = (f'\n    <p class="req">{required_span(T, f)}</p>' if (f.get("required_disclaimer") or "").strip() else "")
-        rows.append(f'  <div data-aff="{k}"{"" if k == first else " hidden"}>\n    <p class="al">{" · ".join(bits)}</p>{req}\n  </div>')
+        req = (f'\n      <p class="req">{required_span(T, f)}</p>' if (f.get("required_disclaimer") or "").strip() else "")
+        inner = f'\n      <p class="aw">{T("desk2.aff.why")}</p>\n      <p class="al">{" · ".join(bits)}</p>{req}\n    '
+        rows.append(f'  <div data-aff="{k}"{"" if k == first else " hidden"}>\n    {geo.wrap(T, k, inner, sep=chr(10) + "    ")}\n  </div>')
     if not rows:
         return ""
     shown = first is not None and link_live(FIRMS[first])
-    return (f'<div class="affl" id="affl"{hold}{"" if shown else " hidden"}>\n  <p class="aw">{T("desk2.aff.why")}</p>\n'
-            + "\n".join(rows) + "\n</div>")
+    return f'<div class="affl" id="affl"{"" if shown else " hidden"}>\n' + "\n".join(rows) + "\n</div>"
 
 
 def profiles_js(T=None):
