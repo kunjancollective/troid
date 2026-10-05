@@ -202,6 +202,8 @@ const GUARDRAILS = [
 // "a lower total profit" than the 1-Step's 10%, and every rule of its table sourced where two had no recorded source.
 const CANDIDATE_GUARDRAILS = [
   "troid's published Monte Carlo results come from explain_rule, topic ruin: quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED, and never one from memory.",
+  "What a firm lets you trade (a coin, a commodity, a stock) comes from firm_assets: each asset as the firm's own page names it, its hold limit and the date troid read it. An asset it doesn't list is one no page troid has read names; never say troid has no list.",
+  "The concentration ladder is two numbers a step, as firm_rules labels them: the margin in use as a percent of capital at which the step starts, and the payout penalty percent at review. Never say what the penalty is a share of beyond the firm's own wording.",
   "Compare products on the figures the tools give, and do arithmetic across them only through the tools: a staged challenge's targets add up across its stages, as firm_rules gives them. Never say every rule is sourced when a tool reports one whose source is not yet recorded.",
   // run 11, o-predict: "the firm's own dashboard and financial data platforms are the record" for prices and forecasts,
   // and "for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai"
@@ -1230,8 +1232,16 @@ const TOOLS = [
 ];
 // A candidate's tools: the live ones plus these, until it is promoted. None is staged. trade_math's schema is the
 // candidate's (TRADE_MATH_TOOL_NEXT: a side, and the calculator audit's F6 and F7 in its description).
-const CANDIDATE_TOOLS = [];
-const TOOLS_NEXT = TOOLS.map((t) => (t === TRADE_MATH_TOOL ? TRADE_MATH_TOOL_NEXT : t)).concat(CANDIDATE_TOOLS);
+const FIRM_ASSETS_TOOL = { name: "firm_assets",
+  description: "The assets a firm's own pages name, as troid has recorded them (what troid's desk lets a trader pick): each with the firm's own name for it, " +
+    "its hold-limit tier and limit, and the document and date troid read it. Call it for any question about what a firm lets you trade: a coin, a commodity, a stock. " +
+    "An asset it doesn't list is one no page troid has read names: say that, never that the firm doesn't offer it and never that troid has no list.",
+  input_schema: { type: "object", properties: { firm: { type: "string", description: "bitfunded | brightfunded | crypto_fund_trader" },
+    symbol: { type: "string", description: "optional: one asset to look up, e.g. BTC, TSLA, NVDA" } }, required: ["firm"] } };
+const FIRM_RULES_TOOL_NEXT = Object.assign({}, FIRM_RULES_TOOL, { description: FIRM_RULES_TOOL.description.replace("leverage cap —",
+  "leverage cap, and the firm-level rules where troid records them (open positions at once, the hold limit by asset tier, the concentration ladder with what each step's two numbers are) —") });
+const CANDIDATE_TOOLS = [FIRM_ASSETS_TOOL];
+const TOOLS_NEXT = TOOLS.map((t) => (t === TRADE_MATH_TOOL ? TRADE_MATH_TOOL_NEXT : t === FIRM_RULES_TOOL ? FIRM_RULES_TOOL_NEXT : t)).concat(CANDIDATE_TOOLS);
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: (a) => explainRuleSourced(a), trade_math, firm_rules };
 // A candidate's tool implementations, until promoted. Staged after evaluation run 10:
@@ -1252,6 +1262,7 @@ const RULE_FIELDS_NEXT = RULE_FIELDS.map((f) => (f[0] === "fee_usd" ? ["fee_usd"
 function firmRulesNext(a) {
   const out = firm_rules(a, RULE_FIELDS_NEXT);
   if (out.error) return out;
+  firmLevelRules(out, a);
   const prods = JSON.parse(context().firms)[String(a.firm)].products, stage = /^(.+)_s\d+$/.exec(String(a.product));
   if (stage) {
     const ks = Object.keys(prods).filter((k) => k.startsWith(stage[1] + "_s") && prods[k] && typeof prods[k] === "object").sort();
@@ -1263,6 +1274,95 @@ function firmRulesNext(a) {
           note: "Each stage's target is a percent of the account size, so the targets add up: the realized profit the whole challenge asks for is " +
                 sum + "% of the account size. DERIVED from the stages' targets, each with its source above." } });
     }
+  }
+  return out;
+}
+// The firm-level rules (the live test of 2026-10-04, session a4fc357b…, Bitfunded 2-Step): the open-position cap, the hold
+// limit by asset tier and the concentration ladder, which firm_rules skipped (an object, or no product field), so the
+// model stated the cap from the prompt's bare value and wrote its read date itself ("read 2026-09-23", where provenance
+// gives the help centre's Restricted Trading Practices read 2026-09-21, the same page re-read on 24 and 26 September).
+// Each rule now carries its document and every date troid read that document, from provenance; the ladder carries its
+// steps as numbers, labelled, and the firm's own wording for what a step does where troid has recorded it.
+const docKey = (u) => String(u || "").replace(/\.md$/, "").replace(/\/+$/, "");
+function citeWithRereads(f, ids, section) {
+  const S = (f.provenance || {}).sources || {}, own = ids.filter((i) => S[i]);
+  if (!own.length) return { rule: "", source: "not yet recorded" };
+  const first = [...new Set(own.map((i) => S[i].read_on).filter(Boolean))].sort(), urls = new Set(own.map((i) => docKey(S[i].url)));
+  const again = [...new Set(Object.entries(S).filter(([i, x]) => !own.includes(i) && urls.has(docKey(x.url))).map(([, x]) => x.read_on)
+    .filter((d) => d && !first.includes(d)))].sort();
+  const when = "read " + first.join(" and ") + (again.length ? " (the same page re-read " + again.join(" and ") + ")" : "");
+  return { document_section: section, read_on: first, reread_on: again, urls: [...new Set(own.map((i) => S[i].url))], when };
+}
+const HOLD_TIERS = { major: "Major Crypto Assets", minor: "Minor Crypto Assets", tradfi: "Traditional Trading Pairs" };
+function firmLevelRules(out, a) {
+  const F = JSON.parse(context().firms), f = F[String(a.firm)], P = f.provenance || {}, pk = String(a.product || "");
+  const fieldIds = (k) => (((P.fields || {})[k] || {}).src || []), sec = (k, d) => (((P.fields || {})[k] || {}).section || d);
+  const add = (rule, value, c) => {
+    out.rules.push({ rule, value });
+    out.sources.push(c.source ? { rule: rule + " " + value, source: c.source }
+      : { rule: rule + " " + value, document_section: c.document_section, read_on: c.read_on, urls: c.urls,
+          cite: rule + " " + value + " — " + c.document_section + ", " + c.when });
+  };
+  if (typeof f.max_open_positions === "number")
+    add("open positions at once, at most", f.max_open_positions, citeWithRereads(f, fieldIds("max_open"), sec("max_open")));
+  if (f.hold_cap_days && typeof f.hold_cap_days === "object") {
+    const c = citeWithRereads(f, fieldIds("hold_cap"), sec("hold_cap"));
+    for (const [k, d] of Object.entries(f.hold_cap_days)) if (typeof d === "number")
+      add("hold limit, " + (HOLD_TIERS[k] || k) + ", days", d, c);
+    out.hold_limit_note = "The hold limit follows the asset's tier, not the product: firm_assets gives each asset troid has recorded with its tier.";
+  }
+  if (Array.isArray(f.concentration_penalty_ladder) && String(a.firm) === "bitfunded") {
+    // Instant Funding's ladder starts lower (check_compliance's); the other products share firms.json's
+    const steps = pk === "instant" ? PENALTY_LADDER_IF : f.concentration_penalty_ladder;
+    const c = citeWithRereads(f, ["rtp"], "Bitfunded help centre — Restricted Trading Practices s.2");
+    const wording = (f.concentration_penalty_wording && typeof f.concentration_penalty_wording === "object") ? f.concentration_penalty_wording : null;
+    out.concentration_ladder = {
+      steps: steps.map(([from, pen]) => ({ margin_used_pct_of_capital_from: from, payout_penalty_pct: pen,
+        firm_wording: wording && wording[String(from)] ? wording[String(from)] : "not yet recorded" })),
+      reading: "Each step is two numbers from Restricted Trading Practices s.2: the margin in use, as a percent of the account's capital, at which the step " +
+        "starts, and the payout penalty percent that step carries at review. Quote both numbers with those labels. Where firm_wording is \"not yet recorded\", " +
+        "troid has not recorded the firm's own words for what the penalty does to a payout: say so, and never describe it as a cut of the profit, the split " +
+        "or the payout amount, or as anything the numbers alone don't say.",
+      source: c.source ? c.source : c.document_section + ", " + c.when };
+    out.sources.push(c.source ? { rule: "concentration ladder", source: c.source }
+      : { rule: "concentration ladder", document_section: c.document_section, read_on: c.read_on, urls: c.urls,
+          cite: "concentration ladder (" + steps.map(([x, y]) => x + "% margin → " + y + "% payout penalty").join("; ") + ") — " + c.document_section + ", " + c.when });
+  }
+  return out;
+}
+// What a firm lets a trader pick, as troid has recorded it (firms.json _asset_universe: a symbol goes in only when a
+// firm's own page names it, read with a date). The live test of 2026-10-04 ("can I trade BTC and a stock?") was told
+// troid had no list of tickers: this gives each listed asset with the firm's own name for it, the hold limit of its tier
+// and the document and date troid read it.
+function firm_assets(a) {
+  const F = JSON.parse(context().firms), fk = String(a.firm || "");
+  if (!Object.hasOwn(F, fk) || fk.startsWith("_") || !F[fk].products) return { error: "unknown firm. troid covers: " + Object.keys(profiles()).join(", ") };
+  const f = F[fk], U = F._asset_universe || {}, S = (f.provenance || {}).sources || {}, sym = String(a.symbol || "").toUpperCase().trim();
+  const listed = [], sources = [];
+  for (const g of U.groups || []) for (const x of g.symbols || []) {
+    const l = (x.listed_by || {})[fk];
+    if (!l) continue;
+    const src = S[l.src], tier = Object.entries(HOLD_TIERS).find(([, n]) => String(l.as_listed).includes("(" + n + ")"));
+    const days = tier && f.hold_cap_days ? f.hold_cap_days[tier[0]] : undefined;
+    const row = { symbol: x.sym, group: g.group, as_listed: l.as_listed, tier: tier ? tier[1] : null,
+      hold_limit_days: typeof days === "number" ? days : "not set on a page troid has read",
+      source: src ? { document: src.doc, read_on: src.read_on, url: src.url } : "not yet recorded" };
+    listed.push(row);
+    if (sym && sym !== x.sym) continue;
+    const rule = x.sym + " listed as " + l.as_listed + (typeof days === "number" ? ", hold limit " + days + " days" : "");
+    sources.push(src ? { rule, document_section: src.doc + (tier ? " s.1 (maximum holding duration by asset type)" : ""), read_on: [src.read_on], urls: [src.url] }
+      : { rule, source: "not yet recorded" });
+  }
+  const groups = {};
+  for (const r of listed) (groups[r.group] = groups[r.group] || []).push(r.symbol);
+  const out = { firm: f.name, listed, named_by_group: groups, sources,
+    note: "These are the assets a page of " + f.name + "'s that troid has read names, with the firm's own name for each" +
+      (groups.stocks ? "; of stocks, " + (groups.stocks.length === 1 ? "the one named is " : "those named are ") + groups.stocks.join(", ") : "; it names no stock") +
+      ". An asset not listed here may still be on the firm's platform: troid has no record of it either way. Never say the firm doesn't offer it, and never that troid has no list.",
+    tier: "SOURCED — each asset as the firm's own page names it, with the document and the date troid read it. The firm's own documents govern." };
+  if (sym && !listed.some((r) => r.symbol === sym)) {
+    out.asked = { symbol: sym, listed: false, detail: "No page of " + f.name + "'s that troid has read names " + sym + ". troid has no record that the firm offers it, and none that it doesn't." };
+    if (sym in (U.not_listed || {})) out.asked.detail += " troid's desk shows it on the price tape as market context only, so the desk sizes nothing on it.";
   }
   return out;
 }
@@ -1339,6 +1439,7 @@ function tradeMathNext(a) {
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
   explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES), Object.assign({}, TOPIC_CITES, CANDIDATE_TOPIC_CITES)),
   firm_rules: firmRulesNext,
+  firm_assets,
   check_budget: (a) => withFloatingSource(check_budget(a), a),
   size_trade: (a) => withFloatingSource(size_trade(a, true), a),   // the calculator audit's F5, F6 and F7
   trade_math: tradeMathNext,
@@ -1714,6 +1815,59 @@ CANDIDATE_LINTS.push(
    "Write the formula in symbols, with an equals sign and its brackets, on its own line: quantity = risk ÷ (stop distance + fee per unit), say."],
   [(t) => DANGLING_OPEN_RX.test(t),
    "The answer opens by pointing at a result the reader never saw (\"That result …\"): open with the answer to the question, then say where each figure comes from."]);
+// A read date the model wrote itself (the live test of 2026-10-04: max open positions "read 2026-09-23", a date no tool
+// gave for that rule): every date beside "read" must be one a tool returned this turn, or the user's own.
+const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12 };
+function isoOf(m) {
+  const z = (n) => String(n).padStart(2, "0"), d = m.replace(/[\u2010\u2011]/g, "-");
+  let x = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d);
+  if (x) return d;
+  x = /^(\d{1,2}) ([A-Za-z]{3,9}) (\d{4})$/.exec(d);
+  if (x && MONTHS[x[2].toLowerCase().slice(0, x[2].toLowerCase().startsWith("sept") ? 4 : 3)]) return x[3] + "-" + z(MONTHS[x[2].toLowerCase().slice(0, 3)]) + "-" + z(x[1]);
+  x = /^([A-Za-z]{3,9}) (\d{1,2}),? (\d{4})$/.exec(d);
+  if (x && MONTHS[x[1].toLowerCase().slice(0, 3)]) return x[3] + "-" + z(MONTHS[x[1].toLowerCase().slice(0, 3)]) + "-" + z(x[2]);
+  return null;
+}
+const READ_DATES_RX = new RegExp(READ_DATE_RX.source.replace("\\bread (on )?", "\\b(?:read|re-read|reread)(?: on)? "), "g");
+// each source a tool gave this turn: the words it names its rule and document by, and the dates troid read it
+function sourcePairs(tools) {
+  const out = [], walk = (o) => {
+    if (Array.isArray(o)) return o.forEach(walk);
+    if (!o || typeof o !== "object") return;
+    if ((o.read_on || o.reread_on || o.cite) && (o.rule || o.document_section || o.document || o.cite)) {
+      const text = [o.rule, o.document_section, o.document, o.cite].filter(Boolean).join(" ");
+      out.push({ text: text.toLowerCase(), dates: new Set((JSON.stringify([o.read_on, o.reread_on, o.cite]).match(/\d{4}-\d{2}-\d{2}/g) || [])) });
+    }
+    Object.values(o).forEach(walk);
+  };
+  (tools || []).forEach((t) => walk(t.result));
+  return out;
+}
+const RULE_WORDS = ["open position", "hold", "ladder", "concentration", "daily", "maximum loss", "max loss", "leverage", "fee", "target", "split",
+  "reset", "floating", "minimum trading", "drawdown", "refund", "closed trade", "listed", "payout"];
+function unsourcedReadDates(t, tools, asked) {
+  const pairs = sourcePairs(tools), user = new Set(String(asked || "").match(/\d{4}-\d{2}-\d{2}/g) || []), body = stripSources(t), out = [];
+  for (const m of body.matchAll(READ_DATES_RX)) {
+    const iso = isoOf(m[1] || m[2] || "");
+    if (!iso || user.has(iso)) continue;
+    const before = body.slice(0, m.index), cut = Math.max(before.lastIndexOf("\n"), before.search(/[.!?]\s[^.!?]*$/));
+    const win = before.slice(cut < 0 ? Math.max(0, before.length - 200) : cut).toLowerCase();
+    const dated = pairs.filter((x) => x.dates.has(iso));
+    // the clause names its rule by a section (s.3, 9(a)) or by the rule's words: some source with this date must name it too
+    const marks = (win.match(/\bs\.\s?\d+\b|\b\d{1,2}\([a-z]\)(\([ivx]+\))?/g) || []).map((k) => k.replace(/\s/g, ""));
+    const words = RULE_WORDS.filter((w) => win.includes(w));
+    const ok = dated.length > 0 && (!marks.length && !words.length
+      || dated.some((x) => marks.some((k) => x.text.includes(k)) || words.some((w) => x.text.includes(w))));
+    if (!ok) out.push(m[0]);
+  }
+  return [...new Set(out)];
+}
+CANDIDATE_LINTS.push(
+  // a turn with no tool at all gets RULE_NUDGE instead (a rule with no tool behind it): this one is for a date beside a tool's rule
+  [(t, tools, asked) => (tools || []).some((x) => x.result) && unsourcedReadDates(t, tools, asked).length > 0,
+   (t, tools, asked) => "These read dates are not the ones a tool gave this turn for the rule beside them: " + unsourcedReadDates(t, tools, asked).join("; ") +
+     ". Every date troid read a rule comes from the tool that gave the rule (firm_rules, firm_assets, explain_rule, check_budget, size_trade, check_compliance): " +
+     "get the rule through it and give its date exactly, or leave the date to the sources the service writes under the answer. Never write a read date yourself."]);
 // support.md section 2, step 4: the three usual causes, when the user says troid's numbers were involved and the reply
 // leaves them out (run 14, ex-angry). Before the dashboard's paragraph; English only.
 const BLAMES_TROID_RX = /\btroid\b|\bcalculator\b|\byour (numbers?|tool|site|math|figures?|desk)\b/i;

@@ -12,6 +12,29 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-05: the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step, "can I trade BTC and a stock?")
+
+- **What a firm lets you trade.** The rules tools never gave the model firms.json `_asset_universe`, so it said troid has
+  no list of tickers. A new tool, `firm_assets` (`CANDIDATE_TOOLS`, `CANDIDATE_RUN`), gives each asset a page of the
+  firm's names, with the firm's own name for it (`as_listed`), its hold-limit tier and limit, and the document and date
+  troid read it: on Bitfunded, BTC (Major Crypto Assets, 10 days) and TSLA (Traditional Trading Pairs, 5 days, the one
+  stock named), from Restricted Trading Practices read 2026-09-24 (`rtp_0924`). An asset it doesn't list is unrecorded
+  either way (never "not offered"). A guardrail sends any what-can-I-trade question to it. Eval case `p-assets`.
+- **Every read date from provenance.** The reply cited max open positions as "read 2026-09-23": no tool gave the rule
+  (firm_rules skipped it and check_compliance cites it only on a breach), so the model stated the prompt's bare value
+  and wrote a date seen beside other rules. The candidate's `firm_rules` now gives Bitfunded's firm-level rules, each
+  dated from provenance with every read of the same page: open positions at once 5 (Restricted Trading Practices s.3,
+  read 2026-09-21, the same page re-read 2026-09-24 and 2026-09-26), the hold limit by tier (10, 7, 5 days). A new lint
+  sends back an answer whose "read <date>" isn't one a tool gave this turn for the rule beside it (matched by its
+  section, s.3 or 9(a), or the rule's words); a turn with no tool keeps the existing nudge.
+- **The concentration ladder.** "65%→50% payout cut" was ambiguous. `firm_rules` gives each step as two labelled
+  numbers (`margin_used_pct_of_capital_from`, `payout_penalty_pct`; Instant Funding's from 55%) and the firm's own wording
+  for what the step does in `firm_wording`, from firms.json `concentration_penalty_wording` (keyed by the step's
+  threshold). **Not yet recorded:** Restricted Trading Practices s.2 couldn't be read from this session's container
+  (bitfunded.gitbook.io is blocked by its network policy), so each step says "not yet recorded" and the tool tells the
+  model to say so and never call it a cut of the profit, the split or the payout. Recording the wording is one edit to
+  firms.json once the page is read.
+
 ## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
 
 The owner approved staging these, and the evaluation that follows, so ask troid's tools agree with troid's desk and the

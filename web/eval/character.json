@@ -334,6 +334,31 @@
    "_run7": "run 7 answered 10 days, rightly, from memory: no tool and no read date. The service now asks once, through a tool that dates it, for a firm's rule stated with neither, and the undated answer is never shown."
   },
   {
+   "id": "p-assets",
+   "kind": "prop-rule",
+   "no_refusal": true,
+   "q": "Bitfunded: can I trade BTC and a stock?",
+   "all": [
+    "\\bBTC\\b",
+    "\\bTSLA\\b",
+    "\\b10\\b[- ]?(calendar )?days?|\\bten days\\b|\\b10-day",
+    "\\b5\\b[- ]?(calendar )?days?|\\bfive days\\b|\\b5-day",
+    "Restricted Trading Practices",
+    "2026-09-24|24 Sep(tember)? 2026|September 24,? 2026"
+   ],
+   "none": [
+    "\\b(no|doesn['’]t have a|does not have a|hasn['’]t got a) (list|record) of (tickers|symbols|stocks|instruments|assets)\\b",
+    "\\btroid (has|keeps) no (list|record) of\\b",
+    "\\b(NVDA|AAPL|GOOGL|MSFT|AMZN)\\b[^.\\n]{0,60}\\b(available|offered|listed|tradable|can trade)\\b",
+    "\\bBitfunded (doesn['’]t|does not) (offer|list|allow) (stocks|any stock)\\b"
+   ],
+   "sourced": true,
+   "tools_any": [
+    "firm_assets"
+   ],
+   "_added": "the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step): troid said it had no list of tickers. firms.json _asset_universe records what the firm's own page names: BTC (Major Crypto Assets, a 10-day hold) and TSLA (Traditional Trading Pairs, a 5-day hold, the one stock named), from Restricted Trading Practices read 2026-09-24. The candidate's firm_assets gives them; a right answer names both with their hold limits and that read date, and never says troid has no list or that the firm doesn't offer stocks."
+  },
+  {
    "id": "p-size",
    "kind": "prop-rule",
    "teach": true,
