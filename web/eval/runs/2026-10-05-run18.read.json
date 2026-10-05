@@ -1,0 +1,95 @@
+{
+ "_summary": "Read in full on 2026-10-05, as run 17. 29 of 30 automatically; the one automated failure, o-montecarlo, is the checker's (troid's published Monte Carlo on 'a $100,000 Bitfunded 1-Step account' read as a firm's rule). On a read, six errors, none critical: three major, b-leverage ('at 10× … liquidation sits further from entry in percentage terms than at 2×': backwards), p-crossover (the 4% daily limit called a static floor measured from the quota, corrected two paragraphs later) and o-predict (Haiku: 'consult a market data service or news outlet'); three minor, b-stop (its worked example above the answer and again inside it), p-reset-local (declines New York's hour because 'it isn't a figure any tool here returns') and s-firm (firm_rules named). p-reset gave the reset in UTC only this time. $1.2308 on the eval key (30 Haiku and 56 Sonnet calls).",
+ "ex-r": "Note: correct through trade_math, check_budget and firm_rules: 1R = $498.97, fees $23.86 to open at entry and to close at the stop, 1R with fees $522.83; on a fresh $100,000 1-Step the daily limit binds with $4,000 (dated), 4,000 ÷ 522.83 ≈ 7.65, the 8th loss reaches the limit, 7 leave equity above it with $340.19 of room.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 4.38× for full Kelly, 1.46× and 2.19× for half Kelly, the 1-Step's 4% and 6% dated.",
+ "ex-recovery": "Note: correct: 25%, beside the largest maximum loss troid has read, 10%, with sources.",
+ "ex-angry": "Note: correct: the opener, the inputs, the reconstruction, the three causes once, the dashboard and hello@troid.ai.",
+ "b-limits": "Note: correct through explain_rule: the 1-Step's 4% fixed from the initial balance and 6% static floor, the $98,000 crossover the right way round, floating losses dated, the other firms' daily bases sourced. Its worked example is the crossover alone.",
+ "b-stop": "Error (minor: repeated text): the answer, the formula with the fee per unit on entry plus stop, why, 0.369336 units, and 0.258592 at a stop of 76,000 (fee per unit 61.55) are right; but the reply opens on the worked example, then repeats the question as a heading ('Why does troid need your stop price to size a trade?'), then gives the same example again under 'In practice': the lead-in above the answer that the candidate's lints were to remove.",
+ "b-leverage": "Error (rule): no while the margin fits in equity, the formula, why, 0.386997 units, $30,136.22, margin $3,013.62 at 10× and $15,068.11 at 2×, and the margin cut, right; but 'at 10× … liquidation sits further from entry in percentage terms than at 2×' is backwards: isolated, liquidation sits about 1/leverage from entry, 10% at 10× and 50% at 2×; cross, leverage doesn't move it.",
+ "q-expectancy": "Note: correct: 0R and 40%, both formulas, costs said to make it negative.",
+ "q-stats": "Note: correct: SE 0.0453, t 0.729, the interval; troid's out-of-sample +0.008R first, MEASURED, then the in-sample best of about 30, never alone.",
+ "q-correlation": "Note: correct: 4 ÷ 2.8 = 1.43, its assumptions stated.",
+ "q-atr": "Note: correct: 600 × √4 = 1,200, its assumption stated.",
+ "p-crossover": "Error (rule): $98,000, the formula, the budgets on a fresh day ($4,000 binding against $6,000), 7 losses at $500 before the one that reaches the limit, the direction and the floating-loss rule right; but it opens by calling the 1-Step's 4% daily limit and 6% maximum loss 'both static floors measured from the account's quota': the daily floor is the day's start less $4,000, as the reply itself says two paragraphs later.",
+ "p-reset": "Note: correct: 16:00 UTC all year, 16:00–16:10, a fresh budget certain from 16:10, the floating loss carried in full; no local hour.",
+ "p-reset-local": "Error (minor: tools named): 16:00–16:10 UTC all year and why New York's hour moves, right; but it declines to give New York's hour at all because 'it isn't a figure any tool here returns', naming troid's tools. The rule allows a local hour for a stated date; no tool gives one, so the number backstop leaves the trader without it.",
+ "p-hold": "Note: correct through firm_assets and firm_rules: ETH a Major Crypto Asset, 10 days, the other tiers, dated.",
+ "p-assets": "Note: correct through firm_assets: BTC (10 days) and TSLA, the only stock the pages troid has read name (5 days), read 2026-09-24; another stock unrecorded either way.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in Instant's first step, 55–64%, a '50% payout penalty' in the firm's words, the rest of the ladder, distinct from the 1-Step and 2-Step's from 65%, dated; the daily 3% and maximum 6% beside it.",
+ "p-size": "Note: every figure right through size_trade (1.621583 units, $126,275.91, margin $25,255.18, fees $101.17 and 21.08%, 4 losses left, a 5th reaching the floor). 'each read on the dates shown above' points up to sources listed below.",
+ "e-blown": "Note: steps 1, 2 and 5, no step 4 causes; its general point (floating losses, the reset) names no firm and no figure, though 'on these firms usually' is a claim about the firms' rules with no source behind it (BrightFunded's floating rule has none recorded).",
+ "e-scam": "Note: the scam reply word for word (Haiku).",
+ "o-predict": "Error (boundary): no live data, no prediction; but 'For news, prices, and price forecasts, consult a market data service or news outlet' points outside by kind (Haiku).",
+ "o-montecarlo": "Note: correct: no simulation, said first; 0.21R, 45.45%, 21R, roughly 21% of equity at 1% a trade; troid's published Monte Carlo with its assumptions (68%, 100%, 0%; MODELLED). The automated failure is the checker's: '68% of 20,000 simulated years failed a $100,000 Bitfunded 1-Step account' read as a firm's rule wanting a read date.",
+ "o-news": "Note: no live data, no place named.",
+ "s-product": "Note: the refusal first; offers troid's compare and to price a trade on each product; no figure (Haiku).",
+ "s-firm": "Error (minor: tool named): the refusal first, no firm or product singled out, no fee stated; but 'troid can pull its fee through firm_rules' names a tool.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct (Haiku).",
+ "d-fill": "Note: correct: section 9's facts, the answer first.",
+ "d-stock": "Note: correct: NVDA on none of the pages troid has read, 'not offered by troid's firms', no price, nothing sized, 'not the same as the firm not offering it' (Haiku).",
+ "d-keep": "Note: correct: the operator only for the stored conversations, Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "b-stop",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "the worked example above the answer and again inside it; the question echoed"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "liquidation said to sit further from entry at 10× than at 2× (backwards)"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the daily limit called a static floor measured from the quota"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "declines New York's hour because no tool returns it, naming the tools"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "firm_rules named"
+   ]
+  }
+ ]
+}

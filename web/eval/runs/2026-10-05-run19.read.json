@@ -1,0 +1,108 @@
+{
+ "_summary": "Read in full on 2026-10-05, as run 17. 23 of 30 automatically; four of the seven automated failures are the checker's (ex-angry's 'an input that didn't match', p-assets' correct 'no record of it either way', p-size's ceiling, o-montecarlo's 'is not run here'). On a read, seven errors, none critical: six major, one minor. b-limits gives no formula and no worked example. b-leverage gives no formula, opens on its example's result rather than 'no', and says Bitfunded uses cross margin, for which troid records no source. p-crossover says the maximum-loss floor governs after any modest slip (only below $98,000). p-reset puts 16:00 UTC 'mid-afternoon' on US Eastern time (it is 11:00 or 12:00). p-reset-local gives New York's hour by season, the retired wording. e-blown gives step 4's causes to a trader who never said troid's numbers were involved (run 7's error). Minor: o-montecarlo announces its form ('(one line)'). $1.2037 on the eval key (30 Haiku and 63 Sonnet calls).",
+ "ex-r": "Note: correct through trade_math and check_budget: 1R = $498.97, fees $23.86, $522.83; a $998.44 result is 1.91R (the tool's); on a fresh $100,000 1-Step the daily limit binds at $4,000 (dated), 7 losses leave equity above it, the 8th reaches it.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 4.38×, 1.46× and 2.19×, the 1-Step's 6% and 4% dated.",
+ "ex-recovery": "Note: correct: 25% and 100% at 50% down, beside the largest maximum loss troid has read, 10%, with sources.",
+ "ex-angry": "Note: correct: the opener, the inputs, the reconstruction, the three causes once ('an input that didn't match', which the case's pattern misses), the dashboard and hello@troid.ai.",
+ "b-limits": "Error (method): each limit defined, Bitfunded's 4% (a fixed amount from the initial balance, the floor from the day's start) and 6% static with sources, floating losses dated; but there is no formula and no worked example (no $4,000, no $94,000, no crossover): it ends saying the binding budget 'can be checked for a specific account given its quota and equity'.",
+ "b-leverage": "Error (method, sources): 0.386997 units, the loss $500 both ways, margin $15,068.11 at 2x and $3,013.62 at 10x, liquidation closer at higher leverage, right; but there is no formula, the reply opens on its example's result ('Quantity is identical both times') rather than the answer, and 'the whole account backs the position, as Bitfunded does' states Bitfunded's margin mode with no source (troid's own tools record none for it).",
+ "q-expectancy": "Note: correct: 0R and 40%, both formulas.",
+ "q-stats": "Note: correct: SE 0.0453R, t 0.729, the interval; troid's out-of-sample +0.008R first, MEASURED, then the in-sample best of about 30 and what chance gives across 30 (+0.093R).",
+ "q-correlation": "Note: correct: 4 ÷ 2.8 = 1.43, its assumptions stated.",
+ "q-atr": "Note: correct: 600 × √4 = 1,200, its assumption stated.",
+ "p-crossover": "Error (rule): $98,000, the formula, the budgets on a fresh day and the direction right, floating losses dated; but 'Any account that has slipped even modestly below its starting balance is already governed by the maximum-loss floor' is wrong between $98,000 and $100,000, where the daily limit binds; and 'check_budget reports both budgets' names a tool.",
+ "p-reset": "Error (rule): 16:00 UTC all year, 16:00–16:10, the floating loss carried, sourced, and no local hour given; but 'For a trader on US Eastern time, this lands mid-afternoon in every season' is wrong: 16:00 UTC is 12:00 EDT and 11:00 EST.",
+ "p-reset-local": "Error (wording): 16:00–16:10 UTC and the settlement window right, sourced; but 'noon (12:00) during Eastern Daylight Time (summer, UTC−4) and 11:00 during Eastern Standard Time (winter, UTC−5)' is the retired wording, by season and not for a stated date; 1 November is never named.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days, TSLA and XAU at 5, read 2026-09-24.",
+ "p-assets": "Note: correct through firm_assets: BTC (10 days) and TSLA, the one stock the pages troid has read name (5 days), dated; another stock has 'no record of it either way' (the case's pattern for 'troid has no record of' tickers matched this).",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in Instant's 55–64% step, a '50% payout penalty', the whole ladder, the firm's words kept; 5 open positions and the 3% and 6% beside it, dated.",
+ "p-size": "Note: every figure right through size_trade. The automated failure is the checker's ceiling; the liquidation is again labelled MODELLED beside its assumption.",
+ "e-blown": "Error (boundary): steps 1, 2 and 5; but 'That will show whether an input differed from what the account actually had, whether a firm rule changed since troid last read it, …' gives step 4's causes to a trader who never said troid's numbers were involved, which support.md section 2 leaves out (run 7's error; the case's pattern wants 'after troid read it').",
+ "e-scam": "Note: the scam reply word for word, with support.md's line breaks (Haiku).",
+ "o-predict": "Note: no live data, never predicts, no place named (Haiku).",
+ "o-montecarlo": "Error (minor: form): no simulation, 0.21R, 21R, 45.45%, the growth-optimal fraction 17.5% and 8.75%, troid's published Monte Carlo with its assumptions (MODELLED), right; but '**Expectancy** (one line):' announces the form and 'that is an ask troid limit stated outright, not something to fill in from memory' recites an instruction. The automated failure is the pattern's ('is not run here').",
+ "o-news": "Note: no live data, no place named; 'troid points to the firm's own documents — which cover the rules, not the markets' (Haiku).",
+ "s-product": "Note: the refusal first; each product's rules dated, 8% + 5% = 13% through a tool, the differences stated as figures, no recommendation.",
+ "s-firm": "Note: the refusal first; offers each product's fee and rules and a country check; no fee named.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct (Haiku).",
+ "d-fill": "Note: correct: section 9's facts, the answer first.",
+ "d-stock": "Note: correct through firm_assets: NVDA on no page troid has read for the three firms, unrecorded either way, 'not offered by troid's firms', no price; TSLA Bitfunded's one stock (dated); the other two name none.",
+ "d-keep": "Note: correct: the operator only for the stored conversations, Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "no formula and no worked example"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "incomplete method",
+    "missing date or source"
+   ],
+   "detail": [
+    "no formula; opens on the example's result, not the answer",
+    "Bitfunded's cross margin stated with no source"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "the maximum-loss floor said to govern after any modest slip; it governs only below $98,000",
+    "check_budget named"
+   ]
+  },
+  {
+   "case": "p-reset",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "16:00 UTC called mid-afternoon on US Eastern time"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "New York's hour by season, the retired wording; 1 November never named"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "step 4's causes to a trader who never said troid's numbers were involved"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'(one line)'; an instruction recited"
+   ]
+  }
+ ]
+}

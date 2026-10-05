@@ -41,6 +41,23 @@ and a person's read finds no error" after run 16. Promotion is one commit: the f
   3%, 9%, 1:5) and Instant (3%, 6%, 1:5); the daily reset at 00:00 (UTC+8), which is the recorded 16:00 UTC. The
   Instant daily loss conflicts (FAQ 4%, help centre 3%) and is logged in `_conflicts_found`; troid keeps 3%.
 
+**Evaluated 2026-10-05** (`web/eval/runs/2026-10-05-*`, $5.70 on the eval key in all, at the runner's prices). The six
+cases the calculator changes touch and the two new ones, candidate against live: 6 and 2 of 8 automatically; on a read
+the candidate one error (b-stop, its answer last), the live prompt seven, two critical (p-size at the live tools' fee
+convention, 1.622095; o-montecarlo's "Let's"). Every case, three candidate runs and the live baseline: runs 17, 18 and
+19 passed 25, 29 and 23 of 30 automatically and had 9, 6 and 7 failing cases on a read, none critical; run 20 (live) 19
+automatically, 13 on a read, one critical (p-size). `--promotion --candidate 17,18,19 --live 20`: (a) and (b) met
+(7.33 against 13.00), (c) not: incomplete method (run 19's b-limits and b-leverage, no formula) and repeated text (run
+18's b-stop) are kinds run 20 doesn't have. Not promoted: the owner's decision. The new cases were right in all three
+runs (p-assets BTC and TSLA, dated; p-ladder-instant the firm's "50% payout penalty"; the live prompt failed both).
+Recurring in the candidate's runs: New York's reset hour given by season (p-reset-local in 17 and 19, p-reset in 17;
+run 18 declined to give one, "not a figure any tool here returns"), the crossover overstated ("even a small amount",
+"even modestly": the floor governs only below $98,000), b-leverage's worked example (a different error in each run),
+and out-of-scope replies pointing outside by kind (Haiku). The reads found the checker wrong both ways: it fails p-size's
+`ceil(2,000/480) − 1 = 4` (read without the ceiling), b-leverage's "the same either way", o-montecarlo's "not something
+troid can run" and p-assets' "no record of it either way"; it passes "noon" more than 30 characters from "New York" and
+s-firm's fees above $500 when "$50k+" appears.
+
 ## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
 
 The owner approved staging these, and the evaluation that follows, so ask troid's tools agree with troid's desk and the

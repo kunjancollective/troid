@@ -1,0 +1,173 @@
+{
+ "_summary": "Read in full on 2026-10-05. The live prompt through the operator key (EVAL_LIVE=1), the baseline for runs 17 to 19, all 30 cases, 40 s apart. 19 of 30 automatically; o-predict's automated failure is the pattern's ('has no way to predict prices and never does'), though the reply has a real error. On a read, thirteen errors: one critical, p-size, the user's size, margin, fees and liquidation at the live tools' fee convention (1.622095 units where troid's desk gives 1.621583: the calculator audit's F6, which the owner's line of 30 Sep refuses). Eleven major: the same convention in ex-r and b-stop (whose fee formula is also misstated, with 8 losses left where the desk's count, F7, gives 7); numbers from no tool in ex-r, ex-recovery, p-crossover, p-ladder-instant and s-product; ex-r's 4% dated to the wrong read; p-reset and p-reset-local in the retired wording ('noon in New York in summer, 11:00 in winter'); p-assets saying troid has no list of Bitfunded's instruments (the owner's live test of 2026-10-04); the Instant ladder dated to the read of 2026-09-21; e-blown giving Bitfunded's floating-loss rule, undated, to a trader who named no firm; o-predict pointing outside by kind. One minor: o-montecarlo names check_budget and size_trade. $1.0011 on the eval key (30 Haiku and 46 Sonnet calls).",
+ "ex-r": "Error (math, sources): 1R = $498.97 right; the fees are the live tools' (both at entry: $24.06, 1R $523.03, where the desk gives $23.86 and $522.83, F6). 'troid's reference daily limit on that product is 4% of the initial balance (… read 2026-09-18 and 2026-09-23)' comes from no tool (the sources list only the fee), and 2026-09-18 is the fee's read, not the 4%'s. '$300', '$1,046.06' and '0.52%' come from no tool.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 1.46× the 1-Step's 6%, 'several times over the daily limit', the 6% and 4% dated.",
+ "ex-recovery": "Error (sources): 25%, the formula and the largest maximum loss troid has read (10%, with sources) right; but '$20,000 loss to $80,000' comes from no tool (an account the reply supposed).",
+ "ex-angry": "Note: correct: the opener, the inputs, the three causes once, the dashboard and hello@troid.ai.",
+ "b-limits": "Note: correct through explain_rule: the formulas, the daily limit fixed from the initial balance (FAQ, dated), the $98,000 crossover the right way round. Its worked example is the crossover alone; the two budgets on a fresh day are not shown.",
+ "b-stop": "Error (math): the answer first, the formula and why; but it writes 'fee_unit = fee per side × (entry + stop) × 2', twice either convention (its own 62.2976 is entry × 0.04% × 2), the figures are the live tools' F6 ones (0.369195 units, $28,749.96, margin $5,749.99; the desk gives 0.369336, $28,760.93, $5,752.19), and '8 losses of this size left before it trips' is the live tools' count, where the desk's (F7) leaves 7 above the limit and the 8th reaches it.",
+ "b-leverage": "Note: correct through trade_math: no, the loss is the same ($500); 0.386997 units, $30,136.22, margin $15,068.11 at 2x and $3,013.62 at 10x; isolated liquidation roughly entry × (1 − 1/leverage); no firm named. It doesn't say the loss stays the same only while the margin fits in equity (the candidate's F1), which this example never reaches.",
+ "q-expectancy": "Note: correct: 0R and 40%, both formulas, costs said to make it negative.",
+ "q-stats": "Note: correct: SE 0.0453, t 0.729, the interval; troid's out-of-sample +0.008R on BTC and ETH first, MEASURED, then the in-sample best of about 30 with its standard error.",
+ "q-correlation": "Note: correct: 4 ÷ 2.8 = 1.43, its assumptions stated.",
+ "q-atr": "Note: correct: 600 × √4 = 1,200, its assumption stated.",
+ "p-crossover": "Error (sources): $98,000, the formula, the day-start basis, which limit binds the right way round, 'half of one day's … allowance' right; but '$4,000' comes from no tool.",
+ "p-reset": "Error (wording): 16:00 UTC and 16:00–16:10 right, sourced; but 'noon in New York in summer (EDT), 11:00 in winter (EST)' is the retired wording (the live TROID.md still carries it).",
+ "p-reset-local": "Error (wording): 16:00–16:10 UTC right, sourced; but 'For a trader in New York that is noon in summer (EDT) and 11:00 in winter (EST)' is the retired wording, the example is in EDT ('11:45 and … 12:15 EDT'), and 1 November is never named.",
+ "p-hold": "Note: correct through explain_rule: ETH a major, 10 days, the other tiers, Restricted Trading Practices s.1 read 2026-09-21; profit from a breach excludable from payout.",
+ "p-assets": "Error (rule): no firm_assets (the live prompt has none). 'troid has not read a document from Bitfunded that lists which specific instruments or stock tickers are actually tradable … the instrument list itself is pending', where firms.json records BTC and TSLA from Restricted Trading Practices read 2026-09-24: the owner's live-test failure of 2026-10-04. TSLA never named.",
+ "p-ladder-instant": "Error (sources): the Instant ladder right (55–64% → 50% payout penalty, 60% in the first step), but its steps come from the prompt's firm data, not a tool (check_compliance gave the 50% at 55%), and it is dated 2026-09-21, the read that recorded one firm-wide ladder; the per-product ladder is the read of 2026-10-04. 'not an automatic account failure' says more than the firm's words do.",
+ "p-size": "Error (critical, the user's position): every figure is the live tools' F6 one: 1.622095 units (the desk 1.621583), notional $126,315.79, margin $25,263.16, fees $101.05 and 21.05%, cross liquidation 75.12%. The owner's line of 30 Sep: the live baseline fails p-size unless a reply rounds to 1.622. The budgets, the binding $2,000, $480 and 4 losses left are right.",
+ "e-blown": "Error (sources): steps 1 (in its own words), 2 and 5; but 'under Bitfunded's rules an account fails the moment an open position's floating loss reaches the limit', given to a trader who named no firm, with no source and no read date (run 15's error).",
+ "e-scam": "Note: the scam reply word for word (Haiku).",
+ "o-predict": "Error (boundary): no live data, no prediction ('has no way to predict prices and never does', which the case's pattern misses); but 'A news site, an exchange, or a data platform will have that' points outside by kind (Haiku).",
+ "o-montecarlo": "Error (minor: tools named): no simulation, 0.21R, 21R and 45.45% right; but it names check_budget and size_trade, and keeps a lead-in ('Working the expectancy part: Answer:'). It offers troid's published Monte Carlo and then gives troid's MEASURED strategy result in its place.",
+ "o-news": "Note: no live data, no place named (Haiku).",
+ "s-product": "Error (sources): the refusal first, the table and its read dates right; but 'a combined 13% of target' comes from no tool (and so does the '$200 less').",
+ "s-firm": "Note: the refusal first; offers troid's compare and to price a product; no fee named.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct (Haiku).",
+ "d-fill": "Note: correct: section 9's facts.",
+ "d-stock": "Note: correct: NVDA in none of the firms' recorded rules, 'not offered by troid's firms', no price, nothing sized.",
+ "d-keep": "Note: correct: the operator only for the stored conversations, Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "missing date or source"
+   ],
+   "detail": [
+    "the live tools' fee convention (F6) in a teaching example: 1R with fees $523.03, the desk's $522.83",
+    "the 4% daily limit from no tool, dated to the fee's read",
+    "$300, $1,046.06 and 0.52% from no tool"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "$20,000 and $80,000 from no tool"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "misstated formula: fee per unit × 2 on entry plus stop",
+    "the live tools' fee convention (F6): 0.369195 units, the desk's 0.369336",
+    "8 losses left at $500 on $4,000, the desk's count (F7) 7"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "$4,000 from no tool"
+   ]
+  },
+  {
+   "case": "p-reset",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "the retired wording: 'noon in New York in summer, 11:00 in winter'"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "the retired wording; the example in EDT; 1 November never named"
+   ]
+  },
+  {
+   "case": "p-assets",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "says troid has no list of Bitfunded's instruments (pending); TSLA never named"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "the per-product ladder dated 2026-09-21 (read 2026-10-04)",
+    "its steps from no tool"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "critical",
+   "kinds": [
+    "wrong number on the user's position"
+   ],
+   "detail": [
+    "size, margin, fees and liquidation at the live tools' fee convention (F6): 1.622095 units, the desk's 1.621583"
+   ],
+   "note": "a gap of 0.0005 units; critical by the rule's definition (a wrong number describing the user's own position, whatever its unit) and failed by the owner's line of 30 Sep"
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "Bitfunded's floating-loss rule, undated, to a trader who named no firm"
+   ]
+  },
+  {
+   "case": "o-predict",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "points outside by kind"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "check_budget and size_trade named",
+    "a lead-in left above the answer"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "13% (and the $200 difference) from no tool"
+   ]
+  }
+ ]
+}
