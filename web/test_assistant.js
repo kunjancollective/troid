@@ -78,10 +78,10 @@ ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 
    && /Challenge & Trader Stage/.test(r.sources[0].document_section) && /9\(a\)/.test(r.sources[0].document_section) && !/Criteria/.test(r.sources[0].document_section) && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee still says not yet recorded",
+ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee cites Criteria to be Success, read 2026-10-04 (no product restriction)",
    ["daily 5%", "max 10%", "leverage cap 5×"].every((k) => { const s = r.sources.find((x) => x.rule === k).document_section || "";
      return /Two Steps Evaluation table/.test(s) && /Terms of Use 9\(a\), 2 Steps Challenges/.test(s) && !/clause not recorded/.test(s); })
-   && r.sources.find((x) => x.rule === "fee 0.04% per side").source === "not yet recorded", r.sources);
+   && (() => { const x = r.sources.find((y) => y.rule === "fee 0.04% per side"); return /Criteria to be Success/.test(x.document_section) && /no product restriction/.test(x.document_section) && x.read_on.join() === "2026-10-04"; })(), r.sources);
 r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
 ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
 for (const [pk, d, m] of [["trader_1step", 4, 6], ["trader_express", 3, 3], ["trader_2step", 5, 8]]) {
@@ -110,7 +110,7 @@ const cite = (rule) => (r.sources.find((x) => x.rule === rule) || {}).cite;
 ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23"
    && cite("max 6%") === "max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23"
    && cite("drawdown type (static)") === "drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18"
-   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23"
+   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04"
    && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21", r.sources);
 ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r.assumptions.length === 5 && r.assumptions.some((x) => /^margin mode cross — troid's default.*no recorded source/.test(x))
    && r.assumptions.some((x) => /^leverage 5× — troid's default/.test(x)) && r.assumptions.some((x) => /^budget cap 35% /.test(x)) && r.assumptions.some((x) => /^target 2R /.test(x))
@@ -369,7 +369,7 @@ const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name
 ok("candidate: the live prompt plus six guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
    CG.length === 6 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
-   && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /payout penalty percent/.test(g))
+   && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
    && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets"
    && /firm-level rules/.test(handler._toolsFor("candidate").find((t) => t.name === "firm_rules").description) && !/firm-level/.test(handler._toolsFor("live").find((t) => t.name === "firm_rules").description));
 // the live test of 2026-10-04: firm_assets (BTC and the one stock named, TSLA, each with its hold limit, read 2026-09-24),
@@ -385,15 +385,25 @@ ok("candidate: the live prompt plus six guardrails (runs 10 to 13: the Monte Car
   ok("live: no firm_assets", !handler._toolsFor("live").some((t) => t.name === "firm_assets") && !!handler._runTool("firm_assets", { firm: "bitfunded" }, "live").error);
   const fr = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), frl = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "live");
   const mo = fr.sources.find((x) => /^open positions at once/.test(x.rule));
-  ok("candidate firm_rules: max open positions 5 from Restricted Trading Practices s.3, read 2026-09-21 (re-read 2026-09-24 and 2026-09-26), never 2026-09-23; live unchanged",
-     fr.rules.some((x) => /^open positions at once/.test(x.rule) && x.value === 5) && mo.read_on.join() === "2026-09-21" && /s\.3, read 2026-09-21 \(the same page re-read 2026-09-24 and 2026-09-26\)/.test(mo.cite)
+  ok("candidate firm_rules: max open positions 5 from Restricted Trading Practices s.3, read 2026-09-21 (re-read 2026-09-24, 2026-09-26 and 2026-10-04), never 2026-09-23; live unchanged",
+     fr.rules.some((x) => /^open positions at once/.test(x.rule) && x.value === 5) && mo.read_on.join() === "2026-09-21" && /s\.3, read 2026-09-21 \(the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04\)/.test(mo.cite)
      && !/2026-09-23/.test(mo.cite) && !frl.rules.some((x) => /open positions/.test(x.rule)), mo);
   ok("candidate firm_rules: the hold limit by tier (10, 7, 5 days)", ["Major Crypto Assets", "Minor Crypto Assets", "Traditional Trading Pairs"].map((t) => (fr.rules.find((x) => x.rule.includes(t)) || {}).value).join() === "10,7,5");
-  const lad = fr.concentration_ladder;
-  ok("candidate firm_rules: the concentration ladder's steps as two labelled numbers (65 → 50, 75 → 60, 90 → 65, 96 → 70), the firm's wording 'not yet recorded' until troid reads it, never a 'payout cut'",
-     lad.steps.map((x) => x.margin_used_pct_of_capital_from + ">" + x.payout_penalty_pct).join() === "65>50,75>60,90>65,96>70" && lad.steps.every((x) => x.firm_wording === "not yet recorded")
-     && /margin in use, as a percent of the account's capital/.test(lad.reading) && /never describe it as a cut/.test(lad.reading) && /s\.2, read 2026-09-21/.test(lad.source)
-     && handler._runTool("firm_rules", { firm: "bitfunded", product: "instant" }, "candidate").concentration_ladder.steps[0].margin_used_pct_of_capital_from === 55, lad);
+  const lad = fr.concentration_ladder, ins = handler._runTool("firm_rules", { firm: "bitfunded", product: "instant" }, "candidate").concentration_ladder;
+  const exl = handler._runTool("firm_rules", { firm: "bitfunded", product: "express" }, "candidate").concentration_ladder;
+  ok("candidate firm_rules: the concentration ladder per product in the firm's words (owner's read 2026-10-04): 2-Step 65-74% '50% payout penalty' … 96-100% '70%'; Instant from 55%; Express none recorded; never a 'cut'",
+     lad.steps.map((x) => x.exposure_from_pct + "-" + x.exposure_to_pct + ":" + x.firm_wording).join() === "65-74:50% payout penalty,75-89:60% payout penalty,90-95:65% payout penalty,96-100:70% payout penalty"
+     && ins.steps.map((x) => x.exposure_from_pct + ":" + x.payout_penalty_pct).join() === "55:50,65:55,75:60,90:65,96:70" && !exl.steps.length && /no concentration ladder recorded/.test(exl.note)
+     && /never call it a cut/.test(lad.reading) && /Excessive Risk Concentration \('All In' Trading\), read 2026-10-04/.test(lad.source), [lad, ins, exl]);
+  const cc = (pk, m) => handler._runTool("check_compliance", { firm: "bitfunded", product: pk, margin_pct_of_capital: m }, "candidate").findings.filter((x) => /Concentration/.test(x.rule));
+  ok("candidate check_compliance: 60% on Instant is '50% payout penalty' (the Instant ladder, read 2026-10-04); 60% on the 1-Step is under its 65% start; 70% on Express has no ladder recorded",
+     /"50% payout penalty"/.test(cc("instant", 60)[0].detail) && cc("instant", 60)[0].sources[0].read_on === "2026-10-04" && !cc("1step", 60).length
+     && cc("express", 70)[0].severity === "info" && /No concentration ladder recorded/.test(cc("express", 70)[0].detail));
+  const exr = handler._runTool("firm_rules", { firm: "bitfunded", product: "express" }, "candidate").sources;
+  ok("firm_rules: Express's daily 3, max 3, leverage 1:5 and every product's 0.04% fee cite the help centre read 2026-10-04 (Criteria to be Success, Challenge & Trader Stage)",
+     ["daily loss limit %", "maximum loss %", "leverage cap", "trading fee per side %"].every((r) => (exr.find((x) => x.rule.startsWith(r)) || { read_on: [] }).read_on.includes("2026-10-04"))
+     && ["1step", "2step_s1", "2step_s2", "express", "instant", "trader_1step", "trader_express", "trader_2step"].every((pk) =>
+       (handler._runTool("firm_rules", { firm: "bitfunded", product: pk }, "live").sources.find((x) => /^trading fee per side/.test(x.rule)) || {}).read_on.includes("2026-10-04")), exr);
   const tl = [{ name: "firm_rules", result: fr }, { name: "firm_assets", result: fa }], dn = (t) => handler._lintNotesFor(t, "candidate", tl, "q").filter((n) => /read dates are not/.test(n));
   ok("candidate lint: a read date the tools didn't give for that rule (the live test's 'read 2026-09-23' beside max open positions) is sent back; the right one, a re-read of the same page, and the 1-Step's 23 September limits pass; live has none",
      dn("Bitfunded allows 5 open positions at once (Restricted Trading Practices s.3, read 2026-09-23).").length === 1
@@ -489,7 +499,7 @@ ok("a figure: list numbering (1. 2.) is not one", !HF("1. an input that differed
 const fr = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
 ok("firm_rules: a product's rules, each with its document and read date, pending or not yet recorded where troid has none",
    fr.rules.find((r) => r.rule === "maximum loss %").value === 8 && fr.sources.find((x) => /^maximum loss % 8/.test(x.rule)).read_on.join() === "2026-09-23"
-   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).source === "not yet recorded" && /^SOURCED/.test(fr.tier)
+   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).read_on.join() === "2026-10-04" && /^SOURCED/.test(fr.tier)
    && /pending product/.test(RT("firm_rules", { firm: "brightfunded", product: "2step_bright" }, "candidate").error), fr);
 const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step" });
 ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
@@ -1181,7 +1191,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 6 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_budget,size_trade,trade_math" && gc.lints === 25 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 25 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;

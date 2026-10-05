@@ -43,7 +43,8 @@
         "max_pct": 3,
         "target_pct": 9,
         "min_days": 5,
-        "fee_usd_5k": 39
+        "fee_usd_5k": 39,
+        "max_leverage": 5
       },
       "instant": {
         "daily_pct": 3,
@@ -89,24 +90,85 @@
       "tradfi": 5
     },
     "max_open_positions": 5,
-    "concentration_penalty_ladder": [
-      [
-        65,
-        50
+    "concentration_penalty_ladder": {
+      "1step": [
+        [
+          65,
+          50
+        ],
+        [
+          75,
+          60
+        ],
+        [
+          90,
+          65
+        ],
+        [
+          96,
+          70
+        ]
       ],
-      [
-        75,
-        60
+      "2step_s1": [
+        [
+          65,
+          50
+        ],
+        [
+          75,
+          60
+        ],
+        [
+          90,
+          65
+        ],
+        [
+          96,
+          70
+        ]
       ],
-      [
-        90,
-        65
+      "2step_s2": [
+        [
+          65,
+          50
+        ],
+        [
+          75,
+          60
+        ],
+        [
+          90,
+          65
+        ],
+        [
+          96,
+          70
+        ]
       ],
-      [
-        96,
-        70
-      ]
-    ],
+      "instant": [
+        [
+          55,
+          50
+        ],
+        [
+          65,
+          55
+        ],
+        [
+          75,
+          60
+        ],
+        [
+          90,
+          65
+        ],
+        [
+          96,
+          70
+        ]
+      ],
+      "_note": "Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading), read 2026-10-04: two ladders by Exposure Level, the share of the account's margin in one trade or in highly correlated trades; [from %, payout penalty %], each step running to the next one's start (96 to 100). 2-Step & 1-Step from 65%, Instant Funding from 55%. Express is in neither: no ladder recorded for it, nor for a Trader Stage. Until 2026-10-05 this was one firm-wide ladder, wrong for Instant."
+    },
     "consistency_rule": null,
     "mandatory_sl": "expected; absence can be classed excessive risk",
     "min_closed_trades_per_stage": 2,
@@ -410,6 +472,34 @@
           "read_on": "2026-09-26",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page 0daab90607eb3df1): 'Upon completing the requirements of these stages, you will become a Funded Trader and will be eligible to receive 80% profit sharing.' One Step Evaluation table: 'Profit Share Ratio | - | 80%'."
+        },
+        "rtp_1004": {
+          "doc": "Bitfunded help centre: Restricted Trading Practices",
+          "read_on": "2026-10-04",
+          "url": "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+          "doc_dated": null,
+          "read_via": "read by the owner's Claude session on 2026-10-04 (troid's build environment can't reach bitfunded.gitbook.io); Excessive Risk Concentration ('All In' Trading): 'Traders are expected to manage exposure responsibly and avoid excessive concentration of account margin into a single trade or multiple highly correlated positions.' Steps by Exposure Level, in the firm's words 'N% payout penalty': 2-Step & 1-Step 65-74% 50% payout penalty, 75-89% 60%, 90-95% 65%, 96-100% 70%; Instant Funding 55-64% 50%, 65-74% 55%, 75-89% 60%, 90-95% 65%, 96-100% 70%. Express is in neither ladder."
+        },
+        "criteria_1004": {
+          "doc": "Bitfunded help centre: Criteria to be Success",
+          "read_on": "2026-10-04",
+          "url": "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+          "doc_dated": null,
+          "read_via": "read by the owner's Claude session on 2026-10-04 (troid's build environment can't reach bitfunded.gitbook.io); '0.04% of the total position size at both entry and exit', with no restriction to a product; the daily loss resets at 00:00 (UTC+8)."
+        },
+        "trader_stage_1004": {
+          "doc": "Bitfunded help centre: Challenge & Trader Stage",
+          "read_on": "2026-10-04",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage.md",
+          "doc_dated": null,
+          "read_via": "read by the owner's Claude session on 2026-10-04 (troid's build environment can't reach bitfunded.gitbook.io); Express: daily 3%, max 3%, target 9%, leverage 1:5 (Stage 1 and the Trader Stage). Instant: max daily loss 3%, max loss 6%, leverage 1:5."
+        },
+        "faq_1004": {
+          "doc": "Bitfunded FAQ",
+          "read_on": "2026-10-04",
+          "url": "https://www.bitfunded.com/frequently-asked-questions/",
+          "doc_dated": null,
+          "read_via": "read by the owner's Claude session on 2026-10-04: gives Instant Funding a 4% maximum daily loss (the help centre says 3%; _conflicts_found). The quote is recorded in that session, not here."
         }
       },
       "fields": {
@@ -455,14 +545,16 @@
         },
         "reset_utc": {
           "src": [
-            "criteria_0923"
+            "criteria_0923",
+            "criteria_1004"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion"
         },
         "fee_per_side_pct": {
           "src": [
             "criteria",
-            "criteria_0923"
+            "criteria_0923",
+            "criteria_1004"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success"
         },
@@ -543,6 +635,12 @@
             "faq_0926"
           ],
           "section": "Bitfunded Terms of Use 18 (at most three payout requests every 30 days; no cap on profit stated) and FAQ"
+        },
+        "concentration_ladder": {
+          "src": [
+            "rtp_1004"
+          ],
+          "section": "Bitfunded help centre \u2014 Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading)"
         }
       },
       "products": {
@@ -564,7 +662,8 @@
           "fee_per_side_pct": {
             "src": [
               "criteria",
-              "criteria_0923"
+              "criteria_0923",
+              "criteria_1004"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success"
           },
@@ -601,14 +700,16 @@
           "daily_pct": {
             "src": [
               "trader_stage",
-              "blog"
+              "blog",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
           "max_pct": {
             "src": [
               "trader_stage",
-              "blog"
+              "blog",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
@@ -620,9 +721,16 @@
           },
           "max_leverage": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant)"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         },
         "2step_s1": {
@@ -666,6 +774,12 @@
               "faq"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         },
         "2step_s2": {
@@ -703,24 +817,33 @@
               "faq"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         },
         "express": {
           "daily_pct": {
             "src": [
-              "blog"
+              "blog",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
           "max_pct": {
             "src": [
-              "blog"
+              "blog",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
           "target_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
           },
@@ -730,6 +853,18 @@
               "faq"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
+          },
+          "max_leverage": {
+            "src": [
+              "trader_stage_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Express)"
           }
         },
         "trader_1step": {
@@ -756,24 +891,33 @@
               "trader_stage"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         },
         "trader_express": {
           "daily_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "max_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "max_leverage": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
@@ -782,6 +926,12 @@
               "trader_stage"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         },
         "trader_2step": {
@@ -808,6 +958,12 @@
               "trader_stage"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "criteria_1004"
+            ],
+            "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
         }
       },
@@ -949,6 +1105,23 @@
           }
         ],
         "troid": "9%, the help centre's figure; the Terms are silent on the Express"
+      },
+      {
+        "topic": "Instant Funding daily loss",
+        "logged": "2026-10-04",
+        "sides": [
+          {
+            "src": "trader_stage_1004",
+            "doc": "help centre, Challenge & Trader Stage (Instant)",
+            "says": "3% maximum daily loss"
+          },
+          {
+            "src": "faq_1004",
+            "doc": "FAQ",
+            "says": "4% maximum daily loss"
+          }
+        ],
+        "troid": "3%: the stricter"
       }
     ],
     "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes.",
@@ -956,7 +1129,8 @@
       "time": "16:00",
       "tz": "UTC",
       "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc). 00:00 UTC+8 is 16:00 UTC; the help centre says it takes effect by 00:10 UTC+8."
-    }
+    },
+    "concentration_penalty_wording": "payout penalty"
   },
   "brightfunded": {
     "name": "BrightFunded",

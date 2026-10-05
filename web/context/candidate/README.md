@@ -27,13 +27,19 @@ and a person's read finds no error" after run 16. Promotion is one commit: the f
   read 2026-09-21, the same page re-read 2026-09-24 and 2026-09-26), the hold limit by tier (10, 7, 5 days). A new lint
   sends back an answer whose "read <date>" isn't one a tool gave this turn for the rule beside it (matched by its
   section, s.3 or 9(a), or the rule's words); a turn with no tool keeps the existing nudge.
-- **The concentration ladder.** "65%→50% payout cut" was ambiguous. `firm_rules` gives each step as two labelled
-  numbers (`margin_used_pct_of_capital_from`, `payout_penalty_pct`; Instant Funding's from 55%) and the firm's own wording
-  for what the step does in `firm_wording`, from firms.json `concentration_penalty_wording` (keyed by the step's
-  threshold). **Not yet recorded:** Restricted Trading Practices s.2 couldn't be read from this session's container
-  (bitfunded.gitbook.io is blocked by its network policy), so each step says "not yet recorded" and the tool tells the
-  model to say so and never call it a cut of the profit, the split or the payout. Recording the wording is one edit to
-  firms.json once the page is read.
+- **The concentration ladder.** "65%→50% payout cut" was ambiguous, and firms.json held one ladder for every product.
+  The owner's session read Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading), on 2026-10-04
+  (`rtp_1004`; this container can't reach bitfunded.gitbook.io). firms.json now records the ladder per product in the
+  firm's words, "N% payout penalty" by Exposure Level (`concentration_penalty_wording`): 2-Step and 1-Step 65–74% → 50%,
+  75–89% → 60%, 90–95% → 65%, 96–100% → 70%; Instant Funding 55–64% → 50%, 65–74% → 55%, 75–89% → 60%, 90–95% → 65%,
+  96–100% → 70%; none recorded for Express. The candidate's `firm_rules` gives the product's steps (`exposure_from_pct`,
+  `exposure_to_pct`, `payout_penalty_pct`, `firm_wording`), and its `check_compliance` checks a trade against that
+  product's ladder (Express: an info finding that no ladder is recorded). A guardrail keeps the firm's words, never a
+  cut. Eval case `p-ladder-instant` (60% of margin on Instant → 50% payout penalty).
+- **Also read 2026-10-04 (the owner's session):** Criteria to be Success's fee, "0.04% of the total position size at
+  both entry and exit", with no product restriction, now cites all 8 products; Challenge & Trader Stage's Express (3%,
+  3%, 9%, 1:5) and Instant (3%, 6%, 1:5); the daily reset at 00:00 (UTC+8), which is the recorded 16:00 UTC. The
+  Instant daily loss conflicts (FAQ 4%, help centre 3%) and is logged in `_conflicts_found`; troid keeps 3%.
 
 ## Staged 2026-09-30: the calculator audit's F1, F5, F6, F7 and D6, the review's R5 and R6, and the patch's two wordings
 

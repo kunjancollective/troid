@@ -203,7 +203,7 @@ const GUARDRAILS = [
 const CANDIDATE_GUARDRAILS = [
   "troid's published Monte Carlo results come from explain_rule, topic ruin: quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED, and never one from memory.",
   "What a firm lets you trade (a coin, a commodity, a stock) comes from firm_assets: each asset as the firm's own page names it, its hold limit and the date troid read it. An asset it doesn't list is one no page troid has read names; never say troid has no list.",
-  "The concentration ladder is two numbers a step, as firm_rules labels them: the margin in use as a percent of capital at which the step starts, and the payout penalty percent at review. Never say what the penalty is a share of beyond the firm's own wording.",
+  "The concentration ladder differs by product (firm_rules or check_compliance give the product's own): give each step in the firm's words, an Exposure Level and its \"N% payout penalty\", never a cut, and never say what the penalty is a share of.",
   "Compare products on the figures the tools give, and do arithmetic across them only through the tools: a staged challenge's targets add up across its stages, as firm_rules gives them. Never say every rule is sourced when a tool reports one whose source is not yet recorded.",
   // run 11, o-predict: "the firm's own dashboard and financial data platforms are the record" for prices and forecasts,
   // and "for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai"
@@ -1290,8 +1290,20 @@ function citeWithRereads(f, ids, section) {
   const first = [...new Set(own.map((i) => S[i].read_on).filter(Boolean))].sort(), urls = new Set(own.map((i) => docKey(S[i].url)));
   const again = [...new Set(Object.entries(S).filter(([i, x]) => !own.includes(i) && urls.has(docKey(x.url))).map(([, x]) => x.read_on)
     .filter((d) => d && !first.includes(d)))].sort();
-  const when = "read " + first.join(" and ") + (again.length ? " (the same page re-read " + again.join(" and ") + ")" : "");
+  const last = first[first.length - 1], later = again.filter((d) => d > last), earlier = again.filter((d) => d < first[0]);
+  const when = "read " + first.join(" and ") + (later.length || earlier.length ? " (the same page " + [earlier.length ? "read before on " + earlier.join(", ") : "",
+    later.length ? "re-read " + later.join(" and ") : ""].filter(Boolean).join("; ") + ")" : "");
   return { document_section: section, read_on: first, reread_on: again, urls: [...new Set(own.map((i) => S[i].url))], when };
+}
+// A product's concentration ladder as firms.json records it (per product since 2026-10-05: 2-Step & 1-Step from 65%,
+// Instant Funding from 55%, none recorded for Express or a Trader Stage), with the firm's word for what a step carries
+function ladderFor(f, pk) {
+  const L = f.concentration_penalty_ladder;
+  if (!L || typeof L !== "object") return null;
+  const steps = Array.isArray(L) ? L : L[pk];
+  const wording = typeof f.concentration_penalty_wording === "string" ? f.concentration_penalty_wording : null;
+  if (Array.isArray(steps)) return { steps, wording };
+  return Array.isArray(L) ? null : { note: "no concentration ladder recorded for this product: the firm's page gives one for the 2-Step & 1-Step and one for Instant Funding" };
 }
 const HOLD_TIERS = { major: "Major Crypto Assets", minor: "Minor Crypto Assets", tradfi: "Traditional Trading Pairs" };
 function firmLevelRules(out, a) {
@@ -1311,22 +1323,22 @@ function firmLevelRules(out, a) {
       add("hold limit, " + (HOLD_TIERS[k] || k) + ", days", d, c);
     out.hold_limit_note = "The hold limit follows the asset's tier, not the product: firm_assets gives each asset troid has recorded with its tier.";
   }
-  if (Array.isArray(f.concentration_penalty_ladder) && String(a.firm) === "bitfunded") {
-    // Instant Funding's ladder starts lower (check_compliance's); the other products share firms.json's
-    const steps = pk === "instant" ? PENALTY_LADDER_IF : f.concentration_penalty_ladder;
-    const c = citeWithRereads(f, ["rtp"], "Bitfunded help centre — Restricted Trading Practices s.2");
-    const wording = (f.concentration_penalty_wording && typeof f.concentration_penalty_wording === "object") ? f.concentration_penalty_wording : null;
-    out.concentration_ladder = {
-      steps: steps.map(([from, pen]) => ({ margin_used_pct_of_capital_from: from, payout_penalty_pct: pen,
-        firm_wording: wording && wording[String(from)] ? wording[String(from)] : "not yet recorded" })),
-      reading: "Each step is two numbers from Restricted Trading Practices s.2: the margin in use, as a percent of the account's capital, at which the step " +
-        "starts, and the payout penalty percent that step carries at review. Quote both numbers with those labels. Where firm_wording is \"not yet recorded\", " +
-        "troid has not recorded the firm's own words for what the penalty does to a payout: say so, and never describe it as a cut of the profit, the split " +
-        "or the payout amount, or as anything the numbers alone don't say.",
-      source: c.source ? c.source : c.document_section + ", " + c.when };
+  const lad = ladderFor(f, pk);
+  if (lad) {
+    const c = citeWithRereads(f, fieldIds("concentration_ladder").length ? fieldIds("concentration_ladder") : ["rtp"],
+      sec("concentration_ladder", "Bitfunded help centre — Restricted Trading Practices s.2"));
+    out.concentration_ladder = lad.steps ? {
+      steps: lad.steps.map(([from, pen], i, xs) => ({ exposure_from_pct: from, exposure_to_pct: i + 1 < xs.length ? xs[i + 1][0] - 1 : 100,
+        firm_wording: lad.wording ? pen + "% " + lad.wording : "not yet recorded", payout_penalty_pct: pen })),
+      reading: "Each step is an Exposure Level, the share of the account's margin in one trade or in highly correlated trades, and what the firm says it carries. " +
+        "Give each step in the firm's own words (firm_wording, e.g. \"50% payout penalty\"), with its range; never call it a cut, and never say what the penalty is " +
+        "a share of beyond those words.",
+      source: c.source ? c.source : c.document_section + ", " + c.when }
+      : { steps: [], note: lad.note, source: c.source ? c.source : c.document_section + ", " + c.when };
     out.sources.push(c.source ? { rule: "concentration ladder", source: c.source }
       : { rule: "concentration ladder", document_section: c.document_section, read_on: c.read_on, urls: c.urls,
-          cite: "concentration ladder (" + steps.map(([x, y]) => x + "% margin → " + y + "% payout penalty").join("; ") + ") — " + c.document_section + ", " + c.when });
+          cite: "concentration ladder (" + (lad.steps ? lad.steps.map(([x, y], i, xs) => x + "–" + (i + 1 < xs.length ? xs[i + 1][0] - 1 : 100) + "% exposure: " + y + "% " + (lad.wording || "payout penalty")).join("; ") : lad.note) +
+            ") — " + c.document_section + ", " + c.when });
   }
   return out;
 }
@@ -1436,10 +1448,27 @@ function tradeMathNext(a) {
   }
   return trade_math(a, MATH_NEXT, MATH_FORMULAS_NEXT);
 }
+// check_compliance for the candidate: the concentration finding from the product's own ladder in firms.json (Express has
+// none recorded; the live check applies the 2-Step & 1-Step ladder to it), in the firm's words
+function checkComplianceNext(a) {
+  const out = check_compliance(a);
+  if (out.pending || out.error) return out;
+  const F = JSON.parse(context().firms), f = F.bitfunded, pk = a.product || "1step", lad = ladderFor(f, pk), mp = +a.margin_pct_of_capital || 0;
+  out.findings = (out.findings || []).filter((x) => x.rule !== "RTP s.2");
+  const c = citeWithRereads(f, ((((f.provenance || {}).fields || {}).concentration_ladder) || {}).src || ["rtp"], "Bitfunded help centre — Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading)");
+  const src = c.source ? [{ source: c.source }] : [{ document: c.document_section, read_on: c.read_on.join(" and "), url: c.urls[0] }];
+  if (lad && lad.steps) {
+    const at = [...lad.steps].reverse().find(([thr]) => mp >= thr);
+    if (at) out.findings.push({ severity: "penalty", rule: "RTP, Excessive Risk Concentration", sources: src,
+      detail: `Margin at ${mp.toFixed(0)}% of the account in one trade or correlated trades sits at an Exposure Level the firm gives as "${at[1]}% ${lad.wording || "payout penalty"}". This product's ladder starts at ${lad.steps[0][0]}%.` });
+  } else if (lad && mp > 0) out.findings.push({ severity: "info", rule: "RTP, Excessive Risk Concentration", sources: src, detail: lad.note.charAt(0).toUpperCase() + lad.note.slice(1) + ". troid can't check this trade's concentration against a ladder." });
+  return out;
+}
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
   explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES), Object.assign({}, TOPIC_CITES, CANDIDATE_TOPIC_CITES)),
   firm_rules: firmRulesNext,
   firm_assets,
+  check_compliance: checkComplianceNext,
   check_budget: (a) => withFloatingSource(check_budget(a), a),
   size_trade: (a) => withFloatingSource(size_trade(a, true), a),   // the calculator audit's F5, F6 and F7
   trade_math: tradeMathNext,

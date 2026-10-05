@@ -19,7 +19,7 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - 14(d)(v) — marketed strategies are prohibited. Entry logic is never a product here.
 - Hold limit is TIERED (help centre, Restricted Trading Practices s.1): majors 10d, other crypto 7d, TradFi 5d. Engine uses 60 bars for BTC; set per asset.
 - 5 simultaneous trades max (RTP s.3). The ToU says 10; the help centre is newer and stricter.
-- Concentration is a PENALTY LADDER (RTP s.2): 65%→50% payout penalty, 75%→60%, 90%→65%, 96%→70%. Instant Funding starts at 55%.
+- Concentration is a PENALTY LADDER by product (RTP, Excessive Risk Concentration ('All In' Trading), read 2026-10-04), in the firm's words "N% payout penalty" by Exposure Level: 2-Step & 1-Step 65–74% → 50%, 75–89% → 60%, 90–95% → 65%, 96–100% → 70%; Instant Funding 55–64% → 50%, 65–74% → 55%, 75–89% → 60%, 90–95% → 65%, 96–100% → 70%. None recorded for Express.
 - 2 closed trades per stage, each ≥10 min, before payout (RTP s.4). Trading without SL/TP can be classed as excessive risk.
 - Day Trader Challenge ($10k, 1–8 hours, 2×–5× boost) is a different product; the strategy cannot run in its window.
 - 9(a) — minimum 5 trading days. The challenge page displays 0; the contract governs.
@@ -151,7 +151,7 @@ and no number that isn't the question's, a tool's, or a step shown on the page.
 Evaluation spends its own budget. Keyed runs go out on `ANTHROPIC_API_KEY_EVAL` (the `troid-eval` workspace, its own
 limit), never the key visitors use; the runner refuses a keyed run while the deployment reports no evaluation key. If
 the organisation's credit runs out, ask troid stops answering visitors, not just tests. Between changes, run only the
-cases a change touches (`--only`); run every case (29 since p-assets, 2026-10-05) for the candidate and the live baseline
+cases a change touches (`--only`); run every case (30 since p-ladder-instant, 2026-10-05) for the candidate and the live baseline
 only when deciding a promotion. A single change the owner asks to ship on its own is staged in `web/context/patch/`
 instead (the live prompt with that file, `x-troid-variant: patch`, `EVAL_PATCH=1`), run on the cases it touches against
 the live baseline, and published when it adds no critical failure and no new kind of failure.

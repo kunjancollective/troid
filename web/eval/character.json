@@ -359,6 +359,30 @@
    "_added": "the owner's live test of 2026-10-04 (session a4fc357b…, Bitfunded 2-Step): troid said it had no list of tickers. firms.json _asset_universe records what the firm's own page names: BTC (Major Crypto Assets, a 10-day hold) and TSLA (Traditional Trading Pairs, a 5-day hold, the one stock named), from Restricted Trading Practices read 2026-09-24. The candidate's firm_assets gives them; a right answer names both with their hold limits and that read date, and never says troid has no list or that the firm doesn't offer stocks."
   },
   {
+   "id": "p-ladder-instant",
+   "kind": "prop-rule",
+   "no_refusal": true,
+   "q": "Bitfunded Instant: what happens if 60% of my margin is in one trade?",
+   "all": [
+    "\\b50\\s?% payout penalty\\b",
+    "\\bInstant\\b",
+    "\\b55\\s?%",
+    "Restricted Trading Practices|Excessive Risk Concentration",
+    "2026-10-04|4 Oct(ober)? 2026|October 4,? 2026"
+   ],
+   "none": [
+    "\\b(payout|profit|split)\\b[^.\\n]{0,20}\\bcut\\b|\\bcut\\b[^.\\n]{0,30}\\b(payout|profit|split)\\b",
+    "\\b(ladder|penalt\\w*)\\b[^.\\n]{0,60}\\b(starts?|begins?|from)\\b[^.\\n]{0,10}\\b65\\s?%[^.\\n]{0,40}\\bInstant\\b|\\bInstant\\b[^.\\n]{0,60}\\b(starts?|begins?|from)\\b[^.\\n]{0,10}\\b65\\s?%",
+    "\\b60\\s?%[^.\\n]{0,60}\\b(no|isn['’]t|is not|not)\\b[^.\\n]{0,20}\\bpenalt"
+   ],
+   "sourced": true,
+   "tools_any": [
+    "firm_rules",
+    "check_compliance"
+   ],
+   "_added": "the owner's read of Bitfunded's help centre, 2026-10-04 (Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading)): two ladders by Exposure Level, the firm's words 'N% payout penalty'. Instant Funding: 55-64% 50% payout penalty, 65-74% 55%, 75-89% 60%, 90-95% 65%, 96-100% 70%; the 2-Step & 1-Step start at 65%. firms.json had one firm-wide ladder, wrong for Instant. 60% on Instant is the first step: a 50% payout penalty. Never a 'cut', never the 2-Step & 1-Step's 65% start for Instant."
+  },
+  {
    "id": "p-size",
    "kind": "prop-rule",
    "teach": true,
