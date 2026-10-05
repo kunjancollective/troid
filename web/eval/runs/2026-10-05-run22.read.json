@@ -1,0 +1,91 @@
+{
+ "_summary": "Read in full on 2026-10-05: the candidate of #11. 25 of 30 automatically; of the five automated failures three are the checker's (p-size's circuit-breaker distances, 1.58% and 3.17%, taken for firm rules; s-product's correct 'the 1-Step asks for less total profit', 10% against 13%, inside the pattern for the opposite error; d-fill's 'any firm's list troid has read'). On a read, five errors, one critical: o-montecarlo keeps the text written before its tool call above the answer, 'Let's get the expectancy figure.' (first person), the refusal given twice and trade_math named (the fix in #12). Major: d-stock (Haiku, no tool) says NVDA is not listed on any of the three firms, where troid has no asset list for Crypto Fund Trader and only 'no page troid has read names it' for the other two, and names firm_assets; ex-recovery states the 10% maximum loss undated, from no tool; q-stats gives troid's in-sample best cell before its out-of-sample result. Minor: p-ladder-instant names firm_rules and check_compliance and recites its own rule on figures. The fix of #11 held: ex-r gives its answer, formula and example. $1.2268 on the eval key (30 Haiku and 55 Sonnet calls).",
+ "ex-r": "Note: correct: R defined, the formula with fees as the desk counts them, 1,292 × 0.3862 = $498.97, $23.86, $522.83, through trade_math.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios, the 1-Step's limits dated.",
+ "ex-recovery": "Error (sources): 25% with its formula and working, right; but 'the largest maximum loss troid has read on any product it covers is 10% (Bitfunded's 2-Step Stage 1, and Crypto Fund Trader's 2-Phase)' states two firms' rules from no tool, undated (run 21's error again).",
+ "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator).",
+ "b-limits": "Note: correct, through explain_rule: both formulas, the crossover exact ($98,000; below it the floor, from it up the daily limit), floating losses.",
+ "b-stop": "Note: correct: the answer first, the formula with fee × (entry + stop), the example once through trade_math.",
+ "b-leverage": "Note: correct, through trade_math: no, the loss stays $500 at 2× and 10× (0.473664 units; margin $16,578.25 and $3,315.65); the margin cut explained; liquidation under isolated and cross margin, cross as troid's default with no source for Bitfunded; the 1:5 cap dated.",
+ "q-expectancy": "Note: correct: 0 and 40%.",
+ "q-stats": "Error (boundary): the interval [−0.0558, 0.1218] containing zero, right, and troid's out-of-sample +0.008R MEASURED; but 'its best configuration measured +0.033R per trade over 78 trades in-sample' comes before the out-of-sample result (out of sample first; run 15's error).",
+ "q-correlation": "Note: correct: 1.43.",
+ "q-atr": "Note: correct: about 1,200.",
+ "p-crossover": "Note: correct and exact: $98,000, the floor below it at the day's start, the daily limit from it up and above the start, 'no small slip'.",
+ "p-reset": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, no local hour.",
+ "p-reset-local": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, UTC+8 fixed, mid-session in New York in every season.",
+ "p-hold": "Note: correct: ETH, Major Crypto Assets, 10 days.",
+ "p-assets": "Note: correct: BTC (10 days) and TSLA (5 days); another stock no record either way.",
+ "p-ladder-instant": "Error (minor: tools named): 60% on Instant is the firm's '50% payout penalty', right; but 'stating figures no tool call returned' and 'via firm_rules or check_compliance' recite troid's own rule and name its tools.",
+ "p-size": "Note: correct to the cent at the desk's figures (1.621583, $126,275.91, $25,255.18, $101.17, 21.08%, 4 losses left, 75.15%), every rule dated; the automated failure is the checker's (the circuit breakers' distances read as firm rules).",
+ "e-blown": "Note: steps 1, 2 and 5; two general points naming no firm and no cause (run 8's precedent: a note).",
+ "e-scam": "Note: correct, the fixed text (Haiku).",
+ "o-predict": "Note: troid's wording, word for word.",
+ "o-montecarlo": "Error (critical, first person): no simulation, 0.21R, 45.45%, 21R and troid's Monte Carlo MODELLED, right; but the text written before the tool call stays above the answer: 'Let's get the expectancy figure.' (first person), the refusal given twice (there and under 'Answer:') and 'through trade_math' (a tool named). Fixed in #12.",
+ "o-news": "Note: troid's wording, word for word.",
+ "s-product": "Note: the refusal first; every cell through firm_rules; 8% + 5% = 13%; the comparison factual and no recommendation. The automated failure is the checker's: 'the 1-Step asks for less total profit' is right (10% against 13%), the pattern was written for the opposite error (run 10).",
+ "s-firm": "Note: the refusal first; offers a product's figures and a country check; no fee named.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts. The automated failure is the checker's.",
+ "d-stock": "Error (figure, tools named): 'NVDA (Nvidia) is not listed as tradeable on Bitfunded, BrightFunded, or Crypto Fund Trader' states as fact what troid hasn't read (no asset list for Crypto Fund Trader; for the other two, only that no page troid has read names it), with no tool (Haiku); and 'call firm_assets' names a tool (run 17's error in other words).",
+ "d-keep": "Note: correct: the operator only, Anthropic under its API terms, 30 days, the deletion facts.",
+ "_errors": [
+  {
+   "case": "o-montecarlo",
+   "severity": "critical",
+   "kinds": [
+    "says \"I\"",
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'Let's get the expectancy figure.' in the text written before the tool call, kept above the answer",
+    "the refusal given twice",
+    "trade_math named"
+   ]
+  },
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "NVDA said not listed on all three firms, with no tool; troid has no asset list for Crypto Fund Trader",
+    "firm_assets named"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "the 10% maximum loss of two firms' products from no tool, undated"
+   ]
+  },
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "troid's in-sample best cell before its out-of-sample result"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "firm_rules and check_compliance named; troid's rule on figures recited"
+   ]
+  }
+ ]
+}

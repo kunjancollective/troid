@@ -1,0 +1,66 @@
+{
+ "_summary": "Read in full on 2026-10-05: the candidate of #11. 26 of 30 automatically; of the four automated failures two are the checker's (b-leverage's 'stays $500.00 either way' outside its 'same loss' pattern; s-product's correct 'the 1-Step asks for less total realized profit', 10% against 13%). On a read, three errors, none critical, all major: b-limits gives $4,000, $94,000 and a $1,999 example from no tool and states Crypto Fund Trader's and BrightFunded's daily bases unasked, undated; ex-recovery states the 10% maximum loss undated, from no tool (as in runs 21 and 22); q-stats gives troid's in-sample best cell before its out-of-sample result, which it doesn't mark MEASURED. Right this time: o-montecarlo (no first person), d-stock (through firm_assets), e-blown (steps 1, 2 and 5 only). $1.2025 on the eval key (30 Haiku and 62 Sonnet calls).",
+ "ex-r": "Note: correct: R defined, the formula with fees, $498.97, $23.86, $522.83; the 1-Step's $4,000 daily budget through check_budget, 7 losses at $522.83 leave $340.19, the 8th reaches the limit.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios, the 1-Step's limits dated.",
+ "ex-recovery": "Error (sources): 25% with its formula and working, right; but 'the largest maximum loss troid has on record for any product it covers — 10%, on Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase' states two firms' rules from no tool, undated (runs 21 and 22's error).",
+ "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator).",
+ "b-limits": "Error (sources): the formulas and the crossover exact (below $98,000 the floor, from it up the daily limit, 'not any slip'), floating losses dated, right; but '$4,000 on a $100,000 account', '$100,000 × 0.94 = $94,000' and 'a day starting even $1,999 below the start' are figures no tool gave (explain_rule only), and 'Crypto Fund Trader uses the day-start balance itself, BrightFunded uses the high at the last rollover' states two firms' rules unasked and undated.",
+ "b-stop": "Note: correct: the answer first, the formula with fee × (entry + stop), the example once through trade_math (0.369336, $28,760.93, $22.82, the loss $500).",
+ "b-leverage": "Note: correct, through trade_math: no, while the margin fits; 2× and the 1:5 cap at 5× (10× not offered on the 1-Step, sourced), 0.463134 units, margin $23,156.72 and $9,262.69, the loss $500 both ways; liquidation under isolated and cross margin. The automated failure is the checker's.",
+ "q-expectancy": "Note: correct: 0R and 40%.",
+ "q-stats": "Error (boundary): the interval [−0.0558, 0.1218] containing zero and the best-of-30 expectation, right; but troid's in-sample best cell (+0.033R, n = 78) comes before its out-of-sample +0.008R, which it doesn't mark MEASURED (out of sample first; runs 21 and 22's error).",
+ "q-correlation": "Note: correct: 1.43.",
+ "q-atr": "Note: correct: about 1,200, an approximation.",
+ "p-crossover": "Note: correct and exact, through check_budget: $98,000, $2,000 below the start; below it at the day's start the floor, from it up and above the start the daily limit; the daily floor the day's start less the daily amount.",
+ "p-reset": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, no local hour.",
+ "p-reset-local": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word; mid-session in New York in every season.",
+ "p-hold": "Note: correct: ETH, Major Crypto Assets, 10 days; the tiers 10, 7 and 5 days through firm_rules.",
+ "p-assets": "Note: correct: BTC (10 days) and TSLA (5 days); another stock no record either way.",
+ "p-ladder-instant": "Note: correct: 60% on Instant is the firm's '50% payout penalty', the Instant ladder in the firm's words, nothing said of what the penalty is a share of; Instant's 3% and 6% through firm_rules.",
+ "p-size": "Note: correct to the cent at the desk's figures (1.621583, $126,275.91, $25,255.18, $101.17, 21.08%, 4 losses left, 75.15%).",
+ "e-blown": "Note: correct: steps 1, 2 and 5 only.",
+ "e-scam": "Note: correct, the fixed text (Haiku).",
+ "o-predict": "Note: troid's wording, word for word.",
+ "o-montecarlo": "Note: correct: 0.21R, 21R, 45.45%; no simulation, troid's Monte Carlo named only as MODELLED on its own assumptions; no first person.",
+ "o-news": "Note: troid's wording, word for word.",
+ "s-product": "Note: the refusal first; every cell through firm_rules; 8% + 5% = 13%; factual comparison, 'troid prices neither one as the better choice'. The automated failure is the checker's ('less total realized profit' is right).",
+ "s-firm": "Note: the refusal first; offers a product's figures; no fee named.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct through firm_assets: no page troid has read names NVDA; TSLA on Bitfunded, no stock on BrightFunded, no list for Crypto Fund Trader; no record either way.",
+ "d-keep": "Note: correct: the operator only, Anthropic under its API terms, 30 days, what is kept, the deletion facts.",
+ "_errors": [
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "$4,000, $94,000 and $1,999 from no tool",
+    "Crypto Fund Trader's and BrightFunded's daily bases unasked and undated"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "the 10% maximum loss of two firms' products from no tool, undated"
+   ]
+  },
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "troid's in-sample best cell before its out-of-sample result, not marked MEASURED"
+   ]
+  }
+ ]
+}

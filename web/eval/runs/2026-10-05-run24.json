@@ -1,0 +1,1327 @@
+{
+ "base": "https://troid.ai",
+ "variant": "candidate",
+ "started_utc": "2026-10-05T14:12:04.238Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 11,
+   "tools": [
+    "firm_assets"
+   ],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown",
+    "fees",
+    "reset"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "firm_assets",
+    "check_compliance",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 34,
+   "eval_key": true,
+   "patch": [
+    "TROID.md"
+   ],
+   "patch_rules": [
+    "reset"
+   ]
+  },
+  "key_days_left": {
+   "main": null,
+   "eval": null
+  }
+ },
+ "set": {
+  "cases": 30,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 3
+  }
+ },
+ "results": [
+  {
+   "id": "ex-r",
+   "kind": "beginner",
+   "example": true,
+   "q": "What does R mean?",
+   "status": 200,
+   "ms": 38872,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math",
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "77872",
+    "76580",
+    "0.3862",
+    "1",
+    "1292",
+    "498.97",
+    "0.04",
+    "23.86",
+    "522.83",
+    "2026",
+    "09",
+    "18",
+    "23",
+    "10",
+    "04",
+    "1000",
+    "1.913"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 324,
+     "cache_read": 39827,
+     "output": 317
+    },
+    "claude-sonnet-5": {
+     "calls": 4,
+     "input": 8,
+     "cache_write": 2874,
+     "cache_read": 213260,
+     "output": 1634
+    }
+   },
+   "tool_calls": 2,
+   "reply": "R is the amount risked on a single trade — the loss (or gain) that happens if the stop is hit, used as a unit to measure results on one scale.\n\nFormula: `1R = |entry − stop| × quantity` (troid's desk adds both fees: `+ fee × (entry + stop) × quantity`, the exit fee charged at the stop); a trade's result in R = `result ÷ 1R`.\n\nWhy it works: a dollar loss means something different on different account sizes and different trade sizes. Expressing every outcome as a multiple of what was risked puts them on one scale.\n\nIn practice: long BTC at entry 77,872, stop 76,580, size 0.3862 BTC. Stop distance = |77,872 − 76,580| = 1,292, so the raw 1R = 1,292 × 0.3862 = 498.97. Bitfunded's fee is 0.04% per side (help centre, Criteria to be Success), charged at entry and again at the stop, adding 23.86, so troid's desk counts 1R with fees as 522.83. A result of 1,000 on this trade works out to 1,000 ÷ 522.83 = 1.913R.\n\nWhat it means for you: a trade's result divided by its own risk turns any dollar outcome into a figure that compares directly across trades of different sizes — and against a firm's loss ceilings, which are measured the same way.\n\nSources, each with the date troid read it:\n- fee 0.04% per side (Bitfunded 1-Step) — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\brisk/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /entry/",
+     "pass": true
+    },
+    {
+     "name": "says: /[=×]/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bR (is|means|stands for|measures)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bhalf\\b[^.\\n]{0,40}\\bdaily/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-kelly",
+   "kind": "quantitative",
+   "example": true,
+   "q": "Should I size with Kelly? I win 45% of my trades and my average win is twice my average loss.",
+   "status": 200,
+   "ms": 12762,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "45",
+    "2",
+    "1",
+    "100",
+    "0.45",
+    "0.55",
+    "17.5",
+    "8.75",
+    "6",
+    "2.92",
+    "1.46",
+    "4",
+    "4.38",
+    "2.19",
+    "9",
+    "2026",
+    "09",
+    "23"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 343,
+     "cache_read": 39827,
+     "output": 290
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 1400,
+     "cache_read": 105336,
+     "output": 746
+    }
+   },
+   "tool_calls": 1,
+   "reply": "troid doesn't recommend; it prices what you bring. Here is what Kelly implies from the numbers given.\n\nFormula: `f* = p − (1 − p) ÷ b`, where p is win rate and b is average win ÷ average loss.\n\nWhy it works: Kelly's fraction maximises long-run growth rate — but only if p and b are known exactly, which they never are in live trading; they're estimates from a sample.\n\nIn practice, with p = 0.45 and b = 2: f* = 0.45 − 0.55 ÷ 2 = 17.5% of the account per trade (full Kelly). Half Kelly, the fraction many traders use to cut variance, is 17.5% ÷ 2 = 8.75%.\n\nWhat this means on an account troid prices: Bitfunded's 1-Step caps the maximum loss at 6% of the starting balance and the daily loss at 4% (help centre, Challenge & Trader Stage, and Terms 9(a), read 2026-09-23). A single full-Kelly-sized loss is 17.5% ÷ 6% = 2.92 times the account's entire maximum-loss allowance, and 17.5% ÷ 4% = 4.38 times the daily allowance. Even half Kelly, at 8.75%, is 1.46 times the maximum loss and 2.19 times the daily limit — one losing trade at that size breaches both ceilings outright. On a product with these ceilings, the firm's loss limit binds long before Kelly's fraction would.\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /17\\.5\\s?%|0\\.175/",
+     "pass": true
+    },
+    {
+     "name": "says: /8\\.75\\s?%|0\\.0875/",
+     "pass": true
+    },
+    {
+     "name": "says: /max(imum)?[- ]loss|ceiling|allowance/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /half[- ]Kelly(?:(?!\\.\\s)[^;\\n]){0,80}\\b4\\.38/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-recovery",
+   "kind": "quantitative",
+   "example": true,
+   "q": "I'm down 20%. How much do I need to get back?",
+   "status": 200,
+   "ms": 11541,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "20",
+    "1",
+    "100",
+    "0.2",
+    "25",
+    "10",
+    "2",
+    "9",
+    "2026",
+    "09",
+    "23",
+    "21"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 334,
+     "cache_read": 39827,
+     "output": 177
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 928,
+     "cache_read": 105322,
+     "output": 450
+    }
+   },
+   "tool_calls": 1,
+   "reply": "25%, to get back to even.\n\nFormula: gain needed = d ÷ (1 − d), where d is the drawdown as a fraction.\n\nWhy it works: a loss is measured on the starting balance, but the recovery gain is measured on the smaller balance left after it — so the percentage needed back is always larger than the percentage lost.\n\nWorked example: d = 20% = 0.20 → gain needed = 0.20 ÷ (1 − 0.20) = 0.20 ÷ 0.80 = 25%.\n\nWhat it means: a 20% drawdown is already past the largest maximum-loss ceiling troid has read on any product it covers — 10%, on Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase. On any funded or evaluation account built to one of those rules, an account down 20% would already have failed the maximum-loss limit before reaching this point; the 25% recovery math only applies to an account where no such ceiling applied (e.g., a personal account with no firm rule).\n\nSources, each with the date troid read it:\n- max 10% (Bitfunded 2-Step · S1) — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1), read 2026-09-23\n- max 10% (Crypto Fund Trader 2-Phase) — Crypto Fund Trader Terms and Conditions, read 2026-09-21\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "a claim about every rule troid has read has a tool's sources behind it",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\b25(\\.0+)?\\s?%/",
+     "pass": true
+    },
+    {
+     "name": "says: /max(imum)?[- ]loss|floor/",
+     "pass": true
+    },
+    {
+     "name": "never says: /1-Step[^.\\n]{0,40}\\b10\\s?%|\\b10\\s?%[^.\\n]{0,40}\\b1-Step/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b6\\s?[-–]\\s?10\\s?%/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "ex-angry",
+   "kind": "emotional",
+   "example": true,
+   "q": "Your calculator is wrong. I failed because of troid.",
+   "status": 500,
+   "ms": 563,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "b-limits",
+   "kind": "beginner",
+   "example": false,
+   "q": "What's the difference between the daily loss limit and the maximum loss?",
+   "status": 500,
+   "ms": 615,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "b-stop",
+   "kind": "beginner",
+   "example": false,
+   "q": "Why does troid need my stop price to size a trade?",
+   "status": 500,
+   "ms": 523,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "b-leverage",
+   "kind": "beginner",
+   "example": false,
+   "q": "If I use 10x leverage instead of 2x, do I lose more when my stop is hit?",
+   "status": 500,
+   "ms": 418,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "q-expectancy",
+   "kind": "quantitative",
+   "example": false,
+   "q": "My win rate is 40% and my average win is 1.5R against an average loss of 1R. What's my expectancy, and what win rate would I need to break even?",
+   "status": 500,
+   "ms": 783,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "q-stats",
+   "kind": "quantitative",
+   "example": false,
+   "q": "Over 78 trades my average is +0.033R with a standard deviation of 0.40R. Is that a real edge?",
+   "status": 500,
+   "ms": 487,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "q-correlation",
+   "kind": "quantitative",
+   "example": false,
+   "q": "I hold four positions and every pair is correlated at 0.6. How many independent bets is that, roughly?",
+   "status": 500,
+   "ms": 388,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "q-atr",
+   "kind": "quantitative",
+   "example": false,
+   "q": "My 1-hour ATR on BTC is 600. Roughly what should the 4-hour ATR be?",
+   "status": 500,
+   "ms": 649,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-crossover",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "What is the crossover on a $100,000 Bitfunded 1-Step, and why does it matter?",
+   "status": 500,
+   "ms": 452,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-reset",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "When does Bitfunded's trading day reset, in UTC?",
+   "status": 500,
+   "ms": 574,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-reset-local",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "I trade from New York. What time does Bitfunded's trading day reset for me?",
+   "status": 500,
+   "ms": 604,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-hold",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "How long can I keep an ETH position open on Bitfunded?",
+   "status": 500,
+   "ms": 479,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-assets",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "Bitfunded: can I trade BTC and a stock?",
+   "status": 500,
+   "ms": 476,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-ladder-instant",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "Bitfunded Instant: what happens if 60% of my margin is in one trade?",
+   "status": 500,
+   "ms": 607,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "p-size",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "Size a short on a $100,000 Bitfunded 1-Step. Equity and day-start balance are both $96,000, entry 77,872, stop 0.3% above entry, risking 0.5%.",
+   "status": 500,
+   "ms": 661,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "e-blown",
+   "kind": "emotional",
+   "example": false,
+   "q": "I just blew my second challenge this week. I feel sick. What did I do wrong?",
+   "status": 500,
+   "ms": 603,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "e-scam",
+   "kind": "emotional",
+   "example": false,
+   "q": "This is a scam. troid just wants my affiliate money.",
+   "status": 500,
+   "ms": 546,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "o-predict",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "Where will Bitcoin's price be next week?",
+   "status": 500,
+   "ms": 466,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "o-montecarlo",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "Can you run a Monte Carlo simulation of my strategy? 55% win rate, 1.2R average win, 1% risk per trade, 100 trades.",
+   "status": 500,
+   "ms": 557,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "o-news",
+   "kind": "out-of-scope",
+   "example": false,
+   "q": "What's moving the crypto market today?",
+   "status": 500,
+   "ms": 773,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "s-product",
+   "kind": "should-i",
+   "example": false,
+   "q": "Should I buy the Bitfunded 1-Step or the 2-Step?",
+   "status": 500,
+   "ms": 424,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "s-firm",
+   "kind": "should-i",
+   "example": false,
+   "q": "Which prop firm is best for me? I'm a beginner and I have $500.",
+   "status": 500,
+   "ms": 410,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "u-ftmo",
+   "kind": "unread-firm",
+   "example": false,
+   "q": "What's FTMO's daily loss limit?",
+   "status": 500,
+   "ms": 602,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "u-topstep",
+   "kind": "unread-firm",
+   "example": false,
+   "q": "Does Topstep calculate its trailing drawdown intraday or at the end of the day?",
+   "status": 500,
+   "ms": 395,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "d-fill",
+   "kind": "desk",
+   "example": false,
+   "q": "Can troid fill in the price for me?",
+   "status": 500,
+   "ms": 531,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "d-stock",
+   "kind": "desk",
+   "example": false,
+   "q": "I tapped NVDA on the price tape and the desk won't size it. Why?",
+   "status": 500,
+   "ms": 589,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  },
+  {
+   "id": "d-keep",
+   "kind": "desk",
+   "example": false,
+   "q": "Who can read what I type to ask troid?",
+   "status": 500,
+   "ms": 434,
+   "reply": null,
+   "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai.",
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": false,
+     "detail": {
+      "status": 500,
+      "error": "ask troid is misconfigured. Try again later, or write to hello@troid.ai."
+     }
+    }
+   ]
+  }
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-10-05T14:32:42.994Z",
+ "passed": 3,
+ "failed": 27,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 3,
+    "input": 9,
+    "cache_write": 1001,
+    "cache_read": 119481,
+    "output": 784,
+    "usd": 0.0171
+   },
+   "claude-sonnet-5": {
+    "calls": 8,
+    "input": 16,
+    "cache_write": 5202,
+    "cache_read": 423918,
+    "output": 2830,
+    "usd": 0.1261
+   }
+  },
+  "usd": 0.1432,
+  "priced": true
+ }
+}
