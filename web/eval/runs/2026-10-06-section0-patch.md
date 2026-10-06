@@ -6,13 +6,15 @@ Prompt: **patch** (the live prompt with context/patch/: TROID.md) on https://tro
 
 **Tokens:** claude-haiku-4-5 3 calls, 9 input, 38594 cache-write, 75146 cache-read, 324 output; claude-sonnet-5 6 calls, 12 input, 52802 cache-write, 249210 cache-read, 1649 output — $0.2558 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-10-06: the fourth patch (web/context/patch/: TROID.md's reset in UTC and "no measurable edge"; PATCH_RULES.reset) on the three cases it touches, against the live baseline run the same hour (2026-10-06-section0-live). 2 of 3 automatically; p-reset-local's failure is real. On a read, one error, major: p-reset-local gives New York's hour by season ('noon–12:10pm New York time' in summer, '11:00–11:10am' in winter), not for a stated date and from no tool, and never names 1 November; the live runs have that kind (boundary wording). p-reset right: 16:00 UTC all year, no local hour. q-stats right. No critical failure, and no kind the live prompt's runs lack.
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| q-stats | quantitative | pass | — |
-| p-reset | prop-rule | pass | — |
-| p-reset-local | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York"; every number comes from a tool, the user's message or troid's published figures |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| q-stats | quantitative | pass | — | note |
+| p-reset | prop-rule | pass | — | note |
+| p-reset-local | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York"; every number comes from a tool, the user's message or troid's published figures | **error** |
 
 ## q-stats — quantitative
 
@@ -78,6 +80,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
 
+**Read by a person:** Note: correct: not distinguishable from zero first; SE 0.0453R, t 0.729, CI [−0.0558, 0.1218]; the best of 30 under zero edge about +0.093R (SE × 2.0428); troid's own result named only as noise out of sample, with no in-sample figure.
+
 ## p-reset — prop-rule
 
 **Question:** When does Bitfunded's trading day reset, in UTC?
@@ -134,6 +138,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ never says: /morning and afternoon (sessions )?(as|are) separate|applies to both morning/
 - ✓ answers instead of refusing (a question, not a "should I")
 - ✓ each rule it states carries its document and read date
+
+**Read by a person:** Note: correct through explain_rule: 16:00 UTC every day of the year (UTC+8 a fixed offset), 16:00–16:10 and a fresh budget certain only from 16:10, the floating loss carried in full, mid-session for New York in every season; no local hour.
 
 ## p-reset-local — prop-rule
 
@@ -197,3 +203,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ says: /1 November|November 1|daylight|\bDST\b|standard time|depends on the date|for the date/
 - ✓ answers instead of refusing (a question, not a "should I")
 - ✓ each rule it states carries its document and read date
+
+**Read by a person:** Error (wording): 16:00–16:10 UTC, the fixed offset and the floating loss right, through explain_rule; but it gives New York's hour by season ('noon–12:10pm New York time' in summer, '11:00–11:10am' in winter, 'around noon in summer, around 11am in winter'), not for a stated date and from no tool, and never names 1 November, when New York leaves daylight saving. The patch takes the seasonal hours out of TROID.md and explain_rule; asked for a local time, the model converts on its own (the candidate, on hold, gives no local hour: run 28).

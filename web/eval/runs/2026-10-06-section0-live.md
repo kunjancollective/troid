@@ -6,13 +6,15 @@ Prompt: **live** (the baseline, through the operator key) on https://troid.ai ·
 
 **Tokens:** claude-haiku-4-5 3 calls, 9 input, 38550 cache-write, 75058 cache-read, 477 output; claude-sonnet-5 6 calls, 12 input, 52472 cache-write, 248900 cache-read, 1575 output — $0.2548 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-10-06: the live prompt as the baseline (EVAL_LIVE=1) on the fourth patch's three cases, the same hour as 2026-10-06-section0-patch. 1 of 3 automatically; both failures real. On a read, three errors, all major, boundary wording: p-reset and p-reset-local give 'noon in New York in summer (EDT), 11:00 in winter (EST)' and an example in EDT or ET, the wording the live TROID.md and explain_rule still carry (run 20's errors); q-stats gives troid's in-sample best cell before its out-of-sample result (runs 22 and 23's error).
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| q-stats | quantitative | pass | — |
-| p-reset | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York" |
-| p-reset-local | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York"; says: /1 November\|November 1\|daylight\|\bDST\b\|standard time\|depends on the date\|for the date/ |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| q-stats | quantitative | pass | — | **error** |
+| p-reset | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York" | **error** |
+| p-reset-local | prop-rule | **fail** | retired wording: "no measurable edge", and the reset in UTC, never "noon in New York"; says: /1 November\|November 1\|daylight\|\bDST\b\|standard time\|depends on the date\|for the date/ | **error** |
 
 ## q-stats — quantitative
 
@@ -80,6 +82,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
 
+**Read by a person:** Error (wording): SE 0.0453R, t 0.729 and the interval right; but troid's own in-sample best cell (+0.033R over 78 trades, best of about 30) comes before its out-of-sample result (+0.008R on BTC, n=504, and ETH, n=498, MEASURED), and the in-sample figure isn't marked MEASURED (runs 22 and 23's error).
+
 ## p-reset — prop-rule
 
 **Question:** When does Bitfunded's trading day reset, in UTC?
@@ -139,6 +143,8 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ answers instead of refusing (a question, not a "should I")
 - ✓ each rule it states carries its document and read date
 
+**Read by a person:** Error (wording): 16:00 UTC and 16:00–16:10 right, sourced; but 'noon in New York in summer (EDT), 11:00 in winter (EST)' and the example '11:45 and 12:15 EDT', the retired wording the live TROID.md and explain_rule carry (run 20's error).
+
 ## p-reset-local — prop-rule
 
 **Question:** I trade from New York. What time does Bitfunded's trading day reset for me?
@@ -194,3 +200,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✗ says: /1 November|November 1|daylight|\bDST\b|standard time|depends on the date|for the date/
 - ✓ answers instead of refusing (a question, not a "should I")
 - ✓ each rule it states carries its document and read date
+
+**Read by a person:** Error (wording): 16:00–16:10 UTC and the floating loss right, sourced; but 'noon in New York in summer (EDT)' and '11:00 in New York in winter (EST)', the example in ET ('11:45 ET … 12:15 ET'), and 1 November never named (run 20's error).

@@ -1,0 +1,38 @@
+{
+ "_summary": "Read in full on 2026-10-06: the live prompt as the baseline (EVAL_LIVE=1) on the fourth patch's three cases, the same hour as 2026-10-06-section0-patch. 1 of 3 automatically; both failures real. On a read, three errors, all major, boundary wording: p-reset and p-reset-local give 'noon in New York in summer (EDT), 11:00 in winter (EST)' and an example in EDT or ET, the wording the live TROID.md and explain_rule still carry (run 20's errors); q-stats gives troid's in-sample best cell before its out-of-sample result (runs 22 and 23's error).",
+ "q-stats": "Error (wording): SE 0.0453R, t 0.729 and the interval right; but troid's own in-sample best cell (+0.033R over 78 trades, best of about 30) comes before its out-of-sample result (+0.008R on BTC, n=504, and ETH, n=498, MEASURED), and the in-sample figure isn't marked MEASURED (runs 22 and 23's error).",
+ "p-reset": "Error (wording): 16:00 UTC and 16:00–16:10 right, sourced; but 'noon in New York in summer (EDT), 11:00 in winter (EST)' and the example '11:45 and 12:15 EDT', the retired wording the live TROID.md and explain_rule carry (run 20's error).",
+ "p-reset-local": "Error (wording): 16:00–16:10 UTC and the floating loss right, sourced; but 'noon in New York in summer (EDT)' and '11:00 in New York in winter (EST)', the example in ET ('11:45 ET … 12:15 ET'), and 1 November never named (run 20's error).",
+ "_errors": [
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "troid's in-sample best cell before its out-of-sample result, not marked MEASURED"
+   ]
+  },
+  {
+   "case": "p-reset",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "the retired wording: 'noon in New York in summer, 11:00 in winter'; the example in EDT"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "the retired wording; the example in ET; 1 November never named"
+   ]
+  }
+ ]
+}
