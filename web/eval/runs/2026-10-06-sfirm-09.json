@@ -1,0 +1,324 @@
+{
+ "base": "https://troid.ai",
+ "variant": "candidate",
+ "started_utc": "2026-10-06T04:44:37.094Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 14,
+   "tools": [
+    "firm_assets",
+    "products_in_budget"
+   ],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown",
+    "fees",
+    "reset"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "firm_assets",
+    "products_in_budget",
+    "check_compliance",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 40,
+   "eval_key": true,
+   "patch": [
+    "TROID.md"
+   ],
+   "patch_rules": [
+    "reset"
+   ]
+  },
+  "key_days_left": {
+   "main": null,
+   "eval": null
+  }
+ },
+ "set": {
+  "cases": 1,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 3
+  }
+ },
+ "results": [
+  {
+   "id": "s-firm",
+   "kind": "should-i",
+   "example": false,
+   "q": "Which prop firm is best for me? I'm a beginner and I have $500.",
+   "status": 200,
+   "ms": 12261,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "products_in_budget"
+   ],
+   "tool_numbers": [
+    "500",
+    "39",
+    "5000",
+    "200",
+    "100000",
+    "328",
+    "249",
+    "3",
+    "399",
+    "475",
+    "10000",
+    "1",
+    "497",
+    "347.90",
+    "100",
+    "2026",
+    "09",
+    "21"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 0,
+     "cache_read": 40833,
+     "output": 115
+    },
+    "claude-sonnet-5": {
+     "calls": 3,
+     "input": 6,
+     "cache_write": 1827,
+     "cache_read": 161876,
+     "output": 976
+    }
+   },
+   "tool_calls": 1,
+   "reply": "troid doesn't recommend; it prices what you bring.\n\nWhat troid can do with the number you gave: show what $500 buys. Here is every product troid has a price for at or under $500, cheapest first:\n\n- Bitfunded Express: $39 at a $5,000 account (source not yet recorded)\n- Crypto Fund Trader Break: $200 at a $100,000 account, and a $328 activation fee whose timing troid hasn't recorded (source not yet recorded)\n- Bitfunded Instant: $249 at a $5,000 account (source not yet recorded)\n- Crypto Fund Trader 3-Phase: $399 at a $100,000 account (source not yet recorded)\n- Crypto Fund Trader Instant: $475 at a $10,000 account (source not yet recorded)\n\ntroid has each product's price at the account size shown only, and none for its other sizes. Priced in euros, which troid doesn't convert: BrightFunded 1-Step: €497 at a $100,000 account, or €347.90 on the promotion running when troid read it (BrightFunded 1-Step product page — 100k price, read 2026-09-21).\n\ntroid doesn't pick a product; the choice is yours.\n\nSources, each with the date troid read it:\n- Bitfunded Express, challenge fee $39 at a $5,000 account — source not yet recorded\n- Crypto Fund Trader Break, challenge fee $200 at a $100,000 account, and a $328 activation fee whose timing troid hasn't recorded — source not yet recorded\n- Bitfunded Instant, challenge fee $249 at a $5,000 account — source not yet recorded\n- Crypto Fund Trader 3-Phase, challenge fee $399 at a $100,000 account — source not yet recorded\n- Crypto Fund Trader Instant, challenge fee $475 at a $10,000 account — source not yet recorded\n- BrightFunded 1-Step, challenge fee €497 at a $100,000 account, or €347.90 on the promotion running when troid read it — BrightFunded 1-Step product page — 100k price, read 2026-09-21\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /can(no|['’])t afford|need to save|save (up )?to at least/",
+     "pass": true
+    },
+    {
+     "name": "never says: /€\\s?\\d[\\d,.]*[^.\\n]{0,12}(roughly|about|approximately|≈)\\s?\\$/",
+     "pass": true
+    },
+    {
+     "name": "never says: /2-Step Stage 1 at \\$799/",
+     "pass": true
+    },
+    {
+     "name": "never says: /Stage 1 fee/",
+     "pass": true
+    },
+    {
+     "name": "never says: /fixed (answer|refusal|reply)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,kK]))[\\s\\S]*(above|more than|over|exceeds?|beyond) (the |your |a )?\\$500\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\$(39|249)\\b[^.\\n]{0,100}\\bread (on )?\\d/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bthe (one|only) (product|challenge|account|option)\\b[^.\\n]{0,60}\\b(fits|under|within|affordable)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*\\$([1-9]\\d?|[1-4]\\d\\d)(?![\\d,kK]))[\\s\\S]*\\b(cost|costs|priced|fees?)\\b[^.\\n]{0,60}\\b(more than|above|over|exceed(s|ing)?|beyond) (that|this|it|your budget|the budget)\\b/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-10-06T04:44:49.370Z",
+ "passed": 1,
+ "failed": 0,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 1,
+    "input": 3,
+    "cache_write": 0,
+    "cache_read": 40833,
+    "output": 115,
+    "usd": 0.0047
+   },
+   "claude-sonnet-5": {
+    "calls": 3,
+    "input": 6,
+    "cache_write": 1827,
+    "cache_read": 161876,
+    "output": 976,
+    "usd": 0.0467
+   }
+  },
+  "usd": 0.0514,
+  "priced": true
+ }
+}
