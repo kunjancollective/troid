@@ -6,11 +6,13 @@ Prompt: **candidate** on https://troid.ai · models: {"lookup":"claude-haiku-4-5
 
 **Tokens:** claude-haiku-4-5 1 calls, 3 input, 346 cache-write, 40495 cache-read, 71 output; claude-sonnet-5 2 calls, 4 input, 1480 cache-write, 107043 cache-read, 693 output — $0.0368 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-10-06: p-crossover alone on the candidate of #16 (the crossover guardrail with no quotable phrase, and the lint for written-back prompt words), 1 of 5. Automated checks pass; no error on a read. $0.0368 on the eval key.
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| p-crossover | prop-rule | pass | — |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| p-crossover | prop-rule | pass | — | note |
 
 ## p-crossover — prop-rule
 
@@ -83,3 +85,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a formula
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
+
+**Read by a person:** Note: correct and exact, through explain_rule: $98,000 and its formula; below it at the day's start the floor, from it up and above the start the daily limit; less than $2,000 below the start still the daily limit; floating losses dated. Nothing set in quotes from the prompt, and no small amount said to cross. ('4% of the initial balance per the FAQ': the basis, as runs 1, 3, 5 and 12 were read.)

@@ -6,11 +6,13 @@ Prompt: **candidate** on https://troid.ai · models: {"lookup":"claude-haiku-4-5
 
 **Tokens:** claude-haiku-4-5 1 calls, 3 input, 0 cache-write, 40841 cache-read, 174 output; claude-sonnet-5 4 calls, 8 input, 3967 cache-write, 217722 cache-read, 1463 output — $0.0731 at the prices the runner records.
 
+**Read by a person:** Read in full on 2026-10-06: p-crossover alone on the candidate of #16 (the crossover guardrail with no quotable phrase, and the lint for written-back prompt words), 4 of 5. Automated checks pass; no error on a read. $0.0731 on the eval key.
+
 Automated checks cover the figures, the calculations written out, the boundaries, tool use, the third person, the note, sources on rules, and three of the method's six parts. A person reads each reply below for the other two: *why it works* and *what it means for you*.
 
-| case | kind | result | failed checks |
-|---|---|---|---|
-| p-crossover | prop-rule | pass | — |
+| case | kind | result | failed checks | read by a person |
+|---|---|---|---|---|
+| p-crossover | prop-rule | pass | — | note |
 
 ## p-crossover — prop-rule
 
@@ -93,3 +95,5 @@ Automated checks cover the figures, the calculations written out, the boundaries
 - ✓ method: a formula
 - ✓ method: a worked example with numbers
 - ✓ method: the tier
+
+**Read by a person:** Note: correct and exact, through explain_rule and check_budget: the reference account's floors and budgets, which limit binds; floating losses; no quoted phrase.
