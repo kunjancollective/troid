@@ -355,6 +355,8 @@ const NEW16 = /^Every number in the answer comes from|^A teaching answer writes 
 // the read of runs 17 to 19 (2026-10-05): nine lints the older runs' replies were never written against; the older tests
 // leave them out, and they are tested on runs 17 to 20's replies below
 const NEW1005 = /^The largest maximum loss troid has read covers|^troid's own strategy: its out-of-sample result first, then|^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
+// the owner's fixes of 2026-10-06 (after runs 25 to 27): three lints the older runs' replies were never written against
+const NEW1006 = /^Never set one product apart as what the money buys|^Give every product products_in_budget returns|^These words are troid's own instructions/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -368,16 +370,17 @@ const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidat
 // the calculator audit's F6/F7 (2026-09-30): the same tools but trade_math's schema, which adds side and says how fees and losses left are counted
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
 // the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
-const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
-ok("candidate: the live prompt plus thirteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
-   CG.length === 13 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets" && t.name !== "products_in_budget").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
+ok("candidate: the live prompt plus fourteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 14 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
    && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
    && CG.some((g) => /a tool returned this turn for that very thing/.test(g) && /no recorded source for Bitfunded's margin modes/.test(g))
-   && CG.some((g) => g.includes(handler.DST_SENTENCE) && /no noon, midday or mid-afternoon/.test(g)) && CG.some((g) => /below \$98,000 at the day's start the maximum-loss floor binds/.test(g) && /even a small amount/.test(g))
+   && CG.some((g) => g.includes(handler.DST_SENTENCE) && /no noon, midday or mid-afternoon/.test(g)) && CG.some((g) => /below \$98,000 at the day's start the maximum-loss floor binds/.test(g) && /turns on the day's start alone/.test(g) && !/["“”]/.test(g))
+   && CG.some((g) => g.includes(handler.BUDGET_CLOSE) && /products_in_budget/.test(g) && /never leave one out/.test(g))
    && CG.some((g) => /the formula written out with an equals sign/.test(g) && /Give the example once/.test(g)) && CG.some((g) => g.includes(handler.OUT_OF_SCOPE_REPLY))
    && CG.some((g) => /or it is not stated/.test(g) && /every maximum loss troid has read/.test(g)) && CG.some((g) => g.includes(handler.OWN_STRATEGY) && /out-of-sample result comes first/.test(g))
-   && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets"
+   && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets,products_in_budget"
    && /firm-level rules/.test(handler._toolsFor("candidate").find((t) => t.name === "firm_rules").description) && !/firm-level/.test(handler._toolsFor("live").find((t) => t.name === "firm_rules").description));
 // the live test of 2026-10-04: firm_assets (BTC and the one stock named, TSLA, each with its hold limit, read 2026-09-24),
 // firm_rules' firm-level rules dated from provenance (max open positions read 2026-09-21, re-read 24 and 26), the ladder's
@@ -575,7 +578,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
         : { rule: parts[0], document_section: parts.slice(1).join(" — ").replace(/,\s*read [^]*$/, ""), read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
     return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
   const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
-  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n) && !NEW1005.test(n));
+  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n) && !NEW1005.test(n) && !NEW1006.test(n));
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
   ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
@@ -743,7 +746,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   for (const n of RUNS) for (const c of R17[n]) {
     const ks = Object.keys(KINDS).filter((k) => handler._lintNotesFor(body17(c), "candidate", tools17(c), c.q, c.q).some((m) => KINDS[k].test(m)));
     if (ks.length) hits.push(n + " " + c.id + " " + ks.join("+"));
-    if (handler._lintNotesFor(body17(c), "live", tools17(c), c.q, c.q).some((m) => NEW1005.test(m))) onLive.push(n + " " + c.id);
+    if (handler._lintNotesFor(body17(c), "live", tools17(c), c.q, c.q).some((m) => NEW1005.test(m) || NEW1006.test(m))) onLive.push(n + " " + c.id);
   }
   ok("candidate lints (the read of runs 17 to 19): the crossover's 'even a small amount', the reset's local hours, liquidation the wrong way round, cross margin called Bitfunded's, a how question with no formula or no example from a tool, the example given twice, a place named by kind for prices or news; nothing else in runs 17 to 20 and the subset run, and nothing on live",
      hits.join("; ") === ["subset-candidate b-stop formula", "run17 p-crossover xover", "run17 p-reset reset", "run17 p-reset-local reset", "run17 o-news outside",
@@ -823,7 +826,68 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && q21.indexOf("+0.008R") < q21.indexOf("best of the ~30") && R24.slice(0, 4).every(([, rs]) => handler._ownStrategyFirst(plain(caseOf(rs, "q-stats"))) === plain(caseOf(rs, "q-stats"))), [mis, q21.slice(-700)]);
   const WL = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^The largest maximum loss troid has read covers/.test(n));
   ok("candidate: 'every account troid covers' beside the largest maximum loss troid has read is sent back (ex-recovery, runs 17, 21, 22 and 23; run 24 kept to the products troid has read); live is not",
-     wid === "run17,run21,run22,run23" && WL(plain(caseOf(R24[4][1], "ex-recovery")), "candidate") && !WL(plain(caseOf(R24[4][1], "ex-recovery")), "live"), wid); }
+     wid === "run17,run21,run22,run23" && WL(plain(caseOf(R24[4][1], "ex-recovery")), "candidate") && !WL(plain(caseOf(R24[4][1], "ex-recovery")), "live"), wid);
+  // the owner's fixes of 2026-10-06, after runs 25 to 27: a budget gets every product troid has a price for at or under
+  // it, troid picking none (s-firm: runs 25 and 26 critical, run 27 no fee under $500); firm_rules gives Crypto Fund
+  // Trader's fees; the crossover guardrail quotes nothing, and the prompt's quoted words aren't written back
+  const PB = handler._runTool("products_in_budget", { budget: 500 }, "candidate");
+  ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and that its source is not yet recorded; BrightFunded's euros apart, not converted; troid's closing line; live has no such tool",
+     PB.products.map((p) => p.firm + " " + p.product + " " + p.price + " " + p.account_size).join("; ") === "Bitfunded Express 39 5000; Crypto Fund Trader Break 200 100000; Bitfunded Instant 249 5000; Crypto Fund Trader 3-Phase 399 100000; Crypto Fund Trader Instant 475 10000"
+     && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (source not yet recorded)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => p.source === "source not yet recorded")
+     && /Priced in euros, which troid doesn't convert: BrightFunded 1-Step: €497 at a \$100,000 account, or €347\.90 on the promotion running when troid read it \(BrightFunded 1-Step product page — 100k price, read 2026-09-21\)/.test(PB.note)
+     && PB.close === handler.BUDGET_CLOSE && !handler._toolsFor("live").some((t) => t.name === "products_in_budget") && !!handler._runTool("products_in_budget", { budget: 500 }, "live").error
+     && handler._runTool("products_in_budget", { budget: 30 }, "candidate").products.length === 0 && handler._runTool("products_in_budget", { budget: 1000 }, "candidate").products.map((p) => p.price).join() === "39,200,249,399,475,619,660,780,799,999"
+     && handler._runTool("products_in_budget", { budget: 400, currency: "EUR" }, "candidate").products.map((p) => p.price).join() === "", PB);
+  const cft = (pk, v) => handler._runTool("firm_rules", { firm: "crypto_fund_trader", product: pk }, v);
+  const feeOf = (o) => o.rules.filter((x) => /fee at a/.test(x.rule)).map((x) => x.value).join();
+  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the rest not yet recorded; live gives none",
+     ["1phase", "2phase", "3phase", "instant", "ascend", "break"].map((pk) => feeOf(cft(pk, "candidate"))).join(";") === "619;660;399;475;780;200,328"
+     && cft("1phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 619/.test(x.rule) && x.read_on.join() === "2026-09-21")
+     && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && x.source === "not yet recorded")
+     && ["1phase", "2phase", "3phase", "instant", "ascend", "break"].every((pk) => feeOf(cft(pk, "live")) === ""));
+  const QS = JSON.parse(fs0.readFileSync(path0.join(__dirname, "eval", "character.json"), "utf8")).cases;
+  const BO = handler._budgetOf;
+  ok("a budget is an amount to spend on a challenge: of the 30 cases, s-firm's only; never an account size, a risk or a loss",
+     QS.filter((c) => BO(c.q)).map((c) => c.id).join() === "s-firm" && JSON.stringify(BO("Which prop firm is best for me? I'm a beginner and I have $500.")) === '{"budget":500,"currency":"USD"}'
+     && BO("What can $300 buy at Bitfunded?").budget === 300 && BO("I have $500, which challenge?").budget === 500 && BO("a budget of $1,000 for a prop firm challenge").budget === 1000
+     && BO("I've got €400 to spend on a challenge").currency === "EUR" && BO("with $5k which firm is best").budget === 5000
+     && [ "I have a $100,000 account at Bitfunded", "Size a short on a $100,000 Bitfunded 1-Step with $500 risk", "I'm down $500 on my challenge today",
+          "I have $50,000 in my account", "Is $39 for the Express worth it?"].every((q) => BO(q) === null));
+  // runs 25 to 27's s-firm replies as the runs gave them (their records are in a records PR of their own, so the test
+  // keeps the text it was written against)
+  const SF27 = {
+    "run25": "troid doesn't recommend; it prices what you bring.\n\nThat question gets the same answer regardless of budget or experience: troid isn't positioned to weigh one firm's terms against your situation, so it won't say which is \"best.\"\n\nWhat troid can do instead:\n\n- Lay out the recorded rules for Bitfunded, BrightFunded and Crypto Fund Trader side by side — daily loss, maximum loss, profit target, minimum days, fee, and leverage cap — each with its own document and read date, so you can compare them yourself rather than take a characterization from troid.\n- On fees specifically: with a $500 budget, the smallest product troid has a fee for at Bitfunded is its Instant account at a $5,000 size — fee $249, source not yet recorded for that figure itself, though the account's other terms (3% daily loss, 6% maximum loss, static drawdown, 60% profit split, 1:5 leverage cap) are sourced to Bitfunded's help centre and blog, read 2026-09-21/23/2026-10-04. Fees differ by product and account size at every firm troid covers, so troid won't generalize one number to a whole firm — ask about a specific product and size at BrightFunded or Crypto Fund Trader and troid will pull the same detail.\n- If you mention your country, troid can check what each firm's own terms exclude before going further, since availability differs by firm.\n- If you bring a specific trade on a specific account (entry, stop, side), troid will size it against both loss ceilings and show the working.\n\nWhich product and firm would you like the rules or fee for?",
+    "run26": "troid doesn't recommend; it prices what you bring.\n\nWhat troid can do is show what $500 actually buys, on the rules as it has read them.\n\nBitfunded's $100,000 1-Step challenge has a fee of $999 — above $500. Its daily loss limit is 4%, maximum loss 6% (static — measured from the account's starting balance and never moving), profit target 10%, minimum 5 trading days.\n\nBitfunded's Instant account at $5,000 has a fee of $249 — source not yet recorded. Its daily loss limit is 3%, maximum loss 6% (static), no profit target and no minimum trading days, and it pays a 60% split instead of 80%.\n\nBoth products cap leverage at 1:5, charge 0.04% per side in trading fees, and count floating losses toward both limits — an open position that reaches either one fails the account automatically.\n\ntroid has not read BrightFunded's or Crypto Fund Trader's $500-range product fees in this conversation, so it won't state them from memory; ask and troid will pull them the same way.\n\nOnce you bring a product, an entry, a stop and a size, troid can size the trade against whichever ceiling binds, net of fees.",
+    "run27": "troid doesn't recommend; it prices what you bring.\n\nWhat troid can do: lay the recorded rules of specific products side by side, each with its source, so a comparison rests on the firms' own documents rather than a characterization of them. Two examples that fit a $500 budget:\n\n**Bitfunded 1-Step** ($100,000 account, the only account size troid has a recorded fee for on this product): daily loss limit 4%, maximum loss 6% (static — the floor is fixed at quota × (1 − 6%) and doesn't move with profit), profit target 10%, minimum trading days 5, leverage cap 1:5, trading fee 0.04% per side, challenge fee $999 (help centre's Challenge Type table and Terms 9(a), read 2026-09-23). That fee is above $500.\n\n**Crypto Fund Trader Instant**: daily loss limit 4%, maximum loss 6%, profit target 10%, minimum trading days — source not yet recorded, leverage cap crypto 1:100 on Advanced accounts, 1:5 on Student accounts, trading fee 0.0325% per side, daily limit measured from the day-start balance rather than the initial balance (Terms and Conditions 8.i–8.ii, read 2026-09-21). troid has not recorded this product's challenge fee at the account sizes this product is sold in, nor its profit split base percentage (only that an add-on can raise it toward 90%, Terms and Conditions 5.9, read 2026-09-26).\n\nBoth charge a challenge fee before any funded trading starts. Whether $500 covers either depends on the account size chosen, and troid does not have a sourced fee figure for Crypto Fund Trader Instant to check that against — worth confirming directly with the firm."
+  };
+  const SF = [["run15", plain(caseOf(require("./eval/runs/2026-09-24-run15.json").results, "s-firm"))], ["run21", plain(caseOf(require("./eval/runs/2026-10-05-run21.json").results, "s-firm"))],
+    ["run25", SF27.run25], ["run26", SF27.run26], ["run27", SF27.run27]];
+  const SFQ = "Which prop firm is best for me? I'm a beginner and I have $500.";
+  const BL = (t, v) => handler._lintNotesFor(t, v, [], SFQ).filter((n) => NEW1006.test(n)).map((n) => n.slice(0, 24));
+  const listed = handler._budgetListed(SF[2][1], SFQ, []), listedLog = [];
+  ok("candidate: s-firm's budget answers of runs 15, 21 and 25 to 27 are sent back (one product set apart in runs 15, 25 and 27; every one with products missing); the backstop gives the list, which passes its own checks and trips no lint; live is not",
+     SF.every(([, t]) => BL(t, "candidate").includes("Give every product produ")) && SF.filter(([, t]) => BL(t, "candidate").includes("Never set one product ap")).map(([n]) => n).join() === "run15,run25,run27"
+     && SF.every(([, t]) => !BL(t, "live").length) && listed === "troid doesn't recommend; it prices what you bring.\n\n" + handler._budgetText(PB)
+     && handler._budgetListed(listed, SFQ, listedLog) === listed && !handler._lintNotesFor(listed, "candidate", [{ name: "products_in_budget", input: { budget: 500 }, result: PB }], SFQ).length
+     && handler._budgetListed("The 2-Step's two targets add up to 13%.", "Should I buy the Bitfunded 1-Step or the 2-Step?", []) === "The 2-Step's two targets add up to 13%.",
+     SF.map(([n, t]) => n + ": " + BL(t, "candidate").join(" + ")));
+  const ECHO = []; for (const f of fs0.readdirSync(path0.join(__dirname, "eval", "runs")).filter((f) => /\.json$/.test(f) && !/read/.test(f)).sort()) {
+    let rs; try { rs = require("./eval/runs/" + f).results || []; } catch (e) { continue; }
+    for (const c of rs) if (handler._promptEcho(String(c.reply || "").split("Sources, each with the date troid read it:")[0], [], c.q).length) ECHO.push(f.replace(/^2026-\d\d-\d\d-|\.json$/g, "") + " " + c.id); }
+  const EL = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^These words are troid's own instructions/.test(n));
+  // the sentences runs 25 to 27 wrote back (their records are in a records PR of their own)
+  const ECHO27 = {
+    "run25 b-limits": "A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"",
+    "run26 b-limits": "- A day starting less than $2,000 below the start is still bound by the daily limit, not \"a small amount\".",
+    "run26 p-crossover": "A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"",
+    "run27 p-crossover": "A day that starts less than 2,000 below the start is still bound by the daily limit, not \"any slip.\""
+  };
+  const KNOWN = ["run21 p-crossover", "run22 p-crossover", "run23 b-limits", ...Object.keys(ECHO27)];
+  ok("candidate: the prompt's quoted words written back after never, not or no are sent back: in every saved run, only runs 21 to 27's crossover replies ('no \"small slip\"', 'never \"any slip.\"', 'not \"a small amount\"'), runs 21 to 23's all found; the crossover guardrail quotes nothing now; live is not",
+     ECHO.every((x) => KNOWN.includes(x)) && KNOWN.slice(0, 3).every((x) => ECHO.includes(x)) && Object.values(ECHO27).every((s) => handler._promptEcho(s, [], "q").length === 1)
+     && EL("A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"", "candidate")
+     && !EL("A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"", "live")
+     && !EL("Bitfunded calls it a \"50% payout penalty\", never a cut.", "candidate") && !CG.some((g) => /any slip|small amount/.test(g)), ECHO); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1293,8 +1357,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 13 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 37 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 14 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 40 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
@@ -1494,9 +1558,18 @@ fake.listen(18765, async () => {
     ok("candidate: a rewrite that fixes none of its draft's notes leaves the draft", r.status === 200 && r.j.reply.startsWith(DRAFT) && !/on this trade\./.test(r.j.reply), r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "x" }])
       : msg("end_turn", [{ type: "text", text: "support.md section 4 applies here:\n\ntroid doesn't recommend; it prices what you bring.\n\nThe fees differ by product.\n\ntroid doesn't recommend; it prices what you bring. Name a product." }]);
-    r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    r = await call(hc, [U("Which firm is best for me? I trade a $100,000 account.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
     ok("candidate: support.md section 4's reply comes first and once, whatever the rewrite leaves (run 8, s-product and s-firm)",
        r.status === 200 && r.j.reply.startsWith("troid doesn't recommend; it prices what you bring.\n\nThe fees differ by product.\n\nName a product.") && !/support\.md/.test(r.j.reply), r.j.reply);
+    // the owner, 2026-10-06 (runs 25 to 27, s-firm): with a budget, a reply that lists no product gives way to the list
+    r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
+    const bodyB = r.j.reply.split("\n\nSources, each with")[0];
+    ok("candidate: a budget answer that names no product at or under it gives way to every one, cheapest first, under support.md section 4's line once, and ends with troid's line",
+       r.status === 200 && bodyB.startsWith("troid doesn't recommend; it prices what you bring.\n\nEvery product troid has a price for at or under $500, cheapest first:\n- Bitfunded Express: $39 at a $5,000 account")
+       && bodyB.endsWith(handler.BUDGET_CLOSE) && bodyB.split("troid doesn't recommend").length === 2 && !/support\.md/.test(r.j.reply)
+       && /Sources, each with the date troid read it:\n- Bitfunded Express, challenge fee \$39 at a \$5,000 account — source not yet recorded/.test(r.j.reply), r.j.reply);
+    r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true });
+    ok("live, beside it: unchanged (no list)", r.status === 200 && !/Every product troid has a price for/.test(r.j.reply) && !r.j.reply.includes(handler.BUDGET_CLOSE), r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid has no live data. Check CoinDesk or Binance's announcements for news." }])
       : msg("end_turn", [{ type: "text", text: "troid does not browse and has no live data; the firm's own documents are what troid has read." }]);
     before = calls.length;

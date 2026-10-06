@@ -227,7 +227,7 @@ const DST_SENTENCE = "Local clocks move with daylight saving and UTC doesn't, so
 CANDIDATE_GUARDRAILS.push(
   "In a leverage or margin answer, every size, notional, margin and liquidation figure is one a tool returned this turn for that very thing, beside the leverage it belongs to: work each leverage through trade_math (position_size, with an equity) or size_trade and quote its quantity, notional and margin as the result gives them, never a figure worked out from another. A liquidation distance is size_trade's (among its circuit breakers); where no tool gives one, say it in words: higher leverage brings an isolated position's liquidation closer to entry, and under cross margin leverage doesn't move it. Cross margin is troid's default model; troid has no recorded source for Bitfunded's margin modes.",
   "Bitfunded's reset is given in UTC only: 16:00 UTC, in effect by 16:10 UTC, followed by this sentence, word for word: \"" + DST_SENTENCE + "\" Never a local hour, by season or otherwise: no noon, midday or mid-afternoon, no EDT or EST.",
-  "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit: never \"even a small amount\" or \"any slip\". The daily floor is the day's start less the daily amount, never a static floor from the quota.",
+  "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. Which one binds turns on the day's start alone: a day that starts less than $2,000 below the start is still bound by the daily limit, however much was lost or given back before it, and only a day that starts below $98,000 is bound by the floor. The daily floor is the day's start less the daily amount, never a static floor from the quota.",
   "A question about how something is calculated or works (what R means, why the stop sets the size, how the two limits differ, what leverage changes) gets, after its one-line answer, the formula written out with an equals sign and its terms, then one worked example whose figures a tool computed this turn. Give the example once: never before the answer, never again after it.",
   "A question about where a price is going, what is moving the market or the news gets this reply, word for word, and nothing else: \"" + OUT_OF_SCOPE_REPLY + "\" Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service).");
 // The owner's two fixes of 2026-10-06, after runs 21 to 24. ex-recovery set the largest maximum loss troid has read
@@ -239,6 +239,14 @@ const OWN_STRATEGY = "Out of sample, troid's own strategy measured +0.008R per t
 CANDIDATE_GUARDRAILS.push(
   "A firm's rule stated anywhere, a maximum loss in passing too, comes from a tool this turn, which gives its source and read date (for a drawdown, trade_math's recovery with firm \"all\" gives the largest maximum loss troid has read), or it is not stated. That figure covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products).",
   "When troid's own strategy comes up, even in passing (a user's figures that match its search, say), its out-of-sample result comes first and the in-sample one after it, labelled in-sample, in these words: \"" + OWN_STRATEGY + "\" Never the in-sample figure first, alone or unlabelled.");
+// The owner's fixes of 2026-10-06, after runs 25 to 27. s-firm narrowed a $500 budget to one product (runs 25 and 26,
+// critical: "the smallest product troid has a fee for at Bitfunded is its Instant", "what $500 actually buys" with the
+// Express left out; run 27 named no fee under $500): a budget gets every product troid has a price for at or under it,
+// cheapest first, and troid picks none. The crossover guardrail above no longer quotes the wording it forbids: runs 23 and
+// 25 to 27 wrote it back to the reader ('never "any slip."', 'not "a small amount"').
+const BUDGET_CLOSE = "troid doesn't pick a product; the choice is yours.";
+CANDIDATE_GUARDRAILS.push(
+  "When the user names an amount to spend on a challenge, or asks what an amount buys, call products_in_budget with it. After support.md section 4's line, give every product it returns, cheapest first, one line each with its price, its account size and its source and read date, or that its source is not yet recorded, as the tool's lines give them; then the tool's note; and end with this line, word for word: \"" + BUDGET_CLOSE + "\" Never set one product apart as what the money buys or gets, or as where it should go, and never leave one out.");
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
@@ -1269,7 +1277,15 @@ const FIRM_ASSETS_TOOL = { name: "firm_assets",
     symbol: { type: "string", description: "optional: one asset to look up, e.g. BTC, TSLA, NVDA" } }, required: ["firm"] } };
 const FIRM_RULES_TOOL_NEXT = Object.assign({}, FIRM_RULES_TOOL, { description: FIRM_RULES_TOOL.description.replace("leverage cap —",
   "leverage cap, and the firm-level rules where troid records them (open positions at once, the hold limit by asset tier, the concentration ladder with what each step's two numbers are) —") });
-const CANDIDATE_TOOLS = [FIRM_ASSETS_TOOL];
+// the owner, 2026-10-06 (runs 25 to 27, s-firm): what an amount buys, every product at once, troid picking none
+const PRODUCTS_IN_BUDGET_TOOL = { name: "products_in_budget",
+  description: "Every product troid has a price for at or under an amount the user has to spend, cheapest first, each with its price, its account size " +
+    "and its source and read date, or that its source is not yet recorded; prices in another currency come apart, never converted. Call it whenever " +
+    "the user names an amount to spend on a challenge or asks what an amount buys. Give every product it returns, in its order, as its lines give " +
+    "them, then its note, and end with its closing line: never one product set apart as what the money buys.",
+  input_schema: { type: "object", properties: { budget: { type: "number", description: "the amount, e.g. 500" },
+    currency: { type: "string", enum: ["USD", "EUR"], description: "the amount's currency, USD unless the user wrote euros" } }, required: ["budget"] } };
+const CANDIDATE_TOOLS = [FIRM_ASSETS_TOOL, PRODUCTS_IN_BUDGET_TOOL];
 const TOOLS_NEXT = TOOLS.map((t) => (t === TRADE_MATH_TOOL ? TRADE_MATH_TOOL_NEXT : t === FIRM_RULES_TOOL ? FIRM_RULES_TOOL_NEXT : t)).concat(CANDIDATE_TOOLS);
 const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: (a) => explainRuleSourced(a), trade_math, firm_rules };
@@ -1287,7 +1303,11 @@ const RUN = { size_trade, check_budget, check_compliance, check_availability, ex
 // the fee's label says whose account size it is
 const RULE_FIELDS_NEXT = RULE_FIELDS.map((f) => (f[0] === "fee_usd" ? ["fee_usd", "price", "challenge fee at the $100,000 account level, USD (troid has recorded no fee for other account sizes of this product)"] : f))
   .concat([["floating_counts", "floating_counts", "floating losses count toward the daily and maximum loss"],
-  ["fee_eur_100k", "price", "challenge fee at a $100,000 account, EUR"], ["fee_eur_100k_promo", "price", "challenge fee at a $100,000 account on promotion, EUR"]]);
+  ["fee_eur_100k", "price", "challenge fee at a $100,000 account, EUR"], ["fee_eur_100k_promo", "price", "challenge fee at a $100,000 account on promotion, EUR"],
+  // the owner, 2026-10-06 (run 27, s-firm: "troid has not recorded this product's challenge fee" for Crypto Fund
+  // Trader's Instant): Crypto Fund Trader's six fees, which firms.json records under keys firm_rules never read
+  ["fee_usd_100k", "price", "challenge fee at a $100,000 account, USD"], ["fee_usd_10k", "price", "challenge fee at a $10,000 account, USD"],
+  ["activation_fee_usd_100k", "price", "activation fee at a $100,000 account, USD (troid hasn't recorded when it is charged)"]]);
 function firmRulesNext(a) {
   const out = firm_rules(a, RULE_FIELDS_NEXT);
   if (out.error) return out;
@@ -1493,10 +1513,68 @@ function checkComplianceNext(a) {
   } else if (lad && mp > 0) out.findings.push({ severity: "info", rule: "RTP, Excessive Risk Concentration", sources: src, detail: lad.note.charAt(0).toUpperCase() + lad.note.slice(1) + ". troid can't check this trade's concentration against a ladder." });
   return out;
 }
+// What an amount buys (the owner, 2026-10-06, after runs 25 to 27, s-firm): every product troid has a price for at or
+// under it, cheapest first, each with its price, its account size and the document and date troid read the price, or that
+// its source is not yet recorded. A price in another currency comes apart, never converted (run 1 converted €100 from
+// memory). The lines are the reply's; the closing line is fixed: troid picks none of them.
+const PRICE_KEYS = [["fee_usd", "USD", 100000], ["fee_usd_5k", "USD", 5000], ["fee_usd_10k", "USD", 10000], ["fee_usd_100k", "USD", 100000],
+  ["fee_eur_100k", "EUR", 100000]];
+const PRODUCT_LABELS = { "3phase": "3-Phase", ascend: "Ascend", break: "Break" };
+const BUDGET_SIZES_NOTE = "troid has each product's price at the account size shown only, and none for its other sizes.";
+const moneyOf = (v, cur) => (cur === "EUR" ? "€" : "$") + Number(v).toLocaleString("en-US", { minimumFractionDigits: Number.isInteger(+v) ? 0 : 2, maximumFractionDigits: 2 });
+function pricedProducts() {
+  const F = JSON.parse(context().firms), out = [];
+  for (const [fk, f] of Object.entries(F)) {
+    if (fk.startsWith("_") || !f || typeof f !== "object" || !f.products) continue;
+    const labels = (f.calc && f.calc.products) || {};
+    for (const [pk, p] of Object.entries(f.products)) {
+      if (pk.startsWith("_") || !p || typeof p !== "object") continue;
+      for (const [key, currency, size] of PRICE_KEYS) {
+        if (typeof p[key] !== "number") continue;
+        const c = cite(f, "price", pk, true);
+        out.push({ firm: f.name, product: pk, label: (PRODUCT_LABELS[pk] || (labels[pk] && labels[pk].label) || pk).replace(/\s*·\s*S\d+$/, ""),
+          price: p[key], currency, account_size: size,
+          promo_price: typeof p[key + "_promo"] === "number" ? p[key + "_promo"] : null,
+          activation_fee: typeof p["activation_" + key] === "number" ? p["activation_" + key] : null,
+          source: c ? { document_section: c.section, read_on: c.read_on, urls: c.urls } : "not yet recorded" });
+      }
+    }
+  }
+  return out;
+}
+const priceTerms = (r) => moneyOf(r.price, r.currency) + " at a " + moneyOf(r.account_size, "USD") + " account" +
+  (r.promo_price != null ? ", or " + moneyOf(r.promo_price, r.currency) + " on the promotion running when troid read it" : "") +
+  (r.activation_fee != null ? ", and a " + moneyOf(r.activation_fee, r.currency) + " activation fee whose timing troid hasn't recorded" : "");
+const priceSource = (r) => (r.source === "not yet recorded" ? "source not yet recorded"
+  : r.source.document_section + ", " + (r.source.read_on.length ? "read " + r.source.read_on.join(" and ") : "read date not recorded"));
+const budgetLine = (r) => r.firm + " " + r.label + ": " + priceTerms(r) + " (" + priceSource(r) + ")";
+function products_in_budget(a) {
+  const budget = Number(a.budget), currency = /^\s*(eur|euros?|€)\s*$/i.test(String(a.currency || "")) ? "EUR" : "USD";
+  if (!(budget > 0) || !Number.isFinite(budget)) return { error: "budget must be a positive amount, e.g. 500" };
+  const all = pricedProducts();
+  const within = all.filter((r) => r.currency === currency && r.price <= budget).sort((x, y) => x.price - y.price || x.firm.localeCompare(y.firm));
+  const other = all.filter((r) => r.currency !== currency);
+  return { budget, currency,
+    products: within.map((r) => ({ firm: r.firm, product: r.label, price: r.price, currency: r.currency, account_size: r.account_size,
+      ...(r.promo_price != null ? { promo_price: r.promo_price } : {}), ...(r.activation_fee != null ? { activation_fee: r.activation_fee } : {}),
+      source: priceSource(r) })),
+    lines: within.map(budgetLine),
+    note: BUDGET_SIZES_NOTE + (other.length ? " Priced in " + (currency === "USD" ? "euros" : "dollars") + ", which troid doesn't convert: " +
+      other.map(budgetLine).join("; ") + "." : ""),
+    close: BUDGET_CLOSE,
+    sources: [...within, ...other].map((r) => { const rule = r.firm + " " + r.label + ", challenge fee " + priceTerms(r);
+      return r.source === "not yet recorded" ? { rule, source: "not yet recorded" } : Object.assign({ rule }, r.source); }),
+    tier: "SOURCED — each price as troid has recorded it, with the document and the date troid read it; a price with no recorded source says so. troid picks none of them." };
+}
+// the reply the backstop gives (and the one the guardrail asks for): support.md section 4's line, the list, its note, the line
+const budgetText = (out) => (out.lines.length
+  ? "Every product troid has a price for at or under " + moneyOf(out.budget, out.currency) + ", cheapest first:\n" + out.lines.map((l) => "- " + l).join("\n")
+  : "troid has a price for no product at or under " + moneyOf(out.budget, out.currency) + ".") + "\n\n" + out.note + "\n\n" + BUDGET_CLOSE;
 const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
   explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES), Object.assign({}, TOPIC_CITES, CANDIDATE_TOPIC_CITES)),
   firm_rules: firmRulesNext,
   firm_assets,
+  products_in_budget,
   check_compliance: checkComplianceNext,
   check_budget: (a) => withFloatingSource(check_budget(a), a),
   size_trade: (a) => withFloatingSource(size_trade(a, true), a),   // the calculator audit's F5, F6 and F7
@@ -2176,6 +2254,106 @@ CANDIDATE_LINTS.push(
    "The largest maximum loss troid has read covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products)."],
   [(t) => ownStrategyMisordered(t),
    "troid's own strategy: its out-of-sample result first, then the in-sample one labelled in-sample, in these words: \"" + OWN_STRATEGY + "\""]);
+// The owner's fixes of 2026-10-06, after runs 25 to 27.
+// 1. A budget (s-firm): an amount the user has to spend on a challenge, never an account size, a risk or a loss ("a
+//    $100,000 account", "risking $500", "I'm down $500"): what the money buys is every product troid has a price for at
+//    or under it, cheapest first, and troid picks none
+const MONEY_RX = /(?:US\$|\$|€)\s?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)\s?([kK])?(?![\d.]*\d)/g;
+const BUDGET_BEFORE_RX = /\b(have|got|budget( of| is)?|spend|spending|afford|buy|purchase|invest|with|working with|start(ing)? with|only|just|can)\s*$/i;
+const BUDGET_AFTER_RX = /^\s*(budget|to spend|to invest|to start|to put|in (my )?(pocket|savings)|buys?|gets?\b|can buy|will buy|would buy)\b/i;
+const NOT_BUDGET_AFTER_RX = /^\s*(?:[A-Za-z’'-]+\s+){0,2}(account|accounts|challenge|quota|balance|equity|evaluation|funded|profit|profits|target|loss|losses|drawdown|stop|entry|position|notional|margin|risk|risked|day|daily|limit|floor|size|trade|in profit|in losses)\b/i;
+function budgetOf(text) {
+  const t = String(text || "");
+  if (!/\b(firm|firms|challenge|challenges|account|product|products|prop|funded|evaluation|buy|afford|spend|start|which|best|budget)\b/i.test(t)) return null;
+  for (const m of t.matchAll(MONEY_RX)) {
+    const before = t.slice(Math.max(0, m.index - 30), m.index), after = t.slice(m.index + m[0].length, m.index + m[0].length + 40);
+    if (NOT_BUDGET_AFTER_RX.test(after)) continue;                                                     // "$100,000 account"
+    const said = BUDGET_AFTER_RX.test(after) || (BUDGET_BEFORE_RX.test(before) && !/\b(a|an|my|the|our|this|that|per|each)\s*$/i.test(before));
+    if (said) return { budget: +m[1].replace(/,/g, "") * (m[2] ? 1000 : 1), currency: /€/.test(m[0]) ? "EUR" : "USD" };
+  }
+  return null;
+}
+const budgetFromTools = (tools) => { const x = (tools || []).find((t) => t.name === "products_in_budget" && t.result && !t.result.error);
+  return x ? { budget: x.result.budget, currency: x.result.currency } : null; };
+// one product set apart as what the money buys, gets or should go to (run 15: "the one product that fits a $500 budget";
+// run 25: "the smallest product troid has a fee for at Bitfunded is its Instant")
+const BUDGET_PRODUCT_RX = /\b(Express|Instant|1-Step|2-Step|1-Phase|2-Phase|3-Phase|Ascend|Break)\b/g;
+const BUDGET_BUY_RX = /\b(buys?|bought|gets?( you)?|would buy|can buy|could buy|will buy|affords?|covers?|should go|should be spent|best spent|goes furthest)\b/i;
+const BUDGET_PICK_RX = /\bthe (one|only|single|smallest|cheapest|lowest[- ]priced|least expensive|best|right|ideal|natural|obvious|sensible) (product|challenge|account|option|fit|choice|pick|way in|place to start|starting point|entry point)\b|\b(should|would|could) (go|be spent) (to|on)\b|\bspend (it|that|this|your (money|budget|\$?\d[\d,]*)|the (money|budget)) on\b/i;
+function budgetPicks(t) {
+  const body = stripSources(String(t));
+  if (BUDGET_PICK_RX.test(body)) return true;
+  return body.split(/(?<=[.!?])\s+|\n+/).some((s) => /(?:\$|€)\s?\d/.test(s) && BUDGET_BUY_RX.test(s) && new Set((s.match(BUDGET_PRODUCT_RX) || []).map((x) => x.toLowerCase())).size === 1);
+}
+// every product the list holds named beside its price on a line of its own, with its source and read date or that it has
+// none, cheapest first; and the reply's text ending with the fixed line
+const escRx = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+function budgetGaps(t, out) {
+  const body = stripSources(String(t)).replace(/\*\*|__/g, "").replace(/\n*Not financial advice\. Verify with the firm before acting\.\s*$/, "").trim(), lines = body.split("\n");
+  const missing = [], undated = [], at = [];
+  for (const p of out.products) {
+    const price = moneyOf(p.price, p.currency), rx = new RegExp("\\b" + escRx(p.product) + "\\b", "i");
+    const i = lines.findIndex((l) => rx.test(l) && l.includes(price) && (l.includes(p.firm) || l.includes(p.firm.split(" ")[0])));
+    if (i < 0) { missing.push(p.firm + " " + p.product + " (" + price + ")"); continue; }
+    if (!/\bread \d{4}-\d{2}-\d{2}\b|\bnot yet recorded\b/i.test(lines[i])) undated.push(p.firm + " " + p.product);
+    at.push(i);
+  }
+  return { missing, undated, ordered: at.every((v, k) => k === 0 || v >= at[k - 1]), closes: body.endsWith(BUDGET_CLOSE) };
+}
+const budgetFor = (t, tools, asked) => budgetFromTools(tools) || budgetOf(asked);
+function budgetNote(t, tools, asked) {
+  const b = budgetFor(t, tools, asked);
+  if (!b) return null;
+  const g = budgetGaps(t, products_in_budget(b));
+  return g.missing.length || g.undated.length || !g.ordered || !g.closes ? g : null;
+}
+// 3. The prompt's own quoted words written back to the reader (runs 23 and 25 to 27: 'never "any slip."', 'not "a small
+//    amount"', from the crossover guardrail, reworded now; runs 21 and 22: 'no "small slip"'): a phrase the reply sets in
+//    quotes just after never, not or no, that the instructions quote (or one already written back), that the user didn't
+//    write and no tool gave
+const LEAKED_QUOTES = ["any slip", "small slip", "a small amount", "even a small amount", "even modestly"];
+const QUOTE_AFTER_NO_RX = /\b(never|not|no|nor)\b[^.\n"“”]{0,14}["“]([^"“”\n]{2,48})["”]/gi;
+const quoteKey = (s) => String(s).trim().replace(/[.,;:!?]+$/, "").toLowerCase();
+let PROMPT_QUOTES = null;
+function promptQuotes() {
+  if (!PROMPT_QUOTES) {
+    PROMPT_QUOTES = new Set(LEAKED_QUOTES);
+    try {
+      const c = context("candidate");
+      const text = [guardrailsFor("candidate"), c.troid, characterBlock(c.character) || "", c.support].join("\n");
+      for (const m of text.matchAll(/["“]([^"“”\n]{2,48})["”]/g)) PROMPT_QUOTES.add(quoteKey(m[1]));
+    } catch (e) { /* the known ones only */ }
+  }
+  return PROMPT_QUOTES;
+}
+function promptEcho(t, tools, asked) {
+  const user = String(asked || "").toLowerCase(), given = JSON.stringify((tools || []).map((x) => x.result || null)).toLowerCase(), set = promptQuotes();
+  return [...stripSources(String(t)).matchAll(QUOTE_AFTER_NO_RX)].filter((m) => { const q = quoteKey(m[2]);
+    return set.has(q) && !user.includes(q) && !given.includes(q); }).map((m) => m[0]);
+}
+CANDIDATE_LINTS.push(
+  [(t, tools, asked) => !!budgetFor(t, tools, asked) && budgetPicks(t),
+   "Never set one product apart as what the money buys or gets, or as where it should go: give every product products_in_budget returns for the amount, cheapest first, as its lines give them, and end with this line, word for word: \"" + BUDGET_CLOSE + "\""],
+  [(t, tools, asked) => !!budgetNote(t, tools, asked),
+   (t, tools, asked) => { const g = budgetNote(t, tools, asked);
+     return "Give every product products_in_budget returns for the amount, cheapest first, one line each with its price, its account size and its source and read date, or that its source is not yet recorded, as the tool's lines give them" +
+       (g.missing.length ? " (missing: " + g.missing.join(", ") + ")" : "") + (g.undated.length ? " (no source or read date: " + g.undated.join(", ") + ")" : "") +
+       "; then the tool's note; and end with this line, word for word: \"" + BUDGET_CLOSE + "\""; }],
+  [(t, tools, asked) => promptEcho(t, tools, asked).length > 0,
+   (t, tools, asked) => "These words are troid's own instructions, not the reader's: " + promptEcho(t, tools, asked).join("; ") +
+     ". Say what is so in your own words, and set nothing in quotation marks that the user didn't write or a tool didn't give."]);
+// the backstop: a budget answer that still sets one product apart, leaves one out or out of order, or doesn't end with the
+// fixed line gives way to the list itself, under support.md section 4's line; its sources are the list's
+function budgetListed(reply, lastUser, toolLog) {
+  const b = budgetFromTools(toolLog) || budgetOf(lastUser);
+  if (!b) return reply;
+  const out = products_in_budget(b);
+  if (out.error) return reply;
+  const g = budgetGaps(reply, out);
+  if (!budgetPicks(reply) && !g.missing.length && !g.undated.length && g.ordered && g.closes) return reply;
+  toolLog.splice(0, toolLog.length, { name: "products_in_budget", input: b, result: out });
+  return "troid doesn't recommend; it prices what you bring.\n\n" + budgetText(out);
+}
 // the user's question written back as a heading (run 18, b-stop: "Why does troid need your stop price to size a trade?")
 const QNORM = (s) => String(s).toLowerCase().replace(/\byour\b/g, "my").replace(/\byou\b/g, "i").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
 function withoutEchoedQuestion(reply, lastUser) {
@@ -2581,7 +2759,8 @@ module.exports = async (req, res) => {
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
         // only, and a question about prices or news gets troid's wording
-        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply)), lastUser), lastUser), lastUser, toolLog);
+        // and a budget gets every product troid has a price for at or under it, troid picking none (the owner, 2026-10-06)
+        if (reply && variant === "candidate" && lang === "en") reply = budgetListed(outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply)), lastUser), lastUser), lastUser, toolLog), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -2667,6 +2846,13 @@ module.exports._inThirdPerson = inThirdPerson;
 module.exports._ownStrategyFirst = ownStrategyFirst;
 module.exports._ownStrategyMisordered = ownStrategyMisordered;
 module.exports._widensMaxLoss = widensMaxLoss;
+module.exports._budgetOf = budgetOf;
+module.exports._budgetPicks = budgetPicks;
+module.exports._budgetGaps = budgetGaps;
+module.exports._budgetListed = budgetListed;
+module.exports._budgetText = budgetText;
+module.exports._promptEcho = promptEcho;
+module.exports.BUDGET_CLOSE = BUDGET_CLOSE;
 module.exports.OWN_STRATEGY = OWN_STRATEGY;
 module.exports.OUT_OF_SCOPE_REPLY = OUT_OF_SCOPE_REPLY;
 module.exports.DST_SENTENCE = DST_SENTENCE;

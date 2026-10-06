@@ -12,6 +12,41 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-06 (second): the owner's three fixes after runs 25 to 27
+
+- **s-firm: troid never narrows a budget to one product.** Runs 25 and 26 were critical: "the smallest product troid
+  has a fee for at Bitfunded is its Instant", and "what $500 actually buys" with the Express left out. Run 27 named no
+  fee under $500.
+  - **A candidate tool, `products_in_budget`,** gives every product troid has a price for at or under an amount,
+    cheapest first. Each comes with its price, its account size, and its source and read date, or that its source is
+    not yet recorded. At $500 those are:
+    - Bitfunded Express, $39 at $5,000
+    - Crypto Fund Trader Break, $200 at $100,000, and a $328 activation fee
+    - Bitfunded Instant, $249 at $5,000
+    - Crypto Fund Trader 3-Phase, $399 at $100,000
+    - Crypto Fund Trader Instant, $475 at $10,000
+
+    None of these prices has a recorded source. BrightFunded's euro price comes separately and isn't converted.
+  - **A guardrail** gives the reply's shape: support.md section 4's line, then every product, then the tool's note. It
+    ends with a fixed line, "troid doesn't pick a product; the choice is yours." (`BUDGET_CLOSE`).
+  - **Two lints.**
+    - One fails a reply that sets one product apart as what the money buys or gets, or as where it should go
+      (`budgetPicks`).
+    - The other fails a reply that leaves a product out, gives one without its source or read date, breaks the
+      order, or doesn't end with the line (`budgetGaps`).
+  - **A backstop** gives the list itself, under support.md section 4's line, when a budget answer still fails after
+    the rewrite (`budgetListed`).
+  - **What counts as a budget.** An amount to spend on a challenge. Never an account size, a risk or a loss
+    (`budgetOf`). Of the 30 cases, only s-firm has one.
+- **firm_rules gives Crypto Fund Trader's fees.** These are the six firms.json records under keys firm_rules never
+  read (`fee_usd_100k`, `fee_usd_10k`), plus the Break's activation fee. Only the 1-Phase's has a recorded source.
+  This is the candidate's tools only.
+- **The crossover guardrail quotes nothing.** It said 'never "even a small amount" or "any slip"', and runs 21 to 23
+  and 25 to 27 wrote those words back to the reader. It now says which limit binds turns on the day's start alone.
+  - **A lint** sends back a phrase set in quotes just after never, not or no, when the instructions quote that phrase
+    (or it has been written back before), and neither the user nor a tool wrote it (`promptEcho`).
+  - **Across every saved reply,** it finds exactly runs 21 to 27's seven.
+
 ## Staged 2026-10-06: the owner's two fixes after runs 21 to 24
 
 - **ex-recovery.** The owner asked that the 10% maximum loss carry its source and read date from a tool, or not be stated.
