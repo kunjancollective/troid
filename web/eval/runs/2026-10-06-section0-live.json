@@ -1,0 +1,703 @@
+{
+ "base": "https://troid.ai",
+ "variant": "live",
+ "operator_live": true,
+ "started_utc": "2026-10-06T16:08:04.934Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 14,
+   "tools": [
+    "firm_assets",
+    "products_in_budget"
+   ],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown",
+    "fees",
+    "reset"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "firm_assets",
+    "products_in_budget",
+    "check_compliance",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 40,
+   "eval_key": true,
+   "patch": [
+    "TROID.md"
+   ],
+   "patch_rules": [
+    "reset"
+   ]
+  },
+  "key_days_left": {
+   "main": null,
+   "eval": null
+  }
+ },
+ "set": {
+  "cases": 3,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 3
+  }
+ },
+ "results": [
+  {
+   "id": "q-stats",
+   "kind": "quantitative",
+   "example": false,
+   "q": "Over 78 trades my average is +0.033R with a standard deviation of 0.40R. Is that a real edge?",
+   "status": 200,
+   "ms": 12653,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "0.033",
+    "0.4",
+    "78",
+    "95",
+    "1.96",
+    "0.0453",
+    "0.729",
+    "0.0558",
+    "0.1218"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 37878,
+     "cache_read": 0,
+     "output": 316
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 50261,
+     "cache_read": 49829,
+     "output": 634
+    }
+   },
+   "tool_calls": 1,
+   "reply": "Not distinguishable from zero on this sample.\n\nFormula: SE = sd ÷ √n; t = mean ÷ SE; 95% CI = mean ± 1.96 × SE.\n\nWhy it works: a mean computed from a noisy, finite sample has its own uncertainty (the standard error), and if the interval built around the mean from that uncertainty includes zero, the data can't rule out \"no edge.\"\n\nWorked example, with the numbers given: SE = 0.40 ÷ √78 = 0.0453R. t = 0.033 ÷ 0.0453 = 0.729. 95% CI = 0.033 ± 1.96×0.0453 = [-0.0558R, +0.1218R].\n\nWhat it means: the interval contains zero, so a mean of +0.033R over 78 trades is not distinguishable from a true edge of zero — this is the same situation as troid's own backtest, where +0.033R over 78 trades (in-sample, best of ~30 configurations searched) also carried a confidence interval containing zero, and troid's out-of-sample measurement came back at +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades), both MEASURED, both confidence intervals containing zero as well.\n\nThis is DERIVED arithmetic from the numbers given (normal approximation); it says nothing about whether this particular 78-trade sample came from a search over many configurations, which would widen what counts as \"real\" further still.\n\nTier: the figures above are DERIVED — troid's tools computed them from the numbers given; no firm rule was needed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the live prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /0\\.045/",
+     "pass": true
+    },
+    {
+     "name": "says: /(contains|includes|spans|straddles|crosses) (zero|0)|(zero|0) (sits|lies|is|falls) (inside|within|in)|not (statistically )?(distinguishable|significant)|indistinguishable|(can['’]t|cannot) (be )?(tell|distinguish|rule out)/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bDERIVED\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bthat is a real edge\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byes, (that|it)['’]?s? (is )?a real edge/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*(out[- ]of[- ]sample|never (been )?(tuned|seen|fit)|never saw|held[- ]out|not tuned))[\\s\\S]*\\bin[- ]sample/",
+     "pass": true
+    },
+    {
+     "name": "never says: /^(?![\\s\\S]*(out[- ]of[- ]sample|never (been )?(tuned|seen|fit)|never saw|held[- ]out|not tuned))[\\s\\S]*troid['’]s own (strategy|backtest)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /√\\(2\\s*[·×]?\\s*ln/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-reset",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "When does Bitfunded's trading day reset, in UTC?",
+   "status": 200,
+   "ms": 6927,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_numbers": [
+    "00",
+    "8",
+    "16",
+    "11",
+    "10",
+    "45",
+    "12",
+    "15",
+    "23",
+    "30",
+    "59",
+    "05",
+    "2026",
+    "09",
+    "04",
+    "1",
+    "22",
+    "12291765",
+    "14284743",
+    "21"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 333,
+     "cache_read": 37529,
+     "output": 74
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 1086,
+     "cache_read": 99533,
+     "output": 462
+    }
+   },
+   "tool_calls": 1,
+   "reply": "Bitfunded's trading day resets at 00:00 UTC+8, which is **16:00 UTC** — noon in New York in summer (EDT), 11:00 in winter (EST). Not midnight.\n\nBecause of the platform's settlement process, the reset can take effect any time between 00:00 and 00:10 UTC+8, i.e. **16:00–16:10 UTC**: the first ten minutes are ambiguous, and a fresh daily budget is certain only from 16:10 UTC.\n\nWhat this means in practice: for a trader in New York, the reset lands mid-session, so a loss at 11:45 and a loss at 12:15 EDT fall on different trading days, drawing on different daily budgets. A floating loss that survives the reset counts in full against the new day — the prior day's profit does not carry over — so a position that was inside the limit just before the reset can breach it just after, with no price movement at all.\n\nThis is SOURCED from Bitfunded's help centre, Criteria to be Success (read 2026-09-23 and 2026-10-04), which gives the time as 00:00 UTC+8; the UTC conversion is troid's own.\n\nSources, each with the date troid read it:\n- reset 00:00 UTC+8, effective by 00:10 — Bitfunded help centre — Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion, read 2026-09-23 and 2026-10-04\n- BrightFunded rollover 23:30–23:59 CET — BrightFunded help centre — 'How does my daily permitted loss work' and 'BrightFunded 1-Step', CET rollover; UTC is troid's conversion, read 2026-09-22\n- Crypto Fund Trader reset 00:05 UTC — Crypto Fund Trader T&C 8.i–8.ii, read 2026-09-21\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the live prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": false,
+     "detail": "noon in New York"
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /16:00/",
+     "pass": true
+    },
+    {
+     "name": "says: /16:10/",
+     "pass": true
+    },
+    {
+     "name": "never says: /morning and afternoon (sessions )?(as|are) separate|applies to both morning/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    }
+   ]
+  },
+  {
+   "id": "p-reset-local",
+   "kind": "prop-rule",
+   "example": false,
+   "q": "I trade from New York. What time does Bitfunded's trading day reset for me?",
+   "status": 200,
+   "ms": 7960,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "explain_rule"
+   ],
+   "tool_numbers": [
+    "00",
+    "8",
+    "16",
+    "11",
+    "10",
+    "45",
+    "12",
+    "15",
+    "23",
+    "30",
+    "59",
+    "05",
+    "2026",
+    "09",
+    "04",
+    "1",
+    "22",
+    "12291765",
+    "14284743",
+    "21"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 339,
+     "cache_read": 37529,
+     "output": 87
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 1125,
+     "cache_read": 99538,
+     "output": 479
+    }
+   },
+   "tool_calls": 1,
+   "reply": "Bitfunded's trading day resets at 00:00 UTC+8, which converts to 16:00 UTC — **noon in New York in summer (EDT)** and **11:00 in New York in winter (EST)**.\n\nA wrinkle on top of that: because of the platform's settlement process, the reset isn't exact — it can take effect any time between 00:00 and 00:10 UTC+8, i.e. 16:00–16:10 UTC. A fresh daily budget is only certain from 16:10 UTC onward; the ten minutes before that are ambiguous.\n\nWhat this means for a New York trader: the reset lands mid-session, not overnight. A loss taken at 11:45 ET and a loss taken at 12:15 ET fall on two different trading days and draw against two different daily budgets. There's also a trap worth knowing: a floating (open, unrealized) loss that's still open when the reset hits counts in full against the new day's limit — yesterday's profit doesn't carry over to offset it — so a position that was inside the daily limit right before the reset can breach it right after, with no price movement at all.\n\nSources, each with the date troid read it:\n- reset 00:00 UTC+8, effective by 00:10 — Bitfunded help centre — Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion, read 2026-09-23 and 2026-10-04\n- BrightFunded rollover 23:30–23:59 CET — BrightFunded help centre — 'How does my daily permitted loss work' and 'BrightFunded 1-Step', CET rollover; UTC is troid's conversion, read 2026-09-22\n- Crypto Fund Trader reset 00:05 UTC — Crypto Fund Trader T&C 8.i–8.ii, read 2026-09-21\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": false,
+   "checks": [
+    {
+     "name": "answered by the live prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": false,
+     "detail": "noon in New York"
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /16:00/",
+     "pass": true
+    },
+    {
+     "name": "says: /1 November|November 1|daylight|\\bDST\\b|standard time|depends on the date|for the date/",
+     "pass": false,
+     "detail": null
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-10-06T16:09:12.511Z",
+ "passed": 1,
+ "failed": 2,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 3,
+    "input": 9,
+    "cache_write": 38550,
+    "cache_read": 75058,
+    "output": 477,
+    "usd": 0.0581
+   },
+   "claude-sonnet-5": {
+    "calls": 6,
+    "input": 12,
+    "cache_write": 52472,
+    "cache_read": 248900,
+    "output": 1575,
+    "usd": 0.1967
+   }
+  },
+  "usd": 0.2548,
+  "priced": true
+ }
+}

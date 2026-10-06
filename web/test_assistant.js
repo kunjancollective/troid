@@ -336,10 +336,10 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
      /fee_unit   = fee_per_side × \(entry \+ stop\)/.test(TR) && /losses_left = ceil\(effective_budget \/ loss_at_stop\) − 1/.test(TR) && /0\.3% stop  →  21\.03%   21\.08%    21\.05%/.test(TR)
      && /there is none above zero/.test(TR) && !/floor\(/.test(TR) && !/× 2\n/.test(TR) && !/21\.1%/.test(TR), TR.length);
   // the calculator audit's F1 and the review's R6 (2026-09-30), and the fourth patch's two wordings, which the owner had
-  // brought into the candidate at once
-  const PT = require("fs").readFileSync(require("path").join(__dirname, "context", "patch", "TROID.md"), "utf8");
+  // brought into the candidate at once (the patch has published: its paragraph is the live TROID.md's now)
+  const PT = require("fs").readFileSync(require("path").join(__dirname, "public", "TROID.md"), "utf8");
   const resetOf = (t) => t.slice(t.indexOf("- **Reset at 00:00 UTC+8"), t.indexOf("Criteria to be Success)*", t.indexOf("- **Reset at 00:00 UTC+8")));
-  ok("candidate TROID.md: the margin cut (qty = equity × leverage / entry, the loss then less), leverage leaving the loss alone only while the margin fits, a long's floors past 100% not reached above zero; the patch's reset paragraph word for word and \"no measurable edge\"",
+  ok("candidate TROID.md: the margin cut (qty = equity × leverage / entry, the loss then less), leverage leaving the loss alone only while the margin fits, a long's floors past 100% not reached above zero; the live reset paragraph word for word and \"no measurable edge\"",
      /if qty × entry \/ leverage > equity:/.test(TR) && /qty      = equity × leverage \/ entry/.test(TR) && /less when the margin cut the size/.test(TR)
      && /consumes   = loss_at_stop \/ effective_budget/.test(TR) && /\*\*Leverage does not change the loss\*\* while the margin fits in equity/.test(TR)
      && /daily limit or floor\n100% or more below entry: it is not reached above zero/.test(TR) && /REDUCE — cut to the cap, or to fit the margin/.test(TR)
@@ -445,8 +445,10 @@ ok("live prompt: every section of the character appears exactly once (TROID.md o
 ok("live guardrails: the teaching method, a tool for every figure, no simulations, no judging the numbers, no browsing",
    /answer first, in one line/.test(liveSys[0].text) && /Compute every figure through a tool/.test(liveSys[0].text) && /does not run simulations/.test(liveSys[0].text)
    && /never whether they are good or bad/.test(liveSys[0].text) && /does not browse/.test(liveSys[0].text));
-ok("TROID.md: the reset is noon in New York only in summer, and a New York morning and afternoon can fall on different days",
-   /noon in New York in summer, 11:00 in winter/.test(liveSys[0].text) && !/Morning and afternoon\s+are separate daily budgets/.test(liveSys[0].text));
+ok("TROID.md: the reset at 16:00 UTC all year, a local hour only for the date it was converted for, no fixed New York hour; a New York morning and afternoon can fall on different days; \"no measurable edge\" (the fourth patch, published)",
+   /16:00 UTC\*\*, all year/.test(liveSys[0].text) && /holds only for the date it\s+was converted for/.test(liveSys[0].text)
+   && !/noon in New York|statistical edge|1[12]:00 in (winter|summer)/.test(liveSys[0].text) && /shows no measurable edge/.test(liveSys[0].text)
+   && !/Morning and afternoon\s+are separate daily budgets/.test(liveSys[0].text));
 
 // --- the service's own guarantees (evaluation runs 1-9), for everyone since the promotion
 const HF = handler._hasFigure;
@@ -462,24 +464,17 @@ const hl = RT("explain_rule", { topic: "hold_limit" }, "live");
 ok("explain_rule: the rule it states carries its document and read date, SOURCED",
    hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21" && /^SOURCED/.test(hl.tier), hl);
 const rs = RT("explain_rule", { topic: "reset" }, "live");
-ok("explain_rule reset: noon in New York in summer, 11:00 in winter, no 'separate daily budgets' rule; the three firms' resets sourced",
-   /11:00 in winter/.test(rs.explanation) && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
+ok("explain_rule reset: 16:00 UTC all year, a local hour only for the date it was converted for, its example in UTC, no fixed New York hour, no 'separate daily budgets' rule; the three firms' resets sourced",
+   /16:00 UTC all year/.test(rs.explanation) && /only for the date it was converted for/.test(rs.explanation)
+   && /a loss at 15:45 UTC and a loss at 16:15 UTC/.test(rs.explanation) && !/\bnoon\b|\bEDT\b|\bEST\b|1[12]:00 in (winter|summer)/.test(rs.explanation)
+   && !/Morning and afternoon sessions draw/.test(rs.explanation) && rs.sources.length === 3
    && rs.sources.every((x) => x.document_section && x.read_on.length), rs);
-{ // the fourth patch (context/patch/README.md, launch handoff section 0): the reset in UTC; the live text stays until it publishes
-  const rp = RT("explain_rule", { topic: "reset" }, "patch");
-  const tail = (s) => s.slice(s.indexOf("Because of the platform's settlement process"));
-  ok("patch: the reset in UTC all year, a local hour only for the date it was converted for, its example in UTC; no fixed New York hour",
-     /16:00 UTC all year/.test(rp.explanation) && /only for the date it was converted for/.test(rp.explanation)
-     && /a loss at 15:45 UTC and a loss at 16:15 UTC/.test(rp.explanation) && !/\bnoon\b|\bEDT\b|\bEST\b|1[12]:00 in (winter|summer)/.test(rp.explanation)
-     && rp.sources.length === 3 && rp.sources.every((x) => x.document_section && x.read_on.length), rp);
-  ok("patch: the rest of the reset explanation is the live one's word for word, and the live one is untouched until the patch publishes",
-     tail(rp.explanation).replace("mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC", "mid-session, so a loss at 11:45 and a loss at 12:15 EDT")
-       === tail(rs.explanation) && Object.keys(handler._patchRules).join() === "reset", tail(rp.explanation).slice(0, 240));
-  // the owner, 2026-09-30: the old wording out of the candidate now, so its evaluation doesn't run on text that would be
-  // rejected anyway; whichever publishes first, the other drops it
-  const rc = RT("explain_rule", { topic: "reset" }, "candidate");
-  ok("patch: the candidate carries the patch's reset, word for word, with the same sources; live keeps its own until the patch publishes",
-     rc.explanation === rp.explanation && JSON.stringify(rc.sources) === JSON.stringify(rp.sources) && rs.explanation !== rp.explanation && /noon in New York/.test(rs.explanation)); }
+{ // the fourth patch (context/patch/README.md, launch handoff section 0), published after its runs of 2026-10-06: the patch
+  // slot is empty again, and the patch and the candidate (which carried the same text) give the live reset word for word
+  const rp = RT("explain_rule", { topic: "reset" }, "patch"), rc = RT("explain_rule", { topic: "reset" }, "candidate");
+  ok("the fourth patch published: nothing left in the patch's rules, and the patch and the candidate give the live reset word for word, with the same sources",
+     Object.keys(handler._patchRules).length === 0 && rp.explanation === rs.explanation && rc.explanation === rs.explanation
+     && JSON.stringify(rp.sources) === JSON.stringify(rs.sources) && JSON.stringify(rc.sources) === JSON.stringify(rs.sources), Object.keys(handler._patchRules)); }
 const dd = RT("explain_rule", { topic: "drawdown" }, "live");
 ok("explain_rule drawdown: Crypto Fund Trader's by product, the 1-Phase trailing and the 2-Phase static (run 7, b-limits)",
    /CFT's 2-Phase is static/.test(dd.explanation) && /belongs to a product/.test(dd.explanation)
@@ -1356,8 +1351,8 @@ fake.listen(18765, async () => {
        && KV.has("conv:" + r.j.session), r.j.variant);
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
-    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 14 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
+    ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts (the patch's reset left with it), tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 14 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
        && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 40 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;

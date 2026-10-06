@@ -195,13 +195,15 @@ on promotions. Confirm with Bitfunded before relying on a refund. Split 80% risi
 
 ## Bitfunded rules that disqualify (verified, with source)
 
-- **Reset at 00:00 UTC+8 = 16:00 UTC** (noon in New York in summer, 11:00 in winter),
-  effective any time up to 00:10 UTC+8 (16:10 UTC) because of platform settlement. The first
-  ten minutes after the reset are ambiguous: a fresh daily budget is certain only from 16:10
-  UTC. For a trader in New York the reset lands mid-session, so a morning loss and an
-  afternoon loss can fall on different trading days and draw on different daily budgets. A
-  floating loss that survives the reset counts in full against the new day; yesterday's
-  profit does not carry. *(Help centre, Criteria to be Success)*
+- **Reset at 00:00 UTC+8 = 16:00 UTC**, all year: UTC+8 is a fixed offset. Local clocks move
+  with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it
+  was converted for; troid states the reset in UTC. It takes effect any time up to 00:10 UTC+8
+  (16:10 UTC) because of platform settlement. The first ten minutes after the reset are
+  ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the
+  reset lands mid-session in every season, so a morning loss and an afternoon loss can fall on
+  different trading days and draw on different daily budgets. A floating loss that survives the
+  reset counts in full against the new day; yesterday's profit does not carry. *(Help centre,
+  Criteria to be Success)*
 - **Hold limit, tiered:** majors (BTC ETH BNB XRP SOL TRX HYPE ZEC DOGE ADA) 10 days;
   other crypto 7; TradFi 5. *(Restricted Trading Practices s.1)*
 - **5 open positions max.** The Terms (14(d)(xi), still as revised 2026-03-24) say 10; the
@@ -245,7 +247,7 @@ standard error 0.016R); both 95% confidence intervals contain zero. On api.binan
 chosen on, the best of the ~30 configurations searched measured +0.033R per trade, n=78,
 standard error 0.046R, confidence interval containing zero, and below what chance produces
 across that many configurations (~+0.093R). That in-sample figure is a best cell and never
-stands alone. troid's own strategy shows no statistical edge. Nothing here claims otherwise.
+stands alone. troid's own strategy shows no measurable edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
 verdict, the size, the fee share, and how many more losses at that size before the
