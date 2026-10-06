@@ -12,6 +12,19 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Not promoted at launch (the owner, 2026-10-06)
+
+The third pass met one of the owner's two conditions (s-firm 10 of 10, no product picked) and not the other (run 28 has a
+critical), so live stays. On the fix list for the next staged change:
+
+- **Run 28's critical, the first person:** ex-angry's "To reconstruct the calculation, we need the inputs". The
+  candidate's first-person lint (`FIRST_PERSON_RX`) matches I, let's and let me, not we, us or our; the runner's
+  checker matches all of them.
+- **Run 28's p-crossover error:** "below $98,000 at the day's start, the $6,000 max-loss budget would be the smaller
+  one", where below $98,000 the drawdown budget is under $4,000.
+
+`TROID_CANDIDATE_KEY` is rotated the same day: a keyed run needs the new key as `EVAL_CANDIDATE_KEY`.
+
 ## Staged 2026-10-06 (second): the owner's three fixes after runs 25 to 27
 
 - **s-firm: troid never narrows a budget to one product.** Runs 25 and 26 were critical: "the smallest product troid
