@@ -157,6 +157,11 @@ instead (the live prompt with that file, `x-troid-variant: patch`, `EVAL_PATCH=1
 the live baseline, and published when it adds no critical failure and no new kind of failure.
 Each keyed run reports its tokens by model (`usage`) and what they cost at the prices it records.
 
+Code merges candidate-only changes itself (the owner, 2026-10-06): a pull request that reaches only the candidate
+(`web/context/candidate/`, the `CANDIDATE_*` entries and service changes gated on `variant === "candidate"` in
+`web/api/troid.js`, and their tests), once its tests and CI pass and live and patch are shown unchanged over every
+saved reply. A promotion, a patch's publication or anything else a visitor gets stays the owner's to merge.
+
 ## A correction that is now policy
 
 The daily limit is a FIXED dollar amount = daily% × INITIAL balance (Bitfunded FAQ). An
