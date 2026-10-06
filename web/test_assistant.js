@@ -354,7 +354,7 @@ const fs0 = require("fs"), path0 = require("path");
 const NEW16 = /^Every number in the answer comes from|^A teaching answer writes its formula|^Write the formula in symbols|^The answer opens by pointing/;   // run 16 and the subset run of 2026-09-24
 // the read of runs 17 to 19 (2026-10-05): nine lints the older runs' replies were never written against; the older tests
 // leave them out, and they are tested on runs 17 to 20's replies below
-const NEW1005 = /^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
+const NEW1005 = /^The largest maximum loss troid has read covers|^troid's own strategy: its out-of-sample result first, then|^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -369,13 +369,14 @@ const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidat
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
 // the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
 const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
-ok("candidate: the live prompt plus eleven guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
-   CG.length === 11 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+ok("candidate: the live prompt plus thirteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 13 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
    && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
    && CG.some((g) => /a tool returned this turn for that very thing/.test(g) && /no recorded source for Bitfunded's margin modes/.test(g))
    && CG.some((g) => g.includes(handler.DST_SENTENCE) && /no noon, midday or mid-afternoon/.test(g)) && CG.some((g) => /below \$98,000 at the day's start the maximum-loss floor binds/.test(g) && /even a small amount/.test(g))
    && CG.some((g) => /the formula written out with an equals sign/.test(g) && /Give the example once/.test(g)) && CG.some((g) => g.includes(handler.OUT_OF_SCOPE_REPLY))
+   && CG.some((g) => /or it is not stated/.test(g) && /every maximum loss troid has read/.test(g)) && CG.some((g) => g.includes(handler.OWN_STRATEGY) && /out-of-sample result comes first/.test(g))
    && sameBut2("candidate") === sameBut2("live") && handler._toolsFor("candidate").map((t) => t.name).join() === handler._toolsFor("live").map((t) => t.name).join() + ",firm_assets"
    && /firm-level rules/.test(handler._toolsFor("candidate").find((t) => t.name === "firm_rules").description) && !/firm-level/.test(handler._toolsFor("live").find((t) => t.name === "firm_rules").description));
 // the live test of 2026-10-04: firm_assets (BTC and the one stock named, TSLA, each with its hold limit, read 2026-09-24),
@@ -809,7 +810,20 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      !SN(said22, fin22).length && TP(fin22).startsWith("No new Monte Carlo was run") && !/\blet['’]s\b/i.test(TP(r22mc))
      && TP("Let's get the figure.\n\nE = 0.21R.") === "E = 0.21R." && TP("Let's say equity is $100,000. Then E = 0.21R.") === "Let's say equity is $100,000. Then E = 0.21R."
      && TP("Answer the question first.") === "Answer the question first." && FP("Let me price it: 0.21R", "candidate") && !FP("Let me price it: 0.21R", "live")
-     && JSON.stringify(SN(said21, fin21)) === JSON.stringify(kept21), [SN(said22, fin22), TP(fin22).slice(0, 80)]); }
+     && JSON.stringify(SN(said21, fin21)) === JSON.stringify(kept21), [SN(said22, fin22), TP(fin22).slice(0, 80)]);
+  // the owner's fixes of 2026-10-06: troid's own strategy out of sample first (q-stats, runs 21 to 23) and the largest
+  // maximum loss troid has read never widened to every account troid covers (ex-recovery, runs 17 and 21 to 23)
+  const R24 = ["run17", "run18", "run19", "run20", "run21", "run22", "run23", "run24"].map((n) => [n, require("./eval/runs/2026-10-05-" + n + ".json").results]);
+  const caseOf = (rs, id) => rs.find((c) => c.id === id), plain = (c) => String(c.reply).split("Sources, each with the date troid read it:")[0].trim();
+  const mis = R24.filter(([, rs]) => caseOf(rs, "q-stats") && handler._ownStrategyMisordered(plain(caseOf(rs, "q-stats")))).map(([n]) => n).join();
+  const wid = R24.filter(([, rs]) => handler._widensMaxLoss(plain(caseOf(rs, "ex-recovery")))).map(([n]) => n).join();
+  const q21 = handler._ownStrategyFirst(plain(caseOf(R24[4][1], "q-stats")));
+  ok("candidate: troid's own in-sample result first, alone or unlabelled is found in runs 21 to 23's q-stats, not in run 19's (out of sample first, as 'Its out-of-sample result'); the backstop gives troid's words, out of sample first, keeping what the sentence said of the user's figures",
+     mis === "run21,run22,run23" && q21.includes(handler.OWN_STRATEGY) && /not distinguishable from zero at this sample size\. Out of sample, troid's own strategy/.test(q21)
+     && q21.indexOf("+0.008R") < q21.indexOf("best of the ~30") && R24.slice(0, 4).every(([, rs]) => handler._ownStrategyFirst(plain(caseOf(rs, "q-stats"))) === plain(caseOf(rs, "q-stats"))), [mis, q21.slice(-700)]);
+  const WL = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^The largest maximum loss troid has read covers/.test(n));
+  ok("candidate: 'every account troid covers' beside the largest maximum loss troid has read is sent back (ex-recovery, runs 17, 21, 22 and 23; run 24 kept to the products troid has read); live is not",
+     wid === "run17,run21,run22,run23" && WL(plain(caseOf(R24[4][1], "ex-recovery")), "candidate") && !WL(plain(caseOf(R24[4][1], "ex-recovery")), "live"), wid); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1279,8 +1293,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin, fees and the patch's reset texts, tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 11 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 35 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 13 && gc.tools.join() === "firm_assets" && gc.rules.join() === "ruin,crossover,drawdown,fees,reset"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 37 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
