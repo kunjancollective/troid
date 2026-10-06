@@ -1,19 +1,8 @@
 {
- "_summary": "Incomplete: from 14:14 UTC, after 3 cases, every call on the evaluation key was refused (Anthropic HTTP 400; the service's 'ask troid is misconfigured'), most likely the troid-eval workspace's spend limit, reached at about $10 for the day at the runner's prices. 27 cases unanswered; not a run for the promotion rule. Of the three answered: ex-r and ex-kelly right; ex-recovery states the 10% maximum loss undated, from no tool (as in runs 21 to 23). $0.1432 on the eval key (3 Haiku and 8 Sonnet calls). A visitor-path request at about 15:30 UTC answered 200 on the main key.",
+ "_summary": "Incomplete: from 14:14 UTC, after 3 cases, every call on the evaluation key was refused (Anthropic HTTP 400; the service's 'ask troid is misconfigured'), most likely the troid-eval workspace's spend limit, reached at about $10 for the day at the runner's prices. 27 cases unanswered; not a run for the promotion rule. Of the three answered: ex-r and ex-kelly right; ex-recovery right too (the 10% sourced through trade_math; read wrongly at first). $0.1432 on the eval key (3 Haiku and 8 Sonnet calls). A visitor-path request at about 15:30 UTC answered 200 on the main key. Corrected 2026-10-06: the first read missed the sources under the answer, or (run 17) the widening.",
  "ex-r": "Note: correct: R defined, the formula with fees, $498.97, $23.86, $522.83, 1.913R on a 1,000 result.",
  "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios, the 1-Step's limits dated.",
- "ex-recovery": "Error (sources): 25% with its formula and working, right; but the 10% maximum loss of Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase from no tool, undated (runs 21 to 23's error).",
+ "ex-recovery": "Note: correct: 25% with its formula and working; the 10% is trade_math's (firm \"all\"), its two sources listed under the answer with their read dates (Bitfunded 2-Step Stage 1, read 2026-09-23; Crypto Fund Trader 2-Phase, read 2026-09-21); kept to the accounts 'built to one of those rules'. Corrected 2026-10-06: the first read missed the sources under the answer, or (run 17) the widening.",
  "_incomplete": "27 of 30 cases returned 500 (the evaluation key refused from 14:14 UTC): ex-angry to d-keep.",
- "_errors": [
-  {
-   "case": "ex-recovery",
-   "severity": "major",
-   "kinds": [
-    "missing date or source"
-   ],
-   "detail": [
-    "the 10% maximum loss of two firms' products from no tool, undated"
-   ]
-  }
- ]
+ "_errors": []
 }

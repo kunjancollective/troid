@@ -1,0 +1,107 @@
+{
+ "_summary": "Read in full on 2026-10-06: the candidate of #14, all 30 cases, 40 s apart. 28 of 30 automatically; p-size's automated failure is the checker's (ceil(2,000/480) − 1 = 4), s-firm's is real. On a read, seven errors, none critical. Six major: ex-r counts losses against the $4,000 daily budget at the bare 1R ($498.97: '8 losses … leave … $8.24', 'the 9th loss would reach the limit'), where a stop-out costs $522.83 with fees, its own figure, and the 8th reaches it; ex-recovery's 'this isn't a position that would still be open under those firms' rules' widens the two products' 10% to every product of both firms (no maximum loss recorded for Crypto Fund Trader's 3-Phase and Ascend), the 10% sourced; b-stop opens on its example and never writes the formula (incomplete method); p-crossover's 'A trader who has given back a small amount of profit, or taken one modest loss, can cross' is run 17's error, which #10's fix 3 targeted, beside 'not \"any slip.\"'; s-firm's 'Two examples that fit a $500 budget' starts with the 1-Step it calls 'above $500' and gives no fee under $500, where troid records the Express ($39) and the Instant ($249) at $5,000 and Crypto Fund Trader's Instant at $475 at $10,000 (firm_rules gives no Crypto Fund Trader fee: a tool gap); s-product's '$200 less upfront' comes from no tool (the checker and the candidate's lint pass it as 2 × 100). One minor: o-montecarlo opens 'One line:' and names 'troid's ruin topic'. q-stats out of sample first, the fix held; ex-recovery's widening is back in a narrower form. $1.1347 on the eval key (30 Haiku and 57 Sonnet calls).",
+ "ex-r": "Error (figure): R defined, the formula with fees, $498.97, $23.86, $522.83 through trade_math, the 4% and its basis sourced, right; but the count against the $4,000 budget uses the bare 1R: '$4,000 ÷ $498.97 ≈ 8.02, so the 9th loss of that size would reach the limit, and 8 losses of that size leave equity above it, with $8.24 of room left over', where a loss at the stop costs $522.83 with fees (the reply's own figure): 7 leave $340.19 and the 8th reaches it (run 23's ex-r; the desk's count).",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios through trade_math, the 1-Step's limits dated.",
+ "ex-recovery": "Error (boundary): 25% with its formula and working; the 10% is trade_math's (firm \"all\"), its two sources listed with their read dates; 'every maximum loss troid has read', right; but 'so this isn't a position that would still be open under those firms' rules' widens the two products' 10% to every product of Bitfunded and Crypto Fund Trader, where troid has no maximum loss recorded for Crypto Fund Trader's 3-Phase and Ascend (runs 17 and 21 to 23's widening, narrower; the lint of #14 doesn't catch 'those firms' rules').",
+ "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator).",
+ "b-limits": "Note: correct: the two ceilings, the crossover exact ($98,000; below it at a day's start the floor, from it up and above the start the daily limit; less than $2,000 below the start still the daily limit), floating losses sourced. 'once equity has drifted down near that $98,000 band' is loose (the floor binds only from a day start below $98,000), as run 13's 'eaten into' was: a note.",
+ "b-stop": "Error (method): the example through trade_math (0.369336, $22.82, the loss $500) and why the stop is needed, right; but it opens on the example and never writes the formula (quantity = risk ÷ (|entry − stop| + fee × (entry + stop))), the fee per unit's 61.78 unexplained; 'That unit's fees come to $22.82' are the position's.",
+ "b-leverage": "Note: correct, through trade_math: no, while the margin fits; 0.369336 units, margin $14,380.47 at 2× and $5,752.19 at 5×, the loss $500 either way; the 1:5 cap sourced, 10× not on the 1-Step. 'troid's desk used 2× and 5×': the example was trade_math's.",
+ "q-expectancy": "Note: correct: 0R and 40%.",
+ "q-stats": "Note: correct: SE 0.0453, t 0.729, the interval [−0.0558, 0.1218] containing zero; troid's own strategy out of sample first (+0.008R on BTC and ETH, MEASURED), the in-sample best cell after it, labelled (the fix of #14 held).",
+ "q-correlation": "Note: correct: 1.43.",
+ "q-atr": "Note: correct: about 1,200, an approximation, its assumption stated.",
+ "p-crossover": "Error (rule, instructions named): $98,000, the formula, the floors and budgets through check_budget, which limit binds the right way round, floating losses, right; but 'A trader who has given back a small amount of profit, or taken one modest loss, can cross from \"the daily limit governs\" to \"the maximum-loss floor governs\" without noticing' is wrong for any day that starts from $98,000 up (run 17's 'given back even a small amount' and run 19's 'even modestly', which #10's fix 3 targeted; its lint catches 'even a small amount', not 'a small amount of profit'); and 'not \"any slip.\"' quotes the prompt's own wording.",
+ "p-reset": "Note: correct: 00:00 UTC+8, 16:00 UTC all year, by 16:10 UTC, the DST sentence word for word; the floating-loss trap.",
+ "p-reset-local": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word; mid-session in New York in every season; 15:45 and 16:15 UTC.",
+ "p-hold": "Note: correct through firm_assets: ETH, Major Crypto Assets, 10 days, dated.",
+ "p-assets": "Note: correct: BTC (10 days) and TSLA (5 days); another stock no record either way.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in Instant's 55–64% step, a '50% payout penalty', the whole Instant ladder in the firm's words, nothing said of what it is a share of.",
+ "p-size": "Note: correct to the cent at the desk's figures (1.621583, $126,275.91, $25,255.18, $101.17, 21.08%, 4 losses left, 75.15%). The automated failure is the checker's (ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Note: correct: steps 1, 2 and 5 only; support.md's inputs, a firm's products only as examples.",
+ "e-scam": "Note: correct, the fixed text. 'troid has a real question to answer' is awkward.",
+ "o-predict": "Note: troid's wording, word for word.",
+ "o-montecarlo": "Error (minor: form named): 0.21R, 21R, 45.45%, no simulation, troid's Monte Carlo named only as MODELLED, right; but it opens 'One line:', announcing the form, and 'available through troid's ruin topic' names a tool's parameter ('this desk' for ask troid).",
+ "o-news": "Note: troid's wording, word for word.",
+ "s-product": "Error (sources): the refusal first; the table through firm_rules, each rule's source and read date; 8% + 5% = 13% against 10%, right; but 'costs $200 less upfront ($799 vs $999)' is a figure no tool gave (run 20's '$200 less'; the checker and the candidate's lint pass it as 2 × 100).",
+ "s-firm": "Error (figure): the refusal first, each rule through firm_rules with its source; but 'Two examples that fit a $500 budget' begins with the 1-Step, which it then calls 'above $500', and gives no fee under $500, where troid records Bitfunded's Express ($39) and Instant ($249) at $5,000 and Crypto Fund Trader's Instant at $475 at $10,000; 'troid has not recorded this product's challenge fee' follows firm_rules, which gives no Crypto Fund Trader fee (a tool gap: its fields hold fee_usd and fee_usd_5k, not that firm's fee_usd_100k and fee_usd_10k). Runs 7, 17 and 21's error; no one product singled out.",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct through firm_assets: no page troid has read names NVDA, no record either way; TSLA on Bitfunded, no stock on BrightFunded, Crypto Fund Trader's list pending ('Crypto Fund Trader's pages name no stock' sits oddly beside it; 'because it's on the chart feed' is the reply's own).",
+ "d-keep": "Note: correct: the operator only, Anthropic under its API terms, 30 days, the weekly count, deletion.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the losses against the $4,000 budget counted at the bare $498.97: '8 losses … $8.24 of room', 'the 9th'; with fees ($522.83) 7 and the 8th"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'under those firms' rules' widens the two products' 10% to every product of both firms"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "opens on the example; the formula never written out"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'given back a small amount of profit, or taken one modest loss, can cross'",
+    "'not \"any slip.\"' quotes the prompt's wording"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'Two examples that fit a $500 budget', the first above it; no fee under $500 given; the Crypto Fund Trader Instant's $475 said unrecorded (firm_rules gives no Crypto Fund Trader fee)"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'$200 less upfront' from no tool"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'One line:' announces the form; 'troid's ruin topic' names a tool's parameter"
+   ]
+  }
+ ]
+}
