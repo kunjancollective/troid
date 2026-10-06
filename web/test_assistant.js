@@ -356,7 +356,7 @@ const NEW16 = /^Every number in the answer comes from|^A teaching answer writes 
 // leave them out, and they are tested on runs 17 to 20's replies below
 const NEW1005 = /^The largest maximum loss troid has read covers|^troid's own strategy: its out-of-sample result first, then|^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
 // the owner's fixes of 2026-10-06 (after runs 25 to 27): three lints the older runs' replies were never written against
-const NEW1006 = /^Never set one product apart as what the money buys|^Give every product products_in_budget returns|^These words are troid's own instructions/;
+const NEW1006 = /^The maximum-loss budget is the day.s start less|^Never set one product apart as what the money buys|^Give every product products_in_budget returns|^These words are troid's own instructions/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -883,6 +883,30 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && EL("A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"", "candidate")
      && !EL("A day that starts less than $2,000 below the start is still bound by the daily limit, never \"any slip.\"", "live")
      && !EL("Bitfunded calls it a \"50% payout penalty\", never a cut.", "candidate") && !CG.some((g) => /any slip|small amount/.test(g)), ECHO); }
+// the owner's fixes of 2026-10-06, after run 28: the first-person lint reads the checker's whole set (ex-angry: "we need
+// the inputs"), and the $6,000 maximum-loss budget is never set beside a day below the crossover (p-crossover)
+{ const fsR = require("fs"), pathR = require("path"), FPI = handler._firstPersonIn, XB = handler._xoverBudgetSlip, FPHITS = [], XBHITS = [];
+  let nR = 0;
+  for (const f of fsR.readdirSync(pathR.join(__dirname, "eval", "runs")).filter((f) => /\.json$/.test(f) && !/read/.test(f)).sort()) {
+    let rs; try { rs = JSON.parse(fsR.readFileSync(pathR.join(__dirname, "eval", "runs", f), "utf8")).results || []; } catch (e) { continue; }
+    for (const c of rs) { if (typeof c.reply !== "string") continue; nR++;
+      const k = f.replace(/\.json$/, "") + " " + c.id;
+      if (FPI(c.reply)) FPHITS.push(k);
+      if (XB(c.reply)) XBHITS.push(k); } }
+  const SP = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^Speak of troid in the third person/.test(n));
+  const r28 = require("./eval/runs/2026-10-06-run28.json").results, at28 = (id) => String(r28.find((c) => c.id === id).reply).split("Sources, each with the date troid read it:")[0];
+  ok("candidate: the first-person lint reads the checker's set (I, I'm/I've/I'll/I'd, me, my, mine, myself, we, us, our, ours, ourselves, let's, let me), quoted text and 'should I' left out: over every saved reply it fires on exactly run 22's 'Let's', the live subset run's 'Let's' and run 28's 'we'; live is not",
+     nR >= 803 && FPHITS.join() === "2026-10-05-run22 o-montecarlo,2026-10-05-subset-live o-montecarlo,2026-10-06-run28 ex-angry"
+     && SP(at28("ex-angry"), "candidate") && !SP(at28("ex-angry"), "live")
+     && ["We need the inputs.", "That leaves us $500.", "Our figures say 7.", "my account", "I can't say.", "troid gives me nothing"].every((t) => SP(t, "candidate"))
+     && ["The trader wrote \"we lost it all\".", "> we lost it all", "A should-I question gets support's line.", "troid computes 7 losses.", "US stocks"].every((t) => !SP(t, "candidate")),
+     [nR, FPHITS]);
+  const XL = (t, v) => handler._lintNotesFor(t, v, [], "q").some((n) => /^The maximum-loss budget is the day's start less/.test(n));
+  ok("candidate: the $6,000 maximum-loss budget set beside a day below $98,000 is sent back: over every saved reply, run 28's p-crossover alone; a correct statement passes; live is not",
+     XBHITS.join() === "2026-10-06-run28 p-crossover" && XL(at28("p-crossover"), "candidate") && !XL(at28("p-crossover"), "live")
+     && !XB("Below $98,000 the max-loss budget is under $4,000, whereas at a $100,000 start it is $6,000.") && !XB("At a $100,000 start the drawdown budget is $6,000; below $98,000 it is under $4,000.")
+     && XB("Below the crossover, the $6,000 drawdown budget is the smaller one.") && CG.filter((g) => g.includes("Each budget is the day's start less its floor")).length === 1
+     && !CG.some((g) => g.includes("Each budget is the day's start less its floor") && /["“]/.test(g)), XBHITS); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1353,7 +1377,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts (the patch's reset left with it), tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 14 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 40 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 41 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;

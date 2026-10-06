@@ -227,7 +227,7 @@ const DST_SENTENCE = "Local clocks move with daylight saving and UTC doesn't, so
 CANDIDATE_GUARDRAILS.push(
   "In a leverage or margin answer, every size, notional, margin and liquidation figure is one a tool returned this turn for that very thing, beside the leverage it belongs to: work each leverage through trade_math (position_size, with an equity) or size_trade and quote its quantity, notional and margin as the result gives them, never a figure worked out from another. A liquidation distance is size_trade's (among its circuit breakers); where no tool gives one, say it in words: higher leverage brings an isolated position's liquidation closer to entry, and under cross margin leverage doesn't move it. Cross margin is troid's default model; troid has no recorded source for Bitfunded's margin modes.",
   "Bitfunded's reset is given in UTC only: 16:00 UTC, in effect by 16:10 UTC, followed by this sentence, word for word: \"" + DST_SENTENCE + "\" Never a local hour, by season or otherwise: no noon, midday or mid-afternoon, no EDT or EST.",
-  "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. Which one binds turns on the day's start alone: a day that starts less than $2,000 below the start is still bound by the daily limit, however much was lost or given back before it, and only a day that starts below $98,000 is bound by the floor. The daily floor is the day's start less the daily amount, never a static floor from the quota.",
+  "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. Which one binds turns on the day's start alone: a day that starts less than $2,000 below the start is still bound by the daily limit, however much was lost or given back before it, and only a day that starts below $98,000 is bound by the floor. The daily floor is the day's start less the daily amount, never a static floor from the quota. Each budget is the day's start less its floor: the maximum-loss budget is $6,000 only on a day that starts at $100,000, and below $98,000 it is under $4,000, smaller than the daily budget, which is why the floor binds there; never set the $6,000 beside a day that starts below the crossover.",
   "A question about how something is calculated or works (what R means, why the stop sets the size, how the two limits differ, what leverage changes) gets, after its one-line answer, the formula written out with an equals sign and its terms, then one worked example whose figures a tool computed this turn. Give the example once: never before the answer, never again after it.",
   "A question about where a price is going, what is moving the market or the news gets this reply, word for word, and nothing else: \"" + OUT_OF_SCOPE_REPLY + "\" Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service).");
 // The owner's two fixes of 2026-10-06, after runs 21 to 24. ex-recovery set the largest maximum loss troid has read
@@ -785,7 +785,7 @@ const CANDIDATE_RULES = {
   // run 11, b-limits: the floating-loss rule, from TROID.md, beside explain_rule's crossover and drawdown with no source
   // line; both explanations state it now, so the service lists its source under them
   // the read of runs 17 and 19 (p-crossover: the floor said to govern after "even a small amount"): stated exactly
-  crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below $98,000 at the day's start the max-loss floor binds, and the 4% daily limit is not the constraint that day; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover." +
+  crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below $98,000 at the day's start the max-loss floor binds, and the 4% daily limit is not the constraint that day; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit. The max-loss budget is the day's start less the $94,000 floor: $6,000 on a day that starts at $100,000, under $4,000 on one that starts below $98,000. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover." +
     " Both of Bitfunded's ceilings count floating losses: an open position that reaches either one fails the account, with no close needed.",
   drawdown: RULES.drawdown + " Bitfunded's floor counts floating losses: an open position that reaches it fails the account, with no close needed.",
   // the calculator audit's F6 (troid's desk, 2026-09-29): the exit fee is charged at the stop, not at entry
@@ -2124,9 +2124,30 @@ function repeatedWorking(t) {
   }
   return false;
 }
+// the crossover's budgets (run 28, p-crossover: "below $98,000 at the day's start, the $6,000 max-loss budget would be the
+// smaller one"): $6,000 is the 1-Step's maximum-loss budget on a $100,000 day; below $98,000 it is under $4,000. A
+// sentence that sets a day below the crossover beside a $6,000 budget or room is sent back
+const XOVER_BELOW_RX = /\b(below|under|less than)\s+(\$?98,000|\$?98k|the crossover)\b/i;
+const SIX_K_BUDGET_RX = /(?<![\d,.])\$?6,000(?![\d,])[^.\n;]{0,40}\b(budget|room)\b|\b(budget|room)\b[^.\n;]{0,30}(?<![\d,.])\$?6,000(?![\d,])/i;
+// read from the day below the crossover on, up to a turn to another day ("whereas at a $100,000 start, $6,000")
+const XOVER_TURN_RX = /\b(at|on|from|with) (a |the )?\$?100,000\b|\b(whereas|while|but|compared with)\b|;/i;
+const xoverBudgetSlip = (t) => stripSources(String(t)).split("\n").some((l) => sentencesOf(l).some((x) => {
+  const m = x.match(XOVER_BELOW_RX);
+  if (!m) return false;
+  const after = x.slice(m.index), turn = after.slice(1).search(XOVER_TURN_RX);
+  return SIX_K_BUDGET_RX.test(turn < 0 ? after : after.slice(0, turn + 1));
+}));
 // 5. A place named by kind for prices or news (run 17, o-news: "the exchanges and news services themselves"; run 18,
 //    o-predict: "a market data service or news outlet"; run 20, live: "A news site, an exchange, or a data platform")
-const FIRST_PERSON_RX = /\blet['’]s\b|\blet me\b|\bI['’](m|ll|ve|d)\b/i;
+// run 28, ex-angry: "To reconstruct the calculation, we need the inputs". The checker's set (eval_character.js
+// firstPerson): I, I'm/I've/I'll/I'd, me, my, mine, myself, we, us, our, ours, ourselves, let's and let me, with quoted
+// text, a blockquote, the service's sources list and "should I" (a kind of question) left out
+const FIRST_PERSON_RX = [/\bI\b/, /\bI['’](m|ve|ll|d)\b/, /\b(me|my|mine|myself|we|us|our|ours|ourselves)\b/, /\blet['’]s\b|\blet me\b/i,
+                         /(^|[.?]\s+|\n\s*)(My|We|Our|Us|Me)\b/];
+const unquotedForFirstPerson = (t) => String(t).replace(/^Sources, each with the date troid read it:\n(- .*(\n|$))*/m, "")
+  .replace(/"[^"\n]{0,400}"|“[^”\n]{0,400}”/g, " ").split("\n").filter((l) => !/^\s*>/.test(l)).join("\n")
+  .replace(/\bshould[- ]I\b/gi, "should-question");
+const firstPersonIn = (t) => { const u = unquotedForFirstPerson(t); return FIRST_PERSON_RX.some((re) => re.test(u)); };
 const OUTSIDE_KIND_RX = /\b(check|consult|see|use|visit|try|look at|look to|turn to|points? to|refer to|go to|head to)\b[^.\n]{0,40}\b(news (sites?|outlets?|services?|sources?|feeds?|apps?)|market[- ]data (services?|providers?|platforms?|sites?)|data (platforms?|providers?|services?)|financial (data|news)|charting (platforms?|sites?|tools?)|price (feeds?|sites?|trackers?)|(crypto )?exchanges?\b(?!\s*(liquidat|['’]s|fees?|margin|rates?)))|\b(news (sites?|outlets?|services?|sources?)|market[- ]data (services?|providers?|platforms?)|data platforms?)\b[^.\n]{0,40}\b(will have|have|has|carry|carries|show|shows|cover|covers)\b/i;
 CANDIDATE_LINTS.push(
   [(t, tools, asked) => labelledFigureSlips(t, tools, asked).length > 0,
@@ -2147,7 +2168,10 @@ CANDIDATE_LINTS.push(
   [(t) => OUTSIDE_KIND_RX.test(t),
    "Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service). For where a price is going or what is moving the market, give troid's wording, word for word: \"" + OUT_OF_SCOPE_REPLY + "\""],
   // run 22, o-montecarlo: "Let's get the expectancy figure." (first person; inThirdPerson removes one with no figure)
-  [(t) => FIRST_PERSON_RX.test(t), "Speak of troid in the third person: no \"let's\", \"let me\" or \"I\". Say what troid computes (\"troid computes …\"), and lead into nothing: give the answer."]);
+  // run 28, p-crossover: the $6,000 maximum-loss budget set beside a day that starts below $98,000
+  [(t) => xoverBudgetSlip(t), "The maximum-loss budget is the day's start less the $94,000 floor: $6,000 only on a day that starts at $100,000, under $4,000 on a day that starts below $98,000, which is why the floor binds there. Give the budget below the crossover from check_budget, or in words, never as $6,000."],
+  // run 28, ex-angry: "we need the inputs" (the checker's whole set now, not only let's, let me and I'm/I'll/I've/I'd)
+  [(t) => firstPersonIn(t), "Speak of troid in the third person: no \"let's\", \"let me\", \"I\", \"we\", \"us\" or \"our\". Say what troid computes (\"troid computes …\"), and lead into nothing: give the answer."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
 // final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
@@ -2838,6 +2862,8 @@ module.exports._resetInUtcOnly = resetInUtcOnly;
 module.exports._outOfScopeFixed = outOfScopeFixed;
 module.exports._hasGeneralFormula = hasGeneralFormula;
 module.exports._inThirdPerson = inThirdPerson;
+module.exports._firstPersonIn = firstPersonIn;
+module.exports._xoverBudgetSlip = xoverBudgetSlip;
 module.exports._ownStrategyFirst = ownStrategyFirst;
 module.exports._ownStrategyMisordered = ownStrategyMisordered;
 module.exports._widensMaxLoss = widensMaxLoss;

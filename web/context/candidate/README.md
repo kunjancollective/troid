@@ -12,18 +12,27 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-06 (third): the owner's two fixes after run 28
+
+- **The first person, in full.** Run 28's ex-angry wrote "To reconstruct the calculation, we need the inputs" (critical).
+  The candidate's first-person lint matched only I'm/I'll/I've/I'd, let's and let me; it now reads the checker's set
+  (`firstPerson()` in `web/eval_character.js`): I, I'm/I've/I'll/I'd, me, my, mine, myself, we, us, our, ours, ourselves,
+  let's and let me, with quoted text, a blockquote, the service's sources list and "should I" left out
+  (`firstPersonIn`). It still sends a draft back once. Over every saved reply (809 on 6 Oct) it fires on exactly three:
+  run 22's "Let's" (o-montecarlo), the live subset run's "Let's" and run 28's "we".
+- **The crossover's budgets.** Run 28's p-crossover set the $6,000 maximum-loss budget beside a day that starts below
+  $98,000, where that budget is under $4,000. The crossover guardrail now says each budget is the day's start less its
+  floor, $6,000 only at a $100,000 start and under $4,000 below $98,000 (it quotes nothing), and explain_rule's
+  crossover text gives the same. A lint sends back a sentence that puts a day below the crossover beside a $6,000 budget
+  or room (`xoverBudgetSlip`); over every saved reply it finds run 28's p-crossover alone.
+- **Live and patch unchanged:** their system blocks, tools, tool results, lints and reply handlers over every saved
+  reply (809 replies, 1,390 tool calls) are byte for byte main's.
+
 ## Not promoted at launch (the owner, 2026-10-06)
 
 The third pass met one of the owner's two conditions (s-firm 10 of 10, no product picked) and not the other (run 28 has a
-critical), so live stays. On the fix list for the next staged change:
-
-- **Run 28's critical, the first person:** ex-angry's "To reconstruct the calculation, we need the inputs". The
-  candidate's first-person lint (`FIRST_PERSON_RX`) matches I, let's and let me, not we, us or our; the runner's
-  checker matches all of them.
-- **Run 28's p-crossover error:** "below $98,000 at the day's start, the $6,000 max-loss budget would be the smaller
-  one", where below $98,000 the drawdown budget is under $4,000.
-
-`TROID_CANDIDATE_KEY` is rotated the same day: a keyed run needs the new key as `EVAL_CANDIDATE_KEY`.
+critical), so live stays. Run 28's two errors went on the fix list: they are the third staging, above.
+`TROID_CANDIDATE_KEY` was rotated the same day.
 
 ## Staged 2026-10-06 (second): the owner's three fixes after runs 25 to 27
 
