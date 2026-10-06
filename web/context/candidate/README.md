@@ -221,8 +221,9 @@ prompt and tools are unchanged: every live and patch tool result, schema and sys
   liquidation "none above zero" and its floors past 100% "not reached above zero", "how many more losses at that size
   leave equity above the binding ceiling", and the "Costs" line of "What troid knows". And the fourth patch's two
   wordings, brought in at once (the owner, 30 Sep: "Otherwise the test runs on text you'd reject anyway"): the reset
-  paragraph in UTC, word for word from `../patch/TROID.md`, and "no measurable edge". explain_rule's reset is the
-  patch's too (`CANDIDATE_RULES.reset = PATCH_RULES.reset`). Whichever publishes first, the other drops its copy.
+  paragraph in UTC, word for word from the patch's `TROID.md`, and "no measurable edge". explain_rule's reset was the
+  patch's too, until the patch published first (its runs of 2026-10-06): the candidate dropped its copy of the rule, and
+  its `TROID.md` keeps the same paragraph, which the live one now has.
   `TROID-CHARACTER.md`: the same "Costs" and "Leverage and margin" lines, and the R example's fees "to open at entry and
   to close at the stop" and "8 − 1 = 7 losses of that size leave you above it".
 
