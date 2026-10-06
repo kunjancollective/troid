@@ -12,6 +12,22 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-06: the owner's two fixes after runs 21 to 24
+
+- **ex-recovery.** The owner asked that the 10% maximum loss carry its source and read date from a tool, or not be stated.
+  In runs 21 to 24 it already did: trade_math's recovery (firm "all") gives the largest maximum loss troid has read, and
+  the service listed both sources under the answer (Bitfunded 2-Step Stage 1, read 2026-09-23; Crypto Fund Trader
+  2-Phase, read 2026-09-21); the reads that said otherwise were wrong and are corrected. What failed was the widening:
+  "on every account troid covers" (runs 17, 21, 22 and 23), where troid has no maximum loss recorded for some products.
+  A guardrail now states both (a firm's rule from a tool or not at all; "every maximum loss troid has read", never every
+  account troid covers), and a lint sends the widening back (`widensMaxLoss`).
+- **q-stats.** troid's own strategy: the out-of-sample result first, the in-sample one after it, labelled in-sample,
+  in troid's words (`OWN_STRATEGY`, from TROID.md's "Does the strategy work?"). A guardrail gives the words, a lint
+  reads the order (the first in-sample mention of troid's own result against the first +0.008R, so run 19's "Its
+  out-of-sample result comes first" passes), and a backstop puts troid's words where the first sentence about its
+  result stood, keeping what that sentence said of the user's figures (`ownStrategyFirst`). Over every saved reply the
+  backstop changes q-stats alone: runs 21 to 23, and runs 2, 4, 6 and 8 of 2026-09-24.
+
 ## Staged 2026-10-05 (second): the read of runs 17 to 19, the owner's six fixes
 
 On top of the candidate below (candidate only; the live and patch prompts, tools, tool results and lints were compared

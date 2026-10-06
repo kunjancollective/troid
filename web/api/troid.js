@@ -230,6 +230,15 @@ CANDIDATE_GUARDRAILS.push(
   "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit: never \"even a small amount\" or \"any slip\". The daily floor is the day's start less the daily amount, never a static floor from the quota.",
   "A question about how something is calculated or works (what R means, why the stop sets the size, how the two limits differ, what leverage changes) gets, after its one-line answer, the formula written out with an equals sign and its terms, then one worked example whose figures a tool computed this turn. Give the example once: never before the answer, never again after it.",
   "A question about where a price is going, what is moving the market or the news gets this reply, word for word, and nothing else: \"" + OUT_OF_SCOPE_REPLY + "\" Name no place for prices, news or forecasts, by name or by kind (a news outlet, an exchange, a market data service).");
+// The owner's two fixes of 2026-10-06, after runs 21 to 24. ex-recovery set the largest maximum loss troid has read
+// (trade_math's, with its sources) beside "every account troid covers", where troid has no maximum loss recorded for
+// some products; q-stats put troid's own in-sample best cell before its out-of-sample result, or without it.
+const OWN_STRATEGY = "Out of sample, troid's own strategy measured +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades), " +
+  "both 95% confidence intervals containing zero (MEASURED). In-sample, the best of the ~30 configurations it searched measured " +
+  "+0.033R per trade over 78 trades (MEASURED, in-sample): a best cell, below what chance alone produces across that many configurations (~+0.093R).";
+CANDIDATE_GUARDRAILS.push(
+  "A firm's rule stated anywhere, a maximum loss in passing too, comes from a tool this turn, which gives its source and read date (for a drawdown, trade_math's recovery with firm \"all\" gives the largest maximum loss troid has read), or it is not stated. That figure covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products).",
+  "When troid's own strategy comes up, even in passing (a user's figures that match its search, say), its out-of-sample result comes first and the in-sample one after it, labelled in-sample, in these words: \"" + OWN_STRATEGY + "\" Never the in-sample figure first, alone or unlabelled.");
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
@@ -2108,6 +2117,65 @@ function inThirdPerson(reply) {
   }).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n");
   return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
 }
+// troid's own strategy, out of sample first (the owner, 2026-10-06; runs 21 to 23, q-stats): a sentence about troid's own
+// result is one naming troid's own strategy, backtest or search and giving a figure or sample of it; the in-sample
+// result (+0.033R, the best of the search) comes after the out-of-sample one (+0.008R) and says it is in-sample
+const OWN_RX = /\btroid['’]s own\b|\btroid['’]s (backtest|strategy|search)\b|\bconfigurations? (it |troid )?(searched|tried|tested)\b/i;
+const OWN_IN_RX = /(?<![\d.])0\.033\s?R?\b|\bbest (of|cell|configuration)\b|\bin[- ]sample\b/i;
+const OWN_OUT_RX = /(?<![\d.])0\.008\s?R?\b|\bout[- ]of[- ]sample\b|\bout of sample\b/i;
+function ownStrategySentences(t) {
+  const out = [];
+  String(t).split("\n").forEach((line, li) => sentencesOf(line).forEach((s, si) => {
+    if (OWN_RX.test(s) && (OWN_IN_RX.test(s) || OWN_OUT_RX.test(s))) out.push({ li, si, s });
+  }));
+  return out;
+}
+// the in-sample result first, alone or unlabelled: the first in-sample mention of troid's own result against the first
+// out-of-sample figure (+0.008R, troid's alone: run 19 gave it as "Its out-of-sample result comes first: … +0.008R")
+const OWN_OUT_FIG_RX = /(?<![\d.])0\.008\s?R?\b/;
+function ownStrategyMisordered(t) {
+  const text = stripSources(String(t)), ss = ownStrategySentences(text), ins = ss.filter((x) => OWN_IN_RX.test(x.s));
+  if (!ins.length) return false;
+  const inAt = text.indexOf(ins[0].s) + ins[0].s.search(OWN_IN_RX), outAt = text.search(OWN_OUT_FIG_RX);
+  const unlabelled = ss.some((x) => /(?<![\d.])0\.033\s?R?\b/.test(x.s) && !/\bin[- ]sample\b/i.test(x.s));
+  return outAt < 0 || inAt < outAt || unlabelled;
+}
+// the backstop: the sentences about troid's own result give way to troid's own words, out of sample first, where the
+// first stood; what that sentence said before its clause about troid (run 21: "the interval … contains zero — this is the
+// same shape of result troid's own strategy search produced …") stays
+function ownStrategyFirst(reply) {
+  if (!ownStrategyMisordered(reply)) return reply;
+  const ss = ownStrategySentences(reply), drop = new Set(ss.map((x) => x.li + ":" + x.si)), first = ss[0];
+  const before = (sent) => {
+    const at = sent.search(OWN_RX), head = sent.slice(0, at < 0 ? 0 : at);
+    const cut = Math.max(head.lastIndexOf(" — "), head.lastIndexOf(" – "), head.lastIndexOf("; "), head.lastIndexOf(": "));
+    if (cut < 0) return "";
+    const kept = head.slice(0, cut).trim(), mark = head.slice(cut).trim()[0];
+    if (mark === ":" && kept.split(/\s+/).length <= 5) return kept + ":";            // a label ("What it means:")
+    return kept ? kept.replace(/[,;:—–\s]+$/, "") + "." : "";
+  };
+  const lines = String(reply).split("\n").map((line, li) => {
+    if (!ss.some((x) => x.li === li)) return line;
+    const lead = (line.match(/^\s*([-*•]|\d+[.)])\s+/) || [""])[0], parts = sentencesOf(line.slice(lead.length));
+    const kept = [];
+    parts.forEach((sent, si) => {
+      // the line without its lead splits into the same sentences as the whole line: the lead holds no sentence end
+      const key = li + ":" + si;
+      if (li === first.li && si === first.si) { const b = before(sent); kept.push((b ? b + " " : "") + OWN_STRATEGY); }
+      else if (!drop.has(key)) kept.push(sent);
+    });
+    return kept.length ? lead + kept.join(" ") : "";
+  });
+  return lines.filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n").replace(/\n{3,}/g, "\n\n").trim();
+}
+// "every account troid covers" beside the largest maximum loss troid has read (runs 21 to 23, ex-recovery)
+const WIDEN_RX = /\b(every|any|all)\s+(funded\s+(or\s+evaluation\s+)?|evaluation\s+)?(accounts?|products?|challenges?)\s+(that\s+)?troid\s+(covers|compares|prices)\b|\b(outside|beyond)\s+what\s+(any|every)\s+product\s+troid\s+covers\b/i;
+const widensMaxLoss = (t) => String(t).split(/(?<=[.!?])\s+|\n+/).some((s) => WIDEN_RX.test(s) && /\bmax(imum)?[- ](loss|drawdown)\b|\bfloor\b|\bfail(ed|s)?\b|\bbreach(ed|es)?\b|\b(20|\d{2})%/i.test(s));
+CANDIDATE_LINTS.push(
+  [(t) => widensMaxLoss(t),
+   "The largest maximum loss troid has read covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products)."],
+  [(t) => ownStrategyMisordered(t),
+   "troid's own strategy: its out-of-sample result first, then the in-sample one labelled in-sample, in these words: \"" + OWN_STRATEGY + "\""]);
 // the user's question written back as a heading (run 18, b-stop: "Why does troid need your stop price to size a trade?")
 const QNORM = (s) => String(s).toLowerCase().replace(/\byour\b/g, "my").replace(/\byou\b/g, "i").replace(/[^a-z0-9 ]+/g, " ").replace(/\s+/g, " ").trim();
 function withoutEchoedQuestion(reply, lastUser) {
@@ -2513,7 +2581,7 @@ module.exports = async (req, res) => {
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
         // only, and a question about prices or news gets troid's wording
-        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(inThirdPerson(reply), lastUser), lastUser), lastUser, toolLog);
+        if (reply && variant === "candidate" && lang === "en") reply = outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply)), lastUser), lastUser), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -2596,5 +2664,9 @@ module.exports._resetInUtcOnly = resetInUtcOnly;
 module.exports._outOfScopeFixed = outOfScopeFixed;
 module.exports._hasGeneralFormula = hasGeneralFormula;
 module.exports._inThirdPerson = inThirdPerson;
+module.exports._ownStrategyFirst = ownStrategyFirst;
+module.exports._ownStrategyMisordered = ownStrategyMisordered;
+module.exports._widensMaxLoss = widensMaxLoss;
+module.exports.OWN_STRATEGY = OWN_STRATEGY;
 module.exports.OUT_OF_SCOPE_REPLY = OUT_OF_SCOPE_REPLY;
 module.exports.DST_SENTENCE = DST_SENTENCE;
