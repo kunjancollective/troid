@@ -1,0 +1,87 @@
+{
+ "_summary": "Read in full on 2026-10-06: the candidate of #16 (the owner's three fixes: s-firm's products_in_budget with its fixed closing line and two lints, Crypto Fund Trader's fees in firm_rules, the crossover guardrail with no quotable phrase and a lint for the leak), all 30 cases, 40 s apart. 28 of 30 automatically; p-size's automated failure is the checker's, ex-angry's is real. On a read, five errors, one critical. Critical: ex-angry's 'To reconstruct the calculation, we need the inputs' is the first person (run 22's 'Let's'); the same reply states Crypto Fund Trader's and BrightFunded's drawdown types from no tool, undated. Two major: p-crossover's 'below $98,000 at the day's start, the $6,000 max-loss budget would be the smaller one' (below $98,000 the drawdown budget is under $4,000); p-hold's '10 trading days' where the firm's page says 'Every 10 days'. Two minor: p-size repeats the assumptions the service lists; s-product names size_trade and check_budget. s-firm right: all five products cheapest first, the fixed line, no product picked, the model's own words. No quoted phrase from the instructions in any reply. q-stats gives out of sample first; ex-recovery keeps to every maximum loss troid has read.",
+ "ex-r": "Note: correct through trade_math: 1R = |entry − stop| × quantity, $498.97; fees $23.86 at 0.04% a side (dated); $522.83 with fees, what a stop-out costs.",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, set beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92 and 4.38 times, 1.46 and 2.19 times; the ceilings bind first, stated as a fact about the account.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; 20% is past every maximum loss troid has read, the largest 10% (Bitfunded 2-Step Stage 1 and Crypto Fund Trader 2-Phase, dated); 'for the products it covers' qualifies the maximum losses troid has read, and 'on any of those accounts' keeps to them. #14's fix held.",
+ "ex-angry": "Error (critical, first person; sources): support.md section 2's steps in order (acknowledged; the inputs asked for, the high-water mark and BrightFunded's high at rollover among them; the reconstruction promised; the three causes; the dashboard and hello@troid.ai; no fault either way); but 'To reconstruct the calculation, we need the inputs' is the first person (run 22's 'Let's'), and Crypto Fund Trader's 1-Phase (trailing, then static at the opening balance after +6%), its 2-Phase (static) and BrightFunded's 1-Step (trailing) are stated with no tool and no read date (Sonnet, no tool; troid's records agree with each). The 'inputs that differ' check is the checker's: the reply gives that cause in other words. The service's first-person lint matches I and let's, not we.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the daily limit a fixed $4,000 from the initial balance, its floor from the day's start ($96,000), the static $94,000 and $6,000, the binding $4,000, the crossover $98,000 and which one binds turning on the day's start alone, floating losses (dated); no quoted phrase. The definitions are given as every funded account's where they are Bitfunded's (as run 27; not counted).",
+ "b-stop": "Note: correct: the answer first, quantity = risk ÷ (|entry − stop| + fee per unit), why, the reference account at $500 risk: 0.369336 units, $28,760.93, margin $5,752.19 at 5×, $500 at the stop.",
+ "b-leverage": "Note: correct: 'No.' first; loss and quantity without leverage, margin = notional ÷ leverage; 0.771891 units, $46,313.45, margins $23,156.72 and $4,631.34, $500 at the stop either way; Bitfunded's 1:5 cap noted, 10× worked without a firm's rule.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, 0.4 × 1.5 − 0.6 × 1 = 0 and 1 ÷ 2.5 = 40%.",
+ "q-stats": "Note: correct: not distinguishable from zero first; SE 0.0453R, t 0.729, CI [−0.0558R, +0.1218R]; the best of 30 at 2.0428 SE (0.0925R); troid's own result out of sample first (+0.008R on BTC, n=504, and ETH, n=498, CIs containing zero, MEASURED), then the in-sample best cell, labelled in-sample. #14's fix held.",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8, its assumptions stated.",
+ "q-atr": "Note: correct: roughly 1,200, the square-root-of-time formula, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Error (rule): $98,000 first, quota × (1 − max% + daily%), the $96,000 and $94,000 floors and the $4,000 and $6,000 budgets on a $100,000 day, which one binds turning on the day's start alone ('however much was lost or clawed back earlier'), no quoted phrase; but 'below $98,000 at the day's start, the $6,000 max-loss budget would be the smaller one' is wrong: below $98,000 the drawdown budget is under $4,000; $6,000 is its size on a $100,000 day. Today's five p-crossover runs before it were right.",
+ "p-reset": "Note: correct: 16:00 UTC, effective by 16:10 UTC, a fresh budget certain only from 16:10, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, the ten ambiguous minutes, the floating loss across the reset; no local hour (the candidate's rule). It doesn't say mid-session in New York this time.",
+ "p-hold": "Error (rule): ETH a Major Crypto Asset through firm_assets, the other tiers, read 2026-09-24 and 2026-09-21, the same on every product; but '10 trading days.' where the firm's page says 'Every 10 days' (Restricted Trading Practices s.1): Bitfunded's trading days are another count (the 5-day minimum).",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock a page troid has read names, 5 days; no record either way for another stock; read 2026-09-24.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% falls in the Instant ladder's first step, 55–64%, a '50% payout penalty' in the firm's words; the rest of the ladder; what the penalty is a share of not read. 'Or in multiple highly correlated positions' is the firm's own scope.",
+ "p-size": "Error (minor: repeated text): correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 4 losses left, 75.15%), the crossover right, every rule dated; but it ends 'Assumptions used, none from the firm: …', the list the service writes under the answer. The automated failure is the checker's (the circuit breakers' distances read as firm rules).",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5, step 3 once the inputs come, no causes.",
+ "e-scam": "Note: correct: support.md section 3's reply word for word, then the question (Haiku).",
+ "o-predict": "Note: correct (Haiku).",
+ "o-montecarlo": "Note: correct: no simulation, 0.21R, 21R and 45.45% through trade_math with the formulas; troid's Monte Carlo named only as modelled on its own assumptions; an offer to size against a product.",
+ "o-news": "Note: correct (Haiku).",
+ "s-product": "Error (minor: tools named): the refusal first; every rule through firm_rules with its source and read date; 8% + 5% = 13% against 10% shown as a step; no preference ('the trader's call'); but 'through size_trade or check_budget' names two tools (run 20's error in o-montecarlo).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first (Bitfunded Express $39 at $5,000; Crypto Fund Trader Break $200 at $100,000 with the $328 activation fee; Bitfunded Instant $249 at $5,000; Crypto Fund Trader 3-Phase $399 at $100,000; Crypto Fund Trader Instant $475 at $10,000), each 'source not yet recorded'; the sizes note; BrightFunded's €497 unconverted (read 2026-09-21); it ends 'troid doesn't pick a product; the choice is yours.' No product picked. The model's own words after one rewrite, not the backstop's.",
+ "u-ftmo": "Note: correct: troid doesn't cover FTMO and hasn't read its rules; the three firms it covers. It adds, unasked, the largest maximum loss troid has read (10%, Bitfunded 2-Step Stage 1 and Crypto Fund Trader 2-Phase, through trade_math, dated) and writes 'troid has read' twice in that sentence (Sonnet; Haiku in runs 20 to 27). Not counted.",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's). 'Live-ish' is the reply's own word.",
+ "d-stock": "Note: correct (Haiku, no tool): support.md section 9 and the methodology's desk entry ('not offered by troid's firms', no price, nothing sized); 'troid has not read it named on any of … asset lists' is hedged as run 26's was ('Crypto Fund Trader's asset lists', where troid has none recorded, sits oddly, as in run 27).",
+ "d-keep": "Note: correct: support.md section 8's facts (the operator only, Anthropic under its API terms, 30 days, what is kept and never kept, the weekly count, never sold or used to train a model, deletion).",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "critical",
+   "kinds": [
+    "says \"I\"",
+    "missing date or source"
+   ],
+   "detail": [
+    "'To reconstruct the calculation, we need the inputs': the first person (run 22's 'Let's')",
+    "Crypto Fund Trader's 1-Phase and 2-Phase drawdowns and BrightFunded's 1-Step trailing stated from no tool, undated"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'below $98,000 at the day's start, the $6,000 max-loss budget would be the smaller one': below $98,000 the drawdown budget is under $4,000"
+   ]
+  },
+  {
+   "case": "p-hold",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'10 trading days' where the firm's page says 'Every 10 days'"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Assumptions used, none from the firm: …' repeats the list the service writes under the answer"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'through size_trade or check_budget' names two tools"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-06: p-crossover alone on the candidate of #16 (the crossover guardrail with no quotable phrase, and the lint for written-back prompt words), 4 of 5. Automated checks pass; no error on a read. $0.0731 on the eval key.",
+ "p-crossover": "Note: correct and exact, through explain_rule and check_budget: the reference account's floors and budgets, which limit binds; floating losses; no quoted phrase.",
+ "_errors": []
+}

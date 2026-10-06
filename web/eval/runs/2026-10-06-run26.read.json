@@ -1,0 +1,96 @@
+{
+ "_summary": "Read in full on 2026-10-06: the candidate of #14, all 30 cases, 40 s apart. 24 of 30 automatically; five of the six automated failures are the checker's (b-leverage's 'identical $500 loss' outside its 'same loss' pattern; q-stats' 'troid's own strategy search encountered: out of sample, …', the word 'search' before the out-of-sample result, which comes first; p-assets' 'troid has no record of it either way', right; p-size's ceil(2,000/480) − 1 = 4 read without the ceiling; o-montecarlo's '0.21% of equity', right), and b-stop's is real. On a read, six errors. One critical: s-firm offers to 'show what $500 actually buys' and shows the $100,000 1-Step ($999, above it) and the Instant ($249), leaving out the Express ($39 at $5,000): the Instant is the one product it puts in the user's budget (run 25's error, by the owner's reading after run 16). Three major: b-stop's '0.5%' from no tool; e-blown names BrightFunded and Crypto Fund Trader's 1-Phase as trailing products to a trader who named no firm, from no tool this turn, undated; s-product's 'those are the only levers present in the rules', where the Trader Stage after each path has its own limits. Two minor: b-limits' 'not \"a small amount\"' and p-crossover's 'never \"any slip.\"' quote the prompt's own wording (run 25's b-limits). The owner's two fixes held: ex-recovery kept to 'either product', the 10% sourced; q-stats out of sample first. $1.1767 on the eval key (30 Haiku and 60 Sonnet calls).",
+ "ex-r": "Note: correct, through trade_math: R defined, the formula with fees, $498.97, $23.86, $522.83; +2R at twice the stop distance (the desk's 2R target), −1R about −$522.83 with fees; the fee sourced.",
+ "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios through trade_math, the 1-Step's limits dated.",
+ "ex-recovery": "Note: correct: 25% with its formula and working; the 10% is trade_math's (firm \"all\"), its two sources listed with their read dates; 'every maximum loss troid has read', then 'under either product's terms' (the fix of #14 held).",
+ "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator). A parenthesis left open.",
+ "b-limits": "Error (minor: instructions named): the formulas, the crossover exact (below $98,000 the floor; from $98,000 up, and above the start, the daily limit), every figure through check_budget, floating losses sourced, right; but 'still bound by the daily limit, not \"a small amount\"' quotes the prompt's own wording to a visitor who never said it (run 25's 'never \"any slip.\"').",
+ "b-stop": "Error (sources): the answer first, the formula with fee × (entry + stop), the example through trade_math (0.369336, $28,760.93, margin $5,752.19 at 5×, $22.82, the loss $500), right; but 'risking 0.5% ($500)' gives a figure no tool gave (the subset run's live ex-r: '0.5%' from no tool).",
+ "b-leverage": "Note: correct, through trade_math: no, while the margin fits; 0.369336 units at 2× and 10×, margin $14,380.47 and $2,876.09, the loss $500.00 both ways; the 1:5 cap sourced and dated, 10× not on the 1-Step. The automated failure is the checker's ('identical $500 loss').",
+ "q-expectancy": "Note: correct: 0R and 40%.",
+ "q-stats": "Note: correct: SE 0.0453R, t 0.729, the interval [−0.0558, 0.1218] containing zero; troid's own strategy out of sample first (+0.008R on BTC and ETH, 504 and 498 trades, MEASURED), the in-sample best cell after it, labelled in-sample (the fix of #14 held; the candidate's lint passes it). The automated failure is the checker's: 'the same situation troid's own strategy search encountered: out of sample, …' names the search, not an in-sample result, before the out-of-sample one.",
+ "q-correlation": "Note: correct: 1.43.",
+ "q-atr": "Note: correct: about 1,200, an approximation, its assumption stated (a stop scaled the same way, as runs 12, 15 and 22).",
+ "p-crossover": "Error (minor: instructions named): $98,000, the formula, which limit binds the right way round, floating losses, every rule sourced, right; but 'never \"any slip.\"' quotes the prompt's own wording.",
+ "p-reset": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, no local hour; the floating-loss trap from explain_rule.",
+ "p-reset-local": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence word for word; mid-session in New York in every season.",
+ "p-hold": "Note: correct through firm_assets: ETH, Major Crypto Assets, 10 days, dated.",
+ "p-assets": "Note: correct: BTC (10 days) and TSLA (5 days); another stock 'troid has no record of it either way — that doesn't mean Bitfunded doesn't offer it'. The automated failure is the checker's (run 19's 'no record of it either way').",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in Instant's 55–64% step, a '50% payout penalty' in the firm's words, nothing said of what it is a share of. 'it doesn't fail the account' says more than the firm's words do (as the subset run's 'not a disqualifying one', a note then too).",
+ "p-size": "Note: correct to the cent at the desk's figures (1.621583, $126,275.91, $25,255.18, $101.17, 21.08%, 4 losses left, 75.15%), every rule dated. The automated failure is the checker's (ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Error (sources): steps 1, 2 and 5, no step 4 causes, right; but 'If it was a trailing-drawdown product (BrightFunded, or Crypto Fund Trader's 1-Phase)' gives two firms' drawdown rules to a trader who named no firm, from no tool this turn (the tools gave Bitfunded's rules and the resets) and with no read date, and puts the high at rollover, BrightFunded's, on the 1-Phase too (run 20's error in other words).",
+ "e-scam": "Note: correct, the fixed text, then a question.",
+ "o-predict": "Note: troid's wording, word for word.",
+ "o-montecarlo": "Note: correct: 0.21R, 21R, 45.45%, 0.21% of equity; no simulation, troid's Monte Carlo named only as MODELLED on its own reference cases. The automated failure is the checker's ('0.21% of equity' is right).",
+ "o-news": "Note: troid's wording, word for word.",
+ "s-product": "Error (rule): the refusal first; every cell through firm_rules; 8% + 5% = 13% against 10%; no preference, right; but 'those are the only levers present in the rules' is not so: the Trader Stage after each path has its own limits (4% and 6% after the 1-Step, 5% and 8% after the 2-Step), and the 2-Step is two stages of 5 trading days each, as the reply's own list says.",
+ "s-firm": "Error (critical, recommendation: by the owner's reading after run 16, narrowing a purchase to one product for the user is recommending it): the refusal first, each figure through firm_rules, the Instant fee's missing source said, the other two firms' fees not stated from memory; but it offers to 'show what $500 actually buys' and shows the $100,000 1-Step ($999, 'above $500') and the Instant ($249), leaving out the 1-Step Express, $39 at $5,000: the Instant is the one product it puts in the user's budget (run 25's error without its false 'smallest').",
+ "u-ftmo": "Note: correct (Haiku).",
+ "u-topstep": "Note: correct; points to Topstep's own documents (Haiku).",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct (Sonnet, no tool): support.md section 9's own words, NVDA not among what the compared firms list on the pages troid has read, so nothing to size against; offers a lookup by firm.",
+ "d-keep": "Note: correct: support.md section 8's facts (30 days after the last message, what is kept and never kept, deletion).",
+ "_errors": [
+  {
+   "case": "s-firm",
+   "severity": "critical",
+   "kinds": [
+    "recommendation"
+   ],
+   "detail": [
+    "the Instant shown as what the user's $500 buys; the Express, $39 at $5,000, left out"
+   ],
+   "note": "critical by the owner's reading after run 16 (run 15's s-firm): narrowing a purchase to a single product for the user is recommending it"
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'0.5%' from no tool"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "BrightFunded and Crypto Fund Trader's 1-Phase named as trailing products to a trader who named no firm, from no tool, undated"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'those are the only levers present in the rules': the Trader Stage limits differ by path"
+   ]
+  },
+  {
+   "case": "b-limits",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'not \"a small amount\"' quotes the prompt's wording to the visitor"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'never \"any slip.\"' quotes the prompt's wording to the visitor"
+   ]
+  }
+ ]
+}
