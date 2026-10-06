@@ -4,7 +4,7 @@
  "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, the four ratios, the 1-Step's limits dated.",
  "ex-recovery": "Error (boundary): 25% with its formula and working, right, and the 10% is trade_math's (firm \"all\"), its two sources listed under the answer with their read dates (Bitfunded 2-Step Stage 1, read 2026-09-23; Crypto Fund Trader 2-Phase, read 2026-09-21); but 'on any account troid covers, a 20% drawdown would already have breached the maximum-loss ceiling' widens 'every maximum loss troid has read' (the tool's own words) to every account or product troid covers, where troid has no maximum loss recorded for some products (Crypto Fund Trader's 3-Phase and Ascend). Corrected 2026-10-06: the first read missed the sources under the answer, or (run 17) the widening.",
  "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator).",
- "b-limits": "Error (sources): the formulas and the crossover exact, floating losses dated, right, and the two other firms' daily bases sourced by explain_rule (listed with their read dates); but '$4,000 on a $100,000 account', '$100,000 × 0.94 = $94,000' and 'a day starting even $1,999 below the start' are figures no tool gave (explain_rule only). Corrected 2026-10-06: the first read missed the two firms' sources under the answer.",
+ "b-limits": "Error (sources): the formulas and the crossover exact, floating losses dated, right, and the two other firms' daily bases sourced by explain_rule (listed with their read dates); but '$4,000 on a $100,000 account', '$100,000 × 0.94 = $94,000' and 'a day starting even $1,999 below the start' are figures no tool gave (explain_rule only). Corrected 2026-10-06: the first read missed the two firms' sources under the answer. Corrected again 2026-10-06: its 'the crossover is a specific number, not \"any slip.\"' quotes the prompt's own wording to the visitor (minor, instructions named), read as right at first; run 25's b-limits has it too.",
  "b-stop": "Note: correct: the answer first, the formula with fee × (entry + stop), the example once through trade_math (0.369336, $28,760.93, $22.82, the loss $500).",
  "b-leverage": "Note: correct, through trade_math: no, while the margin fits; 2× and the 1:5 cap at 5× (10× not offered on the 1-Step, sourced), 0.463134 units, margin $23,156.72 and $9,262.69, the loss $500 both ways; liquidation under isolated and cross margin. The automated failure is the checker's.",
  "q-expectancy": "Note: correct: 0R and 40%.",
@@ -35,10 +35,12 @@
    "case": "b-limits",
    "severity": "major",
    "kinds": [
-    "missing date or source"
+    "missing date or source",
+    "form, instructions or tool named"
    ],
    "detail": [
-    "$4,000, $94,000 and $1,999 from no tool"
+    "$4,000, $94,000 and $1,999 from no tool",
+    "'not \"any slip.\"' quotes the prompt's wording"
    ]
   },
   {
