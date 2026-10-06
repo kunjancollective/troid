@@ -1,8 +1,8 @@
 {
- "_summary": "Read in full on 2026-10-05: the first run on the candidate of #10, before the fix in #11. 25 of 30 automatically (23 checked again under the checker of #11); of the five automated failures two are the checker's (b-leverage's 'identical $500 loss' outside its 'same loss' pattern; d-stock's 'any compared firm's page troid has read', which the firm_assets sources stand behind). On a read, six errors, none critical: ex-r reaches the reader with no answer and no formula (the accepted rewrite opened at 'In practice', the fix in #11); ex-recovery states Bitfunded's and Crypto Fund Trader's 10% maximum loss from no tool, undated; q-stats sets troid's own in-sample best cell (+0.033R on 78 trades) beside the user's, with no out-of-sample figure and no MEASURED; e-blown gives step 4's causes to a trader who never said troid's numbers were involved (run 19's error in new words); o-montecarlo states Bitfunded's 6% and 4% undated, called SOURCED; s-firm says the recorded products cost more than $500 and names no fee under it (the Express's $39, the Instant's $249 at $5,000). Fixed against runs 17 to 19: the crossover exact (b-limits, p-crossover), the reset in UTC with the DST sentence (p-reset, p-reset-local), troid's wording out of scope (o-predict, o-news), b-leverage and b-stop from the tools with a formula. $1.3722 on the eval key (30 Haiku and 60 Sonnet calls).",
+ "_summary": "Read in full on 2026-10-05: the first run on the candidate of #10, before the fix in #11. 25 of 30 automatically (23 checked again under the checker of #11); of the five automated failures two are the checker's (b-leverage's 'identical $500 loss' outside its 'same loss' pattern; d-stock's 'any compared firm's page troid has read', which the firm_assets sources stand behind). On a read, six errors, none critical: ex-r reaches the reader with no answer and no formula (the accepted rewrite opened at 'In practice', the fix in #11); ex-recovery states Bitfunded's and Crypto Fund Trader's 10% maximum loss from no tool, undated; q-stats sets troid's own in-sample best cell (+0.033R on 78 trades) beside the user's, with no out-of-sample figure and no MEASURED; e-blown gives step 4's causes to a trader who never said troid's numbers were involved (run 19's error in new words); o-montecarlo states Bitfunded's 6% and 4% undated, called SOURCED; s-firm says the recorded products cost more than $500 and names no fee under it (the Express's $39, the Instant's $249 at $5,000). Fixed against runs 17 to 19: the crossover exact (b-limits, p-crossover), the reset in UTC with the DST sentence (p-reset, p-reset-local), troid's wording out of scope (o-predict, o-news), b-leverage and b-stop from the tools with a formula. $1.3722 on the eval key (30 Haiku and 60 Sonnet calls). ex-recovery corrected 2026-10-06: the first read missed the sources under the answer, or (run 17) the widening. (ex-recovery: the 10% sourced through trade_math; the error is the widening, major, boundary wording.)",
  "ex-r": "Error (method): the reply opens at 'In practice' — 1R = 1,292 × 0.3862 = $498.97, $522.83 with the fees, 7 losses left, all the tools' — with no answer ('R is …') and no formula. The draft tripped a lint and the accepted rewrite left both in the text written before the tool calls, which the reader never sees with a rewrite (fixed in #11).",
  "ex-kelly": "Note: correct: the refusal first, 17.5% and 8.75%, 2.92× and 4.38×, 1.46× and 2.19×, the 1-Step's 6% and 4% dated.",
- "ex-recovery": "Error (sources): 25% with the formula, why and the working, right; but 'past the largest maximum loss troid has read for any product it covers — 10%, on Bitfunded's 2-Step Stage 1 and Crypto Fund Trader's 2-Phase' states two firms' rules from no tool, undated, and 'on every account troid covers' takes in products whose maximum loss troid hasn't recorded (Crypto Fund Trader's 3-Phase and Ascend).",
+ "ex-recovery": "Error (boundary): 25% with its formula and working, right, and the 10% is trade_math's (firm \"all\"), its two sources listed under the answer with their read dates (Bitfunded 2-Step Stage 1, read 2026-09-23; Crypto Fund Trader 2-Phase, read 2026-09-21); but 'On every account troid covers, a trader who is down 20% has already hit a product's maximum-loss floor' widens 'every maximum loss troid has read' (the tool's own words) to every account or product troid covers, where troid has no maximum loss recorded for some products (Crypto Fund Trader's 3-Phase and Ascend). Corrected 2026-10-06: the first read missed the sources under the answer, or (run 17) the widening.",
  "ex-angry": "Note: correct: steps 1, 2 and 5 and the three causes (the trader blamed troid's calculator), the dashboard, hello@troid.ai.",
  "b-limits": "Note: correct, through check_budget: the formula, $4,000 against $6,000 on a fresh day, the daily limit binds; the crossover exact ($98,000; below it the floor, from it up the daily limit); floating losses in both.",
  "b-stop": "Note: correct: the answer first, the formula with fee × (entry + stop), the example once through size_trade (0.369336, $28,760.93, $5,752.19, the loss $500), 7 losses left, the 8th reaches it.",
@@ -39,16 +39,6 @@
    ],
    "detail": [
     "no answer and no formula reach the reader: the accepted rewrite opened at 'In practice' (fixed in #11)"
-   ]
-  },
-  {
-   "case": "ex-recovery",
-   "severity": "major",
-   "kinds": [
-    "missing date or source"
-   ],
-   "detail": [
-    "Bitfunded's and Crypto Fund Trader's 10% maximum loss from no tool, undated; 'every account troid covers' takes in products with no recorded maximum loss"
    ]
   },
   {
@@ -89,6 +79,16 @@
    ],
    "detail": [
     "the recorded products said to cost more than $500, no fee under it named; troid records the Express's $39 and the Instant's $249 at $5,000"
+   ]
+  },
+  {
+   "case": "ex-recovery",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'every maximum loss troid has read' widened to every account or product troid covers; the 10% itself sourced through trade_math"
    ]
   }
  ]
