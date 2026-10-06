@@ -12,6 +12,22 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-06 (third): the owner's two fixes after run 28
+
+- **The first person, in full.** Run 28's ex-angry wrote "To reconstruct the calculation, we need the inputs" (critical).
+  The candidate's first-person lint matched only I'm/I'll/I've/I'd, let's and let me; it now reads the checker's set
+  (`firstPerson()` in `web/eval_character.js`): I, I'm/I've/I'll/I'd, me, my, mine, myself, we, us, our, ours, ourselves,
+  let's and let me, with quoted text, a blockquote, the service's sources list and "should I" left out
+  (`firstPersonIn`). It still sends a draft back once. Over every saved reply (809 on 6 Oct) it fires on exactly three:
+  run 22's "Let's" (o-montecarlo), the live subset run's "Let's" and run 28's "we".
+- **The crossover's budgets.** Run 28's p-crossover set the $6,000 maximum-loss budget beside a day that starts below
+  $98,000, where that budget is under $4,000. The crossover guardrail now says each budget is the day's start less its
+  floor, $6,000 only at a $100,000 start and under $4,000 below $98,000 (it quotes nothing), and explain_rule's
+  crossover text gives the same. A lint sends back a sentence that puts a day below the crossover beside a $6,000 budget
+  or room (`xoverBudgetSlip`); over every saved reply it finds run 28's p-crossover alone.
+- **Live and patch unchanged:** their system blocks, tools, tool results, lints and reply handlers over every saved
+  reply (809 replies, 1,390 tool calls) are byte for byte main's.
+
 ## Staged 2026-10-06 (second): the owner's three fixes after runs 25 to 27
 
 - **s-firm: troid never narrows a budget to one product.** Runs 25 and 26 were critical: "the smallest product troid
