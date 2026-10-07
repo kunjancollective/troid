@@ -28,13 +28,14 @@
  "u-ftmo": "Note: correct (Haiku): troid doesn't cover FTMO and hasn't read its rules; the three firms it covers.",
  "u-topstep": "Note: correct (Haiku); points to Topstep's own documents.",
  "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's).",
- "d-stock": "Error (major: boundary wording): Haiku, no tool. 'Not offered by troid's firms', no price, nothing sized, as the desk does; but 'NVDA (Nvidia) is not on any of those lists — Bitfunded, BrightFunded and Crypto Fund Trader each list crypto, and some commodities and stocks, but NVDA is not among them' states as a fact about three firms' lists what troid knows only of the pages it has read (runs 26 to 28 hedged it: 'troid has not read it named'); and 'troid can show its full asset list for any of the three' where troid has no Crypto Fund Trader asset list recorded.",
+ "d-stock": "Error (major: NVDA's listing, boundary wording): Haiku, no tool. 'Not offered by troid's firms', no price, nothing sized, as the desk does; but 'NVDA (Nvidia) is not on any of those lists — Bitfunded, BrightFunded and Crypto Fund Trader each list crypto, and some commodities and stocks, but NVDA is not among them' states as a fact about three firms' lists what troid knows only of the pages it has read (runs 26 to 28 hedged it: 'troid has not read it named'); and 'troid can show its full asset list for any of the three' where troid has no Crypto Fund Trader asset list recorded.",
  "d-keep": "Note: correct: support.md section 8's facts (the operator only, Anthropic under its API terms, 30 days, what is kept and never kept, the weekly count, never sold or used to train a model, deletion).",
  "_errors": [
   {
    "case": "d-stock",
    "severity": "major",
    "kinds": [
+    "wrong figure or rule",
     "boundary wording"
    ],
    "detail": [
