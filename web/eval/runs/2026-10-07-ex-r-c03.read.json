@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #25, ex-r alone. 1 error.",
+ "ex-r": "Error (major: wrong figure or rule): R first, the formula, $498.97 from trade_math, 'troid's desk' (#25's fix held). But 'a $500 loss on a $20,000 account and a $500 loss on a $100,000 account mean very different things in dollar terms, but both are \"1R\"' gives figures from no tool or question, and says the reverse of the point (the same dollars, a different share of the account). The automated failure is this.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'a $500 loss on a $20,000 account and a $500 loss on a $100,000 account mean very different things in dollar terms, but both are \"1R\"': $500 and $20,000 from no tool or question, and the same dollar loss said to differ 'in dollar terms'"
+   ]
+  }
+ ]
+}

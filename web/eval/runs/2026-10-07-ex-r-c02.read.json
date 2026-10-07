@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #25, ex-r alone. 1 error.",
+ "ex-r": "Error (major: boundary wording): through trade_math and size_trade: R first, the formula, $498.97 and 'troid's desk' $522.83 (#25's fix held). But an unasked sizing on a $100,000 1-Step at 0.5% follows, and 'this trade uses 12.5% of it, and 7 more losses of that size leave equity above it' counts eight losses of $500, $4,000, which reaches the daily limit: the tool's 7 losses left count from the whole budget. The service's assumptions list follows the unasked sizing (not counted).",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'this trade uses 12.5% of it, and 7 more losses of that size leave equity above it': this trade and 7 more are eight losses of $500, $4,000, which reaches the $4,000 daily limit; size_trade's 7 losses left count from the whole budget (an unasked sizing on a $100,000 1-Step)"
+   ]
+  }
+ ]
+}
