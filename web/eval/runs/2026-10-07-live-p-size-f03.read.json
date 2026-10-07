@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the live prompt after #24 (fees as fee × (entry + stop)), p-size alone. 1 error.",
+ "p-size": "Error (minor: repeated text): Through size_trade, to the cent at the desk's figures: binding $2,000 (max drawdown, below the $98,000 crossover), $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses, liquidation 75.15%, 2R at 77,404.77. Run 20's critical is gone: #24 holds. But 'Tiers: the firm rules … are SOURCED, with their documents and read dates attached above. … Leverage, margin mode (cross), the 35% cap and the 2R target are troid's assumptions' restates the service's tier line and assumptions list.",
+ "_errors": [
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Tiers: the firm rules (…) are SOURCED, with their documents and read dates attached above. The sizing arithmetic is DERIVED. Leverage, margin mode (cross), the 35% cap and the 2R target are troid's assumptions': the service's tier line and assumptions list again"
+   ]
+  }
+ ]
+}

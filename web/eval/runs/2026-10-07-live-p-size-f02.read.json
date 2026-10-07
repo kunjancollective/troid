@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the live prompt after #24 (fees as fee × (entry + stop)), p-size alone. 1 error.",
+ "p-size": "Error (minor: repeated text): Through size_trade, to the cent at the desk's figures: binding $2,000 (max drawdown, below the $98,000 crossover), $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses, liquidation 75.15%, 2R at 77,404.77. Run 20's critical is gone: #24 holds. But 'Assumptions troid supplied, not given by you: …' repeats the service's assumptions list, and 'Rules used: daily 4% and max 6% (…, read 2026-09-23); …' restates its sources. The automated number failure is the checker's (480 ÷ 296.007, a step shown).",
+ "_errors": [
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Assumptions troid supplied, not given by you: cross margin …, 5× leverage, 35% budget cap, 2R target, 0.5% maintenance margin' repeats the service's assumptions list; 'Rules used: daily 4% and max 6% (Bitfunded help centre …, read 2026-09-23); …' restates the sources"
+   ]
+  }
+ ]
+}
