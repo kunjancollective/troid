@@ -371,8 +371,8 @@ const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidat
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
 // the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
 const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets" && t.name !== "products_in_budget").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
-ok("candidate: the live prompt plus fourteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
-   CG.length === 14 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+ok("candidate: the live prompt plus sixteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first; 2026-10-07: a method answer's answer and formula first from the given figures, each thing said once); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 16 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
    && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
    && CG.some((g) => /a tool returned this turn for that very thing/.test(g) && /no recorded source for Bitfunded's margin modes/.test(g))
@@ -907,6 +907,50 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !XB("Below $98,000 the max-loss budget is under $4,000, whereas at a $100,000 start it is $6,000.") && !XB("At a $100,000 start the drawdown budget is $6,000; below $98,000 it is under $4,000.")
      && XB("Below the crossover, the $6,000 drawdown budget is the smaller one.") && CG.filter((g) => g.includes("Each budget is the day's start less its floor")).length === 1
      && !CG.some((g) => g.includes("Each budget is the day's start less its floor") && /["“]/.test(g)), XBHITS); }
+// the owner's fixes of 2026-10-07, after runs 29 to 31 (the promotion rule's (c)): a method answer opens with the answer
+// and the formula and asks for no figure the question gives (b-leverage run 31, o-montecarlo run 30), and a draft that
+// repeats a sentence or restates the sources list is sent back (s-product and p-crossover run 30, s-firm run 31). Runs 29
+// to 31 are in a records PR of their own: their sentences are here, and the sweep accepts them when they are present.
+{ const fsM = require("fs"), pathM = require("path"), EF = handler._exampleFirst, AG = handler._asksGiven, RS = handler._repeatedSentence, SR = handler._sourcesRestated;
+  const H = { ef: [], ag: [], rs: [], sr: [] }; let nM = 0;
+  for (const f of fsM.readdirSync(pathM.join(__dirname, "eval", "runs")).filter((f) => /\.json$/.test(f) && !/read/.test(f)).sort()) {
+    let rs; try { rs = JSON.parse(fsM.readFileSync(pathM.join(__dirname, "eval", "runs", f), "utf8")).results || []; } catch (e) { continue; }
+    for (const c of rs) { if (typeof c.reply !== "string") continue; nM++;
+      const k = f.replace(/^2026-|\.json$/g, "") + " " + c.id;
+      if (EF(c.reply, c.q)) H.ef.push(k);
+      if (AG(c.reply, c.q).length) H.ag.push(k);
+      if (RS(c.reply)) H.rs.push(k);
+      if (SR(c.reply, /Sources, each with the date troid read it:/.test(c.reply))) H.sr.push(k); } }
+  const only = (got, known, must) => got.every((x) => known.includes(x)) && must.every((x) => got.includes(x));
+  const LQ = "If I use 10x leverage instead of 2x, do I lose more when my stop is hit?", MQ = "Can you run a Monte Carlo simulation of my strategy? 55% win rate, 1.2R average win, 1% risk per trade, 100 trades.";
+  const B31 = "Long at entry 77,872, stop at 76,580, risking $500 on $100,000 equity:\n\n- At 2× leverage: quantity 0.386997, notional $30,136.22, margin $15,068.11\n\nThe quantity and notional don't change between the two.";
+  const M30 = "Want any of those run? If so, give (or confirm) the average loss in R as well — expectancy and Kelly both need it (a 1.2R average win alone isn't enough).";
+  const P30 = "What can be compared is the two products' own recorded rules, side by side.\n\nHere is what each product's own recorded rules give, side by side, on the $100,000 account level:";
+  const F31 = "troid doesn't recommend; it prices what you bring.\n\nThat said, since you named an amount to spend, here's what $500 buys across the products troid has prices for.\n\nHere's what $500 buys, cheapest first:\n\n- Bitfunded Express: $39 at a $5,000 account (source not yet recorded)";
+  const X30 = "Which one binds turns on the day's start alone.\n\nThis is DERIVED from Bitfunded's published daily (4%) and maximum (6%) loss rules — help centre, Challenge & Trader Stage, One Step Evaluation table, and Terms of Use 9(a), both read 2026-09-23; the daily limit's basis (initial balance) is from Bitfunded's FAQ, read 2026-09-21; the static drawdown mechanics are from Criteria to be Success, read 2026-09-18.";
+  const TOOLSRC = [{ name: "explain_rule", input: { topic: "crossover" }, result: { sources: [{ rule: "daily 4%", document: "help centre", read_on: ["2026-09-23"] }] } }];
+  const N7 = (t, v, q, tools) => handler._lintNotesFor(t, v, tools || [], q || "q", q || "q");
+  const has = (t, v, q, rx, tools) => N7(t, v, q, tools).some((n) => rx.test(n));
+  ok("candidate: a method answer that opens on its example is sent back (run 31's b-leverage); over every saved reply also runs 3's and 21's ex-r and nothing else; one that opens with the answer passes; live is not",
+     nM >= 809 && only(H.ef, ["09-24-run3 ex-r", "10-05-run21 ex-r", "10-07-run31 b-leverage"], ["09-24-run3 ex-r", "10-05-run21 ex-r"])
+     && has(B31, "candidate", LQ, /^The question asks how something is worked out: open with the one-line answer/) && !has(B31, "live", LQ, /^The question asks how something is worked out: open with/)
+     && !EF("No — the loss at the stop is the same at either leverage.\n\nFormula: loss = quantity × (|entry − stop| + fee per unit).", LQ)
+     && !EF("Long at entry 77,872:", "What is the crossover on a $100,000 Bitfunded 1-Step?"), H.ef);
+  ok("candidate: a figure the question gives, asked for, is sent back (run 30's o-montecarlo: the average loss, where a 1% risk per trade is the 1R loss); over every saved reply nothing else; live is not",
+     only(H.ag, ["10-07-run30 o-montecarlo"], []) && AG(M30, MQ).join() === "the average loss" && has(M30, "candidate", MQ, /^The question already gives the average loss/)
+     && !has(M30, "live", MQ, /^The question already gives/) && !AG(M30, "What is expectancy at a 1.2R average win?").length
+     && !AG("Any edge above zero requires a higher win rate than 40%.", "40% win rate, 1.5R average win, 1R average loss: expectancy?").length
+     && CG.filter((g) => g.includes("never ask for one the question already gives")).length === 1, H.ag);
+  ok("candidate: a sentence that restates the one before it is sent back (run 30's s-product, run 31's s-firm); over every saved reply nothing else, parallel lines over different figures pass; live is not",
+     only(H.rs, ["10-07-run30 s-product", "10-07-run31 s-firm"], []) && !!RS(P30) && !!RS(F31) && has(F31, "candidate", "q", /^Say it once: "Here's what \$500 buys, cheapest first:"/)
+     && !has(F31, "live", "q", /^Say it once/)
+     && !RS("Full Kelly, 17.5%, is 2.92 times the maximum loss and 4.38 times the daily limit.\nHalf Kelly, 8.75%, is still 1.46 times the maximum loss and 2.19 times the daily limit.")
+     && !RS("troid doesn't recommend; it prices what you bring.\n\ntroid doesn't pick a product; the choice is yours."), H.rs);
+  ok("candidate: a paragraph that restates the sources the service lists is sent back (run 30's and p-crossover-05's 'This is DERIVED from …', the 'Rules used:' paragraphs of earlier runs); only when the tools gave sources; one read date in a sentence passes; live is not",
+     H.sr.every((k) => /\b(p-size|p-crossover|p-reset|s-product|s-firm)$/.test(k)) && H.sr.includes("10-05-run21 p-size") && H.sr.includes("10-06-pcrossover-3 p-crossover")
+     && !!SR(X30, true) && !SR(X30, false) && has(X30, "candidate", "q", /^The service lists every source and read date under the answer/, TOOLSRC)
+     && !has(X30, "live", "q", /^The service lists every source/, TOOLSRC) && !has(X30, "candidate", "q", /^The service lists every source/)
+     && !SR("Bitfunded's daily limit is 4% of the initial balance (FAQ, read 2026-09-21).", true), H.sr); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1376,8 +1420,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts (the patch's reset left with it), tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 14 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 41 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 16 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 45 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;

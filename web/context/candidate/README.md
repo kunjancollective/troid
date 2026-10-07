@@ -12,6 +12,38 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-07: the owner's fixes for the two kinds run 20 doesn't have (runs 29 to 31)
+
+Runs 29 to 31 held: no critical failure, 4.0 failing cases per run against live's 13.0, but two kinds of failure live
+run 20 doesn't have (the promotion rule's (c)). Both are fixed here, candidate only.
+
+- **Incomplete method.** A guardrail: a question about how something is worked out opens with its one-line answer,
+  then the formula; the example after both. It works from the figures the user gave and never asks for one the
+  question gives: a win in R beside a risk per trade makes the average loss 1R. Two lints:
+  - `exampleFirst` sends back a method answer whose first paragraph is a lead-in to figures, a later part of the
+    method, a position or a list. Run 31's b-leverage opened "Long at entry 77,872, stop at 76,580, risking $500 on
+    $100,000 equity:". Over every saved reply it finds that one, run 21's ex-r ("In practice") and run 3's ex-r.
+  - `asksGiven` sends back a request for a figure the question gives: the average loss, win rate, average win, risk
+    per trade or number of trades. Run 30's o-montecarlo wrote "give (or confirm) the average loss in R". Over every
+    saved reply it finds that one alone.
+- **Repeated text.** A guardrail: say each thing once, and leave the sources and read dates to the list the service
+  writes under the answer. Two lints:
+  - `repeatedSentence` sends back a sentence that restates the one before it. The test is two neighbouring prose
+    sentences of at most 25 words that share a run of four words and most of the shorter one's words. Parallel lines
+    over different figures pass. Over every saved reply it finds run 30's s-product and run 31's s-firm, nothing else.
+  - `sourcesRestated` sends back a paragraph that restates the sources when the tools gave sources. That is a
+    paragraph led as a source line ("Rules used:", "This is DERIVED from …") that names a source or read date, or
+    prose with three read dates. Over every saved reply it finds run 30's and p-crossover-05's p-crossover, the
+    "Rules used:" paragraphs of p-size in earlier runs, and a few s-product, s-firm and p-reset paragraphs of the
+    same shape.
+- **Live and patch unchanged** over every saved reply (914, the 7 Oct records included), compared with main's:
+  - their system blocks in every language;
+  - their tools and the results of each tool;
+  - their lints (with and without sources) and the reply handlers.
+
+Left for later, on the owner's list: d-stock (Crypto Fund Trader has no asset list, so say so, never "none of the
+three"), ex-r's two 1R conventions in one reply, and q-stats' reversed opening (run 30).
+
 ## Staged 2026-10-06 (third): the owner's two fixes after run 28
 
 - **The first person, in full.** Run 28's ex-angry wrote "To reconstruct the calculation, we need the inputs" (critical).
