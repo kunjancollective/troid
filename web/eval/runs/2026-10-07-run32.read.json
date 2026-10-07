@@ -1,0 +1,45 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #22 (answer and formula first, figures from the question, each thing said once), all 30 cases, 40 s apart. 26 of 30 automatically; all four automated failures are the checker's (b-leverage's 'the same at 10x and at 2x'; p-size's ceil(2,000/480) − 1 = 4; o-montecarlo's 'can't be run here — not something troid computes'; d-stock's missing word 'rules' where it says 'nothing to size'). On a read, one error, minor: s-product's lead-in twice (repeated text; the lint's 25-word bound let it through). No critical, no major. #22's fixes held: b-leverage opens 'No —' with its formula before the example; o-montecarlo works 0.21R from the question and asks for nothing; s-firm and p-crossover say each thing once. Run 28's held: ex-angry has no first person; p-crossover's below-$98,000 budget is under $4,000. $1.0384 on the eval key.",
+ "ex-r": "Note: correct through trade_math: R first; 1R = |entry − stop| × quantity, and with fees; $498.97, fees $23.86, $522.83; $1,045.66 = 2R (the tool's). One convention throughout.",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 1.46, 4.38 and 2.19 times; the ceiling binds first.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; past every maximum loss troid has read, the largest 10% (dated); 'on those products' keeps to them.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order (the inputs, BrightFunded's high at rollover as an input; the reconstruction with each rule's read date; the three causes; the dashboard and hello@troid.ai). No first person: run 28's fix held.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the daily limit resets, the maximum loss doesn't; the formulas; the reset 16:00–16:10 UTC; floating losses (read 2026-09-24); $96,000/$4,000, $94,000/$6,000, the daily limit binding; the crossover $98,000, below it the floor, between it and $100,000 and above the daily limit. The opening definition is every account's (noted, not counted).",
+ "b-stop": "Note: correct through trade_math: the stop sets the size; quantity = risk ÷ (|entry − stop| + fee per unit); $500 at a 1% stop: 0.594738 units, $46,313.45, fees $36.87, $500 at the stop.",
+ "b-leverage": "Note: correct through trade_math: 'No —' first, then the loss and margin formulas, then the example: $1,000 at 60,000/59,400: 1.543782 units, $92,626.90, margins $46,313.45 (2×), $18,525.38 (5×, the 1-Step's cap), $9,262.69 (10×, off the cap), $1,000 at the stop at each; isolated and cross margin; the cut-to-fit case. #22's fix held. Its loss formula leaves out the fee term the worked figures include (noted, not counted). The automated failure is the checker's ('the same at 10x and at 2x').",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, 0.4 × 1.5 − 0.6 × 1 = 0 and 1 ÷ 2.5 = 40%.",
+ "q-stats": "Note: correct: 'Not distinguishable from zero on this sample.' first; SE 0.0453, t 0.729, CI [−0.0558, 0.1218]; troid's own result out of sample first (MEASURED), then the in-sample best cell, labelled.",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8, the assumptions.",
+ "q-atr": "Note: correct: roughly 1,200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through explain_rule: $98,000 first, $2,000 below the start; the formula; below $98,000 the floor binds, between $98,000 and the start and above it the daily limit; the maximum-loss budget $6,000 at a $100,000 start, under $4,000 below $98,000; floating losses. No sources paragraph. #22's and run 28's fixes held.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10 UTC, the DST sentence, a fresh budget certain from 16:10, the floating loss across the reset.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, mid-session in New York in every season; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days (dated in the list).",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock named, 5 days; 'no page naming it either way', not the same as not offered.",
+ "p-ladder-instant": "Note: correct through check_compliance: 60% in the step from 55%, a '50% payout penalty' in the firm's words; a penalty, not a disqualification; what it is taken out of not read; the two Terms prohibitions troid states but can't check.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses left, 75.15%), the crossover right. 'your 5×' for troid's default (noted, not counted, as in run 30). The automated failure is the checker's (ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5, the reconstruction once the inputs come, no causes, no firm rule stated.",
+ "e-scam": "Note: correct (Haiku): support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Note: correct through trade_math and explain_rule: no simulation; 0.21R from p = 0.55, W = 1.2R, L = 1R, the formula, 21R as a mean, 45.45% break-even; troid's own ruin result named as MODELLED on its own assumptions. Nothing asked for: #22's fix held. The automated failure is the checker's ('can't be run here — not something troid computes', run 17's).",
+ "o-news": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; both products at $100,000; 8% + 5% = 13%; the shared rules; the differences as facts; 'for the trader to weigh'. But the lead-in is given twice ('What troid can give is each product's recorded rules side by side …', then 'Here is what each product's own rules give, …'), run 30's error; the second sentence is over 25 words, so the repeatedSentence lint let it through. 'each sourced above' for sources listed below (not counted).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded', the Break's $328 activation fee; the sizes note; BrightFunded's €497 (€347.90) apart, unconverted, dated; ending with troid's line; none picked. One lead-in: #22's fix held.",
+ "u-ftmo": "Note: correct (Haiku): not covered, not read; the three firms.",
+ "u-topstep": "Note: correct (Haiku): not covered, not read; the three firms; Topstep's own documentation.",
+ "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's).",
+ "d-stock": "Note: correct (Haiku, no tool): 'not offered by troid's firms', no price, nothing sized; 'a symbol that doesn't appear there is one no compared firm lists on the pages troid has read', hedged. The automated failure is the checker's: it wants the reason in the word 'rules' ('no firm rules to size against'); the reply says 'nothing to size'.",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'What troid can give is each product's recorded rules side by side, so the comparison is on the numbers, not a characterization of them.' then 'Here is what each product's own rules give, at the $100,000 account level, …': the lead-in twice, as in run 30 (the second sentence is over 25 words, so #22's repeatedSentence lint didn't catch it)"
+   ]
+  }
+ ]
+}

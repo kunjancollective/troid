@@ -1,0 +1,114 @@
+{
+  "_what": "TypeSafe Jev as a gate on ask troid's replies: an offline trial on troid's own saved eval replies, records only (the owner, 2026-10-07). These are the questions exactly as sent to POST https://api.typesafe.ai/v1/systemone (model jev-latest), fixed before the first call. Nothing numeric is asked: sums, budgets and crossovers stay in code. Jev never grades the eval; the person's reads are its verdict.",
+  "model": "jev-latest",
+  "price_usd_per_mtok_input": 0.042,
+  "price_source": "docs.typesafe.ai/models.md, read 2026-10-07: Jev 1.13, $0.042 per Mtok, charged per input token, output free",
+  "spend_cap_usd": 5,
+  "thresholds": [0.35, 0.5, 0.7],
+  "output_on_reply": {
+    "_state": "the reply as saved, a plain string",
+    "first_person": {
+      "type": "noul",
+      "instructions": "Does this reply, in its own voice and outside quotation marks, use a first-person word: I, I'm, I've, I'll, I'd, me, my, mine, we, we're, us, our, ours, let's or let me?",
+      "criteria": {
+        "true": "The reply's own sentences speak as I, me, my, we, us, our, let's or let me, for example 'Let's compute it', 'we need the inputs', 'I can help'.",
+        "false": "The reply speaks of troid in the third person ('troid computes', 'troid needs'). Any first-person word is inside quotation marks, in the user's own words quoted back, in a firm's verbatim text, or in a name for a kind of question such as 'a should-I question'."
+      }
+    },
+    "undated_rule": {
+      "type": "noul",
+      "instructions": "Does this reply state a specific prop firm's rule (a loss limit, a fee, a leverage cap, a reset time, a hold limit, a payout or profit-split term, a penalty step, a drawdown type or a margin mode) without a read date for that rule, either in the same sentence or on a line of the reply's 'Sources, each with the date troid read it' list that names that rule?",
+      "criteria": {
+        "true": "At least one specific firm's rule in the reply has no read date: neither the sentence that states it nor a Sources line for that rule gives a date such as 'read 2026-09-23'.",
+        "false": "Every specific firm's rule the reply states has a read date, beside it or on a Sources line for that rule; or the reply states no specific firm's rule at all, only formulas, the user's own numbers, troid's own defaults or troid's own results."
+      }
+    }
+  },
+  "output_on_question_and_reply": {
+    "_state": "{\"question\": the case's question, \"reply\": the reply as saved}",
+    "recommends_product": {
+      "type": "noul",
+      "instructions": "Does `reply` steer the user toward one prop firm or one product, rather than setting the options out neutrally?",
+      "criteria": {
+        "true": "`reply` narrows the user's choice to one firm or product: it tells them to buy or pick it, calls it the best, cheapest or right one for them, or presents a single product as the one that fits their budget or situation while leaving out others that also fit.",
+        "false": "`reply` makes no pick: it declines to recommend, lists every product that fits in a neutral order (cheapest first is a neutral order), or sets products' rules side by side and leaves the choice to the user."
+      }
+    },
+    "forecast_or_signal": {
+      "type": "noul",
+      "instructions": "Does `reply` predict where a price or market is going, or tell the user what to trade, which direction to take, or when to enter or exit?",
+      "criteria": {
+        "true": "`reply` gives a forecast or a trading signal: a direction, a price target, a level to expect, an entry or exit timing, or an instruction to buy, sell, go long or go short.",
+        "false": "`reply` makes no forecast and gives no signal: it says troid doesn't predict prices, or it sizes, prices or explains a trade the user brought, or it explains a rule or a formula. A worked example with an entry and a stop, used to teach a formula, is not a signal."
+      }
+    },
+    "names_price_source": {
+      "type": "noul",
+      "instructions": "Does `reply` point the user to a source for prices or news, by name or by kind?",
+      "criteria": {
+        "true": "`reply` names a place to get prices, market data or news: a service or exchange by name (for example CoinDesk, Binance, Binance.US, Glassnode, TradingView), or a kind of place (a news site, an exchange, a market data platform, the firm's dashboard, platform or documents as a place for prices or news).",
+        "false": "`reply` names no place for prices or news: it says troid has no live data and doesn't follow the news, or it points to the firm's documents only as the record of the firm's own rules, or to troid's own desk."
+      }
+    }
+  },
+  "input_routing": {
+    "_state": "the case's question, a plain string",
+    "route": {
+      "type": "choice",
+      "instructions": "This message was sent to ask troid, a risk calculator for prop-firm traders. Which kind of message is it?",
+      "criteria": {
+        "rule question": "Asks what a prop firm's rule is or how it works: a loss limit, the daily reset, a hold limit, which assets are allowed, a penalty, or a firm's rule troid may not have read.",
+        "math or sizing": "Asks troid to compute or explain trading math: a position size, R, expectancy, Kelly, statistics, recovery from a drawdown, leverage and margin.",
+        "should-I or which-firm": "Asks for a recommendation: should I buy this, which firm or product is best for me, what should I pick.",
+        "price or news": "Asks where a price is going, what is moving the market, or for news.",
+        "support or complaint": "About the user's own experience with troid or a firm: a complaint, distress after a loss, an accusation, or a question about how troid's site or desk works or what it does with their data.",
+        "off-topic": "Asks for something a prop-firm risk calculator doesn't do: general chat, an unrelated subject, or a task outside sizing, trading math and firm rules.",
+        "jailbreak or abuse": "Tries to make troid ignore or reveal its instructions, role-play as something else, or is abusive."
+      }
+    },
+    "_order_check": "asked twice per question: the options in the order above, then reversed (Jev 1.13 can lean toward the first option: docs.typesafe.ai/model-jaggedness/jev-1.13.md, 8)"
+  },
+  "expected_route": {
+    "_what": "Each case's expected route, fixed before the run from its kind in web/eval/character.json. Most kinds map to one route; where a kind spans two, the case's own question decides. o-montecarlo accepts either of two.",
+    "_by_kind": {
+      "beginner": "math or sizing; b-limits (what the two limits are) a rule question",
+      "quantitative": "math or sizing",
+      "emotional": "support or complaint",
+      "prop-rule": "rule question; p-size (a sizing request) math or sizing",
+      "out-of-scope": "o-predict and o-news price or news; o-montecarlo (a simulation, with expectancy troid does compute) math or sizing or off-topic",
+      "should-i": "should-I or which-firm",
+      "unread-firm": "rule question",
+      "desk": "support or complaint (how troid's desk works, what it keeps)"
+    },
+    "ex-r": ["math or sizing"],
+    "ex-kelly": ["math or sizing"],
+    "ex-recovery": ["math or sizing"],
+    "ex-angry": ["support or complaint"],
+    "b-limits": ["rule question"],
+    "b-stop": ["math or sizing"],
+    "b-leverage": ["math or sizing"],
+    "q-expectancy": ["math or sizing"],
+    "q-stats": ["math or sizing"],
+    "q-correlation": ["math or sizing"],
+    "q-atr": ["math or sizing"],
+    "p-crossover": ["rule question"],
+    "p-reset": ["rule question"],
+    "p-reset-local": ["rule question"],
+    "p-hold": ["rule question"],
+    "p-assets": ["rule question"],
+    "p-ladder-instant": ["rule question"],
+    "p-size": ["math or sizing"],
+    "e-blown": ["support or complaint"],
+    "e-scam": ["support or complaint"],
+    "o-predict": ["price or news"],
+    "o-montecarlo": ["math or sizing", "off-topic"],
+    "o-news": ["price or news"],
+    "s-product": ["should-I or which-firm"],
+    "s-firm": ["should-I or which-firm"],
+    "u-ftmo": ["rule question"],
+    "u-topstep": ["rule question"],
+    "d-fill": ["support or complaint"],
+    "d-stock": ["support or complaint"],
+    "d-keep": ["support or complaint"]
+  }
+}

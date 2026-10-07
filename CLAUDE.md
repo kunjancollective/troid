@@ -83,6 +83,10 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - ask troid's launch caps (`TROID_DAILY_TURNS` across every visitor, counted in the store as a number; `TROID_VISITOR_TURNS`
   per address, in memory) rest it until 00:00 UTC; each API key's expiry date is recorded in Vercel and reported by
   `GET /api/troid` (`web/key_expiry.js` reads them from the Admin API). Settings: `web/README.md`.
+- `web/eval/jev/` — the TypeSafe Jev trial (2026-10-07): five Noul checks and a routing Choice run offline over every
+  read eval reply, measured against the reads; records only, no gate in the service, no key in Vercel, and Jev never
+  grades the eval. `REPORT.md`: no check earned a place in the lint loop; undated_rule's shadow run waits until after
+  round 3 and the drawdown-type tool fix (the owner, 2026-10-07).
 - ask troid's weekly question digest (`web/api/digest.js`, Vercel Cron): counts by topic into `digest:<week>`,
   never text, never a session ID, never committed. `business/` is gitignored and lives only on the machine it was
   written on: confidential affiliate terms go there (e.g. `business/brightfunded-affiliate.json`), never in `firms.json`.

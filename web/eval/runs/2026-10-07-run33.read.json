@@ -1,0 +1,75 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #22, all 30 cases, 40 s apart. 26 of 30 automatically; three automated failures are the checker's (q-stats' 'troid's own strategy search produced' before the out-of-sample figure, which comes first; p-assets' 'no record of it one way or the other'; p-size's ceil(2,000/480) − 1 = 4), e-blown's is real. On a read, four errors, none critical: three major (ex-r calls troid's fee-inclusive 1R 'Bitfunded's desk'; ex-angry names BrightFunded's and Crypto Fund Trader's 1-Phase drawdowns from no tool, undated; e-blown gives step 4's three causes to a trader who never blamed troid's numbers), one minor (s-product's refusal line twice). #22's fixes held: b-leverage 'No.' then the formula before the example; o-montecarlo 0.21R, nothing asked; s-firm, p-crossover and the others say each thing once, no sources paragraph. Run 28's held. $1.1635 on the eval key.",
+ "ex-r": "Error (major: rule misstated): through trade_math: R first; 1R = |entry − stop| × size; $498.97, fees $23.86, $522.83; +$1,000 ≈ 1.91R, a stop-out −1R, one convention throughout. But 'Bitfunded's desk also prices the fee …' gives troid's desk's fee-inclusive 1R as the firm's.",
+ "ex-kelly": "Note: correct: the refusal first; 17.5% first; f* = p − (1 − p) ÷ b, half-Kelly 8.75%; beside the 1-Step's 6% and 4% (dated in the list): 2.92, 4.38, 1.46 and 2.19 times; the ceiling binds first.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; 'the largest maximum loss troid has read on any product it covers, 10%', dated in the list; 'on those accounts' keeps to them.",
+ "ex-angry": "Error (major: sources): support.md section 2's steps in order, no first person (run 28's fix held); but 'If this was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)' states two firms' drawdown types from no tool, undated (troid's records agree; read, not fixed, as in run 28).",
+ "b-limits": "Note: correct through explain_rule and check_budget: the formulas for both; the daily amount fixed from the initial balance (FAQ); the 1-Step worked, $4,000 binding, dated; the crossover $98,000 at the day's start, below it the floor with under $4,000; floating losses. 'Until it locks' for trailing products is one product's (noted, not counted).",
+ "b-stop": "Note: correct through trade_math: quantity = risk ÷ (|entry − stop| + fee per unit); $500 on 77,872/76,580: 0.369336 units, $28,760.93, fees $22.82, $500 at the stop.",
+ "b-leverage": "Note: correct through trade_math: 'No.' first, then the loss formula with the fee term, then margin = notional ÷ leverage, then the example: 0.369336 units, $28,760.93, $500.00 at the stop at both, margins $14,380.47 and $2,876.09; the 1-Step's 1:5 cap noted, worked without a firm's cap; the cut-to-fit case. #22's fix held.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working, fees push it negative.",
+ "q-stats": "Note: correct: 'No, not distinguishable from zero' first; SE 0.0453R, t 0.729, CI [−0.0558R, 0.1218R]; troid's own result out of sample first (MEASURED), then the in-sample cell, labelled; the user's figures match it. The automated failure is the checker's ('troid's own strategy search produced' read as an in-sample figure first, as in run 31).",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8, the extremes, the assumptions.",
+ "q-atr": "Note: correct: about 1200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through explain_rule and check_budget: $98,000 first; the formula; the two budgets' formulas; a $97,000 day worked: $93,000/$4,000 and $94,000/$3,000, the floor binding at $3,000; below $98,000 the floor, above it the daily limit. No $6,000 below the crossover, no sources paragraph.",
+ "p-reset": "Note: correct: 16:00 UTC, by 16:10 UTC, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, the ten minutes, mid-session in New York, the floating loss across the reset; no local hour.",
+ "p-hold": "Note: correct through firm_assets and firm_rules: '10 days' first; the three tiers, 10, 7 and 5 days, from the tools.",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock named, 5 days; 'no record of it one way or the other', not the same as not offered. The automated failure is the checker's (run 19's).",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in the 55–64% step, '50% payout penalty' in the firm's words; the rest of the ladder; what it is a share of not recorded; the Instant's 3% and 6% from the tool.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses left, 75.15%), the crossover right. The automated failure is the checker's (ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Error (major: boundary wording): support.md section 2's steps 1, 2 and 5; the general points hedged ('usually', 'commonly'), no firm named. But it ends with step 4's three causes ('an input that differed …, a rule that changed after troid's read date, or a rule troid has marked pending') to a trader who never said troid's numbers were involved (runs 19 and 21; the automated failure).",
+ "e-scam": "Note: correct (Haiku): support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Note: correct through explain_rule and trade_math: no simulation; 0.21R from p = 0.55, W = 1.2R, L = 1R, 45.45%, 21R as a mean; troid's published Monte Carlo, MODELLED, not transferable. Nothing asked for: #22's fix held.",
+ "o-news": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; both products at $100,000; 8% + 5% = 13%; the shared rules; the differences as facts. But the refusal line comes again in the last paragraph ('troid doesn't recommend; it prices what you bring — …').",
+ "s-firm": "Note: correct through products_in_budget: support.md section 4's line; 'which firm is best for you' not answered; all five products at or under $500, cheapest first, each 'source not yet recorded'; BrightFunded's €497 (€347.90) apart, dated; ending with troid's line; none picked.",
+ "u-ftmo": "Note: correct (Haiku): not covered, not read; FTMO's own documents.",
+ "u-topstep": "Note: correct (Haiku): not covered, not read; the three firms; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct through firm_assets (three calls): no page troid has read names NVDA, 'not the same as the firm not offering it'; Bitfunded's TSLA, BrightFunded no stock, Crypto Fund Trader no asset in troid's record; no price, nothing sized.",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'Bitfunded's desk also prices the fee charged on entry and on exit (at the stop), 0.04% a side … so the risk actually carried is 1R = $522.83': the fee-inclusive 1R is troid's desk's convention, given as the firm's"
+   ]
+  },
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'If this was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)': two firms' drawdown types from no tool, undated (read, not fixed, as in runs 28 and 7 Oct ex-angry-01)"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'say whether it points to an input that differed from the account's real state, a rule that changed after troid's read date, or a rule troid has marked pending': step 4's causes to a trader who never said troid's numbers were involved (runs 19 and 21)"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'troid doesn't recommend; it prices what you bring.' first, then again in the last paragraph ('troid doesn't recommend; it prices what you bring — troid can size …'); the service's once-first handler matches only the sentence ending in a full stop"
+   ]
+  }
+ ]
+}

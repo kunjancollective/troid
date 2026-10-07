@@ -1,0 +1,339 @@
+{
+ "base": "https://troid.ai",
+ "variant": "candidate",
+ "started_utc": "2026-10-07T03:42:32.620Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 16,
+   "tools": [
+    "firm_assets",
+    "products_in_budget"
+   ],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown",
+    "fees"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "firm_assets",
+    "products_in_budget",
+    "check_compliance",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 45,
+   "eval_key": true,
+   "patch": [],
+   "patch_rules": []
+  },
+  "key_days_left": {
+   "main": null,
+   "eval": null
+  }
+ },
+ "set": {
+  "cases": 1,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 3
+  }
+ },
+ "results": [
+  {
+   "id": "s-product",
+   "kind": "should-i",
+   "example": false,
+   "q": "Should I buy the Bitfunded 1-Step or the 2-Step?",
+   "status": 200,
+   "ms": 12028,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "firm_rules",
+    "firm_rules",
+    "firm_rules"
+   ],
+   "tool_numbers": [
+    "1",
+    "4",
+    "6",
+    "10",
+    "5",
+    "100000",
+    "999",
+    "80",
+    "18",
+    "0.04",
+    "7",
+    "9",
+    "2026",
+    "09",
+    "23",
+    "21",
+    "20",
+    "26",
+    "04",
+    "2",
+    "24",
+    "3",
+    "65",
+    "74",
+    "50",
+    "75",
+    "89",
+    "60",
+    "90",
+    "95",
+    "96",
+    "100",
+    "70",
+    "8",
+    "799",
+    "13"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 338,
+     "cache_read": 40733,
+     "output": 175
+    },
+    "claude-sonnet-5": {
+     "calls": 2,
+     "input": 4,
+     "cache_write": 11887,
+     "cache_read": 107614,
+     "output": 917
+    }
+   },
+   "tool_calls": 3,
+   "reply": "troid doesn't recommend; it prices what you bring.\n\nWhat troid can give is each product's recorded rules, so the comparison is on the numbers, not a characterization of them.\n\nHere are the two products, on the $100,000 account level, as Bitfunded's own documents give them:\n\n**1-Step**\n- Daily loss limit: 4% (fixed, from the initial balance)\n- Maximum loss: 6%, static (the floor doesn't move as the account grows)\n- Profit target: 10%\n- Minimum trading days: 5\n- Fee: $999\n- Split: 80% (18(a): \"initial\"; a Scaling Plan can raise it, no figure stated)\n\n**2-Step**\n- Stage 1: daily 5%, maximum loss 10% static, target 8%, minimum 5 trading days\n- Stage 2: daily 5%, maximum loss 8% static, target 5%, minimum 5 trading days\n- Combined profit target across both stages: 8% + 5% = 13% (each stage's target is a percent of the account size, so the targets add; DERIVED)\n- Fee: $799, one fee covering both stages\n- Split: 80% (same clause as above)\n\nBoth carry the same leverage cap (5×), the same per-side trading fee (0.04%), the same hold limits by asset tier (majors 10 days, other crypto 7, TradFi 5), the same 5-open-position cap, and the same concentration ladder (65–74% exposure: 50% payout penalty; 75–89%: 60%; 90–95%: 65%; 96–100%: 70%).\n\nThe structural differences, from the numbers alone: the 1-Step asks for one target (10%) against tighter loss limits (4%/6%); the 2-Step asks for a larger combined target (13%) across two stages, against looser per-stage loss limits (5%/10% then 5%/8%), for a lower combined fee ($799 vs $999).\n\nSources, each with the date troid read it:\n- daily loss limit % 4 — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- maximum loss % 6 — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- profit target % 10 — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n- minimum trading days 5 — Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ, read 2026-09-21 and 2026-09-23\n- challenge fee at the $100,000 account level, USD (troid has recorded no fee for other account sizes of this product) 999 — Bitfunded Terms of Use 9(a), 1 Step Challenges, Expert Level ($100,000 account, fee $999); help centre — Challenge Type, One Step Evaluation table, read 2026-09-23\n- profit split 80% (Terms 18(a): 'initial'; a Scaling Plan can raise it, no figure stated) — Bitfunded FAQ (What's the profit split?); help centre — Challenge & Trader Stage, One Step Evaluation table; Terms of Use 18(a) (an initial 80:20; a Scaling Plan can raise it, no figure stated), read 2026-09-26\n- drawdown type static — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18\n- daily limit basis initial_balance — Bitfunded FAQ, read 2026-09-21\n- trading fee per side % 0.04 — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04\n- leverage cap 5 — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23\n- floating losses count toward the daily and maximum loss yes — Bitfunded help centre — Criteria to be Success, 1. Maximum Daily Loss and 2. Maximum Loss (floating losses are in both calculations; an open position that reaches either limit fails the account), read 2026-09-24\n- open positions at once, at most 5 — Bitfunded help centre — Restricted Trading Practices s.3, read 2026-09-21 (the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04)\n- hold limit, Major Crypto Assets, days 10 — Bitfunded help centre — Restricted Trading Practices s.1, read 2026-09-21 (the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04)\n- hold limit, Minor Crypto Assets, days 7 — Bitfunded help centre — Restricted Trading Practices s.1, read 2026-09-21 (the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04)\n- hold limit, Traditional Trading Pairs, days 5 — Bitfunded help centre — Restricted Trading Practices s.1, read 2026-09-21 (the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04)\n- concentration ladder (65–74% exposure: 50% payout penalty; 75–89% exposure: 60% payout penalty; 90–95% exposure: 65% payout penalty; 96–100% exposure: 70% payout penalty) — Bitfunded help centre — Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading), read 2026-10-04 (the same page read before on 2026-09-21, 2026-09-24, 2026-09-26)\n- daily loss limit % 5 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1), read 2026-09-23\n- maximum loss % 10 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1), read 2026-09-23\n- profit target % 8 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1), read 2026-09-23\n- challenge fee at the $100,000 account level, USD (troid has recorded no fee for other account sizes of this product) (one fee for the whole 2-Step; troid records it on 2-Step · S1 and no fee for another stage) 799 — Bitfunded Terms of Use 9(a), 2 Step Challenges, Expert Level (fee $799), read 2026-09-23\n- trading fee per side % 0.04 — Bitfunded help centre — Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction), read 2026-10-04\n- leverage cap 5 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage), read 2026-09-23\n- daily loss limit % 5 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2), read 2026-09-23\n- maximum loss % 8 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2), read 2026-09-23\n- profit target % 5 — Bitfunded help centre — Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2), read 2026-09-23\n\nTier: the rules above are SOURCED — read from the documents listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\byou should (buy|pick|choose|go with|use|trade)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bgo with the\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(better|best) (choice|option|pick) for you\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\brecommend(ed)? (the|using|you)\\b(?![^.]*doesn['’]t)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /Stage 1 fee/",
+     "pass": true
+    },
+    {
+     "name": "never says: /whatever Stage 2 costs/",
+     "pass": true
+    },
+    {
+     "name": "never says: /same overall (risk|requirement|target|profit)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /character section/",
+     "pass": true
+    },
+    {
+     "name": "never says: /1-Step is the tight(est|er) structure/",
+     "pass": true
+    },
+    {
+     "name": "never says: /(profit )?split[^.\\n]{0,160}(recorded|sourced) (on|from|in) the 1-Step/",
+     "pass": true
+    },
+    {
+     "name": "never says: /fixed (answer|refusal|reply)/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\b(lower|smaller|less)\\b[^.\\n]{0,40}\\b(total|combined|overall|in all)\\b[^.\\n]{0,40}\\b(profit|target|gain)/",
+     "pass": true
+    },
+    {
+     "name": "gives support.md section 4 word for word",
+     "pass": true
+    },
+    {
+     "name": "each rule it states carries its document and read date",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-10-07T03:42:44.663Z",
+ "passed": 1,
+ "failed": 0,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 1,
+    "input": 3,
+    "cache_write": 338,
+    "cache_read": 40733,
+    "output": 175,
+    "usd": 0.0054
+   },
+   "claude-sonnet-5": {
+    "calls": 2,
+    "input": 4,
+    "cache_write": 11887,
+    "cache_read": 107614,
+    "output": 917,
+    "usd": 0.0604
+   }
+  },
+  "usd": 0.0658,
+  "priced": true
+ }
+}
