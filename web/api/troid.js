@@ -247,6 +247,14 @@ CANDIDATE_GUARDRAILS.push(
 const BUDGET_CLOSE = "troid doesn't pick a product; the choice is yours.";
 CANDIDATE_GUARDRAILS.push(
   "When the user names an amount to spend on a challenge, or asks what an amount buys, call products_in_budget with it. After support.md section 4's line, give every product it returns, cheapest first, one line each with its price, its account size and its source and read date, or that its source is not yet recorded, as the tool's lines give them; then the tool's note; and end with this line, word for word: \"" + BUDGET_CLOSE + "\" Never set one product apart as what the money buys or gets, or as where it should go, and never leave one out.");
+// The owner's two fixes of 2026-10-07, after runs 29 to 31 (the promotion rule's (c): two kinds live run 20 doesn't
+// have). Incomplete method: b-leverage (run 31) opened on its worked example, the answer in its third sentence;
+// o-montecarlo (run 30) asked for "the average loss in R" where the question's 1% risk per trade is the 1R loss.
+// Repeated text: s-product (run 30) and s-firm (run 31) wrote their lead-in twice; p-crossover (run 30) restated the
+// sources the service lists under the answer.
+CANDIDATE_GUARDRAILS.push(
+  "A question about how something is worked out or what it means opens with its one-line answer, then the formula; the worked example comes after both, never first. Work from the figures the user gave and never ask for one the question already gives: a win in R beside a risk per trade makes the average loss 1R (a 1.2R average win at 1% risk is W = 1.2, L = 1).",
+  "Say each thing once: never a sentence that restates the one before it, and never a paragraph that restates the sources or their read dates (\"Rules used: …\", \"This is DERIVED from …, read …\"); the service lists every source and read date under the answer.");
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
@@ -2172,6 +2180,82 @@ CANDIDATE_LINTS.push(
   [(t) => xoverBudgetSlip(t), "The maximum-loss budget is the day's start less the $94,000 floor: $6,000 only on a day that starts at $100,000, under $4,000 on a day that starts below $98,000, which is why the floor binds there. Give the budget below the crossover from check_budget, or in words, never as $6,000."],
   // run 28, ex-angry: "we need the inputs" (the checker's whole set now, not only let's, let me and I'm/I'll/I've/I'd)
   [(t) => firstPersonIn(t), "Speak of troid in the third person: no \"let's\", \"let me\", \"I\", \"we\", \"us\" or \"our\". Say what troid computes (\"troid computes …\"), and lead into nothing: give the answer."]);
+// the owner's fixes of 2026-10-07, after runs 29 to 31. 1. A method answer that opens on its example (run 31,
+// b-leverage: "Long at entry 77,872, stop at 76,580, risking $500 on $100,000 equity:"): the first paragraph a lead-in to
+// figures, a later part of the method, a position or a list. Over every saved reply: run 31's b-leverage, run 21's ex-r
+// ("In practice") and run 3's ex-r ("Working through a long BTC position").
+const EXAMPLE_OPEN_RX = /^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation|Example|Working)\b|^\s*(?:\*\*|__)?\s*(long|short)\b|^\s*([-*•]\s|\||\d+[.)]\s)/i;
+function exampleFirst(t, asked) {
+  if (!HOWCALC_RX.test(String(asked || ""))) return false;
+  const p = stripSources(String(t)).replace(/^troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split(/\n\s*\n/)[0].trim();
+  return (/:\s*$/.test(p) && !/\b(formula|answer)\b/i.test(p.split("\n")[0])) || EXAMPLE_OPEN_RX.test(p);
+}
+// 2. A figure asked for that the question gives (run 30, o-montecarlo: "give (or confirm) the average loss in R as well",
+//    the question's 1% risk per trade being the 1R loss). Over every saved reply: run 30's o-montecarlo alone.
+const ASK_SRC = "\\b(give|confirm|provide|send|supply)\\b|\\bshare (the|your)\\b|\\btell troid\\b|\\bwhat['’]?s your\\b|\\bwhat is your\\b";
+const GIVEN_INPUTS = [
+  ["the average loss", /\b(average|avg\.?) loss\b|\bloss (size )?in R\b/i, /\b(average|avg\.?) loss\b|\brisk(ed)? per trade\b|\b\d+(\.\d+)?\s?% risk\b/i],
+  ["the win rate", /\bwin rate\b/i, /\b\d+(\.\d+)?\s?% win rate\b|\bwin rate (of |is )?\d/i],
+  ["the average win", /\b(average|avg\.?) win\b/i, /\b(average|avg\.?) win\b/i],
+  ["the risk per trade", /\brisk per trade\b/i, /\brisk(ed)? per trade\b|\b\d+(\.\d+)?\s?% risk\b/i],
+  ["the number of trades", /\bnumber of trades\b|\bhow many trades\b/i, /\b\d+\s+trades\b/i]];
+function asksGiven(t, asked) {
+  const out = [];
+  for (const s of stripSources(String(t)).split(/(?<=[.?!])\s+|\n+/))
+    for (const [name, inReply, inAsked] of GIVEN_INPUTS)
+      if (inAsked.test(String(asked || "")) && new RegExp("(?:" + ASK_SRC + ")[^.?\\n]{0,80}(?:" + inReply.source + ")", "i").test(s) && !out.includes(name)) out.push(name);
+  return out;
+}
+// 3. A sentence that restates the one before it (run 30, s-product: "What can be compared is the two products' own recorded
+//    rules, side by side." then "Here is what each product's own recorded rules give, side by side, …"; run 31, s-firm:
+//    "… here's what $500 buys across the products troid has prices for." then "Here's what $500 buys, cheapest first:"):
+//    two neighbouring prose sentences of at most 25 words sharing a run of four words and most of the shorter one's words,
+//    not two parallel lines over different figures. Over every saved reply: those two alone.
+const REPEAT_STOP = new Set("the a an of to and or in on at for is are be it its this that as by with from".split(" "));
+const PROSE_SKIP_RX = /^\s*([-*•]\s|\||\d+[.)]\s|```|>)|^\s*(\*\*|__)?(Tier\b|troid['’]s assumptions, not the firm['’]s rules|Not financial advice)/;
+const repeatWords = (s) => s.toLowerCase().replace(/\*\*|__|`/g, "").replace(/’/g, "'").replace(/[^\w$€%'.,-]+/g, " ").replace(/[.,](?=\s|$)/g, "")
+  .split(/\s+/).filter(Boolean).map((w) => w.replace(/'s$|s'$|'$/, "").replace(/s$/, ""));
+function repeatedSentence(t) {
+  const S = stripSources(String(t)).split("\n").filter((l) => l.trim() && !PROSE_SKIP_RX.test(l)).flatMap(sentencesOf)
+    .filter((s) => !/[=÷×]/.test(s)).map((s) => [s, repeatWords(s)]).filter(([, w]) => w.length >= 4);
+  for (let i = 0; i + 1 < S.length; i++) {
+    const a = S[i][1], b = S[i + 1][1];
+    if (a.length > 25 || b.length > 25) continue;
+    const ca = [...new Set(a.filter((w) => !REPEAT_STOP.has(w) && !/^[\d$.,%€()-]+$/.test(w)))], cb = [...new Set(b.filter((w) => !REPEAT_STOP.has(w) && !/^[\d$.,%€()-]+$/.test(w)))];
+    const [x, y] = ca.length <= cb.length ? [ca, cb] : [cb, ca];
+    if (x.length < 4 || x.filter((w) => y.includes(w)).length / x.length < 0.6) continue;
+    // parallel lines over different figures ("Full Kelly, 17.5%, is 2.92 times …" then "Half Kelly, 8.75%, is 1.46 times …")
+    const na = (S[i][0].match(/\d[\d,.]*/g) || []).join(" "), nb = (S[i + 1][0].match(/\d[\d,.]*/g) || []).join(" ");
+    if (na && nb && na !== nb) continue;
+    const runs = new Set(); for (let k = 0; k + 4 <= a.length; k++) runs.add(a.slice(k, k + 4).join(" "));
+    for (let k = 0; k + 4 <= b.length; k++) { const r = b.slice(k, k + 4).join(" "); if (runs.has(r) && !r.split(" ").every((w) => REPEAT_STOP.has(w))) return [S[i][0], S[i + 1][0]]; }
+  }
+  return null;
+}
+// 4. A paragraph that restates the sources the service lists (run 30, p-crossover: "This is DERIVED from Bitfunded's
+//    published daily (4%) and maximum (6%) loss rules — help centre, …, read 2026-09-23; … read 2026-09-21; … read
+//    2026-09-18."): one led as a source line ("Rules used:", "Rule sources:", "This is DERIVED/SOURCED from …") that
+//    names a source or read date, or any prose paragraph with three read dates, when the tools gave sources.
+const SRC_LEAD_RX = /^\s*(\*\*|__)?\s*(rules?( used| sources?)?|rule basis|sources?( used)?|this is (DERIVED|SOURCED)\b[^.\n]{0,40}\b(from|sourced)|these (figures|rules)\b[^.\n]{0,80}\b(sourced?|read)|each (of these )?rules?\b[^.\n]{0,40}\bsource)\b/i;
+const SRC_READ_RX = /\bread (on )?20\d\d-\d\d-\d\d/g;
+function sourcesRestated(t, listed) {
+  if (!listed) return null;
+  for (const p of stripSources(String(t)).split(/\n\s*\n/)) {
+    const prose = p.split("\n").filter((l) => !PROSE_SKIP_RX.test(l)).join(" ");
+    if (!prose.trim()) continue;
+    if ((SRC_LEAD_RX.test(prose) && /\bread (on )?20\d\d|\bsource|shown (above|below)/i.test(prose)) || (prose.match(SRC_READ_RX) || []).length >= 3) return prose;
+  }
+  return null;
+}
+CANDIDATE_LINTS.push(
+  [(t, tools, asked, last) => exampleFirst(t, last || asked),
+   "The question asks how something is worked out: open with the one-line answer, then the formula with an equals sign and its terms; the worked example comes after both, never first."],
+  [(t, tools, asked, last) => asksGiven(t, last || asked).length > 0,
+   (t, tools, asked, last) => "The question already gives " + asksGiven(t, last || asked).join(" and ") + ": work from it and never ask for it (a win in R beside a risk per trade makes the average loss 1R)."],
+  [(t) => !!repeatedSentence(t),
+   (t) => "Say it once: \"" + repeatedSentence(t)[1] + "\" restates the sentence before it. Keep one of the two."],
+  [(t, tools) => !!sourcesRestated(t, toolSourceLines(tools).length > 0),
+   "The service lists every source and read date under the answer: drop the paragraph that restates them, and keep any figure it gives that the answer needs."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
 // final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
@@ -2864,6 +2948,10 @@ module.exports._hasGeneralFormula = hasGeneralFormula;
 module.exports._inThirdPerson = inThirdPerson;
 module.exports._firstPersonIn = firstPersonIn;
 module.exports._xoverBudgetSlip = xoverBudgetSlip;
+module.exports._exampleFirst = exampleFirst;
+module.exports._asksGiven = asksGiven;
+module.exports._repeatedSentence = repeatedSentence;
+module.exports._sourcesRestated = sourcesRestated;
 module.exports._ownStrategyFirst = ownStrategyFirst;
 module.exports._ownStrategyMisordered = ownStrategyMisordered;
 module.exports._widensMaxLoss = widensMaxLoss;
