@@ -619,9 +619,10 @@ function size_trade(a, next) {
     }
   }
   base.sources = sourcesFor(p, used);
-  // F6 (next): the exit fee is charged on the exit notional, quantity × stop at the stop, so a unit's fees are
-  // fee × (entry + stop) and the loss at the stop is the risk to the cent, long or short
-  const fu = next ? fee * (entry + stop) : entry * fee * 2, qty0 = risk / (dist + fu), m0 = qty0 * entry / levUsed;
+  // F6 (the calculator audit, live and candidate since 2026-10-07): the exit fee is charged on the exit notional,
+  // quantity × stop at the stop, so a unit's fees are fee × (entry + stop) and the loss at the stop is the risk to the
+  // cent, long or short (live priced both fees at entry until then: run 20's p-size, 1.622095 against the desk's 1.621583)
+  const fu = fee * (entry + stop), qty0 = risk / (dist + fu), m0 = qty0 * entry / levUsed;
   // F1 (next): a margin above equity can't be opened, so the size is cut to what equity carries at this leverage, and the
   // loss at the stop falls with it: $100,000 at 5× carries $500,000 of notional at most. Live sizes past it.
   const cut = !!next && m0 > eq + 1e-9, qty = cut ? eq * levUsed / entry : qty0, notional = qty * entry, margin = notional / levUsed;
@@ -633,7 +634,7 @@ function size_trade(a, next) {
                { step: "cap", formula: `budget × ${cpIn}%`, value: r2(cap) },
                { step: "risk", formula: "min(intended, cap)", value: r2(risk) },
                { step: "stop distance", formula: "|entry − stop|", value: r4(dist) },
-               { step: "fee per unit", formula: feeKnown ? (next ? `(entry + stop) × ${p.fee}%` : `entry × ${p.fee}% × 2`) : "fee per side pending: taken as 0, size before fees", value: r4(fu) },
+               { step: "fee per unit", formula: feeKnown ? `(entry + stop) × ${p.fee}%` : "fee per side pending: taken as 0, size before fees", value: r4(fu) },
                { step: "quantity", formula: cut ? "equity × leverage used ÷ entry: cut to fit the margin" : feeKnown ? "risk ÷ (stop distance + fee per unit)" : "risk ÷ stop distance", value: Math.round(qty * 1e6) / 1e6 },
                { step: "notional", formula: "quantity × entry", value: r2(notional) },
                { step: "leverage used", formula: levCap == null ? (next && held != null ? `your leverage; cap pending (held to ${held}×, the lowest cap recorded for this firm)` : "your leverage; cap pending") : `min(your ${lev}×, cap ${levCap}×)`, value: levUsed },
@@ -644,7 +645,7 @@ function size_trade(a, next) {
   working.push({ step: "budget used", formula: "risk ÷ budget", value: r2(consumes) + "%" },
                { step: "losses left", formula: next ? "ceil(budget ÷ risk) − 1" : "floor(budget ÷ risk)", value: left },
                { step: "target", formula: `entry ${side > 0 ? "+" : "−"} ${tR} × stop distance`, value: r2(target) });
-  base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? (next ? `(stop distance + (entry + stop) × ${p.fee}%)` : `(stop distance + entry × ${p.fee}% × 2)`) : "stop distance")
+  base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? `(stop distance + (entry + stop) × ${p.fee}%)` : "stop distance")
     + (cut ? `; margin at the risk-based size > equity: size cut to equity × ${levUsed}× ÷ entry` : "");
   // R5 (next, extends F7): a loss that takes the whole room reaches the limit, which fails the account (only at a 100% cap)
   if (next && left < 1) {
@@ -760,7 +761,12 @@ const RULES = {
   // 16:00 UTC is noon in New York only in summer; "morning and afternoon are separate daily budgets" read as a rule of the
   // firm's (run 1 of the evaluation, p-reset): it is a consequence of the reset's hour for a trader in New York
   reset: "Bitfunded's trading day resets at 00:00 UTC+8, which is 16:00 UTC all year (UTC+8 is a fixed offset). Not midnight. Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for. Because of the platform's settlement process the reset can take effect any time between 00:00 and 00:10 UTC+8 (help centre, Criteria to be Success): 16:00–16:10 UTC. Those ten minutes are ambiguous: a fresh daily budget is certain only from 16:10 UTC. For a trader in New York the reset lands mid-session in every season, so a loss at 15:45 UTC and a loss at 16:15 UTC fall on different trading days and draw on different daily budgets. The trap: a floating loss that survives the reset counts in full against the new day, because the prior day's profit does not carry over, so a position inside the limit just before the reset can breach just after it without price moving. BrightFunded rolls over at 23:30–23:59 CET and advises not trading in the window; Crypto Fund Trader resets at 00:05 UTC (T&C 8.i–8.ii).",
-  fees: "Bitfunded: 0.04% per side on notional, 0.08% round trip. Notional scales inversely with stop distance, so tight stops are punished hardest. Fee share of risk = 2f/(s+2f). At a 3.9% stop that's 2% of risk; at a 0.3% scalp stop it's 21%. Other firms' fees are in firms.json; a null is pending.",
+  // the calculator audit's F6 (troid's desk, 2026-09-29; live since 2026-10-07): the exit fee is charged at the stop
+  fees: "Bitfunded: 0.04% per side on notional: on the entry notional, and on the exit notional, which at the stop is quantity × stop. So a unit's fees " +
+    "are f × (entry + stop), and the loss at the stop, both fees in it, is the risk, long or short. The fee share of risk is f(2 − s)/(s + f(2 − s)) on a " +
+    "long and f(2 + s)/(s + f(2 + s)) on a short, s the stop distance as a fraction of entry: a short's stop sits above entry, so it pays a little more. " +
+    "2f/(s + 2f), both fees priced at entry, is the side-neutral approximation. Notional scales inversely with stop distance, so tight stops are " +
+    "punished hardest: at a 3.9% stop the fees are about 2% of risk; at a 0.3% scalp stop about 21%, either side. Other firms' fees are in firms.json; a null is pending.",
   leverage: "Leverage does not determine your loss — the stop does. risk = |entry − stop| × quantity, and leverage appears nowhere in it. What leverage changes is margin posted and liquidation distance. Under ISOLATED margin a long is liquidated near entry × (1 − 1/leverage) and a short near entry × (1 + 1/leverage): a distance of about entry ÷ leverage, ~20% at 5x, a little less after the exchange's maintenance margin. Under CROSS margin the whole account backs the position, so at any size a 5× cap allows the firm's own floors are breached long before exchange liquidation. troid models cross margin by default; it has no recorded source for which margin modes Bitfunded offers.",
   cross: "Under cross margin, troid's default model (troid has no recorded source for Bitfunded's margin modes; the 5× leverage cap is from the help centre, Challenge & Trader Stage, and Terms 9(a)), every position is backed by the entire account balance. Exchange liquidation never binds — even at the 65% margin cap it sits at ~31% adverse move while the 6% floor binds at 1.85%. The firm's floors ARE your liquidation model. Nothing cuts a runaway position before the firm fails you; your stop is the only circuit breaker in front of the floor. At the 65% margin cap the daily limit binds at a 1.23% adverse move — tighter than a normal 1.66% stop.",
   // a drawdown type belongs to a product (run 7, b-limits: "Crypto Fund Trader's trail the high-water mark"; its 2-Phase is static)
@@ -802,12 +808,9 @@ const CANDIDATE_RULES = {
   crossover: "A funded account has two loss ceilings. Under Bitfunded the daily limit is a FIXED amount from the initial balance (FAQ) and the max loss is a fixed floor from the starting quota. They swap where the day-start balance equals quota × (1 − max% + daily%). On a $100k 1-Step that is $98,000 — only $2,000 below the start. Below $98,000 at the day's start the max-loss floor binds, and the 4% daily limit is not the constraint that day; between $98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than $2,000 below the start is still bound by the daily limit. The max-loss budget is the day's start less the $94,000 floor: $6,000 on a day that starts at $100,000, under $4,000 on one that starts below $98,000. Intraday, which ceiling binds depends on that day's starting balance, not on equity alone: check_budget shows both budgets and the smaller one. Size against the smaller of the two, always. Other firms use other bases: CFT's daily is a percentage of the day-start balance (crossover quota × (1 − max%) / (1 − daily%)); BrightFunded's is a fixed amount below the high at rollover." +
     " Both of Bitfunded's ceilings count floating losses: an open position that reaches either one fails the account, with no close needed.",
   drawdown: RULES.drawdown + " Bitfunded's floor counts floating losses: an open position that reaches it fails the account, with no close needed.",
-  // the calculator audit's F6 (troid's desk, 2026-09-29): the exit fee is charged at the stop, not at entry
-  fees: "Bitfunded: 0.04% per side on notional: on the entry notional, and on the exit notional, which at the stop is quantity × stop. So a unit's fees " +
-    "are f × (entry + stop), and the loss at the stop, both fees in it, is the risk, long or short. The fee share of risk is f(2 − s)/(s + f(2 − s)) on a " +
-    "long and f(2 + s)/(s + f(2 + s)) on a short, s the stop distance as a fraction of entry: a short's stop sits above entry, so it pays a little more. " +
-    "2f/(s + 2f), both fees priced at entry, is the side-neutral approximation. Notional scales inversely with stop distance, so tight stops are " +
-    "punished hardest: at a 3.9% stop the fees are about 2% of risk; at a 0.3% scalp stop about 21%, either side. Other firms' fees are in firms.json; a null is pending.",
+  // the calculator audit's F6 (troid's desk, 2026-09-29): the exit fee is charged at the stop, not at entry; the same
+  // text as RULES.fees since F6 went live (2026-10-07)
+  fees: RULES.fees,
 };
 // the rules each candidate explanation states, where they differ from TOPIC_CITES
 const FLOAT_CITE = ["bitfunded", "floating_counts", null, "floating losses count toward the daily and maximum loss (Bitfunded)"];
@@ -917,12 +920,12 @@ function check_availability(a) {
 // DERIVED from the numbers given. kelly can set its result beside a firm product's loss limits, with their sources.
 // Percentages come in as percent (45 means 45%). A result troid can only approximate says so in its note.
 const MATH_FORMULAS = {
-  r_multiple: "1R = |entry − stop| × quantity (troid's desk adds the round-trip fee: + entry × fee × 2 × quantity); R of a result = result ÷ 1R",
-  position_size: "quantity = risk ÷ (|entry − stop| + entry × fee × 2); notional = quantity × entry; margin = notional ÷ leverage",
+  r_multiple: "1R = |entry − stop| × quantity (troid's desk adds both fees: + fee × (entry + stop) × quantity, the exit fee charged at the stop); R of a result = result ÷ 1R",
+  position_size: "quantity = risk ÷ (|entry − stop| + fee × (entry + stop)); notional = quantity × entry; margin = notional ÷ leverage; the loss at the stop = quantity × (|entry − stop| + fee × (entry + stop)) = risk",
   expectancy: "E = p × W − (1 − p) × L; break-even win rate = L ÷ (W + L) = 1 ÷ (1 + W/L)",
   kelly: "f* = p − (1 − p) ÷ b, where b = average win ÷ average loss",
   recovery: "gain needed = d ÷ (1 − d)",
-  fee_share: "fee share of risk = 2f ÷ (s + 2f), f = fee per side, s = stop distance as a fraction of price",
+  fee_share: "fee share of risk = f × (2 − s) ÷ (s + f × (2 − s)) on a long, f × (2 + s) ÷ (s + f × (2 + s)) on a short; side-neutral approximation, both fees at the entry price: 2f ÷ (s + 2f). f = fee per side, s = stop distance as a fraction of entry",
   losses_to_limit: "losses = budget ÷ risk per loss",
   capped_budget: "budget after n losses = B × (1 − c)^n",
   stats: "SE = sd ÷ √n; t = mean ÷ SE; 95% CI = mean ± 1.96 × SE",
@@ -955,10 +958,10 @@ const MATH = {
     const out = { one_r: rd(dist * q, 2) };
     let base = dist * q;
     if (fee != null) {
-      const rt = entry * fee / 100 * 2 * q;
+      const rt = fee / 100 * (entry + stop) * q;
       base += rt;
-      w.push({ step: "round-trip fee", formula: "entry × " + fee + "% × 2 × quantity", value: rd(rt, 2) },
-             { step: "1R with fees", formula: "1R + round-trip fee (troid's desk counts it in the risk)", value: rd(base, 2) });
+      w.push({ step: "fees in and out", formula: fee + "% × (entry + stop) × quantity: the entry fee at entry, the exit fee at the stop", value: rd(rt, 2) },
+             { step: "1R with fees", formula: "1R + fees in and out (troid's desk counts them in the risk)", value: rd(base, 2) });
       out.one_r_with_fees = rd(base, 2);
     }
     if (res != null) { w.push({ step: "R of the result", formula: "result ÷ " + (fee != null ? "1R with fees" : "1R"), value: rd(res / base, 3) }); out.r_multiple = rd(res / base, 3); }
@@ -969,9 +972,9 @@ const MATH = {
     const mf = mathFee(x, a), fee = mf.fee, lev = x("leverage", { gt: 0, max: 200, optional: true });
     const dist = Math.abs(entry - stop);
     if (!(dist > 0)) throw new MathInputError("entry and stop are the same price");
-    const fu = entry * (fee || 0) / 100 * 2, q = risk / (dist + fu);
+    const fu = (fee || 0) / 100 * (entry + stop), q = risk / (dist + fu);
     const w = [{ step: "stop distance", formula: "|entry − stop|", value: rd(dist) },
-               { step: "fee per unit", formula: fee == null ? "no fee given: 0" : "entry × " + fee + "% × 2", value: rd(fu) },
+               { step: "fee per unit", formula: fee == null ? "no fee given: 0" : "(entry + stop) × " + fee + "%", value: rd(fu) },
                { step: "quantity", formula: "risk ÷ (stop distance + fee per unit)", value: rd(q) },
                { step: "notional", formula: "quantity × entry", value: rd(q * entry, 2) }];
     const result = { quantity: rd(q), notional: rd(q * entry, 2) };
@@ -1049,10 +1052,19 @@ const MATH = {
   fee_share(x, a) {
     const mf = mathFee(x, a);
     if (mf.fee == null || !(mf.fee > 0)) throw new MathInputError("fee_share needs fee_per_side_pct, or firm and product");
-    const f = mf.fee / 100, st = x("stop_pct", { gt: 0, lt: 100 }) / 100;
-    const sh = 2 * f / (st + 2 * f);
-    return { working: [{ step: "fee share of risk", formula: `2 × ${rd(f * 100, 4)}% ÷ (${rd(st * 100, 4)}% + 2 × ${rd(f * 100, 4)}%)`, value: rd(sh * 100, 2) + "%" }],
-             result: { fee_share_pct: rd(sh * 100, 2) }, sources: mf.sources, note: "Depends only on the stop distance and the fee: not the asset, not leverage." };
+    const f = mf.fee / 100, st = x("stop_pct", { gt: 0, lt: 100 }) / 100, F = rd(f * 100, 4), S = rd(st * 100, 4);
+    const sd = a.side == null || a.side === "" ? null : String(a.side).toLowerCase().startsWith("l") ? 1 : String(a.side).toLowerCase().startsWith("s") ? -1 : 0;
+    if (sd === 0) throw new MathInputError("side must be long or short");
+    // a unit's fees are f × (entry + stop): f × (2 − s) of entry on a long, whose stop is below entry, f × (2 + s) on a short
+    const at = (g) => f * (2 - g * st) / (st + f * (2 - g * st));
+    const line = (g) => ({ step: "fee share of risk, " + (g > 0 ? "long" : "short"),
+      formula: `${F}% × (2 ${g > 0 ? "−" : "+"} ${S}%) ÷ (${S}% + ${F}% × (2 ${g > 0 ? "−" : "+"} ${S}%))`, value: rd(at(g) * 100, 2) + "%" });
+    const neutral = 2 * f / (st + 2 * f);
+    if (sd != null) return { working: [line(sd)], result: { side: sd > 0 ? "long" : "short", fee_share_pct: rd(at(sd) * 100, 2) }, sources: mf.sources,
+      note: "The exit fee is charged at the stop: below entry on a long, above it on a short, so a short's share is a little higher. Depends only on the stop distance, the fee and the side: not the asset, not leverage." };
+    return { working: [line(1), line(-1), { step: "side-neutral approximation, both fees at the entry price", formula: `2 × ${F}% ÷ (${S}% + 2 × ${F}%)`, value: rd(neutral * 100, 2) + "%" }],
+             result: { fee_share_long_pct: rd(at(1) * 100, 2), fee_share_short_pct: rd(at(-1) * 100, 2), fee_share_side_neutral_pct: rd(neutral * 100, 2) }, sources: mf.sources,
+             note: "No side given: both sides are shown. The exit fee is charged at the stop, below entry on a long and above it on a short, so a long's share is a little lower and a short's a little higher than the side-neutral figure, which prices both fees at entry. Depends only on the stop distance, the fee and the side: not the asset, not leverage." };
   },
   losses_to_limit(x) {
     const B = x("budget", { gt: 0 }), r = x("risk", { gt: 0 });
