@@ -12,6 +12,24 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-07 (second): the owner's fixes after runs 32 to 34
+
+Runs 32 to 34 held only on (c), on repeated text (s-product), with ex-r's "Bitfunded's desk" twice among the majors.
+Candidate only:
+
+- **troid's desk is troid's.** A guardrail, and a lint (`firmOwnsTroid`) that sends back a firm's name in front of
+  "desk", a calculator, troid's tools or a 1R. Over every saved reply (1,023) it finds runs 33's and 34's ex-r and run
+  3's p-crossover ("Bitfunded's own check_budget").
+- **One lead-in to a list.** `repeatedSentence` missed s-product's repeated lead-in in runs 32 (over 25 words) and 34
+  (7 of 13 words, under its 0.6). The shape both had is a sentence on what troid can give or show, then a second
+  lead-in ("Here is …", or a sentence ending in a colon) to the same list. A lint (`doubleLeadIn`) sends it back: 25
+  saved replies, all s-product, s-firm and o-montecarlo (runs 30 to 34's s-product among them).
+- **support.md section 4's line once.** A lint (`refusalTwice`) sends back the line given twice, with or without its
+  full stop (run 33, and run 8 of 24 Sep). The candidate's backstop (`refusalOnceFirstNext`) also drops a later copy
+  that ends in a dash or comma, with its joiner. Live's handler is unchanged.
+- **Live and patch unchanged** over 1,023 saved replies: system blocks in 11 languages, tools, tool results, lints,
+  the refusal handler and the reply handlers.
+
 ## Staged 2026-10-07: the owner's fixes for the two kinds run 20 doesn't have (runs 29 to 31)
 
 Runs 29 to 31 held: no critical failure, 4.0 failing cases per run against live's 13.0, but two kinds of failure live

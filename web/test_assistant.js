@@ -357,6 +357,9 @@ const NEW16 = /^Every number in the answer comes from|^A teaching answer writes 
 const NEW1005 = /^The largest maximum loss troid has read covers|^troid's own strategy: its out-of-sample result first, then|^These figures are not what a tool gave|^Higher leverage brings an isolated position's liquidation|^troid has no recorded source for Bitfunded's margin modes|^Give Bitfunded's reset in UTC only|^State the crossover exactly|^The question asks how something is worked out|^Work one example through a tool|^The worked example is given twice|^Name no place for prices/;
 // the owner's fixes of 2026-10-06 (after runs 25 to 27): three lints the older runs' replies were never written against
 const NEW1006 = /^The maximum-loss budget is the day.s start less|^Never set one product apart as what the money buys|^Give every product products_in_budget returns|^These words are troid's own instructions/;
+// the owner's fixes of 2026-10-07 (after runs 29 to 34): lints the older runs' replies were never written against; the
+// older tests leave them out, and they are tested on the saved replies below
+const NEW1007 = /^The question asks how something is worked out: open with|^The question already gives|^Say it once:|^The service lists every source and read date under the answer|^"[^"]+": troid's desk, its tools|^Introduce the list once|^support\.md section 4's line goes once, first/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -371,8 +374,8 @@ const STAGED_TROID = fs0.readFileSync(path0.join(__dirname, "context", "candidat
 const sameBut = (v) => JSON.stringify(handler._toolsFor(v).map((t) => (t.name === "trade_math" ? null : t)));
 // the live test of 2026-10-04 (a4fc357b…): firm_assets added, firm_rules' description names the firm-level rules
 const sameBut2 = (v) => JSON.stringify(handler._toolsFor(v).filter((t) => t.name !== "firm_assets" && t.name !== "products_in_budget").map((t) => (t.name === "trade_math" || t.name === "firm_rules" ? null : t)));
-ok("candidate: the live prompt plus sixteen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first; 2026-10-07: a method answer's answer and formula first from the given figures, each thing said once); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
-   CG.length === 16 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
+ok("candidate: the live prompt plus seventeen guardrails (runs 10 to 13: the Monte Carlo through explain_rule, arithmetic across products through the tools, what hello@troid.ai and the dashboard are for, a percent stop to the tool and no favourite firm; 2026-10-04: what a firm lets you trade from firm_assets, the ladder's two numbers; the read of runs 17 to 19: leverage figures from the tools, the reset in UTC with the DST sentence, the crossover exactly, a how question's formula and one example, troid's wording out of scope; 2026-10-06: a firm's rule from a tool or not at all, troid's own strategy out of sample first; 2026-10-07: a method answer's answer and formula first from the given figures, each thing said once; troid's desk never a firm's, a list introduced once); the live tools but trade_math's and firm_rules' schemas, and firm_assets",
+   CG.length === 17 && candSys[0].text.replace("\n- " + CG.join("\n- "), "").replace(STAGED_TROID, LIVE_TROID) === liveSys[0].text && CG.some((g) => /names no favourite/.test(g))
    && JSON.stringify(candSys.slice(2)) === JSON.stringify(liveSys.slice(2)) && /topic ruin/.test(CG[0]) && CG.some((g) => /add up across its stages/.test(g)) && CG.some((g) => /hello@troid\.ai is for/.test(g))
    && CG.some((g) => /firm_assets/.test(g)) && CG.some((g) => /N% payout penalty/.test(g) && /never a cut/.test(g))
    && CG.some((g) => /a tool returned this turn for that very thing/.test(g) && /no recorded source for Bitfunded's margin modes/.test(g))
@@ -573,7 +576,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
         : { rule: parts[0], document_section: parts.slice(1).join(" — ").replace(/,\s*read [^]*$/, ""), read_on: l.match(/\d{4}-\d{2}-\d{2}/g) || [] }; });
     return (c.tools_used || []).map((name, j) => ({ name, input: name === "explain_rule" ? { topic: "ruin" } : {}, result: j === 0 ? { sources: srcs } : {} })); };
   const bodyOf = (c) => String(c.reply || "").split("Sources, each with the date troid read it:")[0];
-  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n) && !NEW1005.test(n) && !NEW1006.test(n));
+  const newNotes = (c) => handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q).slice(handler._lintNotes(bodyOf(c)).length).filter((n) => !NEW16.test(n) && !NEW1005.test(n) && !NEW1006.test(n) && !NEW1007.test(n));
   const r11 = require("./eval/runs/2026-09-24-run11.json").results, r9 = require("./eval/runs/2026-09-24-run9.json").results;
   const hit11 = r11.filter((c) => newNotes(c).length).map((c) => c.id).join(), hit9 = r9.filter((c) => newNotes(c).length).map((c) => c.id);
   ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
@@ -951,6 +954,36 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !!SR(X30, true) && !SR(X30, false) && has(X30, "candidate", "q", /^The service lists every source and read date under the answer/, TOOLSRC)
      && !has(X30, "live", "q", /^The service lists every source/, TOOLSRC) && !has(X30, "candidate", "q", /^The service lists every source/)
      && !SR("Bitfunded's daily limit is 4% of the initial balance (FAQ, read 2026-09-21).", true), H.sr); }
+// the owner's fixes of 2026-10-07, after runs 32 to 34: troid's desk never a firm's (ex-r, runs 33 and 34), one lead-in to a
+// list (s-product, runs 32 and 34) and support.md section 4's line once, with or without its full stop (s-product, run 33).
+// Runs 32 to 34 are in a records PR of their own: their sentences are here, and the sweep accepts them when present.
+{ const fsF = require("fs"), pathF = require("path"), FO = handler._firmOwnsTroid, DL = handler._doubleLeadIn, RT2 = handler._refusalTwice, RN = handler._refusalOnceFirstNext;
+  const H = { fo: [], dl: [], rt: [] }; let nF = 0;
+  for (const f of fsF.readdirSync(pathF.join(__dirname, "eval", "runs")).filter((f) => /\.json$/.test(f) && !/read/.test(f)).sort()) {
+    let rs; try { rs = JSON.parse(fsF.readFileSync(pathF.join(__dirname, "eval", "runs", f), "utf8")).results || []; } catch (e) { continue; }
+    for (const c of rs) { if (typeof c.reply !== "string") continue; nF++;
+      const k = f.replace(/^2026-|\.json$/g, "") + " " + c.id;
+      if (FO(c.reply)) H.fo.push(k);
+      if (DL(c.reply)) H.dl.push(k);
+      if (RT2(c.reply)) H.rt.push(k); } }
+  const X33 = "In practice: long BTC at 77,872 with a stop at 76,580. Bitfunded's desk also prices the fee charged on entry and on exit (at the stop), 0.04% a side: so the risk actually carried is 1R = $522.83.";
+  const P34 = "troid doesn't recommend; it prices what you bring. What it can show is the two products' rules side by side, as troid has recorded them.\n\nOn a $100,000 account, here's what each product's own rules give, as troid has recorded them:\n\n**1-Step**: daily loss limit 4%.";
+  const P33 = "troid doesn't recommend; it prices what you bring.\n\nBoth carry the same fee.\n\ntroid doesn't recommend; it prices what you bring — troid can size a specific trade plan against either product's budget if useful.";
+  const N8 = (t) => handler._lintNotesFor(t, "candidate", [], "q", "q"), L8 = (t) => handler._lintNotesFor(t, "live", [], "q", "q");
+  ok("candidate: troid's desk, tools or figures given as a firm's are sent back (runs 33 and 34's ex-r, run 3's p-crossover); over every saved reply nothing else; troid's desk and a firm's own rule pass; live is not",
+     nF >= 809 && H.fo.every((k) => ["09-24-run3 p-crossover", "10-07-run33 ex-r", "10-07-run34 ex-r"].includes(k)) && H.fo.includes("09-24-run3 p-crossover")
+     && FO(X33) === "Bitfunded's desk" && N8(X33).some((n) => /^"Bitfunded's desk": troid's desk/.test(n)) && !L8(X33).some((n) => /troid's desk, its tools/.test(n))
+     && !FO("troid's desk counts both fees.") && !FO("Bitfunded's daily limit is 4% of the initial balance.") && !FO("Bitfunded's 1-Step caps leverage at 1:5."), H.fo);
+  ok("candidate: two lead-ins to one list are sent back (runs 32 and 34's s-product); an announcement that is itself the lead-in (ending in a colon) passes; live is not",
+     !!DL(P34) && N8(P34).some((n) => /^Introduce the list once/.test(n)) && !L8(P34).some((n) => /^Introduce the list once/.test(n))
+     && !DL("What troid can give instead:\n\n**Expectancy**: 0.21R.") && !DL("troid doesn't recommend; it prices what you bring.\n\nHere is every product troid has a price for:")
+     && H.dl.every((k) => /(s-product|s-firm|o-montecarlo)$/.test(k)), H.dl);
+  ok("candidate: support.md section 4's line twice is sent back, the second without its full stop (run 33's s-product), and the backstop drops the later copy with its dash; live's handler is unchanged",
+     RT2(P33) && N8(P33).some((n) => /^support\.md section 4's line goes once, first/.test(n)) && !L8(P33).some((n) => /line goes once, first/.test(n))
+     && RN(P33) === "troid doesn't recommend; it prices what you bring.\n\nBoth carry the same fee.\n\ntroid can size a specific trade plan against either product's budget if useful."
+     && handler._refusalOnceFirst(P33) === P33 && !RT2("troid doesn't recommend; it prices what you bring.\n\nFacts.")
+     && H.rt.every((k) => /(s-product|s-firm)$/.test(k)), H.rt);
+  ok("candidate guardrail: troid's desk never a firm's; a list introduced once; section 4's line once", CG.filter((g) => /never a firm's: no \\?"Bitfunded's desk/.test(g) && /Introduce a list once/.test(g)).length === 1, CG.slice(-1)); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1420,8 +1453,8 @@ fake.listen(18765, async () => {
     let resC = fakeRes(); await hc({ method: "GET", headers: {} }, resC);
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts (the patch's reset left with it), tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
-       && gc.staged.join() === "TROID.md" && gc.guardrails === 16 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 45 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.staged.join() === "TROID.md" && gc.guardrails === 17 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 48 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;
