@@ -966,7 +966,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
       const k = f.replace(/^2026-|\.json$/g, "") + " " + c.id;
       if (FO(c.reply)) H.fo.push(k);
       if (DL(c.reply)) H.dl.push(k);
-      if (RT2(c.reply)) H.rt.push(k); } }
+      if (RT2(c.reply, (c.tools_used || []).includes("products_in_budget"))) H.rt.push(k); } }
   const X33 = "In practice: long BTC at 77,872 with a stop at 76,580. Bitfunded's desk also prices the fee charged on entry and on exit (at the stop), 0.04% a side: so the risk actually carried is 1R = $522.83.";
   const P34 = "troid doesn't recommend; it prices what you bring. What it can show is the two products' rules side by side, as troid has recorded them.\n\nOn a $100,000 account, here's what each product's own rules give, as troid has recorded them:\n\n**1-Step**: daily loss limit 4%.";
   const P33 = "troid doesn't recommend; it prices what you bring.\n\nBoth carry the same fee.\n\ntroid doesn't recommend; it prices what you bring — troid can size a specific trade plan against either product's budget if useful.";
@@ -983,8 +983,26 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      RT2(P33) && N8(P33).some((n) => /^support\.md section 4's line goes once, first/.test(n)) && !L8(P33).some((n) => /line goes once, first/.test(n))
      && RN(P33) === "troid doesn't recommend; it prices what you bring.\n\nBoth carry the same fee.\n\ntroid can size a specific trade plan against either product's budget if useful."
      && handler._refusalOnceFirst(P33) === P33 && !RT2("troid doesn't recommend; it prices what you bring.\n\nFacts.")
-     && H.rt.every((k) => /(s-product|s-firm)$/.test(k)), H.rt);
+     && H.rt.every((k) => /s-product$/.test(k)), H.rt);
   ok("candidate guardrail: troid's desk never a firm's; a list introduced once; section 4's line once", CG.filter((g) => /never a firm's: no \\?"Bitfunded's desk/.test(g) && /Introduce a list once/.test(g)).length === 1, CG.slice(-1)); }
+// the owner's fixes of 2026-10-07, after the touched cases on #25 (s-product ×5): two "Here are …" lead-ins (c02), section
+// 4's line said again in other words (c01, and runs 29 and 31) and a sentence saying every rule above was read (c01, c02).
+// s-firm's products_in_budget answer ends with BUDGET_CLOSE by design and passes.
+{ const DL = handler._doubleLeadIn, RT2 = handler._refusalTwice, SR = handler._sourcesRestated;
+  const N9 = (t, tools) => handler._lintNotesFor(t, "candidate", tools || [], "q", "q"), L9 = (t, tools) => handler._lintNotesFor(t, "live", tools || [], "q", "q");
+  const C02 = "troid doesn't recommend; it prices what you bring.\n\nHere are the two products' recorded rules, so the comparison is on figures rather than characterization.\n\nHere are the recorded rules side by side, at the $100,000 level:\n\n| | 1-Step |\n|---|---|\n| daily loss limit | 4% |";
+  const C01 = "troid doesn't recommend; it prices what you bring.\n\nBoth share the same leverage cap (1:5).\n\nEvery other figure shown here (fee, daily/max loss %, target %, split, min days) is SOURCED, with its document and read date given above.\n\ntroid doesn't pick a product; the choice is yours.";
+  const C02b = "The 1-Step is tighter on both loss ceilings. Every rule above was read from the help centre's Challenge & Trader Stage tables and the Terms of Use (9(a), 18(a)), on 2026-09-23 and 2026-09-26 as listed.";
+  const BUD = "troid doesn't recommend; it prices what you bring.\n\n- Bitfunded Express, $39 at $5,000\n\n" + handler.BUDGET_CLOSE;
+  ok("candidate: two \"Here are …\" lead-ins to one list are sent back (7 Oct, s-product c02); one \"Here is …:\" passes; live is not",
+     !!DL(C02) && N9(C02).some((n) => /^Introduce the list once/.test(n)) && !L9(C02).some((n) => /^Introduce the list once/.test(n))
+     && !DL("troid doesn't recommend; it prices what you bring.\n\nHere are the recorded rules side by side:\n\n- 4%"));
+  ok("candidate: section 4's line said again in other words is sent back (c01's \"troid doesn't pick a product; the choice is yours.\"); the budget answer's closing line after products_in_budget passes; live is not",
+     RT2(C01) && N9(C01).some((n) => /^support\.md section 4's line goes once, first/.test(n)) && !L9(C01).some((n) => /line goes once, first/.test(n))
+     && !RT2(BUD, true) && !N9(BUD, [{ name: "products_in_budget", result: { error: "not under test" } }]).some((n) => /line goes once, first/.test(n))
+     && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
+  ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
+     !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
