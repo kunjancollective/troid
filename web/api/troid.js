@@ -2244,12 +2244,16 @@ function repeatedSentence(t) {
 //    names a source or read date, or any prose paragraph with three read dates, when the tools gave sources.
 const SRC_LEAD_RX = /^\s*(\*\*|__)?\s*(rules?( used| sources?)?|rule basis|sources?( used)?|this is (DERIVED|SOURCED)\b[^.\n]{0,40}\b(from|sourced)|these (figures|rules)\b[^.\n]{0,80}\b(sourced?|read)|each (of these )?rules?\b[^.\n]{0,40}\bsource)\b/i;
 const SRC_READ_RX = /\bread (on )?20\d\d-\d\d-\d\d/g;
+// or a sentence anywhere in it saying every rule or figure above was read or sourced (7 Oct, s-product: "Every other figure
+// shown here … is SOURCED, with its document and read date given above."; "Every rule above was read from the help centre's …")
+const SRC_EVERY_RX = /\b(?:every|each|all)(?: other)? (?:rule|figure|number)s?\b[^.\n]{0,40}\b(?:above|here)\b[^.\n]{0,80}\b(?:read|SOURCED|sourced)\b/i;
 function sourcesRestated(t, listed) {
   if (!listed) return null;
   for (const p of stripSources(String(t)).split(/\n\s*\n/)) {
     const prose = p.split("\n").filter((l) => !PROSE_SKIP_RX.test(l)).join(" ");
     if (!prose.trim()) continue;
-    if ((SRC_LEAD_RX.test(prose) && /\bread (on )?20\d\d|\bsource|shown (above|below)/i.test(prose)) || (prose.match(SRC_READ_RX) || []).length >= 3) return prose;
+    if ((SRC_LEAD_RX.test(prose) && /\bread (on )?20\d\d|\bsource|shown (above|below)/i.test(prose)) || (prose.match(SRC_READ_RX) || []).length >= 3
+        || SRC_EVERY_RX.test(prose)) return prose;
   }
   return null;
 }
@@ -2268,8 +2272,10 @@ const FIRM_TROID_RX = /\b(?:Bitfunded|BrightFunded|Crypto Fund Trader|CFT)['’]
 const firmOwnsTroid = (t) => { const m = stripSources(String(t)).match(FIRM_TROID_RX); return m ? m[0] : null; };
 // 6. Two lead-ins to one list (runs 32 and 34, s-product: "What troid can give is each product's recorded rules side by
 //    side …" then "Here is what each product's own rules give, …:"): a sentence on what troid can give, show, do or
-//    compare, not itself ending in a colon, followed by a lead-in (one ending in a colon, or "Here is/are", "Below").
-const ANNOUNCE_RX = /^(?:\*\*|__)?\s*(?:What (?:troid|it|ask troid) can (?:give|show|offer|compare|do)|What can be compared|What troid gives)\b/i;
+//    compare, or "Here is/are …", not itself ending in a colon, followed by a lead-in (one ending in a colon, or "Here
+//    is/are", "Below"; 7 Oct, s-product: "Here are the two products' recorded rules, so …." then "Here are the recorded
+//    rules side by side, at the $100,000 level:").
+const ANNOUNCE_RX = /^(?:\*\*|__)?\s*(?:What (?:troid|it|ask troid) can (?:give|show|offer|compare|do)|What can be compared|What troid gives|Here(?:['’]s| is| are)\b)/i;
 const LEADIN_RX = /:\s*(?:\*\*|__)?\s*$|^(?:\*\*|__)?\s*(?:Here(?:['’]s| is| are)|Below)\b/i;
 function doubleLeadIn(t) {
   const S = stripSources(String(t)).replace(/^\s*troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split("\n").flatMap(sentencesOf);
@@ -2280,14 +2286,19 @@ function doubleLeadIn(t) {
 // 7. support.md section 4's line more than once, with or without its full stop (run 33, s-product: "troid doesn't
 //    recommend; it prices what you bring — troid can size …" in its last paragraph)
 const REFUSAL_ANY_RX = /troid doesn['’]t recommend; it prices what you bring/gi;
-const refusalTwice = (t) => (stripSources(String(t)).match(REFUSAL_ANY_RX) || []).length > 1;
+// or said again in other words after it (7 Oct, s-product: "troid doesn't pick a product; the choice is yours.", the
+// budget answer's closing line, which only an answer from products_in_budget ends with)
+const REFUSAL_AGAIN_RX = /\btroid (?:doesn['’]t|does not|won['’]t|will not|can['’]t|cannot) (?:pick|choose|recommend|select|decide)\b|\bthe choice is (?:yours|the trader['’]s)\b/i;
+const refusalTwice = (t, budget) => { let b = stripSources(String(t)); const m = b.match(REFUSAL_ANY_RX) || [];
+  if (budget) b = b.split(BUDGET_CLOSE).join("");
+  return m.length > 1 || (m.length === 1 && REFUSAL_AGAIN_RX.test(b.slice(b.search(REFUSAL_ANY_RX) + m[0].length))); };
 CANDIDATE_LINTS.push(
   [(t) => !!firmOwnsTroid(t),
    (t) => "\"" + firmOwnsTroid(t) + "\": troid's desk, its tools and the figures they compute are troid's, never a firm's. Say \"troid's desk\" (or troid's own tool's result), and keep a firm's name for the firm's own rules."],
   [(t) => !!doubleLeadIn(t),
    (t) => "Introduce the list once: \"" + doubleLeadIn(t)[0] + "\" and \"" + doubleLeadIn(t)[1] + "\" both lead into it. Keep one lead-in."],
-  [(t) => refusalTwice(t),
-   "support.md section 4's line goes once, first: \"troid doesn't recommend; it prices what you bring.\" Never again later in the answer, with or without its full stop."]);
+  [(t, tools) => refusalTwice(t, (tools || []).some((x) => x.name === "products_in_budget")),
+   "support.md section 4's line goes once, first: \"troid doesn't recommend; it prices what you bring.\" Never again later in the answer, with or without its full stop, nor in other words (\"troid doesn't pick …\", \"the choice is yours\")."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
 // final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before

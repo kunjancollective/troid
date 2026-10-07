@@ -12,6 +12,20 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-07 (third): the lints' reach, after s-product ×5 on the second
+
+Two of five s-product replies on the second staging still said a thing twice, in shapes its lints missed. Candidate only:
+
+- **Two "Here are …" lead-ins.** `doubleLeadIn` also takes "Here is/are …" as the first of the two (c02: "Here are the two
+  products' recorded rules, so …." then "Here are the recorded rules side by side, at the $100,000 level:").
+- **Section 4's line in other words.** `refusalTwice` also sends back "troid doesn't pick …" or "the choice is yours" after
+  the line (c01, and runs 29 and 31). The budget answer's closing line (`BUDGET_CLOSE`) still passes after
+  products_in_budget.
+- **"Every rule above was read …".** `sourcesRestated` also sends back a sentence saying every rule or figure above was
+  read or sourced (c01, c02), when the tools gave sources.
+- **Over every saved reply (1,033)** the wider reach adds those s-product replies and nothing else. Live and patch are
+  unchanged over all of them.
+
 ## Staged 2026-10-07 (second): the owner's fixes after runs 32 to 34
 
 Runs 32 to 34 held only on (c), on repeated text (s-product), with ex-r's "Bitfunded's desk" twice among the majors.
