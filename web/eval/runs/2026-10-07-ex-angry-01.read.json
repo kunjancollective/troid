@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: ex-angry alone on the candidate of #20 (the first-person lint reads the checker's whole set), 01 of 05. Automated checks: one fails, the checker's ('inputs that differ' given as 'an input that didn't match'). One major error on a read; no critical; no first person. No tool calls; 1 Sonnet call. $0.1905 on the eval key.",
+ "ex-angry": "Error (major, sources): support.md section 2's steps in order: acknowledged; the inputs asked for; the reconstruction promised with its formulas, values, rule and read date; the three causes; the dashboard and hello@troid.ai; no fault either way. No first person (troid needs, troid will). The automated failure is the checker's: '/inputs? (that )?differ/' misses 'an input that didn't match the account's actual state', the same cause in other words (run 19's listed false failure). On a read, one major error: 'if it's a trailing-drawdown product like BrightFunded' states BrightFunded's drawdown type with no tool and no read date (troid's record agrees: trailing). Read, not fixed, as in run 28.",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'if it's a trailing-drawdown product like BrightFunded': BrightFunded's drawdown type stated from no tool, undated"
+   ]
+  }
+ ]
+}
