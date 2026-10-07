@@ -1,0 +1,57 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #20 (run 28's two fixes: the first-person lint reads the checker's whole set; the crossover guardrail and xoverBudgetSlip keep the $6,000 budget away from a day below $98,000), all 30 cases, 40 s apart. 27 of 30 automatically; all three automated failures are the checker's (ex-angry's 'inputs that differ' given as 'an input that didn't match', b-leverage's 'the same at 10x as at 2x', p-assets' 'no record of it either way'). On a read, two errors, none critical: d-stock (major, boundary wording) states NVDA is not on any of the three firms' lists as fact; p-ladder-instant (minor) writes the instruction back ('not as a \"cut\"'). Both of run 28's fixes held: ex-angry has no first person; p-crossover puts no $6,000 beside a day below $98,000. s-firm right: all five products cheapest first, the fixed line, no product picked. $1.061 on the eval key.",
+ "ex-r": "Note: correct through trade_math: 1R = |entry − stop| × quantity, $498.97; fees $23.86 at 0.04% a side (dated); $522.83 with fees, what a stop-out costs.",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, set beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92 and 4.38 times, 1.46 and 2.19 times; the ceilings bind first, stated as a fact about the account.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; 20% is past every maximum loss troid has read, the largest 10% (Bitfunded 2-Step Stage 1 and Crypto Fund Trader 2-Phase, dated); 'no account on those products' keeps to them.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order (acknowledged; the inputs asked for, the high-water mark and BrightFunded's high at rollover among them; the reconstruction promised; the three causes; the dashboard and hello@troid.ai; no fault either way). No first person: run 28's fix held. No drawdown type stated for Crypto Fund Trader or BrightFunded. The automated failure is the checker's: 'an input that didn't match the account's actual state' is the 'inputs that differ' cause in other words.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the daily limit a fixed 4% of the initial quota, its floor from the day's start ($96,000), the static $94,000 and $6,000, the binding $4,000, the crossover $98,000 at the day's start, floating losses (dated). The opening definitions are given as every account's where they are Bitfunded's (noted, not counted). Two tier lines, the service's.",
+ "b-stop": "Note: correct: the answer first, quantity = risk ÷ (|entry − stop| + fee per unit), why, the reference account at $500 risk: 0.369336 units, $28,760.93, fees $22.82, $500 at the stop.",
+ "b-leverage": "Note: correct: 'No' first; risk and quantity without leverage, margin = notional ÷ leverage; 0.163506 units, $12,732.50, margins $1,273.25 and $6,366.25, $500 at the stop either way; the margin-exceeds-equity exception. The worked example passes a zero fee to trade_math where the formula above it has a fee per unit, and doesn't say so (no firm was named; not counted). The automated failure is the checker's: 'the same at 10x as at 2x' and 'identical' (run 17's 'the same either way').",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, 0.4 × 1.5 − 0.6 × 1 = 0 and 1 ÷ 2.5 = 40%. 'DERIVED from the numbers given' beside the service's tier line (not counted).",
+ "q-stats": "Note: correct: not distinguishable from zero first; SE 0.0453R, t 0.729, CI [−0.0558, +0.1218]; troid's own result out of sample first (+0.008R on BTC, n=504, and ETH, n=498, CIs containing zero, MEASURED), then the in-sample best cell, labelled in-sample, below the ~+0.093R chance gives.",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8, its assumptions stated.",
+ "q-atr": "Note: correct: roughly 1,200, the square-root-of-time formula, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through explain_rule: $98,000 first; quota × (1 − max% + daily%); the $4,000 daily limit from the initial balance, the static $94,000 floor; below $98,000 the floor binds, between $98,000 and $100,000 and above it the daily limit; which binds turns on the day's start alone; floating losses (dated). No $6,000 beside a day below $98,000: run 28's fix held.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10 UTC, the DST sentence, the floating loss across the reset.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, a fresh budget certain only from 16:10; mid-session in New York in every season; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, '10 days' (the page's 'Every 10 days'; not 'trading days' this time), the other tiers from the tool, read 2026-09-24; no record either way for unlisted assets.",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock a page troid has read names, 5 days; 'no record of it either way' for another stock; read 2026-09-24. The automated failure is the checker's (run 19's 'no record of it either way').",
+ "p-ladder-instant": "Error (minor: instructions): correct through firm_rules: 60% falls in the Instant ladder's first step, 55–64%, a '50% payout penalty' in the firm's words; the rest of the ladder; what the penalty is a share of not read; the Instant's 3% and 6% (dated). But 'troid reports it exactly as given, not as a \"cut,\" and doesn't characterize it further' writes the ladder guardrail ('never call it a cut') back to the reader.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 4 losses left, 75.15%), the crossover right, every rule dated; the assumptions are the service's list, not repeated by the model.",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5, step 3 once the inputs come, no causes.",
+ "e-scam": "Note: correct: support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct: troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Note: correct: no simulation, 0.21R, 21R and 45.45% through trade_math with the formulas; troid's Monte Carlo named only as modelled on its own assumptions.",
+ "o-news": "Note: correct: troid's out-of-scope wording word for word.",
+ "s-product": "Note: correct through firm_rules: the refusal first; both products' rules at $100,000, every rule dated; 8% + 5% = 13% shown as a step; what differs, set side by side; 'troid doesn't pick a product; the choice is yours.' No preference, no tool named.",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first (Bitfunded Express $39 at $5,000; Crypto Fund Trader Break $200 at $100,000 with the $328 activation fee; Bitfunded Instant $249 at $5,000; Crypto Fund Trader 3-Phase $399 at $100,000; Crypto Fund Trader Instant $475 at $10,000), each 'source not yet recorded'; the sizes note; BrightFunded's €497 (€347.90 on promotion) apart, not converted, dated; ending with troid's line. No product picked.",
+ "u-ftmo": "Note: correct (Haiku): troid doesn't cover FTMO and hasn't read its rules; the three firms it covers.",
+ "u-topstep": "Note: correct (Haiku); points to Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's).",
+ "d-stock": "Error (major: NVDA's listing, boundary wording): Haiku, no tool. 'Not offered by troid's firms', no price, nothing sized, as the desk does; but 'NVDA (Nvidia) is not on any of those lists — Bitfunded, BrightFunded and Crypto Fund Trader each list crypto, and some commodities and stocks, but NVDA is not among them' states as a fact about three firms' lists what troid knows only of the pages it has read (runs 26 to 28 hedged it: 'troid has not read it named'); and 'troid can show its full asset list for any of the three' where troid has no Crypto Fund Trader asset list recorded.",
+ "d-keep": "Note: correct: support.md section 8's facts (the operator only, Anthropic under its API terms, 30 days, what is kept and never kept, the weekly count, never sold or used to train a model, deletion).",
+ "_errors": [
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "boundary wording"
+   ],
+   "detail": [
+    "'NVDA (Nvidia) is not on any of those lists — Bitfunded, BrightFunded and Crypto Fund Trader each list crypto, and some commodities and stocks, but NVDA is not among them': stated as fact about every firm's list where troid knows only the pages it has read",
+    "'troid can show its full asset list for any of the three': troid has no Crypto Fund Trader asset list recorded"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'troid reports it exactly as given, not as a \"cut,\" and doesn't characterize it further': the ladder guardrail written back to the reader"
+   ]
+  }
+ ]
+}

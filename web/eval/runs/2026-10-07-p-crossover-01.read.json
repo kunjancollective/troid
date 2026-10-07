@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: p-crossover alone on the candidate of #20 (the crossover guardrail and xoverBudgetSlip keep the $6,000 budget away from a day below $98,000), 01 of 05. Automated checks pass. No error on a read. $0.0362 on the eval key.",
+ "p-crossover": "Note: correct: $98,000 first; quota × (1 − max% + daily%) worked to $98,000; the daily limit a fixed $4,000 from the initial balance, the floor a static $94,000; below $98,000 at the day's start the floor binds with under $4,000 of room, between $98,000 and the $100,000 start and above it the daily limit binds; $6,000 only at a $100,000 start; floating losses count (dated). No $6,000 beside a day below $98,000: run 28's fix held. Through explain_rule.",
+ "_errors": []
+}

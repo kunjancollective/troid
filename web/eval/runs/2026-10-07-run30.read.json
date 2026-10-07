@@ -1,0 +1,99 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #20, all 30 cases, 40 s apart. 26 of 30 automatically; p-assets' and p-size's automated failures are the checker's ('no record of it either way'; ceil(2,000/480) − 1 = 4), ex-r's and o-montecarlo's are real. On a read, six errors, none critical: four major (ex-r's $200 and $2,000 from no tool; q-stats' first line 'not distinguishable from a real edge'; o-montecarlo computes no expectancy and asks for an average loss the 1% risk already gives, naming the 'ruin' topic; d-stock's NVDA unlisted by every firm, with firm_assets named), two minor (p-crossover restates its sources; s-product's sentence twice). Both of run 28's fixes held: ex-angry has no first person ('please share the inputs'); p-crossover puts no $6,000 beside a day below $98,000. s-firm right: all five products cheapest first, the fixed line, none picked. $1.1131 on the eval key.",
+ "ex-r": "Error (major: figures from no tool): correct through trade_math and size_trade: 1R = |entry − stop| × size, $498.97; fees $23.86 at 0.04% a side; the desk's $522.83; the 1-Step's $500 at 0.5%, 12.5% of the $4,000 budget, 7 more losses (the tool's). But 'a trade risking $200 and one risking $2,000 can both be \"+2R\"' uses two figures no tool gave and the question didn't (the automated failure).",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) / b, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92 and 4.38 times, 1.46 and 2.19 times; the ceilings bind first.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; 'on every funded product troid has a maximum loss recorded for', the largest 10% (Bitfunded 2-Step Stage 1 and Crypto Fund Trader 2-Phase, dated). Keeps to what troid has read.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order (acknowledged; the inputs asked for, the high-water mark if the product trails; the reconstruction promised with each rule's read date; the three causes; the dashboard and hello@troid.ai; no fault either way). No first person ('please share the inputs'): run 28's fix held. No firm's drawdown type stated.",
+ "b-limits": "Note: correct through check_budget: the daily limit resets, the maximum loss doesn't; the formulas; $96,000/$4,000, $94,000/$6,000, the binding $4,000; the crossover $98,000 at the day's start, which binds turning on it alone. The opening definition is every account's where the figures are Bitfunded's (noted, not counted); 'shown above' for sources listed below.",
+ "b-stop": "Note: correct through trade_math: the stop sets the size; quantity = risk ÷ (|entry − stop| + fee per unit); entry 60,000, stop 59,700, $500: 1.437277 units, $86,236.63, fees $68.82, $500 at the stop, margin $17,247.33 at 5×.",
+ "b-leverage": "Note: correct: 'No' first; loss at the stop = risk, leverage absent; 0.5 units, $25,000, margins $12,500 and $2,500, $500 either way; the margin-exceeds-equity exception; liquidation under isolated and cross. As in run 29 the example passes a zero fee where the formula has fees, unsaid (no firm named; not counted).",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, 0.4 × 1.5 − 0.6 × 1 = 0 and 1 ÷ 2.5 = 40%, costs push it below zero.",
+ "q-stats": "Error (major: misstated): SE 0.0453R, t 0.729, CI [−0.0558, 0.1218]R containing zero; troid's own result out of sample first (+0.008R, BTC n=504, ETH n=498, MEASURED), then the in-sample best cell, labelled. But the first line, 'No, that result is not distinguishable from a real edge', says the reverse of the result: it is not distinguishable from zero (no edge).",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8.",
+ "q-atr": "Note: correct: about 1200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Error (minor: repeated text): correct through check_budget and trade_math: $98,000 first; quota × (1 − max% + daily%), $2,000 below the start (half the $4,000 daily budget, the tool's); $96,000/$4,000 and $94,000/$6,000 on a $100,000 day; between $98,000 and $100,000 the daily limit binds, below $98,000 the floor; which binds turns on the day's start alone. No $6,000 beside a day below $98,000: run 28's fix held. But its last paragraph restates the sources the service lists.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10 UTC, a fresh budget certain only from 16:10, the DST sentence, the floating loss across the reset.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, the ten ambiguous minutes, mid-session in New York in every season; no local hour.",
+ "p-hold": "Note: correct through firm_rules and firm_assets: ETH a Major Crypto Asset, '10 days' (not 'trading days'); the three tiers with the majors troid records (firms.json), 7 and 5 days; Restricted Trading Practices s.1, dated in the list; the same on every product.",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock named, 5 days; 'no record of it either way … not that Bitfunded doesn't offer it'. The automated failure is the checker's (run 19's).",
+ "p-ladder-instant": "Note: correct through check_compliance: 60% falls in the Instant ladder's first step, from 55%, a '50% payout penalty' in the firm's words; what the penalty is a share of not read. Adds the two Terms prohibitions troid states but can't check (14(d)(ix), 13(c)(v)), from the tool. No 'cut' this time.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses left, 75.15%), the crossover right. 'Your default cap' for troid's default 5×, and 'as it should be' of the stop being the first breaker, noted, not counted. The automated failure is the checker's (ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5, step 3 once the inputs come, no causes.",
+ "e-scam": "Note: correct (Haiku): support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Error (major: incomplete method; tool named): no simulation, rightly; but no expectancy either: it lists what troid could compute and asks for the average loss in R, where the question's 1% risk per trade is the 1R loss (runs 20 to 29 gave 0.21R, 21R and 45.45%). 'Under the \"ruin\" topic' names a tool's parameter (run 27's).",
+ "o-news": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; both products at $100,000, every rule dated; 8% + 5% = 13% as a step; $200 less in fees, a fact; no preference. But the opening sentence is given twice in other words ('side by side' both times).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded', the Break's $328 activation fee; the sizes note; BrightFunded's €497 (€347.90 on promotion) apart, unconverted, dated; ending with troid's line. 'Here's what $500 buys' introduces the whole list; no product picked.",
+ "u-ftmo": "Note: correct (Haiku): troid doesn't cover FTMO and hasn't read its rules; FTMO's own terms. 'troid recommends checking FTMO's own terms' points to a document, not a firm or trade.",
+ "u-topstep": "Note: correct (Haiku): not covered, not read; the three firms; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's).",
+ "d-stock": "Error (major: NVDA's listing; tool named): 'not offered by troid's firms', no price, nothing sized, as the desk does; but 'it isn't among the assets any firm troid compares actually lists for trading' states every firm's list where troid has none for Crypto Fund Trader (runs 22, 25, 29), and 'checked through troid's firm_assets tool' names a tool.",
+ "d-keep": "Note: correct: support.md section 8's facts (the operator only, Anthropic under its API terms, 30 days, what is kept and never kept, the weekly count, never sold or used to train a model, deletion).",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'a trade risking $200 and one risking $2,000 can both be \"+2R\"': $200 and $2,000 from no tool and not the question's (the automated failure); not wrong as arithmetic, but against the rule that every number comes from a tool, the user or troid's figures"
+   ]
+  },
+  {
+   "case": "q-stats",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'No, that result is not distinguishable from a real edge.': the answer's first line says the opposite of the method's result; the mean is not distinguishable from zero (the next paragraphs say so)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
+    "incomplete method",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "no expectancy computed: 'give (or confirm) the average loss in R as well' where the question's 1% risk per trade is the 1R loss (runs 20 to 29 computed 0.21R, 21R and 45.45%); the automated failure",
+    "'troid only quotes its own published Monte Carlo results (under the \"ruin\" topic)' and 'There's no tool here that executes…' name a tool's parameter and the tools (run 27's 'troid's ruin topic')"
+   ]
+  },
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'it isn't among the assets any firm troid compares actually lists for trading': NVDA said not listed by all three firms, with no tool; troid has no asset list for Crypto Fund Trader",
+    "'checked through troid's firm_assets tool' names a tool"
+   ]
+  },
+  {
+   "case": "p-crossover",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'This is DERIVED from Bitfunded's published daily (4%) and maximum (6%) loss rules — help centre … read 2026-09-23; … FAQ, read 2026-09-21; … read 2026-09-18': restates the sources list the service writes under the answer"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'What can be compared is the two products' own recorded rules, side by side.' then 'Here is what each product's own recorded rules give, side by side': the same sentence twice"
+   ]
+  }
+ ]
+}

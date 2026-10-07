@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: ex-angry alone on the candidate of #20 (the first-person lint reads the checker's whole set), 04 of 05. Automated checks pass. No error on a read; no first person. No tool calls; 1 Sonnet call. $0.0182 on the eval key.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order: acknowledged; the inputs asked for; the reconstruction promised with its formulas, values, rule and read date; the three causes; the dashboard and hello@troid.ai; no fault either way. No first person (troid needs, troid will).",
+ "_errors": []
+}
