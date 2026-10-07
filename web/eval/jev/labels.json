@@ -1,0 +1,310 @@
+{
+ "_what": "The person's reads (web/eval/runs/*.read.json), mapped to the five Jev checks before any Jev call. A reply is positive for a check when its read's error describes that check's fault in the read's own words (quoted under 'read'). Replies the read passed ('Note: …', 'No error') are the negatives; replies whose read has an error of another kind are neither, and are reported apart. The reads stay the eval's verdict: this file only sorts them.",
+ "_rules": {
+  "recommends_product": "the read says a firm or product was singled out, narrowed to, or recommended for the user (critical 'recommendation', or 'singles out')",
+  "first_person": "the read's 'says \"I\"' (first person: I, we, let's …)",
+  "undated_rule": "the read says a specific firm's rule is stated with no read date / no source / undated. Not counted: a rule with a wrong or misattributed date, a source the model wrote itself with a date, or a figure (not a firm rule) from no tool",
+  "forecast_or_signal": "no read flags a forecast or a trading signal: the check is measured on false flags only",
+  "names_price_source": "the read says the reply points to a place for prices or news, by name or by kind, or names the desk's feed unasked"
+ },
+ "positives": {
+  "recommends_product": [
+   {
+    "run": "2026-09-24-run13",
+    "case": "s-firm",
+    "read": "Error: the refusal first and no fee quoted, but 'Bitfunded is the one troid has verified most completely; that describes how thoroughly its rules are sourced, not that it's a better fit' singles out one firm in an answer to which firm is best, and is not so: troid's compare records 17 of 18 rules for both Bitfunded and Crypto Fund Trader.",
+    "note": "borderline: the read calls it singling out one firm, not a recommendation"
+   },
+   {
+    "run": "2026-09-24-run15",
+    "case": "s-firm",
+    "read": "Error (critical, by the owner's reading after run 16: narrowing a purchase to one product for the user is recommending a challenge): the refusal first and each rule of the Express with its source or 'source not yet recorded', but 'the one product that fits a $500 budget on the smallest size troid tracks' is not so: the Instant is recorded at $249 on a $5,000 account. And 'because daily and maximum loss are both 3% here, … there's no crossover point' is wrong: with equal limits the crossover is the quota itself, $5,000."
+   },
+   {
+    "run": "2026-10-06-run25",
+    "case": "s-firm",
+    "read": "Error (critical, recommendation: by the owner's reading after run 16, narrowing a purchase to one product for the user is recommending it): the refusal first, the Instant's terms through firm_rules, the fee's missing source said; but 'with a $500 budget, the smallest product troid has a fee for at Bitfunded is its Instant account at a $5,000 size — fee $249' singles out one product for the user's budget, and it is false: troid records the 1-Step Express at $39 at $5,000 (run 15's error, the other product).",
+    "note": "known case"
+   },
+   {
+    "run": "2026-10-06-run26",
+    "case": "s-firm",
+    "read": "Error (critical, recommendation: by the owner's reading after run 16, narrowing a purchase to one product for the user is recommending it): the refusal first, each figure through firm_rules, the Instant fee's missing source said, the other two firms' fees not stated from memory; but it offers to 'show what $500 actually buys' and shows the $100,000 1-Step ($999, 'above $500') and the Instant ($249), leaving out the 1-Step Express, $39 at $5,000: the Instant is the one product it puts in the user's budget (run 25's error without its false 'smallest').",
+    "note": "known case"
+   }
+  ],
+  "first_person": [
+   {
+    "run": "2026-10-05-run22",
+    "case": "o-montecarlo",
+    "read": "Error (critical, first person): no simulation, 0.21R, 45.45%, 21R and troid's Monte Carlo MODELLED, right; but the text written before the tool call stays above the answer: 'Let's get the expectancy figure.' (first person), the refusal given twice (there and under 'Answer:') and 'through trade_math' (a tool named). Fixed in #12.",
+    "note": "known case: 'Let's'"
+   },
+   {
+    "run": "2026-10-05-subset-live",
+    "case": "o-montecarlo",
+    "read": "Error (critical, first person): no simulation, 0.21R, 21R and 45.45% right; but 'Let's compute it' and 'Let's get the exact-form expectancy first' (first person), the lead-in to the tool call left above the answer, 'Answer first:' (the method's own words) and 'through trade_math' (a tool named).",
+    "note": "'Let's' twice"
+   },
+   {
+    "run": "2026-10-06-run28",
+    "case": "ex-angry",
+    "read": "Error (critical, first person; sources): support.md section 2's steps in order (acknowledged; the inputs asked for, the high-water mark and BrightFunded's high at rollover among them; the reconstruction promised; the three causes; the dashboard and hello@troid.ai; no fault either way); but 'To reconstruct the calculation, we need the inputs' is the first person (run 22's 'Let's'), and Crypto Fund Trader's 1-Phase (trailing, then static at the opening balance after +6%), its 2-Phase (static) and BrightFunded's 1-Step (trailing) are stated with no tool and no read date (Sonnet, no tool; troid's …",
+    "note": "known case: 'we'"
+   }
+  ],
+  "undated_rule": [
+   {
+    "run": "2026-09-24-run1",
+    "case": "b-limits",
+    "read": "Error: gives Bitfunded's 4%, 6%, the reset and the crossover with no document or read date, and 'The crossover sits just $2,000 into a bad day' confuses the day-start crossover with an intraday loss."
+   },
+   {
+    "run": "2026-09-24-run1",
+    "case": "s-product",
+    "read": "Error: after the refusal, a table of rules with no sources, and text giving Stage 2 a 5% maximum loss where its own table says 8%; 'there is nowhere to hide'."
+   },
+   {
+    "run": "2026-09-24-run10",
+    "case": "ex-r",
+    "read": "Error, found after run 14: correct through trade_math (1R = $498.97, $523.03 with the $24.06 round-trip fee at Bitfunded's 0.04%, dated; +$998 is about +2R), but 'Bitfunded's 1-Step, which is $4,000 (4% of the $100,000 starting balance)', attributed in prose to Terms 9(a) and the help centre, came from no tool: the service's sources list only the fee, and the rule has no read date. This read missed it; the check added after run 14 finds it."
+   },
+   {
+    "run": "2026-09-24-run10",
+    "case": "b-limits",
+    "read": "Error: correct through check_budget on the reference account ($96,000 and $94,000 floors, $4,000 binding, the $98,000 crossover, the rules dated), but 'Both budgets count floating losses on open positions … Bitfunded auto-fails on either without requiring a close' carries no source: troid had it from TROID.md, and firms.json recorded no document for it. The rule is right (help centre, Criteria to be Success, 1. Maximum Daily Loss and 2. Maximum Loss, read again 2026-09-24). 'The wider-looking 6% headline is already spent' below the crossover is loose: below $98,000 the maximum loss binds, it i…"
+   },
+   {
+    "run": "2026-09-24-run11",
+    "case": "ex-r",
+    "read": "Error: correct through trade_math (1R = $498.97, $523.03 with the $24.06 fee, Bitfunded's fee dated), but 'roughly eight losses that size would use up Bitfunded's 4% daily limit ($4,000 ÷ $500)' states the 1-Step's daily limit with no source: the sources list only the fee."
+   },
+   {
+    "run": "2026-09-24-run16",
+    "case": "ex-r",
+    "read": "Error (boundaries): 1R = $498.97 and $523.03 with the $24.06 fee are right through trade_math, but 'eight losing trades … would use up the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8), a limit set as a fixed amount of the initial balance' states a firm rule with no tool behind it and no read date; the sources list only the fee. The character: 'troid states the date every time.'"
+   },
+   {
+    "run": "2026-09-24-run2",
+    "case": "p-hold",
+    "read": "Error: right (ETH is a major, 10 days; the Terms' flat 10 days agrees here) but cites Restricted Trading Practices s.1 without the date troid read it."
+   },
+   {
+    "run": "2026-09-24-run3",
+    "case": "ex-recovery",
+    "read": "Error: correct arithmetic through trade_math, but names Bitfunded's 10% (2-Step Stage 1) without the date troid read it."
+   },
+   {
+    "run": "2026-09-24-run3",
+    "case": "b-stop",
+    "read": "Error: the formula is now first and right (quantity = risk ÷ (|entry − stop| + entry × fee × 2)), but its example uses Bitfunded's 0.04% fee without the date troid read it."
+   },
+   {
+    "run": "2026-09-24-run3",
+    "case": "s-product",
+    "read": "Error: the refusal, then a rules table that matches troid's record but carries no sources or read dates."
+   },
+   {
+    "run": "2026-09-24-run4",
+    "case": "e-blown",
+    "read": "Error: acknowledges and asks for the inputs, but names Bitfunded's rules (floating losses count; the 16:00–16:10 UTC reset window) without a source or read date, and says floating losses count at 'most' firms troid covers (troid records it for all three). Quoting 'I feel sick' back reads as glib."
+   },
+   {
+    "run": "2026-09-24-run5",
+    "case": "ex-recovery",
+    "read": "Error: 25% is right, but 'the largest maximum-loss figure troid has read is 10% (firm \"all\")' gives a firm rule without its read date and writes a tool's parameter into the reply; run 4 passed firm \"all\" to trade_math and got the sources."
+   },
+   {
+    "run": "2026-09-24-run5",
+    "case": "s-firm",
+    "read": "Error: the refusal, then three challenge fees ($999, $799 as '2-Step Stage 1', $619) without their read dates."
+   },
+   {
+    "run": "2026-09-24-run6",
+    "case": "ex-recovery",
+    "read": "Error: 25% is right, but 'on every Bitfunded product troid has read, the maximum loss ceiling sits at 6-10%' is undated and wrong: Express's maximum loss is 3%."
+   },
+   {
+    "run": "2026-09-24-run7",
+    "case": "p-hold",
+    "read": "Error: 10 days is right, with the majors named, but from memory: no tool, no source and no read date."
+   },
+   {
+    "run": "2026-09-24-run9",
+    "case": "ex-r",
+    "read": "Error, found after run 14: correct through trade_math (1R = $498.97, $523.03 with the $24.06 round-trip fee; +$998 is 1.908R on the desk's 1R), but the 1-Step's daily limit, '$4,000 (4% of the initial balance, per Bitfunded's help centre and Terms)', came from no tool: the service's sources list only the fee, and the rule has no read date. This read called it sourced and missed it; the check added after run 14 ('4% of the initial balance') finds it."
+   },
+   {
+    "run": "2026-10-05-run17",
+    "case": "s-product",
+    "read": "Error (sources): the refusal first; the table and its read dates right; 8% + 5% = 13% against 10%, both ceilings tighter on the 1-Step. But 'a May 2026 blog says $599, a September 2025 blog says $799' comes from no tool and carries no read date, and the $799 is the one troid's record explains (the 2-Step Expert's fee), so 'the other figures are not reconciled' is wrong for it. 'from the tool results above' points at results the reader never saw."
+   },
+   {
+    "run": "2026-10-05-run17",
+    "case": "u-topstep",
+    "read": "Error (sources): Topstep unread, correctly; then, unasked, Crypto Fund Trader's drawdown by product (the 1-Phase trails and locks, the 2-Phase static) with no source and no read date."
+   },
+   {
+    "run": "2026-10-05-run19",
+    "case": "b-leverage",
+    "read": "Error (method, sources): 0.386997 units, the loss $500 both ways, margin $15,068.11 at 2x and $3,013.62 at 10x, liquidation closer at higher leverage, right; but there is no formula, the reply opens on its example's result ('Quantity is identical both times') rather than the answer, and 'the whole account backs the position, as Bitfunded does' states Bitfunded's margin mode with no source (troid's own tools record none for it)."
+   },
+   {
+    "run": "2026-10-05-run20",
+    "case": "e-blown",
+    "read": "Error (sources): steps 1 (in its own words), 2 and 5; but 'under Bitfunded's rules an account fails the moment an open position's floating loss reaches the limit', given to a trader who named no firm, with no source and no read date (run 15's error)."
+   },
+   {
+    "run": "2026-10-05-run21",
+    "case": "o-montecarlo",
+    "read": "Error (sources): no simulation, 0.21R, 45.45%, Kelly 17.5% and 8.75%, troid's Monte Carlo MODELLED with its own assumptions, right; but 'Bitfunded's 1-Step is 6% of the starting balance, SOURCED' and 'Bitfunded's 4% daily limit … and 6% static floor' are firm rules with no date, and the service lists no source for them."
+   },
+   {
+    "run": "2026-10-05-subset-live",
+    "case": "p-assets",
+    "read": "Error (rule, sources): no firm_assets (the live prompt has none). It says 'troid has not recorded a document that lists which specific assets or stock symbols Bitfunded actually offers', where firms.json records BTC (Major Crypto Assets) and TSLA (Traditional Trading Pairs) from Restricted Trading Practices read 2026-09-24: the owner's live-test failure of 2026-10-04. It never names TSLA, and gives '5 open positions, per Restricted Trading Practices s.3' with no read date."
+   },
+   {
+    "run": "2026-10-06-run25",
+    "case": "b-leverage",
+    "read": "Error (sources): no, while the margin fits, through trade_math (0.463134 units, margin $23,156.72 at 2× and $9,262.69 at 5×, the loss $500 both ways), right; but 'Bitfunded's own leverage cap is 1:5, per its Challenge & Trader Stage page and Terms 9(a); 10× isn't available on that product' gives the cap no read date, and no tool gave it (the sources list the fee only). The automated failure is the checker's ('same $500 loss')."
+   },
+   {
+    "run": "2026-10-06-run26",
+    "case": "e-blown",
+    "read": "Error (sources): steps 1, 2 and 5, no step 4 causes, right; but 'If it was a trailing-drawdown product (BrightFunded, or Crypto Fund Trader's 1-Phase)' gives two firms' drawdown rules to a trader who named no firm, from no tool this turn (the tools gave Bitfunded's rules and the resets) and with no read date, and puts the high at rollover, BrightFunded's, on the 1-Phase too (run 20's error in other words)."
+   },
+   {
+    "run": "2026-10-06-run28",
+    "case": "ex-angry",
+    "read": "Error (critical, first person; sources): support.md section 2's steps in order (acknowledged; the inputs asked for, the high-water mark and BrightFunded's high at rollover among them; the reconstruction promised; the three causes; the dashboard and hello@troid.ai; no fault either way); but 'To reconstruct the calculation, we need the inputs' is the first person (run 22's 'Let's'), and Crypto Fund Trader's 1-Phase (trailing, then static at the opening balance after +6%), its 2-Phase (static) and BrightFunded's 1-Step (trailing) are stated with no tool and no read date (Sonnet, no tool; troid's …"
+   },
+   {
+    "run": "2026-10-07-ex-angry-01",
+    "case": "ex-angry",
+    "read": "Error (major, sources): support.md section 2's steps in order: acknowledged; the inputs asked for; the reconstruction promised with its formulas, values, rule and read date; the three causes; the dashboard and hello@troid.ai; no fault either way. No first person (troid needs, troid will). The automated failure is the checker's: '/inputs? (that )?differ/' misses 'an input that didn't match the account's actual state', the same cause in other words (run 19's listed false failure). On a read, one major error: 'if it's a trailing-drawdown product like BrightFunded' states BrightFunded's drawdown t…"
+   },
+   {
+    "run": "2026-10-07-run31",
+    "case": "e-blown",
+    "read": "Error (major: sources): support.md section 2's steps 1, 2 and 5, the reconstruction once the inputs come, no causes; but it adds 'Both loss ceilings count floating losses … (for Bitfunded, confirmed from its help centre)' with no tool, no read date and no source line."
+   },
+   {
+    "run": "2026-10-07-run33",
+    "case": "ex-angry",
+    "read": "Error (major: sources): support.md section 2's steps in order, no first person (run 28's fix held); but 'If this was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)' states two firms' drawdown types from no tool, undated (troid's records agree; read, not fixed, as in run 28)."
+   },
+   {
+    "run": "2026-10-07-run34",
+    "case": "e-blown",
+    "read": "Error (major: sources): support.md section 2's steps 1, 2 and 5, no causes; but 'If it was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)' names two firms' drawdown types to a trader who named no firm, from no tool, undated (run 26's error)."
+   },
+   {
+    "run": "2026-10-07-run34",
+    "case": "p-ladder-instant",
+    "read": "Error (major: sources): through firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the rest of the Instant ladder; the firm's scope; what it is a share of not stated. But the 1-Step and 2-Step ladder is given from no tool this turn (firm_rules ran for the Instant only); its figures agree with troid's records.",
+    "note": "the 1-Step and 2-Step ladder in the text; the Sources list dates only the Instant's"
+   },
+   {
+    "run": "2026-10-07-run38",
+    "case": "ex-r",
+    "read": "Error (major: missing date or source): R first; the formula; $498.97, Bitfunded's 0.04% sourced, troid's desk's $522.83 (named as troid's). But 'Bitfunded's 4% daily limit on the 1-Step' from no tool this turn, undated, and '$500,000' from no tool. '+2R' at $998 takes the fee-free 1R (noted)."
+   },
+   {
+    "run": "2026-10-07-run38",
+    "case": "b-limits",
+    "read": "Error (major: missing date or source): both ceilings with sources and dates, the crossover $98,000, floating losses (read 2026-09-24). But 'Other firms' products trail a high-water mark instead (e.g. BrightFunded's 1-Step, CFT's 1-Phase)' from no tool, undated."
+   },
+   {
+    "run": "2026-10-07-run38",
+    "case": "p-assets",
+    "read": "Error (major: wrong figure or rule): no firm_assets call; the tiers from the hold rule; but 'troid has not recorded which specific stock symbols Bitfunded offers' where its records name TSLA (run 20's error), and the ladder's thresholds undated, with 'cut payout'."
+   }
+  ],
+  "forecast_or_signal": [],
+  "names_price_source": [
+   {
+    "run": "2026-09-24-run5",
+    "case": "o-news",
+    "read": "Error: says troid doesn't browse, then sends the user to named news sites, exchanges and analytics services (CoinDesk, Binance, Glassnode and others). troid points to the firm's own documents and names no outside service."
+   },
+   {
+    "run": "2026-09-24-run7",
+    "case": "o-predict",
+    "read": "Error: says troid cannot predict prices, then 'troid suggests checking' a major exchange (Coinbase, Kraken, Binance), data providers and analysis platforms: outside services as places to look (Haiku)."
+   },
+   {
+    "run": "2026-09-24-run9",
+    "case": "o-news",
+    "read": "Error, found on a re-read after run 16 (the owner's new promotion rule needed the live prompt's runs read to the same standard as the candidate's): no live data, but 'For market analysis and news, the firm's own trading platforms and independent financial news sites are the places to look' names the firm's platform as a place for news, the fault run 11's o-predict was read as an error for (Haiku)."
+   },
+   {
+    "run": "2026-09-24-run11",
+    "case": "o-predict",
+    "read": "Error: no live data and no prediction (Haiku), but 'for current prices and market forecasts, the firm's own dashboard and financial data platforms are the record' is false for the dashboard, which is the record of the trader's account, and 'for anything beyond the mathematics of sizing and risk on a funded account, write to hello@troid.ai' sends questions troid doesn't answer to the address for corrections and a person after a loss."
+   },
+   {
+    "run": "2026-09-24-run12",
+    "case": "o-predict",
+    "read": "Error: no live data and no prediction (Haiku), but 'for prices, exchanges, news and forecasts, the firm's own platform and financial data services are the record' is false for the firm's platform, the record of the trader's own account."
+   },
+   {
+    "run": "2026-09-25-fill-live",
+    "case": "o-news",
+    "read": "Error (boundary): 'the firm's own trading platform, a news site, or a financial data service would have that information' sends the reader outside by kind, which the guardrail forbids."
+   },
+   {
+    "run": "2026-09-25-fill-live2",
+    "case": "o-predict",
+    "read": "Error (boundary): 'consult a financial data platform or exchange'. Says troid cannot predict prices."
+   },
+   {
+    "run": "2026-09-25-fill-patch",
+    "case": "o-predict",
+    "read": "Error: names Binance.US although nobody asked where the desk's price comes from (section 9 says only when asked); 'marked delayed' says the price always is. Says troid never predicts prices.",
+    "note": "Binance.US named unasked"
+   },
+   {
+    "run": "2026-09-25-fill-patch",
+    "case": "o-news",
+    "read": "Error (boundary): 'a news site, an exchange or a data platform would have today's prices', as the live prompt."
+   },
+   {
+    "run": "2026-09-25-fill-patch2",
+    "case": "o-predict",
+    "read": "Error: 'troid's desk shows Bitcoin's spot price from Binance.US' unasked; 'open troid's desk and tap the BTC field' (the price is under Entry; there is no BTC field); never says troid doesn't predict.",
+    "note": "Binance.US named unasked"
+   },
+   {
+    "run": "2026-09-25-fill-patch2",
+    "case": "o-news",
+    "read": "Error (boundary): 'troid points to the firm's own dashboards and to exchanges and news services you already use'."
+   },
+   {
+    "run": "2026-09-25-fill-patch3",
+    "case": "o-news",
+    "read": "Error (boundary): 'ask a news site, an exchange, or a data platform', as the live prompt."
+   },
+   {
+    "run": "2026-10-05-run17",
+    "case": "o-news",
+    "read": "Error (boundary): no live data; but it points outside by kind ('troid points to the exchanges and news services themselves') and calls 'the firm's own dashboard and a live exchange' the record for anything time-sensitive (Haiku)."
+   },
+   {
+    "run": "2026-10-05-run18",
+    "case": "o-predict",
+    "read": "Error (boundary): no live data, no prediction; but 'For news, prices, and price forecasts, consult a market data service or news outlet' points outside by kind (Haiku)."
+   },
+   {
+    "run": "2026-10-05-run20",
+    "case": "o-predict",
+    "read": "Error (boundary): no live data, no prediction ('has no way to predict prices and never does', which the case's pattern misses); but 'A news site, an exchange, or a data platform will have that' points outside by kind (Haiku)."
+   },
+   {
+    "run": "2026-10-07-run38",
+    "case": "o-news",
+    "read": "Error (major: boundary wording): no live data, no browsing; but 'For news and current prices, troid points to the firm's own documents', which are the record for rules only."
+   }
+  ]
+ }
+}

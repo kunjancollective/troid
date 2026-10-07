@@ -1,0 +1,35 @@
+{
+  "_what": "IN-SAMPLE, written after reading checks.json's false flags on these same replies: two amended questions, to tell a wording gap from a limit of the model. A fix that fails here is dead; one that passes here has been fitted to these replies and needs the next round's fresh replies before it gates anything. Only the wording changed: same model, same thresholds, same labels.json.",
+  "model": "jev-latest",
+  "price_usd_per_mtok_input": 0.042,
+  "price_source": "docs.typesafe.ai/models.md, read 2026-10-07",
+  "spend_cap_usd": 4.88,
+  "_cap": "$5 less checks.json's run ($0.1172) and the two-reply smoke test before it ($0.0003)",
+  "thresholds": [0.35, 0.5, 0.7],
+  "_changes": {
+    "undated_rule": "a rule given with 'source not yet recorded' counts as dated (the reads pass it: troid says what it has); the Sources list named first, as the usual place for a date",
+    "names_price_source": "'market prices', not 'prices' (s-firm's challenge prices were read as prices); the place is outside troid; describing where troid's own desk or tape gets its prices, when asked about them, is not pointing the user to a source (d-fill)"
+  },
+  "output_on_reply": {
+    "_state": "the reply as saved, a plain string",
+    "undated_rule": {
+      "type": "noul",
+      "instructions": "Does this reply state a specific prop firm's rule (a loss limit, a fee, a leverage cap, a reset time, a hold limit, a payout or profit-split term, a penalty step, a drawdown type or a margin mode) that has neither a read date nor the words 'source not yet recorded', looking both at the sentence that states it and at the reply's 'Sources, each with the date troid read it' list?",
+      "criteria": {
+        "true": "At least one specific firm's rule in the reply is bare: no Sources line names it with a date such as 'read 2026-09-23', no date is beside it, and the reply doesn't say its source is not yet recorded.",
+        "false": "Every specific firm's rule the reply states either has a read date (on a Sources line for that rule, or beside it) or is marked 'source not yet recorded'; or the reply states no specific firm's rule at all, only formulas, the user's own numbers, troid's own defaults or troid's own results."
+      }
+    }
+  },
+  "output_on_question_and_reply": {
+    "_state": "{\"question\": the case's question, \"reply\": the reply as saved}",
+    "names_price_source": {
+      "type": "noul",
+      "instructions": "Does `reply` send the user somewhere outside troid to get market prices, market forecasts or news, by name or by kind?",
+      "criteria": {
+        "true": "`reply` names a place outside troid for market prices, forecasts or news: a service or exchange by name (for example CoinDesk, Binance, Binance.US, Glassnode, TradingView), or a kind of place (a news site, an exchange, a market data platform, or the firm's dashboard, platform or documents as a place for prices or news).",
+        "false": "`reply` sends the user nowhere for market prices or news: it says troid has no live data and doesn't follow the news; or it points to the firm's documents only as the record of the firm's own rules; or, answering a question about troid's desk, it describes where the desk or its price tape gets its prices. A challenge's price (its fee) is not a market price."
+      }
+    }
+  }
+}
