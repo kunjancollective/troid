@@ -1,0 +1,75 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #22, all 30 cases, 40 s apart. 29 of 30 automatically; p-size's failures are the checker's (ceil(2,000/480) − 1 = 4; the circuit-breaker distances read as firm rules). On a read, four errors, none critical: three major (ex-r calls troid's fee-inclusive 1R 'Bitfunded's desk', run 33's error; p-ladder-instant gives the 1-Step and 2-Step ladder from no tool; e-blown names BrightFunded's and Crypto Fund Trader's 1-Phase drawdowns to a trader who named no firm), one minor (s-product's lead-in twice, under the lint's threshold). #22's fixes held where they were aimed: b-leverage 'No.' then the formula before the example; o-montecarlo 0.21R, 'L = 1R by definition', nothing asked; no sources paragraph anywhere. Run 28's held. $1.2004 on the eval key.",
+ "ex-r": "Error (major: rule misstated): through trade_math and firm_rules: R first; 1R = |entry − stop| × size; $498.97, fees $23.86, $522.83; +2R and −1R; the 1-Step's 4% daily limit from the tool. But 'Bitfunded's desk also counts the fees …' gives troid's desk's fee-inclusive 1R as the firm's (run 33's error).",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 1.46 and 2.19 times; the ceilings bind first.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; the largest maximum loss troid has read, 10% (dated in the list); 'on any account at one of those loss limits' keeps to them.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order (the inputs, BrightFunded's high at rollover as an input; the reconstruction with each rule's read date; the three causes; the dashboard and hello@troid.ai). No first person: run 28's fix held.",
+ "b-limits": "Note: correct through explain_rule and check_budget: both formulas on the 1-Step; $96,000/$4,000, $94,000/$6,000, the daily limit binding; the crossover $98,000, below it the floor, between and above the daily limit; floating losses (read 2026-09-24). The opening definitions are every account's (noted, not counted).",
+ "b-stop": "Note: correct through trade_math: the stop sets the size first; quantity = risk ÷ (|entry − stop| + fee per unit); $500 on 60,000/59,400: 0.771891 units, $46,313.45, fees $36.87, $500 at the stop.",
+ "b-leverage": "Note: correct through trade_math: 'No.' first, the formulas, then the example: 0.463134 units, $46,313.45, margins $23,156.72 (2×) and $4,631.34 (10×, generic, above the 1-Step's 5× cap), $500 at the stop at both; isolated and cross margin; the cut-to-fit case. #22's fix held.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: 'Not distinguishable from zero on this sample.' first; SE 0.0453, t 0.729, CI [−0.0558, 0.1218]; troid's own result out of sample first (MEASURED), then the in-sample cell, labelled.",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8.",
+ "q-atr": "Note: correct: roughly 1,200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through check_budget and trade_math: $98,000 first; the formula; the static $94,000 floor and the daily floor from the day's start; below $98,000 the daily floor would sit below $94,000, so the floor binds; the $6,000 budget only at a $100,000 start, under $4,000 below $98,000; which binds turns on the day's start alone. No sources paragraph.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10 UTC, a fresh budget certain from 16:10, the DST sentence, the floating loss across the reset.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, mid-session in New York, the floating loss; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days; other tiers named without figures.",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock named, 5 days; 'no record either way', not the same as not offered.",
+ "p-ladder-instant": "Error (major: sources): through firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the rest of the Instant ladder; the firm's scope; what it is a share of not stated. But the 1-Step and 2-Step ladder is given from no tool this turn (firm_rules ran for the Instant only); its figures agree with troid's records.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses left, 75.15%), the crossover right. The automated failures are the checker's (ceil(2,000/480) − 1 = 4; the circuit-breaker distances read as firm rules).",
+ "e-blown": "Error (major: sources): support.md section 2's steps 1, 2 and 5, no causes; but 'If it was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)' names two firms' drawdown types to a trader who named no firm, from no tool, undated (run 26's error).",
+ "e-scam": "Note: correct (Haiku): support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Note: correct through trade_math and explain_rule: no simulation; 0.21R ('the 1% risk per trade is the loss size, so L = 1R by definition'), 21R as a mean, 45.45%; Kelly beside the largest maximum loss troid has read (dated); troid's published Monte Carlo, MODELLED, not transferable. Nothing asked for: #22's fix held.",
+ "o-news": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; both products at $100,000; 8% + 5% = 13%; the shared rules; the differences as facts; 'for the trader to weigh'. But the lead-in is given twice ('… side by side, as troid has recorded them.' then '… here's what each product's own rules give, as troid has recorded them:'); the lint's 0.6 overlap bound let it through (7 of 13 words).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded'; the sizes note; BrightFunded's €497 (€347.90) apart, dated; ending with troid's line; none picked.",
+ "u-ftmo": "Note: correct (Haiku): not covered, not read; the three firms and troid's compare.",
+ "u-topstep": "Note: correct (Haiku): not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct through firm_assets: no page troid has read names NVDA; Bitfunded's and BrightFunded's lists from the tool; 'troid has read no page naming any assets' for Crypto Fund Trader; 'no record either way'. Its last sentences bring in the largest maximum loss troid has read, unasked (not counted).",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'Bitfunded's desk also counts the fees paid to open at entry and close at the stop … making the risked amount $522.83': troid's desk's fee-inclusive 1R given as the firm's (run 33's error)"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'Bitfunded's 1-Step and 2-Step use a different set of steps (65–74% → \"50% payout penalty,\" 75–89% → \"60%,\" …)': the 1-Step and 2-Step ladder from no tool this turn (firm_rules ran for the Instant only); the figures agree with troid's records"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'If it was a trailing-drawdown product (BrightFunded or Crypto Fund Trader's 1-Phase)': two firms' drawdown types to a trader who named no firm, from no tool, undated (run 26's error)"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'What it can show is the two products' rules side by side, as troid has recorded them.' then 'On a $100,000 account, here's what each product's own rules give, as troid has recorded them:': the lead-in twice; the repeatedSentence lint shares 7 of 13 words (0.54, under its 0.6) and let it through"
+   ]
+  }
+ ]
+}
