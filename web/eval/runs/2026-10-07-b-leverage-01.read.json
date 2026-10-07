@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: b-leverage alone on the candidate of #22 (answer and formula first, figures from the question, each thing said once), 01 of 05. Automated: passes. No error on a read. $0.2303 on the eval key.",
+ "b-leverage": "Note: correct through trade_math: 'No' first; the formulas (quantity, notional, margin, loss = risk); the margin-exceeds-equity cut; entry 60,000, stop 59,000, $1,000: 1 unit, $60,000, margins $30,000 and $6,000, $1,000 at the stop either way. The answer and formula come first: #22's fix held. 'Leverage changes … where exchange liquidation sits' and '10× … moves exchange liquidation closer to entry' leave out that this holds under isolated margin (noted, not counted). The automated failure is the checker's ('the same at 10× as at 2×').",
+ "_errors": []
+}

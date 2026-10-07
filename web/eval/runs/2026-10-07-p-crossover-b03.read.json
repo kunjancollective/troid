@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: p-crossover alone on the candidate of #22 (answer and formula first, figures from the question, each thing said once), 03 of 03. Automated checks pass. No error on a read. $0.0346 on the eval key.",
+ "p-crossover": "Note: correct through explain_rule: $98,000 first; quota × (1 − max% + daily%) worked; the daily limit a fixed $4,000 from the initial balance, the static $94,000 floor; below $98,000 the floor binds with under $4,000 of room, between $98,000 and $100,000 and above it the daily limit; $6,000 only at a $100,000 start; floating losses. No sources paragraph: #22's fix held; run 28's held too.",
+ "_errors": []
+}
