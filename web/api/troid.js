@@ -255,6 +255,12 @@ CANDIDATE_GUARDRAILS.push(
 CANDIDATE_GUARDRAILS.push(
   "A question about how something is worked out or what it means opens with its one-line answer, then the formula; the worked example comes after both, never first. Work from the figures the user gave and never ask for one the question already gives: a win in R beside a risk per trade makes the average loss 1R (a 1.2R average win at 1% risk is W = 1.2, L = 1).",
   "Say each thing once: never a sentence that restates the one before it, and never a paragraph that restates the sources or their read dates (\"Rules used: …\", \"This is DERIVED from …, read …\"); the service lists every source and read date under the answer.");
+// The owner's fixes of 2026-10-07, after runs 32 to 34 (the hold on (c), repeated text, and the read's majors). ex-r
+// (runs 33 and 34) gave troid's fee-inclusive 1R as "Bitfunded's desk"; s-product set a sentence on what troid can give
+// before a second lead-in to the same list (runs 32 and 34), and gave support.md section 4's line twice, the second
+// without its full stop (run 33).
+CANDIDATE_GUARDRAILS.push(
+  "troid's desk, its calculators, its tools and every figure they compute are troid's, never a firm's: no \"Bitfunded's desk\" or a firm's 1R; a firm's rule is the firm's, and how troid prices it is troid's. Introduce a list once: one lead-in, never a sentence on what troid can give or show followed by another introducing the same list; and support.md section 4's line once, first.");
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
   ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
@@ -2268,6 +2274,32 @@ CANDIDATE_LINTS.push(
    (t) => "Say it once: \"" + repeatedSentence(t)[1] + "\" restates the sentence before it. Keep one of the two."],
   [(t, tools) => !!sourcesRestated(t, toolSourceLines(tools).length > 0),
    "The service lists every source and read date under the answer: drop the paragraph that restates them, and keep any figure it gives that the answer needs."]);
+// 5. troid's desk, tools or figures given as a firm's (runs 33 and 34, ex-r: "Bitfunded's desk also prices the fee";
+//    run 3, p-crossover: "Bitfunded's own check_budget"). Over every saved reply: those three.
+const FIRM_TROID_RX = /\b(?:Bitfunded|BrightFunded|Crypto Fund Trader|CFT)['’]s?\s+(?:own\s+)?(?:desk|calculator|sizer|tools?|trade_math|size_trade|check_budget|explain_rule|firm_rules|1R\b|fee-inclusive|R with fees)/i;
+const firmOwnsTroid = (t) => { const m = stripSources(String(t)).match(FIRM_TROID_RX); return m ? m[0] : null; };
+// 6. Two lead-ins to one list (runs 32 and 34, s-product: "What troid can give is each product's recorded rules side by
+//    side …" then "Here is what each product's own rules give, …:"): a sentence on what troid can give, show, do or
+//    compare, not itself ending in a colon, followed by a lead-in (one ending in a colon, or "Here is/are", "Below").
+const ANNOUNCE_RX = /^(?:\*\*|__)?\s*(?:What (?:troid|it|ask troid) can (?:give|show|offer|compare|do)|What can be compared|What troid gives)\b/i;
+const LEADIN_RX = /:\s*(?:\*\*|__)?\s*$|^(?:\*\*|__)?\s*(?:Here(?:['’]s| is| are)|Below)\b/i;
+function doubleLeadIn(t) {
+  const S = stripSources(String(t)).replace(/^\s*troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split("\n").flatMap(sentencesOf);
+  for (let i = 0; i + 1 < S.length; i++)
+    if (ANNOUNCE_RX.test(S[i]) && !/:\s*(?:\*\*|__)?\s*$/.test(S[i]) && LEADIN_RX.test(S[i + 1])) return [S[i], S[i + 1]];
+  return null;
+}
+// 7. support.md section 4's line more than once, with or without its full stop (run 33, s-product: "troid doesn't
+//    recommend; it prices what you bring — troid can size …" in its last paragraph)
+const REFUSAL_ANY_RX = /troid doesn['’]t recommend; it prices what you bring/gi;
+const refusalTwice = (t) => (stripSources(String(t)).match(REFUSAL_ANY_RX) || []).length > 1;
+CANDIDATE_LINTS.push(
+  [(t) => !!firmOwnsTroid(t),
+   (t) => "\"" + firmOwnsTroid(t) + "\": troid's desk, its tools and the figures they compute are troid's, never a firm's. Say \"troid's desk\" (or troid's own tool's result), and keep a firm's name for the firm's own rules."],
+  [(t) => !!doubleLeadIn(t),
+   (t) => "Introduce the list once: \"" + doubleLeadIn(t)[0] + "\" and \"" + doubleLeadIn(t)[1] + "\" both lead into it. Keep one lead-in."],
+  [(t) => refusalTwice(t),
+   "support.md section 4's line goes once, first: \"troid doesn't recommend; it prices what you bring.\" Never again later in the answer, with or without its full stop."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
 // final answer gives again goes too (run 18, b-stop: its example above the answer, then again under "In practice").
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
@@ -2589,6 +2621,15 @@ function refusalOnceFirst(reply) {
 // first sentence that paraphrases it goes; the rest stays. English only: another language's reply is its reviewer's.
 const SHOULD_ASK_RX = /(^|[.?!,;:]\s*|\b(so|and|but)\s+)(should I\b|which\b[^.?!\n]{0,60}\bbest\b|will I pass\b|what should I (trade|buy|pick|choose)\b|(do|would) you recommend\b)/i;
 const PARAPHRASE_RX = /prices what you bring|\bdoes(n['’]t| not) recommend|not something troid\b|isn['’]t something troid\b/i;
+// the candidate's: a later copy without its full stop goes too, with what joins it to the rest of its sentence ("… what
+// you bring — troid can size …" leaves "troid can size …"; run 33, s-product)
+const REFUSAL_LATER_RX = /troid doesn['’]t recommend; it prices what you bring(?:\.|\s*[—–]\s*|\s*[,;:]\s*|(?=\s))/g;
+function refusalOnceFirstNext(reply) {
+  const once = refusalOnceFirst(reply), first = once.search(/troid doesn['’]t recommend; it prices what you bring\./);
+  if (first < 0) return once;
+  const head = once.slice(0, first + "troid doesn't recommend; it prices what you bring.".length);
+  return (head + once.slice(head.length).replace(REFUSAL_LATER_RX, "")).replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n");
+}
 function refusalWordForWord(reply, lastUser) {
   if (!SHOULD_ASK_RX.test(String(lastUser || "")) || /troid doesn['’]t recommend; it prices what you bring\./.test(reply)) return reply;
   const body = reply.replace(/^\s+/, ""), m = body.match(/^[^\n]*?[.?!](?=\s|$)/);
@@ -2869,7 +2910,7 @@ module.exports = async (req, res) => {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
         if (reply && variant === "candidate" && lang === "en") reply = refusalWordForWord(reply, lastUser);
-        if (reply) reply = refusalOnceFirst(withSupportStep5(reply, lang));
+        if (reply) reply = (variant === "candidate" ? refusalOnceFirstNext : refusalOnceFirst)(withSupportStep5(reply, lang));
         if (reply && variant === "candidate" && lang === "en") reply = withSupportStep4(reply, lastUser);
         if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
@@ -2964,6 +3005,10 @@ module.exports._exampleFirst = exampleFirst;
 module.exports._asksGiven = asksGiven;
 module.exports._repeatedSentence = repeatedSentence;
 module.exports._sourcesRestated = sourcesRestated;
+module.exports._firmOwnsTroid = firmOwnsTroid;
+module.exports._doubleLeadIn = doubleLeadIn;
+module.exports._refusalTwice = refusalTwice;
+module.exports._refusalOnceFirstNext = refusalOnceFirstNext;
 module.exports._ownStrategyFirst = ownStrategyFirst;
 module.exports._ownStrategyMisordered = ownStrategyMisordered;
 module.exports._widensMaxLoss = widensMaxLoss;
