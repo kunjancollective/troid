@@ -107,7 +107,7 @@ intended   = risk% × balance
 cap        = 35% × max(effective_budget, 0)
 risk       = min(intended, cap)
 
-fee_unit   = entry × fee_per_side × 2
+fee_unit   = fee_per_side × (entry + stop)       the exit fee is charged at the stop
 qty        = risk / (|entry − stop| + fee_unit)
 notional   = qty × entry
 margin     = notional / leverage

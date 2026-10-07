@@ -17,15 +17,15 @@ ok("ref2 verdict OK", r.verdict === "OK", r);
 ok("ref2 binding max drawdown", r.binding === "max drawdown", r.binding);
 ok("ref2 budgets 4000 / 2000", r.daily_budget === 4000 && r.dd_budget === 2000, [r.daily_budget, r.dd_budget]);
 ok("ref2 risk 480", r.risk === 480, r.risk);
-ok("ref2 qty 1.622095", r.quantity === 1.622095, r.quantity);
-ok("ref2 notional 126315.79", r.notional === 126315.79, r.notional);
-ok("ref2 margin 25263.16", r.margin === 25263.16, r.margin);
-ok("ref2 fees 101.05 = 21.05%", r.fees === 101.05 && r.fee_share_of_risk_pct === 21.05, [r.fees, r.fee_share_of_risk_pct]);
+ok("ref2 qty 1.621583 (F6, live since 2026-10-07: the exit fee at the stop; was 1.622095)", r.quantity === 1.621583, r.quantity);
+ok("ref2 notional 126275.91", r.notional === 126275.91, r.notional);
+ok("ref2 margin 25255.18", r.margin === 25255.18, r.margin);
+ok("ref2 fees 101.17 = 21.08%", r.fees === 101.17 && r.fee_share_of_risk_pct === 21.08, [r.fees, r.fee_share_of_risk_pct]);
 ok("ref2 consumes 24, losses left 4", r.consumes_pct_of_budget === 24 && r.losses_remaining === 4, [r.consumes_pct_of_budget, r.losses_remaining]);
 ok("ref2 crossover 98000", r.crossover_equity === 98000, r.crossover_equity);
 ok("ref2 breakers order", r.circuit_breakers.map((b) => b.event).join(">") === "your stop>max-loss floor>daily limit>exchange liquidation (cross)", r.circuit_breakers);
-ok("ref2 cross liq 75.12 on this short: (equity ÷ notional − MMR) ÷ (1 + MMR); the long formula gave 75.88",
-   r.circuit_breakers[3].adverse_move_pct === 75.12 && r.working.some((w) => w.formula === "(equity ÷ notional − MMR 0.5%) ÷ (1 + MMR)"), r.circuit_breakers[3]);
+ok("ref2 cross liq 75.15 on this short: (equity ÷ notional − MMR) ÷ (1 + MMR); the long formula gave 75.88",
+   r.circuit_breakers[3].adverse_move_pct === 75.15 && r.working.some((w) => w.formula === "(equity ÷ notional − MMR 0.5%) ÷ (1 + MMR)"), r.circuit_breakers[3]);
 { const liqAt = (side, stop) => T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 100000, side, entry: 77872, stop, risk_pct: 0.5, margin_mode: "isolated", leverage: 5 })
     .circuit_breakers.find((b) => /liquidation/.test(b.event)).adverse_move_pct;
   ok("isolated 5×: a long liquidates 19.6% away, a short 19.4% (the maintenance margin is on the notional at the higher price)", liqAt("long", 77638.384) === 19.6 && liqAt("short", 78105.616) === 19.4); }
@@ -116,7 +116,7 @@ ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r
    && r.assumptions.some((x) => /^leverage 5× — troid's default/.test(x)) && r.assumptions.some((x) => /^budget cap 35% /.test(x)) && r.assumptions.some((x) => /^target 2R /.test(x))
    && !r.assumptions.some((x) => /^risk /.test(x)) && /troid's assumption/.test(r.tier), r.assumptions);
 ok("size_trade: definitions for the terms it uses", ["R", "notional", "cross margin", "maintenance margin"].every((k) => r.definitions[k]), r.definitions);
-ok("size_trade: the live smoke figures", r.quantity === 1.622183 && r.notional === 126322.62 && r.fees === 101.06 && r.target === 77404.8, r);
+ok("size_trade: the live smoke figures (F6 since 2026-10-07)", r.quantity === 1.621671 && r.notional === 126282.74 && r.fees === 101.18 && r.target === 77404.8, r);
 r = T.check_budget({ firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 });
 ok("check_budget: the crossover's working, as a day-start threshold", r.crossover_working.formula === "max-loss floor + quota × 4% = quota × (1 − 6% + 4%)"
    && r.crossover_working.value === 98000 && /day-start balance/.test(r.crossover_working.meaning), r.crossover_working);
@@ -179,10 +179,10 @@ ok("the disclosure is the owner's wording: the 30-day sentence and the weekly to
 // --- trade_math: trading arithmetic that needs no firm rule (TROID-CHARACTER.md, "compute through the tools")
 const M = (a) => T.trade_math(a);
 r = M({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04, result: 998 });
-ok("trade_math r_multiple: the character's example — 1R $498.97, $523.03 with the round-trip fee", r.result.one_r === 498.97 && r.result.one_r_with_fees === 523.03
-   && r.result.r_multiple === 1.908 && /DERIVED from the numbers given; no firm rule/.test(r.tier) && r.working.length === 5, r);
+ok("trade_math r_multiple: the character's example — 1R $498.97, $522.83 with both fees (the exit fee at the stop; was $523.03)", r.result.one_r === 498.97 && r.result.one_r_with_fees === 522.83
+   && r.result.r_multiple === 1.909 && /DERIVED from the numbers given; no firm rule/.test(r.tier) && r.working.length === 5, r);
 r = M({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, fee_per_side_pct: 0.04 });
-ok("trade_math position_size: reference case 2's quantity (1.622095) and notional", r.result.quantity === 1.622095 && r.result.notional === 126315.79, r.result);
+ok("trade_math position_size: reference case 2's quantity (1.621583) and notional", r.result.quantity === 1.621583 && r.result.notional === 126275.91, r.result);
 r = M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 });
 ok("trade_math expectancy: 40% at 1.5R is 0R; break-even 40%", r.result.expectancy === 0 && r.result.breakeven_win_rate_pct === 40 && r.result.payoff_ratio === 1.5, r.result);
 r = M({ calc: "kelly", win_rate_pct: 45, payoff_ratio: 2 });
@@ -195,8 +195,9 @@ ok("trade_math kelly: no edge says so", /No positive edge/.test(M({ calc: "kelly
 r = M({ calc: "recovery", drawdown_pct: 20, balance: 100000 });
 ok("trade_math recovery: 20% down needs 25%; $80,000 after, $20,000 to recover", r.result.gain_needed_pct === 25 && r.result.balance_after === 80000 && r.result.amount_to_recover === 20000, r.result);
 ok("trade_math recovery: 50% down needs 100%", M({ calc: "recovery", drawdown_pct: 50 }).result.gain_needed_pct === 100);
-ok("trade_math fee_share: TROID.md's table — 2.01% at a 3.9% stop, 21.05% at 0.3%",
-   M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 3.9 }).result.fee_share_pct === 2.01 && M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 0.3 }).result.fee_share_pct === 21.05);
+ok("trade_math fee_share: TROID.md's table side-neutral — 2.01% at a 3.9% stop, 21.05% at 0.3% — beside each side's (21.03% long, 21.08% short)",
+   M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 3.9 }).result.fee_share_side_neutral_pct === 2.01 && M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 0.3 }).result.fee_share_side_neutral_pct === 21.05
+   && M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 0.3 }).result.fee_share_long_pct === 21.03 && M({ calc: "fee_share", fee_per_side_pct: 0.04, stop_pct: 0.3, side: "short" }).result.fee_share_pct === 21.08);
 r = M({ calc: "losses_to_limit", budget: 4000, risk: 500 });
 ok("trade_math losses_to_limit: eight $500 losses use up $4,000; the eighth reaches it", r.result.losses_that_fit === 8 && r.result.left_after === 0 && r.result.loss_that_reaches_limit === 8, r.result);
 r = M({ calc: "losses_to_limit", budget: 4000, risk: 450 });
@@ -221,11 +222,11 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
 { const RC = handler._runTool, BF = { firm: "bitfunded", product: "1step" };
   const ref2 = { ...BF, quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003, target_r: 2 };
   const c2 = RC("size_trade", ref2, "candidate"), l2 = RC("size_trade", ref2, "live"), W = (r, st) => r.working.find((w) => w.step === st);
-  ok("candidate F6 ref2: qty 1.621583, notional 126,275.91, margin 25,255.18, fees 101.17 (21.08%), losses left 4, loss at the stop 480; live still 1.622095",
+  ok("candidate F6 ref2: qty 1.621583, notional 126,275.91, margin 25,255.18, fees 101.17 (21.08%), losses left 4, loss at the stop 480; live the same fee (F6 live since 2026-10-07), its losses left still floor(…)",
      c2.verdict === "OK" && c2.quantity === 1.621583 && c2.notional === 126275.91 && c2.margin === 25255.18 && c2.fees === 101.17 && c2.fee_share_of_risk_pct === 21.08
      && c2.losses_remaining === 4 && c2.loss_at_stop === 480 && W(c2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(c2, "loss at the stop").value === 480
      && W(c2, "losses left").formula === "ceil(budget ÷ risk) − 1" && /\(stop distance \+ \(entry \+ stop\) × 0\.04%\)$/.test(c2.formula)
-     && l2.quantity === 1.622095 && l2.fees === 101.05 && !("loss_at_stop" in l2) && W(l2, "fee per unit").formula === "entry × 0.04% × 2" && W(l2, "losses left").formula === "floor(budget ÷ risk)",
+     && l2.quantity === 1.621583 && l2.fees === 101.17 && !("loss_at_stop" in l2) && W(l2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(l2, "losses left").formula === "floor(budget ÷ risk)",
      [c2.quantity, c2.notional, c2.margin, c2.fees, c2.fee_share_of_risk_pct, c2.losses_remaining, c2.loss_at_stop]);
   const sp = RC("size_trade", { ...ref2, stop: undefined, stop_pct: 0.3, risk_pct: 0.5 }, "candidate");
   ok("candidate F6: p-size's question (stop_pct 0.3 on the short) gives ref2's figures", sp.quantity === 1.621583 && sp.fees === 101.17 && sp.losses_remaining === 4, [sp.quantity, sp.fees]);
@@ -235,8 +236,8 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   const cases = [["long", 77872 * 0.99], ["short", 77872 * 1.01], ["long", 77872 * 0.998], ["short", 77872 * 1.002]].map(([side, stop]) => {
     const c = RC("size_trade", { ...fresh, side, stop }, "candidate"), l = RC("size_trade", { ...fresh, side, stop }, "live");
     return { side, c: +lossAt(c, 77872, stop).toFixed(2), l: +lossAt(l, 77872, stop).toFixed(2), at: c.loss_at_stop }; });
-  ok("candidate F6: the loss at the stop is $500.00 long or short (1% and 0.2% stops); live's short was $500.19 and $500.14, its long under $500",
-     cases.every((x) => x.c === 500 && x.at === 500) && cases[1].l === 500.19 && cases[3].l === 500.14 && cases[0].l < 500 && cases[2].l < 500, cases);
+  ok("F6, candidate and live: the loss at the stop is $500.00 long or short (1% and 0.2% stops); live's short was $500.19 and $500.14 before 2026-10-07",
+     cases.every((x) => x.c === 500 && x.at === 500 && x.l === 500), cases);
   const f7 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "candidate"), f7l = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "live");
   ok("candidate F7: a fresh $100,000 1-Step at $500 risk leaves 7 losses, not 8 (the 8th reaches the $4,000 daily limit); live still 8",
      f7.risk === 500 && f7.losses_remaining === 7 && f7.notes.includes("7 more losses at this size before daily loss limit trips") && f7l.losses_remaining === 8, [f7.losses_remaining, f7l.losses_remaining]);
@@ -248,9 +249,9 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   const crossLong = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "candidate"), crossLongL = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "live");
   const iso1 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9, margin_mode: "isolated", leverage: 1 }, "candidate");
   const crossShort = RC("size_trade", { ...fresh, side: "short", stop: 77872 * 1.1 }, "candidate");
-  ok("candidate F5: a cross long past 100% shows \"none above zero\" and sorts last (live 2,025.63%); isolated at 1× says the margin covers a fall to zero; a short, and a long whose notional is above equity, as computed",
+  ok("candidate F5: a cross long past 100% shows \"none above zero\" and sorts last (live 2,024.82%); isolated at 1× says the margin covers a fall to zero; a short, and a long whose notional is above equity, as computed",
      liqOf(crossLong).adverse_move_pct === "none above zero" && crossLong.circuit_breakers[crossLong.circuit_breakers.length - 1] === liqOf(crossLong)
-     && W(crossLong, "exchange liquidation (cross)").value === "none above zero" && liqOf(crossLongL).adverse_move_pct === 2025.63
+     && W(crossLong, "exchange liquidation (cross)").value === "none above zero" && liqOf(crossLongL).adverse_move_pct === 2024.82
      && liqOf(iso1).adverse_move_pct === "none above zero" && iso1.notes.includes("isolated at 1×: no liquidation above zero — the position's own margin covers a fall to zero")
      && typeof liqOf(crossShort).adverse_move_pct === "number" && liqOf(crossShort).adverse_move_pct > 100
      && liqOf(c2).adverse_move_pct === 75.15 && typeof liqOf(RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.998 }, "candidate")).adverse_move_pct === "number",
@@ -259,14 +260,14 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   // at this leverage. Every figure below is the audit model's (audit/model.py), worked independently of this code
   const tight = { ...fresh, side: "long", entry: 60000, stop: 59990, leverage: 5 };
   const f1 = RC("size_trade", tight, "candidate"), f1l = RC("size_trade", tight, "live");
-  ok("candidate F1: long 60,000/59,990 at 5× on $100,000: the risk-based size needs $103,455.41 of margin, so it is cut to 8.333333 ($500,000 at 5×) and risks $483.30, REDUCE, 8 losses left; live sizes 8.62069 on $103,448.28 of margin",
+  ok("candidate F1: long 60,000/59,990 at 5× on $100,000: the risk-based size needs $103,455.41 of margin, so it is cut to 8.333333 ($500,000 at 5×) and risks $483.30, REDUCE, 8 losses left; live sizes 8.621284 on $103,455.41 of margin (no cut)",
      f1.verdict === "REDUCE" && f1.quantity === 8.333333 && f1.notional === 500000 && f1.margin === 100000 && f1.risk === 483.3 && f1.loss_at_stop === 483.3
      && f1.fees === 399.97 && f1.consumes_pct_of_budget === 12.08 && f1.losses_remaining === 8
      && W(f1, "quantity").formula === "equity × leverage used ÷ entry: cut to fit the margin" && W(f1, "risk").value === 500
      && W(f1, "margin check").value === 103455.41 && W(f1, "margin check").formula === "margin at the risk-based size > equity: size cut to equity × 5× ÷ entry"
      && f1.notes.includes("cut to fit the margin: at 5× the account carries at most 500000.00 notional, so this trade risks 483.30")
      && /; margin at the risk-based size > equity: size cut to equity × 5× ÷ entry$/.test(f1.formula)
-     && f1l.verdict === "OK" && f1l.quantity === 8.62069 && f1l.margin === 103448.28 && f1l.risk === 500 && !W(f1l, "margin check"),
+     && f1l.verdict === "OK" && f1l.quantity === 8.621284 && f1l.margin === 103455.41 && f1l.risk === 500 && !W(f1l, "margin check"),
      [f1.verdict, f1.quantity, f1.risk, f1.losses_remaining, W(f1, "margin check"), f1l.quantity]);
   const both = RC("size_trade", { ...BF, quota: 100000, equity: 95000, day_start: 95000, side: "long", entry: 60000, stop: 59999, leverage: 4 }, "candidate");
   ok("candidate F1 after a budget cut: $475 cut to $350 by the drawdown budget, then the margin cuts the size to 6.333333 ($380,000 at 4×), risking $310.33, 3 losses left; a size that fits has its margin check and no cut",
@@ -278,22 +279,22 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   // $50,000, so the desk holds leverage to the lowest cap it records (5×), not the highest (100×)
   const cftMid = { firm: "crypto_fund_trader", product: "1phase", quota: 30000, equity: 30000, side: "long", entry: 60000, stop: 59990, leverage: 200 };
   const d6 = RC("size_trade", cftMid, "candidate"), d6l = RC("size_trade", cftMid, "live");
-  ok("candidate D6 with F1: Crypto Fund Trader at $30,000 and 200× is held to 5× (the lowest cap recorded), so the size is cut to 2.5 units ($150,000), risking $122.49, 9 losses left; live holds it to 100× and sizes 3.061224",
+  ok("candidate D6 with F1: Crypto Fund Trader at $30,000 and 200× is held to 5× (the lowest cap recorded), so the size is cut to 2.5 units ($150,000), risking $122.49, 9 losses left; live holds it to 100× and sizes 3.061428",
      d6.verdict === "REDUCE" && d6.leverage_used === 5 && d6.quantity === 2.5 && d6.margin === 30000 && d6.risk === 122.49 && d6.losses_remaining === 9
      && d6.notes.includes("leverage held to 5×, the lowest cap this firm records") && W(d6, "leverage used").formula === "your leverage; cap pending (held to 5×, the lowest cap recorded for this firm)"
-     && d6l.leverage_used === 100 && d6l.quantity === 3.061224 && d6l.notes.includes("leverage held to 100×, the highest cap this firm records") && W(d6l, "leverage used").formula === "your leverage; cap pending",
+     && d6l.leverage_used === 100 && d6l.quantity === 3.061428 && d6l.notes.includes("leverage held to 100×, the highest cap this firm records") && W(d6l, "leverage used").formula === "your leverage; cap pending",
      [d6.verdict, d6.leverage_used, d6.quantity, d6.risk, d6.losses_remaining, d6l.leverage_used]);
   // R6 (the review, 2026-09-30): a long's floor 100% or more below entry is not reached above zero, and sorts after every
   // distance that is reached; a short's is shown as computed
   const FAR = "not reached above zero — a fall to zero stays inside it", brk = (r) => r.circuit_breakers.map((b) => b.event + " " + b.adverse_move_pct).join(" → ");
   const r6 = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 54000 }, "candidate"), r6l = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 54000 }, "live");
   const r6w = RC("size_trade", { ...fresh, side: "long", entry: 60000, stop: 40000 }, "candidate"), r6s = RC("size_trade", { ...fresh, side: "short", entry: 60000, stop: 66000 }, "candidate");
-  ok("candidate R6: a long 60,000/54,000's max-loss floor at 120.91% reads \"not reached above zero\" and sorts after the daily limit (80.61%); a 33% stop's daily limit too; a short's floor 121.01% as computed; live 120.96%",
+  ok("candidate R6: a long 60,000/54,000's max-loss floor at 120.91% reads \"not reached above zero\" and sorts after the daily limit (80.61%); a 33% stop's daily limit too; a short's floor 121.01% as computed; live 120.91% as a figure",
      brk(r6) === "your stop 10 → daily limit 80.61 → max-loss floor " + FAR + " → exchange liquidation (cross) none above zero"
      && W(r6, "max-loss floor distance").value === FAR && W(r6, "daily-limit distance").value === "80.61%"
      && brk(r6w) === "your stop 33.33 → daily limit " + FAR + " → max-loss floor " + FAR + " → exchange liquidation (cross) none above zero"
      && W(r6s, "max-loss floor distance").value === "121.01%" && r6s.circuit_breakers.find((b) => b.event === "max-loss floor").adverse_move_pct === 121.01
-     && r6l.circuit_breakers.find((b) => b.event === "max-loss floor").adverse_move_pct === 120.96 && W(r6l, "max-loss floor distance").value === "120.96%",
+     && r6l.circuit_breakers.find((b) => b.event === "max-loss floor").adverse_move_pct === 120.91 && W(r6l, "max-loss floor distance").value === "120.91%",
      [brk(r6), brk(r6w), brk(r6s), brk(r6l)]);
   const TM = (x, v) => RC("trade_math", x, v);
   const ltl = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "candidate"), ltlL = TM({ calc: "losses_to_limit", budget: 4000, risk: 500 }, "live");
@@ -301,35 +302,35 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
      ltl.result.losses_left === 7 && ltl.result.loss_that_reaches_limit === 8 && ltl.result.room_left_after === 500 && !("losses_that_fit" in ltl.result)
      && TM({ calc: "losses_to_limit", budget: 2000, risk: 480 }, "candidate").result.losses_left === 4 && ltlL.result.losses_that_fit === 8, [ltl.result, ltlL.result]);
   const fsN = TM({ calc: "fee_share", stop_pct: 0.3, ...BF }, "candidate"), fsS = TM({ calc: "fee_share", stop_pct: 0.3, ...BF, side: "short" }, "candidate");
-  ok("candidate trade_math fee_share: 21.03% long, 21.08% short, 21.05% labelled side-neutral; with a side, that side's; live 21.05% with no side",
+  ok("candidate trade_math fee_share: 21.03% long, 21.08% short, 21.05% labelled side-neutral; with a side, that side's; live the same since 2026-10-07",
      fsN.result.fee_share_long_pct === 21.03 && fsN.result.fee_share_short_pct === 21.08 && fsN.result.fee_share_side_neutral_pct === 21.05
      && fsN.working.some((w) => /side-neutral/.test(w.step)) && fsS.result.fee_share_pct === 21.08 && fsS.result.side === "short"
      && TM({ calc: "fee_share", stop_pct: 3.9, ...BF, side: "long" }, "candidate").result.fee_share_pct === 1.97
-     && TM({ calc: "fee_share", stop_pct: 0.3, ...BF }, "live").result.fee_share_pct === 21.05, [fsN.result, fsS.result]);
+     && JSON.stringify(TM({ calc: "fee_share", stop_pct: 0.3, ...BF }, "live").result) === JSON.stringify(fsN.result), [fsN.result, fsS.result]);
   const psC = TM({ calc: "position_size", risk: 480, entry: 77872, stop_pct: 0.3, side: "short", ...BF, leverage: 5 }, "candidate");
   const psP = TM({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, ...BF }, "candidate"), psL = TM({ calc: "position_size", risk: 480, entry: 77872, stop: 77872 * 1.003, ...BF }, "live");
-  ok("candidate trade_math position_size: ref2's short at 1.621583, its loss at the stop 480, from stop_pct with side or the stop price; live 1.622095",
+  ok("candidate trade_math position_size: ref2's short at 1.621583, its loss at the stop 480, from stop_pct with side or the stop price; live 1.621583 from the stop price",
      psC.result.quantity === 1.621583 && psC.result.notional === 126275.91 && psC.result.margin === 25255.18 && psC.result.loss_at_stop === 480 && !psC.assumptions
-     && psP.result.quantity === 1.621583 && psL.result.quantity === 1.622095 && /fee × \(entry \+ stop\)/.test(psC.formula), [psC.result, psP.result, psL.result]);
+     && psP.result.quantity === 1.621583 && psL.result.quantity === 1.621583 && /fee × \(entry \+ stop\)/.test(psC.formula), [psC.result, psP.result, psL.result]);
   // F1 in position_size: with equity and leverage, a margin above equity is cut to fit, as the desk and size_trade do
   const pf = { calc: "position_size", risk: 500, entry: 60000, stop: 59990, ...BF, leverage: 5 };
   const pCut = TM({ ...pf, equity: 100000 }, "candidate"), pFit = TM({ ...pf, equity: 110000 }, "candidate"), pNo = TM(pf, "candidate"), pLive = TM({ ...pf, equity: 100000 }, "live");
-  ok("candidate trade_math position_size: with equity 100,000 at 5× the size is cut to 8.333333, its loss at the stop $483.30, and says so; at 110,000 it fits (8.621284, $500); with no equity it asks for it; live ignores equity",
+  ok("candidate trade_math position_size: with equity 100,000 at 5× the size is cut to 8.333333, its loss at the stop $483.30, and says so; at 110,000 it fits (8.621284, $500); with no equity it asks for it; live ignores equity (8.621284, no cut)",
      pCut.result.quantity === 8.333333 && pCut.result.loss_at_stop === 483.3 && pCut.result.margin === 100000 && pCut.result.cut_to_fit_margin === true
      && pCut.working.find((w) => w.step === "margin check").value === 103455.41 && /Cut to fit the margin: at 5× equity of 100000 carries at most 500000 of notional, so this size risks 483\.3, less than the 500 given\./.test(pCut.note)
      && pFit.result.quantity === 8.621284 && pFit.result.loss_at_stop === 500 && !("cut_to_fit_margin" in pFit.result) && /≤ equity 110000/.test(pFit.working.find((w) => w.step === "margin check").formula)
      && pNo.result.quantity === 8.621284 && !pNo.working.some((w) => w.step === "margin check") && /give equity to check it/.test(pNo.note)
-     && pLive.result.quantity === 8.62069 && !("cut_to_fit_margin" in pLive.result) && /equity × leverage ÷ entry/.test(pCut.formula)
+     && pLive.result.quantity === 8.621284 && !("cut_to_fit_margin" in pLive.result) && /equity × leverage ÷ entry/.test(pCut.formula)
      && /equity with leverage to check the margin fits/.test(handler._toolsFor("candidate").find((t) => t.name === "trade_math").description)
      && handler._toolsFor("candidate").find((t) => t.name === "trade_math").input_schema.properties.equity && !handler._toolsFor("live").find((t) => t.name === "trade_math").input_schema.properties.equity,
      [pCut.result, pFit.result, pNo.result, pLive.result]);
   const rm = TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "candidate");
-  ok("candidate trade_math r_multiple: the character's example, 1R $498.97 and $522.83 with both fees (≈ $523, as the example says); live $523.03",
-     rm.result.one_r === 498.97 && rm.result.one_r_with_fees === 522.83 && TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "live").result.one_r_with_fees === 523.03, rm.result);
+  ok("candidate trade_math r_multiple: the character's example, 1R $498.97 and $522.83 with both fees (≈ $523, as the example says); live the same since 2026-10-07 (was $523.03)",
+     rm.result.one_r === 498.97 && rm.result.one_r_with_fees === 522.83 && TM({ calc: "r_multiple", entry: 77872, stop: 76580, quantity: 0.3862, fee_per_side_pct: 0.04 }, "live").result.one_r_with_fees === 522.83, rm.result);
   const feC = RC("explain_rule", { topic: "fees" }, "candidate").explanation, feL = RC("explain_rule", { topic: "fees" }, "live").explanation;
   const ruC = RC("explain_rule", { topic: "ruin" }, "candidate").explanation;
-  ok("candidate explain_rule: fees priced f × (entry + stop), per side, 2f/(s + 2f) named side-neutral; ruin in ceil(maxloss/f) losses, reaching it the breach; live unchanged",
-     /f × \(entry \+ stop\)/.test(feC) && /side-neutral approximation/.test(feC) && /f\(2 \+ s\)\/\(s \+ f\(2 \+ s\)\) on a short/.test(feC) && /Fee share of risk = 2f\/\(s\+2f\)/.test(feL)
+  ok("candidate explain_rule: fees priced f × (entry + stop), per side, 2f/(s + 2f) named side-neutral; ruin in ceil(maxloss/f) losses, reaching it the breach; live's fees text the same since 2026-10-07, its ruin unchanged",
+     /f × \(entry \+ stop\)/.test(feC) && /side-neutral approximation/.test(feC) && /f\(2 \+ s\)\/\(s \+ f\(2 \+ s\)\) on a short/.test(feC) && feL === feC
      && /ceil\(maxloss\/f\) losses/.test(ruC) && !/floor\(maxloss/.test(ruC) && /floor\(maxloss\/f\)/.test(RC("explain_rule", { topic: "ruin" }, "live").explanation), feC);
   const TR = require("fs").readFileSync(require("path").join(__dirname, "context", "candidate", "TROID.md"), "utf8");
   ok("candidate TROID.md: fee_unit = fee × (entry + stop), losses_left = ceil(…) − 1, the side-aware fee share and its table, a long's liquidation none above zero; no floor(…) or entry × fee × 2 left",
@@ -496,7 +497,7 @@ ok("size_trade takes stop or stop_pct (run 2, p-size)", stL.input_schema.propert
 const sp1 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop_pct: 0.3, risk_pct: 0.5 }),
       sp2 = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.616, risk_pct: 0.5 });
 ok("size_trade stop_pct: 0.3% above 77,872 on a short is 78,105.616, the same quantity as that stop price (run 2 worked it out as 78,106.616)",
-   sp1.quantity === sp2.quantity && sp1.quantity === 1.622095 && sp1.working.some((w) => w.step === "stop" && w.value === 78105.616), [sp1.quantity, sp2.quantity]);
+   sp1.quantity === sp2.quantity && sp1.quantity === 1.621583 && sp1.working.some((w) => w.step === "stop" && w.value === 78105.616), [sp1.quantity, sp2.quantity]);
 ok("trade_math expectancy over n trades: 100 × 0.21R = 21R, a mean, not one run's outcome", (() => { const e = M({ calc: "expectancy", win_rate_pct: 55, avg_win: 1.2, avg_loss: 1, trades: 100 });
    return e.result.expected_total === 21 && /not what one run will do/.test(e.note); })());
 ok("guardrails: say whose each thing is (a firm's rule the firm's; a tool, default or assumption troid's)", /Say whose each thing is/.test(liveSys[0].text));
@@ -509,7 +510,7 @@ ok("firm_rules: a product's rules, each with its document and read date, pending
 const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step" });
 ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
    rvAll.result.largest_max_loss_pct === 10 && rvAll.result.past_every_max_loss === true && rvAll.sources.length === 2 && rvAll.sources.every((x) => x.read_on.length)
-   && psF.result.quantity === 0.369195 && /^fee 0\.04% per side/.test(psF.sources[0].rule) && /firm rules listed/.test(psF.tier)
+   && psF.result.quantity === 0.369336 && /^fee 0\.04% per side/.test(psF.sources[0].rule) && /firm rules listed/.test(psF.tier)
    && M({ calc: "recovery", drawdown_pct: 20 }).result.largest_max_loss_pct === 10 && M({ calc: "recovery", drawdown_pct: 20 }).sources.length === 2
    && !M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 }).sources, [rvAll, psF]);   // run 6: recovery sits beside the largest maximum loss by default
 const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
