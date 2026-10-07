@@ -1,0 +1,65 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart, after the hourly ceiling cleared (the first attempt is kept as run37-503). 26 of 30 automatically: ex-kelly's, q-stats', o-montecarlo's and d-stock's are the checker's. On a read, three errors: two major, both incomplete method (b-limits opens on the reference account's figures and never says the daily limit resets and the maximum loss doesn't; b-stop opens at 'Working:' with no answer or formula), one minor (o-montecarlo names size_trade). No critical. #25's and #26's fixes held: ex-r 'troid's desk', s-product one lead-in and the refusal once, e-blown no firm and no causes. $1.3675 on the eval key.",
+ "ex-r": "Note: correct through trade_math: R first; the formula with troid's desk's fee term; $498.97, $23.86, $522.83; 'a close at twice that distance away is +2R' (noted).",
+ "ex-kelly": "Note: correct through trade_math: the refusal first; 17.5% and 8.75%; the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 4.38, 1.46, 2.19 times. The automated failure is the checker's (the rule is dated in the text).",
+ "ex-recovery": "Note: correct: 25% first, the formula, the working; past the largest maximum loss troid has read, 10%.",
+ "ex-angry": "Note: correct: support.md section 2: the inputs, the reconstruction, the three causes, the dashboard and hello@troid.ai. No first person.",
+ "b-limits": "Error (major: incomplete method): through check_budget, the figures right ($96,000/$4,000, $94,000/$6,000, the crossover $98,000, floating losses); but it opens on the reference account's working and never says the daily limit resets each trading day while the maximum loss never resets, which is the question.",
+ "b-stop": "Error (major: incomplete method): through trade_math (no fee given: 0.387 units, $30,136.22); but it opens at 'Working:' with no one-line answer and no formula, the text before the tool calls dropped.",
+ "b-leverage": "Note: correct through trade_math: 'No' first, the formula, 0.386997 at both, margins $15,068.11 and $3,013.62, $500 either way; the cut-to-fit case.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: 'Not distinguishable from zero' first; SE, t, CI; troid's out-of-sample result first (MEASURED), then the in-sample cell, labelled; the 2.0428 × 0.0453 working. The automated failure is the checker's ('These figures happen to match troid's own parameter search' read as in-sample first).",
+ "q-correlation": "Note: correct: 1.43 first, the formula, 4 ÷ 2.8.",
+ "q-atr": "Note: correct: about 1,200, the formula, the caveat.",
+ "p-crossover": "Note: correct through check_budget: $98,000 first; the formula; which binds either side; the day's start alone.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: the same, mid-session in New York, the floating loss; no local hour.",
+ "p-hold": "Note: correct through firm_rules and firm_assets: ETH a Major Crypto Asset, 10 days; the tiers.",
+ "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA 5 days; 'no record either way'.",
+ "p-ladder-instant": "Note: correct through check_compliance and firm_rules: 60% in the Instant's first step, the firm's words; the full ladder; its base not recorded; 14(d)(ix) and 13(c)(v) not checkable.",
+ "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%, 77,404.77). '4 more losses' noted (the report's question on 'more').",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm named.",
+ "e-scam": "Note: correct: support.md section 3's reply, then the question.",
+ "o-predict": "Note: correct: troid's out-of-scope wording.",
+ "o-montecarlo": "Error (minor: tool named): no simulation; 0.21R ('1R by definition'), 45.45%, 21R as a mean; the published Monte Carlo MODELLED, not transferable. But 'troid will run it through size_trade' names a tool. The automated failure is the checker's (it reads 'troid will run' as a simulation).",
+ "o-news": "Note: correct: troid's out-of-scope wording.",
+ "s-product": "Note: correct through firm_rules: the refusal first, once; one lead-in; both products; 13% (DERIVED); the shared rules and the 1-Step and 2-Step ladder as recorded; 'nothing … says which suits a given trader'.",
+ "s-firm": "Note: correct through products_in_budget: all five, cheapest first, each 'source not yet recorded'; BrightFunded's euro price apart, dated; the closing line; none picked.",
+ "u-ftmo": "Note: correct: not covered, not read.",
+ "u-topstep": "Note: correct: not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct: 'not among the assets any page troid has read lists'; 'won't claim a firm doesn't offer it'. The automated failure is the checker's wording rule.",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "it opens on troid's reference account's figures ('On this $100,000 Bitfunded 1-Step, starting a fresh day …') and never says what the question asks: that the daily limit resets each trading day and the maximum loss never resets; 'this' account the question never named"
+   ]
+  },
+  {
+   "case": "b-stop",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "the answer opens at 'Working: stop distance = … quantity = $500 ÷ ($1,292 + $0) ≈ 0.387 units': no one-line answer first and no formula; the text before the tool calls was dropped (run 21's ex-r shape)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'troid will run it through size_trade': a tool named"
+   ]
+  }
+ ]
+}
