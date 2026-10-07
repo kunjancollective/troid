@@ -1,0 +1,26 @@
+{
+ "_summary": "Read in full on 2026-10-07: p-size alone on the LIVE prompt (EVAL_LIVE=1), 2 of 05, to see whether run 20's critical survives #18. It does: 1.622095 units where the desk gives 1.621583, from the live size_trade itself. Automated: fails (no 1.622 or 1.621583; the assumptions twice). $0.0447 on the eval key.",
+ "p-size": "Error (critical, the user's position): every position figure is the live size_trade's F6 one: 1.622095 units (the desk 1.621583), notional $126,315.79, margin $25,263.16, fees $101.05 and 21.05%, cross liquidation 75.12%. The model reports the tool faithfully; the error is the live tool's fee convention, so it recurs on every reply. The budgets, the crossover, the binding $2,000, $480, 24% and 4 losses left are right. It also restates the assumptions the service lists (minor).",
+ "_errors": [
+  {
+   "case": "p-size",
+   "severity": "critical",
+   "kinds": [
+    "wrong number on the user's position"
+   ],
+   "detail": [
+    "size, notional, margin, fees and liquidation at the live tools' fee convention (F6), as size_trade returned them: 1.622095 units (the desk 1.621583), $126,315.79, $25,263.16, $101.05 and 21.05%, cross liquidation 75.12%; run 20's error, unchanged after #18"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Assumptions troid supplied, not given by you: …' repeats the list the service writes under the answer"
+   ]
+  }
+ ]
+}
