@@ -5,10 +5,12 @@ loss. The dot stays above them; that is the product. On the site the dot is a st
 it ripples while troid's ledger is live and holds still when its data stops (BRAND.md, Mark).
 Every file here carries the two floors: mark-*.png is the same drawing as mark-2ceilings-*.png
 (kept under both names so existing links still work); in the wordmark, lockup, preview and
-banners the wordmark's dot sits above its two floors at 60% ink, as in the site header. The X and Reddit
-banners (24 Sep 2026, the owner's set in social/) carry the wordmark alone, since it already holds the mark, then the
-line "The droid does the prop-firm math. You decide the trade." and troid.ai; social/README.md says where each goes.
-The line is drawn from the site's own text (og.tagline) by tagline.py, which redraws only its strip.
+banners the wordmark's dot sits above its two floors at 60% ink, as in the site header. The X header (24 Sep 2026, the
+owner's set in social/) carries the wordmark alone, since it already holds the mark, then the line "The droid does the
+prop-firm math. You decide the trade." and troid.ai; social/README.md says where each goes. The line is drawn from the
+site's own text (og.tagline) by tagline.py, which redraws only its strip. The Reddit banner (6 Oct 2026) is the mark as
+an account, drawn by social/reddit-banner.py; banner-reddit-1920x384.png is the earlier wordmark banner, kept, no longer
+redrawn.
 
 Wordmark: troid in IBM Plex Mono SemiBold with the o replaced by the dot, above its two
 floors. The dot is
@@ -19,7 +21,7 @@ the r carries its weight on the right and reads closer than it is.
 |---|---|
 | X / Reddit / YouTube / GitHub avatar | mark-400.png (or mark-1024.png where allowed); social/x-avatar-400.png and social/reddit-avatar-256.png are the same drawing at X's and Reddit's sizes |
 | X header 1500×500 | banner-x-1500x500.png (= social/x-header-1500x500.png) |
-| Reddit banner 1920×384 | banner-reddit-1920x384.png (= social/reddit-banner-1920x384.png) |
+| Reddit banner 1920×384 | social/reddit-banner-1920x384.png, drawn by social/reddit-banner.py (6 Oct 2026; banner-reddit-1920x384.png is the earlier one) |
 | X launch thread, first post | social/x-launch-card-1600x900.png |
 | YouTube banner 2560×1440 | banner-youtube-2560x1440.png |
 | Site favicon | favicon.ico (16 and 32 px: mark-2ceilings-16.png, drawn on the pixel grid and larger than the master so the two floors stay apart, and mark-2ceilings-32.png) |

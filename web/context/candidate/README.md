@@ -28,6 +28,12 @@ and a person's read finds no error" after run 16. Promotion is one commit: the f
 - **Live and patch unchanged:** their system blocks, tools, tool results, lints and reply handlers over every saved
   reply (809 replies, 1,390 tool calls) are byte for byte main's.
 
+## Not promoted at launch (the owner, 2026-10-06)
+
+The third pass met one of the owner's two conditions (s-firm 10 of 10, no product picked) and not the other (run 28 has a
+critical), so live stays. Run 28's two errors went on the fix list: they are the third staging, above.
+`TROID_CANDIDATE_KEY` was rotated the same day.
+
 ## Staged 2026-10-06 (second): the owner's three fixes after runs 25 to 27
 
 - **s-firm: troid never narrows a budget to one product.** Runs 25 and 26 were critical: "the smallest product troid

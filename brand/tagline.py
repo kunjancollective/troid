@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-"""Redraw the line on the X header and the Reddit banner from the site's own text (web/i18n/en.json og.tagline), so the
-banners, the home page and the share image say the same thing (the owner, 2026-09-26).
+"""Redraw the line on the X header from the site's own text (web/i18n/en.json og.tagline), so the header, the home page
+and the share image say the same thing (the owner, 2026-09-26). The Reddit banner carries no line since 6 Oct 2026: it is
+drawn by social/reddit-banner.py, and this script no longer touches it (redrawing its strip would cut through the chart).
 
 Each banner's background is a vertical gradient with every row one colour, so the strip the line sits in is erased row
 by row to that row's own colour, then the line is drawn back in IBM Plex Mono Regular (PlexMono-Regular.ttf, OFL), in
@@ -8,7 +9,7 @@ the site's dim ink, centred where the banners set it under the wordmark; the let
 "oid" in droid) in the dot's blue and the rest of those two words in the wordmark's ink, as on the home page. The
 wordmark, its floors and troid.ai are not touched. Running it again redraws the same strip, so a new line only needs en.json changed and this run.
 
-  python brand/tagline.py            # brand/banner-*.png and their copies in brand/social/
+  python brand/tagline.py            # brand/banner-x-1500x500.png and its copy, brand/social/x-header-1500x500.png
 """
 import json
 import sys
@@ -29,7 +30,6 @@ FONT = HERE / "PlexMono-Regular.ttf"
 # baseline and the centre, all measured from the owner's banners of 24 Sep 2026
 BANNERS = [
     (("banner-x-1500x500.png", "social/x-header-1500x500.png"), (280, 332), 27, 313, 800),
-    (("banner-reddit-1920x384.png", "social/reddit-banner-1920x384.png"), (218, 272), 26, 251, 960),
 ]
 
 
