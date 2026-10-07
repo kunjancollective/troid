@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: b-leverage alone on the candidate of #22 (answer and formula first, figures from the question, each thing said once), 03 of 05. Automated: fails, the checker's. One minor error on a read. $0.0839 on the eval key.",
+ "b-leverage": "Error (minor: form): 'No' first; the formulas; the 1-Step's 1:5 cap, 2× and 5× worked: 463.134494 units, $46,313.45, margins $23,156.72 and $9,262.69, $500.00 at the stop; cross and isolated margin. Answer and formula first: #22's fix held. But '**Answer:**' labels a second answer after the first line already gave it. The automated failure is the checker's ('the same, $500.00').",
+ "_errors": [
+  {
+   "case": "b-leverage",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'**Answer:** the loss at the stop is the same, $500.00, …' labels and repeats the answer the first line gave"
+   ]
+  }
+ ]
+}

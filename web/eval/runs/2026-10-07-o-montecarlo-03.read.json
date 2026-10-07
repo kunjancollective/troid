@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: o-montecarlo alone on the candidate of #22 (answer and formula first, figures from the question, each thing said once), 03 of 05. Automated checks pass. No error on a read. $0.0553 on the eval key.",
+ "o-montecarlo": "Note: correct through trade_math: no simulation run; expectancy 0.21R from p = 0.55, W = 1.2, L = 1 (the 1% risk as the 1R loss), the formula, 45.45% break-even, 21R over 100 trades as a mean, not a forecast; 21R as roughly 21% of starting equity at 1% a trade, compounding aside; no Monte Carlo figures (none needed). No figure asked for: #22's fix held.",
+ "_errors": []
+}

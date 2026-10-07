@@ -1,0 +1,5 @@
+{
+ "_summary": "Read in full on 2026-10-07: b-leverage alone on the candidate of #22 (answer and formula first, figures from the question, each thing said once), 05 of 05. Automated: fails, the checker's. No error on a read. $0.0585 on the eval key.",
+ "b-leverage": "Note: correct through trade_math: 'No' first; the formulas; $500 on 77,872/76,580: 0.386997 units, $30,136.22, margins $15,068.11 and $3,013.62, $500 either way; cross and isolated margin; the cut-to-fit case. Answer and formula first: #22's fix held. The worked quantity drops the fee term the formula has, as in runs 29 to 31 (not counted). The automated failure is the checker's ('stays the same').",
+ "_errors": []
+}
