@@ -239,12 +239,21 @@ run 28's at 0.55.
 - **forecast_or_signal: no evidence either way.** The reads flagged nothing and Jev flagged nothing. A gate with nothing
   to catch adds a call to every turn for no measured gain.
 - **names_price_source: no.** Everything it catches comes from the live prompt, the patch, or the candidate before run
-  25. The candidate now answers price and news questions with troid's fixed wording, set by the service. On the candidate's own replies it has nothing to catch and
-  33 false flags at 0.7, or 3 reworded and in-sample.
+  25. The candidate now answers price and news questions with troid's fixed wording, set by the service. On the
+  candidate's own replies it has nothing to catch and 33 false flags at 0.7, or 3 reworded and in-sample.
 
 In short, the regex lints already cover what Jev catches here, and Jev misses the subtle cases that pass the regex (the
 narrowed product, the one "we", the drawdown type). Nothing numeric was asked, and none of this changes the eval: the
 person's reads stay its verdict.
+
+## Decision (the owner, 2026-10-07)
+
+- None of the five checks goes into the lint loop.
+- The undated_rule shadow run is held until after round 3 and the drawdown-type fix: the e-blown and ex-angry answers
+  get a firm's drawdown type through a tool instead of stating it. Once that fix is in, the reads show whether undated
+  rules still appear, and only then is a shadow run worth doing.
+- The 14 o-news and o-predict replies from 24 September that Jev flagged and the reads passed are low priority. They
+  predate the candidate's fixed out-of-scope wording, which a promotion would bring to visitors.
 
 ## Caveats
 
