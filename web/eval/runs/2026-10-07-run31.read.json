@@ -1,0 +1,75 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #20, all 30 cases, 40 s apart. 26 of 30 automatically; all four automated failures are the checker's (b-limits' formula in a code block under '**Formula:**'; q-stats' 'troid's own strategy search landed in' read as an in-sample figure before the out-of-sample one, which comes first; p-hold's '7 days', troid's own recorded figure for other crypto, dated in the sentence; p-size's circuit-breaker distances and ceil(2,000/480) − 1 = 4). On a read, four errors, none critical: three major (ex-r mixes the bare and fee-inclusive 1R; b-leverage opens on the example with no answer or formula first; e-blown states Bitfunded's floating-loss rule with no tool or read date), one minor (s-firm's lead-in twice). Both of run 28's fixes held: ex-angry has no first person; p-crossover's below-$98,000 budget is 'under $4,000'. s-firm right: all five products cheapest first, the fixed line, none picked. d-stock hedged, through firm_assets. $1.1345 on the eval key.",
+ "ex-r": "Error (major: rule misstated): through trade_math: 1R = |entry − stop| × size, $498.97; fees $23.86 at 0.04% a side; $522.83 with fees; $998 = 1.909R (the tool's). But having set 1R with fees at $522.83, 'a stop-out is −1R before fees, or a little worse than −1R once the fees are counted' measures the stop-out on the bare 1R: on the desk's 1R a stop-out is exactly −1R.",
+ "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 1.46, 4.38 and 2.19 times; the ceilings bind first.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; past every maximum loss troid has read, the largest 10% (dated); 'on those products' keeps to them.",
+ "ex-angry": "Note: correct: support.md section 2's steps in order (acknowledged; the inputs, the high-water mark and BrightFunded's high at rollover as inputs; the reconstruction promised with each rule's read date; the three causes; the dashboard and hello@troid.ai; no fault either way). No first person: run 28's fix held. No firm's drawdown type stated.",
+ "b-limits": "Note: correct through check_budget: the daily limit resets, the maximum loss doesn't; the formulas in a block; the 1-Step at $96,500 equity on a $100,000 day: $96,000/$500, $94,000/$2,500, the daily limit binding at $500. The opening definition is every account's (noted, not counted). The automated failure is the checker's: the formula sits in a code block under '**Formula:**', with equals signs.",
+ "b-stop": "Note: correct through trade_math: quantity = risk ÷ (|entry − stop| + fee per unit); $500 on 77,872/76,580: 0.369336 units, $28,760.93, fees $22.82, $500 at the stop.",
+ "b-leverage": "Error (major: incomplete method): through trade_math: 0.386997 units, $30,136.22, margins $15,068.11 and $3,013.62, $500 either way; cross and isolated margin; the margin-exceeds-equity exception. But no answer first and no formula line: it opens on the example and says the loss is identical in its third sentence. The zero fee again, unsaid (not counted).",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working, costs push it negative.",
+ "q-stats": "Note: correct: not distinguishable from zero first; SE 0.0453R, t 0.729, CI [−0.0558R, 0.1218R]; troid's own result out of sample first (+0.008R, BTC n=504, ETH n=498, MEASURED), then the in-sample best cell, labelled. The automated failure is the checker's: 'the exact situation troid's own strategy search landed in' matches its in-sample-first pattern though no figure precedes the out-of-sample one.",
+ "q-correlation": "Note: correct: 1.43 first, n ÷ (1 + (n − 1)ρ), 4 ÷ 2.8, the assumptions stated.",
+ "q-atr": "Note: correct: roughly 1,200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through explain_rule: $98,000 first, $2,000 below the start; the formula; below $98,000 the floor binds, its budget under $4,000; between $98,000 and the start and above it the daily limit binds; floating losses. No $6,000 beside a day below $98,000: run 28's fix held.",
+ "p-reset": "Note: correct: 00:00 UTC+8, 16:00 UTC, up to 16:10 UTC, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 UTC, by 16:10 UTC, the DST sentence word for word, the ten minutes, mid-session in New York, the floating loss across the reset; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, '10 days'; Restricted Trading Practices s.1, read 2026-09-24; the three tiers. The automated failure is the checker's: '7 days' for other crypto is troid's own recorded figure (firms.json, the same page), dated in the sentence, though no tool gave it this turn.",
+ "p-assets": "Note: correct through firm_assets: BTC a Major Crypto Asset, 10 days; TSLA the only stock named, 5 days, with XAU; 'no page naming it either way', not the same as not offered.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in the 55–64% step, '50% payout penalty' in the firm's words; the whole Instant ladder; the firm's own scope ('a single trade or multiple highly correlated positions'). No 'cut'.",
+ "p-size": "Note: correct to the cent at the desk's figures (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses left, 75.15%), the crossover right. The automated failures are the checker's (the circuit-breaker distances read as firm rules; ceil(2,000/480) − 1 = 4).",
+ "e-blown": "Error (major: sources): support.md section 2's steps 1, 2 and 5, the reconstruction once the inputs come, no causes; but it adds 'Both loss ceilings count floating losses … (for Bitfunded, confirmed from its help centre)' with no tool, no read date and no source line.",
+ "e-scam": "Note: correct (Haiku): support.md section 3's reply word for word, then the question.",
+ "o-predict": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "o-montecarlo": "Note: correct through trade_math and explain_rule: no simulation; 0.21R, 21R and 45.45% with the formula; troid's own Monte Carlo figures (68% and 0% of 20,000 years) labelled MODELLED, on its own assumptions, not transferable.",
+ "o-news": "Note: correct (Haiku): troid's out-of-scope wording word for word.",
+ "s-product": "Note: correct through firm_rules: the refusal first; both products at $100,000; 8% + 5% = 13% as a step; $200 less, a fact; 'troid doesn't pick between them'. 'Each SOURCED, with its own read date above' for sources listed below (not counted).",
+ "s-firm": "Error (minor: repeated text): correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded', the Break's $328 activation fee; BrightFunded's €497 (€347.90) apart, unconverted, dated; the sizes note; ending with troid's line; none picked. But the lead-in is given twice ('here's what $500 buys across the products…', then 'Here's what $500 buys, cheapest first:').",
+ "u-ftmo": "Note: correct (Haiku): not covered, not read; the three firms troid covers.",
+ "u-topstep": "Note: correct (Haiku): not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts (the spot price under Entry, 'delayed' after a minute, a tapped symbol opening the desk, gold, oil and stocks typed in, NVDA unsizable, the stop the trader's).",
+ "d-stock": "Note: correct through firm_assets (four calls): what Bitfunded's and BrightFunded's pages name (read 2026-09-24), no asset page for Crypto Fund Trader; 'NVDA isn't on any of these lists — that doesn't mean the firms don't offer it'; 'not offered by troid's firms', no price, nothing sized.",
+ "d-keep": "Note: correct: support.md section 8's facts (the operator only, Anthropic under its API terms, 30 days, what is kept and never kept, the weekly count, never sold or used to train a model, deletion).",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'1R with fees = $498.97 + $23.86 = $522.83' and '$998 ÷ $522.83 = 1.909R', then 'a stop-out is −1R before fees, or a little worse than −1R once the fees are counted': with the desk's 1R (fees in), a stop-out is exactly −1R, $522.83; the reply mixes the two conventions"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "incomplete method"
+   ],
+   "detail": [
+    "no answer first and no formula line: the reply opens on the worked example ('Long at entry 77,872, stop at 76,580, risking $500…') and gives 'identical … $500 either way' in its third sentence"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'Both loss ceilings count floating losses … (for Bitfunded, confirmed from its help centre)': a firm rule from no tool, with no read date and no source line"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'here's what $500 buys across the products troid has prices for.' then 'Here's what $500 buys, cheapest first:'"
+   ]
+  }
+ ]
+}
