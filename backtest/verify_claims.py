@@ -397,16 +397,31 @@ check("DERIVED", "example R: $998 is +2R", 998 / _one_r, 2.0, 1e-3, "R")
 check("DERIVED", "example R: the round-trip fee at 0.04% a side (the exit's at the stop) is about $24, the desk's 1R about $523",
       _one_r + (77872 + 76580) * 0.0004 * 0.3862, 522.83, 1e-4, "")
 check("DERIVED", "example R: eight $500 losses use up Bitfunded 1-Step's $4,000 daily limit", 0.04 * 100_000 / 500, 8.0, 0)
+# the examples as promoted on 2026-10-08 (#35) show each step's arithmetic; the figures they added are held here too
+check("DERIVED", "example R: a close 2,584 above entry is twice the 1,292 stop distance", 2 * (77872 - 76580), 2584.0, 0, "")
+check("DERIVED", "example R: 2,584 x 0.3862 is $998 to the dollar", round(2584 * 0.3862), 998.0, 0, "")
+check("DERIVED", "example R: risking $500 on $100,000 is 0.5% a trade", 500 / 100_000 * 100, 0.5, 1e-9, "%")
+check("DERIVED", "example R: 8 - 1 = 7 losses of $500 leave the account above the $4,000 daily limit (the 8th reaches it)",
+      math.ceil(0.04 * 100_000 / 500 - 1e-9) - 1, 7.0, 0)
+_bf1 = _GC.FIRMS["bitfunded"]["products"]["1step"]
+check("SOURCED", "example R: Bitfunded 1-Step's daily loss limit, as firms.json records it, is the example's 4%", _bf1["daily_pct"], 4.0, 0, "%")
+check("SOURCED", "example Kelly: Bitfunded 1-Step's maximum loss, as firms.json records it, is the example's 6%", _bf1["max_pct"], 6.0, 0, "%")
 _kelly = 0.45 - 0.55 / 2
 check("DERIVED", "example Kelly: p = 0.45, b = 2 gives 17.5%", _kelly * 100, 17.5, 1e-9, "%")
-check("DERIVED", "example Kelly: a full-Kelly loss is nearly three times the 6% maximum loss", _kelly / 0.06, 2.9167, 1e-3, "x")
+check("DERIVED", "example Kelly: half-Kelly is 17.5% / 2 = 8.75%", _kelly / 2 * 100, 8.75, 1e-9, "%")
+check("DERIVED", "example Kelly: a full-Kelly loss is 2.9167 times the 6% maximum loss, unrounded", _kelly / 0.06, 2.9167, 1e-3, "x")
+check("DERIVED", "example Kelly: as the example rounds it, 17.5% / 6% = 2.92 times", round(_kelly / 0.06, 2), 2.92, 0, "x")
+check("DERIVED", "example Kelly: and half-Kelly's, 8.75% / 6% = 1.46 times", round(_kelly / 2 / 0.06, 2), 1.46, 0, "x")
 check("DERIVED", "example Kelly: half-Kelly (8.75%) is over the 6% maximum loss in one trade", float(_kelly / 2 > 0.06), 1.0)
 check("DERIVED", "example recovery: down 20% needs 25%", 0.2 / 0.8 * 100, 25.0, 1e-9, "%")
 check("DERIVED", "example recovery: down 50% needs 100%", 0.5 / 0.5 * 100, 100.0, 1e-9, "%")
 _maxes = [p.get("max_pct") for f in _GC.FIRMS.values() if isinstance(f, dict) for p in (f.get("products") or {}).values() if isinstance(p, dict) and p.get("max_pct") is not None]
 check("SOURCED", "example recovery: the largest maximum loss troid has read is 10%", max(_maxes), 10.0, 0, "%")
-for _t in ("1R = 1,292 × 0.3862 ≈ $499", "about $24", "about $523", "($4,000 ÷ $500)", "f* = 0.45 − 0.55/2 = 0.175", "Half-Kelly is 8.75%",
-           "nearly three times", "25% of $80,000", "At 50% down the recovery is 100%", "the largest troid has read is 10%"):
+# each figure above, in the words the examples state it (the promoted wording, 2026-10-08)
+for _t in ("1R = 1,292 × 0.3862 ≈ $499", "A close 2,584 above entry", "2,584 × 0.3862 = $998", "about $24", "about $523",
+           "1R is $500 ÷ $100,000 = 0.5%", "($4,000 ÷ $500 = 8)", "8 − 1 = 7 losses", "f* = 0.45 − 0.55/2 = 0.175",
+           "Half-Kelly is 17.5% ÷ 2 = 8.75%", "17.5% ÷ 6% = 2.92 times", "8.75% ÷ 6% = 1.46 times",
+           "0.20 ÷ (1 − 0.20) = 0.25, so 25%", "At 50% down: 0.50 ÷ 0.50 = 1.00 — 100%", "the largest troid has read is 10%"):
     check("DERIVED", f"TROID-CHARACTER.md states it: {_t}", float(_t in _ch), 1.0)
 
 # the price tape (ticker v3): terms and FAQ say TradingView sees the visitor's connection; every page's strip names the

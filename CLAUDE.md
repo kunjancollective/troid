@@ -50,9 +50,11 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   renders `/sources`; `figures.json` holds the canonical figures and where each is read from; `claim_check.py`, run by
   `verify_claims.py`, fails on a public number with no tier and source, a claim word with no citation, or a page that
   disagrees with `figures.json` (challenge-proof audit, 2026-09-26; exceptions in `claim_allow.json`, each with why).
-- `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff);
-  `data.yml` is the one-shot multi-year fetch; `calendar.yml` reads the BLS, BEA and Fed release schedules into
-  `web/public/calendar.json` every Monday for the calendar strip (`backtest/fetch_calendar.py`; no forecasts);
+- `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff, only on `RESULT: 0 failed`);
+  `verify.yml` runs `verify_claims.py` on every pull request and fails on any RESULT but `0 failed` (the script always
+  exits 0: read the RESULT line, never the exit code); `data.yml` is the one-shot multi-year fetch; `calendar.yml`
+  reads the BLS, BEA and Fed release schedules into `web/public/calendar.json` every Monday for the calendar strip
+  (`backtest/fetch_calendar.py`; no forecasts);
   `tape-capture.yml`, by hand, taps every symbol on the live TradingView tape in three browsers and records the link it
   really sends and what the desk selects (`web/capture_tape.py`; TradingView appends `?tvwidgetsymbol=` to the page it is
   given and fills no placeholder, `web/tape_captured.json`). A tape change is checked against it, never against a stub.
