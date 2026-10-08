@@ -7,7 +7,11 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
-The fifth patch (staged 2026-10-08, the owner's ruling after round 3), being evaluated: live run 39's s-firm narrowed a
+The fifth patch (staged 2026-10-08, the owner's ruling after round 3), retired unpublished on 2026-10-08: round 4's
+promotion (#35) replaced it, and the patch slot is empty again. Live now has the candidate's defences against the first
+person (its lint, and the handler that drops a "Let's" sentence with no figure), and the promoted service answers a budget with products_in_budget, every
+product at or under the amount, none picked, and `BUDGET_CLOSE` (live s-firm after the promotion,
+`web/eval/runs/2026-10-08-promoted-sfirm`). What it was: live run 39's s-firm narrowed a
 $500 purchase to Bitfunded's products ("since only Bitfunded is marked verified among the firms troid covers") and its
 o-montecarlo wrote "Let's compute that." (both critical). `support.md` section 4: a budget gets the refusal line first,
 and troid never narrows a purchase to one firm or one product; it lists no products and no prices, points to troid's
