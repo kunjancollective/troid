@@ -1,0 +1,42 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch's evaluation, run p02 on the patch prompt (s-firm, s-product, o-montecarlo, ex-angry, 40 s apart, one run at a time). 3 errors, one critical (s-firm narrows the purchase to Bitfunded). No first person in any reply.",
+ "ex-angry": "Error (major: missing date or source): section 2 in order, then a question; but 'high at rollover (if BrightFunded)' from no tool.",
+ "o-montecarlo": "Error (minor: repeated text; tool named): no simulation, 0.21R, 45.45%, 21R; but 'What troid can do instead:' then 'What troid can give instead', 'through trade_math's stats calc' and 'in METHODOLOGY'.",
+ "s-product": "Note: correct through firm_rules: the refusal once; one lead-in; the table; 13% and the differences as facts. The automated failure is '$200 more', a difference of two tool figures.",
+ "s-firm": "Error (critical: recommendation; wrong figure): Bitfunded's Express and Instant listed, then 'Everything else troid has a price for sits above $500' beside Crypto Fund Trader's '$399' and '$200+$328 activation', which are under it: the purchase narrowed to one firm.",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'or high at rollover (if BrightFunded)': a firm's drawdown mechanics from no tool, undated (the fix list's ex-angry and e-blown item)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'What troid can do instead:' then 'What troid can give instead'",
+    "'through trade_math's stats calc'; 'are in METHODOLOGY'"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "critical",
+   "kinds": [
+    "recommendation",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'Everything else troid has a price for sits above $500' beside Crypto Fund Trader's $399 (3-Phase) and $200 (Break): the purchase narrowed to Bitfunded's two products"
+   ]
+  }
+ ]
+}
