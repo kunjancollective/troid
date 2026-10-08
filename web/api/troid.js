@@ -2380,7 +2380,12 @@ function inThirdPerson(reply) {
     const kept = parts.filter((s) => !(/^\W*(let['’]s|let me)\b/i.test(s) && !/\d/.test(s)));
     return kept.length === parts.length ? l : kept.length ? lead + kept.join(" ") : "";
   }).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n");
-  return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
+  // a label inside a bold sentence ("**Answer: these inputs imply … .**", round 4's t02) takes its bold with it, and the
+  // sentence starts with a capital, unless it starts with troid's own lowercase name
+  const unlabelled = body.replace(/^\s*(\*\*|__)Answer\s*:\s*(?!\1)([^\n]*?)\1/i, (m, b, x) => x)
+    .replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "");
+  const capped = unlabelled !== body && !/^\s*(ask )?troid\b/.test(unlabelled) ? unlabelled.replace(/^(\s*)([a-z])/, (m, w, c) => w + c.toUpperCase()) : unlabelled;
+  return capped.replace(/\n{3,}/g, "\n\n").trim();
 }
 // troid's own strategy, out of sample first (the owner, 2026-10-06; runs 21 to 23, q-stats): a sentence about troid's own
 // result is one naming troid's own strategy, backtest or search and giving a figure or sample of it; the in-sample

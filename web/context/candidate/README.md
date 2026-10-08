@@ -12,6 +12,13 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-08 (second): the Answer label in a bold sentence
+
+Round 4's touched case t02, o-montecarlo, opened "these inputs imply +0.21R … produces.**": the service's label removal
+took "**Answer:" from a bold sentence and left its closing "**" and a lowercase first word. The bold now goes with the
+label and the sentence starts with a capital, unless it starts with troid's name. Candidate only; merged after round 4's
+full runs so the candidate did not change during them.
+
 ## Staged 2026-10-08: the owner's fixes after round 3 (runs 35 to 39)
 
 Round 3 held on (c), incomplete method, from run 37's b-limits and b-stop. Candidate only:

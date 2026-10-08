@@ -983,7 +983,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      RT2(P33) && N8(P33).some((n) => /^support\.md section 4's line goes once, first/.test(n)) && !L8(P33).some((n) => /line goes once, first/.test(n))
      && RN(P33) === "troid doesn't recommend; it prices what you bring.\n\nBoth carry the same fee.\n\ntroid can size a specific trade plan against either product's budget if useful."
      && handler._refusalOnceFirst(P33) === P33 && !RT2("troid doesn't recommend; it prices what you bring.\n\nFacts.")
-     && H.rt.every((k) => /s-product$/.test(k)), H.rt);
+     && H.rt.every((k) => /s-product$/.test(k) || /-patch5-\w+ s-firm$/.test(k)), H.rt);   // the fifth patch's s-firm ends with the budget line by design
   ok("candidate guardrail: troid's desk never a firm's; a list introduced once; section 4's line once", CG.filter((g) => /never a firm's: no \\?"Bitfunded's desk/.test(g) && /Introduce a list once/.test(g)).length === 1, CG.slice(-1)); }
 // the owner's fixes of 2026-10-07, after the touched cases on #25 (s-product ×5): two "Here are …" lead-ins (c02), section
 // 4's line said again in other words (c01, and runs 29 and 31) and a sentence saying every rule above was read (c01, c02).
@@ -1043,6 +1043,14 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const CT = require("fs").readFileSync(path10.join(__dirname, "context", "candidate", "TROID.md"), "utf8").replace(/\s+/g, " ");
   ok("candidate TROID.md: 'how many losses at that size fit, this one included, and which one reaches the binding ceiling', never 'how many more losses'",
      CT.includes("how many losses at that size fit, this one included, and which one reaches the binding ceiling") && !/how many more losses/.test(CT)); }
+// round 4's t02, o-montecarlo: "**Answer: these inputs imply … .**" lost its label and kept its closing "**" and a lowercase
+// first word; now the bold goes with the label and the sentence starts with a capital (troid's name stays lowercase)
+{ const TP = handler._inThirdPerson;
+  ok("candidate: an Answer label inside a bold sentence goes with its bold, and the sentence is capitalised; troid stays lowercase; a plain label as before",
+     TP("**Answer: these inputs imply +0.21R.**\n\nFormula: E = p × W.") === "These inputs imply +0.21R.\n\nFormula: E = p × W."
+     && TP("**Answer:** these inputs imply +0.21R.") === "These inputs imply +0.21R." && TP("Answer: 25%.") === "25%."
+     && TP("**Answer:** troid computes 0.21R.") === "troid computes 0.21R." && TP("**Answer:** **0.21R** per trade.") === "**0.21R** per trade."
+     && TP("no label, lowercase stays.") === "no label, lowercase stays."); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
