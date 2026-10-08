@@ -2389,14 +2389,20 @@ function saidNotRepeatedNext(said, final) {
 }
 // troid in the third person (run 22, o-montecarlo: "Let's get the expectancy figure." reached the reader): a sentence
 // that opens "Let's" or "Let me" and carries no figure goes; a leading "Answer:" label goes too (the form announced)
-function inThirdPerson(reply) {
+function inThirdPerson(reply, variant) {
   const body = String(reply).split("\n").map((l) => {
     if (!/\blet['’]s\b|\blet me\b/i.test(l)) return l;
     const lead = (l.match(/^\s*([-*•]|\d+[.)])\s+/) || [""])[0], parts = sentencesOf(l.slice(lead.length));
     const kept = parts.filter((s) => !(/^\W*(let['’]s|let me)\b/i.test(s) && !/\d/.test(s)));
     return kept.length === parts.length ? l : kept.length ? lead + kept.join(" ") : "";
   }).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n");
-  return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
+  // candidate (staged after the 2026-10-08 promotion): a label inside a bold sentence ("**Answer: these inputs imply … .**",
+  // round 4's t02) takes its bold with it, and the sentence starts with a capital, unless it starts with troid's own name
+  if (variant !== "candidate") return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
+  const unlabelled = body.replace(/^\s*(\*\*|__)Answer\s*:\s*(?!\1)([^\n]*?)\1/i, (m, b, x) => x)
+    .replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "");
+  const capped = unlabelled !== body && !/^\s*(ask )?troid\b/.test(unlabelled) ? unlabelled.replace(/^(\s*)([a-z])/, (m, w, c) => w + c.toUpperCase()) : unlabelled;
+  return capped.replace(/\n{3,}/g, "\n\n").trim();
 }
 // troid's own strategy, out of sample first (the owner, 2026-10-06; runs 21 to 23, q-stats): a sentence about troid's own
 // result is one naming troid's own strategy, backtest or search and giving a figure or sample of it; the in-sample
@@ -2974,7 +2980,7 @@ module.exports = async (req, res) => {
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
         // only, and a question about prices or news gets troid's wording
         // and a budget gets every product troid has a price for at or under it, troid picking none (the owner, 2026-10-06)
-        if (reply && lang === "en") reply = budgetListed(outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply)), lastUser), lastUser), lastUser, toolLog), lastUser, toolLog);
+        if (reply && lang === "en") reply = budgetListed(outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply, variant)), lastUser), lastUser), lastUser, toolLog), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");

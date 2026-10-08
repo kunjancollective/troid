@@ -1047,6 +1047,17 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const CT = require("fs").readFileSync(path10.join(__dirname, "public", "TROID.md"), "utf8").replace(/\s+/g, " ");
   ok("candidate TROID.md: 'how many losses at that size fit, this one included, and which one reaches the binding ceiling', never 'how many more losses'",
      CT.includes("how many losses at that size fit, this one included, and which one reaches the binding ceiling") && !/how many more losses/.test(CT)); }
+// round 4's t02, o-montecarlo: "**Answer: these inputs imply … .**" lost its label and kept its closing "**" and a lowercase
+// first word; now the bold goes with the label and the sentence starts with a capital (troid's name stays lowercase)
+{ const TP = (t) => handler._inThirdPerson(t, "candidate"), TL = (t) => handler._inThirdPerson(t, "live");
+  ok("candidate: an Answer label inside a bold sentence goes with its bold, and the sentence is capitalised; troid stays lowercase; a plain label as before",
+     TP("**Answer: these inputs imply +0.21R.**\n\nFormula: E = p × W.") === "These inputs imply +0.21R.\n\nFormula: E = p × W."
+     && TP("**Answer:** these inputs imply +0.21R.") === "These inputs imply +0.21R." && TP("Answer: 25%.") === "25%."
+     && TP("**Answer:** troid computes 0.21R.") === "troid computes 0.21R." && TP("**Answer:** **0.21R** per trade.") === "**0.21R** per trade."
+     && TP("no label, lowercase stays.") === "no label, lowercase stays.");
+  ok("live, beside it: unchanged (the label goes, the bold and the case stay as they were)",
+     TL("**Answer: these inputs imply +0.21R.**") === "these inputs imply +0.21R.**" && TL("**Answer:** these inputs imply +0.21R.") === "these inputs imply +0.21R."
+     && TL("Answer: 25%.") === "25%."); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
