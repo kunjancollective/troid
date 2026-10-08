@@ -206,7 +206,14 @@ def size_trade(quota: float, equity: float, day_start_balance: float,
     if reduced:
         notes.append(f"Cut from ${intended:,.2f} to ${risk:,.2f} — the {b['binding']} "
                      f"budget caps it at {BUDGET_CAP_PCT:.0f}% of what remains.")
-    notes.append(f"{losses_left} more losses at this size before {b['binding']} trips.")
+    # "N more losses" after this trade counted one too many (the owner, 2026-10-08): the count includes this trade
+    if losses_left > 0:
+        reach = losses_left + 1
+        suffix = "th" if 11 <= reach % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(reach % 10, "th")
+        notes.append(f"{losses_left} {'loss' if losses_left == 1 else 'losses'} at this size fit, this one included; "
+                     f"the {reach}{suffix} reaches the {b['binding']}.")
+    else:
+        notes.append(f"A loss at this size reaches the {b['binding']}.")
     notes.append(f"Leverage does not change this loss. At the stop you lose ${risk:,.2f} "
                  f"whether you use 2x or 25x; leverage sets margin and liquidation distance.")
 
