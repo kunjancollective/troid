@@ -1,0 +1,308 @@
+{
+ "base": "https://troid.ai",
+ "variant": "candidate",
+ "started_utc": "2026-10-07T19:11:46.788Z",
+ "get": {
+  "enabled": true,
+  "models": {
+   "lookup": "claude-haiku-4-5",
+   "tools": "claude-sonnet-5"
+  },
+  "candidate": {
+   "key": true,
+   "staged": [
+    "TROID.md",
+    "TROID-CHARACTER.md"
+   ],
+   "guardrails": 17,
+   "tools": [
+    "firm_assets",
+    "products_in_budget"
+   ],
+   "rules": [
+    "ruin",
+    "crossover",
+    "drawdown",
+    "fees"
+   ],
+   "run": [
+    "explain_rule",
+    "firm_rules",
+    "firm_assets",
+    "products_in_budget",
+    "check_compliance",
+    "check_budget",
+    "size_trade",
+    "trade_math"
+   ],
+   "lints": 48,
+   "eval_key": true,
+   "patch": [],
+   "patch_rules": []
+  },
+  "key_days_left": {
+   "main": null,
+   "eval": null
+  }
+ },
+ "set": {
+  "cases": 1,
+  "kinds": {
+   "beginner": 4,
+   "quantitative": 6,
+   "emotional": 3,
+   "prop-rule": 4,
+   "out-of-scope": 3,
+   "should-i": 2,
+   "unread-firm": 2,
+   "desk": 3
+  }
+ },
+ "results": [
+  {
+   "id": "ex-r",
+   "kind": "beginner",
+   "example": true,
+   "q": "What does R mean?",
+   "status": 200,
+   "ms": 16526,
+   "model": "claude-sonnet-5",
+   "tools_used": [
+    "trade_math"
+   ],
+   "tool_numbers": [
+    "77872",
+    "76580",
+    "0.3862",
+    "1",
+    "1292",
+    "498.97",
+    "0.04",
+    "23.86",
+    "522.83",
+    "2026",
+    "09",
+    "18",
+    "23",
+    "10",
+    "04"
+   ],
+   "usage": {
+    "claude-haiku-4-5": {
+     "calls": 1,
+     "input": 3,
+     "cache_write": 0,
+     "cache_read": 41165,
+     "output": 279
+    },
+    "claude-sonnet-5": {
+     "calls": 3,
+     "input": 6,
+     "cache_write": 1497,
+     "cache_read": 162774,
+     "output": 1076
+    }
+   },
+   "tool_calls": 1,
+   "reply": "R is the amount risked on one trade — the loss if the stop is hit, used as a single scale to measure trade outcomes against.\n\nFormula: 1R = |entry − stop| × position size\n\nWhy it works: measuring results in R lets trades of different sizes and instruments be compared on the same scale — a win of \"2R\" means twice what was risked, regardless of the dollar size of the position.\n\nIn practice: a long BTC trade at entry 77,872, stop 76,580, position size 0.3862 BTC. The stop distance is 1,292 (77,872 − 76,580), so 1R = 1,292 × 0.3862 = $498.97. troid's desk also counts the round-trip fee on a Bitfunded 1-Step (0.04% per side, charged at entry and at the stop): the entry and exit fees together come to $23.86, making the fee-adjusted 1R $522.83.\n\nWhat this means: on an account sized in this way, 1R is a fixed loss unit — $498.97 before fees, $522.83 with them counted — and every trade's outcome can be read directly in multiples of it.\n\nSources, each with the date troid read it:\n- fee 0.04% per side (Bitfunded 1-Step) — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04\n\nTier: the figures above are DERIVED — troid's tools computed them from the rules listed.\n\nNot financial advice. Verify with the firm before acting.",
+   "error": null,
+   "pass": true,
+   "checks": [
+    {
+     "name": "answered by the candidate prompt",
+     "pass": true
+    },
+    {
+     "name": "troid never says \"I\" (third person only)",
+     "pass": true
+    },
+    {
+     "name": "troid stays lowercase",
+     "pass": true
+    },
+    {
+     "name": "no exclamation mark",
+     "pass": true
+    },
+    {
+     "name": "states what the numbers imply, never whether they are good (no \"solid\", \"where traders belong\")",
+     "pass": true
+    },
+    {
+     "name": "an answer with a figure ends with the note",
+     "pass": true
+    },
+    {
+     "name": "no affiliate link or code",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states carries the date troid read it",
+     "pass": true
+    },
+    {
+     "name": "no tool parameter in the reply",
+     "pass": true
+    },
+    {
+     "name": "the tier line agrees with the reply (no \"no firm rule was needed\" beside a dated firm rule)",
+     "pass": true
+    },
+    {
+     "name": "the arithmetic it writes out holds",
+     "pass": true
+    },
+    {
+     "name": "prints each tier once",
+     "pass": true
+    },
+    {
+     "name": "a rule that differs by product names its product (Crypto Fund Trader's drawdown)",
+     "pass": true
+    },
+    {
+     "name": "names none of troid's own instructions and announces no form (\"support.md section 4\", \"result first, one line\")",
+     "pass": true
+    },
+    {
+     "name": "troid's own strategy: out of sample first, each figure MEASURED",
+     "pass": true
+    },
+    {
+     "name": "troid never trades: the risk and the trade are the trader's",
+     "pass": true
+    },
+    {
+     "name": "never calls every rule sourced where one has no recorded source",
+     "pass": true
+    },
+    {
+     "name": "a firm's rule it states as a percentage is among the sources the service lists",
+     "pass": true
+    },
+    {
+     "name": "never calls a rule unrecorded that the sources list with a read date",
+     "pass": true
+    },
+    {
+     "name": "never singles out one firm as better verified or sourced",
+     "pass": true
+    },
+    {
+     "name": "which limit binds, the right way round (above the crossover, the daily limit)",
+     "pass": true
+    },
+    {
+     "name": "retired wording: \"no measurable edge\", and the reset in UTC, never \"noon in New York\"",
+     "pass": true
+    },
+    {
+     "name": "every number comes from a tool, the user's message or troid's published figures",
+     "pass": true
+    },
+    {
+     "name": "every product has a crossover (with equal limits, the quota itself)",
+     "pass": true
+    },
+    {
+     "name": "a firm's loss limit it states as a figure carries its source and read date",
+     "pass": true
+    },
+    {
+     "name": "a teaching answer works its own example; it never asks the user for the numbers",
+     "pass": true
+    },
+    {
+     "name": "troid's published Monte Carlo keeps each figure's risk (68% at 1% a trade, 100% at 2%)",
+     "pass": true
+    },
+    {
+     "name": "an example on a firm's product keeps to its leverage cap (Bitfunded 1:5), or says it",
+     "pass": true
+    },
+    {
+     "name": "troid's tools and defaults are troid's, not a firm's",
+     "pass": true
+    },
+    {
+     "name": "a formula line writes its formula in symbols, with an equals sign",
+     "pass": true
+    },
+    {
+     "name": "opens with the answer, never with a result the reader never saw (\"That result …\")",
+     "pass": true
+    },
+    {
+     "name": "says: /\\brisk/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bstop\\b/",
+     "pass": true
+    },
+    {
+     "name": "says: /entry/",
+     "pass": true
+    },
+    {
+     "name": "says: /[=×]/",
+     "pass": true
+    },
+    {
+     "name": "says: /\\bR (is|means|stands for|measures)\\b/",
+     "pass": true
+    },
+    {
+     "name": "never says: /\\bhalf\\b[^.\\n]{0,40}\\bdaily/",
+     "pass": true
+    },
+    {
+     "name": "answers instead of refusing (a question, not a \"should I\")",
+     "pass": true
+    },
+    {
+     "name": "computes through a tool (trade_math)",
+     "pass": true
+    },
+    {
+     "name": "method: a formula",
+     "pass": true
+    },
+    {
+     "name": "method: a worked example with numbers",
+     "pass": true
+    },
+    {
+     "name": "method: the tier",
+     "pass": true
+    }
+   ]
+  }
+ ],
+ "nothing_staged": false,
+ "finished_utc": "2026-10-07T19:12:03.332Z",
+ "passed": 1,
+ "failed": 0,
+ "usage": {
+  "by_model": {
+   "claude-haiku-4-5": {
+    "calls": 1,
+    "input": 3,
+    "cache_write": 0,
+    "cache_read": 41165,
+    "output": 279,
+    "usd": 0.0055
+   },
+   "claude-sonnet-5": {
+    "calls": 3,
+    "input": 6,
+    "cache_write": 1497,
+    "cache_read": 162774,
+    "output": 1076,
+    "usd": 0.0471
+   }
+  },
+  "usd": 0.0526,
+  "priced": true
+ }
+}

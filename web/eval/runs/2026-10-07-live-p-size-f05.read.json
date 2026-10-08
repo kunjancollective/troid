@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the live prompt after #24 (fees as fee × (entry + stop)), p-size alone. Correct. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
+ "p-size": "Error (major: boundary wording): correct. Through size_trade, to the cent at the desk's figures: binding $2,000 (max drawdown, below the $98,000 crossover), $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4 losses, liquidation 75.15%, 2R at 77,404.77. Run 20's critical is gone: #24 holds. 'this is Bitfunded's own math, as troid reads the rule' for the crossover (hedged; noted, not counted). But '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
+ "_errors": [
+  {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'at this size, **4 more losses** before the max-drawdown floor trips': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)"
+   ]
+  }
+ ]
+}
