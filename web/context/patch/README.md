@@ -7,6 +7,15 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
+The fifth patch (staged 2026-10-08, the owner's ruling after round 3), being evaluated: live run 39's s-firm narrowed a
+$500 purchase to Bitfunded's products ("since only Bitfunded is marked verified among the firms troid covers") and its
+o-montecarlo wrote "Let's compute that." (both critical). `support.md` section 4: a budget gets the refusal line first,
+and troid never narrows a purchase to one firm or one product; it gives every product it has a price for at or under the
+amount, cheapest first, with each price's source and read date, or none and troid's compare, and ends with "troid doesn't
+pick a product; the choice is yours." (the candidate's closing line). `TROID.md`: the first-person rule names "let me"
+and "let's", and says to lead into nothing. The candidate's own defences go further than a file can: its
+products_in_budget tool, its first-person lint and the handler that drops a "Let's" sentence with no figure.
+
 The fourth patch (2026-09-28, the owner's launch handoff, section 0), published; the patch slot is empty again.
 `TROID.md`: Bitfunded's reset stated in UTC, 16:00 UTC all year, with a local hour only for the date it was converted
 for (it said "noon in New York in summer, 11:00 in winter"; from Sunday 1 November 2026, when New York leaves daylight
