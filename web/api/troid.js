@@ -532,6 +532,7 @@ function budgets(a) {
            crossover_equity: r2(crossover), crossover_working: crossoverWork, formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
 }
 const r2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
+const nth = (n) => n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : (["th", "st", "nd", "rd"][n % 10] || "th"));
 // E[max of k independent standard normals]: the expected best of k configurations under a zero edge, in
 // standard errors. ∫ x·k·φ(x)·Φ(x)^(k−1) dx, with Φ accumulated by the trapezoid rule on the same grid; the
 // same integral as backtest/noise_math.py. (√(2 ln k), used before, overstates it: 2.61 against 2.04 at k = 30.)
@@ -629,7 +630,8 @@ function size_trade(a, next) {
   const fees = qty * fu, target = entry + side * tR * dist, loss = qty * (dist + fu), lost = next ? loss : risk, fshare = fees / lost * 100;
   // F7 (next): losses that leave equity above the floor. Firms word a breach as reaching the limit, so a loss that lands
   // exactly on it is not one more left ($4,000 at $500 leaves 7, not 8). The epsilon reads 4.000000000000001 as 4.
-  const consumes = lost / b.effective_budget * 100, left = next ? Math.ceil(b.effective_budget / loss - 1e-9) - 1 : Math.floor(b.effective_budget / risk + 1e-9);
+  // Live too since 2026-10-08 (it counted floor(budget ÷ risk), 8 at $4,000 and $500, the 8th reaching the limit).
+  const consumes = lost / b.effective_budget * 100, left = Math.ceil(b.effective_budget / (next ? loss : risk) - 1e-9) - 1;
   working.push({ step: "intended risk", formula: `equity × ${rpIn}%`, value: r2(intended) },
                { step: "cap", formula: `budget × ${cpIn}%`, value: r2(cap) },
                { step: "risk", formula: "min(intended, cap)", value: r2(risk) },
@@ -643,7 +645,8 @@ function size_trade(a, next) {
   if (feeKnown) working.push({ step: "fees", formula: "quantity × fee per unit", value: r2(fees) });
   if (next) working.push({ step: "loss at the stop", formula: "quantity × (stop distance + fee per unit)", value: r2(loss) });
   working.push({ step: "budget used", formula: "risk ÷ budget", value: r2(consumes) + "%" },
-               { step: "losses left", formula: next ? "ceil(budget ÷ risk) − 1" : "floor(budget ÷ risk)", value: left },
+               { step: "losses left", formula: "ceil(budget ÷ risk) − 1: the losses at this size that leave equity above the limit, this one included", value: left },
+               { step: "the loss that reaches the limit", formula: "ceil(budget ÷ risk)", value: left + 1 },
                { step: "target", formula: `entry ${side > 0 ? "+" : "−"} ${tR} × stop distance`, value: r2(target) });
   base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? `(stop distance + (entry + stop) × ${p.fee}%)` : "stop distance")
     + (cut ? `; margin at the risk-based size > equity: size cut to equity × ${levUsed}× ÷ entry` : "");
@@ -656,7 +659,10 @@ function size_trade(a, next) {
   // F1 (next): the margin cut says what equity carries and what the trade then risks, and a budget cut before it says both
   if (cut) notes.push(`cut to fit the margin: at ${levUsed}× the account carries at most ${(eq * levUsed).toFixed(2)} notional, so this trade risks ${loss.toFixed(2)}`);
   if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it` + (cut ? `; the margin then cut it to ${loss.toFixed(2)}` : ""));
-  notes.push(`${left} more losses at this size before ${b.binding} trips`);
+  // the owner, 2026-10-08: "N more losses" after this trade counted one too many (runs 35 to 39's p-size): the count
+  // includes this trade, and the loss that reaches the limit is named
+  notes.push(left > 0 ? `${left} ${left === 1 ? "loss" : "losses"} at this size fit, this one included; the ${nth(left + 1)} reaches the ${b.binding}`
+                      : `a loss at this size reaches the ${b.binding}`);
   const sp = dist / entry * 100;
   // MMR 0.5% is troid's assumption, not a firm rule. The exchange liquidates when the margin behind the position falls to
   // the maintenance margin on the notional at the liquidation price: lower than entry for a long, higher for a short.
@@ -696,7 +702,7 @@ function size_trade(a, next) {
   return { verdict: reduced || cut ? "REDUCE" : "OK", quantity: Math.round(qty * 1e6) / 1e6, notional: r2(notional),
            margin: r2(margin), leverage_used: levUsed, risk: r2(next ? loss : risk), fees: feeKnown ? r2(fees) : null,
            fee_share_of_risk_pct: feeKnown ? r2(fshare) : null, stop_distance_pct: r2(sp), target: r2(target),
-           ...(next ? { loss_at_stop: r2(loss) } : {}), consumes_pct_of_budget: r2(consumes), losses_remaining: left,
+           ...(next ? { loss_at_stop: r2(loss) } : {}), consumes_pct_of_budget: r2(consumes), losses_remaining: left, loss_that_reaches_limit: left + 1,
            circuit_breakers: ord.map(([e, v, t]) => ({ event: e, adverse_move_pct: t != null ? t : isFinite(v) ? r2(v) : null })),
            assumptions: assumed, definitions: DEFINITIONS, ...base, working, notes };
 }

@@ -222,11 +222,11 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
 { const RC = handler._runTool, BF = { firm: "bitfunded", product: "1step" };
   const ref2 = { ...BF, quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003, target_r: 2 };
   const c2 = RC("size_trade", ref2, "candidate"), l2 = RC("size_trade", ref2, "live"), W = (r, st) => r.working.find((w) => w.step === st);
-  ok("candidate F6 ref2: qty 1.621583, notional 126,275.91, margin 25,255.18, fees 101.17 (21.08%), losses left 4, loss at the stop 480; live the same fee (F6 live since 2026-10-07), its losses left still floor(…)",
+  ok("candidate F6 ref2: qty 1.621583, notional 126,275.91, margin 25,255.18, fees 101.17 (21.08%), losses left 4, loss at the stop 480; live the same fee (F6 live since 2026-10-07) and, since 2026-10-08, the same losses left",
      c2.verdict === "OK" && c2.quantity === 1.621583 && c2.notional === 126275.91 && c2.margin === 25255.18 && c2.fees === 101.17 && c2.fee_share_of_risk_pct === 21.08
      && c2.losses_remaining === 4 && c2.loss_at_stop === 480 && W(c2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(c2, "loss at the stop").value === 480
-     && W(c2, "losses left").formula === "ceil(budget ÷ risk) − 1" && /\(stop distance \+ \(entry \+ stop\) × 0\.04%\)$/.test(c2.formula)
-     && l2.quantity === 1.621583 && l2.fees === 101.17 && !("loss_at_stop" in l2) && W(l2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(l2, "losses left").formula === "floor(budget ÷ risk)",
+     && W(c2, "losses left").formula === "ceil(budget ÷ risk) − 1: the losses at this size that leave equity above the limit, this one included" && W(c2, "the loss that reaches the limit").value === 5 && c2.loss_that_reaches_limit === 5 && /\(stop distance \+ \(entry \+ stop\) × 0\.04%\)$/.test(c2.formula)
+     && l2.quantity === 1.621583 && l2.fees === 101.17 && !("loss_at_stop" in l2) && W(l2, "fee per unit").formula === "(entry + stop) × 0.04%" && W(l2, "losses left").formula === "ceil(budget ÷ risk) − 1: the losses at this size that leave equity above the limit, this one included" && l2.losses_remaining === 4 && l2.loss_that_reaches_limit === 5,
      [c2.quantity, c2.notional, c2.margin, c2.fees, c2.fee_share_of_risk_pct, c2.losses_remaining, c2.loss_at_stop]);
   const sp = RC("size_trade", { ...ref2, stop: undefined, stop_pct: 0.3, risk_pct: 0.5 }, "candidate");
   ok("candidate F6: p-size's question (stop_pct 0.3 on the short) gives ref2's figures", sp.quantity === 1.621583 && sp.fees === 101.17 && sp.losses_remaining === 4, [sp.quantity, sp.fees]);
@@ -239,12 +239,14 @@ ok("trade_math refuses what it can't compute: unknown calc, a missing input, out
   ok("F6, candidate and live: the loss at the stop is $500.00 long or short (1% and 0.2% stops); live's short was $500.19 and $500.14 before 2026-10-07",
      cases.every((x) => x.c === 500 && x.at === 500 && x.l === 500), cases);
   const f7 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "candidate"), f7l = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99 }, "live");
-  ok("candidate F7: a fresh $100,000 1-Step at $500 risk leaves 7 losses, not 8 (the 8th reaches the $4,000 daily limit); live still 8",
-     f7.risk === 500 && f7.losses_remaining === 7 && f7.notes.includes("7 more losses at this size before daily loss limit trips") && f7l.losses_remaining === 8, [f7.losses_remaining, f7l.losses_remaining]);
+  ok("F7, candidate and live (live since 2026-10-08): a fresh $100,000 1-Step at $500 risk leaves 7 losses, not 8 (the 8th reaches the $4,000 daily limit); the note counts this trade and names the 8th, never 'N more losses' (the owner, 2026-10-08)",
+     [f7, f7l].every((r) => r.risk === 500 && r.losses_remaining === 7 && r.loss_that_reaches_limit === 8 && r.notes.includes("7 losses at this size fit, this one included; the 8th reaches the daily loss limit")
+       && !r.notes.some((n) => /\bmore losses\b/.test(n))), [f7.losses_remaining, f7l.losses_remaining, f7l.notes]);
   const r5 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99, risk_pct: 10, budget_cap_pct: 100 }, "candidate");
-  ok("candidate F7 (the desk's R5): a loss that takes the whole room at a 100% cap is BLOCK, naming the limit it reaches; live sizes it with 1 loss left",
+  ok("candidate F7 (the desk's R5): a loss that takes the whole room at a 100% cap is BLOCK, naming the limit it reaches; live sizes it, with no loss left: the first reaches the limit",
      r5.verdict === "BLOCK" && /take the whole room and reach the daily loss limit, which fails the account/.test(r5.reasons[0]) && !("quantity" in r5)
-     && RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99, risk_pct: 10, budget_cap_pct: 100 }, "live").losses_remaining === 1, r5);
+     && (() => { const l = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.99, risk_pct: 10, budget_cap_pct: 100 }, "live");
+                 return l.losses_remaining === 0 && l.notes.includes("a loss at this size reaches the daily loss limit"); })(), r5);
   const liqOf = (r) => r.circuit_breakers.find((b) => /liquidation/.test(b.event));
   const crossLong = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "candidate"), crossLongL = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9 }, "live");
   const iso1 = RC("size_trade", { ...fresh, side: "long", stop: 77872 * 0.9, margin_mode: "isolated", leverage: 1 }, "candidate");
