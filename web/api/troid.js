@@ -1747,6 +1747,20 @@ function stripSources(text) {
   }
   return out.join("\n").replace(/\n{3,}/g, "\n\n").trim();
 }
+// candidate (staged 2026-10-08, the owner: the promoted live s-firm wrote "the rules above are SOURCED" under five prices
+// marked "source not yet recorded"): a tier line never calls an unsourced rule SOURCED. With some sources unrecorded the
+// line names which rules are SOURCED; with none recorded it says so. English only until the strings are reviewed.
+const CANDIDATE_TIER_PART = "Tier: the rules above with a document and read date are SOURCED; a rule marked \"source not yet recorded\" is not.";
+const CANDIDATE_TIER_NONE = "Tier: troid has no recorded source for the rules above, and each says so; the firm's own documents govern.";
+const CANDIDATE_TIER_QUOTED_PART = "Tier: the figures above are DERIVED — troid's tools computed them from the numbers given; each firm rule quoted beside them with a read date is SOURCED, and one marked \"source not yet recorded\" is not.";
+const UNRECORDED_RX = /\bsource not yet recorded\b/;
+function tierLine(k, quoted, lang, cites, variant) {
+  const line = S(lang, "ask.tier." + (quoted ? "inputs_quoted" : k));
+  if (variant !== "candidate" || lang !== "en" || !cites.some((c) => UNRECORDED_RX.test(c))) return line;
+  if (quoted) return CANDIDATE_TIER_QUOTED_PART;
+  if (k !== "sourced") return line;
+  return cites.every((c) => UNRECORDED_RX.test(c)) ? CANDIDATE_TIER_NONE : CANDIDATE_TIER_PART;
+}
 function withSources(reply, lang, toolLog, variant) {
   const cites = [], tiers = new Set(), assumed = [];
   for (const t of toolLog) {
@@ -1772,7 +1786,7 @@ function withSources(reply, lang, toolLog, variant) {
   if (cites.length) block.push(S(lang, "ask.sources") + "\n" + uniq(cites).map((c) => "- " + c).join("\n"));
   // a reply that quotes a firm's rule with its read date itself is not told "no firm rule was needed" (run 5, ex-kelly)
   const quoted = READ_DATE_RX.test(stripSources(reply));
-  for (const k of ["modelled", "derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(S(lang, "ask.tier." + (k === "inputs" && quoted ? "inputs_quoted" : k)));
+  for (const k of ["modelled", "derived", "inputs", "sourced"]) if (tiers.has(k)) block.push(tierLine(k, k === "inputs" && quoted, lang, cites, variant));
   if (assumed.length) block.push(S(lang, "ask.assumed", { list: uniq(assumed).join("; ") }));
   let body = stripSources(reply);
   // the service lists troid's assumptions, so the reply's own list of them goes (subset run 1, p-size: listed twice, the
