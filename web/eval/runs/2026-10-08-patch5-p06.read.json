@@ -1,0 +1,17 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch revised (#32: a budget gets no product list), run p06 on the patch prompt (s-firm, s-product). s-firm narrows nothing. 1 error(s), none critical.",
+ "s-product": "Error (major: missing date or source): the refusal first; one lead-in; 13% cumulative; the differences as facts. But every rule is also given in dollars ('4% ($4,000)', '6% ($6,000)', '10% ($10,000)', '$5,000', '$8,000') from no tool (run 20's standard), the automated failure.",
+ "s-firm": "Note: correct (no tool, the revised patch): the refusal first; 'troid doesn't pick a product; the choice is yours.' at once, not at the end (noted); no product named, listed or set apart; troid's compare and an offer to give a named product's rules. Nothing narrowed. 'without troid narrowing it to one' writes the patch's word back (noted).",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'daily loss limit 4% ($4,000), maximum loss 6% ($6,000, static), profit target 10% ($10,000)' and the 2-Step's '$5,000', '$10,000', '$8,000', '$5,000': dollar figures from no tool"
+   ]
+  }
+ ]
+}

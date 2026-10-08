@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #25, s-product alone. 1 error.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; both products at $100,000; 8% + 5% = 13%; the shared rules. But 'troid doesn't pick a product; the choice is yours.' says section 4's line again in other words, and 'Every other figure shown here … is SOURCED, with its document and read date given above.' restates the sources (they are below). Neither lint caught them (#26 widens both).",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'troid doesn't pick a product; the choice is yours.' after 'troid doesn't recommend; it prices what you bring.'; and 'Every other figure shown here … is SOURCED, with its document and read date given above.' restating the service's sources"
+   ]
+  }
+ ]
+}

@@ -43,8 +43,9 @@ for x in json.loads(sys.argv[1]):
                      entry=x["entry"], stop=x["stop"], target_r=x["targetR"], risk_pct_of_balance=x["riskPct"], leverage=x["lev"],
                      profile="1step", margin_mode=x["mode"])
     q = t["quantity"]
-    out.append({"desk": {"quantity": d["qty"], "notional": d["notional"], "loss": d["loss"]},
-                "mcp": {"quantity": q, "notional": t["notional"], "loss": q * abs(x["entry"] - x["stop"]) + 0.0004 * q * (x["entry"] + x["stop"])}})
+    out.append({"desk": {"quantity": d["qty"], "notional": d["notional"], "loss": d["loss"], "left": d["left"]},
+                "mcp": {"quantity": q, "notional": t["notional"], "loss": q * abs(x["entry"] - x["stop"]) + 0.0004 * q * (x["entry"] + x["stop"]),
+                        "left": t["losses_remaining"], "notes": t["notes"]}})
 print(json.dumps(out))
 `;
 const py = JSON.parse(execFileSync("python3", ["-c", PY, JSON.stringify(CASES.map(([, x]) => x))], { cwd: ROOT, encoding: "utf8" }));
@@ -70,6 +71,15 @@ CASES.forEach(([name, x], i) => {
   const ref = rows["the desk (audit/model.py)"];
   ok(`${name}: quantity ${ref[0]}, notional ${ref[1]}, loss at the stop ${ref[2]} = the risk, in all six`,
      Object.values(rows).every((v) => v[0] === ref[0] && v[1] === ref[1] && v[2] === ref[2]) && ref[2] === c2(risk), rows);
+  // losses left (the owner, 2026-10-08): live, candidate, the desk and the MCP server count the same losses, this trade
+  // included, and no note says "N more losses" (one too many after this trade)
+  const left = { live: live.losses_remaining, candidate: cand.losses_remaining, desk: py[i].desk.left, mcp: py[i].mcp.left };
+  const reach = left.desk + 1, sfx = reach % 100 >= 11 && reach % 100 <= 13 ? "th" : ["th", "st", "nd", "rd"][reach % 10] || "th";
+  const fitRx = new RegExp(`^${left.desk} loss(es)? at this size fit, this one included; the ${reach}${sfx} reaches the `);
+  ok(`${name}: ${left.desk} losses left in all four, the ${reach}${sfx} named as the one that reaches the limit, never "more losses"`,
+     Object.values(left).every((v) => v === left.desk) && live.loss_that_reaches_limit === reach && cand.loss_that_reaches_limit === reach
+     && [live.notes, cand.notes, py[i].mcp.notes].every((ns) => ns.some((t) => fitRx.test(t)) && !ns.some((t) => /\bmore losses\b/.test(t))),
+     { left, live: live.notes, mcp: py[i].mcp.notes });
 });
 // p-size's own figures, as run 20's read and the desk give them (the live baseline gave 1.622095 before 2026-10-07)
 const ps = RC("size_trade", { firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop_pct: 0.3, risk_pct: 0.5 }, "live");

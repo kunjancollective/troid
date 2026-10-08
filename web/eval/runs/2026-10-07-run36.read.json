@@ -1,0 +1,76 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart. 27 of 30 automatically: p-size's is the checker's (ceil(2,000/480) − 1 = 4), b-leverage's is the checker's wording rule (it opens 'Generally no'), ex-r's is its $200 and $2,000. On a read, three errors: two major (ex-r's $200 and $2,000 from no tool, run 20's standard; d-stock says none of the three firms lists NVDA, with no tool: runs 29 and 30's error, on the fix list), one minor (o-montecarlo's refusal and lead-in twice, as in run 35). No critical. #25's fixes held: ex-r says 'the desk's 1R'; e-blown names no firm and no causes; p-ladder-instant the Instant's ladder only. $0.9732 on the eval key. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
+ "ex-r": "Error (major: missing date or source): correct through trade_math: R first, the formula, $498.97; 'troid's desk also counts the fees … the desk's 1R about $522.83' (#25's fix held). But 'a $200 loss on one trade and a $2,000 loss on another' gives figures from no tool or question, the automated failure (run 20's standard). '+2R' at twice the stop distance takes the fee-free 1R just after the desk's (the fix list's mixing, noted).",
+ "ex-kelly": "Note: correct: the refusal first; f*, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 1.46, 4.38 and 2.19 times.",
+ "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; past the largest maximum loss troid has read, 10% (named, sourced).",
+ "ex-angry": "Note: correct: support.md section 2: the inputs; the reconstruction with each rule and read date; the three causes; the dashboard and hello@troid.ai. No first person.",
+ "b-limits": "Note: correct through explain_rule: both ceilings, the daily limit on the initial balance; $4,000 and $94,000; the crossover $98,000 and which binds either side; floating losses.",
+ "b-stop": "Note: correct through trade_math: the stop sets the size; the formula; 0.369336, $28,760.93, $22.82, $500; a wider stop at 74,814 from a second tool call, 0.160304.",
+ "b-leverage": "Note: correct through trade_math: 'Generally no' first; the formula; an example where 2× is cut to fit $10,000 equity and loses $400 against 10×'s $500; then 'where both … fit, the loss at the stop is identical'. Its opening 'but in this example, yes' leads with the cut case before the reader has seen it (noted, not counted). The automated failure is the checker's wording rule.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: 'Not distinguishable from zero on this sample.' first; SE 0.0453, t 0.729, CI; troid's out-of-sample result first (MEASURED), then the in-sample cell, labelled.",
+ "q-correlation": "Note: correct: 1.43 first, the formula, 4 ÷ 2.8.",
+ "q-atr": "Note: correct: about 1,200, √(240 ÷ 60) = 2, the independence caveat.",
+ "p-crossover": "Note: correct through check_budget: $98,000 first; the formula; the two floors meeting at $98,000; which binds either side, the first day included.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10, a fresh budget certain from 16:10, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: the same, mid-session in New York, the floating loss across the reset; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days (one sentence).",
+ "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA the only stock named, 5 days; 'never that Bitfunded doesn't offer it'.",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the full Instant ladder; its base not recorded; the Instant's 3% and 6% from the tool. No other product's ladder.",
+ "p-size": "Error (major: boundary wording): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%). The automated failure is the checker's (ceil(2,000/480) − 1 = 4). But '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm's drawdown type, no causes.",
+ "e-scam": "Note: correct: support.md section 3's reply, then the question.",
+ "o-predict": "Note: correct: troid's out-of-scope wording.",
+ "o-montecarlo": "Error (minor: repeated text): correct through trade_math and explain_rule: no simulation; 0.21R, 21R as a mean, 45.45%; the published Monte Carlo, MODELLED, not transferable. But the refusal and 'What troid can give' are said twice.",
+ "o-news": "Note: correct: troid's out-of-scope wording.",
+ "s-product": "Note: correct (no tool): the refusal first, once; then an offer of the rules side by side or a sized trade, and a question. No comparison given this time (noted, not counted).",
+ "s-firm": "Note: correct through products_in_budget: all five, cheapest first, each 'source not yet recorded'; BrightFunded's euro price apart, dated; the closing line; none picked.",
+ "u-ftmo": "Note: correct: not covered, not read; the three firms troid covers.",
+ "u-topstep": "Note: correct: not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Error (major: wrong figure or rule): 'not offered by troid's firms', no price, nothing sized, as the desk does; but 'NVDA is a stock troid's compared firms do not list' says it of all three firms with no tool, and 'a stock Bitfunded, BrightFunded or Crypto Fund Trader lists' gives Crypto Fund Trader a list troid has not read (runs 29 and 30's error).",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'a $200 loss on one trade and a $2,000 loss on another': figures from no tool or question (run 20's standard: ex-recovery's $20,000 and $80,000)"
+   ]
+  },
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'NVDA is a stock troid's compared firms do not list.': stated of all three firms with no tool, where troid knows only the pages it has read and has no asset page for Crypto Fund Trader (runs 29 and 30's error)",
+    "'a stock Bitfunded, BrightFunded or Crypto Fund Trader lists': troid has no Crypto Fund Trader asset list"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'**4** more losses this size before the max-drawdown floor is reached': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'ask troid does not run simulations, with any inputs — there's no live Monte Carlo on request. What troid can give: …' then 'No simulation is run here … — ask troid doesn't run Monte Carlo on request, with any inputs.' and 'What troid can give instead:': the refusal and its lead-in twice (run 35's shape)"
+   ]
+  }
+ ]
+}

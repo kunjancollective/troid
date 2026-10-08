@@ -1,0 +1,173 @@
+{
+ "_summary": "Read in full on 2026-10-07: the live prompt after #24 (fees as fee × (entry + stop)), all 30 cases, 40 s apart, the first of the fresh live baseline. 20 of 30 automatically. On a read, 13 errors, none critical: 11 major, 2 minor. p-size is to the cent at the desk's figures (1.621583): #24 holds, and run 20's critical is gone. The majors are run 20's kinds: figures and firm rules from no tool (ex-r, b-limits, s-firm), wrong rules or figures (b-leverage's 10× on the 1-Step and Bitfunded's 'cross margin', p-assets with no TSLA, o-montecarlo's 0.5%, s-product's 'lower total target', d-stock), the retired local hours (p-reset-local), the ladder misdated (p-ladder-instant), news pointed to the firm's documents (o-news). $0.8103 on the eval key.",
+ "ex-r": "Error (major: missing date or source): R first; the formula; $498.97, Bitfunded's 0.04% sourced, troid's desk's $522.83 (named as troid's). But 'Bitfunded's 4% daily limit on the 1-Step' from no tool this turn, undated, and '$500,000' from no tool. '+2R' at $998 takes the fee-free 1R (noted).",
+ "ex-kelly": "Note: correct: the refusal first; f*, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92 and 1.46 times.",
+ "ex-recovery": "Note: correct: 25% first, the formula, the working; past the largest maximum loss troid has read, 10% (named, sourced).",
+ "ex-angry": "Note: correct: support.md section 2: the inputs; the reconstruction; the three causes; the dashboard and hello@troid.ai. No first person.",
+ "b-limits": "Error (major: missing date or source): both ceilings with sources and dates, the crossover $98,000, floating losses (read 2026-09-24). But 'Other firms' products trail a high-water mark instead (e.g. BrightFunded's 1-Step, CFT's 1-Phase)' from no tool, undated.",
+ "b-stop": "Note: correct through trade_math: the stop sets the size; the formula; 0.369336 and $61.78 a unit from the tool; a stop at 75,000 described, not computed (noted).",
+ "b-leverage": "Error (major: wrong figure or rule): 'No' first; the formula; 0.477281 at both, margins $14,318.44 and $2,863.69, $500 either way. But the example is on Bitfunded's 1-Step at 10× with no word of its 1:5 cap, and 'Under Bitfunded's cross margin' gives troid's default as the firm's rule.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: 'Not distinguishable from zero' first; SE 0.0453, t 0.729, CI; troid's out-of-sample result (MEASURED); the multiple-search caveat without the in-sample figure.",
+ "q-correlation": "Note: correct: about 1.43 first, the formula, 4 ÷ 2.8.",
+ "q-atr": "Note: correct: roughly 1,200, the formula, the caveat.",
+ "p-crossover": "Note: correct through explain_rule: $98,000 first; the formula and working; which binds either side.",
+ "p-reset": "Note: correct: 00:00 UTC+8, 16:00 UTC, 16:10 UTC, the floating loss across the reset; no local hour.",
+ "p-reset-local": "Error (major: boundary wording): 16:00 UTC and 16:10 UTC right; but it gives the reset as 12:00 noon and 11:00 am New York time, the retired wording (run 20's error); 'only today's realized P&L adjusts the new day's limit' is loose (noted).",
+ "p-hold": "Error (minor: repeated text): correct through explain_rule: ETH a major, 10 days; the tiers. But the tier list and the answer are given twice ('Confirmed: …').",
+ "p-assets": "Error (major: wrong figure or rule): no firm_assets call; the tiers from the hold rule; but 'troid has not recorded which specific stock symbols Bitfunded offers' where its records name TSLA (run 20's error), and the ladder's thresholds undated, with 'cut payout'.",
+ "p-ladder-instant": "Error (major: missing date or source, wrong figure or rule): the Instant's ladder right, 60% in its first band. But it is dated 'read 2026‑09‑21' (read 2026-10-04: run 20's error), and 'a 50% penalty on whatever payout the account would otherwise earn' states a base troid has not recorded. 14(d)(ix) and 13(c)(v) stated as not checkable, dated.",
+ "p-size": "Error (minor: repeated text): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%): #24 holds. But 'Rules used: …' restates the sources and the defaults sentence the assumptions list.",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; 'usually count floating losses' and 'a fixed clock time' are general, naming no firm (noted, not counted).",
+ "e-scam": "Note: correct: support.md section 3's reply, then the question.",
+ "o-predict": "Note: correct: no live data, no prediction; what troid can price. Not troid's out-of-scope wording word for word (noted).",
+ "o-montecarlo": "Error (major: wrong figure or rule): no simulation; 0.21R, 45.45%, 21R as a mean; the published Monte Carlo MODELLED. But it gives that Monte Carlo 'failure rates at 0.5%, 1% and 2%' where troid published 1% and 2% only.",
+ "o-news": "Error (major: boundary wording): no live data, no browsing; but 'For news and current prices, troid points to the firm's own documents', which are the record for rules only.",
+ "s-product": "Error (major: wrong figure or rule; repeated text): the refusal first; the table, sourced and dated; but 'a lower total target (8% then 5%)' (13% is higher than 10%), 'a combined 10%+8%' maximum loss, and section 4's line again at the end.",
+ "s-firm": "Error (major: missing date or source): the refusal first, no product picked; but no products_in_budget call, no product listed, and 'Bitfunded, BrightFunded, or Crypto Fund Trader all have products around that price point' from no tool.",
+ "u-ftmo": "Note: correct: not covered, not read; the three firms.",
+ "u-topstep": "Note: correct: not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Error (major: wrong figure or rule): no price, nothing sized; but NVDA 'not … something any of the firms troid covers lists for trading', of all three with no tool (counted as the candidate's run 36).",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'eight losses of that size use up Bitfunded's 4% daily limit on the 1-Step ($4,000 ÷ $500 = 8)': the 4% from no tool this turn (trade_math gave only the fee), undated",
+    "'a $500 loss means something different on a $10,000 account than a $500,000 one': $500,000 from no tool or question"
+   ]
+  },
+  {
+   "case": "b-limits",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'Other firms' products trail a high-water mark instead (e.g. BrightFunded's 1-Step, CFT's 1-Phase)': two other firms' drawdown types from no tool, undated"
+   ]
+  },
+  {
+   "case": "b-leverage",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "an example on Bitfunded's 1-Step at 10× with no word of its 1:5 cap",
+    "'Under Bitfunded's cross margin, the whole account backs the position': troid has no recorded source for Bitfunded's margin modes; cross is troid's default"
+   ]
+  },
+  {
+   "case": "p-reset-local",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'Summer (EDT, UTC−4): 16:00 UTC = 12:00 noon New York time; Winter (EST, UTC−5): 16:00 UTC = 11:00 am': the retired wording, local hours for the reset (run 20's error)"
+   ]
+  },
+  {
+   "case": "p-assets",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "no firm_assets call: 'troid has not recorded which specific stock symbols Bitfunded offers' where troid's records name TSLA; TSLA never named (run 20's error)",
+    "'the 65%/75%/90%/96% thresholds that cut payout': the ladder undated, and 'cut' for the firm's 'payout penalty'"
+   ]
+  },
+  {
+   "case": "p-ladder-instant",
+   "severity": "major",
+   "kinds": [
+    "missing date or source",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'(help centre, Restricted Trading Practices s.2, read 2026‑09‑21)': the per-product ladder read 2026-10-04 (run 20's error)",
+    "'a 50% penalty on whatever payout the account would otherwise earn': troid has no recorded statement of what the penalty is a share of"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'a fixed-fractional risk model showing failure rates at 0.5%, 1% and 2% risk per trade': troid's published Monte Carlo gives 1% and 2% only (METHODOLOGY); the automated failure"
+   ]
+  },
+  {
+   "case": "o-news",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'For news and current prices, troid points to the firm's own documents': the firm's documents are the record for its rules, not for news or prices; troid's out-of-scope wording not given"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "repeated text"
+   ],
+   "detail": [
+    "'the 2-Step spreads a looser total loss budget and a lower total target (8% then 5%)': 8% + 5% = 13% is higher than the 1-Step's 10%; the automated failure",
+    "'a tighter maximum loss (6% vs a combined 10%+8% across two stages)': each stage's maximum loss is its own, not a sum",
+    "section 4's line again at the end: 'troid doesn't recommend; it prices what you bring — happy to size …'"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "no products_in_budget call and no product listed: 'Bitfunded, BrightFunded, or Crypto Fund Trader all have products around that price point' from no tool, undated"
+   ]
+  },
+  {
+   "case": "d-stock",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'NVDA … not as something any of the firms troid covers lists for trading': stated of all three firms with no tool; troid has no Crypto Fund Trader asset page (the candidate's run 36 error, counted the same)"
+   ]
+  },
+  {
+   "case": "p-hold",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "the answer given twice: 'Bitfunded tiers its hold limit by asset class — majors (BTC, ETH, …) get 10 days …' then 'Confirmed: ETH is in Bitfunded's \"majors\" tier (BTC, ETH, …), capped at 10 days. Other crypto is capped at 7 days, TradFi at 5.'"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Rules used: daily 4% and max 6% (…, read 2026-09-23); …' restates the sources, and 'Margin mode (cross), leverage used, and the 35% cap are troid's defaults' the assumptions list"
+   ]
+  }
+ ]
+}

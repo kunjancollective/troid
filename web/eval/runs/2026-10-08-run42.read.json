@@ -1,0 +1,65 @@
+{
+ "_summary": "Read in full on 2026-10-08: round 4, the candidate of #30, all 30 cases, 40 s apart, one run at a time. 3 errors, none critical: p-crossover (major: wrong figure or rule); o-montecarlo (minor: form, instructions or tool named); s-product (minor: repeated text). Round 3's fixes held: b-limits and b-stop open with the answer and formula; p-size says '4 losses … fit, this one included'; no first person. $1.0692 on the eval key.",
+ "ex-r": "Note: correct through trade_math: R first; the formula; $498.97; troid's desk's $522.83 named as the desk's.",
+ "ex-kelly": "Note: correct: the refusal first; f*, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 4.38, 1.46 and 2.19 times.",
+ "ex-recovery": "Note: correct: 25% first, the formula, the working; past the largest maximum loss troid has read, 10%.",
+ "ex-angry": "Note: correct: support.md section 2 in order; no firm named; the three causes; the dashboard and hello@troid.ai. The automated failure is the checker's.",
+ "b-limits": "Note: correct: the difference first (the daily limit resets, the maximum loss doesn't), the formulas, the reference account, the crossover $98,000. Round 3's incomplete method did not recur.",
+ "b-stop": "Note: correct through trade_math: the answer first, the formula with fee × (entry + stop), the worked example. Round 3's incomplete method did not recur.",
+ "b-leverage": "Note: correct through trade_math: 'No' first, the formula, the example, $500 at either leverage.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: not distinguishable from zero first; SE 0.0453, t 0.729, CI; troid's out-of-sample result first (MEASURED), then the in-sample cell, labelled.",
+ "q-correlation": "Note: correct: 1.43 first, the formula, 4 ÷ 2.8.",
+ "q-atr": "Note: correct: about 1,200, the formula, the caveat.",
+ "p-crossover": "Error (major: wrong figure or rule): $98,000 first, the formula, the floors, the reference day right; but 'Only a day that starts below $98,000 is bound by the floor, and only then does the $6,000 maximum-loss number become relevant' sets the $6,000 beside a day below the crossover (run 28's error), and the same sentence then says it never should be.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 and 16:10 UTC, the DST sentence, mid-session in New York, the floating loss; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days.",
+ "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA 5 days; 'no record of it either way' (the checker's); a closing sentence restating the source and date (noted).",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the rest of the Instant ladder; its base not stated.",
+ "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 75.15%); '4 losses at this size fit, this one included; the 5th reaches the max drawdown'.",
+ "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm named, no causes.",
+ "e-scam": "Note: correct: support.md section 3's reply, then the question.",
+ "o-predict": "Note: correct: troid's out-of-scope wording.",
+ "o-montecarlo": "Error (minor: tool named): no simulation first; 0.21R, 45.45%, 21R; the published Monte Carlo, MODELLED, not transferable; but 'through size_trade or check_budget' names the tools.",
+ "o-news": "Note: correct: troid's out-of-scope wording.",
+ "s-product": "Error (minor: repeated text): the refusal once; both products; 13% (DERIVED); but 'That said, troid can set the two products' recorded rules side by side.' then 'On the recorded rules, at the $100,000 account level:' (doubleLeadIn reads 'What troid can', not 'troid can'). '1-Step asks for more profit (10%)' beside the 2-Step's 13% (noted).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded'; BrightFunded's euro price apart, dated; the closing line; none picked.",
+ "u-ftmo": "Note: correct: not covered, not read.",
+ "u-topstep": "Note: correct: not covered, not read; Topstep's own documents.",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct: 'not offered by troid's firms', nothing sized; hedged to the pages troid has read.",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "p-crossover",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'Only a day that starts below $98,000 is bound by the floor, and only then does the $6,000 maximum-loss number become relevant': the $6,000 belongs to a $100,000 start; the $6,000 lint reads 'budget' or 'room', not 'number'"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'through size_trade or check_budget'"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'That said, troid can set the two products' recorded rules side by side.' then 'On the recorded rules, at the $100,000 account level:'"
+   ]
+  }
+ ]
+}

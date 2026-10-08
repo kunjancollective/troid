@@ -34,21 +34,16 @@
  * operator request goes out on ANTHROPIC_API_KEY_EVAL when that is set,
  * so evaluation never spends the key visitors use, and its reply carries the tools it called and every number in
  * their inputs and results (tool_numbers), for the evaluation's check that each figure came from a tool. Promoting a
- * candidate follows the owner's rule in CLAUDE.md, and is one commit: its files move into place and the CANDIDATE_* entries fold into
- * GUARDRAILS, RULES, TOOLS and RUN. troid's character was promoted this way after evaluation run 9 (web/eval/runs/);
- * the fixes from the reads of runs 10 to 16 and of the subset run of 2026-09-24 are staged now (the CANDIDATE_* entries,
- * CANDIDATE_LINTS, CANDIDATE_TOPIC_CITES, a should-I refusal, support.md section 2's three causes, a MODELLED tier line
- * for troid's quoted Monte Carlo, troid's assumptions listed once, and a lint rewrite that stands only when it fixes more
- * than it breaks). Staged with them (2026-09-30, the owner's approval): the calculator audit's F5, F6 and F7 (audit/SPEC.md),
- * so the candidate's tools agree with troid's desk and the MCP server — a unit's fees are fee × (entry + stop), losses
- * left are ceil(budget ÷ risk) − 1, and a long's liquidation at 100% or more is "none above zero" (size_trade(a, true),
- * MATH_NEXT, TRADE_MATH_TOOL_NEXT, CANDIDATE_RULES.fees and .ruin, context/candidate/TROID.md and TROID-CHARACTER.md);
- * and, the owner's decisions of the same day, F1 (a margin above equity cut to fit, with D6's lowest leverage cap it rests
- * on), R6 (a long's floor 100% or more below entry "not reached above zero") and the fourth patch's two wordings
- * (context/candidate/TROID.md; live has its reset now). And from the read of runs 17 to 19 (2026-10-05, the owner's six
- * fixes): five guardrails, the crossover stated exactly (CANDIDATE_RULES.crossover), nine lints that read what the reader
- * sees, and three backstops on the reply (the question not written back, the reset in UTC with the DST sentence, troid's
- * wording for a question about prices or news).
+ * candidate follows the owner's rule in CLAUDE.md, and is one commit: its files move into place and what it staged becomes
+ * every visitor's. troid's character was promoted this way after evaluation run 9 (web/eval/runs/). The candidate of runs
+ * 10 to 42 was promoted on 2026-10-08 (the owner, after round 4: runs 40 to 42 against live runs 38 and 39): its TROID.md
+ * and TROID-CHARACTER.md moved into place; its guardrails, rule explanations, tools, tool implementations and lints are
+ * PROMOTED_GUARDRAILS, PROMOTED_RULES (with PROMOTED_TOPIC_CITES), PROMOTED_TOOLS (TOOLS_LIVE), PROMOTED_RUN (RUN_LIVE)
+ * and PROMOTED_LINTS, every visitor's, after the earlier ones and in the order they were staged; and every service change
+ * once gated on the candidate applies to every reply. The earlier live forms (TOOLS, RUN, MATH, size_trade without its
+ * `next` flag) remain only as the bases the promoted ones extend. A new candidate starts empty: CANDIDATE_GUARDRAILS,
+ * CANDIDATE_RULES, CANDIDATE_TOOLS, CANDIDATE_RUN and CANDIDATE_LINTS, and any service change gated on variant ===
+ * "candidate".
  *
  * Feature flag: TROID_ASSISTANT=on, with ANTHROPIC_API_KEY, a TROID_TURN_KEY of at least 32 bytes and the
  * conversation store (Upstash Redis: KV_REST_API_URL / KV_REST_API_TOKEN) set. Otherwise POST answers 503
@@ -200,10 +195,10 @@ const GUARDRAILS = [
   "State what the numbers imply, never whether they are good or bad: no \"solid\", \"healthy\", \"strong\" or \"where traders belong\". Compare products by their recorded rules only, never by a characterization of them, and say which rules have no recorded source exactly as the tool does. Give a fixed reply as it is, first and once, without announcing it; never name troid's own instructions (support.md, its sections, the character) or the parts of the method (\"result first\", \"one line\") in a reply. When a user gives a budget, one product's fee never stands for a firm: fees differ by product and account size, so give each product's fee through firm_rules or say that they differ. Acknowledge a loss once, plainly, and never quote a user's feelings back to them.",
   "ask troid does not browse and has no live data. For news, prices, exchange rates, other firms, or anything newer than troid's own files, say what troid has and hasn't read; for a firm's rules, the firm's own documents are the record. Name no outside service as a place to look (a news site, an exchange, a data or social platform). Never convert a currency from memory.",
 ].join("\n- ").replace(/^/, "- ");
-// A candidate's guardrails: the live ones plus these, until it is promoted. Staged after evaluation run 10: o-montecarlo
+// Promoted 2026-10-08 (staged as the candidate's guardrails from evaluation run 10 to round 4). Staged after run 10: o-montecarlo
 // quoted troid's Monte Carlo from memory, its 68% (at 1% a trade) set beside 2%; s-product called the 2-Step's 8% and 5%
 // "a lower total profit" than the 1-Step's 10%, and every rule of its table sourced where two had no recorded source.
-const CANDIDATE_GUARDRAILS = [
+const PROMOTED_GUARDRAILS = [
   "troid's published Monte Carlo results come from explain_rule, topic ruin: quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED, and never one from memory.",
   "What a firm lets you trade (a coin, a commodity, a stock) comes from firm_assets: each asset as the firm's own page names it, its hold limit and the date troid read it. An asset it doesn't list is one no page troid has read names; never say troid has no list.",
   "The concentration ladder differs by product (firm_rules or check_compliance give the product's own): give each step in the firm's words, an Exposure Level and its \"N% payout penalty\", never a cut, and never say what the penalty is a share of.",
@@ -224,7 +219,7 @@ const CANDIDATE_GUARDRAILS = [
 const OUT_OF_SCOPE_REPLY = "ask troid does not browse and has no live data: it has no live price, never predicts one, and doesn't follow the news. " +
   "troid prices what you bring: an entry, a stop and an account, against the firm's own rules.";
 const DST_SENTENCE = "Local clocks move with daylight saving and UTC doesn't, so a local hour for the reset holds only for the date it was converted for.";
-CANDIDATE_GUARDRAILS.push(
+PROMOTED_GUARDRAILS.push(
   "In a leverage or margin answer, every size, notional, margin and liquidation figure is one a tool returned this turn for that very thing, beside the leverage it belongs to: work each leverage through trade_math (position_size, with an equity) or size_trade and quote its quantity, notional and margin as the result gives them, never a figure worked out from another. A liquidation distance is size_trade's (among its circuit breakers); where no tool gives one, say it in words: higher leverage brings an isolated position's liquidation closer to entry, and under cross margin leverage doesn't move it. Cross margin is troid's default model; troid has no recorded source for Bitfunded's margin modes.",
   "Bitfunded's reset is given in UTC only: 16:00 UTC, in effect by 16:10 UTC, followed by this sentence, word for word: \"" + DST_SENTENCE + "\" Never a local hour, by season or otherwise: no noon, midday or mid-afternoon, no EDT or EST.",
   "State the crossover exactly: below $98,000 at the day's start the maximum-loss floor binds; between $98,000 and the $100,000 start the daily limit binds, and above the start too. Which one binds turns on the day's start alone: a day that starts less than $2,000 below the start is still bound by the daily limit, however much was lost or given back before it, and only a day that starts below $98,000 is bound by the floor. The daily floor is the day's start less the daily amount, never a static floor from the quota. Each budget is the day's start less its floor: the maximum-loss budget is $6,000 only on a day that starts at $100,000, and below $98,000 it is under $4,000, smaller than the daily budget, which is why the floor binds there; never set the $6,000 beside a day that starts below the crossover.",
@@ -236,7 +231,7 @@ CANDIDATE_GUARDRAILS.push(
 const OWN_STRATEGY = "Out of sample, troid's own strategy measured +0.008R per trade on BTC (504 trades) and +0.008R on ETH (498 trades), " +
   "both 95% confidence intervals containing zero (MEASURED). In-sample, the best of the ~30 configurations it searched measured " +
   "+0.033R per trade over 78 trades (MEASURED, in-sample): a best cell, below what chance alone produces across that many configurations (~+0.093R).";
-CANDIDATE_GUARDRAILS.push(
+PROMOTED_GUARDRAILS.push(
   "A firm's rule stated anywhere, a maximum loss in passing too, comes from a tool this turn, which gives its source and read date (for a drawdown, trade_math's recovery with firm \"all\" gives the largest maximum loss troid has read), or it is not stated. That figure covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products).",
   "When troid's own strategy comes up, even in passing (a user's figures that match its search, say), its out-of-sample result comes first and the in-sample one after it, labelled in-sample, in these words: \"" + OWN_STRATEGY + "\" Never the in-sample figure first, alone or unlabelled.");
 // The owner's fixes of 2026-10-06, after runs 25 to 27. s-firm narrowed a $500 budget to one product (runs 25 and 26,
@@ -245,24 +240,29 @@ CANDIDATE_GUARDRAILS.push(
 // cheapest first, and troid picks none. The crossover guardrail above no longer quotes the wording it forbids: runs 23 and
 // 25 to 27 wrote it back to the reader ('never "any slip."', 'not "a small amount"').
 const BUDGET_CLOSE = "troid doesn't pick a product; the choice is yours.";
-CANDIDATE_GUARDRAILS.push(
+PROMOTED_GUARDRAILS.push(
   "When the user names an amount to spend on a challenge, or asks what an amount buys, call products_in_budget with it. After support.md section 4's line, give every product it returns, cheapest first, one line each with its price, its account size and its source and read date, or that its source is not yet recorded, as the tool's lines give them; then the tool's note; and end with this line, word for word: \"" + BUDGET_CLOSE + "\" Never set one product apart as what the money buys or gets, or as where it should go, and never leave one out.");
 // The owner's two fixes of 2026-10-07, after runs 29 to 31 (the promotion rule's (c): two kinds live run 20 doesn't
 // have). Incomplete method: b-leverage (run 31) opened on its worked example, the answer in its third sentence;
 // o-montecarlo (run 30) asked for "the average loss in R" where the question's 1% risk per trade is the 1R loss.
 // Repeated text: s-product (run 30) and s-firm (run 31) wrote their lead-in twice; p-crossover (run 30) restated the
 // sources the service lists under the answer.
-CANDIDATE_GUARDRAILS.push(
+PROMOTED_GUARDRAILS.push(
   "A question about how something is worked out or what it means opens with its one-line answer, then the formula; the worked example comes after both, never first. Work from the figures the user gave and never ask for one the question already gives: a win in R beside a risk per trade makes the average loss 1R (a 1.2R average win at 1% risk is W = 1.2, L = 1).",
   "Say each thing once: never a sentence that restates the one before it, and never a paragraph that restates the sources or their read dates (\"Rules used: …\", \"This is DERIVED from …, read …\"); the service lists every source and read date under the answer.");
 // The owner's fixes of 2026-10-07, after runs 32 to 34 (the hold on (c), repeated text, and the read's majors). ex-r
 // (runs 33 and 34) gave troid's fee-inclusive 1R as "Bitfunded's desk"; s-product set a sentence on what troid can give
 // before a second lead-in to the same list (runs 32 and 34), and gave support.md section 4's line twice, the second
 // without its full stop (run 33).
-CANDIDATE_GUARDRAILS.push(
+PROMOTED_GUARDRAILS.push(
   "troid's desk, its calculators, its tools and every figure they compute are troid's, never a firm's: no \"Bitfunded's desk\" or a firm's 1R; a firm's rule is the firm's, and how troid prices it is troid's. Introduce a list once: one lead-in, never a sentence on what troid can give or show followed by another introducing the same list; and support.md section 4's line once, first.");
+// Promoted 2026-10-08 (the owner, after round 4: runs 40 to 42 against live runs 38 and 39): the guardrails staged as the
+// candidate's since run 10 are every visitor's now, after the earlier ones and in the order they were staged.
+const LIVE_GUARDRAILS = GUARDRAILS + "\n- " + PROMOTED_GUARDRAILS.join("\n- ");
+// the next candidate's guardrails: the live ones plus these, until it is promoted (none staged since 2026-10-08)
+const CANDIDATE_GUARDRAILS = [];
 const guardrailsFor = (variant) => (variant === "candidate" && CANDIDATE_GUARDRAILS.length
-  ? GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : GUARDRAILS);
+  ? LIVE_GUARDRAILS + "\n- " + CANDIDATE_GUARDRAILS.join("\n- ") : LIVE_GUARDRAILS);
 // A service change staged with a candidate is gated on variant === "candidate" until it is promoted. The character's
 // (web/eval/runs/, runs 1-9) were promoted and run for everyone; run 10's are staged: support.md section 4's reply word
 // for word on a should-I question, and CANDIDATE_LINTS.
@@ -532,6 +532,7 @@ function budgets(a) {
            crossover_equity: r2(crossover), crossover_working: crossoverWork, formula, working, pending, notes, sources: sourcesFor(p, used), _p: p, _eq: eq, _used: used, _quota: quota };
 }
 const r2 = (x) => (x == null ? null : Math.round(x * 100) / 100);
+const nth = (n) => n + ((n % 100 >= 11 && n % 100 <= 13) ? "th" : (["th", "st", "nd", "rd"][n % 10] || "th"));
 // E[max of k independent standard normals]: the expected best of k configurations under a zero edge, in
 // standard errors. ∫ x·k·φ(x)·Φ(x)^(k−1) dx, with Φ accumulated by the trapezoid rule on the same grid; the
 // same integral as backtest/noise_math.py. (√(2 ln k), used before, overstates it: 2.61 against 2.04 at k = 30.)
@@ -629,7 +630,8 @@ function size_trade(a, next) {
   const fees = qty * fu, target = entry + side * tR * dist, loss = qty * (dist + fu), lost = next ? loss : risk, fshare = fees / lost * 100;
   // F7 (next): losses that leave equity above the floor. Firms word a breach as reaching the limit, so a loss that lands
   // exactly on it is not one more left ($4,000 at $500 leaves 7, not 8). The epsilon reads 4.000000000000001 as 4.
-  const consumes = lost / b.effective_budget * 100, left = next ? Math.ceil(b.effective_budget / loss - 1e-9) - 1 : Math.floor(b.effective_budget / risk + 1e-9);
+  // Live too since 2026-10-08 (it counted floor(budget ÷ risk), 8 at $4,000 and $500, the 8th reaching the limit).
+  const consumes = lost / b.effective_budget * 100, left = Math.ceil(b.effective_budget / (next ? loss : risk) - 1e-9) - 1;
   working.push({ step: "intended risk", formula: `equity × ${rpIn}%`, value: r2(intended) },
                { step: "cap", formula: `budget × ${cpIn}%`, value: r2(cap) },
                { step: "risk", formula: "min(intended, cap)", value: r2(risk) },
@@ -643,7 +645,8 @@ function size_trade(a, next) {
   if (feeKnown) working.push({ step: "fees", formula: "quantity × fee per unit", value: r2(fees) });
   if (next) working.push({ step: "loss at the stop", formula: "quantity × (stop distance + fee per unit)", value: r2(loss) });
   working.push({ step: "budget used", formula: "risk ÷ budget", value: r2(consumes) + "%" },
-               { step: "losses left", formula: next ? "ceil(budget ÷ risk) − 1" : "floor(budget ÷ risk)", value: left },
+               { step: "losses left", formula: "ceil(budget ÷ risk) − 1: the losses at this size that leave equity above the limit, this one included", value: left },
+               { step: "the loss that reaches the limit", formula: "ceil(budget ÷ risk)", value: left + 1 },
                { step: "target", formula: `entry ${side > 0 ? "+" : "−"} ${tR} × stop distance`, value: r2(target) });
   base.formula += "; size = min(equity × " + rpIn + "%, room × " + cpIn + "%) ÷ " + (feeKnown ? `(stop distance + (entry + stop) × ${p.fee}%)` : "stop distance")
     + (cut ? `; margin at the risk-based size > equity: size cut to equity × ${levUsed}× ÷ entry` : "");
@@ -656,7 +659,10 @@ function size_trade(a, next) {
   // F1 (next): the margin cut says what equity carries and what the trade then risks, and a budget cut before it says both
   if (cut) notes.push(`cut to fit the margin: at ${levUsed}× the account carries at most ${(eq * levUsed).toFixed(2)} notional, so this trade risks ${loss.toFixed(2)}`);
   if (reduced) notes.push(`cut from ${intended.toFixed(2)} to ${risk.toFixed(2)} — ${b.binding} budget caps it` + (cut ? `; the margin then cut it to ${loss.toFixed(2)}` : ""));
-  notes.push(`${left} more losses at this size before ${b.binding} trips`);
+  // the owner, 2026-10-08: "N more losses" after this trade counted one too many (runs 35 to 39's p-size): the count
+  // includes this trade, and the loss that reaches the limit is named
+  notes.push(left > 0 ? `${left} ${left === 1 ? "loss" : "losses"} at this size fit, this one included; the ${nth(left + 1)} reaches the ${b.binding}`
+                      : `a loss at this size reaches the ${b.binding}`);
   const sp = dist / entry * 100;
   // MMR 0.5% is troid's assumption, not a firm rule. The exchange liquidates when the margin behind the position falls to
   // the maintenance margin on the notional at the liquidation price: lower than entry for a long, higher for a short.
@@ -696,7 +702,7 @@ function size_trade(a, next) {
   return { verdict: reduced || cut ? "REDUCE" : "OK", quantity: Math.round(qty * 1e6) / 1e6, notional: r2(notional),
            margin: r2(margin), leverage_used: levUsed, risk: r2(next ? loss : risk), fees: feeKnown ? r2(fees) : null,
            fee_share_of_risk_pct: feeKnown ? r2(fshare) : null, stop_distance_pct: r2(sp), target: r2(target),
-           ...(next ? { loss_at_stop: r2(loss) } : {}), consumes_pct_of_budget: r2(consumes), losses_remaining: left,
+           ...(next ? { loss_at_stop: r2(loss) } : {}), consumes_pct_of_budget: r2(consumes), losses_remaining: left, loss_that_reaches_limit: left + 1,
            circuit_breakers: ord.map(([e, v, t]) => ({ event: e, adverse_move_pct: t != null ? t : isFinite(v) ? r2(v) : null })),
            assumptions: assumed, definitions: DEFINITIONS, ...base, working, notes };
 }
@@ -790,10 +796,10 @@ function explain_rule(a, rules) {
                  "Its formulas are DERIVED; a rule it cites is SOURCED from the section named, and the firm's own documents govern. For a rule's read date, " +
                  "use the sources in size_trade or check_budget, or troid's compare." };
 }
-// A candidate's explanations where they differ from RULES, until it is promoted. Staged after evaluation run 10
+// The explanations promoted on 2026-10-08 where they differ from RULES (LIVE_RULES below). Staged after evaluation run 10
 // (o-montecarlo set troid's 68%, which is at 1% a trade, beside 2%): troid's published Monte Carlo, every figure with the
 // risk it belongs to and the assumptions the landing page states beside it (verify_claims.py re-simulates each).
-const CANDIDATE_RULES = {
+const PROMOTED_RULES = {
   ruin: "Under a proportional cap (risk at most c of the REMAINING budget), budget after n losses is B(1−c)^n — it approaches zero without reaching it, " +
     "so ruin by realized losses is unreachable and the real failure mode is a stalled account. Uncapped, a fixed fraction f of quota reaches the floor in " +
     "ceil(maxloss/f) losses: 12 at 0.5%, 6 at 1%, 3 at 2% of a 6% maximum loss, and reaching it is the breach, so one fewer leaves equity above it " +
@@ -814,7 +820,7 @@ const CANDIDATE_RULES = {
 };
 // the rules each candidate explanation states, where they differ from TOPIC_CITES
 const FLOAT_CITE = ["bitfunded", "floating_counts", null, "floating losses count toward the daily and maximum loss (Bitfunded)"];
-const CANDIDATE_TOPIC_CITES = {};
+const PROMOTED_TOPIC_CITES = {};
 // A patch's rule explanations (context/patch/README.md): explain_rule, for a request with x-troid-variant: patch, gets the
 // live RULES with these in their place and nothing of the candidate's. Publishing the patch folds each into RULES and
 // empties this object. Empty since the fourth patch (the reset in UTC, its runs web/eval/runs/2026-10-06-section0-*)
@@ -837,7 +843,7 @@ const TOPIC_CITES = {
   hold_limit: [["bitfunded", "hold_cap", null, "hold limit: majors 10 days, other crypto 7, TradFi 5"]],
   funded_stage: [["bitfunded", "trader_stage_rule", null, "Trader Stage limits by path"]],
 };
-Object.assign(CANDIDATE_TOPIC_CITES, { crossover: TOPIC_CITES.crossover.concat([FLOAT_CITE]), drawdown: TOPIC_CITES.drawdown.concat([FLOAT_CITE]) });
+Object.assign(PROMOTED_TOPIC_CITES, { crossover: TOPIC_CITES.crossover.concat([FLOAT_CITE]), drawdown: TOPIC_CITES.drawdown.concat([FLOAT_CITE]) });
 const TOPIC_REFS = { cross: "RTP s.2", accounts: "ToU 6(b)", marketed_strategies: "ToU 14(d)(v)", strategy_switching: "ToU 14(d)(ix)", opposite_positions: "ToU 13(c)(v)" };
 // explain_rule for the candidate: its explanations, and the sources of the rules they state, so the service writes each
 // rule's document and read date under the answer and the tier (SOURCED) with them. Topics that state no firm rule
@@ -1288,7 +1294,7 @@ const TOOLS = [
     input_schema: { type: "object", properties: { topic: { type: "string" } }, required: ["topic"] } },
   TRADE_MATH_TOOL, FIRM_RULES_TOOL,
 ];
-// A candidate's tools: the live ones plus these, until it is promoted. None is staged. trade_math's schema is the
+// The tools promoted on 2026-10-08 (TOOLS_LIVE below), staged as the candidate's from the live test of 2026-10-04. trade_math's schema is the
 // candidate's (TRADE_MATH_TOOL_NEXT: a side, and the calculator audit's F6 and F7 in its description).
 const FIRM_ASSETS_TOOL = { name: "firm_assets",
   description: "The assets a firm's own pages name, as troid has recorded them (what troid's desk lets a trader pick): each with the firm's own name for it, " +
@@ -1306,11 +1312,15 @@ const PRODUCTS_IN_BUDGET_TOOL = { name: "products_in_budget",
     "them, then its note, and end with its closing line: never one product set apart as what the money buys.",
   input_schema: { type: "object", properties: { budget: { type: "number", description: "the amount, e.g. 500" },
     currency: { type: "string", enum: ["USD", "EUR"], description: "the amount's currency, USD unless the user wrote euros" } }, required: ["budget"] } };
-const CANDIDATE_TOOLS = [FIRM_ASSETS_TOOL, PRODUCTS_IN_BUDGET_TOOL];
-const TOOLS_NEXT = TOOLS.map((t) => (t === TRADE_MATH_TOOL ? TRADE_MATH_TOOL_NEXT : t === FIRM_RULES_TOOL ? FIRM_RULES_TOOL_NEXT : t)).concat(CANDIDATE_TOOLS);
-const toolsFor = (variant) => (variant === "candidate" ? TOOLS_NEXT : TOOLS);
+const PROMOTED_TOOLS = [FIRM_ASSETS_TOOL, PRODUCTS_IN_BUDGET_TOOL];
+// Promoted 2026-10-08: every visitor's tools are the ones the candidate ran with since round 1 (trade_math and firm_rules
+// in their F6/F7 form, firm_assets and products_in_budget); TOOLS is only their base now. A new candidate's tools
+// (CANDIDATE_TOOLS, none staged since) are added to them for the candidate only.
+const TOOLS_LIVE = TOOLS.map((t) => (t === TRADE_MATH_TOOL ? TRADE_MATH_TOOL_NEXT : t === FIRM_RULES_TOOL ? FIRM_RULES_TOOL_NEXT : t)).concat(PROMOTED_TOOLS);
+const CANDIDATE_TOOLS = [];
+const toolsFor = (variant) => (variant === "candidate" && CANDIDATE_TOOLS.length ? TOOLS_LIVE.concat(CANDIDATE_TOOLS) : TOOLS_LIVE);
 const RUN = { size_trade, check_budget, check_compliance, check_availability, explain_rule: (a) => explainRuleSourced(a), trade_math, firm_rules };
-// A candidate's tool implementations, until promoted. Staged after evaluation run 10:
+// The tool implementations promoted on 2026-10-08 (PROMOTED_RUN below). Staged after evaluation run 10:
 // - b-limits said "Bitfunded auto-fails on either without requiring a close" with no source: troid had read it in the
 //   help centre's Criteria to be Success and recorded it nowhere. It is recorded now (firms.json floating_counts), and
 //   firm_rules, check_budget and size_trade give it with its source; a firm with no recorded source says so.
@@ -1591,8 +1601,10 @@ function products_in_budget(a) {
 const budgetText = (out) => (out.lines.length
   ? "Every product troid has a price for at or under " + moneyOf(out.budget, out.currency) + ", cheapest first:\n" + out.lines.map((l) => "- " + l).join("\n")
   : "troid has a price for no product at or under " + moneyOf(out.budget, out.currency) + ".") + "\n\n" + out.note + "\n\n" + BUDGET_CLOSE;
-const CANDIDATE_RUN = {                                                  // a candidate's tool implementations, until promoted
-  explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, CANDIDATE_RULES), Object.assign({}, TOPIC_CITES, CANDIDATE_TOPIC_CITES)),
+// Promoted 2026-10-08: the tool implementations the candidate ran with are every visitor's now; RUN is only their base.
+const LIVE_RULES = Object.assign({}, RULES, PROMOTED_RULES), LIVE_TOPIC_CITES = Object.assign({}, TOPIC_CITES, PROMOTED_TOPIC_CITES);
+const PROMOTED_RUN = {
+  explain_rule: (a) => explainRuleSourced(a, LIVE_RULES, LIVE_TOPIC_CITES),
   firm_rules: firmRulesNext,
   firm_assets,
   products_in_budget,
@@ -1601,10 +1613,14 @@ const CANDIDATE_RUN = {                                                  // a ca
   size_trade: (a) => withFloatingSource(size_trade(a, true), a),   // the calculator audit's F5, F6 and F7
   trade_math: tradeMathNext,
 };
-const RUN_NEXT = Object.assign({}, RUN, CANDIDATE_RUN);
-const RUN_PATCH = Object.assign({}, RUN, { explain_rule: (a) => explainRuleSourced(a, Object.assign({}, RULES, PATCH_RULES), TOPIC_CITES) });
+const RUN_LIVE = Object.assign({}, RUN, PROMOTED_RUN);
+// a new candidate's tool implementations and rule explanations, until it is promoted (none staged since 2026-10-08)
+const CANDIDATE_RUN = {}, CANDIDATE_RULES = {};
+const RUN_CANDIDATE = Object.assign({}, RUN_LIVE, CANDIDATE_RUN, Object.keys(CANDIDATE_RULES).length
+  ? { explain_rule: (a) => explainRuleSourced(a, Object.assign({}, LIVE_RULES, CANDIDATE_RULES), LIVE_TOPIC_CITES) } : {});
+const RUN_PATCH = Object.assign({}, RUN_LIVE, { explain_rule: (a) => explainRuleSourced(a, Object.assign({}, LIVE_RULES, PATCH_RULES), LIVE_TOPIC_CITES) });
 function runTool(name, input, variant) {
-  const run = variant === "candidate" ? RUN_NEXT : variant === "patch" ? RUN_PATCH : RUN;
+  const run = variant === "candidate" ? RUN_CANDIDATE : variant === "patch" ? RUN_PATCH : RUN_LIVE;
   try { return Object.hasOwn(run, name) ? run[name](input || {}) : { error: "unknown tool " + name }; }
   catch (e) { return { error: "tool failed: " + (e && e.message ? e.message : "unknown") }; }
 }
@@ -1745,10 +1761,10 @@ function withSources(reply, lang, toolLog, variant) {
   const uniq = (xs) => [...new Set(xs)];
   // one DERIVED line, not two, when trade_math ran both with a firm's rule and without one (run 12, o-montecarlo); the
   // candidate's, until it is promoted
-  if (variant === "candidate" && tiers.has("derived")) tiers.delete("inputs");
+  if (tiers.has("derived")) tiers.delete("inputs");
   // troid's published Monte Carlo, quoted from explain_rule's ruin topic, is MODELLED, not DERIVED; one line says both
   // (subset run 1, o-montecarlo: its simulated years were printed under "the figures above are DERIVED")
-  if (variant === "candidate" && MC_QUOTED_RX.test(reply) && toolLog.some((t) => t.name === "explain_rule" && (t.result || {}).topic === "ruin")) {
+  if (MC_QUOTED_RX.test(reply) && toolLog.some((t) => t.name === "explain_rule" && (t.result || {}).topic === "ruin")) {
     tiers.delete("derived"); tiers.delete("inputs"); tiers.add("modelled");
   }
   if (!cites.length && !tiers.size && !assumed.length) return reply;
@@ -1761,7 +1777,7 @@ function withSources(reply, lang, toolLog, variant) {
   let body = stripSources(reply);
   // the service lists troid's assumptions, so the reply's own list of them goes (subset run 1, p-size: listed twice, the
   // reply's copy saying the budget cap and the target "affect margin and liquidation distance")
-  if (variant === "candidate" && assumed.length) body = body.split(/\n\s*\n/).filter((p) => !ASSUMED_PARA_RX.test(p)).join("\n\n");
+  if (assumed.length) body = body.split(/\n\s*\n/).filter((p) => !ASSUMED_PARA_RX.test(p)).join("\n\n");
   // a tier line the model wrote anyway goes when the service writes the tier (run 1: two tier lines)
   // and so does one written at the end of a paragraph, when it names a tier the service writes (run 4, q-stats)
   if (tiers.size) {
@@ -1800,7 +1816,7 @@ const LINTS = [
    "troid's own strategy: its out-of-sample result comes first, +0.008R per trade on BTC (504 trades) and on ETH (498), both confidence intervals containing zero, each figure marked MEASURED; the in-sample figure only after it."],
 ];
 const lintNotes = (t) => LINTS.filter(([test]) => test(t)).map(([, note]) => note);
-// A candidate's lints, until it is promoted: (text, the turn's tool calls) → a note. Staged after evaluation run 10:
+// The lints promoted on 2026-10-08, every reply's after LINTS: (text, the turn's tool calls) → a note. Staged after run 10:
 // o-montecarlo quoted troid's Monte Carlo from memory (its 68%, at 1% a trade, beside 2%); s-product called every rule
 // of its table sourced ("all SOURCED with their read dates") where the split and the 2-Step's trading fee had none.
 const ALL_SOURCED_RX = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sourced|dated)\b|\b(all|every) (rules?|figures?)\b[^.\n]{0,40}\b(with|carr(y|ies)) (its|their) (sources?|read dates?)\b|\ball\b[^.\n]{0,20}\bwith their read dates\b/;
@@ -1808,7 +1824,7 @@ const MC_68_RX = /\b68\s?%[^.\n]{0,80}\b(simulat|years?\b|blow|ruin|fail)|\b(sim
 const MC_QUOTED_RX = new RegExp(MC_68_RX.source + "|\\bsimulated years?\\b", "i");                // a reply that quotes it
 // a paragraph listing troid's own defaults, which the service lists under the answer (ask.assumed)
 const ASSUMED_PARA_RX = /^\s*(?:\*\*|__)?\s*(?:assumptions|troid['’]s (?:assumptions|defaults)|defaults)\b[^\n]{0,60}\b(?:troid|not given|supplied|defaults?|assumed)\b/i;
-const CANDIDATE_LINTS = [
+const PROMOTED_LINTS = [
   [(t, tools) => MC_68_RX.test(t) && !tools.some((x) => x.name === "explain_rule" && String((x.input || {}).topic || "").toLowerCase().trim() === "ruin"),
    "troid's published Monte Carlo comes from explain_rule, topic ruin: get it there, then quote each figure with the risk a trade it belongs to, its assumptions and its tier, MODELLED."],
   [(t, tools) => ALL_SOURCED_RX.test(t) && tools.some((x) => JSON.stringify(x.result || {}).includes("not yet recorded")),
@@ -1867,7 +1883,7 @@ const PH1_RX = "(1-Phase|1 Phase|one-phase|1phase)";
 const CFT_TRAIL_RX = new RegExp(`(?<!${PH1_RX}\\b[^.\\n]{0,40})(Crypto Fund Trader|\\bCFT)\\b(?![^.\\n]{0,80}\\b${PH1_RX}\\b)[^.\\n]{0,60}\\btrail` +
   `|(?<!${PH1_RX}\\b[^.\\n]{0,40})\\btrail[^.\\n]{0,40}\\b(Crypto Fund Trader|CFT)\\b(?![^.\\n]{0,30}\\b${PH1_RX}\\b)`, "i");
 const FLOAT_FIRM_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,120}\bfloat|\bfloat[^.\n]{0,120}\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b/i;
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t, tools, asked) => { const src = toolSourceLines(tools).join("\n"); return firmRulePcts(t, asked).some((x) => !pctIn(src, x.n)); },
    "Every firm rule in the answer comes through a tool, so the service lists its source and read date: get each one through firm_rules, explain_rule, check_budget or size_trade, or leave it out."],
   [(t, tools) => misreportedSources(t, toolSourceLines(tools)).length > 0,
@@ -1889,12 +1905,12 @@ const DAILY_FLOOR_RX = /daily[_ ]floor[^=\n]{0,30}(=|\bsits at\b|\bis\b)[^\n.]{0
 const TOOL_PARAM_RX = /\bfirm ["“]all["”]|\btopic:\s*\w+|\bstop_pct\b|\bcalc\s*[:=]|\bdrawdown_pct\b|\bwin_rate_pct\b|`(kelly|position_size|r_multiple|expectancy|recovery|fee_share|losses_to_limit|capped_budget|stats|atr_scale|effective_bets)`/;
 const READ_ALL_RX = /\b(any|every|all|largest|smallest|tightest)\b[^.\n]{0,60}\btroid has read\b/i;
 const SINGLE_OUT_RX = /\b(Bitfunded|BrightFunded|Crypto Fund Trader)\b[^.\n]{0,40}\b(most|best|more|better)\b[^.\n]{0,30}\b(verified|complete(ly)?|sourced|reliable|trusted|thorough(ly)?|recorded)\b/i;
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => TOOL_PARAM_RX.test(t), "Never write a tool's parameters in a reply (stop_pct, firm \"all\", `kelly`): say what was computed in words."],
   [(t, tools) => READ_ALL_RX.test(t) && !toolSourceLines(tools).length,
    "A claim about every rule troid has read needs a tool behind it (trade_math with firm \"all\" gives the largest maximum loss, with its sources): get it, or leave the claim out."],
   [(t) => SINGLE_OUT_RX.test(t), "Never single out one firm (as the most verified, the best sourced): troid earns a commission and names no favourite."]);
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => FIRM_RECORD_RX.test(t),
    "The firm's dashboard is the record of the trader's own account, not of prices, news, forecasts or exchanges: say troid has no live data, and name no place for them."],
   [(t) => DAILY_FLOOR_RX.test(t),
@@ -1905,7 +1921,7 @@ CANDIDATE_LINTS.push(
 const XOVER_BACKWARDS_RX = /\b(above|higher than|over)\b[^.\n;]{0,60}\b(starting balance|initial balance|quota|crossover|opening balance)\b[^.\n;]{0,60}\bmax(imum)?( loss| drawdown)?\b[^.\n;]{0,30}\bbinds?\b|\bbelow\b[^.\n;]{0,40}\bcrossover\b[^.\n;]{0,40}\bdaily\b[^.\n;]{0,30}\bbinds?\b|\bafter a loss\b[^.\n;]{0,40}\bdaily (loss )?(limit|budget)\b[^.\n;]{0,30}\b(tighter|binds?)\b/i;
 const ASK_NUMBERS_RX = /\b(if you give|give (troid )?(a |the )?(specific|your)|provide (a |the |your )|share (a |the |your ))\b[^.\n]{0,80}\b(entry|stop|equity|quota|numbers|balance|quantity)\b|\b(takes|needs) an? (equity|entry)\b[^.\n]{0,60}\bif you\b/i;
 const ALLOWS_RX = /\b(dollar amount|amount|risk|loss)\s+troid (allows|permits|accepts|is willing)\b|\btroid (allows|permits|accepts) (you )?(to )?(risk|lose|put)\b|\btroid (can |could |will |would )?(let|lets|allow|allows|permit|permits)\b[^.\n]{0,30}\b(into|in|on) (a|the|this) (trade|position)\b/i;   // run 15: "how many units troid can let into a trade"
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => XOVER_BACKWARDS_RX.test(t),
    "Which limit binds is the other way round: above the crossover equity the daily limit binds; below it, after losses, the maximum loss binds. On the 1-Step the crossover is quota × (1 − 6% + 4%) = $98,000: get it through explain_rule (topic crossover) or check_budget."],
   [(t, tools) => /\bFormula\b/i.test(t) && !SUPPORT_OPENER.test(t) && (!tools.length || ASK_NUMBERS_RX.test(t)),
@@ -1932,10 +1948,10 @@ function kellyMixed(t, tools) {                  // a full-Kelly ratio written b
 // said equal 3% limits have "no crossover point" (it is the quota itself)
 const NO_XOVER_RX = /\bno crossover\b|\bnever cross(es)?\b/i;
 const ONLY_PRODUCT_RX = /\bthe (one|only) (product|challenge|account|option)\b[^.\n]{0,60}\b(fits|under|within|affordable)\b/i;
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => NO_XOVER_RX.test(t), "Every product has a crossover, quota × (1 − max% + daily%): where the two limits are equal it is the quota itself. Get it through explain_rule (topic crossover) or check_budget."],
   [(t) => ONLY_PRODUCT_RX.test(t), "Don't call one product the only one that fits: check each product's recorded price through firm_rules, list every one that fits, and say which firms and products troid has no price for."]);
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => JUDGE_RX.test(t), "State what the numbers imply, never whether they are good: no \"solid\", \"healthy\", \"great\" or the like."],
   [(t, tools) => kellyMixed(t, tools), "Each Kelly ratio belongs to its own fraction: full Kelly ÷ a limit and half Kelly ÷ a limit are different figures. Use the tool's line for each."],
   [(t, tools, asked) => SUPPORT_OPENER.test(t) && !BLAMES_TROID_RX.test(String(asked || "")) && CAUSE_GUESS_RX.test(t),
@@ -1945,7 +1961,7 @@ CANDIDATE_LINTS.push(
 // units" in prose (3.1 with its own fee) and ex-r "the whole of Bitfunded's 1-Step daily limit ($4,000 ÷ $500 ≈ 8)".
 // b-leverage worked its example through trade_math and wrote no formula.
 const unsupportedIn = (t, tools, asked) => NUMBERS.unsupportedNumbers(t, [asked], NUMBERS.toolNumbers(tools));
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t, tools, asked) => unsupportedIn(t, tools, asked).length > 0,
    (t, tools, asked) => "Every number in the answer comes from a tool's result or the user's own message; these don't: " +
      unsupportedIn(t, tools, asked).slice(0, 8).join(", ") + ". Get each one through a tool (trade_math takes numbers troid chooses), or leave it out."],
@@ -1967,7 +1983,7 @@ function formulaInWords(t) {                     // a "Formula:" line whose form
   return false;
 }
 const DANGLING_OPEN_RX = /^\s*(?:\*\*|__)?(?:That|This|Those|These) (?:result|figure|output|simulation|number|table|calculation)s?\b/i;
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => formulaInWords(t),
    "Write the formula in symbols, with an equals sign and its brackets, on its own line: quantity = risk ÷ (stop distance + fee per unit), say."],
   [(t) => DANGLING_OPEN_RX.test(t),
@@ -2019,7 +2035,7 @@ function unsourcedReadDates(t, tools, asked) {
   }
   return [...new Set(out)];
 }
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   // a turn with no tool at all gets RULE_NUDGE instead (a rule with no tool behind it): this one is for a date beside a tool's rule
   [(t, tools, asked) => (tools || []).some((x) => x.result) && unsourcedReadDates(t, tools, asked).length > 0,
    (t, tools, asked) => "These read dates are not the ones a tool gave this turn for the rule beside them: " + unsourcedReadDates(t, tools, asked).join("; ") +
@@ -2176,7 +2192,7 @@ const unquotedForFirstPerson = (t) => String(t).replace(/^Sources, each with the
   .replace(/\bshould[- ]I\b/gi, "should-question");
 const firstPersonIn = (t) => { const u = unquotedForFirstPerson(t); return FIRST_PERSON_RX.some((re) => re.test(u)); };
 const OUTSIDE_KIND_RX = /\b(check|consult|see|use|visit|try|look at|look to|turn to|points? to|refer to|go to|head to)\b[^.\n]{0,40}\b(news (sites?|outlets?|services?|sources?|feeds?|apps?)|market[- ]data (services?|providers?|platforms?|sites?)|data (platforms?|providers?|services?)|financial (data|news)|charting (platforms?|sites?|tools?)|price (feeds?|sites?|trackers?)|(crypto )?exchanges?\b(?!\s*(liquidat|['’]s|fees?|margin|rates?)))|\b(news (sites?|outlets?|services?|sources?)|market[- ]data (services?|providers?|platforms?)|data platforms?)\b[^.\n]{0,40}\b(will have|have|has|carry|carries|show|shows|cover|covers)\b/i;
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t, tools, asked) => labelledFigureSlips(t, tools, asked).length > 0,
    (t, tools, asked) => "These figures are not what a tool gave this turn for the thing beside them: " +
      labelledFigureSlips(t, tools, asked).slice(0, 6).map((x) => x.s + " as " + x.kind).join(", ") +
@@ -2274,7 +2290,7 @@ function sourcesRestated(t, listed) {
   }
   return null;
 }
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t, tools, asked, last) => exampleFirst(t, last || asked),
    "The question asks how something is worked out: open with the one-line answer, then the formula with an equals sign and its terms; the worked example comes after both, never first."],
   [(t, tools, asked, last) => asksGiven(t, last || asked).length > 0,
@@ -2328,7 +2344,7 @@ const refusalTwice = (t, budget) => { let b = stripSources(String(t)); const m =
 //    "one more loss … would breach" (run 1, b-limits), which counts nothing
 const MORE_LOSSES_RX = /\b(\d+|two|three|four|five|six|seven|eight|nine|ten)\s+more\b(?:\s+[\w-]+){0,5}?\s+(?:loss(?:es)?\b|before\b[^.\n]{0,60}\b(?:trips?|reach(?:es|ed)?|hits?|fails?))/i;
 const moreLosses = (t) => { const m = stripSources(String(t)).replace(/\*\*|__/g, "").match(MORE_LOSSES_RX); return m ? m[0] : null; };
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => !!firmOwnsTroid(t),
    (t) => "\"" + firmOwnsTroid(t) + "\": troid's desk, its tools and the figures they compute are troid's, never a firm's. Say \"troid's desk\" (or troid's own tool's result), and keep a firm's name for the firm's own rules."],
   [(t) => !!doubleLeadIn(t),
@@ -2373,15 +2389,16 @@ function saidNotRepeatedNext(said, final) {
 }
 // troid in the third person (run 22, o-montecarlo: "Let's get the expectancy figure." reached the reader): a sentence
 // that opens "Let's" or "Let me" and carries no figure goes; a leading "Answer:" label goes too (the form announced)
-function inThirdPerson(reply) {
+function inThirdPerson(reply, variant) {
   const body = String(reply).split("\n").map((l) => {
     if (!/\blet['’]s\b|\blet me\b/i.test(l)) return l;
     const lead = (l.match(/^\s*([-*•]|\d+[.)])\s+/) || [""])[0], parts = sentencesOf(l.slice(lead.length));
     const kept = parts.filter((s) => !(/^\W*(let['’]s|let me)\b/i.test(s) && !/\d/.test(s)));
     return kept.length === parts.length ? l : kept.length ? lead + kept.join(" ") : "";
   }).filter((l, i, a) => l.trim() || (a[i - 1] || "").trim()).join("\n");
-  // a label inside a bold sentence ("**Answer: these inputs imply … .**", round 4's t02) takes its bold with it, and the
-  // sentence starts with a capital, unless it starts with troid's own lowercase name
+  // candidate (staged after the 2026-10-08 promotion): a label inside a bold sentence ("**Answer: these inputs imply … .**",
+  // round 4's t02) takes its bold with it, and the sentence starts with a capital, unless it starts with troid's own name
+  if (variant !== "candidate") return body.replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "").replace(/\n{3,}/g, "\n\n").trim();
   const unlabelled = body.replace(/^\s*(\*\*|__)Answer\s*:\s*(?!\1)([^\n]*?)\1/i, (m, b, x) => x)
     .replace(/^\s*(?:\*\*|__)?Answer(?:\s*:\s*(?:\*\*|__)?|(?:\*\*|__)\s*:)\s*/i, "");
   const capped = unlabelled !== body && !/^\s*(ask )?troid\b/.test(unlabelled) ? unlabelled.replace(/^(\s*)([a-z])/, (m, w, c) => w + c.toUpperCase()) : unlabelled;
@@ -2441,7 +2458,7 @@ function ownStrategyFirst(reply) {
 // "every account troid covers" beside the largest maximum loss troid has read (runs 21 to 23, ex-recovery)
 const WIDEN_RX = /\b(every|any|all)\s+(funded\s+(or\s+evaluation\s+)?|evaluation\s+)?(accounts?|products?|challenges?)\s+(that\s+)?troid\s+(covers|compares|prices)\b|\b(outside|beyond)\s+what\s+(any|every)\s+product\s+troid\s+covers\b/i;
 const widensMaxLoss = (t) => String(t).split(/(?<=[.!?])\s+|\n+/).some((s) => WIDEN_RX.test(s) && /\bmax(imum)?[- ](loss|drawdown)\b|\bfloor\b|\bfail(ed|s)?\b|\bbreach(ed|es)?\b|\b(20|\d{2})%/i.test(s));
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t) => widensMaxLoss(t),
    "The largest maximum loss troid has read covers the products troid has a maximum loss for: say \"every maximum loss troid has read\", never every account, product or firm troid covers (troid has no maximum loss recorded for some products)."],
   [(t) => ownStrategyMisordered(t),
@@ -2523,7 +2540,7 @@ function promptEcho(t, tools, asked) {
   return [...stripSources(String(t)).matchAll(QUOTE_AFTER_NO_RX)].filter((m) => { const q = quoteKey(m[2]);
     return set.has(q) && !user.includes(q) && !given.includes(q); }).map((m) => m[0]);
 }
-CANDIDATE_LINTS.push(
+PROMOTED_LINTS.push(
   [(t, tools, asked) => !!budgetFor(t, tools, asked) && budgetPicks(t),
    "Never set one product apart as what the money buys or gets, or as where it should go: give every product products_in_budget returns for the amount, cheapest first, as its lines give them, and end with this line, word for word: \"" + BUDGET_CLOSE + "\""],
   [(t, tools, asked) => !!budgetNote(t, tools, asked),
@@ -2645,8 +2662,12 @@ const UNSEEN_DRAFT = "\n(The user never saw the draft above: say nothing about i
 const UNSEEN_SAID = "\n(The reader sees only the answer you write now, none of what you wrote before or between the tool calls: write it whole, from its one-line answer on.)";
 const REWRITE_TALK_RX = /[^.\n]*\b(retract(ing|ed|s)?|(earlier|previous|first|prior) (version|draft|answer)|rewrit(e|ten|ing) (of )?(this|the) answer)\b[^.\n]*[.:]\s*/gi;
 const withoutRewriteTalk = (reply) => reply.replace(REWRITE_TALK_RX, "").replace(/\n{3,}/g, "\n\n").trim();
-const lintNotesFor = (t, variant, tools, asked, last) => lintNotes(t).concat(variant === "candidate"
-  ? CANDIDATE_LINTS.filter(([test]) => test(t, tools || [], asked, last)).map(([, note]) => (typeof note === "function" ? note(t, tools || [], asked, last) : note)) : []);
+// Promoted 2026-10-08: the lints staged as the candidate's are every visitor's now, after LINTS; a new candidate's
+// lints (CANDIDATE_LINTS, none staged since) come after both, for the candidate only
+const CANDIDATE_LINTS = [];
+const notesOf = (lints, t, tools, asked, last) => lints.filter(([test]) => test(t, tools || [], asked, last)).map(([, note]) => (typeof note === "function" ? note(t, tools || [], asked, last) : note));
+const lintNotesFor = (t, variant, tools, asked, last) => lintNotes(t).concat(notesOf(PROMOTED_LINTS, t, tools, asked, last),
+  variant === "candidate" ? notesOf(CANDIDATE_LINTS, t, tools, asked, last) : []);
 const LINT_NOTE = (notes) => "(A note from the service, not the user: write the whole answer again, keeping every figure and every tool result as they are, and fix this:\n" +
   notes.map((n) => "- " + n).join("\n") + ")";
 const LINT_MIN_MS = 20_000;                                             // a rewrite starts only with this much of the deadline left
@@ -2802,7 +2823,7 @@ module.exports = async (req, res) => {
     return json(res, 200, Object.assign({ enabled: isOn(), flag: ENABLED, limit_per_hour: LIMIT_PER_HOUR, max_messages: MAX_MESSAGES, max_chars: MAX_CHARS,
                             caps: { daily: DAILY_TURNS, per_visitor: VISITOR_TURNS }, resting,
                             resting_text: resting ? S(lang, "ask.err.resting") : undefined,
-                            models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: TOOLS.map((t) => t.name), lang, languages: liveCodes(),
+                            models: { lookup: MODEL_LOOKUP, tools: MODEL_TOOLS }, tools: toolsFor("live").map((t) => t.name), lang, languages: liveCodes(),
                             disclosure: S(lang, "ask.disclosure"), store: storeOn(), retention_days: RETENTION_S / 86400, context: ctx, candidate }, keyReport()));
   }
   if (req.method === "DELETE") {                                        // the page's own conversation, at once
@@ -2898,7 +2919,7 @@ module.exports = async (req, res) => {
     // gave two fees read dates borrowed from other rules).
     if (resp.stop_reason === "end_turn" && FIRM_RULE_RX.test(textOf(resp)) && Date.now() < deadlineAt - MIN_CALL_MS) {
       log.nudged = 1;
-      convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE + (variant === "candidate" ? UNSEEN_DRAFT : "") });
+      convo.push({ role: "assistant", content: resp.content }, { role: "user", content: RULE_NUDGE + UNSEEN_DRAFT });
       resp = await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator);
     }
     const rounds = async (r) => {
@@ -2921,21 +2942,19 @@ module.exports = async (req, res) => {
     // each. If the rewrite can't finish in time, or fails, the draft stands.
     if (resp.stop_reason === "end_turn" && Date.now() < deadlineAt - LINT_MIN_MS) {
       const asked = messages.filter((m) => m.role === "user").map((m) => m.content).join("\n");   // every number the user gave
-      const seen = (s, f) => (variant === "candidate" ? [...saidNotRepeatedNext(s, f), f] : [...s, f]).join("\n\n");   // what the reader sees
+      const seen = (s, f) => [...saidNotRepeatedNext(s, f), f].join("\n\n");   // what the reader sees
       const notes = lintNotesFor(seen(said, textOf(resp)), variant, toolLog, asked, lastUser);
       if (notes.length) {
         const keep = { resp, said: said.slice(), tools: toolLog.length, toolCalls };
         try {
-          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + (variant === "candidate" ? UNSEEN_DRAFT + UNSEEN_SAID : "") });
+          convo.push({ role: "assistant", content: resp.content }, { role: "user", content: LINT_NOTE(notes) + UNSEEN_DRAFT + UNSEEN_SAID });
           said.length = 0;                                              // the rewrite is the whole answer
           const r2 = await rounds(await callModel("tools", convo, deadlineAt, onSend, lang, variant, operator));
           if (r2.stop_reason !== "end_turn" || !textOf(r2)) throw new Error("rewrite unfinished");
           // the candidate's: a rewrite that trips more notes than the draft, or fixes none of them, doesn't replace it
           // (subset run of 2026-09-24, o-montecarlo: the rewrite lost the draft's answer and still wrote no formula)
-          if (variant === "candidate") {
-            const key = (n) => String(n).slice(0, 60), again = lintNotesFor(seen(said, textOf(r2)), variant, toolLog, asked, lastUser).map(key);
-            if (again.length > notes.length || notes.every((n) => again.includes(key(n)))) throw new Error("rewrite no better");
-          }
+          const key = (n) => String(n).slice(0, 60), again = lintNotesFor(seen(said, textOf(r2)), variant, toolLog, asked, lastUser).map(key);
+          if (again.length > notes.length || notes.every((n) => again.includes(key(n)))) throw new Error("rewrite no better");
           resp = r2; log.linted = 1;
         } catch (e) {
           resp = keep.resp; said.splice(0, said.length, ...keep.said); toolLog.length = keep.tools; toolCalls = keep.toolCalls;
@@ -2945,7 +2964,7 @@ module.exports = async (req, res) => {
     let reply, ended = false;
     if (resp.stop_reason === "refusal") { reply = S(lang, "ask.refusal"); log.refusal = 1; }
     else {
-      reply = [...(variant === "candidate" ? saidNotRepeatedNext(said, textOf(resp)) : said), textOf(resp)].filter(Boolean).join("\n\n");
+      reply = [...saidNotRepeatedNext(said, textOf(resp)), textOf(resp)].filter(Boolean).join("\n\n");
       // Only the service ends a session, and only after a warning. The model asks with the sentinel; a reply
       // that is the session-ended text word for word (in any published language) is treated the same way.
       if (isSentinelOnly(reply) || isEnded(reply)) {
@@ -2954,14 +2973,14 @@ module.exports = async (req, res) => {
       } else {
         reply = reply.replace(SENTINEL, "").trim();                    // never reaches the page, ends nothing mid-answer
         reply = reply.replace(/\bTroid\b/g, "troid");   // lowercase, a sentence's first word too
-        if (reply && variant === "candidate" && lang === "en") reply = refusalWordForWord(reply, lastUser);
-        if (reply) reply = (variant === "candidate" ? refusalOnceFirstNext : refusalOnceFirst)(withSupportStep5(reply, lang));
-        if (reply && variant === "candidate" && lang === "en") reply = withSupportStep4(reply, lastUser);
-        if (reply && variant === "candidate") reply = withoutRewriteTalk(reply);
+        if (reply && lang === "en") reply = refusalWordForWord(reply, lastUser);
+        if (reply) reply = refusalOnceFirstNext(withSupportStep5(reply, lang));
+        if (reply && lang === "en") reply = withSupportStep4(reply, lastUser);
+        if (reply) reply = withoutRewriteTalk(reply);
         // the read of runs 17 to 19 (the owner's fixes, 2026-10-05): the question isn't written back, the reset is in UTC
         // only, and a question about prices or news gets troid's wording
         // and a budget gets every product troid has a price for at or under it, troid picking none (the owner, 2026-10-06)
-        if (reply && variant === "candidate" && lang === "en") reply = budgetListed(outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply)), lastUser), lastUser), lastUser, toolLog), lastUser, toolLog);
+        if (reply && lang === "en") reply = budgetListed(outOfScopeFixed(resetInUtcOnly(withoutEchoedQuestion(ownStrategyFirst(inThirdPerson(reply, variant)), lastUser), lastUser), lastUser, toolLog), lastUser, toolLog);
         if (reply && toolLog.length) reply = withSources(reply, lang, toolLog, variant);
         if (reply) reply = closeWithNote(reply, lang);
         if (resp.stop_reason === "max_tokens") reply = (reply ? reply + "\n\n" : "") + S(lang, "ask.cut");
@@ -3013,7 +3032,7 @@ module.exports = async (req, res) => {
     return E(502, { error: S(lang, "ask.err.error") });
   }
 };
-module.exports.tools = RUN;   // for tests
+module.exports.tools = RUN_LIVE;   // for tests: the tools every visitor gets
 module.exports._refusalOnceFirst = refusalOnceFirst;
 module.exports._lintNotes = lintNotes;
 module.exports._lintNotesFor = lintNotesFor;
@@ -3022,6 +3041,7 @@ module.exports._withoutRewriteTalk = withoutRewriteTalk;
 module.exports._saidNotRepeated = saidNotRepeated;
 module.exports._withSupportStep4 = withSupportStep4;
 module.exports._candidateGuardrails = CANDIDATE_GUARDRAILS;
+module.exports._promotedGuardrails = PROMOTED_GUARDRAILS;   // for tests: the guardrails promoted on 2026-10-08
 module.exports.fixed = { DISCLOSURE, WARNING, END_SESSION, ENDED_REPLY, REFUSAL_REPLY };
 module.exports.EN = EN;   // for tests: must equal web/i18n/en.json's ask.* strings
 module.exports._sign = (msgs, session, variant) => sign(msgs, session, variant);   // for tests

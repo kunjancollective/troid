@@ -1,0 +1,16 @@
+{
+ "_summary": "Read in full on 2026-10-07: the candidate of #25, s-product alone. 1 error.",
+ "s-product": "Error (minor: repeated text): correct through firm_rules: the refusal first; the table at $100,000; 8% + 5% = 13%; the differences as facts. But 'Here are the two products' recorded rules, so the comparison is on figures rather than characterization.' then 'Here are the recorded rules side by side, at the $100,000 level:' introduces the table twice, and 'Every rule above was read from … on 2026-09-23 and 2026-09-26 as listed.' restates the sources. doubleLeadIn's announcement pattern missed the first (#26 widens it).",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'Here are the two products' recorded rules, so the comparison is on figures rather than characterization.' then 'Here are the recorded rules side by side, at the $100,000 level:'; and 'Every rule above was read from the help centre's … on 2026-09-23 and 2026-09-26 as listed.'"
+   ]
+  }
+ ]
+}
