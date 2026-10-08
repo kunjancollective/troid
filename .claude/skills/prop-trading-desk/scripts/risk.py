@@ -301,7 +301,15 @@ def size_trade(cfg: dict, args) -> dict:
     # limit, so a loss that lands exactly on it is not one more loss left: an exact
     # multiple counts one fewer. The epsilon reads a quotient of 4.000000000000001 as 4.
     losers_left = math.ceil(b["effective_budget"] / risk_amount - 1e-9) - 1 if risk_amount > 0 else 0
-    notes.append(f"{losers_left} more losses at this size before {b['binding']} trips.")
+    # the count includes this trade (the owner, 2026-10-08: "N more losses" counted one too many), as size_trade and the
+    # MCP server word it
+    if losers_left > 0:
+        reach = losers_left + 1
+        suffix = "th" if 11 <= reach % 100 <= 13 else {1: "st", 2: "nd", 3: "rd"}.get(reach % 10, "th")
+        notes.append(f"{losers_left} {'loss' if losers_left == 1 else 'losses'} at this size fit, this one included; "
+                     f"the {reach}{suffix} reaches the {b['binding']}.")
+    else:
+        notes.append(f"A loss at this size reaches the {b['binding']}.")
 
     cb = circuit_breakers(cfg, 1 if args.side == "long" else -1, entry, stop, qty,
                           b["equity"], notional, leverage)
