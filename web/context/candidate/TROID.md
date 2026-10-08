@@ -280,8 +280,8 @@ across that many configurations (~+0.093R). That in-sample figure is a best cell
 stands alone. troid's own strategy shows no measurable edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
-verdict, the size, the fee share, and how many more losses at that size leave equity
-above the binding ceiling. Then stop. No encouragement, no discouragement.
+verdict, the size, the fee share, and how many losses at that size fit, this one included,
+and which one reaches the binding ceiling. Then stop. No encouragement, no discouragement.
 
 **"Why did my account fail at 12:01 when I was fine at 11:59?"** — the reset. Floating
 loss carried into the new day at full size.
