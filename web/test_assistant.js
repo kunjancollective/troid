@@ -1003,6 +1003,14 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
+// the fifth patch (staged 2026-10-08, the owner: live run 39's s-firm narrowed a $500 purchase to Bitfunded's products and
+// its o-montecarlo said "Let's"): support.md section 4 never narrows a purchase to one firm or product, and TROID.md's
+// first-person rule names "let me" and "let's"; the patch gets them, live doesn't
+{ (async () => {
+    const pat = JSON.stringify(await handler._systemBlocks("en", "patch")), liv = JSON.stringify(await handler._systemBlocks("en", "live"));
+    ok("fifth patch: the patch's prompt never narrows a purchase to one firm or product and ends a budget answer with the closing line; its first-person rule names let me and let's; live has neither",
+       pat.includes("troid never narrows a purchase to one firm or one") && pat.includes("troid doesn't pick a product; the choice is yours.") && pat.includes('\\"let me\\" or \\"let\'s\\"')
+       && !liv.includes("troid never narrows a purchase") && !liv.includes('\\"let me\\" or \\"let\'s\\", except inside'), [pat.length, liv.length]); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
 // keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an
 // announcement or "does not run simulations" twice (runs 35 and 36); and "N more losses" (the owner's ruling)
