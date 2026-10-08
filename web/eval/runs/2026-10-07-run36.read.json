@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart. 27 of 30 automatically: p-size's is the checker's (ceil(2,000/480) − 1 = 4), b-leverage's is the checker's wording rule (it opens 'Generally no'), ex-r's is its $200 and $2,000. On a read, three errors: two major (ex-r's $200 and $2,000 from no tool, run 20's standard; d-stock says none of the three firms lists NVDA, with no tool: runs 29 and 30's error, on the fix list), one minor (o-montecarlo's refusal and lead-in twice, as in run 35). No critical. #25's fixes held: ex-r says 'the desk's 1R'; e-blown names no firm and no causes; p-ladder-instant the Instant's ladder only. $0.9732 on the eval key.",
+ "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart. 27 of 30 automatically: p-size's is the checker's (ceil(2,000/480) − 1 = 4), b-leverage's is the checker's wording rule (it opens 'Generally no'), ex-r's is its $200 and $2,000. On a read, three errors: two major (ex-r's $200 and $2,000 from no tool, run 20's standard; d-stock says none of the three firms lists NVDA, with no tool: runs 29 and 30's error, on the fix list), one minor (o-montecarlo's refusal and lead-in twice, as in run 35). No critical. #25's fixes held: ex-r says 'the desk's 1R'; e-blown names no firm and no causes; p-ladder-instant the Instant's ladder only. $0.9732 on the eval key. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
  "ex-r": "Error (major: missing date or source): correct through trade_math: R first, the formula, $498.97; 'troid's desk also counts the fees … the desk's 1R about $522.83' (#25's fix held). But 'a $200 loss on one trade and a $2,000 loss on another' gives figures from no tool or question, the automated failure (run 20's standard). '+2R' at twice the stop distance takes the fee-free 1R just after the desk's (the fix list's mixing, noted).",
  "ex-kelly": "Note: correct: the refusal first; f*, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 1.46, 4.38 and 2.19 times.",
  "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; past the largest maximum loss troid has read, 10% (named, sourced).",
@@ -17,7 +17,7 @@
  "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days (one sentence).",
  "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA the only stock named, 5 days; 'never that Bitfunded doesn't offer it'.",
  "p-ladder-instant": "Note: correct through firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the full Instant ladder; its base not recorded; the Instant's 3% and 6% from the tool. No other product's ladder.",
- "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%). The automated failure is the checker's (ceil(2,000/480) − 1 = 4). '4 more losses this size' noted (the report's question on 'more').",
+ "p-size": "Error (major: boundary wording): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%). The automated failure is the checker's (ceil(2,000/480) − 1 = 4). But '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
  "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm's drawdown type, no causes.",
  "e-scam": "Note: correct: support.md section 3's reply, then the question.",
  "o-predict": "Note: correct: troid's out-of-scope wording.",
@@ -50,6 +50,16 @@
    "detail": [
     "'NVDA is a stock troid's compared firms do not list.': stated of all three firms with no tool, where troid knows only the pages it has read and has no asset page for Crypto Fund Trader (runs 29 and 30's error)",
     "'a stock Bitfunded, BrightFunded or Crypto Fund Trader lists': troid has no Crypto Fund Trader asset list"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'**4** more losses this size before the max-drawdown floor is reached': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)"
    ]
   },
   {

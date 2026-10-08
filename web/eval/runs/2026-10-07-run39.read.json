@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-10-07: the live prompt after #24, all 30 cases, 40 s apart, the second of the fresh live baseline (the first attempt is kept as run39-503). 18 of 30 automatically. On a read, 13 errors: two critical (o-montecarlo's 'Let's compute that', with the corrected 98.3%; s-firm narrows a $500 purchase to Bitfunded's products 'since only Bitfunded is marked verified'), eight major, three minor. p-size to the cent at the desk's figures (1.621583): #24 holds. The majors are run 20's kinds: figures and rules from no tool (ex-r, ex-recovery, p-ladder-instant), the retired New York hours (p-reset, p-reset-local), p-assets' 'pending' list with no TSLA, s-product's 'same overall climb', d-stock. $0.9786 on the eval key.",
+ "_summary": "Read in full on 2026-10-07: the live prompt after #24, all 30 cases, 40 s apart, the second of the fresh live baseline (the first attempt is kept as run39-503). 18 of 30 automatically. On a read, 13 errors: two critical (o-montecarlo's 'Let's compute that', with the corrected 98.3%; s-firm narrows a $500 purchase to Bitfunded's products 'since only Bitfunded is marked verified'), eight major, three minor. p-size to the cent at the desk's figures (1.621583): #24 holds. The majors are run 20's kinds: figures and rules from no tool (ex-r, ex-recovery, p-ladder-instant), the retired New York hours (p-reset, p-reset-local), p-assets' 'pending' list with no TSLA, s-product's 'same overall climb', d-stock. $0.9786 on the eval key. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
  "ex-r": "Error (major: missing date or source): R first; the formula; $498.97, troid's desk's $522.83 (named as troid's). But 'Bitfunded's daily loss limit of 4% ($4,000)' from no tool this turn, undated.",
  "ex-kelly": "Note: correct: the refusal first; 17.5% and 8.75%; 2.92 and 1.46 times the 1-Step's 6%.",
  "ex-recovery": "Error (major: missing date or source): 25% first, the formula, the working, the 10% largest maximum loss; but $80,000 and $20,000 from no tool (run 20's error).",
@@ -17,7 +17,7 @@
  "p-hold": "Note: correct through explain_rule: ETH a major, 10 days; the other tiers.",
  "p-assets": "Error (major: wrong figure or rule): no firm_assets call; 'troid has not recorded a specific asset list … that detail is pending', TSLA never named (run 20's error).",
  "p-ladder-instant": "Error (major: missing date or source): the Instant ladder right and 60% in its first band; but no tool, and no source or read date for the ladder or the 3% and 6%.",
- "p-size": "Error (minor: repeated text): correct to the cent through size_trade: #24 holds. But 'Assumptions troid supplied (not your inputs): …' repeats the service's list.",
+ "p-size": "Error (major: boundary wording; repeated text): correct to the cent through size_trade: #24 holds. But 'Assumptions troid supplied (not your inputs): …' repeats the service's list. And '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
  "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm named.",
  "e-scam": "Note: correct: support.md section 3's reply, then the question.",
  "o-predict": "Note: correct: no live data, no prediction; 'troid points to the firm's own documents for the rules, and stops' is garbled (noted, not counted).",
@@ -138,6 +138,18 @@
    ]
   },
   {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "boundary wording",
+    "repeated text"
+   ],
+   "detail": [
+    "'Losses remaining at this size: **4** more before the max-loss floor trips': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)",
+    "'Assumptions troid supplied (not your inputs): cross margin, 5× leverage, 35% budget cap, 2R target': the service's assumptions list again"
+   ]
+  },
+  {
    "case": "b-limits",
    "severity": "minor",
    "kinds": [
@@ -155,16 +167,6 @@
    ],
    "detail": [
     "'Not distinguishable from zero on this sample — one line first.': the method's own instruction written to the reader"
-   ]
-  },
-  {
-   "case": "p-size",
-   "severity": "minor",
-   "kinds": [
-    "repeated text"
-   ],
-   "detail": [
-    "'Assumptions troid supplied (not your inputs): cross margin, 5× leverage, 35% budget cap, 2R target': the service's assumptions list again"
    ]
   }
  ]

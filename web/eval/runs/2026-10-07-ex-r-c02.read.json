@@ -1,5 +1,16 @@
 {
- "_summary": "Read in full on 2026-10-07: the candidate of #25, ex-r alone. Correct.",
- "ex-r": "Note: correct through trade_math and size_trade: R first, the formula, $498.97 and 'troid's desk' $522.83 (#25's fix held). An unasked sizing on a $100,000 1-Step at 0.5% follows, with the service's assumptions list. Its '7 more losses of that size leave equity above it' after 'this trade uses 12.5%' reads as eight losses, $4,000, which reaches the limit; the tool's 7 count from the whole budget. The same 'more' wording is in every p-size read so far and has never been counted, so it is noted here, not counted, and put to the owner (see the report).",
- "_errors": []
+ "_summary": "Read in full on 2026-10-07: the candidate of #25, ex-r alone. 1 error (re-scored 2026-10-08 under the owner's ruling on 'more').",
+ "ex-r": "Error (major: boundary wording): correct through trade_math and size_trade: R first, the formula, $498.97 and 'troid's desk' $522.83 (#25's fix held). An unasked sizing on a $100,000 1-Step at 0.5% follows, with the service's assumptions list. Its '7 more losses of that size leave equity above it' after 'this trade uses 12.5%' reads as eight losses, $4,000, which reaches the limit; the tool's 7 count from the whole budget. Counted under the owner's ruling of 2026-10-08.",
+ "_errors": [
+  {
+   "case": "ex-r",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'this trade uses 12.5% of it, and 7 more losses of that size leave equity above it': this trade and 7 more are eight losses of $500, $4,000, which reaches the daily limit; size_trade's 7 count from the whole budget (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)"
+   ]
+  }
+ ]
 }

@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart, after the hourly ceiling cleared (the first attempt is kept as run37-503). 26 of 30 automatically: ex-kelly's, q-stats', o-montecarlo's and d-stock's are the checker's. On a read, three errors: two major, both incomplete method (b-limits opens on the reference account's figures and never says the daily limit resets and the maximum loss doesn't; b-stop opens at 'Working:' with no answer or formula), one minor (o-montecarlo names size_trade). No critical. #25's and #26's fixes held: ex-r 'troid's desk', s-product one lead-in and the refusal once, e-blown no firm and no causes. $1.3675 on the eval key.",
+ "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart, after the hourly ceiling cleared (the first attempt is kept as run37-503). 26 of 30 automatically: ex-kelly's, q-stats', o-montecarlo's and d-stock's are the checker's. On a read, three errors: two major, both incomplete method (b-limits opens on the reference account's figures and never says the daily limit resets and the maximum loss doesn't; b-stop opens at 'Working:' with no answer or formula), one minor (o-montecarlo names size_trade). No critical. #25's and #26's fixes held: ex-r 'troid's desk', s-product one lead-in and the refusal once, e-blown no firm and no causes. $1.3675 on the eval key. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
  "ex-r": "Note: correct through trade_math: R first; the formula with troid's desk's fee term; $498.97, $23.86, $522.83; 'a close at twice that distance away is +2R' (noted).",
  "ex-kelly": "Note: correct through trade_math: the refusal first; 17.5% and 8.75%; the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 4.38, 1.46, 2.19 times. The automated failure is the checker's (the rule is dated in the text).",
  "ex-recovery": "Note: correct: 25% first, the formula, the working; past the largest maximum loss troid has read, 10%.",
@@ -17,7 +17,7 @@
  "p-hold": "Note: correct through firm_rules and firm_assets: ETH a Major Crypto Asset, 10 days; the tiers.",
  "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA 5 days; 'no record either way'.",
  "p-ladder-instant": "Note: correct through check_compliance and firm_rules: 60% in the Instant's first step, the firm's words; the full ladder; its base not recorded; 14(d)(ix) and 13(c)(v) not checkable.",
- "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%, 77,404.77). '4 more losses' noted (the report's question on 'more').",
+ "p-size": "Error (major: boundary wording): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%, 77,404.77). But '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
  "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm named.",
  "e-scam": "Note: correct: support.md section 3's reply, then the question.",
  "o-predict": "Note: correct: troid's out-of-scope wording.",
@@ -49,6 +49,16 @@
    ],
    "detail": [
     "the answer opens at 'Working: stop distance = … quantity = $500 ÷ ($1,292 + $0) ≈ 0.387 units': no one-line answer first and no formula; the text before the tool calls was dropped (run 21's ex-r shape)"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "'**4** more losses of this size before the max-loss floor is reached': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)"
    ]
   },
   {

@@ -1,5 +1,5 @@
 {
- "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart. 29 of 30 automatically; p-size's failure is the checker's (ceil(2,000/480) − 1 = 4). On a read, three errors, all minor and all repeated text: p-size restates the assumptions; o-montecarlo gives its refusal and lead-in twice; s-product's two lead-ins a sentence apart. No critical, no major. #25's fixes held: ex-r says 'troid's desk's 1R'; p-ladder-instant gives the Instant's ladder only; e-blown names no firm and no causes. $1.256 on the eval key.",
+ "_summary": "Read in full on 2026-10-07: the candidate of #26, all 30 cases, 40 s apart. 29 of 30 automatically; p-size's failure is the checker's (ceil(2,000/480) − 1 = 4). On a read, three errors, all minor and all repeated text: p-size restates the assumptions; o-montecarlo gives its refusal and lead-in twice; s-product's two lead-ins a sentence apart. No critical, no major. #25's fixes held: ex-r says 'troid's desk's 1R'; p-ladder-instant gives the Instant's ladder only; e-blown names no firm and no causes. $1.256 on the eval key. Re-scored 2026-10-08 under the owner's ruling: p-size's 'more' is a major error (boundary wording).",
  "ex-r": "Note: correct through trade_math: R first, the formula, $498.97; Bitfunded's 0.04% from the tool, 'troid's desk's 1R = 522.83'; 1,000 ÷ 522.83 = 1.913R. 'a dollar loss means something different on a $10,000 account than on a $100,000 one' uses account sizes from no tool (noted, not counted: the point is right, unlike c03's).",
  "ex-kelly": "Note: correct: the refusal first; f* = p − (1 − p) ÷ b, 17.5% and 8.75%, beside the 1-Step's 6% and 4% (read 2026-09-23): 2.92, 4.38, 1.46 and 2.19 times.",
  "ex-recovery": "Note: correct: 25% first, d ÷ (1 − d), the worked step; past every maximum loss troid has read, the largest 10% (named, sourced).",
@@ -17,7 +17,7 @@
  "p-hold": "Note: correct through firm_rules and firm_assets: ETH a Major Crypto Asset, 10 days; the other tiers.",
  "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA the only stock named, 5 days; 'no record either way'.",
  "p-ladder-instant": "Note: correct through check_compliance and firm_rules: 60% in the Instant's 55–64% step, '50% payout penalty' in the firm's words; the full Instant ladder; what it is a share of not recorded; 14(d)(ix) and 13(c)(v) stated as not checkable. No 1-Step or 2-Step ladder this time.",
- "p-size": "Error (minor: repeated text): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%). But 'Cross margin, 5× leverage, and the 35% budget cap are troid's own defaults, not the firm's rule.' restates the service's assumptions list. The automated failure is the checker's (ceil(2,000/480) − 1 = 4). '4 more losses this size' noted (the report's question on 'more').",
+ "p-size": "Error (major: boundary wording; repeated text): correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 4, 75.15%). But 'Cross margin, 5× leverage, and the 35% budget cap are troid's own defaults, not the firm's rule.' restates the service's assumptions list. The automated failure is the checker's (ceil(2,000/480) − 1 = 4). And '4 more' after this trade counts one loss too many (the owner's ruling, 2026-10-08).",
  "e-blown": "Note: correct: support.md section 2's steps 1, 2 and 5; no firm's drawdown type, no causes. The fix list's error did not recur.",
  "e-scam": "Note: correct: support.md section 3's reply, then the question.",
  "o-predict": "Note: correct: troid's out-of-scope wording.",
@@ -33,11 +33,13 @@
  "_errors": [
   {
    "case": "p-size",
-   "severity": "minor",
+   "severity": "major",
    "kinds": [
+    "boundary wording",
     "repeated text"
    ],
    "detail": [
+    "'**4** more losses this size before the max-loss floor is reached': the tool's 4 counts losses from the whole $2,000 budget, this trade included; 4 more after it is five losses, $2,400, past the floor (the owner's ruling of 2026-10-08: 'N more losses' is a major error, counted on both sides)",
     "'Cross margin, 5× leverage, and the 35% budget cap are troid's own defaults, not the firm's rule.': the service's assumptions list again, as its own paragraph"
    ]
   },
