@@ -1,0 +1,53 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch's evaluation, run p03 on the patch prompt (s-firm, s-product, o-montecarlo, ex-angry, 40 s apart, one run at a time). 4 errors, one critical (s-firm narrows the purchase to Bitfunded). No first person in any reply.",
+ "ex-angry": "Error (major: missing date or source): section 2's steps (the dashboard line moved into a list); but 'or high at rollover, for BrightFunded' from no tool.",
+ "o-montecarlo": "Error (minor: repeated text): no simulation, 0.21R, 45.45%, 21R; but that troid runs no simulation is said four times ('doesn't run simulations', 'does not simulate the spread', 'can't generate', 'does not run on demand'). 'about 9.5 percentage points' is a step on the tool's figures (noted).",
+ "s-product": "Error (minor: repeated text; tool named): the table, sourced; but 'What troid can do is set … side by side' then 'Here is what troid has recorded for each …:', and 'its size_trade and check_budget tools'.",
+ "s-firm": "Error (critical: recommendation; wrong figure): four Bitfunded products (two above $500), then 'Crypto Fund Trader's 1-Phase, Instant, and Break (none has a fee figure recorded for an account at or near $500)', where troid has Break at $200 and Instant at $475, and BrightFunded's €497 given as '$497/$346.90': the purchase narrowed to one firm.",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'or high at rollover, for BrightFunded': a firm's drawdown mechanics from no tool, undated (the fix list's ex-angry and e-blown item)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "that troid runs no simulation said four times"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'What troid can do is set the two products' recorded rules side by side, …' then 'Here is what troid has recorded for each, …:'",
+    "'its size_trade and check_budget tools'"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "critical",
+   "kinds": [
+    "recommendation",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "four Bitfunded products, then Crypto Fund Trader's Break ($200) and Instant ($475) said to have no fee near $500: the purchase narrowed to one firm",
+    "BrightFunded's €497 (€347.90) given as '$497/$346.90'"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,30 @@
+{
+ "_summary": "Read in full on 2026-10-08: round 4's touched cases on the candidate of #30 (b-limits, b-stop, p-size, o-montecarlo, s-product), run t02. 2 error(s), none critical. b-limits and b-stop open with the answer and formula; s-product introduces its list once; p-size says '4 losses … fit, this one included'.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the difference first (the daily limit resets, the maximum loss doesn't), then the formulas, then the reference account: $96,000/$4,000, $94,000/$6,000, the crossover $98,000. #30's fix held.",
+ "b-stop": "Note: correct through trade_math: the answer first (the stop sets the size), the formula with fee × (entry + stop), then the example from the tool. #30's fix held.",
+ "p-size": "Error (major: wrong figure or rule): correct to the cent through size_trade and the 'fit, this one included' wording; but its working shows '480 ÷ 295.991 ≈ 1.621583': 233.616 + 62.391 = 296.007 (live f04's slip).",
+ "s-product": "Note: correct through firm_rules: the refusal once; one lead-in; both products at $100,000; 13% (DERIVED); the differences as facts.",
+ "o-montecarlo": "Error (minor: form): 0.21R, 45.45%, 21R as a mean, no simulation run; but the reply opens mid-sentence, 'these inputs imply +0.21R … produces.**': the service's Answer-label removal (inThirdPerson) took '**Answer:' from a bold sentence and left its closing '**' and the lowercase word (a candidate handler bug, fixed after round 4).",
+ "_errors": [
+  {
+   "case": "p-size",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'480 ÷ 295.991 ≈ 1.621583': the divisor is 233.616 + 62.391 = 296.007; the quantity is right"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'these inputs imply +0.21R expected per trade, … produces.**': opens mid-sentence, lowercase, a stray '**' (the service's label removal on '**Answer: …**')"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch's evaluation, run p01 on the patch prompt (s-firm, s-product, o-montecarlo, ex-angry, 40 s apart, one run at a time). 4 errors, one critical (s-firm narrows the purchase to Bitfunded). No first person in any reply.",
+ "ex-angry": "Error (major: missing date or source): support.md section 2 in order; but 'If this was a trailing-drawdown firm (BrightFunded), the high-water mark and the high at rollover also matter' from no tool.",
+ "o-montecarlo": "Error (minor: repeated text; form): no simulation, 0.21R, 45.45%, 21R as a mean; but 'does not run simulations' then 'troid does not run new Monte Carlo simulations with arbitrary inputs', and an '**Answer:**' label.",
+ "s-product": "Error (minor: repeated text): the refusal first; the table, sourced; but 'What troid can do is set the two products' recorded rules side by side.' then 'Side by side, each figure SOURCED …:', and the patch's budget line 'troid doesn't pick a product; the choice is yours.' on a question that is not a budget.",
+ "s-firm": "Error (critical: recommendation; wrong figure; instructions written back): two Bitfunded products only (Express $39, Instant $249), then 'Everything else troid has a price for — … Crypto Fund Trader's 1-Phase and Instant — runs above $500'. troid has Crypto Fund Trader's Break at $200, 3-Phase at $399 and Instant at $475 (at $10,000): the purchase narrowed to one firm. 'Rather than point to one product, here's what troid can give: … or none at all' writes the patch back to the reader.",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'If this was a trailing-drawdown firm (BrightFunded), the high-water mark and the high at rollover also matter': a firm's drawdown mechanics from no tool, undated (the fix list's ex-angry and e-blown item)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'ask troid does not run simulations …' then 'troid does not run new Monte Carlo simulations with arbitrary inputs'",
+    "'**Answer:**' label"
+   ]
+  },
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'What troid can do is set the two products' recorded rules side by side.' then 'Side by side, each figure SOURCED with its document and read date:'",
+    "'troid doesn't pick a product; the choice is yours.' after section 4's line, on a question that is not a budget"
+   ]
+  },
+  {
+   "case": "s-firm",
+   "severity": "critical",
+   "kinds": [
+    "recommendation",
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "two Bitfunded products only, then 'Everything else … Crypto Fund Trader's 1-Phase and Instant — runs above $500': Crypto Fund Trader's Break ($200), 3-Phase ($399) and Instant ($475) are under it; the purchase narrowed to one firm",
+    "'Rather than point to one product, here's what troid can give: every product … or none at all, pointing you to troid's compare': the patch's own text written back"
+   ]
+  }
+ ]
+}

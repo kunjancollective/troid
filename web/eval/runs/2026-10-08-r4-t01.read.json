@@ -1,0 +1,22 @@
+{
+ "_summary": "Read in full on 2026-10-08: round 4's touched cases on the candidate of #30 (b-limits, b-stop, p-size, o-montecarlo, s-product), run t01. 1 error(s), none critical. b-limits and b-stop open with the answer and formula; s-product introduces its list once; p-size says '4 losses … fit, this one included'.",
+ "b-limits": "Note: correct through explain_rule and check_budget: the difference first (the daily limit resets, the maximum loss doesn't), then the formulas, then the reference account: $96,000/$4,000, $94,000/$6,000, the crossover $98,000. #30's fix held.",
+ "b-stop": "Note: correct through trade_math: the answer first (the stop sets the size), the formula with fee × (entry + stop), then the example from the tool. #30's fix held.",
+ "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 75.15%); '4 losses at this size fit, this one included; the 5th reaches the max drawdown': the owner's ruling held.",
+ "s-product": "Note: correct through firm_rules: the refusal and one lead-in in one line; both products; 13%; the shared rules; the differences as facts.",
+ "o-montecarlo": "Error (minor: repeated text; tool named): no simulation, 0.21R, 45.45%, 21R as a mean; Kelly beside the largest maximum loss troid has read (sourced). But that troid runs no simulation is said three times, and 'in explain_rule, topic ruin' names a tool and its parameter. The automated failure reads the 10% as unlisted; the sources list it (noted).",
+ "_errors": [
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text",
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'ask troid does not run simulations, with any inputs' then 'troid cannot run one' then 'ask troid does not run one with any inputs'",
+    "'(in explain_rule, topic ruin)': a tool and its parameter named"
+   ]
+  }
+ ]
+}

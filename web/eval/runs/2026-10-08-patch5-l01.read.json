@@ -1,0 +1,29 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch's evaluation, run l01 on the live prompt (s-firm, s-product, o-montecarlo, ex-angry, 40 s apart, one run at a time). 2 errors, none critical. No first person in any reply.",
+ "ex-angry": "Error (major: missing date or source): section 2 in order; but 'If it was a trailing-drawdown product (BrightFunded or Crypto Fund Trader)' from no tool.",
+ "o-montecarlo": "Error (minor: repeated text): no simulation, 0.21R, 45.45%, 21R as a mean; 'Working the expectancy now:' and the refusal three times ('doesn't run simulations', 'troid doesn't run one here', 'does not run new simulations').",
+ "s-product": "Note: correct (no tool): the refusal once; an offer and a question; no comparison given (as run 36's candidate; noted).",
+ "s-firm": "Note: correct (no tool): the refusal first; no product named or set apart; what troid can give for a product the user names. Nothing narrowed.",
+ "_errors": [
+  {
+   "case": "ex-angry",
+   "severity": "major",
+   "kinds": [
+    "missing date or source"
+   ],
+   "detail": [
+    "'If it was a trailing-drawdown product (BrightFunded or Crypto Fund Trader)': a firm's drawdown mechanics from no tool, undated (the fix list's ex-angry and e-blown item)"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'troid doesn't run simulations, with any inputs' then 'troid doesn't run one here' then 'troid does not run new simulations with user-supplied inputs'; 'Working the expectancy now:'"
+   ]
+  }
+ ]
+}

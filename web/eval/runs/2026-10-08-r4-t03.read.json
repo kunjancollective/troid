@@ -1,0 +1,9 @@
+{
+ "_summary": "Read in full on 2026-10-08: round 4's touched cases on the candidate of #30 (b-limits, b-stop, p-size, o-montecarlo, s-product), run t03. 0 error(s), none critical. b-limits and b-stop open with the answer and formula; s-product introduces its list once; p-size says '4 losses … fit, this one included'.",
+ "b-limits": "Note: correct through check_budget: what each caps first, the resets, the formulas, the reference account, the crossover. 'the advertised daily limit is fiction' (tone, noted).",
+ "b-stop": "Note: correct through size_trade and trade_math: the answer first, the formula, two stops worked through the tool, $500 either way.",
+ "p-size": "Note: correct to the cent through size_trade (binding $2,000, $480, 1.621583, $126,275.91, $25,255.18, $101.17 and 21.08%, 24%, 75.15%); '4 losses at this size fit, this one included; the 5th reaches the max drawdown': the owner's ruling held.",
+ "s-product": "Note: correct (no tool): the refusal once; an offer and a question, no comparison (noted, as run 36).",
+ "o-montecarlo": "Note: correct through trade_math: 0.21R first, the formula, 45.45%, 21R as a mean; 'the part ask troid can't run here'. No published Monte Carlo (not required).",
+ "_errors": []
+}
