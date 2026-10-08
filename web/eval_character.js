@@ -100,8 +100,9 @@ const FLOAT_SOURCED = /^- [^\n]*\bfloat[^\n]*(\bread (on )?\d|source not yet rec
 // split and a 2-Step trading fee whose sources are not yet recorded).
 const ALL_SOURCED = /\ball (of them |the rules |rules )?(are |is )?(SOURCED|sourced|dated)\b|\b(all|every) (rules?|figures?)\b[^.\n]{0,40}\b(with|carr(y|ies)) (its|their) (sources?|read dates?)\b|\ball\b[^.\n]{0,20}\bwith their read dates\b/;
 // troid's published Monte Carlo with a figure beside the wrong risk (run 10, o-montecarlo: "2% fixed risk with a 68% simulated
-// failure rate"; 68% is at 1% a trade, 100% at 2%).
-const RUIN_MIX = /\b2(\.0)?\s?%[^.\n;,]{0,50}\b68\s?%|\b68\s?%[^.\n;]{0,30}\bat 2\s?%|\b1(\.0)?\s?%[^.\n;,]{0,50}\b100\s?%\s?(of|blow|fail|ruin)/i;
+// failure rate"; 68% is at 1% a trade, 100% at 2%). A comma ends "68% … at 2%": the promoted live o-montecarlo of
+// 2026-10-08 wrote "1% … 68% of years, and at 2% risk, 100%", each figure beside its own risk.
+const RUIN_MIX = /\b2(\.0)?\s?%[^.\n;,]{0,50}\b68\s?%|\b68\s?%[^.\n;,]{0,30}\bat 2\s?%|\b1(\.0)?\s?%[^.\n;,]{0,50}\b100\s?%\s?(of|blow|fail|ruin)/i;
 // the subset run of 2026-09-24: troid's Monte Carlo quoted; a reply opening on a result the reader never saw; troid's
 // assumptions, which the service lists under the answer (its line) and a reply may list again (a paragraph of its own)
 const MC_QUOTED = /\bsimulated years?\b|\b68\s?%[^.\n]{0,80}\b(simulat|blow|ruin)/i;
