@@ -2156,7 +2156,8 @@ function repeatedWorking(t) {
 const XOVER_BELOW_RX = /\b(below|under|less than)\s+(\$?98,000|\$?98k|the crossover)\b/i;
 const SIX_K_BUDGET_RX = /(?<![\d,.])\$?6,000(?![\d,])[^.\n;]{0,40}\b(budget|room)\b|\b(budget|room)\b[^.\n;]{0,30}(?<![\d,.])\$?6,000(?![\d,])/i;
 // read from the day below the crossover on, up to a turn to another day ("whereas at a $100,000 start, $6,000")
-const XOVER_TURN_RX = /\b(at|on|from|with) (a |the )?\$?100,000\b|\b(whereas|while|but|compared with)\b|;/i;
+// or a contrast with it (7 Oct, p-crossover-b02: "the usable room is under $4,000, not the $6,000 figure people quote")
+const XOVER_TURN_RX = /\b(at|on|from|with) (a |the )?\$?100,000\b|\b(whereas|while|but|compared with|rather than|instead of)\b|\bnot (the |a )?\$?6,000\b|;/i;
 const xoverBudgetSlip = (t) => stripSources(String(t)).split("\n").some((l) => sentencesOf(l).some((x) => {
   const m = x.match(XOVER_BELOW_RX);
   if (!m) return false;
@@ -2202,7 +2203,11 @@ CANDIDATE_LINTS.push(
 // b-leverage: "Long at entry 77,872, stop at 76,580, risking $500 on $100,000 equity:"): the first paragraph a lead-in to
 // figures, a later part of the method, a position or a list. Over every saved reply: run 31's b-leverage, run 21's ex-r
 // ("In practice") and run 3's ex-r ("Working through a long BTC position").
-const EXAMPLE_OPEN_RX = /^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation|Example|Working)\b|^\s*(?:\*\*|__)?\s*(long|short)\b|^\s*([-*•]\s|\||\d+[.)]\s)/i;
+// 7 Oct, run 37's b-limits: "On this $100,000 Bitfunded 1-Step, starting a fresh day at equity $100,000: the daily floor
+// is …", an account's figures first and the difference the question asks never said
+const FIGURES_OPEN_RX = /^\s*(?:\*\*|__)?\s*(?:On|At|For|With|Using|Taking|Take)\b[^.:\n]{0,60}\$\s?\d/i;
+const EXAMPLE_OPEN_RX = new RegExp(/^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation|Example|Working)\b|^\s*(?:\*\*|__)?\s*(long|short)\b|^\s*([-*•]\s|\||\d+[.)]\s)/.source
+  + "|" + FIGURES_OPEN_RX.source, "i");
 function exampleFirst(t, asked) {
   if (!HOWCALC_RX.test(String(asked || ""))) return false;
   const p = stripSources(String(t)).replace(/^troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split(/\n\s*\n/)[0].trim();
@@ -2287,13 +2292,27 @@ const firmOwnsTroid = (t) => { const m = stripSources(String(t)).match(FIRM_TROI
 //    compare, or "Here is/are …", not itself ending in a colon, followed by a lead-in (one ending in a colon, or "Here
 //    is/are", "Below"; 7 Oct, s-product: "Here are the two products' recorded rules, so …." then "Here are the recorded
 //    rules side by side, at the $100,000 level:").
-const ANNOUNCE_RX = /^(?:\*\*|__)?\s*(?:What (?:troid|it|ask troid) can (?:give|show|offer|compare|do)|What can be compared|What troid gives|Here(?:['’]s| is| are)\b)/i;
+const ANNOUNCE_RX = /^(?:\*\*|__)?\s*(?:What (?:troid|it|ask troid) can (?:give|show|offer|compare|do)|What can be (?:compared|given|shown|offered|done)|What troid gives|Here(?:['’]s| is| are)\b)/i;
 const LEADIN_RX = /:\s*(?:\*\*|__)?\s*$|^(?:\*\*|__)?\s*(?:Here(?:['’]s| is| are)|Below)\b/i;
+// the second lead-in may come a sentence later (7 Oct, run 35's s-product: "What can be compared is the recorded rules of
+// each, side by side." then "Both are single-fee products …" then "At the $100,000 account level, as troid has them
+// recorded:"), never past a list line; and the announcement itself may come twice (runs 35 and 36, o-montecarlo: "What
+// troid can give instead: …" then "What can be given instead:"), as may "does not run simulations"
+const LIST_LINE_RX = /^\s*([-*•]\s|\||\d+[.)]\s)/;
+const SIM_REFUSAL_RX = /\b(?:does not|doesn['’]t|never) run (?:any |a |new )?(?:Monte Carlo|simulations?)\b/i;
 function doubleLeadIn(t) {
-  const S = stripSources(String(t)).replace(/^\s*troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split("\n").flatMap(sentencesOf);
-  for (let i = 0; i + 1 < S.length; i++)
-    if (ANNOUNCE_RX.test(S[i]) && !/:\s*(?:\*\*|__)?\s*$/.test(S[i]) && LEADIN_RX.test(S[i + 1])) return [S[i], S[i + 1]];
-  return null;
+  const lines = stripSources(String(t)).replace(/^\s*troid doesn['’]t recommend; it prices what you bring\.\s*/, "").split("\n");
+  const S = lines.flatMap((l) => (LIST_LINE_RX.test(l) ? [{ s: l, list: true }] : sentencesOf(l).map((s) => ({ s, list: false }))));
+  for (let i = 0; i < S.length; i++) {
+    if (S[i].list || !ANNOUNCE_RX.test(S[i].s)) continue;
+    if (!/:\s*(?:\*\*|__)?\s*$/.test(S[i].s))
+      // a sentence later only when the announcement holds no colon: "What it can do: quote …" is itself the content
+      for (let j = i + 1; j <= (/:/.test(S[i].s) ? i + 1 : i + 2) && j < S.length && !S[j].list; j++) if (LEADIN_RX.test(S[j].s)) return [S[i].s, S[j].s];
+    const again = S.slice(i + 1).find((x) => !x.list && ANNOUNCE_RX.test(x.s) && !/^(?:\*\*|__)?\s*Here/i.test(x.s) && !/^(?:\*\*|__)?\s*Here/i.test(S[i].s));
+    if (again) return [S[i].s, again.s];
+  }
+  const sims = stripSources(String(t)).split("\n").flatMap(sentencesOf).filter((x) => SIM_REFUSAL_RX.test(x));
+  return sims.length > 1 ? [sims[0], sims[1]] : null;
 }
 // 7. support.md section 4's line more than once, with or without its full stop (run 33, s-product: "troid doesn't
 //    recommend; it prices what you bring — troid can size …" in its last paragraph)
@@ -2304,11 +2323,18 @@ const REFUSAL_AGAIN_RX = /\btroid (?:doesn['’]t|does not|won['’]t|will not|c
 const refusalTwice = (t, budget) => { let b = stripSources(String(t)); const m = b.match(REFUSAL_ANY_RX) || [];
   if (budget) b = b.split(BUDGET_CLOSE).join("");
   return m.length > 1 || (m.length === 1 && REFUSAL_AGAIN_RX.test(b.slice(b.search(REFUSAL_ANY_RX) + m[0].length))); };
+// 8. "N more losses" (the owner's ruling, 2026-10-08: one too many after this trade; runs 35 to 39's p-size, ex-r c02):
+//    a count with "more" before losses, or before what the limit does ("4 more before the max-loss floor trips"); not
+//    "one more loss … would breach" (run 1, b-limits), which counts nothing
+const MORE_LOSSES_RX = /\b(\d+|two|three|four|five|six|seven|eight|nine|ten)\s+more\b(?:\s+[\w-]+){0,5}?\s+(?:loss(?:es)?\b|before\b[^.\n]{0,60}\b(?:trips?|reach(?:es|ed)?|hits?|fails?))/i;
+const moreLosses = (t) => { const m = stripSources(String(t)).replace(/\*\*|__/g, "").match(MORE_LOSSES_RX); return m ? m[0] : null; };
 CANDIDATE_LINTS.push(
   [(t) => !!firmOwnsTroid(t),
    (t) => "\"" + firmOwnsTroid(t) + "\": troid's desk, its tools and the figures they compute are troid's, never a firm's. Say \"troid's desk\" (or troid's own tool's result), and keep a firm's name for the firm's own rules."],
   [(t) => !!doubleLeadIn(t),
-   (t) => "Introduce the list once: \"" + doubleLeadIn(t)[0] + "\" and \"" + doubleLeadIn(t)[1] + "\" both lead into it. Keep one lead-in."],
+   (t) => "Introduce the list once: \"" + doubleLeadIn(t)[0] + "\" and \"" + doubleLeadIn(t)[1] + "\" both lead into it, or say twice what troid can give or that it runs no simulation. Keep one lead-in, and write nothing before a tool call that the final answer says again."],
+  [(t) => !!moreLosses(t),
+   (t) => "\"" + moreLosses(t) + "\" counts one loss too many: the losses left include this trade. Say how many fit, this one included, and which one reaches the limit, as size_trade's note gives it (\"4 losses at this size fit, this one included; the 5th reaches the max drawdown\"); never \"N more losses\"."],
   [(t, tools) => refusalTwice(t, (tools || []).some((x) => x.name === "products_in_budget")),
    "support.md section 4's line goes once, first: \"troid doesn't recommend; it prices what you bring.\" Never again later in the answer, with or without its full stop, nor in other words (\"troid doesn't pick …\", \"the choice is yours\")."]);
 // what troid wrote before a tool call, for the candidate: saidNotRepeated's rule, and a block whose worked figures the
@@ -2316,7 +2342,10 @@ CANDIDATE_LINTS.push(
 // A final answer that opens on a later part of the method ("In practice: …") had its answer and formula written before
 // the tool call (run 21, ex-r: "R is …" and the formula went with their block, and the reader got neither): then each
 // paragraph stays that the final answer doesn't give again, without the lead-in to the call.
-const LATE_OPEN_RX = /^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation)\b/i;
+// also "Working:" and an account's figures first (7 Oct, run 37: b-stop opened "Working: stop distance = …" and b-limits
+// "On this $100,000 Bitfunded 1-Step, …:", and the reader got no answer or formula, as run 21's ex-r)
+const LATE_OPEN_RX = new RegExp(/^\s*(?:\*\*|__)?\s*(In practice|What it means|Worked example|Why it works|For your situation|Working)\b/.source
+  + "|" + FIGURES_OPEN_RX.source, "i");
 const workedFigures = (t) => NUMBERS.numbersIn(stripSources(String(t)).replace(/\b\d{4}-\d{2}-\d{2}\b/g, " ")).filter((n) => n.dec > 0 || n.v >= 10);
 // a lead-in to the tool call: a sentence ending with ":" ("… Getting those now:"), one in the first person ("Let's get the
 // expectancy figure.", run 22, o-montecarlo, above an answer that said it all again) or one announcing the call
@@ -3019,6 +3048,7 @@ module.exports._sourcesRestated = sourcesRestated;
 module.exports._firmOwnsTroid = firmOwnsTroid;
 module.exports._doubleLeadIn = doubleLeadIn;
 module.exports._refusalTwice = refusalTwice;
+module.exports._moreLosses = moreLosses;
 module.exports._refusalOnceFirstNext = refusalOnceFirstNext;
 module.exports._ownStrategyFirst = ownStrategyFirst;
 module.exports._ownStrategyMisordered = ownStrategyMisordered;

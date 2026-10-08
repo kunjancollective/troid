@@ -360,7 +360,7 @@ const NEW1005 = /^The largest maximum loss troid has read covers|^troid's own st
 const NEW1006 = /^The maximum-loss budget is the day.s start less|^Never set one product apart as what the money buys|^Give every product products_in_budget returns|^These words are troid's own instructions/;
 // the owner's fixes of 2026-10-07 (after runs 29 to 34): lints the older runs' replies were never written against; the
 // older tests leave them out, and they are tested on the saved replies below
-const NEW1007 = /^The question asks how something is worked out: open with|^The question already gives|^Say it once:|^The service lists every source and read date under the answer|^"[^"]+": troid's desk, its tools|^Introduce the list once|^support\.md section 4's line goes once, first/;
+const NEW1007 = /^The question asks how something is worked out: open with|^The question already gives|^Say it once:|^The service lists every source and read date under the answer|^"[^"]+": troid's desk, its tools|^Introduce the list once|^support\.md section 4's line goes once, first|^"[^"]+" counts one loss too many/;
 const CHAR = fs0.readFileSync(path0.join(__dirname, "..", "TROID-CHARACTER.md"), "utf8");
 ok("TROID-CHARACTER.md: the repo root copy and the copy ask troid loads are identical", CHAR === fs0.readFileSync(path0.join(__dirname, "context", "TROID-CHARACTER.md"), "utf8"));
 ok("TROID.md: the repo root copy and the published copy are identical", fs0.readFileSync(path0.join(__dirname, "..", "TROID.md"), "utf8") === fs0.readFileSync(path0.join(__dirname, "public", "TROID.md"), "utf8"));
@@ -935,8 +935,8 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const TOOLSRC = [{ name: "explain_rule", input: { topic: "crossover" }, result: { sources: [{ rule: "daily 4%", document: "help centre", read_on: ["2026-09-23"] }] } }];
   const N7 = (t, v, q, tools) => handler._lintNotesFor(t, v, tools || [], q || "q", q || "q");
   const has = (t, v, q, rx, tools) => N7(t, v, q, tools).some((n) => rx.test(n));
-  ok("candidate: a method answer that opens on its example is sent back (run 31's b-leverage); over every saved reply also runs 3's and 21's ex-r and nothing else; one that opens with the answer passes; live is not",
-     nM >= 809 && only(H.ef, ["09-24-run3 ex-r", "10-05-run21 ex-r", "10-07-run31 b-leverage"], ["09-24-run3 ex-r", "10-05-run21 ex-r"])
+  ok("candidate: a method answer that opens on its example is sent back (run 31's b-leverage), or on an account's figures (run 37's b-limits, 2026-10-08); over every saved reply also runs 3's and 21's ex-r, run 16's b-leverage and run 37's b-stop and nothing else; one that opens with the answer passes; live is not",
+     nM >= 809 && only(H.ef, ["09-24-run3 ex-r", "10-05-run21 ex-r", "10-07-run31 b-leverage", "09-24-run16 b-leverage", "10-07-run37 b-limits", "10-07-run37 b-stop"], ["09-24-run3 ex-r", "10-05-run21 ex-r", "09-24-run16 b-leverage"])
      && has(B31, "candidate", LQ, /^The question asks how something is worked out: open with the one-line answer/) && !has(B31, "live", LQ, /^The question asks how something is worked out: open with/)
      && !EF("No — the loss at the stop is the same at either leverage.\n\nFormula: loss = quantity × (|entry − stop| + fee per unit).", LQ)
      && !EF("Long at entry 77,872:", "What is the crossover on a $100,000 Bitfunded 1-Step?"), H.ef);
@@ -1003,6 +1003,38 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
+// the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
+// keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an
+// announcement or "does not run simulations" twice (runs 35 and 36); and "N more losses" (the owner's ruling)
+{ const SN = handler._saidNotRepeatedNext, EF2 = handler._exampleFirst, DL = handler._doubleLeadIn, ML = handler._moreLosses;
+  const N10 = (t, q) => handler._lintNotesFor(t, "candidate", [], q || "q", q || "q"), L10 = (t, q) => handler._lintNotesFor(t, "live", [], q || "q", q || "q");
+  const said = ["The stop sets the size: without it there is no distance to divide the risk by.\n\nFormula: quantity = risk ÷ (|entry − stop| + fee per unit).\n\nComputing the example now:"];
+  ok("candidate: a final answer that opens at 'Working:' or on an account's figures keeps the answer and formula written before the tool call, without its lead-in (run 37's b-stop and b-limits); a block that only leads in still goes",
+     JSON.stringify(SN(said, "Working: stop distance = |77,872 − 76,580| = $1,292; quantity ≈ 0.387 units.")) === JSON.stringify(["The stop sets the size: without it there is no distance to divide the risk by.\n\nFormula: quantity = risk ÷ (|entry − stop| + fee per unit)."])
+     && SN(["The daily limit resets each trading day; the maximum loss never resets.\n\nChecking the reference account:"], "On this $100,000 Bitfunded 1-Step, starting a fresh day at equity $100,000: the daily floor is $96,000.").join() === "The daily limit resets each trading day; the maximum loss never resets."
+     && SN(["Getting the figures:"], "The stop sets the size. Formula: quantity = risk ÷ stop distance.").length === 0);
+  ok("candidate: a method answer that opens on an account's figures is sent back (run 37's b-limits); one that opens with the difference passes",
+     EF2("On this $100,000 Bitfunded 1-Step, starting a fresh day at equity $100,000: the daily floor is $96,000.", "What's the difference between the daily loss limit and the maximum loss?")
+     && !EF2("The daily limit resets each trading day; the maximum loss never resets.\n\nFormula: daily_floor = day_start − quota × daily%.", "What's the difference between the daily loss limit and the maximum loss?"));
+  const P35 = "troid doesn't recommend; it prices what you bring.\n\nWhat can be compared is the recorded rules of each, side by side.\n\nBoth are single-fee products from Bitfunded, structured differently. At the $100,000 account level, as troid has them recorded:\n\n**1-Step** — daily loss 4%.";
+  const M35 = "ask troid does not run simulations, with any inputs — none is run here.\n\nWhat troid can give instead: the closed-form expectancy.\n\n**troid does not run simulations.** Not with these inputs.\n\nWhat can be given instead:\n\n**Closed-form expectancy**: 0.21R.";
+  ok("candidate: lead-ins a sentence apart (run 35's s-product), and what troid can give or 'does not run simulations' said twice (runs 35 and 36's o-montecarlo), are sent back; an announcement that is itself the content, followed by a new lead-in, passes; live is not",
+     !!DL(P35) && N10(P35).some((n) => /^Introduce the list once/.test(n)) && !L10(P35).some((n) => /^Introduce the list once/.test(n)) && !!DL(M35)
+     && !!DL("ask troid does not run simulations here.\n\nThe expectancy is 0.21R. That is a mean, and ask troid doesn't run Monte Carlo on request.")
+     && !DL("What troid can do instead: lay out what each product costs, so the comparison is yours to make. The fees differ by size.\n\ntroid's recorded fee for each is at the $100,000 account level:\n\n- $999")
+     && !DL("What it can do: quote the published results. The expectancy comes first.\n\nWith your numbers: p = 0.55, W = 1.2R:"));
+  const fs10 = require("fs"), path10 = require("path"), hitsML = [];
+  for (const f of fs10.readdirSync(path10.join(__dirname, "eval", "runs")).filter((f) => /\.json$/.test(f) && !/read/.test(f))) {
+    let rs; try { rs = JSON.parse(fs10.readFileSync(path10.join(__dirname, "eval", "runs", f), "utf8")).results || []; } catch (e) { continue; }
+    for (const c of rs) if (typeof c.reply === "string" && ML(c.reply)) hitsML.push(c.id); }
+  ok("candidate: 'N more losses' is sent back (the owner's ruling, 2026-10-08: runs 35 to 39's p-size, ex-r c02); over every saved reply only p-size, ex-r and run 21's b-stop; size_trade's note and 'one more loss … would breach' pass; live is not",
+     ML("Losses remaining at this size: **4** more before the max-loss floor trips") === "4 more before the max-loss floor trips" && ML("7 more losses of that size leave equity above it") === "7 more losses"
+     && !ML("4 losses at this size fit, this one included; the 5th reaches the max drawdown") && !ML("below it, one more loss at the daily budget would breach the max") && !ML("two more trades to clear")
+     && N10("**4** more losses this size before the max-loss floor is reached.").some((n) => /counts one loss too many/.test(n)) && !L10("**4** more losses this size.").some((n) => /counts one loss too many/.test(n))
+     && hitsML.length >= 20 && hitsML.every((id) => ["p-size", "ex-r", "b-stop"].includes(id)), hitsML.length);
+  const CT = require("fs").readFileSync(path10.join(__dirname, "context", "candidate", "TROID.md"), "utf8").replace(/\s+/g, " ");
+  ok("candidate TROID.md: 'how many losses at that size fit, this one included, and which one reaches the binding ceiling', never 'how many more losses'",
+     CT.includes("how many losses at that size fit, this one included, and which one reaches the binding ceiling") && !/how many more losses/.test(CT)); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1473,7 +1505,7 @@ fake.listen(18765, async () => {
     const gc = JSON.parse(resC.body).candidate;
     ok("GET: what the candidate stages (here the test's TROID.md; run 10's guardrails, ruin and fees texts (the patch's reset left with it), tool code and lints, nine more from the read of runs 17 to 19; one new tool, firm_assets, after the live test of 2026-10-04) and that a key is set, never shown", gc.key === true
        && gc.staged.join() === "TROID.md" && gc.guardrails === 17 && gc.tools.join() === "firm_assets,products_in_budget" && gc.rules.join() === "ruin,crossover,drawdown,fees"
-       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 48 && !resC.body.includes(CK) && gc.eval_key === false, gc);
+       && gc.run.join() === "explain_rule,firm_rules,firm_assets,products_in_budget,check_compliance,check_budget,size_trade,trade_math" && gc.lints === 49 && !resC.body.includes(CK) && gc.eval_key === false, gc);
     // the live baseline: the key with x-troid-variant: live gets the live prompt on the operator's terms
     KV_CALLS.length = 0; before = calls.length;
     let lb;

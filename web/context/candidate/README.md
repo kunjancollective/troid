@@ -12,6 +12,27 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-08: the owner's fixes after round 3 (runs 35 to 39)
+
+Round 3 held on (c), incomplete method, from run 37's b-limits and b-stop. Candidate only:
+
+- **The answer and formula kept.** Text written before a tool call is kept, without its lead-in, when the final answer
+  opens on a later part: now also "Working:" and an account's figures ("On this $100,000 Bitfunded 1-Step, …"). Run 37's
+  b-stop opened "Working: …" and b-limits on the reference account's figures; the text before their tool calls, the
+  answer and the formula, was dropped as a lead-in (run 21's ex-r shape). `exampleFirst` also sends back an answer that
+  opens on an account's figures: over every saved reply it adds run 16's b-leverage and run 37's b-limits.
+- **Lead-ins a sentence apart, and an announcement twice.** `doubleLeadIn` also reads a second lead-in one sentence on
+  (run 35's s-product), and sends back "What troid can give …" or "does not run simulations" said twice (runs 35 and 36's
+  o-montecarlo). Over every saved reply it adds ten, all repeats (o-montecarlo, s-product).
+- **"N more losses"** (the owner's ruling, 2026-10-08). A lint (`moreLosses`) sends back "4 more losses" or "4 more before
+  the floor trips": the losses left include this trade. Over every saved reply: p-size, ex-r and run 21's b-stop only.
+  The candidate's TROID.md now asks for how many losses fit, this one included, and which one reaches the ceiling.
+  size_trade's own note is fixed for live and candidate in its own pull request (#29), the owner's to merge.
+- **A false positive.** The $6,000-below-the-crossover lint read p-crossover-b02's "the usable room is under $4,000, not
+  the $6,000 figure people quote" as a slip; a contrast ("not the $6,000", "rather than", "instead of") now ends the
+  reading, as "whereas" did.
+- **Live and patch unchanged** over every saved reply.
+
 ## Staged 2026-10-07 (third): the lints' reach, after s-product ×5 on the second
 
 Two of five s-product replies on the second staging still said a thing twice, in shapes its lints missed. Candidate only:
