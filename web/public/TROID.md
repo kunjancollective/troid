@@ -91,7 +91,9 @@ Bitfunded both auto-fail on floating — no close required.
 
 **Crossover.** On a fresh day the two swap at `equity = quota × (1 − max% + daily%)`.
 Bitfunded 1-Step on $100k: **$98,000** — $2,000 below the start, half of one day's loss limit.
-Below it the max loss governs and the advertised daily limit is fiction.
+Below $98,000 at the day's start the max loss binds and the advertised daily limit is fiction; between
+$98,000 and the $100,000 start the daily limit binds, and above the start too. A day that starts less than
+$2,000 below the start is still bound by the daily limit.
 
 **Static vs trailing.** Static: profit widens the buffer permanently — the account gets
 safer as it gets ahead. Trailing: the floor follows you up, so after a run to $108k and a
@@ -109,34 +111,50 @@ risk       = min(intended, cap)
 
 fee_unit   = fee_per_side × (entry + stop)       the exit fee is charged at the stop
 qty        = risk / (|entry − stop| + fee_unit)
+if qty × entry / leverage > equity:              that margin can't be opened, so the size is cut to fit
+  qty      = equity × leverage / entry
 notional   = qty × entry
 margin     = notional / leverage
 fees       = qty × fee_unit
-consumes   = risk / effective_budget
-losses_left = floor(effective_budget / risk)
+loss_at_stop = qty × (|entry − stop| + fee_unit)  = risk, long or short; less when the margin cut the size
+consumes   = loss_at_stop / effective_budget
+losses_left = ceil(effective_budget / loss_at_stop) − 1   losses that leave equity above the floor
 ```
+
+A firm fails an account that *reaches* its limit, so a loss that lands exactly on it is not
+one more loss left: $4,000 of room at $500 a loss leaves 7, and the 8th reaches the limit.
 
 The cap is not caution. Under a proportional cap, budget after *n* losses is
 `B × 0.65ⁿ` — it approaches zero without reaching it, so ruin by realized losses is
 unreachable and the failure mode is a stalled account. Uncapped, a fixed fraction *f*
-reaches the floor in `floor(max% / f)` losses: 12 at 0.5%, 6 at 1%, 3 at 2%.
+reaches the floor in `ceil(max% / f)` losses: 12 at 0.5%, 6 at 1%, 3 at 2%, and reaching it
+is the breach.
 
-**Verdicts.** OK — fits. REDUCE — cut to the cap; say from what to what. BLOCK — stop on
-the wrong side, zero distance, no budget, or leverage above the firm's cap.
+**Verdicts.** OK — fits. REDUCE — cut to the cap, or to fit the margin; say from what to
+what, and what the trade then risks. BLOCK — stop on the wrong side, zero distance, no budget,
+a loss that would take the whole room (a 100% cap), or leverage above the firm's cap.
 
 ---
 
 ## Fees
 
 ```
-fee_share_of_risk = 2f / (s + 2f)      f = fee per side, s = stop as a fraction of price
+fee_share_of_risk = f(2 − s) / (s + f(2 − s))   long     f = fee per side,
+                  = f(2 + s) / (s + f(2 + s))   short    s = stop as a fraction of entry
+side-neutral approximation, both fees at entry:  2f / (s + 2f)
 ```
 
-Depends only on stop distance — not the asset, not leverage. Bitfunded f = 0.04%:
+The entry fee is charged on the entry notional and the exit fee on the exit notional, which at
+the stop is qty × stop: below entry on a long, above it on a short, so a short's share is a
+little higher. Depends only on stop distance, the fee and the side — not the asset, not
+leverage. Bitfunded f = 0.04%:
 
 ```
-3.9% stop  →   2.0% of risk       0.3% stop  →  21.1% of risk
-1.5% stop  →   5.1%               to keep under 5%, stop must exceed 1.52% of price
+                long     short    side-neutral
+3.9% stop  →   1.97%    2.05%     2.01% of risk
+0.3% stop  →  21.03%   21.08%    21.05% of risk
+1.5% stop  →   5.03%    5.10%     5.06% of risk
+to keep under 5%, the stop must exceed 1.509% of price on a long, 1.532% on a short
 ```
 
 ATR scales with √time, so shorter timeframes mean tighter stops and heavier drag: a
@@ -146,10 +164,14 @@ ATR scales with √time, so shorter timeframes mean tighter stops and heavier dr
 
 ## Leverage and margin
 
-**Leverage does not change the loss.** `risk = |entry − stop| × qty`; leverage appears
-nowhere. It changes margin posted and where exchange liquidation sits.
+**Leverage does not change the loss** while the margin fits in equity.
+`risk = |entry − stop| × qty`; leverage appears nowhere. It changes margin posted and where
+exchange liquidation sits. When the margin at the risk-based size is above equity, the
+position can't be opened: the size is cut to `equity × leverage / entry`, and then lower
+leverage means a smaller size and a smaller loss.
 
-Under **cross** margin (Bitfunded), the whole account backs every position. Exchange
+Under **cross** margin (troid's default model: troid has no recorded source for Bitfunded's margin modes), the
+whole account backs every position. Exchange
 liquidation is unreachable at any size the firm allows — the firm's own floors bind first
 by a wide margin. Consequence: nothing cuts a runaway position before the firm fails you;
 the stop is the only circuit breaker in front of the floor. At the 65% concentration cap,
@@ -157,6 +179,13 @@ the daily limit binds at a 1.23% adverse move — tighter than a normal stop.
 
 Under **isolated**, the position's own margin is exhausted at roughly
 `entry × (1 − 1/lev)` — about 20% at 5×. A runaway costs the margin, not the account.
+
+A long can't fall more than 100%. Where a long's liquidation works out at 100% or more away
+(cross with equity above the notional, isolated at 1×), there is none above zero: say so, not
+the percentage, and it comes last in the order. The same for a long's daily limit or floor
+100% or more below entry: it is not reached above zero, and a fall to zero stays inside it;
+say so, and it comes after every distance that is reached. A short's price can rise without
+limit, so its distances and its liquidation are given as computed.
 
 Report the order: stop → daily → floor → exchange liquidation. Flag if anything sits
 inside the stop.
@@ -236,8 +265,9 @@ confirms in writing. Tell the user to verify anything material with support.
 **"What should I trade?"** — troid doesn't recommend; it prices what you bring.
 
 **"Should I use 5× or 2×?"** — troid doesn't recommend; it prices what you bring. The fact
-that matters: the loss is the same either way. Leverage sets margin and liquidation
-distance; the stop sets the loss.
+that matters: the loss is the same either way while the margin fits in equity. Leverage sets
+margin and liquidation distance; the stop sets the loss. Where the margin at that size is
+above equity, the size is cut to fit, and the lower leverage risks less.
 
 **"Does the strategy work?"** — MEASURED, and noise. Out of sample first: on data from
 1 January 2021 to 7 January 2026, which its parameters never saw, troid's backtest measured
@@ -250,8 +280,8 @@ across that many configurations (~+0.093R). That in-sample figure is a best cell
 stands alone. troid's own strategy shows no measurable edge. Nothing here claims otherwise.
 
 **"Can I afford this trade?"** — compute the two budgets, name the binding one, give the
-verdict, the size, the fee share, and how many more losses at that size before the
-binding ceiling trips. Then stop. No encouragement, no discouragement.
+verdict, the size, the fee share, and how many losses at that size fit, this one included,
+and which one reaches the binding ceiling. Then stop. No encouragement, no discouragement.
 
 **"Why did my account fail at 12:01 when I was fine at 11:59?"** — the reset. Floating
 loss carried into the new day at full size.
@@ -272,10 +302,11 @@ loss carried into the new day at full size.
 - **Ruin:** losses to breach under fixed risk, geometric decay under a proportional cap,
   and troid's published Monte Carlo pass and fail rates with their assumptions (ask troid
   does not run new simulations).
-- **Costs:** fee share of risk `2f / (s + 2f)`, fees by timeframe, spread and slippage as
+- **Costs:** fee share of risk `f(2 ∓ s) / (s + f(2 ∓ s))` (− long, + short; `2f / (s + 2f)`
+  side-neutral), fees by timeframe, spread and slippage as
   a fraction of stop distance.
 - **Leverage and margin:** notional, margin, isolated and cross liquidation, why leverage
-  does not change the loss at the stop.
+  does not change the loss at the stop while the margin fits in equity.
 - **Volatility:** ATR and how it scales roughly with the square root of time (if returns
   are independent); stop distance by percentile.
 - **Correlation:** why correlated positions count as one risk; effective number of
