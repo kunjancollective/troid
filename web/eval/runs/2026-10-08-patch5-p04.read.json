@@ -1,0 +1,19 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch revised (#32: a budget gets no product list), run p04 on the patch prompt (s-firm, s-product). s-firm narrows nothing. 1 error(s), none critical.",
+ "s-product": "Error (minor: repeated text): the refusal first; the table, sourced; the differences as facts. But 'What can be compared is the recorded rules of each, side by side.' then 'Side by side, on the $100,000 size, …:', 'All of this is SOURCED — … with the read dates attached above.', and the patch's budget line at the end of a question that is not a budget.",
+ "s-firm": "Note: correct (no tool, the revised patch): the refusal first; 'troid doesn't pick a product; the choice is yours.' at once, not at the end (noted); no product named, listed or set apart; troid's compare and an offer to give a named product's rules. Nothing narrowed.",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'What can be compared is the recorded rules of each, side by side.' then 'Side by side, on the $100,000 size, each rule with its source:'",
+    "'All of this is SOURCED — read from … with the read dates attached above.'",
+    "'troid doesn't pick a product; the choice is yours.' on a question that is not a budget (the patch's budget line)"
+   ]
+  }
+ ]
+}

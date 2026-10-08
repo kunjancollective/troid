@@ -1,0 +1,21 @@
+{
+ "_summary": "Read in full on 2026-10-08: the fifth patch revised (#32: a budget gets no product list), run p05 on the patch prompt (s-firm, s-product). s-firm narrows nothing. 1 error(s), none critical.",
+ "s-product": "Error (major: wrong figure or rule; repeated text): the refusal first; the table; but 'the 2-Step spreads the 8% total target across two stages (8% then 5%)' (13%), 'a lower total profit requirement if measured in one step', 'Where a rule isn't shown above (consistency rule, refund terms) it has conflicting or unsourced documentation' from no tool; two lead-ins; the budget line at the end. The automated failure is the first.",
+ "s-firm": "Note: correct (no tool, the revised patch): the refusal first; 'troid doesn't pick a product; the choice is yours.' at once, not at the end (noted); no product named, listed or set apart; troid's compare and an offer to give a named product's rules. Nothing narrowed. 'say, Bitfunded's 1-Step or Crypto Fund Trader's Instant' as examples of a product to name, one from each of two firms (noted).",
+ "_errors": [
+  {
+   "case": "s-product",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule",
+    "repeated text"
+   ],
+   "detail": [
+    "'the 2-Step spreads the 8% total target across two stages (8% then 5%)': 8% + 5% = 13%",
+    "'Where a rule isn't shown above (consistency rule, refund terms) it has conflicting or unsourced documentation': from no tool",
+    "'What can be compared is the recorded rules, side by side.' then 'Side by side, as troid has recorded them …:'",
+    "'troid doesn't pick a product; the choice is yours.' on a question that is not a budget (the patch's budget line)"
+   ]
+  }
+ ]
+}

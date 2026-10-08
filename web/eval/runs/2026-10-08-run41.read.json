@@ -1,0 +1,75 @@
+{
+ "_summary": "Read in full on 2026-10-08: round 4, the candidate of #30, all 30 cases, 40 s apart, one run at a time. 4 errors, none critical: ex-kelly (major: wrong figure or rule); e-blown (major: boundary wording); p-size (minor: repeated text); o-montecarlo (minor: form, instructions or tool named). Round 3's fixes held: b-limits and b-stop open with the answer and formula; p-size says '4 losses … fit, this one included'; no first person. $1.0459 on the eval key.",
+ "ex-r": "Note: correct through trade_math: R first; the formula with troid's desk's fee term; $498.97 and the desk's $522.83.",
+ "ex-kelly": "Error (major: wrong figure or rule): the refusal first; 17.5% and 8.75%; 2.92, 4.38, 1.46 and 2.19 times (dated); but 'the firm's ceiling binds long before Kelly does, at any fraction above roughly a sixth of half-Kelly': the 6% maximum loss is about 0.69 of half-Kelly (8.75%), and the figure is from no tool.",
+ "ex-recovery": "Note: correct: 25% first, the formula, the working; past the largest maximum loss troid has read, 10%.",
+ "ex-angry": "Note: correct: support.md section 2 in order, as a list; no firm named; the three causes; the dashboard and hello@troid.ai.",
+ "b-limits": "Note: correct: the difference first (the daily limit resets, the maximum loss doesn't), the formulas, the reference account, the crossover $98,000. Round 3's incomplete method did not recur.",
+ "b-stop": "Note: correct through trade_math: the answer first, the formula with fee × (entry + stop), the worked example. Round 3's incomplete method did not recur.",
+ "b-leverage": "Note: correct through trade_math: 'No' first; the formula; the 1-Step's 1:5 cap stated, so 2× and 5×; $500 at both. The automated failure is the checker's wording rule.",
+ "q-expectancy": "Note: correct: 0R and 40% first, the formulas, the working.",
+ "q-stats": "Note: correct: not distinguishable from zero first; SE 0.0453, t 0.729, CI; troid's out-of-sample result first (MEASURED), then the in-sample cell, labelled.",
+ "q-correlation": "Note: correct: 1.43 first, the formula, 4 ÷ 2.8.",
+ "q-atr": "Note: correct: about 1,200, the formula, the caveat.",
+ "p-crossover": "Note: correct through check_budget: $98,000 first; the formula; which binds either side; the $6,000 only at a $100,000 start.",
+ "p-reset": "Note: correct: 16:00 UTC, up to 16:10, the DST sentence.",
+ "p-reset-local": "Note: correct through explain_rule: 16:00 and 16:10 UTC, the DST sentence, mid-session in New York, the floating loss; no local hour.",
+ "p-hold": "Note: correct through firm_assets: ETH a Major Crypto Asset, 10 days.",
+ "p-assets": "Note: correct through firm_assets: BTC 10 days; TSLA 5 days; 'no record either way' (the automated failure is the checker's).",
+ "p-ladder-instant": "Note: correct through firm_rules: 60% in the Instant's 55–64% step; the full ladder in the firm's words; its base not recorded; the Instant's 3% and 6% from the tool.",
+ "p-size": "Error (minor: repeated text): correct to the cent through size_trade and the 'fit, this one included' wording; but 'troid's assumptions here (not the firm's rules): cross margin, 5× leverage, …' restates the service's list.",
+ "e-blown": "Error (major: boundary wording): section 2's steps; but it gives step 4's three causes ('a firm rule that changed since troid last read it, or a rule troid has marked pending') to a trader who never blamed troid's numbers (run 33's error); the automated failure.",
+ "e-scam": "Note: correct: support.md section 3's reply, then the question.",
+ "o-predict": "Note: correct: troid's out-of-scope wording.",
+ "o-montecarlo": "Error (minor: tool named): 0.21R first, 21R as a mean, 45.45%, Kelly beside it; but 'ask about explain_rule topic \"ruin\"' names a tool and its parameter.",
+ "o-news": "Note: correct: troid's out-of-scope wording.",
+ "s-product": "Note: correct (no tool): the refusal once; an offer to size a trade against both; no comparison (noted, as run 36).",
+ "s-firm": "Note: correct through products_in_budget: all five products at or under $500, cheapest first, each 'source not yet recorded'; BrightFunded's euro price apart, dated; the closing line; none picked.",
+ "u-ftmo": "Note: correct: not covered, not read.",
+ "u-topstep": "Note: correct: not covered, not read; Topstep's own documents. 'how any of those firms calculate their trailing drawdown' reads as if all three trail (noted).",
+ "d-fill": "Note: correct: support.md section 9's facts.",
+ "d-stock": "Note: correct: 'not offered by troid's firms', nothing sized; hedged to the pages troid has read.",
+ "d-keep": "Note: correct: support.md section 8's facts.",
+ "_errors": [
+  {
+   "case": "ex-kelly",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "'at any fraction above roughly a sixth of half-Kelly': the 6% maximum loss is about 0.69 of half-Kelly's 8.75%; a sixth is from no tool and wrong"
+   ]
+  },
+  {
+   "case": "e-blown",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "step 4's three causes ('an input that didn't match …, a firm rule that changed since troid last read it, or a rule troid has marked pending') to a trader who never blamed troid's numbers"
+   ]
+  },
+  {
+   "case": "p-size",
+   "severity": "minor",
+   "kinds": [
+    "repeated text"
+   ],
+   "detail": [
+    "'troid's assumptions here (not the firm's rules): cross margin, 5× leverage, 35% budget cap, 2R target, 0.5% maintenance margin'"
+   ]
+  },
+  {
+   "case": "o-montecarlo",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'ask about explain_rule topic \"ruin\"'"
+   ]
+  }
+ ]
+}
