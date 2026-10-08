@@ -116,6 +116,8 @@ F3_OLD = """()=>{for(const f in FIRMS)for(const k in FIRMS[f].products){const p=
 FIG = re.compile(r"[−-]?\$?\d[\d,]*(?:\.\d+)?")
 REWORDED = ["index.js.f_fpu", "index.js.f_size", "index.js.f_left",                 # F6, F6, F7
             "index.js.n_lev_held", "index.js.f_lev_pending_held"]                    # held to the lowest cap, not the highest
+# reworded where a placeholder carries markup ({n} is a glossary term), so mapped back by its parts
+REWORDED_TPL = ["index.js.n_left"]                                                     # this one included (the owner, 2026-10-08)
 NEW_ROWS = ["index.js.st_margin_check", "index.js.st_loss"]                            # F1, F6
 # the working table's rows, by label, whose figures the audit left as they were
 KEPT = ["inputs", "high at rollover", "high-water mark", "daily floor", "daily budget", "max-loss floor", "drawdown budget",
@@ -131,6 +133,15 @@ def _key(k, en):
     return html.escape(mask(re.sub(r"\{\w+\}", "0", en[k])), quote=False)
 
 
+def _tpl_back(h, k):
+    """A reworded string whose placeholders carry markup, mapped back: its literal parts matched around each placeholder's
+    value, the old string's parts written around the same values."""
+    rx = "(?<=<div>)" + "".join("(?P<%s>(?:(?!</?div>).)*?)" % x[1:-1] if x.startswith("{") else re.escape(html.escape(mask(x), quote=False))
+                 for x in re.split(r"(\{\w+\})", EN[k]) if x)
+    return re.sub(rx + "(?=</div>)", lambda m: "".join(m.group(x[1:-1]) if x.startswith("{") else html.escape(mask(x), quote=False)
+                                                   for x in re.split(r"(\{\w+\})", EN0[k]) if x), h)
+
+
 def as_old(h):
     """The new desk's result, figures masked, written as the old desk wrote it: the new rows out, the named rewordings
     back, "none above zero" and a long's floor "not reached above zero" (the review, 2026-09-30) percentages again, the
@@ -140,6 +151,8 @@ def as_old(h):
         h = re.sub(r"<tr><td>" + re.escape(EN[k]) + r"</td>.*?</tr>", "", h)
     for k in REWORDED:
         h = h.replace(_key(k, EN), _key(k, EN0))
+    for k in REWORDED_TPL:
+        h = _tpl_back(h, k)
     h = h.replace(_key("index.js.n_isolated_none", EN), _key("index.js.n_isolated", EN0)).replace(EN["index.js.v_liq_none"], "#%").replace(EN["index.js.v_floor_none"], "#%")
     h = h.replace(_key("index.js.f_dd_loosest", EN), _key("index.js.f_dd_static", EN0))
     return h.replace("<div>" + _key("index.js.n_dd_loosest", EN) + "</div>", "").replace('<div class="notes"></div>', "")
