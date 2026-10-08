@@ -12,6 +12,16 @@ failure the live prompt's runs don't have (`node web/eval_character.js --promoti
 and a person's read finds no error" after run 16. Promotion is one commit: the files move into place (TROID.md into both copies) and the
 `CANDIDATE_*` entries fold into `GUARDRAILS`, `RULES`, `TOOLS` and `RUN`.
 
+## Staged 2026-10-08 (after the promotion, second): a tier line never calls an unsourced rule SOURCED
+
+The promoted live s-firm (`web/eval/runs/2026-10-08-promoted-sfirm`) wrote "Tier: the rules above are SOURCED — read from
+the documents listed." under five prices marked "source not yet recorded" (the owner: wrong). The cause, those prices'
+missing sources in firms.json, is fixed through the audit for the owner to merge. In the candidate the service's tier
+line now reads the sources it lists: with some unrecorded, "the rules above with a document and read date are SOURCED; a
+rule marked "source not yet recorded" is not."; with none recorded, it calls nothing SOURCED; trade_math's quoted-rule
+line is qualified the same way. English only until the strings are reviewed. Over every saved reply (1,286) and five
+tool logs, live and patch are unchanged (12,860 assemblies).
+
 ## Staged 2026-10-08 (after the promotion): the Answer label in a bold sentence
 
 Round 4's touched case t02, o-montecarlo, opened "these inputs imply +0.21R … produces.**": the service's label removal

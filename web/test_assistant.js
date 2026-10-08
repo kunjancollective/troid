@@ -1058,6 +1058,23 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("live, beside it: unchanged (the label goes, the bold and the case stay as they were)",
      TL("**Answer: these inputs imply +0.21R.**") === "these inputs imply +0.21R.**" && TL("**Answer:** these inputs imply +0.21R.") === "these inputs imply +0.21R."
      && TL("Answer: 25%.") === "25%."); }
+// candidate (staged 2026-10-08, the owner): a tier line never calls an unsourced rule SOURCED (the promoted live s-firm
+// wrote "the rules above are SOURCED" under five prices marked "source not yet recorded")
+{ const WS = handler._withSources, pib = RT("products_in_budget", { budget: 500 }, "candidate"), log = [{ name: "products_in_budget", result: pib }];
+  const reply = "troid doesn't recommend; it prices what you bring.\n\nNot financial advice. Verify with the firm before acting.";
+  const cand = WS(reply, "en", log, "candidate"), live = WS(reply, "en", log, "live"), patch = WS(reply, "en", log, "patch");
+  const none = [{ name: "firm_rules", result: { sources: [{ rule: "fee", source: "not yet recorded" }], tier: "SOURCED — test" } }];
+  const all = [{ name: "firm_rules", result: { sources: [{ rule: "daily 4%", document_section: "ToU 9(a)", read_on: ["2026-09-23"] }], tier: "SOURCED — test" } }];
+  const q = [{ name: "trade_math", result: {} }, { name: "firm_rules", result: { sources: [{ rule: "fee", source: "not yet recorded" }] } }];
+  const unsourcedSourced = (t) => /source not yet recorded/.test(t) && t.split("\n").some((l) => /^Tier:/.test(l) && /\bSOURCED\b/.test(l) && !/not yet recorded/.test(l));
+  ok("candidate: with some prices unrecorded, the tier line names which rules are SOURCED; live and patch unchanged",
+     /source not yet recorded/.test(cand) && cand.includes("Tier: the rules above with a document and read date are SOURCED; a rule marked \"source not yet recorded\" is not.")
+     && !cand.includes(handler.EN["ask.tier.sourced"]) && !unsourcedSourced(cand)
+     && live.includes(handler.EN["ask.tier.sourced"]) && patch === live && live === cand.replace("Tier: the rules above with a document and read date are SOURCED; a rule marked \"source not yet recorded\" is not.", handler.EN["ask.tier.sourced"]), [cand.slice(-400), live.slice(-200)]);
+  ok("candidate: with no source recorded the tier line calls nothing SOURCED; with every source recorded it is live's; a quoted read date beside an unrecorded rule is qualified",
+     /Tier: troid has no recorded source for the rules above/.test(WS(reply, "en", none, "candidate")) && !unsourcedSourced(WS(reply, "en", none, "candidate"))
+     && WS(reply, "en", all, "candidate") === WS(reply, "en", all, "live") && WS(reply, "en", all, "live").includes(handler.EN["ask.tier.sourced"])
+     && !unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "candidate")) && unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "live"))); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
