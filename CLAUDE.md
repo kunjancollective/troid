@@ -13,6 +13,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
 - Report parameter neighbourhoods, never a best cell. Out-of-sample first.
 - **Never state a `MEASURED` claim as fact.** Run `verify_claims.py` if unsure which
   tier a number is.
+- **Never merge a pull request with a red `verify`** (`.github/workflows/verify.yml`: `verify_claims.py`'s RESULT line
+  says anything but `0 failed`). It is not a required check, so nothing else stops the merge (the owner, 2026-10-09).
 
 ## Compliance constraints these tools must respect (Bitfunded ToU)
 
