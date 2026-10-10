@@ -514,6 +514,27 @@
           "read_on": "2026-10-10",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 66887b1487a494e7): the Instant tab of 'Challenge Plans' lists 'Starter $10,000', 'Base $5,000', 'Kickstart $2,500' and, in that order, 'Start Challenge! $449', '$249', '$129'"
+        },
+        "offer_20x_1010": {
+          "doc": "Bitfunded home page: 'Exclusive 20X Leverage Account' banner (an image)",
+          "url": "https://www.bitfunded.com/wp-content/uploads/2026/10/LAPTOP-Exclusive-20X-Leverage-Accounts-scaled.png",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 at about 22:57 UTC (sha256 of the image 88327b951d8be502; of the home page 237657284477add2). The banner is an image on https://www.bitfunded.com/ with no text in the page; it reads 'EXCLUSIVE 20X LEVERAGE ACCOUNT' and '1000 ACCOUNTS ONLY \u00b7 FIRST COME FIRST SERVE', and links to https://trader.bitfunded.com/client/challenge/ (the dashboard, behind a login; not read). The owner saw it at bitfunded.com/#Challenges on 2026-10-10 at about 18:50 ET."
+        },
+        "faq_leverage_1010": {
+          "doc": "Bitfunded FAQ",
+          "url": "https://www.bitfunded.com/frequently-asked-questions/",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page b1b3363ad7ac203a): 'What leverage do I get? 1x to 5x. We keep the ceiling low on purpose, it keeps position sizing inside the risk limits your account runs on, and it stops one over-leveraged trade from ending a challenge that was going fine.' No mention of a 20X account."
+        },
+        "adjusting_leverage_1010": {
+          "doc": "Bitfunded help centre: Adjusting Leverage",
+          "url": "https://bitfunded.gitbook.io/support/trading-module/adjusting-leverage.md",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page c976a08f30453775): 'In Bitfunded, it is possible to use leverage ranging from 1 to 5 times across all listed trading pairs.' and 'you can see leverage sizes from 1x to 5x'. No mention of a 20X account."
         }
       },
       "fields": {
@@ -1173,7 +1194,34 @@
       "tz": "UTC",
       "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc). 00:00 UTC+8 is 16:00 UTC; the help centre says it takes effect by 00:10 UTC+8."
     },
-    "concentration_penalty_wording": "payout penalty"
+    "concentration_penalty_wording": "payout penalty",
+    "_offers_note": "Offers Bitfunded advertises that may end, each as troid read it on the date given. An offer is not a rule: nothing here changes a product's limits, price or leverage cap, and a field the firm's own pages don't state is null. Re-read an offer before any answer relies on it; an offer gone from the firm's pages is marked ended with the date troid saw it gone.",
+    "offers_seen": [
+      {
+        "name": "Exclusive 20X Leverage Account",
+        "status": "may end",
+        "seen_on": "2026-10-10",
+        "read_on": "2026-10-10",
+        "src": "offer_20x_1010",
+        "says": "EXCLUSIVE 20X LEVERAGE ACCOUNT; 1000 ACCOUNTS ONLY; FIRST COME FIRST SERVE",
+        "links_to": "https://trader.bitfunded.com/client/challenge/ (the dashboard, behind a login; troid has not read it)",
+        "price": null,
+        "account_sizes": null,
+        "daily_pct": null,
+        "max_pct": null,
+        "leverage": "20X, the banner's word; no page troid read states a ratio, a product or an account size for it",
+        "new_product_or_setting": null,
+        "not_stated_in": [
+          "Terms of Use (read 2026-10-10): 'Up To 1:5 Leverage' for the 1 Step and 2 Steps challenges; no 20X account",
+          "FAQ (faq_leverage_1010): 'What leverage do I get? 1x to 5x.'",
+          "help centre, Adjusting Leverage (adjusting_leverage_1010): 'leverage ranging from 1 to 5 times'",
+          "help centre: Challenge Type, Challenge & Trader Stage, Margin Mode, Criteria to be Success, Restricted Trading Practices (read 2026-10-10)",
+          "home page plan selector (read 2026-10-10): 2 Steps, 1 Step, Instant, Day Trader; no 20X plan",
+          "blog posts updated in October 2026 (5, read 2026-10-10)"
+        ],
+        "troid": "max_leverage stays 5 (1x to 5x, the FAQ and the help centre); the owner decides any change"
+      }
+    ]
   },
   "brightfunded": {
     "name": "BrightFunded",
