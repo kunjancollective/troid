@@ -1650,7 +1650,9 @@
         "fee_usd_100k": 200,
         "activation_fee_usd_100k": 328,
         "consistency_rule": "40% single-day cap on total profits, checked at payout (final stage)",
-        "max_final_stage_accounts": 5
+        "max_final_stage_accounts": 5,
+        "activation_fee_when": "The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage.",
+        "activation_fee_window": "If all applicable conditions and rules have been met, the option to pay the Activation Fee may become available through your personal dashboard. After the option becomes available, the trader will have 30 days to pay the Activation Fee. If the Activation Fee is not paid within this period, the option may expire and access to the Break Final Stage may no longer be available."
       }
     },
     "drawdown_type": "product-dependent: 1-phase trailing-then-static (trailing_stops_at_initial); 2-phase static",
@@ -1861,7 +1863,14 @@
           "url": "https://cryptofundtrader.com/terms-and-conditions/",
           "read_on": "2026-10-10",
           "doc_dated": null,
-          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 4dc34b261be2137f): 5.6.3 Three Phases: '399 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.4 Zero Phases/Instant: '475 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 10,000 USD'; 5.6.6 'Break' Evaluation: '200 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.7 'Activation FEE' for Break Evaluations: '328 USD as the Activation Fee for the Crypto Fund Trader Break Evaluation with an initial demo capital of 100,000 USD'"
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 4dc34b261be2137f): 5.6.3 Three Phases: '399 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.4 Zero Phases/Instant: '475 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 10,000 USD'; 5.6.6 'Break' Evaluation: '200 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.7 'Activation FEE' for Break Evaluations: '328 USD as the Activation Fee for the Crypto Fund Trader Break Evaluation with an initial demo capital of 100,000 USD'; 5.6.1 Two Phases: '660 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.5 'Ascend' Evaluation: '780 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'"
+        },
+        "faq_1010": {
+          "doc": "Crypto Fund Trader FAQ",
+          "url": "https://cryptofundtrader.com/faq/",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 89a3836b91521656): 'What is the Break Activation Fee? The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage. If all applicable conditions and rules have been met, the option to pay the Activation Fee may become available through your personal dashboard. After the option becomes available, the trader will have 30 days to pay the Activation Fee. If the Activation Fee is not paid within this period, the option may expire and access to the Break Final Stage may no longer be available. The applicable Activation Fees are: $25,000 Break account: $138 $50,000 Break account: $198 $100,000 Break account: $328'"
         }
       },
       "fields": {
@@ -2055,6 +2064,12 @@
               "tc_0926"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases)"
+          },
+          "price": {
+            "src": [
+              "tc_1010"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 5.6.1, Two Phases, 100,000 USD"
           }
         },
         "instant": {
@@ -2097,6 +2112,26 @@
               "tc_1010"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD"
+          },
+          "activation_fee_when": {
+            "src": [
+              "faq_1010"
+            ],
+            "section": "Crypto Fund Trader FAQ \u2014 What is the Break Activation Fee?"
+          },
+          "activation_fee_window": {
+            "src": [
+              "faq_1010"
+            ],
+            "section": "Crypto Fund Trader FAQ \u2014 What is the Break Activation Fee?"
+          }
+        },
+        "ascend": {
+          "price": {
+            "src": [
+              "tc_1010"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 5.6.5, 'Ascend' Evaluation, 100,000 USD"
           }
         }
       }

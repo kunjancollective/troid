@@ -888,11 +888,13 @@ function firm_rules(a, fields) {
       v = prods[feeAt].fee_usd; at = feeAt;
       rule = rule0 + " (one fee for the whole " + lab(pk).replace(/\s*·\s*S\d+$/, "") + "; troid records it on " + lab(feeAt) + " and no fee for another stage)";
     }
+    // an activation fee whose timing firms.json doesn't hold says so (Crypto Fund Trader's Break has the FAQ's words since 2026-10-10)
+    if (/^activation_fee_usd/.test(vk) && typeof pr.activation_fee_when !== "string") rule = rule0 + " (troid hasn't recorded when it is charged)";
     if (v === undefined || (v !== null && typeof v === "object")) continue;
     rules.push({ rule, value: v === null ? "pending" : v });
-    const c = cite(f, ck, at, true);
-    sources.push(c ? { rule: rule + " " + (v === null ? "pending" : v), document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls }
-                   : { rule: rule + " " + (v === null ? "pending" : v), source: "not yet recorded" });
+    const c = cite(f, ck, at, true), said = / in the firm's words$/.test(rule) && typeof v === "string" ? rule + ": \"" + v + "\"" : rule + " " + (v === null ? "pending" : v);
+    sources.push(c ? { rule: said, document_section: c.section, read_on: c.read_on.length ? c.read_on : "not recorded", urls: c.urls }
+                   : { rule: said, source: "not yet recorded" });
   }
   return { firm: f.name, product: pk, rules, sources,
            tier: "SOURCED — each rule as troid has recorded it, with the document and the date troid read it; a rule marked pending or not yet recorded is not filled in. The firm's own documents govern." };
@@ -1338,7 +1340,10 @@ const RULE_FIELDS_NEXT = RULE_FIELDS.map((f) => (f[0] === "fee_usd" ? ["fee_usd"
   // the owner, 2026-10-06 (run 27, s-firm: "troid has not recorded this product's challenge fee" for Crypto Fund
   // Trader's Instant): Crypto Fund Trader's six fees, which firms.json records under keys firm_rules never read
   ["fee_usd_100k", "price", "challenge fee at a $100,000 account, USD"], ["fee_usd_10k", "price", "challenge fee at a $10,000 account, USD"],
-  ["activation_fee_usd_100k", "price", "activation fee at a $100,000 account, USD (troid hasn't recorded when it is charged)"]]);
+  ["activation_fee_usd_100k", "price", "activation fee at a $100,000 account, USD"],
+  // when it is paid, in the firm's own words, each with its own source (Crypto Fund Trader's FAQ, read 2026-10-10)
+  ["activation_fee_when", "activation_fee_when", "when the activation fee is paid, in the firm's words"],
+  ["activation_fee_window", "activation_fee_window", "the window to pay the activation fee, in the firm's words"]]);
 function firmRulesNext(a) {
   const out = firm_rules(a, RULE_FIELDS_NEXT);
   if (out.error) return out;
@@ -1567,6 +1572,8 @@ function pricedProducts() {
           price: p[key], currency, account_size: size,
           promo_price: typeof p[key + "_promo"] === "number" ? p[key + "_promo"] : null,
           activation_fee: typeof p["activation_" + key] === "number" ? p["activation_" + key] : null,
+          activation_when: typeof p["activation_" + key] === "number" && typeof p.activation_fee_when === "string" ? p.activation_fee_when : null,
+          activation_when_source: (() => { const w = cite(f, "activation_fee_when", pk, false); return w ? { document_section: w.section, read_on: w.read_on, urls: w.urls } : "not yet recorded"; })(),
           source: c ? { document_section: c.section, read_on: c.read_on, urls: c.urls } : "not yet recorded" });
       }
     }
@@ -1575,10 +1582,12 @@ function pricedProducts() {
 }
 const priceTerms = (r) => moneyOf(r.price, r.currency) + " at a " + moneyOf(r.account_size, "USD") + " account" +
   (r.promo_price != null ? ", or " + moneyOf(r.promo_price, r.currency) + " on the promotion running when troid read it" : "") +
-  (r.activation_fee != null ? ", and a " + moneyOf(r.activation_fee, r.currency) + " activation fee whose timing troid hasn't recorded" : "");
+  (r.activation_fee != null ? ", and a " + moneyOf(r.activation_fee, r.currency) + " activation fee" + (r.activation_when ? "" : " whose timing troid hasn't recorded") : "");
 const priceSource = (r) => (r.source === "not yet recorded" ? "source not yet recorded"
   : r.source.document_section + ", " + (r.source.read_on.length ? "read " + r.source.read_on.join(" and ") : "read date not recorded"));
-const budgetLine = (r) => r.firm + " " + r.label + ": " + priceTerms(r) + " (" + priceSource(r) + ")";
+const whenSource = (r) => priceSource({ source: r.activation_when_source });
+const budgetLine = (r) => r.firm + " " + r.label + ": " + priceTerms(r) + " (" + priceSource(r) + ")" +
+  (r.activation_when ? "; the activation fee, in the firm's words: \"" + r.activation_when + "\" (" + whenSource(r) + ")" : "");
 function products_in_budget(a) {
   const budget = Number(a.budget), currency = /^\s*(eur|euros?|€)\s*$/i.test(String(a.currency || "")) ? "EUR" : "USD";
   if (!(budget > 0) || !Number.isFinite(budget)) return { error: "budget must be a positive amount, e.g. 500" };
@@ -1588,13 +1597,16 @@ function products_in_budget(a) {
   return { budget, currency,
     products: within.map((r) => ({ firm: r.firm, product: r.label, price: r.price, currency: r.currency, account_size: r.account_size,
       ...(r.promo_price != null ? { promo_price: r.promo_price } : {}), ...(r.activation_fee != null ? { activation_fee: r.activation_fee } : {}),
+      ...(r.activation_when ? { activation_fee_when: r.activation_when, activation_fee_when_source: whenSource(r) } : {}),
       source: priceSource(r) })),
     lines: within.map(budgetLine),
     note: BUDGET_SIZES_NOTE + (other.length ? " Priced in " + (currency === "USD" ? "euros" : "dollars") + ", which troid doesn't convert: " +
       other.map(budgetLine).join("; ") + "." : ""),
     close: BUDGET_CLOSE,
-    sources: [...within, ...other].map((r) => { const rule = r.firm + " " + r.label + ", challenge fee " + priceTerms(r);
-      return r.source === "not yet recorded" ? { rule, source: "not yet recorded" } : Object.assign({ rule }, r.source); }),
+    sources: [...within, ...other].flatMap((r) => { const rule = r.firm + " " + r.label + ", challenge fee " + priceTerms(r);
+      const when = r.activation_when ? [Object.assign({ rule: r.firm + " " + r.label + ", when the activation fee is paid: \"" + r.activation_when + "\"" },
+        r.activation_when_source === "not yet recorded" ? { source: "not yet recorded" } : r.activation_when_source)] : [];
+      return [r.source === "not yet recorded" ? { rule, source: "not yet recorded" } : Object.assign({ rule }, r.source)].concat(when); }),
     tier: "SOURCED — each price as troid has recorded it, with the document and the date troid read it; a price with no recorded source says so. troid picks none of them." };
 }
 // the reply the backstop gives (and the one the guardrail asks for): support.md section 4's line, the list, its note, the line
