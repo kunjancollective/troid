@@ -500,6 +500,20 @@
           "url": "https://www.bitfunded.com/frequently-asked-questions/",
           "doc_dated": "2026-09-17",
           "read_via": "read by the owner's Claude session on 2026-10-04; the page says it was last updated 17 Sep 2026. 'What are the trading fees? 0.04% of position size to open and 0.04% to close, in line with most crypto exchanges.' 'What leverage do I get? 1x to 5x. \u2026' '1-Step Express: profit target 9% \u00b7 max daily loss 3% \u00b7 max loss 3% \u00b7 80% profit split' 'Instant Funding: no profit target \u00b7 max daily loss 4% \u00b7 max loss 6% \u00b7 60% profit split' 'What can I trade? A wide range of crypto pairs plus a selection of traditional pairs, all simulated. We keep the list on the platform and update it as market conditions and our offering change.' Its Instant Funding line gives a 4% maximum daily loss, where the help centre says 3% (_conflicts_found)."
+        },
+        "challenge_type_1010": {
+          "doc": "Bitfunded help centre: Challenge Type",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-type.md",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 87ac64e2d175c9d2): One Step Express table: 'Base | 5,000 USDT | $39'; Instant Funding Challenge table: 'Base | 5,000 USDT | $299', 'Kickstart | 2,500 USDT | 149$'"
+        },
+        "home_1010": {
+          "doc": "Bitfunded home page: Challenge Plans",
+          "url": "https://www.bitfunded.com/",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 66887b1487a494e7): the Instant tab of 'Challenge Plans' lists 'Starter $10,000', 'Base $5,000', 'Kickstart $2,500' and, in that order, 'Start Challenge! $449', '$249', '$129'"
         }
       },
       "fields": {
@@ -731,6 +745,12 @@
               "criteria_1004"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
+          },
+          "price": {
+            "src": [
+              "home_1010"
+            ],
+            "section": "Bitfunded home page \u2014 Challenge Plans, Instant tab, Base; the help centre's Challenge Type table lists $299 for the same account (troid's conflicts)"
           }
         },
         "2step_s1": {
@@ -865,6 +885,12 @@
               "trader_stage_1004"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Express)"
+          },
+          "price": {
+            "src": [
+              "challenge_type_1010"
+            ],
+            "section": "Bitfunded help centre \u2014 Challenge Type, One Step Express table, Base"
           }
         },
         "trader_1step": {
@@ -1122,6 +1148,23 @@
           }
         ],
         "troid": "3%: the stricter"
+      },
+      {
+        "topic": "Price of the $5,000 Instant Funding",
+        "logged": "2026-10-10",
+        "sides": [
+          {
+            "src": "home_1010",
+            "doc": "home page, Challenge Plans, Instant tab",
+            "says": "$249"
+          },
+          {
+            "src": "challenge_type_1010",
+            "doc": "help centre, Challenge Type, Instant Funding Challenge table",
+            "says": "$299"
+          }
+        ],
+        "troid": "$249, the price the home page's plan selector shows; the help centre's $299 is printed beside it"
       }
     ],
     "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes.",
@@ -1812,6 +1855,13 @@
           "read_on": "2026-09-26",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-09-26 (sha256 of the page b7b66c6b5ec56041): 8(i): 'At no time during the \u20182 Phases\u2019 Evaluation or \u2018Ascend\u2019 Evaluation Process or Final Stage account have you registered losses ... which exceeded in total 5% of your balance at 12:05 AM UTC or 10% of the initial demo balance.' 8(ii): 'At no time during the \u20181 Phase\u2019 Evaluation Process or Final Stage have you registered losses ... which exceeded in total 4% of your balance at 12:05 AM UTC or 6% based on the maximum demo balance until you make a 6% demo profit, at which point your trailing drawdown will remain static at the account\u2019s opening balance.' 5.9 AddOns: '90% Bonus Performance: Costs 20% of the evaluation price and increases your eligibility to receive up to 90% of the internal reward' (no base share stated). 7.1 xxiv: the 40% consistency rule, 'IN BREAK ACCOUNTS FINAL STAGE' only. 7.1 xxi: 'IN ASCEND ACCOUNTS, within two minutes before and after high-impact news or market opening, the user must not open or add new positions'. Section 6: the firm may impose restrictions 'with prior notice', including 'news trading limits'."
+        },
+        "tc_1010": {
+          "doc": "Crypto Fund Trader Terms and Conditions",
+          "url": "https://cryptofundtrader.com/terms-and-conditions/",
+          "read_on": "2026-10-10",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 4dc34b261be2137f): 5.6.3 Three Phases: '399 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.4 Zero Phases/Instant: '475 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 10,000 USD'; 5.6.6 'Break' Evaluation: '200 USD for the Crypto Fund Trader Evaluation Process with an initial demo capital of 100,000 USD'; 5.6.7 'Activation FEE' for Break Evaluations: '328 USD as the Activation Fee for the Crypto Fund Trader Break Evaluation with an initial demo capital of 100,000 USD'"
         }
       },
       "fields": {
@@ -2025,6 +2075,28 @@
               "tc"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Student up to $25k"
+          },
+          "price": {
+            "src": [
+              "tc_1010"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 5.6.4, Zero Phases/Instant, 10,000 USD"
+          }
+        },
+        "3phase": {
+          "price": {
+            "src": [
+              "tc_1010"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 5.6.3, Three Phases, 100,000 USD"
+          }
+        },
+        "break": {
+          "price": {
+            "src": [
+              "tc_1010"
+            ],
+            "section": "Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD"
           }
         }
       }

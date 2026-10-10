@@ -833,19 +833,20 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   // it, troid picking none (s-firm: runs 25 and 26 critical, run 27 no fee under $500); firm_rules gives Crypto Fund
   // Trader's fees; the crossover guardrail quotes nothing, and the prompt's quoted words aren't written back
   const PB = handler._runTool("products_in_budget", { budget: 500 }, "candidate");
-  ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and that its source is not yet recorded; BrightFunded's euros apart, not converted; troid's closing line; live the same (promoted 2026-10-08)",
+  ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and its source and read date (all five recorded 2026-10-10, 'not yet recorded' before); BrightFunded's euros apart, not converted; troid's closing line; live the same (promoted 2026-10-08)",
      PB.products.map((p) => p.firm + " " + p.product + " " + p.price + " " + p.account_size).join("; ") === "Bitfunded Express 39 5000; Crypto Fund Trader Break 200 100000; Bitfunded Instant 249 5000; Crypto Fund Trader 3-Phase 399 100000; Crypto Fund Trader Instant 475 10000"
-     && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (source not yet recorded)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => p.source === "source not yet recorded")
+     && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => /, read 2026-10-10$/.test(p.source))
      && /Priced in euros, which troid doesn't convert: BrightFunded 1-Step: €497 at a \$100,000 account, or €347\.90 on the promotion running when troid read it \(BrightFunded 1-Step product page — 100k price, read 2026-09-21\)/.test(PB.note)
      && PB.close === handler.BUDGET_CLOSE && handler._toolsFor("live").some((t) => t.name === "products_in_budget") && JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "live")) === JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "candidate"))
      && handler._runTool("products_in_budget", { budget: 30 }, "candidate").products.length === 0 && handler._runTool("products_in_budget", { budget: 1000 }, "candidate").products.map((p) => p.price).join() === "39,200,249,399,475,619,660,780,799,999"
      && handler._runTool("products_in_budget", { budget: 400, currency: "EUR" }, "candidate").products.map((p) => p.price).join() === "", PB);
   const cft = (pk, v) => handler._runTool("firm_rules", { firm: "crypto_fund_trader", product: pk }, v);
   const feeOf = (o) => o.rules.filter((x) => /fee at a/.test(x.rule)).map((x) => x.value).join();
-  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the rest not yet recorded; live the same (promoted 2026-10-08)",
+  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the 3-Phase's, Instant's and Break's from Terms 5.6 (read 2026-10-10), the 2-Phase's and Ascend's not yet recorded; live the same (promoted 2026-10-08)",
      ["1phase", "2phase", "3phase", "instant", "ascend", "break"].map((pk) => feeOf(cft(pk, "candidate"))).join(";") === "619;660;399;475;780;200,328"
      && cft("1phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 619/.test(x.rule) && x.read_on.join() === "2026-09-21")
-     && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && x.source === "not yet recorded")
+     && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && /^Crypto Fund Trader Terms and Conditions 5\.6\.3/.test(x.document_section) && x.read_on.join() === "2026-10-10")
+     && ["2phase", "ascend"].every((pk) => cft(pk, "candidate").sources.some((x) => /^challenge fee at/.test(x.rule) && x.source === "not yet recorded"))
      && ["1phase", "2phase", "3phase", "instant", "ascend", "break"].every((pk) => feeOf(cft(pk, "live")) === feeOf(cft(pk, "candidate"))));
   const QS = JSON.parse(fs0.readFileSync(path0.join(__dirname, "eval", "character.json"), "utf8")).cases;
   const BO = handler._budgetOf;
@@ -1058,7 +1059,10 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && TL("Answer: 25%.") === "25%."); }
 // candidate (staged 2026-10-08, the owner): a tier line never calls an unsourced rule SOURCED (the promoted live s-firm
 // wrote "the rules above are SOURCED" under five prices marked "source not yet recorded")
-{ const WS = handler._withSources, pib = RT("products_in_budget", { budget: 500 }, "candidate"), log = [{ name: "products_in_budget", result: pib }];
+{ const WS = handler._withSources, pib0 = RT("products_in_budget", { budget: 500 }, "candidate");
+  // the five prices under $500 have their sources since 2026-10-10, so the mixed case adds one the tools still mark unrecorded
+  const pib = Object.assign({}, pib0, { sources: pib0.sources.concat([{ rule: "Crypto Fund Trader 2-Phase, challenge fee $660 at a $100,000 account", source: "not yet recorded" }]) });
+  const log = [{ name: "products_in_budget", result: pib }];
   const reply = "troid doesn't recommend; it prices what you bring.\n\nNot financial advice. Verify with the firm before acting.";
   const cand = WS(reply, "en", log, "candidate"), live = WS(reply, "en", log, "live"), patch = WS(reply, "en", log, "patch");
   const none = [{ name: "firm_rules", result: { sources: [{ rule: "fee", source: "not yet recorded" }], tier: "SOURCED — test" } }];
@@ -1072,7 +1076,10 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("candidate: with no source recorded the tier line calls nothing SOURCED; with every source recorded it is live's; a quoted read date beside an unrecorded rule is qualified",
      /Tier: troid has no recorded source for the rules above/.test(WS(reply, "en", none, "candidate")) && !unsourcedSourced(WS(reply, "en", none, "candidate"))
      && WS(reply, "en", all, "candidate") === WS(reply, "en", all, "live") && WS(reply, "en", all, "live").includes(handler.EN["ask.tier.sourced"])
-     && !unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "candidate")) && unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "live"))); }
+     && !unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "candidate")) && unsourcedSourced(WS("Daily is 4% (read 2026-09-23).", "en", q, "live")));
+  const real = [{ name: "products_in_budget", result: pib0 }];
+  ok("the $500 list as recorded since 2026-10-10: every price with its document and read date, so live's and the candidate's tier line are the same SOURCED line",
+     !/source not yet recorded/.test(WS(reply, "en", real, "live")) && WS(reply, "en", real, "candidate") === WS(reply, "en", real, "live") && WS(reply, "en", real, "live").includes(handler.EN["ask.tier.sourced"])); }
 const S5 = handler.EN["ask.support_step5"], W5 = (t) => handler._withSupportStep5(t, "en");
 ok("support.md quotes the service's step-5 line verbatim (section 2)", liveSys[2].text.replace(/\s+/g, " ").includes("> " + S5), S5);
 ok("step 5: a section-2 reply without the dashboard and hello@troid.ai gets the line; one with both, or no section-2 opener, is left alone (run 4, ex-angry)",
@@ -1090,8 +1097,8 @@ ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'S
      && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
    && /^challenge fee at the \$100,000 account level, USD/.test(RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live").rules.find((x) => /^challenge fee/.test(x.rule)).rule), [f1.rules, f2.rules]);   // live's label as the candidate's since 2026-10-08
 const fx = RT("firm_rules", { firm: "bitfunded", product: "express" }, "candidate");
-ok("firm_rules: the Express's fee at $5,000, its source not yet recorded, so one product's fee never stands for the firm (run 7, s-firm)",
-   fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && x.source === "not yet recorded")
+ok("firm_rules: the Express's fee at $5,000 with its own source (the help centre's Challenge Type, read 2026-10-10; not yet recorded before), so one product's fee never stands for the firm (run 7, s-firm)",
+   fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && /One Step Express table/.test(x.document_section) && x.read_on.join() === "2026-10-10")
    && /one product's fee never stands for a firm/.test(liveSys[0].text), fx);
 ok("guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
    /never leave it out/.test(liveSys[0].text) && /no leverage above its 1:5 cap/.test(liveSys[0].text) && /gets its fee, reset time/.test(liveSys[0].text) && /Never write a tool's parameters/.test(liveSys[0].text)
@@ -1687,8 +1694,8 @@ fake.listen(18765, async () => {
     };
     before = calls.length;
     r = await call(hc, [U("What does Bitfunded's Express cost?")], { disclosed: true }, { headers: { "x-troid-candidate": CK } });
-    ok("candidate: a firm's rule with a read date but no tool behind it is nudged too, and the tool says its source is not yet recorded (run 8, s-firm borrowed other rules' dates)",
-       r.status === 200 && calls.length === before + 4 && !r.j.reply.includes("Bitfunded blog, read") && /challenge fee at a \$5,000 account, USD 39 — source not yet recorded/.test(r.j.reply)
+    ok("candidate: a firm's rule with a read date but no tool behind it is nudged too, and the fee carries the tool's own source, not a date borrowed from another rule (run 8, s-firm borrowed other rules' dates)",
+       r.status === 200 && calls.length === before + 4 && !r.j.reply.includes("Bitfunded blog, read") && /challenge fee at a \$5,000 account, USD 39 — Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10/.test(r.j.reply)
        && r.j.tools_used.join() === "firm_rules", [r.j.reply, calls.slice(before).map((c) => c.model)]);
     // run 8's lints: a finished draft that trips one is written again once; a rewrite that can't finish leaves the draft
     const DRAFT = "Risk is the dollar amount troid is willing to lose on the trade: $500 here.";
@@ -1751,7 +1758,7 @@ fake.listen(18765, async () => {
     ok("candidate: a budget answer that names no product at or under it gives way to every one, cheapest first, under support.md section 4's line once, and ends with troid's line",
        r.status === 200 && bodyB.startsWith("troid doesn't recommend; it prices what you bring.\n\nEvery product troid has a price for at or under $500, cheapest first:\n- Bitfunded Express: $39 at a $5,000 account")
        && bodyB.endsWith(handler.BUDGET_CLOSE) && bodyB.split("troid doesn't recommend").length === 2 && !/support\.md/.test(r.j.reply)
-       && /Sources, each with the date troid read it:\n- Bitfunded Express, challenge fee \$39 at a \$5,000 account — source not yet recorded/.test(r.j.reply), r.j.reply);
+       && /Sources, each with the date troid read it:\n- Bitfunded Express, challenge fee \$39 at a \$5,000 account — Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10/.test(r.j.reply), r.j.reply);
     r = await call(hc, [U("Which firm is best for me? I have $500.")], { disclosed: true });
     ok("live, beside it: the same list since 2026-10-08", r.status === 200 && r.j.reply.split("\n\nSources, each with")[0] === bodyB, r.j.reply);
     script = (b) => b.model === "claude-haiku-4-5" ? msg("end_turn", [{ type: "text", text: "troid has no live data. Check CoinDesk or Binance's announcements for news." }])
