@@ -842,12 +842,28 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && handler._runTool("products_in_budget", { budget: 400, currency: "EUR" }, "candidate").products.map((p) => p.price).join() === "", PB);
   const cft = (pk, v) => handler._runTool("firm_rules", { firm: "crypto_fund_trader", product: pk }, v);
   const feeOf = (o) => o.rules.filter((x) => /fee at a/.test(x.rule)).map((x) => x.value).join();
-  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the 3-Phase's, Instant's and Break's from Terms 5.6 (read 2026-10-10), the 2-Phase's and Ascend's not yet recorded; live the same (promoted 2026-10-08)",
+  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the others from Terms 5.6 (read 2026-10-10: 5.6.1 to 5.6.6); live the same (promoted 2026-10-08)",
      ["1phase", "2phase", "3phase", "instant", "ascend", "break"].map((pk) => feeOf(cft(pk, "candidate"))).join(";") === "619;660;399;475;780;200,328"
      && cft("1phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 619/.test(x.rule) && x.read_on.join() === "2026-09-21")
      && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && /^Crypto Fund Trader Terms and Conditions 5\.6\.3/.test(x.document_section) && x.read_on.join() === "2026-10-10")
-     && ["2phase", "ascend"].every((pk) => cft(pk, "candidate").sources.some((x) => /^challenge fee at/.test(x.rule) && x.source === "not yet recorded"))
+     && [["2phase", "5.6.1"], ["ascend", "5.6.5"]].every(([pk, cl]) => cft(pk, "candidate").sources.some((x) => /^challenge fee at/.test(x.rule) && x.document_section.startsWith("Crypto Fund Trader Terms and Conditions " + cl) && x.read_on.join() === "2026-10-10"))
      && ["1phase", "2phase", "3phase", "instant", "ascend", "break"].every((pk) => feeOf(cft(pk, "live")) === feeOf(cft(pk, "candidate"))));
+  // the owner, 2026-10-10: the Break's activation-fee timing in Crypto Fund Trader's FAQ's exact words, with its read date;
+  // the fee beside the Terms, the timing beside the FAQ, never one under the other's source
+  { const WHEN = "The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage.";
+    const br = cft("break", "live"), act = br.rules.find((x) => /^activation fee at a/.test(x.rule)), src = (re) => br.sources.find((x) => re.test(x.rule));
+    const pbB = handler._runTool("products_in_budget", { budget: 500 }, "live"), line = pbB.lines.find((l) => /Break/.test(l)), srcs = pbB.sources.filter((x) => /Break/.test(x.rule));
+    ok("the Break's activation fee: when it is paid and the window to pay it, in the FAQ's exact words, each beside the FAQ (read 2026-10-10); the fee itself beside the Terms; no 'hasn't recorded' left",
+       act && act.rule === "activation fee at a $100,000 account, USD" && act.value === 328
+       && br.rules.some((x) => x.rule === "when the activation fee is paid, in the firm's words" && x.value === WHEN)
+       && br.rules.some((x) => x.rule === "the window to pay the activation fee, in the firm's words" && /the trader will have 30 days to pay the Activation Fee\./.test(x.value))
+       && /^Crypto Fund Trader FAQ — What is the Break Activation Fee\?$/.test(src(/^when the activation fee is paid/).document_section) && src(/^when the activation fee is paid/).read_on.join() === "2026-10-10"
+       && src(/^when the activation fee is paid/).rule === "when the activation fee is paid, in the firm's words: \"" + WHEN + "\""
+       && /^Crypto Fund Trader Terms and Conditions 5\.6\.6/.test(src(/^activation fee at a/).document_section)
+       && line === "Crypto Fund Trader Break: $200 at a $100,000 account, and a $328 activation fee (Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD, read 2026-10-10); the activation fee, in the firm's words: \"" + WHEN + "\" (Crypto Fund Trader FAQ — What is the Break Activation Fee?, read 2026-10-10)"
+       && srcs.length === 2 && !srcs[0].rule.includes(WHEN) && /Terms and Conditions/.test(srcs[0].document_section) && srcs[1].rule.includes(WHEN) && /FAQ/.test(srcs[1].document_section)
+       && !JSON.stringify([br, pbB]).includes("hasn't recorded when it is charged") && !JSON.stringify([br, pbB]).includes("whose timing troid hasn't recorded")
+       && JSON.stringify(br) === JSON.stringify(cft("break", "candidate")) && JSON.stringify(pbB) === JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "candidate")), [act, line, srcs]); }
   const QS = JSON.parse(fs0.readFileSync(path0.join(__dirname, "eval", "character.json"), "utf8")).cases;
   const BO = handler._budgetOf;
   ok("a budget is an amount to spend on a challenge: of the 30 cases, s-firm's only; never an account size, a risk or a loss",
