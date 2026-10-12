@@ -557,6 +557,32 @@ if _aj.exists():
         and f"Totals: {_a['checks']:,} checks, {_a['passed']:,} passed, {_a['failed']:,} failed." in _rt), 1.0)
 else:
     print("  [DERIVED ] --    audit.json not published yet: the desk's audit line stays hidden")
+# the line as the build writes it (regions.desk_audit, 2026-10-12), for a reader or a crawler without audit.js: it names
+# an audit whose report is in the repo, with that report's run date and count, and no week later than audit.json's. It
+# may trail audit.json by a day (a week's pull request changes audit.json alone; the daily build catches the page up,
+# and audit.js does on load), so it is held to its own report, never to audit.json's figures
+import regions as _regions
+_al = _re.search(r'<p class="audit" id="audit"([^>]*)>(.*?)</p>', _read("web/public/index.html"), _re.S)
+if _SB.SITE.get("calc_audit") and _al:
+    _shown = _al.group(2).strip()
+    _tx = {k: "^" + _re.escape(_en[k]).replace(_re.escape("{date}"), r"(\d{4}-\d{2}-\d{2})").replace(_re.escape("{n}"), r"([\d,]+)")
+           .replace(_re.escape("{href}"), _re.escape("https://github.com/kunjancollective/troid/blob/main/") + r"(audit/reports/(\d{4}-W\d{2})\.md)") + "$"
+           for k in ("desk2.audit.pass", "desk2.audit.fail")}
+    _m = {k: _re.match(rx, _shown) for k, rx in _tx.items()}
+    _aw = _a.get("week") if _aj.exists() else None
+    if not _shown:
+        check("DERIVED", "desk: the audit line is in the page as built when audit.json holds together (none built: hidden)",
+              float(" hidden" in _al.group(1) and _regions.desk_audit(_i18n.Strings("en")) is None), 1.0)
+    else:
+        _k = next((k for k, m in _m.items() if m), None)
+        _d, _nn, _rp2, _wk = _m[_k].groups() if _k else (None,) * 4
+        _rt2 = _read(_rp2) if _k and (_ROOT / _rp2).exists() else ""
+        _tot = _re.search(r"^Totals: ([\d,]+) checks, ([\d,]+) passed, ([\d,]+) failed\.$", _rt2, _re.M)
+        check("DERIVED", f"desk: the audit line as built ({_wk}, {_d}, {_nn}) states its report's run date and count, "
+              f"and no week after audit.json's ({_aw})", float(
+            bool(_k) and " hidden" not in _al.group(1) and f"# Calculator audit, {_wk}\n" in _rt2 and f"Run {_d} (UTC)" in _rt2
+            and bool(_tot) and _nn == (_tot.group(3) if _k == "desk2.audit.fail" else _tot.group(2))
+            and (_k == "desk2.audit.fail") == (_tot.group(3) != "0") and (_aw is None or _wk <= _aw)), 1.0)
 
 # The challenge-proof audit as a check (2026-09-26, E1 and E2; claim_check.py): every number on a public page with its
 # tier and source, no claim word without a citation, the canonical figures (figures.json) read from their sources and

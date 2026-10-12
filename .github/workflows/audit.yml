@@ -8,7 +8,8 @@ name: audit — the desk's arithmetic, re-derived
 #
 # Every pull request runs it, and one that touches neither the desk, firms.json nor the audit passes at once, so the
 # check can be required (not yet: the owner revisits that after launch). On Sundays, and by hand, it also commits web/public/audit.json and audit/reports/<week>.md to
-# the branch audit/<week> and opens a pull request for the owner to merge; a week with mismatches opens an issue, once.
+# the branch audit/<week> and opens a pull request for the owner to merge; a week with mismatches, or one whose branch or
+# pull request couldn't be made, opens an issue, once.
 # It never pushes to main, places nothing and touches no account.
 #
 # Two repository settings it needs (audit/README.md, "Setting up"): Settings > Actions > General > Workflow permissions,
@@ -201,10 +202,13 @@ jobs:
           # a pull request opened with GITHUB_TOKEN starts no pull_request workflow, so its audit check runs from here
           gh workflow run audit.yml --ref "$branch" -f week="$WEEK"
 
-      # whatever became of the branch and the pull request: a week with mismatches is never silent. A pull request
-      # that couldn't be opened (the repository setting above) is said in the issue
-      - name: A week with mismatches opens an issue, once
-        if: always() && needs.audit.outputs.failed != '0' && needs.audit.outputs.failed != ''
+      # whatever became of the branch and the pull request: a week with mismatches is never silent, and neither is a
+      # week that passed but couldn't reach main. 2026-W41 passed, its branch was pushed, and `gh pr create` was refused
+      # ("GitHub Actions is not permitted to create or approve pull requests", the repository setting above): the run
+      # went red and nothing else said so, and the desk's line stayed on W40. A pull request that couldn't be opened, or
+      # a branch that couldn't be written, opens the issue too, once a week like a mismatch
+      - name: A week with mismatches, or one that couldn't reach main, opens an issue, once
+        if: always() && ((needs.audit.outputs.failed != '0' && needs.audit.outputs.failed != '') || steps.push.outcome == 'failure' || steps.pr.outcome == 'failure')
         env:
           PUSHED: ${{ steps.push.outcome }}
           OPENED: ${{ steps.pr.outcome }}
@@ -215,9 +219,15 @@ jobs:
           if [ "$PUSHED" != "success" ]; then
             note="The branch audit/$WEEK wasn't written (see the run's log); the report is in the run's 'audit' artifact."
           elif [ "$OPENED" != "success" ]; then
-            note="The pull request for audit/$WEEK wasn't opened (see the run's log; audit/README.md, \"Setting up\")."
+            note="The pull request for audit/$WEEK wasn't opened (see the run's log; audit/README.md, \"Setting up\": Settings > Actions > General > Workflow permissions, \"Allow GitHub Actions to create and approve pull requests\"). Until it is, open it by hand from the branch, or the desk's line stays on the last week merged."
+          fi
+          if [ "$FAILED" != "0" ] && [ -n "$FAILED" ]; then
+            title="audit: $WEEK — mismatches found: $FAILED"
+            body="The calculator audit for $WEEK found mismatches ($summary). Report: $report. $note"
+          else
+            title="audit: $WEEK — passed, not published"
+            body="The calculator audit for $WEEK passed ($summary) but its result didn't reach a pull request. Report: $report. $note"
           fi
           if [ -z "$(gh issue list --state all --search "\"audit: $WEEK\" in:title" --json number --jq '.[].number')" ]; then
-            gh issue create --title "audit: $WEEK — mismatches found: $FAILED" \
-              --body "The calculator audit for $WEEK found mismatches ($summary). Report: $report. $note"
+            gh issue create --title "$title" --body "$body"
           fi

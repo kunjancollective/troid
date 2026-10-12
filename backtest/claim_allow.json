@@ -40,6 +40,11 @@
    "page": "faq",
    "text": "at $19/month or $190/year, tax included",
    "why": "troid Pro's own price, the owner's decision (launch handoff 2026-09-26, 6.1-6.2; tax included, 28 Sep 2026): an offer troid makes, not a figure it computes or cites. Shown only once site.json pro_waitlist is true"
+  },
+  {
+   "page": "index",
+   "text": "Calculators audited",
+   "why": "the weekly calculator audit's own count of its checks, linked to its report; the build writes it from web/public/audit.json since 2026-10-12 (audit.js alone did before, where claim_check never read it), and verify_claims.py holds it to that report's run date and totals"
   }
  ]
 }

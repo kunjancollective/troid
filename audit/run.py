@@ -5,7 +5,8 @@ derives the figure itself. The audit is not written by the thing it audits: noth
 code; the page is served, its fields are set, its own render() runs, and its "show the working" table is read back.
 
 Pages: the English desk (web/public, as built) and one right-to-left page, /ar, built for the run as a draft preview
-(backtest/site_build.py --preview; Arabic is not published yet). A page's row labels are its language's strings
+(backtest/site_build.py --preview; Arabic is not published yet, so audit.json names it under "previews", by its
+language, and lists only published pages under "pages"). A page's row labels are its language's strings
 (web/i18n/{lang}.json, English where the draft has none); its numbers are read in its locale's format (languages.json
 "num"), bidirectional marks dropped.
 
@@ -70,6 +71,11 @@ class Lang:
         self.s = {k: v for k, v in raw.items() if not k.startswith("_")}
         self.num = LANGS[code]["num"]
         self.missing = set()
+
+    @staticmethod
+    def status(code):
+        """A language's _status (web/i18n/{code}.json): 'live' once its native reviewer's sheet is imported."""
+        return json.loads((I18N / f"{code}.json").read_text()).get("_status")
 
     def __call__(self, key):
         v = self.s.get(key)
@@ -1002,8 +1008,12 @@ def _main():
                         "Arabic is not published yet, and its missing strings fall back to English as the preview's do"
                         for x in langs]}
     report_rel = f"audit/reports/{week}.md"
+    # audit.json is public: its pages are the ones troid publishes; a draft driven as a preview (Arabic, until its file
+    # says live) is named by its language under previews, never as an address the site doesn't serve
+    live = {x for x in langs if x == "en" or Lang.status(x) == "live"}
     out = {"date": R["date"], "week": week, "commit": R["commit"], "checks": R["checks"], "passed": passed,
-           "failed": failed, "report": report_rel, "pages": R["pages"], "cases": len(cases), "seed": week,
+           "failed": failed, "report": report_rel, "pages": [PATHS[x] for x in langs if x in live],
+           "previews": [x for x in langs if x not in live], "cases": len(cases), "seed": week,
            "rules_read": rr, "stale_rules": R["stale"], "unsourced_rules": R["unsourced"]}
 
     print(f"audit {week}: {R['checks']:,} checks, {passed:,} passed, {failed:,} failed "

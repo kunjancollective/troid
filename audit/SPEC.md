@@ -214,13 +214,18 @@ distance would put a 100% cap's daily limit on the stop exactly); R5 refuses tha
 web/public/audit.json:
 {"date": "YYYY-MM-DD" (UTC run date), "week": "YYYY-Www", "commit": "<40-hex of the audited tree>",
  "checks": N, "passed": P, "failed": F, "report": "audit/reports/YYYY-Www.md",
- "pages": ["/", "/ar"], "cases": C, "seed": "YYYY-Www", "rules_read": {"from": "YYYY-MM-DD", "to": "YYYY-MM-DD"},
+ "pages": ["/"], "previews": ["ar"], "cases": C, "seed": "YYYY-Www", "rules_read": {"from": "YYYY-MM-DD", "to": "YYYY-MM-DD"},
  "stale_rules": [...], "unsourced_rules": [...]}
 checks = passed + failed. A "check" is one case on one page (all of its figures and its verdict), plus each data check
-(FIRMS vs firms.json per product, provenance coverage per product).
+(FIRMS vs firms.json per product, provenance coverage per product). "pages" are the published pages audited; a draft
+language driven as a preview built for the run (Arabic until its file says live) is named by its code under
+"previews", since the site serves no page for it (2026-10-12).
 
-The desk shows, under the result (a sibling after #result in web/templates/partials/_desk2.html, filled at run time
-by a small web/public/audit.js from /audit.json, hidden when it can't load or site.json "calc_audit" is false):
+The desk shows, under the result (a sibling after #result in web/templates/partials/_desk2.html, written by the build
+from web/public/audit.json as built, ISO date first, so a reader or a crawler without the script sees it; a small
+web/public/audit.js brings it up to the latest /audit.json and dates it in the page's language; hidden while no
+audit.json holds together, and off when site.json "calc_audit" is false; 2026-10-12, before which the script alone
+filled it):
 - passed: desk2.audit.pass = "Calculators audited {date} · {n} checks passed · <a href=\"{href}\">report</a>"
 - failed: desk2.audit.fail = "Calculators audited {date} · found {n} mismatches · <a href=\"{href}\">report</a>"
   ({date} like "4 Oct 2026", Intl en-GB in English, the page's intl locale elsewhere; {href} =
