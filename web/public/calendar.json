@@ -1,44 +1,21 @@
 {
  "_note": "Scheduled US releases for troid's calendar strip, from the agencies' own schedules (backtest/fetch_calendar.py, weekly). Times in UTC. No forecasts.",
- "read": "2026-10-05",
+ "read": "2026-10-12",
  "reads": {
-  "bls:cpi": "2026-10-05",
-  "bls:ppi": "2026-10-05",
-  "bls:jobs": "2026-10-05",
-  "bls:jolts": "2026-10-05",
-  "bea": "2026-10-05",
-  "fed": "2026-10-05"
+  "bls:cpi": "2026-10-12",
+  "bls:ppi": "2026-10-12",
+  "bls:jobs": "2026-10-12",
+  "bls:jolts": "2026-10-12",
+  "bea": "2026-10-12",
+  "fed": "2026-10-12"
  },
  "events": [
-  {
-   "kind": "minutes",
-   "utc": "2026-10-07T18:00Z",
-   "source": "Federal Reserve",
-   "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-10-05"
-  },
-  {
-   "kind": "cpi",
-   "period": "2026-09",
-   "utc": "2026-10-14T12:30Z",
-   "source": "BLS",
-   "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-   "read": "2026-10-05"
-  },
-  {
-   "kind": "ppi",
-   "period": "2026-09",
-   "utc": "2026-10-15T12:30Z",
-   "source": "BLS",
-   "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
-   "read": "2026-10-05"
-  },
   {
    "kind": "fomc",
    "utc": "2026-10-28T18:00Z",
    "source": "Federal Reserve",
    "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "gdp",
@@ -47,7 +24,7 @@
    "utc": "2026-10-29T12:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "pce",
@@ -55,15 +32,7 @@
    "utc": "2026-10-29T12:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-10-05"
-  },
-  {
-   "kind": "jolts",
-   "period": "2026-09",
-   "utc": "2026-11-03T15:00Z",
-   "source": "BLS",
-   "url": "https://www.bls.gov/schedule/news_release/jolts.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "jobs",
@@ -71,7 +40,7 @@
    "utc": "2026-11-06T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "cpi",
@@ -79,7 +48,7 @@
    "utc": "2026-11-10T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "ppi",
@@ -87,14 +56,14 @@
    "utc": "2026-11-13T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "minutes",
    "utc": "2026-11-18T19:00Z",
    "source": "Federal Reserve",
    "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "gdp",
@@ -103,7 +72,7 @@
    "utc": "2026-11-25T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "pce",
@@ -111,7 +80,7 @@
    "utc": "2026-11-25T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "jolts",
@@ -119,7 +88,7 @@
    "utc": "2026-12-01T15:00Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/jolts.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
   },
   {
    "kind": "jobs",
@@ -127,7 +96,22 @@
    "utc": "2026-12-04T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-   "read": "2026-10-05"
+   "read": "2026-10-12"
+  },
+  {
+   "kind": "fomc",
+   "utc": "2026-12-09T19:00Z",
+   "source": "Federal Reserve",
+   "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
+   "read": "2026-10-12"
+  },
+  {
+   "kind": "cpi",
+   "period": "2026-11",
+   "utc": "2026-12-10T13:30Z",
+   "source": "BLS",
+   "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "read": "2026-10-12"
   }
  ]
 }
