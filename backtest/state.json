@@ -1,16 +1,20 @@
 {
   "strategy": "troid-shadow-1",
-  "as_of_bar_utc": "2026-10-11T16:00:00+00:00",
-  "last_close": 83665.61,
+  "as_of_bar_utc": "2026-10-12T00:00:00+00:00",
+  "last_close": 83615.81,
   "outcome": "running",
-  "balance": 100821.43,
+  "balance": 100817.15,
   "trades_total": 88,
-  "trades_new_this_run": 2,
-  "trading_days": 78,
-  "distance_to_floor": 6821.43,
-  "daily_room": 4000.0,
+  "trades_new_this_run": 0,
+  "trading_days": 79,
+  "distance_to_floor": 6817.15,
+  "daily_room": 3995.72,
   "binding": "daily",
-  "position": null,
+  "position": {
+    "open_since_utc": "2026-10-11T16:00:00+00:00",
+    "tranches_filled": 2,
+    "tranches": 5
+  },
   "max_drawdown": -1057.94,
   "forward_filled_bars": 2,
   "trades_touching_filled_bars": 1
