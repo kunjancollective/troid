@@ -158,7 +158,13 @@ def main(out=None):
     # the template calls save() on load but this build ships no such function; drop the call, and
     # let the two columns stack on a phone (the template only has a print media rule)
     page = page.replace(' onload="save()"', "", 1)
-    page = page.replace("</head>", "<style>#troid-head a{color:#1f6fd1}@media (max-width:760px){body{margin:12px}#left,#right{width:100%;float:none;margin:0}"
+    # the page's one h1 says what it is (quantstats heads it with the strategy's name alone), its date range kept beside
+    # it in a span: quantstats puts it in a <dt>, which has no place in a heading
+    page = re.sub(r"<h1>.*?<dt>(.*?)</dt>\s*</h1>",
+                  lambda m: f'<h1>{T("tearsheet.hero.h1")} <span class="qsr">{m.group(1).strip()}</span></h1>', page,
+                  count=1, flags=re.S)
+    page = page.replace("</head>", "<style>#troid-head a{color:#1f6fd1}h1 .qsr{margin-inline-start:10px;font-size:14px}"
+                        "@media (max-width:760px){body{margin:12px}#left,#right{width:100%;float:none;margin:0}"
                         "#left svg,#right svg{max-width:100%;height:auto}table{width:100%}}</style>\n"
                         + "".join(f'<meta property="og:{k}" content="{v}">\n' for k, v in site_build.og(T, "tearsheet").items())
                         + site_build.head_extra(T, "tearsheet", live) + "</head>", 1)

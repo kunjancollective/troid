@@ -9,8 +9,12 @@ calls no one.
 - Passed: "Calculators audited 4 Oct 2026 · 1,023 checks passed · report", the link to that week's report on GitHub.
 - Failed: "… · mismatches found: 2 · report", said as plainly, and one mismatch reads as plainly as two: the count
   stands after a colon, so no language needs a plural form for it.
-- Hidden when /audit.json is missing, isn't JSON, or doesn't hold together (checks ≠ passed + failed, a date that isn't
-  one, a report not named for its week, a commit that isn't one, a count that isn't a whole number).
+- Written by the build from web/public/audit.json as built (regions.desk_audit, 2026-10-12): in the page before its
+  script runs, ISO date first, so a reader or a crawler without the script sees it; hidden only where the build had no
+  audit.json that holds together.
+- When /audit.json is missing, isn't JSON, or doesn't hold together (checks ≠ passed + failed, a date that isn't one, a
+  report not named for its week, a commit that isn't one, a count that isn't a whole number), the built line stays as
+  the build wrote it.
 - An old audit shows its date as it is, with no other wording.
 - "Rules read {range}" on its own line, its dates firms.json's (audit/provenance.py derives them on its own), put in
   the page's language by Intl; the ISO dates are in the page before the script runs.
@@ -19,6 +23,7 @@ calls no one.
 """
 import datetime as dt
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -49,7 +54,7 @@ def ok(name, cond, info=""):
 
 def doc(**kw):
     d = {"date": "2026-10-04", "week": "2026-W40", "commit": "0123456789abcdef0123456789abcdef01234567", "checks": 1023,
-         "passed": 1023, "failed": 0, "report": "audit/reports/2026-W40.md", "pages": ["/", "/ar"], "cases": 1128,
+         "passed": 1023, "failed": 0, "report": "audit/reports/2026-W40.md", "pages": ["/"], "previews": ["ar"], "cases": 1128,
          "seed": "2026-W40", "rules_read": RULES, "stale_rules": [], "unsourced_rules": []}
     d.update(kw)
     return json.dumps(d)
@@ -107,6 +112,13 @@ def main():
         iso = EN["desk2.audit.rules"].replace("{range}", f"{RULES['from']} – {RULES['to']}")
         ok(f"the page carries the rules-read line with firms.json's dates before its script runs ({iso})",
            f">{iso}</p>" in raw and f'data-from="{RULES["from"]}" data-to="{RULES["to"]}"' in raw)
+        AJ = json.loads((PUB / "audit.json").read_text())
+        built = (EN["desk2.audit.fail" if AJ["failed"] else "desk2.audit.pass"].replace("{date}", AJ["date"])
+                 .replace("{n}", f"{AJ['failed'] or AJ['passed']:,}").replace("{href}", REPO + AJ["report"]))
+        ok(f"the page carries the audit line as built from audit.json before its script runs ({AJ['week']}, {AJ['date']})",
+           re.search(r'<p class="audit" id="audit" data-pass="[^"]*" data-fail="[^"]*" data-repo="[^"]*" data-intl="en-GB">'
+                     + re.escape(built) + "</p>", raw) is not None, built)
+        built_text = re.sub(r"<[^>]+>", "", built)
         ok("audit.js is its own script, not in desk2.js", '<script src="/audit.js" defer></script>' in raw
            and "audit.json" not in (PUB / "desk2.js").read_text())
 
@@ -139,7 +151,7 @@ def main():
            not s["hidden"] and s["text"] == f"Calculators audited {intl['en-GB']['old']} · 1,023 checks passed · report", s)
         ctx.close()
 
-        # missing or malformed: hidden, and the rules line stays
+        # missing or malformed: the line the build wrote stays as it is, and so does the rules line
         bad = [("404", {"status": 404, "body": ""}), ("not JSON", {"body": "not json"}),
                ("checks ≠ passed + failed", {"body": doc(checks=1024)}), ("not a date", {"body": doc(date="2026-13-01")}),
                ("a date with a time", {"body": doc(date="2026-10-04T00:00:00Z")}),
@@ -151,7 +163,8 @@ def main():
         for name, kw in bad:
             ctx, pg, errs = page(**kw)
             s = pg.evaluate(LINES)
-            ok(f"{name}: the audit line stays hidden, the rules line shows", s["a"] and s["hidden"] and not s["vis"]
+            ok(f"{name}: the audit line stays as built ('{built_text}'), the rules line shows", s["a"] and not s["hidden"]
+               and s["vis"] and s["text"] == built_text and s["href"] == REPO + AJ["report"]
                and s["rules"] == "Rules read " + intl["en-GB"]["range"] and not errs, (s, errs))
             ctx.close()
 
@@ -194,6 +207,34 @@ def main():
     on = site_build.render_page("index", i18n.Strings("en"), site_build.targets())
     ok("calc_audit false: neither line nor audit.js is in the page", 'id="audit"' not in off and 'id="rulesread"' not in off
        and "/audit.js" not in off and 'id="audit"' in on and "/audit.js" in on)
+
+    # the build's reader (regions.desk_audit): audit.json as audit.js reads it, or nothing, and the line hidden then
+    import regions
+    good = json.loads(doc())
+    with tempfile.TemporaryDirectory() as d:
+        pub, site_build.PUB = site_build.PUB, Path(d)
+        try:
+            got = {}
+            for name, body in (("missing", None), ("not JSON", "not json"), ("checks ≠ passed + failed", doc(checks=1024)),
+                               ("report not named for its week", doc(report="audit/reports/2026-W39.md")),
+                               ("commit not a commit", doc(commit="HEAD")), ("a count as text", doc(checks="1023")),
+                               ("passed", doc()), ("failed", doc(passed=1021, failed=2))):
+                f = Path(d) / "audit.json"
+                if body is None:
+                    f.unlink(missing_ok=True)
+                else:
+                    f.write_text(body)
+                got[name] = regions.desk_audit(T)
+        finally:
+            site_build.PUB = pub
+    ok("the build's reader: nothing from a file audit.js would hide", all(got[k] is None for k in got if k not in ("passed", "failed")), got)
+    ok("the build's reader: a passed week's ISO date, its count as the page writes it, its report on GitHub",
+       got["passed"] == {"failed": 0, "date": good["date"], "n": "1,023", "href": REPO + good["report"]}, got["passed"])
+    ok("the build's reader: a failed week's mismatches, counted", got["failed"] and got["failed"]["failed"] == 2 and got["failed"]["n"] == "2", got["failed"])
+    ctx = regions.template_context(T)
+    none = site_build.render_page("index", T, site_build.targets(), ctx=dict(ctx, desk_audit=None))
+    ok("no audit.json as built: the line is in the page, hidden and empty, for audit.js to fill",
+       re.search(r'<p class="audit" id="audit" hidden data-pass="[^"]*" data-fail="[^"]*" data-repo="[^"]*" data-intl="en-GB"></p>', none) is not None)
 
     print(f"\n{n - len(fails)}/{n} passed")
     sys.exit(1 if fails else 0)

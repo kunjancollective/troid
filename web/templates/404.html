@@ -195,13 +195,11 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
   <p class="lede">{{ t("404.hero.lede") }}</p>
 </div>
 
-{#- Every page troid publishes, each with the line it previews with when shared (en.json *.og.description). #}
+{#- Every page troid publishes (site_build.page_list: the sitemap's pages, in its order), each with the line it previews
+    with when shared (en.json *.og.description). #}
 <ul class="pages">
-{%- for href, name, line in [(H, "product.desk", "index.meta.description"), (L ~ "/compare", "product.compare", "compare.og.description"),
-                              (L ~ "/ledger", "product.ledger", "ledger.og.description"), (L ~ "/dashboard", "product.research", "dashboard.og.description"),
-                              (L ~ "/chat", "product.ask", "chat.og.description"), (L ~ "/faq", "common.link.faq", "faq.og.description"),
-                              (L ~ "/sources", "common.link.sources", "sources.og.description")] %}
-  <li><a href="{{ href }}">{{ t(name) }}</a><p>{{ t(line) }}</p></li>
+{%- for href, name, line in page_list() %}
+  <li><a href="{{ href }}">{{ name }}</a><p>{{ line }}</p></li>
 {%- endfor %}
 </ul>
 

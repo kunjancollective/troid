@@ -7,6 +7,7 @@ through template_context(); gen_compare.py owns the rules they share (cite, sour
 Words come from web/i18n (keys index.firms.*, index.crossover.*, index.js.*, prov.tail). Firm prose and rule values
 from firms.json go through T.data(); firm names and rule-source names stay as the firm publishes them."""
 from __future__ import annotations
+import datetime as dt
 import html
 import json
 import re
@@ -15,6 +16,7 @@ import i18n
 import site_build
 import site_text
 import geo
+import jsnum
 from gen_compare import FIRMS, ORDER, FIELDS, RANK, cite, sourced, link_live, required_span   # noqa: F401
 
 
@@ -407,6 +409,37 @@ def desk_rules_read():
     return {"from": min(dates), "to": max(dates)} if dates else None
 
 
+AUDIT_REPO = "https://github.com/kunjancollective/troid/blob/main/"
+
+
+def desk_audit(T):
+    """The calculator audit's line under the desk as the build writes it, so a reader or a crawler without the script
+    sees it: web/public/audit.json's date (ISO, as the "Rules read" line has its dates until audit.js runs), its count
+    in the page's number format, and the link to its report; None when the file is missing or doesn't hold together by
+    audit.js's own rules, and the line stays hidden until the script finds one that does. audit.js brings the line up
+    to the latest /audit.json on load, so a week merged after the build shows at once; the daily build catches the page
+    up. verify_claims.py holds the line to the report it links."""
+    p = site_build.PUB / "audit.json"
+    try:
+        a = json.loads(p.read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(a, dict):
+        return None
+    n = lambda v: isinstance(v, int) and not isinstance(v, bool) and v >= 0
+    d, week = str(a.get("date", "")), str(a.get("week", ""))
+    try:
+        ok = bool(re.fullmatch(r"\d{4}-\d{2}-\d{2}", d)) and bool(dt.date.fromisoformat(d))
+    except ValueError:
+        ok = False
+    if not (ok and re.fullmatch(r"\d{4}-W\d{2}", week) and re.fullmatch(r"[0-9a-f]{40}", str(a.get("commit", "")))
+            and all(n(a.get(k)) for k in ("checks", "passed", "failed")) and a["checks"] >= 1
+            and a["checks"] == a["passed"] + a["failed"] and a.get("report") == f"audit/reports/{week}.md"):
+        return None
+    count = a["failed"] or a["passed"]
+    return {"failed": a["failed"], "date": d, "n": jsnum.Intl(T.lang).num(count), "href": html.escape(AUDIT_REPO + a["report"])}
+
+
 def ref_price():
     """The reference firm's compare product and its fee, with the date troid read the fee (the FAQ's "Is a challenge
     worth buying?"; challenge-proof audit, B1: the FAQ said $799, the 2-Step's, beside the 1-Step troid compares)."""
@@ -438,5 +471,5 @@ def template_context(T):
     return {"firms_panel": firms_panel_html(T), "profiles_js": profiles_js(T), "crossover": crossover_html(T),
             "reference_firm": html.escape(reference_firm()["name"]), "why_these": why_these(T), "lev_first": lev_first(T),
             "affiliate_notices": affiliate_notices_html(T), "desk_aff": desk_aff_html(T), "n_firms": len(ORDER), "term": term, "ref_price": ref_price(),
-            "ranking": FIRMS["_external_ranking_snapshot"], "calendar_read": _calendar_read(), "rules_read": desk_rules_read(),
+            "ranking": FIRMS["_external_ranking_snapshot"], "calendar_read": _calendar_read(), "rules_read": desk_rules_read(), "desk_audit": desk_audit(T),
             "rules_src": lambda fields, derived=None: rules_src(T, fields, derived), **desk2_context(T)}

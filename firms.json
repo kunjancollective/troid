@@ -1303,7 +1303,7 @@
       "max_pct": 6,
       "target_pct": 10,
       "min_days": 5,
-      "price": "\u20ac497 (\u20ac347.90 promo)",
+      "price": "\u20ac497",
       "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
       "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
       "reset_utc": "23:30\u201323:59 CET rollover = 21:30 UTC (CEST) / 22:30 UTC (CET); firm advises not trading in the window",
@@ -1347,6 +1347,23 @@
     "_link_live_note": "true since 2026-09-22: comparison permitted, confirmed with the firm on 2026-09-21 (record kept privately); promotion policy read (promotion_policy).",
     "required_disclaimer": null,
     "panel_note": "Rules go on this page only after they're read from BrightFunded's own documents.",
+    "offers_seen": [
+      {
+        "name": "1-Step $100,000 at a discount",
+        "status": "may have ended",
+        "seen_on": "2026-09-21",
+        "read_on": "2026-09-21",
+        "src": "product_1step",
+        "price": 347.9,
+        "currency": "EUR",
+        "list_price": 497,
+        "account_sizes": [
+          "$100,000"
+        ],
+        "rechecked": "2026-10-12: not re-read; brightfunded.com did not answer from troid's sandbox",
+        "troid": "Not on troid's pages since 2026-10-12: the compare and /firms/brightfunded show the list price, \u20ac497, alone. A discount runs for a time and troid had not re-read it since 2026-09-21. products.1step.fee_eur_100k_promo still holds it for ask troid, which says it was the promotion running when troid read the page."
+      }
+    ],
     "promotion_policy": {
       "url": "https://help.brightfunded.com/en/articles/9662070-affiliate-promotion-policy",
       "dated": "2026-03-17",
