@@ -33,3 +33,4 @@ troid is a free informational tool, not financial or investment advice. troid do
 - [source](https://github.com/kunjancollective/troid)
 - [x](https://x.com/tradingdroid)
 - [reddit](https://www.reddit.com/user/tradingdroid/)
+- [newsletter](https://substack-url-needed.invalid/)

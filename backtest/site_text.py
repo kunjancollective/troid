@@ -32,10 +32,18 @@ EMAIL = "hello@troid.ai"
 # A name, not prose: shown as it is on every page, in every language.
 COPYRIGHT = "© 2026 Kunjan Patel"
 
+# troid's newsletter on Substack, some posts paid (the owner, 2026-10-14: Stripe asks that troid.ai link the paid
+# Substack, so the two read as one business). The footer links it on every page, as it links troid's X and Reddit
+# accounts (so it joins the Organization's sameAs and llms.txt), and the FAQ's Newsletter section says what it is.
+# Nothing in troid's desk or ask troid's prompt names it. The owner gives the address; until then this placeholder
+# keeps verify_claims.py red, so the link can't merge unset.
+NEWSLETTER_PLACEHOLDER = "https://substack-url-needed.invalid/"
+NEWSLETTER_URL = NEWSLETTER_PLACEHOLDER
+
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
          ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/sources", "sources"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
-         ("https://www.reddit.com/user/tradingdroid/", "reddit")]
+         ("https://www.reddit.com/user/tradingdroid/", "reddit"), (NEWSLETTER_URL, "newsletter")]
 
 
 def holdout():
@@ -76,7 +84,7 @@ LINK_KEYS = {"/": "product.desk", "/compare": "product.compare", "/ledger": "pro
              "/tearsheet": "common.link.tearsheet", "/chat": "product.ask", "/faq": "common.link.faq",
              "/sources": "common.link.sources", "/terms": "common.link.terms",
              "https://github.com/kunjancollective/troid": "common.link.source", "https://x.com/tradingdroid": "common.link.x",
-             "https://www.reddit.com/user/tradingdroid/": "common.link.reddit"}
+             "https://www.reddit.com/user/tradingdroid/": "common.link.reddit", NEWSLETTER_URL: "common.link.newsletter"}
 
 
 # The line's hidden word (the owner, 2026-09-26): "tr" from "trade" and "oid" from "droid" spell troid. Those letters
