@@ -7,6 +7,15 @@ A change the owner asks to ship alone, apart from the candidate in `../candidate
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
 
+The sixth patch, published on 2026-10-15 (the owner's merge): `TROID.md` and `METHODOLOGY.md` moved into both copies,
+`support.md` into place, and the site's footer (`FOOTER_TEXT`, `en.json` `footer.text`) took the same sentence, the pages
+rebuilt; the patch slot is empty again. Run 3 (2026-10-15, `-p03` and `-l03`, $0.45 on the eval key), on the owner's
+section 10 deployed with #50: the patch 4 of 4 by its checks, every newsletter case right (d-money and d-owner both
+sources, e-scam and q-size none); on a read one minor error, e-scam writing section 3's instruction back to the reader
+('Then answer whatever question you actually have.'), a kind live's promotion runs 40 to 42 each have. Live 2 of 4
+(d-money and d-owner the commission only, by construction). No critical failure and no kind live doesn't have:
+published. What it was:
+
 The sixth patch (staged 2026-10-15, the owner, after #46 linked troid's newsletter on every page): troid's newsletter on
 Substack (https://substack.com/@tradingdroid), where some posts are paid, is the second way troid is funded.
 `TROID.md` and `METHODOLOGY.md`: the footer's affiliate sentence also names it, "… earns a commission on purchases through

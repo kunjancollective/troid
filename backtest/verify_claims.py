@@ -261,16 +261,25 @@ for page in sorted((_ROOT / "web" / "public").glob("*.html")):
     check("DERIVED", f"footer links troid's newsletter on {page.name}", float(f'href="{_T.NEWSLETTER_URL}"' in page.read_text()), 1.0)
 # troid's newsletter (the owner, 2026-10-14): Stripe asks that troid.ai link the paid Substack. The address is the owner's
 # to give; the placeholder fails here, so the link can't merge unset. The FAQ's Newsletter section says it in the owner's
-# words; the desk and ask troid's live prompt don't name it (ask troid answers about it only when asked).
+# words. The desk never names it; ask troid's prompt names it in two places only, the footer sentence (TROID.md and
+# METHODOLOGY.md, word for word the site's) and support.md section 10, which names both funding sources on a funding question
+# and never the newsletter otherwise (the sixth patch, published 2026-10-15).
 check("DERIVED", "troid's newsletter address is set (site_text.NEWSLETTER_URL, not the placeholder)",
       float(_T.NEWSLETTER_URL.startswith("https://") and _T.NEWSLETTER_URL != _T.NEWSLETTER_PLACEHOLDER), 1.0)
 check("DERIVED", "the FAQ's Newsletter section: \"troid's newsletter on Substack. Some posts are paid.\", linked",
       float(f'<h2 class="sec" id="newsletter">Newsletter</h2>' in _read("web/public/faq.html")
             and f'<a href="{_T.NEWSLETTER_URL}">troid\'s newsletter on Substack</a>. Some posts are paid.'
             in _html.unescape(_read("web/public/faq.html"))), 1.0)
-for rel in ("web/templates/partials/_desk2.html", "web/public/desk2.js", "web/public/TROID.md", "TROID.md",
-            "web/context/support.md", "web/context/TROID-CHARACTER.md", "web/api/troid.js"):
+for rel in ("web/templates/partials/_desk2.html", "web/public/desk2.js", "web/context/TROID-CHARACTER.md", "web/api/troid.js"):
     check("DERIVED", f"no newsletter in {rel}", float(not _re_nl.search(_read(rel))), 1.0)
+for rel in ("TROID.md", "web/public/TROID.md", "METHODOLOGY.md", "web/public/METHODOLOGY.md"):
+    check("DERIVED", f"{rel} names the newsletter only in the footer sentence",
+          float(_T.FOOTER_TEXT in _read(rel) and not _re_nl.search(_read(rel).replace(_T.FOOTER_TEXT, ""))), 1.0)
+_sup = _read("web/context/support.md").split("\n## 10. ")
+check("DERIVED", "support.md names the newsletter only in section 10, both sources on a funding question",
+      float(len(_sup) == 2 and not _re_nl.search(_sup[0]) and "how troid makes money, how it is funded, who owns it, whether it is "
+            "independent, or about its affiliate links, name both sources" in _sup[1] and _T.NEWSLETTER_URL in _sup[1]
+            and "never pitch it beyond that sentence" in _sup[1]), 1.0)
 for rel in ("METHODOLOGY.md", "web/public/METHODOLOGY.md", "TROID.md", "web/public/TROID.md"):
     check("DERIVED", f"footer line in {rel}", float(_T.FOOTER_TEXT in _read(rel)), 1.0)
 _terms = _html.unescape(_read("web/public/terms.html"))

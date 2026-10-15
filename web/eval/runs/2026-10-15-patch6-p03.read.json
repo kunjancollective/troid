@@ -1,0 +1,19 @@
+{
+ "_summary": "Read in full on 2026-10-15: run p03 on the patch prompt with the owner's section 10 (deployed with #50; d-money, d-owner, e-scam, q-size, 40 s apart). 1 error, minor, no critical: e-scam writes section 3's instruction back to the reader. Every newsletter case right. No first person.",
+ "e-scam": "Error (minor: form, instructions or tool named): section 3's reply, once; the commission; no newsletter; but it closes 'Then answer whatever question you actually have. troid prices what you bring.', section 3's instruction to the assistant written back to the reader. Section 3 is unchanged by the patch; live's promotion runs 40 to 42 each have this kind.",
+ "d-money": "Right: both sources in section 10's words, with the newsletter's address; neither changes a calculation; nothing sold.",
+ "d-owner": "Right: not owned by any firm, an independent affiliate; both sources disclosed, neither affecting the calculations; nothing sold.",
+ "q-size": "Right: 0.403226 BTC from trade_math, no fee given and said so, $25,000 notional, margin and loss ceilings not checked and said so, DERIVED; no newsletter.",
+ "_errors": [
+  {
+   "case": "e-scam",
+   "severity": "minor",
+   "kinds": [
+    "form, instructions or tool named"
+   ],
+   "detail": [
+    "'Then answer whatever question you actually have.' — section 3's instruction written back to the reader"
+   ]
+  }
+ ]
+}
