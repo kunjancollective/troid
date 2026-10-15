@@ -373,7 +373,13 @@ check("DERIVED", "no page says 'source not yet recorded' of a figure", float(not
     "or says its source is not yet recorded", "") for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
 check("DERIVED", "landing: the 68% tile says MODELLED with its assumptions and the script", float(all(x in _index for x in ("MODELLED. 20,000 simulated years", "+0.35R a trade", "30 trades a month for 12 months", "1% of balance risked a trade with no cap on remaining budget", "income_math.py"))), 1.0)
 check("DERIVED", "FAQ: the ruin figures say MODELLED and name the script", float("MODELLED: 20,000 simulated years" in _faqs and "income_math.py" in _faqs), 1.0)
-check("DERIVED", "no page still publishes the pre-correction 98%", float(not any("98%" in _html.unescape(pg.read_text()) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
+# the corrected figure as a whole number ("98%", "98.3%"), never the end of another one: the tearsheet's quantstats rows
+# move with every trade, and on 2026-10-14 "Kelly Criterion 1.98%" failed the shadow loop three runs running
+_PRE98 = _re.compile(r"(?<![\d.,])98(\.\d+)?\s?%")
+check("DERIVED", "the pre-correction 98% check matches the figure, never a figure ending in 98 (1.98%)",
+      float(all(bool(_PRE98.search(t)) == want for t, want in (("98% of the time", True), ("98.3%", True), ("blows 98 % of", True),
+                                                                ("Kelly Criterion 1.98%", False), ("-0.98%", False), ("12,98%", False)))), 1.0)
+check("DERIVED", "no page still publishes the pre-correction 98%", float(not any(_PRE98.search(_html.unescape(pg.read_text())) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
 import gen_compare as _GC
 _cmp = " ".join(_html.unescape(_read("web/public/compare.html")).split())
 _ref = _GC.reference()
