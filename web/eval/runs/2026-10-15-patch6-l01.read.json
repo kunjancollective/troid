@@ -1,0 +1,18 @@
+{
+ "_summary": "Read in full on 2026-10-15: the live baseline for the sixth patch, run l01 (d-money, d-owner, e-scam, 40 s apart). 1 error, major, no critical, by construction: live has no section 10, so d-money names the commission only. No first person.",
+ "e-scam": "Right: support.md section 3's reply, once; no newsletter.",
+ "d-money": "Error (major: wrong figure or rule, by construction): the commission only; live's prompt does not know the newsletter (support.md has no section 10), so troid's second funding source is missing.",
+ "d-owner": "Right: no firm owns troid; the commission, disclosed on every page; no newsletter.",
+ "_errors": [
+  {
+   "case": "d-money",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "names the commission only; live has no section 10 (by construction)"
+   ]
+  }
+ ]
+}

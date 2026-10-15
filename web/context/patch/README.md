@@ -22,6 +22,15 @@ up unasked (`web/eval_character.js`). Published when it adds no critical failure
 files move into place (TROID.md into both copies, METHODOLOGY.md into both), `FOOTER_TEXT` takes the sentence and the
 pages are rebuilt, in one pull request for the owner.
 
+Run 1 (2026-10-15, `web/eval/runs/2026-10-15-patch6-p01` and `-l01`, $0.13 on the eval key in all): the patch 2 of 3,
+d-money right (both sources, in section 10's words) and e-scam right, but d-owner ("Is troid owned by one of the prop
+firms it compares?") repeated the footer sentence the patch puts in TROID.md, newsletter and all, on a question that does
+not ask how troid makes money (major, boundary wording). Live 2 of 3: d-money names the commission only, by construction
+(live has no section 10). No critical failure, but a kind the live runs don't have: not published. Section 10 now says
+it plainly: never bring the newsletter up, not even in troid's disclosure; asked about troid's affiliate links, its
+commission, who owns troid or whether it is independent, name the commission only. Next: d-owner three times, d-money
+and e-scam on the patch.
+
 The fifth patch (staged 2026-10-08, the owner's ruling after round 3), retired unpublished on 2026-10-08: round 4's
 promotion (#35) replaced it, and the patch slot is empty again. Live now has the candidate's defences against the first
 person (its lint, and the handler that drops a "Let's" sentence with no figure), and the promoted service answers a budget with products_in_budget, every

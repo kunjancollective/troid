@@ -1035,7 +1035,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
     const undo = (t) => t.split(NEW).join(OLD).replace(S10, "");
     ok("sixth patch: the patch's prompt is live's with the footer sentence naming the paid newsletter (TROID.md, METHODOLOGY.md) and support.md section 10, nothing else",
        pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1"
-       && /^\n## 10\. "How does troid make money\?"\n\nOnly when asked how troid makes money[^\n]*substack\.com\/@tradingdroid[^\n]*Never bring the newsletter up otherwise\.\n$/.test(S10),
+       && /^\n## 10\. "How does troid make money\?"\n\nOnly when asked how troid makes money[^\n]*substack\.com\/@tradingdroid[^\n]*Never bring the newsletter up otherwise, not even in troid.s disclosure: [^\n]*name the commission only\.\n$/.test(S10),
        [pb.length, lb.length, pb.map((b) => b.text.split(NEW).length - 1).join()]);
     ok("sixth patch: live names no newsletter", !/newsletter|substack/i.test(JSON.stringify(lb))); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures

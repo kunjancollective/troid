@@ -1,0 +1,18 @@
+{
+ "_summary": "Read in full on 2026-10-15: the sixth patch's evaluation, run p01 on the patch prompt (d-money, d-owner, e-scam, 40 s apart, one run at a time). 1 error, major, no critical: d-owner brings the newsletter up unasked, repeating the footer sentence the patch adds to TROID.md. No first person in any reply.",
+ "e-scam": "Right: support.md section 3's reply, once; the commission; no newsletter.",
+ "d-money": "Right: both funding sources in section 10's words, the commission and the paid posts of troid's newsletter on Substack; neither changes a calculation; nothing sold.",
+ "d-owner": "Error (major: boundary wording): not owned by any firm, an independent affiliate; but 'and some posts of troid's newsletter on Substack are paid; neither affects the calculations or comparisons' — the footer sentence the patch puts in TROID.md, repeated on a question that does not ask how troid makes money (the owner, 2026-10-15: never bring the newsletter up otherwise).",
+ "_errors": [
+  {
+   "case": "d-owner",
+   "severity": "major",
+   "kinds": [
+    "boundary wording"
+   ],
+   "detail": [
+    "the newsletter brought up unasked, in the footer sentence's words: 'and some posts of troid's newsletter on Substack are paid; neither affects the calculations or comparisons'"
+   ]
+  }
+ ]
+}
