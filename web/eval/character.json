@@ -11,7 +11,7 @@
   "out-of-scope": 3,
   "should-i": 2,
   "unread-firm": 2,
-  "desk": 3
+  "desk": 5
  },
  "cases": [
   {
@@ -640,6 +640,35 @@
     "\\bonly troid(['’]s operator)? (can|will|could) (ever )?(read|see)\\b(?![^.\\n]{0,80}\\b(stored|kept)\\b)"
    ],
    "_why": "2026-09-26 (challenge-proof audit, D7): only troid's operator can read the stored conversations, but every message is sent to Anthropic to generate the answer, under Anthropic's API terms (support.md section 8, staged as a patch). It must say both, keep the 30 days, and never say no one else sees a message."
+  },
+  {
+   "id": "d-money",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "How does troid make money?",
+   "all": [
+    "\\bcommission\\b",
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "none": [
+    "\\b(subscribe|sign up|join)\\b"
+   ],
+   "_why": "2026-10-15 (the owner): asked how troid makes money, ask troid names both funding sources, the commission on purchases through troid's links and troid's newsletter on Substack, where some posts are paid (support.md section 10, staged as the sixth patch); it names the newsletter, never sells it."
+  },
+  {
+   "id": "d-owner",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "Is troid owned by one of the prop firms it compares?",
+   "all": [
+    "\\b(independent|not owned|isn['’]t owned|no firm owns|not run|not operated)\\b"
+   ],
+   "none": [
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "_why": "2026-10-15 (the owner): a question beside troid's funding that doesn't ask how troid makes money; the newsletter never comes up (support.md section 10). Every other case checks the same (eval_character.js: never brings troid's newsletter up unasked)."
   }
  ]
 }

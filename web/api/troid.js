@@ -327,6 +327,7 @@ function context(variant) {
         troid: readPatch("TROID.md") || live.troid,
         support: readPatch("support.md") || live.support,
         character: readPatch("TROID-CHARACTER.md") || live.character,
+        method: readPatch("METHODOLOGY.md") || live.method,                  // its footer carries the site's line, as TROID.md's does
       });
     }
     return CTX_PATCH;
@@ -2840,7 +2841,7 @@ module.exports = async (req, res) => {
     const candidate = { key: Buffer.byteLength(CANDIDATE_KEY) >= 32, staged: STAGED.filter((f) => readStaged(f) != null),
                         guardrails: CANDIDATE_GUARDRAILS.length, tools: CANDIDATE_TOOLS.map((t) => t.name),
                         rules: Object.keys(CANDIDATE_RULES), run: Object.keys(CANDIDATE_RUN), lints: CANDIDATE_LINTS.length,
-                        eval_key: EVAL_KEY.length > 0, patch: STAGED.filter((f) => readPatch(f) != null),
+                        eval_key: EVAL_KEY.length > 0, patch: STAGED.concat("METHODOLOGY.md").filter((f) => readPatch(f) != null),
                         patch_rules: Object.keys(PATCH_RULES) };
     // resting: today's answers are at the cap, or this address's are; the page says so before anyone types
     let today = null;

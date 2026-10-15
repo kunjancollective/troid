@@ -1024,12 +1024,20 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
-// the fifth patch (staged 2026-10-08) retired unpublished: round 4's promotion replaced it, so the patch slot is empty and
-// the patch's prompt is live's
+// the sixth patch (staged 2026-10-15, the owner): the footer's affiliate sentence also names the paid newsletter, in
+// TROID.md and METHODOLOGY.md as the site will have it, and support.md section 10 names both funding sources only when
+// asked how troid makes money. The patch's prompt is live's with exactly those changes; live names no newsletter
 { (async () => {
-    const pat = JSON.stringify(await handler._systemBlocks("en", "patch")), liv = JSON.stringify(await handler._systemBlocks("en", "live"));
-    ok("fifth patch retired: the patch's prompt is live's, and nothing of the fifth patch's text is served",
-       pat === liv && !liv.includes("troid never narrows a purchase to one firm or one"), [pat.length, liv.length]); })(); }
+    const pb = await handler._systemBlocks("en", "patch"), lb = await handler._systemBlocks("en", "live");
+    const OLD = "earns a commission on purchases through its links; this does not affect the calculations or comparisons.";
+    const NEW = "earns a commission on purchases through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.";
+    const S10 = fs0.readFileSync(path0.join(__dirname, "context", "patch", "support.md"), "utf8").slice(fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8").length);
+    const undo = (t) => t.split(NEW).join(OLD).replace(S10, "");
+    ok("sixth patch: the patch's prompt is live's with the footer sentence naming the paid newsletter (TROID.md, METHODOLOGY.md) and support.md section 10, nothing else",
+       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1"
+       && /^\n## 10\. "How does troid make money\?"\n\nOnly when asked how troid makes money[^\n]*substack\.com\/@tradingdroid[^\n]*Never bring the newsletter up otherwise\.\n$/.test(S10),
+       [pb.length, lb.length, pb.map((b) => b.text.split(NEW).length - 1).join()]);
+    ok("sixth patch: live names no newsletter", !/newsletter|substack/i.test(JSON.stringify(lb))); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
 // keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an
 // announcement or "does not run simulations" twice (runs 35 and 36); and "N more losses" (the owner's ruling)
@@ -1587,13 +1595,14 @@ fake.listen(18765, async () => {
     // a patch: the live prompt with only context/patch/'s files (one change the owner ships on its own), on the operator's terms
     const PSTAGE = fs0.mkdtempSync(path0.join(require("os").tmpdir(), "troid-patch-")), PMARK = "PATCHED FOR THE TEST ONLY";
     fs0.writeFileSync(path0.join(PSTAGE, "support.md"), fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8") + "\n\n" + PMARK);
+    fs0.writeFileSync(path0.join(PSTAGE, "METHODOLOGY.md"), fs0.readFileSync(path0.join(__dirname, "public", "METHODOLOGY.md"), "utf8") + "\n\nMETHOD " + PMARK);
     const hp = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE, TROID_PATCH_DIR: PSTAGE });
     const PH = { "x-troid-candidate": CK, "x-troid-variant": "patch" };
     KV_CALLS.length = 0;
     const pr = await call(hp, [U("What does R mean?")], { disclosed: true }, { headers: PH, ip: "198.51.100.202" });
     const pc = calls[calls.length - 1], psys = pc.system.map((b) => b.text).join("\n");
-    ok("patch: the live prompt with the patch's file and none of the candidate's (its staged file), the live guardrails (promoted 2026-10-08), nine tools, nothing stored, tools reported",
-       pr.status === 200 && pr.j.variant === "patch" && psys.includes(PMARK) && !psys.includes(MARK) && psys.includes("goes to the tool as stop_pct")
+    ok("patch: the live prompt with the patch's files (support.md, METHODOLOGY.md) and none of the candidate's (its staged file), the live guardrails (promoted 2026-10-08), nine tools, nothing stored, tools reported",
+       pr.status === 200 && pr.j.variant === "patch" && psys.includes(PMARK) && psys.includes("METHOD " + PMARK) && !psys.includes(MARK) && psys.includes("goes to the tool as stop_pct")
        && pc.tools.length === 9 && !KV_CALLS.length && Array.isArray(pr.j.tool_numbers), [pr.status, pr.j.variant, KV_CALLS.length]);
     const ph = [U("What does R mean?"), A(pr.j.reply), U("and 2R?")];
     r = await call(hp, ph, { session: pr.j.session, sig: pr.j.sig, disclosed: true }, { headers: PH });
@@ -1605,7 +1614,7 @@ fake.listen(18765, async () => {
     ok("x-troid-variant: patch without the key: an ordinary visitor's request, the live prompt", r.status === 200 && r.j.variant === "live"
        && !calls[calls.length - 1].system.map((b) => b.text).join("\n").includes(PMARK) && KV.has("conv:" + r.j.session), r.j.variant);
     let resP = fakeRes(); await hp({ method: "GET", headers: {} }, resP);
-    ok("GET: what the patch stages", JSON.parse(resP.body).candidate.patch.join() === "support.md", JSON.parse(resP.body).candidate);
+    ok("GET: what the patch stages", JSON.parse(resP.body).candidate.patch.join() === "support.md,METHODOLOGY.md", JSON.parse(resP.body).candidate);
     // the operator's own API key, when set: evaluation never spends the key visitors use
     const he = fresh({ TROID_CANDIDATE_KEY: CK, TROID_CANDIDATE_DIR: STAGE, ANTHROPIC_API_KEY_EVAL: "sk-eval-test" });
     CALL_KEYS.length = 0;
