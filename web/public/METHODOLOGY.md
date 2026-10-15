@@ -117,4 +117,4 @@ agreement exists and its daily, max, target and price cells each have a recorded
 
 ---
 
-troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons. Terms: https://troid.ai/terms
+troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons. Terms: https://troid.ai/terms

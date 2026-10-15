@@ -23,7 +23,7 @@ HYPO = ("These results are based on simulated or hypothetical performance result
 FOOTER_TEXT = ("troid is a free informational tool, not financial or investment advice. troid does not place trades "
                "or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules "
                "change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases "
-               "through its links; this does not affect the calculations or comparisons.")
+               "through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.")
 
 # troid's contact address: the terms, the FAQ and the structured data (site_build.jsonld) name it
 EMAIL = "hello@troid.ai"

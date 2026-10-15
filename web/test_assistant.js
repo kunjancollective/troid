@@ -1024,20 +1024,20 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
-// the sixth patch (staged 2026-10-15, the owner): the footer's affiliate sentence also names the paid newsletter, in
-// TROID.md and METHODOLOGY.md as the site will have it, and support.md section 10 names both funding sources only when
-// asked how troid makes money. The patch's prompt is live's with exactly those changes; live names no newsletter
+// the sixth patch, published 2026-10-15 (the owner's merge after run 3): the footer's affiliate sentence names the paid
+// newsletter in TROID.md and METHODOLOGY.md, word for word the site's, and support.md section 10 names both funding sources
+// on a funding question (how troid makes money, how it is funded, who owns it, whether it is independent, its affiliate
+// links) and never the newsletter otherwise. The patch slot is empty again: the patch's prompt is live's
 { (async () => {
     const pb = await handler._systemBlocks("en", "patch"), lb = await handler._systemBlocks("en", "live");
-    const OLD = "earns a commission on purchases through its links; this does not affect the calculations or comparisons.";
     const NEW = "earns a commission on purchases through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.";
-    const S10 = fs0.readFileSync(path0.join(__dirname, "context", "patch", "support.md"), "utf8").slice(fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8").length);
-    const undo = (t) => t.split(NEW).join(OLD).replace(S10, "");
-    ok("sixth patch: the patch's prompt is live's with the footer sentence naming the paid newsletter (TROID.md, METHODOLOGY.md) and support.md section 10, nothing else",
-       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1"
-       && /^\n## 10\. "How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, name both sources[^\n]*substack\.com\/@tradingdroid[^\n]*never mention the newsletter, and never pitch it beyond that sentence\.\n$/.test(S10),
-       [pb.length, lb.length, pb.map((b) => b.text.split(NEW).length - 1).join()]);
-    ok("sixth patch: live names no newsletter", !/newsletter|substack/i.test(JSON.stringify(lb))); })(); }
+    const sup = lb.find((b) => b.text.startsWith("# support.md")).text, s10 = sup.split("\n## 10. ");
+    ok("sixth patch published: the patch slot is empty (the patch's prompt is live's)", JSON.stringify(pb) === JSON.stringify(lb));
+    ok("sixth patch published: live carries the footer sentence in TROID.md and METHODOLOGY.md, and names the newsletter nowhere else but section 10",
+       lb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1" && s10.length === 2 && !/newsletter|substack/i.test(s10[0])
+       && !/newsletter|substack/i.test(lb.filter((b) => !b.text.startsWith("# support.md")).map((b) => b.text.split(NEW).join("")).join("\n"))
+       && /^"How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, name both sources[^\n]*substack\.com\/@tradingdroid[^\n]*never mention the newsletter, and never pitch it beyond that sentence\.\n$/.test(s10[1]),
+       lb.map((b) => b.text.split(NEW).length - 1).join()); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
 // keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an
 // announcement or "does not run simulations" twice (runs 35 and 36); and "N more losses" (the owner's ruling)
