@@ -35,10 +35,10 @@ COPYRIGHT = "© 2026 Kunjan Patel"
 # troid's newsletter on Substack, some posts paid (the owner, 2026-10-14: Stripe asks that troid.ai link the paid
 # Substack, so the two read as one business). The footer links it on every page, as it links troid's X and Reddit
 # accounts (so it joins the Organization's sameAs and llms.txt), and the FAQ's Newsletter section says what it is.
-# Nothing in troid's desk or ask troid's prompt names it. The owner gives the address; until then this placeholder
-# keeps verify_claims.py red, so the link can't merge unset.
+# Nothing in troid's desk or ask troid's prompt names it. The owner gave the address on 2026-10-15; the placeholder
+# stays so verify_claims.py fails if the address is ever reset to it.
 NEWSLETTER_PLACEHOLDER = "https://substack-url-needed.invalid/"
-NEWSLETTER_URL = NEWSLETTER_PLACEHOLDER
+NEWSLETTER_URL = "https://substack.com/@tradingdroid"
 
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
          ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/sources", "sources"), ("/terms", "terms"),
