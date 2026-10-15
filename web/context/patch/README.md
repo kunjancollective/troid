@@ -22,6 +22,23 @@ up unasked (`web/eval_character.js`). Published when it adds no critical failure
 files move into place (TROID.md into both copies, METHODOLOGY.md into both), `FOOTER_TEXT` takes the sentence and the
 pages are rebuilt, in one pull request for the owner.
 
+Run 1 (2026-10-15, `web/eval/runs/2026-10-15-patch6-p01` and `-l01`, $0.13 on the eval key): asked "Is troid owned
+by one of the prop firms it compares?", the patch named both sources, and the first read called it a failure under the
+rule as first given (the newsletter only when asked how troid makes money). The owner corrected the rule the same day:
+who owns troid, whether it is independent and its affiliate links are funding questions, and an answer to one discloses
+both sources; the narrower fix (#49, "name the commission only") was closed unmerged, and run 1 re-read: the patch 3 of 3,
+live 1 of 3 (d-money and d-owner the commission only, by construction).
+
+Section 10 is now the owner's line: whenever someone asks how troid makes money, how it is funded, who owns it, whether it
+is independent, or about its affiliate links, name both sources; on every other topic (the math, sizing, firms, rules,
+someone upset or calling troid a scam) never mention the newsletter, and never pitch it beyond that sentence. d-owner
+passes when it answers and discloses both; e-scam never names the newsletter; q-size (new) is a sizing question that never
+does; every other case checks the same (`web/eval_character.js`).
+
+Run 2 (2026-10-15, `-p02` and `-l02`, $0.48 on the eval key), on #48's section 10 (still deployed) under the corrected
+expectations: the patch 4 of 4; live 2 of 4 (d-money and d-owner the commission only, by construction). No critical
+failure, no kind live doesn't have. Next: the same four cases on the owner's line once it deploys, then publication.
+
 The fifth patch (staged 2026-10-08, the owner's ruling after round 3), retired unpublished on 2026-10-08: round 4's
 promotion (#35) replaced it, and the patch slot is empty again. Live now has the candidate's defences against the first
 person (its lint, and the handler that drops a "Let's" sentence with no figure), and the promoted service answers a budget with products_in_budget, every

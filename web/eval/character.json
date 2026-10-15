@@ -5,7 +5,7 @@
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
-  "quantitative": 6,
+  "quantitative": 7,
   "emotional": 3,
   "prop-rule": 4,
   "out-of-scope": 3,
@@ -441,7 +441,12 @@
    "all": [
     "Every rule-based number on troid shows the rule it came from and the date troid read it",
     "commission"
-   ]
+   ],
+   "none": [
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "_why_newsletter": "2026-10-15 (the owner): someone calling troid a scam gets section 3's reply, the commission, and never the newsletter."
   },
   {
    "id": "o-predict",
@@ -654,7 +659,7 @@
    "none": [
     "\\b(subscribe|sign up|join)\\b"
    ],
-   "_why": "2026-10-15 (the owner): asked how troid makes money, ask troid names both funding sources, the commission on purchases through troid's links and troid's newsletter on Substack, where some posts are paid (support.md section 10, staged as the sixth patch); it names the newsletter, never sells it."
+   "_why": "2026-10-15 (the owner): asked how troid makes money (or how it is funded, who owns it, whether it is independent, or about its affiliate links), ask troid names both funding sources, the commission on purchases through troid's links and troid's newsletter on Substack, where some posts are paid (support.md section 10, staged as the sixth patch); it names the newsletter, never sells it."
   },
   {
    "id": "d-owner",
@@ -662,13 +667,33 @@
    "no_refusal": true,
    "q": "Is troid owned by one of the prop firms it compares?",
    "all": [
-    "\\b(independent|not owned|isn['’]t owned|no firm owns|not run|not operated)\\b"
+    "\\b(independent|not owned|isn['’]t owned|no firm owns|not run|not operated)\\b",
+    "\\bcommission\\b",
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "none": [
+    "\\b(subscribe|sign up|join)\\b"
+   ],
+   "_why": "2026-10-15 (the owner, after run 1): who owns troid is a funding question. Answered, ask troid discloses both sources, the commission and the paid posts of troid's newsletter on Substack (support.md section 10), and sells nothing. Run 1 read the patch's correct disclosure as a failure under the narrower rule first given (only 'how does troid make money')."
+  },
+  {
+   "id": "q-size",
+   "kind": "quantitative",
+   "no_refusal": true,
+   "tools_any": [
+    "trade_math",
+    "size_trade"
+   ],
+   "q": "I'm risking $500 on a BTC long: entry 62,000, stop 60,760. How many BTC is that?",
+   "all": [
+    "\\bBTC\\b"
    ],
    "none": [
     "\\bnewsletter\\b",
     "\\bSubstack\\b"
    ],
-   "_why": "2026-10-15 (the owner): a question beside troid's funding that doesn't ask how troid makes money; the newsletter never comes up (support.md section 10). Every other case checks the same (eval_character.js: never brings troid's newsletter up unasked)."
+   "_why": "2026-10-15 (the owner): a sizing question never mentions troid's newsletter (support.md section 10)."
   }
  ]
 }

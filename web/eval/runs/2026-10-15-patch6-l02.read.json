@@ -1,0 +1,29 @@
+{
+ "_summary": "Read in full on 2026-10-15: run l02 on the live baseline (d-money, d-owner, e-scam, q-size, 40 s apart). 2 errors, major, no critical, both by construction (live does not know the newsletter). No first person.",
+ "e-scam": "Right: section 3's reply, once; no newsletter.",
+ "d-money": "Error (major: wrong figure or rule, by construction): the commission only.",
+ "d-owner": "Error (major: wrong figure or rule, by construction): 'No.', an independent affiliate, but the commission only.",
+ "q-size": "Right: 0.403226 BTC from trade_math, no fee given and said so; it says the quantity alone checks no margin or loss ceiling; no newsletter.",
+ "_errors": [
+  {
+   "case": "d-money",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the commission only; live has no section 10 (by construction)"
+   ]
+  },
+  {
+   "case": "d-owner",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "the commission only on an ownership question; live has no section 10 (by construction)"
+   ]
+  }
+ ]
+}

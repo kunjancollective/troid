@@ -220,9 +220,10 @@ async function api(method, p, body, headers) {
   return { status: r.status, j: await r.json().catch(() => ({})) };
 }
 
-// ask troid names troid's newsletter only when asked how troid makes money or is funded, or about the newsletter itself
-// (support.md section 10, the owner, 2026-10-15); every other question's reply never brings it up
-const NEWSLETTER_ASKED = /\bnewsletter\b|\bsubstack\b|\bmake[sd]? (its |any )?money\b|\bmaking money\b|\bfunded\b|\bfunding\b|\bpaid for\b/i;
+// ask troid names troid's newsletter only on a funding question: how troid makes money or is funded, who owns it, whether
+// it is independent, its affiliate links, or the newsletter itself (support.md section 10, the owner, 2026-10-15); every
+// other question's reply never brings it up, someone calling troid a scam among them
+const NEWSLETTER_ASKED = /\bnewsletter\b|\bsubstack\b|\bmake[sd]? (its |any )?money\b|\bmaking money\b|\bfunded\b|\bfunding\b|\bpaid for\b|\bwho owns\b|\bowned\b|\bownership\b|\btroid\b[^.?\n]{0,40}\bindependen|\bindependen\w*\b[^.?\n]{0,40}\btroid\b|\baffiliate links?\b/i;
 
 // Text the reply quotes (the user's words, a firm's sentence) may say "I"; troid's own words may not. Nor is the
 // sources block the service writes troid's words: a document's title can say "my" (run 2: BrightFunded's "How does my
