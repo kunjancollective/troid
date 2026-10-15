@@ -1,11 +1,26 @@
 # Patch — one change shipped on its own
 
 A change the owner asks to ship alone, apart from the candidate in `../candidate/`, is staged here: `TROID.md`,
-`support.md` or `TROID-CHARACTER.md`, each only if it changes. Only a request carrying `TROID_CANDIDATE_KEY` with
+`support.md`, `TROID-CHARACTER.md` or `METHODOLOGY.md`, each only if it changes. Only a request carrying `TROID_CANDIDATE_KEY` with
 `x-troid-variant: patch` gets it — the live prompt with these files in place, and nothing of the candidate's
 (`EVAL_PATCH=1` in `web/eval_character.js`). It is evaluated on the cases it touches against the live baseline
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
+
+The sixth patch (staged 2026-10-15, the owner, after #46 linked troid's newsletter on every page): troid's newsletter on
+Substack (https://substack.com/@tradingdroid), where some posts are paid, is the second way troid is funded.
+`TROID.md` and `METHODOLOGY.md`: the footer's affiliate sentence also names it, "… earns a commission on purchases through
+its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.", the
+sentence the site's footer (`backtest/site_text.py` `FOOTER_TEXT`) takes when this is published, so the prompt's copies
+stay identical to the site's. `METHODOLOGY.md` is staged here for the first time: its footer carries the same line, and
+it is in ask troid's prompt (the service's patch variant reads it from here). `support.md` section 10, one line: only when
+asked how troid makes money or how it is funded, ask troid names both, the commission on purchases through troid's links
+and the paid newsletter, and never brings the newsletter up otherwise. Evaluated on the cases it touches against the live
+baseline: d-money ("How does troid make money?": names both) and d-owner ("Is troid owned by one of the prop firms it
+compares?": no newsletter), both new, with e-scam; and every case now checks that a reply never brings the newsletter
+up unasked (`web/eval_character.js`). Published when it adds no critical failure and no new kind of failure: the three
+files move into place (TROID.md into both copies, METHODOLOGY.md into both), `FOOTER_TEXT` takes the sentence and the
+pages are rebuilt, in one pull request for the owner.
 
 The fifth patch (staged 2026-10-08, the owner's ruling after round 3), retired unpublished on 2026-10-08: round 4's
 promotion (#35) replaced it, and the patch slot is empty again. Live now has the candidate's defences against the first
