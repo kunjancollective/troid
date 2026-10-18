@@ -1945,21 +1945,21 @@
     "affiliate_agreement": {
       "platform": "FirstPromoter",
       "terms_url": "https://cryptofundtrader.com/affiliate-terms/ (modified 2026-02-03)",
-      "read": "2026-09-21",
+      "read": "2026-10-18",
       "rate_tiers": {
         "platinum": "10%",
         "diamond": "12%",
         "champion": "15%"
       },
       "rate_current": "10% (Platinum - the platinum5 code)",
-      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4)",
+      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4, as read 2026-09-21; the 2026-10-18 terms differ: cl.6, cl.7)",
       "cookie_days": 60,
-      "payout_currency": "USDT or BTC (cl.14)",
-      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18)",
-      "paid_advertising": "no PPC / keyword ads on the brand name (cl.8)",
-      "coupon_sites_extensions": "prohibited (cl.7, 11)",
-      "negative_marketing": "cl.6 prohibits 'negative words to get attention then promote our services'. troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.20), not indemnity.",
-      "required_disclaimer": "cl.10, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
+      "payout_currency": "USDT or BTC (cl.14, as read 2026-09-21; the 2026-10-18 terms differ: cl.16)",
+      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18, as read 2026-09-21; the 2026-10-18 terms differ: cl.17, 19, 20)",
+      "paid_advertising": "no PPC / keyword ads on the brand name (cl.11)",
+      "coupon_sites_extensions": "prohibited (clauses 10 and 14)",
+      "negative_marketing": "cl.9 prohibits 'negative marketing', 'using negative, misleading, or disparaging statements to attract attention before promoting Crypto Fund Trader\u2019s services' (read 2026-10-18; on 2026-09-21, as cl.6, 'negative words to get attention then promote our services'). troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.22), not indemnity.",
+      "required_disclaimer": "cl.13, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its content. This website is owned and operated by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
       "exclusivity": "none",
       "indemnity": "none",
       "non_disparagement": "none in the affiliate terms (the trader T&C 7.1ix clause does not appear here)",
@@ -2061,9 +2061,9 @@
     ],
     "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts",
     "link_live": true,
-    "_link_live_note": "true since 2026-09-22: affiliate terms read in full 2026-09-21 (affiliate_agreement), clause-10 wording in required_disclaimer with its source recorded.",
-    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
-    "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
+    "_link_live_note": "true since 2026-09-22 (affiliate terms read in full 2026-09-21). Re-read 2026-10-18: the required sentence is now clause 13, in new words; required_disclaimer holds them verbatim, with its source recorded.",
+    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its content. This website is owned and operated by troid, an independent marketing affiliate.",
+    "_required_disclaimer_note": "Clause 13 of the affiliate terms (read 2026-10-18) requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it beside this firm's link wherever troid shows one, in the FAQ's disclaimer and in /terms' affiliate notices, for as long as this firm is listed, and drops it the day the firm rotates out.",
     "panel_note": "Leverage up to 100\u00d7 on Advanced accounts ($50k+) and 5\u00d7 on Student and Instant accounts, per its Terms and Conditions \u2014 the breaker model takes that as an input.",
     "panel_note_src": [
       [
@@ -2075,7 +2075,7 @@
         "max_leverage_advanced"
       ]
     ],
-    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
+    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 13 (the 13th item of its numbered list), read 2026-10-18 (fetched from a sandbox, sha256 of the page 92de767bd5a9692c); its bracket '[your website name/your brand name]' filled with the brand name, troid, as the clause instructs",
     "calc": {
       "daily_basis": "day_start",
       "drawdown": "trailing",
