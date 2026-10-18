@@ -32,9 +32,10 @@ EMAIL = "hello@troid.ai"
 # A name, not prose: shown as it is on every page, in every language.
 COPYRIGHT = "© 2026 Kunjan Patel"
 
-# troid's newsletter on Substack, some posts paid (the owner, 2026-10-14: Stripe asks that troid.ai link the paid
-# Substack, so the two read as one business). The footer links it on every page, as it links troid's X and Reddit
-# accounts (so it joins the Organization's sameAs and llms.txt), and the FAQ's Newsletter section says what it is.
+# troid's newsletter on Substack (the owner, 2026-10-14: Stripe asks that troid.ai link the Substack, so the two read
+# as one business; 2026-10-18: troid's pages say nothing about its pricing). The footer links it on every page, as it
+# links troid's X and Reddit accounts (so it joins the Organization's sameAs and llms.txt), and the FAQ's Newsletter
+# section says what it is.
 # Nothing in troid's desk or ask troid's prompt names it. The owner gave the address on 2026-10-15; the placeholder
 # stays so verify_claims.py fails if the address is ever reset to it.
 NEWSLETTER_PLACEHOLDER = "https://substack-url-needed.invalid/"

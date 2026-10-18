@@ -1024,19 +1024,19 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
-// the sixth patch (staged 2026-10-15, the owner): the footer's affiliate sentence also names the paid newsletter, in
-// TROID.md and METHODOLOGY.md as the site will have it, and support.md section 10 names both funding sources only when
-// asked how troid makes money. The patch's prompt is live's with exactly those changes; live names no newsletter
+// the sixth patch (staged 2026-10-15, the owner; restaged 2026-10-18 with no claim about paid posts): support.md section
+// 10 names the commission and says troid also has a newsletter on Substack, whenever someone asks how troid is funded,
+// owned or independent, or about its affiliate links. The footer is live's again (FOOTER_TEXT), so TROID.md and
+// METHODOLOGY.md are no longer staged. The patch's prompt is live's with that section only; live names no newsletter
 { (async () => {
     const pb = await handler._systemBlocks("en", "patch"), lb = await handler._systemBlocks("en", "live");
-    const OLD = "earns a commission on purchases through its links; this does not affect the calculations or comparisons.";
-    const NEW = "earns a commission on purchases through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.";
     const S10 = fs0.readFileSync(path0.join(__dirname, "context", "patch", "support.md"), "utf8").slice(fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8").length);
-    const undo = (t) => t.split(NEW).join(OLD).replace(S10, "");
-    ok("sixth patch: the patch's prompt is live's with the footer sentence naming the paid newsletter (TROID.md, METHODOLOGY.md) and support.md section 10, nothing else",
-       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1"
-       && /^\n## 10\. "How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, name both sources[^\n]*substack\.com\/@tradingdroid[^\n]*never mention the newsletter, and never pitch it beyond that sentence\.\n$/.test(S10),
-       [pb.length, lb.length, pb.map((b) => b.text.split(NEW).length - 1).join()]);
+    const undo = (t) => t.replace(S10, "");
+    ok("sixth patch: the patch's prompt is live's with support.md section 10 added, nothing else (the footer is live's)",
+       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.filter((b) => b.text.includes(S10)).length === 1
+       && /^\n## 10\. "How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, say, in these words or close to them: troid earns a commission from the firms it compares on purchases through its links; it doesn't change a calculation or a comparison\. troid also has a newsletter on Substack \(https:\/\/substack\.com\/@tradingdroid\)\. On every other topic [^\n]*never mention the newsletter, and never pitch it\.\n$/.test(S10),
+       [pb.length, lb.length, S10]);
+    ok("sixth patch: section 10 says nothing about paid posts ('paid', 'posts')", !/\bpaid\b|\bposts?\b/i.test(S10), S10);
     ok("sixth patch: live names no newsletter", !/newsletter|substack/i.test(JSON.stringify(lb))); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
 // keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an

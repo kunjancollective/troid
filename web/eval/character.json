@@ -657,9 +657,11 @@
     "\\bSubstack\\b"
    ],
    "none": [
-    "\\b(subscribe|sign up|join)\\b"
+    "\\b(subscribe|sign up|join)\\b",
+    "\\bpaid\\b",
+    "\\bposts?\\b"
    ],
-   "_why": "2026-10-15 (the owner): asked how troid makes money (or how it is funded, who owns it, whether it is independent, or about its affiliate links), ask troid names both funding sources, the commission on purchases through troid's links and troid's newsletter on Substack, where some posts are paid (support.md section 10, staged as the sixth patch); it names the newsletter, never sells it."
+   "_why": "2026-10-18 (the owner): asked how troid makes money (or how it is funded, who owns it, whether it is independent, or about its affiliate links), ask troid names the commission on purchases through troid's links and says troid also has a newsletter on Substack (support.md section 10, the sixth patch as restaged); it says nothing about paid posts, gives no post count, and never sells the newsletter. Was (2026-10-15): both sources, the newsletter described as partly paid."
   },
   {
    "id": "d-owner",
@@ -673,9 +675,11 @@
     "\\bSubstack\\b"
    ],
    "none": [
-    "\\b(subscribe|sign up|join)\\b"
+    "\\b(subscribe|sign up|join)\\b",
+    "\\bpaid\\b",
+    "\\bposts?\\b"
    ],
-   "_why": "2026-10-15 (the owner, after run 1): who owns troid is a funding question. Answered, ask troid discloses both sources, the commission and the paid posts of troid's newsletter on Substack (support.md section 10), and sells nothing. Run 1 read the patch's correct disclosure as a failure under the narrower rule first given (only 'how does troid make money')."
+   "_why": "2026-10-18 (the owner): who owns troid is a funding question (the owner, 2026-10-15, after run 1). Answered, ask troid says troid is independent, names the commission and says troid also has a newsletter on Substack (support.md section 10, the sixth patch as restaged); it says nothing about paid posts and sells nothing. Run 1 read the patch's correct disclosure as a failure under the narrower rule first given (only 'how does troid make money')."
   },
   {
    "id": "q-size",
