@@ -48,8 +48,10 @@ that work; a second would make "a pull request with a failing audit can't merge"
 
 - **Settings > Actions > General > Workflow permissions**: turn on "Allow GitHub Actions to create and approve pull
   requests". It is off by default, and in an organisation the organisation's setting must allow it too. Without it
-  `gh pr create` is refused: the week's audit waits on its branch, and a week with mismatches still opens its issue,
-  which says the pull request wasn't opened.
+  `gh pr create` is refused: the week's audit waits on its branch, and the run opens an issue that says the pull
+  request wasn't opened (a week with mismatches always did; a week that passed does too since 2026-10-12, after
+  2026-W41 passed, waited on its branch, and left the desk's line on W40 with nothing but a red run to say so).
+  On 2026-10-12 it was off: W41's run was refused at `gh pr create`.
 - **Settings > Rules (or Branches) on `main`**: require the status check `audit` (the workflow's job). Not yet: the
   owner decided on 30 Sep 2026 to leave it optional until after launch. Until then a pull request whose audit failed
   shows a red check but can still be merged. When it is required, shadow.yml, calendar.yml and data.yml (which push
@@ -69,9 +71,12 @@ hand goes in `cases.py` as a pin, and `run.py` refuses to drive a page until the
 
 ## On the desk
 
-`web/public/audit.js` fills the line under the desk from `/audit.json`: "Calculators audited 4 Oct 2026 · 1,023 checks
-passed · report", or "… mismatches found: 2 · report", linked to the week's report on GitHub. The line is hidden when
-the file is missing or doesn't hold together; an old audit shows its date as it is. "Rules read …" is a separate
+The build writes the line under the desk from `web/public/audit.json` as built (`backtest/regions.py` `desk_audit`, ISO
+date first), so a reader or a crawler without the script sees it, and `web/public/audit.js` brings it up to the latest
+`/audit.json`: "Calculators audited 4 Oct 2026 · 1,023 checks passed · report", or "… mismatches found: 2 · report",
+linked to the week's report on GitHub. The line is hidden while no `audit.json` holds together, and a file the script
+can't read leaves the built line as it is; an old audit shows its date as it is. `audit.json` lists the published pages
+it drove under `pages` and a draft driven as a preview (Arabic) by its language under `previews`. "Rules read …" is a separate
 claim, on its own line, written at build time from `firms.json`. `web/i18n/site.json` `calc_audit` takes both off the
 page. Tests: `python web/test_audit_line.py`; `backtest/verify_claims.py` holds `audit.json` to its report and the
 rules line to `firms.json`.

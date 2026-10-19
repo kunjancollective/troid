@@ -6,7 +6,8 @@ items 2 and 3), for the published English pages and every language rendered with
 
 - Every page: one meta description, its own ({page}.meta.description, else the line it previews with when shared;
   no two pages share one), one canonical URL on troid.ai and og:url equal to it, og:type, og:site_name troid, the X card
-  (summary_large_image) and twitter:site @tradingdroid, each exactly once; the tearsheet included.
+  (summary_large_image), twitter:site @tradingdroid and twitter:image (the page's og:image), each exactly once; the
+  tearsheet included. An English title of at most 60 characters (the site audit of 2026-10-12; 66 before).
 - Every page: one JSON-LD block that parses, an @graph with troid as an Organization whose sameAs are exactly the
   footer's repo, X and Reddit links, and the WebSite; the page's own entity where it has one: the desk a free
   WebApplication, the FAQ a FAQPage, the ledger a Dataset described as simulated with the journal as CSV, the
@@ -20,9 +21,12 @@ And the rest of 5.1 (items 5 to 8):
 - The footer links /sources on every page; /research redirects to /dashboard, permanently (vercel.json).
 - sitemap.xml: every page with a lastmod, no later than today; a change to a page's text moves it to today, a change to
   its head or to nothing keeps it; the page for an address with no page is not in it.
-- /404.html: noindex, no canonical, a link to each page it lists, every one a page the site serves; English only.
+- /404.html: noindex, no canonical, a link to every page troid publishes (the sitemap's, in its order), each one a page
+  the site serves; English only.
 - Headings: one h1 on every page; the FAQ's sections h2 and its questions and disclaimers h3, no level skipped; the
-  ledger's h1 is its name, troid's ledger.
+  ledger's h1 is its name, troid's ledger; the tearsheet's says what it is, quantstats' date range beside it.
+- Bing's verification (site.json bing_site_verification): with no value, no msvalidate.01 tag and no BingSiteAuth.xml;
+  with one, the tag on the home page only and the file, both carrying exactly it; a value that isn't a code refused.
 Reads files only. Spends nothing, calls no one.
 """
 import html
@@ -77,8 +81,8 @@ def check(label, path, code, page):
         # the search audit's quick win 1: a title a result shows whole, a description that isn't cut
         tl = len(html.unescape(re.search(r"<title>(.*?)</title>", head, re.S).group(1)))
         dl = len(html.unescape(desc))
-        ok(f"{label}: title and description at search length (title {tl}, at most 66; description {dl}, 100 to 160)",
-           25 <= tl <= 66 and 100 <= dl <= 160, (tl, dl))
+        ok(f"{label}: title and description at search length (title {tl}, at most 60; description {dl}, 100 to 160)",
+           25 <= tl <= 60 and 100 <= dl <= 160, (tl, dl))
     loc = site_build.i18n.BY_CODE[code]["og_locale"]
     for tag, pat in (("canonical", rf'<link rel="canonical" href="{re.escape(url)}">'),
                      ("og:locale", rf'<meta property="og:locale" content="{re.escape(loc)}">'),
@@ -86,7 +90,8 @@ def check(label, path, code, page):
                      ("og:type", r'<meta property="og:type" content="website">'),
                      ("og:site_name", r'<meta property="og:site_name" content="troid">'),
                      ("twitter:card", r'<meta name="twitter:card" content="summary_large_image">'),
-                     ("twitter:site", r'<meta name="twitter:site" content="@tradingdroid">')):
+                     ("twitter:site", r'<meta name="twitter:site" content="@tradingdroid">'),
+                     ("twitter:image", rf'<meta name="twitter:image" content="{re.escape(site_build.og(T, page)["image"])}">')):
         name = tag.split(":")[-1] if tag.startswith(("og:", "twitter:")) else tag
         count = len(re.findall(r'(?:property|name|rel)="' + re.escape(tag) + '"', head))
         ok(f"{label}: {tag} once, as it should read", count == 1 and re.search(pat, head) is not None, f"{count} × {name}")
@@ -233,17 +238,20 @@ def rest():
        '<meta name="robots" content="noindex">' in nh and 'rel="canonical"' not in nh and 'property="og:url"' not in nh)
     hrefs = re.findall(r'<ul class="pages">(.*?)</ul>', N, re.S)
     hrefs = re.findall(r'href="([^"]+)"', hrefs[0]) if hrefs else []
-    ok(f"404: lists the pages, each one served ({len(hrefs)})",
-       set(hrefs) >= {"/", "/compare", "/ledger", "/dashboard", "/chat", "/faq", "/sources"} and all(served(h) for h in hrefs), hrefs)
+    every = [site_build.page_url("en", p) for p in site_build.published_pages()]
+    ok(f"404: lists every page troid publishes, the sitemap's, in its order, each one served ({len(hrefs)} of {len(every)})",
+       hrefs == every == [u.replace(site_build.BASE_URL, "", 1) for u in locs] and all(served(h) for h in hrefs), (hrefs, every))
     ok("404: one h1, and the footer", levels(N).count(1) == 1 and site_text.FOOTER_TEXT in site_build.html.unescape(N))
 
     # ---------------------------------------------------------------- headings
     for page in site_build.PAGES:
         f = site_build.out_path("en", page)
-        if page == "tearsheet":
-            continue                                        # quantstats' report: troid's box sits above it, no h1 of troid's
         lv = levels(f.read_text())
         ok(f"headings: {page} has one h1", lv.count(1) == 1, lv)
+    h1 = re.findall(r"<h1[^>]*>(.*?)</h1>", site_build.out_path("en", "tearsheet").read_text(), re.S)
+    ok("headings: the tearsheet's h1 says what it is (quantstats heads it with the strategy's name alone), its date range "
+       "beside it in a span", len(h1) == 1 and re.fullmatch(re.escape(T("tearsheet.hero.h1")) + r' <span class="qsr">[^<]+</span>', h1[0])
+       is not None, h1)
     F = (site_build.PUB / "faq.html").read_text()
     lv = levels(F)
     ok("headings: the FAQ's sections are h2, its questions and disclaimers h3, no h4",
@@ -253,6 +261,47 @@ def rest():
     h1 = re.findall(r"<h1[^>]*>(.*?)</h1>", G, re.S)
     ok("headings: the ledger's h1 names it, as the search audit's quick win 8 has it (troid's ledger: the shadow account)",
        h1 == [T("ledger.hero.h1")] and T("ledger.hero.h1").startswith(T("product.ledger")), h1)
+
+
+def bing():
+    """Bing Webmaster's site verification (site.json bing_site_verification): the build writes the home page's
+    msvalidate.01 tag and /BingSiteAuth.xml from the one public value, and neither without it."""
+    T = site_build.i18n.Strings("en")
+    live = site_build.targets()
+    have = site_build.BING
+    I = (site_build.PUB / "index.html").read_text()
+    ok("Bing: web/public matches site.json (" + (f"value {have}" if have else "no value") + "): the home page's tag and the file",
+       ((f'<meta name="msvalidate.01" content="{have}">' in I) if have else ("msvalidate" not in I))
+       and (site_build.PUB / site_build.BING_FILE).exists() == bool(have))
+    code = "0123456789ABCDEF0123456789ABCDEF"
+    site_build.BING = code
+    try:
+        heads = {pg: site_build.head_extra(T, pg, live) for pg in ("index", "faq", "compare", site_build.NOT_FOUND)}
+        ok("Bing, with a value: msvalidate.01 on the home page only, carrying it",
+           heads["index"].count(f'<meta name="msvalidate.01" content="{code}">') == 1
+           and all("msvalidate" not in h for pg, h in heads.items() if pg != "index"), heads["index"])
+        with tempfile.TemporaryDirectory() as d:
+            d = Path(d)
+            for f in site_build.PUB.glob("*.html"):
+                (d / f.name).write_bytes(f.read_bytes())
+            site_build.write_seo(d, today="2026-10-12")
+            x = (d / site_build.BING_FILE).read_text()
+            ok("Bing, with a value: /BingSiteAuth.xml carries it, as Bing's file reads", x == f'<?xml version="1.0"?>\n<users>\n\t<user>{code}</user>\n</users>\n', x)
+            site_build.BING = ""
+            site_build.write_seo(d, today="2026-10-12")
+            ok("Bing, its value taken out: the file goes with it", not (d / site_build.BING_FILE).exists())
+    finally:
+        site_build.BING = have
+    for bad in ("<script>", "abc def 0123456789ab", "x" * 65):
+        site_build.SITE["bing_site_verification"], keep = bad, site_build.SITE.get("bing_site_verification")
+        try:
+            site_build.bing_value()
+            refused = False
+        except SystemExit:
+            refused = True
+        finally:
+            site_build.SITE["bing_site_verification"] = keep
+        ok(f"Bing: a value that isn't a code is refused ({bad[:12]!r})", refused)
 
 
 def pro_waitlist():
@@ -304,6 +353,7 @@ def pro_waitlist():
 
 def main():
     rest()
+    bing()
     pro_waitlist()
     for page in site_build.PAGES:
         check(f"en {page}", site_build.out_path("en", page), "en", page)

@@ -1,7 +1,10 @@
 /* The two lines under troid's desk (calculator audit, 2026-09-29). The first says when an independent model last
    re-derived the desk's arithmetic and what it found: /audit.json, written by the weekly audit (audit/run.py), with a
-   link to that week's report. It stays hidden when the file can't be read or doesn't hold together (checks = passed +
-   failed, the report named for its week); an old audit shows its date as it is. The second says when troid read the
+   link to that week's report. The build writes it from audit.json as built (backtest/regions.py desk_audit), ISO date
+   first, so a reader or a crawler without this script sees it; this brings it up to the latest /audit.json, so a week
+   merged after the build shows at once. A file that can't be read or doesn't hold together (checks = passed + failed,
+   the report named for its week) changes nothing: the built line stays as it is, or hidden where the build had none;
+   an old audit shows its date as it is. The second says when troid read the
    rules the desk sizes with: the build writes it from firms.json with ISO dates, and this only puts them in the page's
    language. Dates are Intl's, in the page's locale (en-GB for English: "4 Oct 2026"). Kept out of desk2.js, whose
    size is budgeted. */
@@ -47,5 +50,5 @@
     a.innerHTML = tpl.replace("{date}", esc(f.format(when))).replace("{n}", esc(num.format(j.failed || j.passed)))
       .replace("{href}", esc(repo + j.report));
     a.hidden = false;
-  }).catch(function () { a.hidden = true; });
+  }).catch(function () {});
 })();

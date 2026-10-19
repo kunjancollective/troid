@@ -210,10 +210,26 @@ def description_key(T, page):
     return next(k for k in (f"{page}.meta.description", f"{page}.og.description", "og.description") if k in T.en)
 
 
+def bing_value():
+    """Bing Webmaster's site verification value (site.json bing_site_verification): the public code Bing shows the
+    site's owner, the same for its meta tag and for BingSiteAuth.xml. Empty until the owner records it; anything but
+    letters and digits is refused, so no other token can ride in on it."""
+    v = str(SITE.get("bing_site_verification") or "").strip()
+    if v and not re.fullmatch(r"[0-9A-Za-z]{16,64}", v):
+        raise SystemExit(f"site.json bing_site_verification {v!r} isn't a Bing verification code (16 to 64 letters and digits)")
+    return v
+
+
+BING = bing_value()
+BING_FILE = "BingSiteAuth.xml"
+
+
 def head_extra(T, page, live):
     """The page's meta description (description_key), its canonical URL on troid.ai (and og:url), its type and site
     name, the X card (summary with the large
-    image, troid's X account: every page, the tearsheet included; launch handoff 2026-09-26, 5.1 item 3), then hreflang
+    image, troid's X account: every page, the tearsheet included; launch handoff 2026-09-26, 5.1 item 3; its image the
+    page's og:image, named for the card too), Bing's verification tag on the home page once site.json records its value
+    (bing_value), then hreflang
     alternates, the language's og tags and font. The alternates, og locale, font and i18n.css appear on English only
     once a second language is live."""
     lang = T.lang
@@ -224,7 +240,10 @@ def head_extra(T, page, live):
         parts = [f'<meta name="description" content="{T.attr(description_key(T, page))}">',
                  f'<link rel="canonical" href="{url}">', f'<meta property="og:url" content="{url}">']
     parts += ['<meta property="og:type" content="website">', '<meta property="og:site_name" content="troid">',
-              '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">']
+              '<meta name="twitter:card" content="summary_large_image">', f'<meta name="twitter:site" content="{X_HANDLE}">',
+              f'<meta name="twitter:image" content="{og(T, page)["image"]}">']
+    if page == "index" and T.code == "en" and BING:
+        parts.append(f'<meta name="msvalidate.01" content="{BING}">')   # Bing Webmaster's check reads the home page
     if len(live) > 1 and page != NOT_FOUND:
         for c in live:
             parts.append(f'<link rel="alternate" hreflang="{c}" href="{BASE_URL}{page_url(c, page)}">')
@@ -612,7 +631,7 @@ def common(T, page, live, preview=False):
             "country_box": country_box(T), "avail_attr": avail_attr(T),
             "src": lambda sid: sources.tier(T, sid), "S": sources.SOURCES, "GEO": geo.GEO, "geo_names": {k: f["name"] for k, f in json.loads((ROOT / "firms.json").read_text()).items()
                                                      if not k.startswith("_") and isinstance(f, dict) and "name" in f}, "pro_waitlist": published("pro"),
-            "calc_audit": bool(SITE.get("calc_audit"))}
+            "calc_audit": bool(SITE.get("calc_audit")), "page_list": lambda: page_list(T)}
 
 
 def country_box(T):
@@ -734,27 +753,50 @@ def body_text(s):
 LASTMOD = re.compile(r"<loc>([^<]+)</loc>\s*<lastmod>(\d{4}-\d{2}-\d{2})</lastmod><!-- text ([0-9a-f]{16}) -->")
 
 
+# each page's name where troid lists its pages (llms.txt, the 404 page); a firm's page reads firm.name ("{firm}'s rules")
+PAGE_NAMES = {"index": "product.desk", "compare": "product.compare", "ledger": "product.ledger", "dashboard": "product.research",
+              "tearsheet": "common.link.tearsheet", "chat": "product.ask", "faq": "common.link.faq", "sources": "common.link.sources",
+              "terms": "common.link.terms", "pro": "pro.hero.eyebrow"}
+
+
+def published_pages():
+    """Every page troid publishes, in the sitemap's order: PAGES, then a page a function serves while it is published."""
+    return PAGES + [p for p in PRIVATE if published(p)]
+
+
+def page_name(T, page):
+    P = page_T(T, page)
+    return P(PAGE_NAMES[page]) if page in PAGE_NAMES else P(f"{page}.name")
+
+
+def page_list(T):
+    """The 404 page's list (published_pages()): each page's address, its name and the line it previews with when shared
+    ({page}.og.description, else its meta description), so an address with no page leads to every page there is."""
+    out = []
+    for page in published_pages():
+        P = page_T(T, page)
+        k = next(k for k in (f"{page}.og.description", f"{page}.meta.description") if k in P.en)
+        out.append((T.H if page == "index" else T.L + "/" + page, page_name(T, page), P(k)))
+    return out
+
+
 def llms_txt():
     """/llms.txt (llmstxt.org): what troid is and where each page and file is, for a language model reading the site.
     English. Each page's line is its own description (en.json: its structured-data description where it has one, the
     ledger's "Simulated: …", else the one it previews with when shared, else its meta description), the rest
     site_text.LLMS and the footer's words, so the file changes when the pages do."""
     T, L = i18n.Strings("en"), site_text.LLMS
-    names = {"index": "product.desk", "compare": "product.compare", "ledger": "product.ledger", "dashboard": "product.research",
-             "tearsheet": "common.link.tearsheet", "chat": "product.ask", "faq": "common.link.faq", "sources": "common.link.sources",
-             "terms": "common.link.terms", "pro": "pro.hero.eyebrow"}
 
     def line(page):
         P = page_T(T, page)
         k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
                  if k in P.en)
-        name = P(names[page]) if page in names else P(f"{page}.name")
-        return f"- [{name}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
+        return f"- [{page_name(T, page)}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
     repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
     ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
     out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
            f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
-           f"## {L['pages']}", "", *[line(p) for p in PAGES + [p for p in PRIVATE if published(p)]], "",
+           f"## {L['pages']}", "", *[line(p) for p in published_pages()], "",
            f"## {L['assist']}", "",
            f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
            f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
@@ -764,7 +806,8 @@ def llms_txt():
 
 
 def write_seo(out=None, today=None):
-    """robots.txt (allow all, with the sitemap line), llms.txt, and sitemap.xml: every published page in every live
+    """robots.txt (allow all, with the sitemap line), llms.txt, BingSiteAuth.xml while site.json records Bing's value
+    (bing_value), and sitemap.xml: every published page in every live
     language, with its hreflang alternates once a second language is live, and its lastmod: the day its text last
     changed (body_text), kept from the sitemap as last written while the text's hash is the same, else today (UTC).
     Written with each build."""
@@ -791,8 +834,15 @@ def write_seo(out=None, today=None):
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
                + xhtml + '>\n' + "\n".join(urls) + "\n</urlset>\n")
     robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
+    files = [("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())]
     written = []
-    for name, text in (("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())):
+    # Bing Webmaster's file check (/BingSiteAuth.xml), from the same public value as the home page's msvalidate.01 tag;
+    # no file while site.json records none
+    if BING:
+        files.append((BING_FILE, f'<?xml version="1.0"?>\n<users>\n\t<user>{BING}</user>\n</users>\n'))
+    elif (base / BING_FILE).exists():
+        (base / BING_FILE).unlink(); written.append(BING_FILE)
+    for name, text in files:
         f = base / name
         if not f.exists() or f.read_text() != text:
             f.write_text(text); written.append(name)

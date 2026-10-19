@@ -454,7 +454,7 @@
    "src": [
     "product_1step"
    ],
-   "evidence": "COMPARE cell. compare_product.price '€497 (€347.90 promo)' comes from products.1step.fee_eur_100k = 497 and fee_eur_100k_promo = 347.9, read from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. currency: 'EUR pricing'. The €347.90 promo is as read on 2026-09-21. A promotion is time-limited, so this part of the cell goes stale sooner than the other product-page numbers."
+   "evidence": "COMPARE cell. compare_product.price '€497' comes from products.1step.fee_eur_100k = 497, read from 'https://brightfunded.com/1-step (product numbers, 2026-09-21)'. currency: 'EUR pricing'. Until 2026-10-12 the cell also showed '(€347.90 promo)', fee_eur_100k_promo = 347.9 as read on 2026-09-21; a promotion is time-limited and had not been re-read, so the cell shows the list price alone and the discount is recorded under brightfunded.offers_seen."
   },
   {
    "field": "daily_basis",
