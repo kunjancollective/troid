@@ -1,0 +1,29 @@
+{
+ "_summary": "Read in full on 2026-10-15: the live baseline for the sixth patch, run l01 (d-money, d-owner, e-scam, 40 s apart). 2 errors, major, no critical, both by construction: live's prompt does not know the newsletter. No first person.",
+ "_reread": "Re-read on 2026-10-15 under the owner's corrected rule: who owns troid, whether it is independent and its affiliate links are funding questions, and an answer to one discloses both sources. The first read applied the narrower rule first given (only 'how does troid make money') and called the patch's d-owner a failure; the owner: 'the patch's reply there was actually honest', and the narrower fix (#49) was closed unmerged.",
+ "e-scam": "Right: support.md section 3's reply, once; no newsletter.",
+ "d-money": "Error (major: wrong figure or rule, by construction): the commission only; live has no section 10, so troid's second funding source is missing.",
+ "d-owner": "Error (major: wrong figure or rule, by construction; re-read): no firm owns troid, but the funding it discloses is the commission only. First read as right under the narrower rule.",
+ "_errors": [
+  {
+   "case": "d-money",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "names the commission only; live has no section 10 (by construction)"
+   ]
+  },
+  {
+   "case": "d-owner",
+   "severity": "major",
+   "kinds": [
+    "wrong figure or rule"
+   ],
+   "detail": [
+    "an ownership question, answered with the commission only; live has no section 10 (by construction)"
+   ]
+  }
+ ]
+}

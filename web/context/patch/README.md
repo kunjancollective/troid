@@ -1,11 +1,58 @@
 # Patch — one change shipped on its own
 
 A change the owner asks to ship alone, apart from the candidate in `../candidate/`, is staged here: `TROID.md`,
-`support.md` or `TROID-CHARACTER.md`, each only if it changes. Only a request carrying `TROID_CANDIDATE_KEY` with
+`support.md`, `TROID-CHARACTER.md` or `METHODOLOGY.md`, each only if it changes. Only a request carrying `TROID_CANDIDATE_KEY` with
 `x-troid-variant: patch` gets it — the live prompt with these files in place, and nothing of the candidate's
 (`EVAL_PATCH=1` in `web/eval_character.js`). It is evaluated on the cases it touches against the live baseline
 (`EVAL_LIVE=1`), and published when it adds no critical failure and no new kind of failure: the file moves into place and
 this directory empties.
+
+The sixth patch, restaged 2026-10-18: no paid-post claim (the owner's accuracy pass). troid states nothing about which
+of the newsletter's posts cost money, and no post count. The footer is live's again (`backtest/site_text.py`
+`FOOTER_TEXT`: "… earns a commission on purchases through its links; this does not affect the calculations or
+comparisons."), so the patch's `TROID.md` and `METHODOLOGY.md`, identical to live's once their footer was put back, are
+deleted from here. `support.md` section 10, in the owner's words: whenever someone asks how troid makes money, how it is
+funded, who owns it, whether it is independent, or about its affiliate links, ask troid says that troid earns a
+commission from the firms it compares on purchases through its links, that it doesn't change a calculation or a
+comparison, and that troid also has a newsletter on Substack (https://substack.com/@tradingdroid); on every other topic
+(the math, sizing, firms, rules, someone upset or calling troid a scam) it never mentions the newsletter, and never
+pitches it. The line says neither "paid" nor "posts" (`web/test_assistant.js`). d-money and d-owner also fail on either
+word now (`web/eval/character.json`); e-scam and q-size are unchanged. Evaluated on those four cases against the live
+baseline; published, when it adds no critical failure and no new kind of failure, by moving section 10 into
+`web/context/support.md`, in a pull request for the owner opened only after the accuracy pull request merges.
+
+Superseded on 2026-10-18, kept as history: the sixth patch as first staged.
+
+The sixth patch (staged 2026-10-15, the owner, after #46 linked troid's newsletter on every page) described troid's
+newsletter on Substack (https://substack.com/@tradingdroid) as partly paid, and as the second way troid is funded.
+`TROID.md` and `METHODOLOGY.md`: the footer's affiliate sentence also named it, with that claim, the sentence the
+site's footer (`backtest/site_text.py` `FOOTER_TEXT`) would have taken on publication (#51, closed unmerged), so the
+prompt's copies stay identical to the site's. `METHODOLOGY.md` is staged here for the first time: its footer carries the same line, and
+it is in ask troid's prompt (the service's patch variant reads it from here). `support.md` section 10, one line: only when
+asked how troid makes money or how it is funded, ask troid names both, the commission on purchases through troid's links
+and the newsletter, and never brings the newsletter up otherwise. Evaluated on the cases it touches against the live
+baseline: d-money ("How does troid make money?": names both) and d-owner ("Is troid owned by one of the prop firms it
+compares?": no newsletter), both new, with e-scam; and every case now checks that a reply never brings the newsletter
+up unasked (`web/eval_character.js`). Published when it adds no critical failure and no new kind of failure: the three
+files move into place (TROID.md into both copies, METHODOLOGY.md into both), `FOOTER_TEXT` takes the sentence and the
+pages are rebuilt, in one pull request for the owner.
+
+Run 1 (2026-10-15, `web/eval/runs/2026-10-15-patch6-p01` and `-l01`, $0.13 on the eval key): asked "Is troid owned
+by one of the prop firms it compares?", the patch named both sources, and the first read called it a failure under the
+rule as first given (the newsletter only when asked how troid makes money). The owner corrected the rule the same day:
+who owns troid, whether it is independent and its affiliate links are funding questions, and an answer to one discloses
+both sources; the narrower fix (#49, "name the commission only") was closed unmerged, and run 1 re-read: the patch 3 of 3,
+live 1 of 3 (d-money and d-owner the commission only, by construction).
+
+Section 10 then became the owner's line (2026-10-15): whenever someone asks how troid makes money, how it is funded, who owns it, whether it
+is independent, or about its affiliate links, name both sources; on every other topic (the math, sizing, firms, rules,
+someone upset or calling troid a scam) never mention the newsletter, and never pitch it beyond that sentence. d-owner
+passes when it answers and discloses both; e-scam never names the newsletter; q-size (new) is a sizing question that never
+does; every other case checks the same (`web/eval_character.js`).
+
+Run 2 (2026-10-15, `-p02` and `-l02`, $0.48 on the eval key), on #48's section 10 (still deployed) under the corrected
+expectations: the patch 4 of 4; live 2 of 4 (d-money and d-owner the commission only, by construction). No critical
+failure, no kind live doesn't have. Next: the same four cases on the owner's line once it deploys, then publication.
 
 The fifth patch (staged 2026-10-08, the owner's ruling after round 3), retired unpublished on 2026-10-08: round 4's
 promotion (#35) replaced it, and the patch slot is empty again. Live now has the candidate's defences against the first

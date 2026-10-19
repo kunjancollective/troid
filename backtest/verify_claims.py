@@ -240,6 +240,8 @@ import html as _html, json as _json, pathlib as _pl, sys as _sys
 _ROOT = _pl.Path(__file__).resolve().parent.parent
 _sys.path.insert(0, str(_ROOT / "backtest"))
 import site_text as _T
+import re as _re0
+_re_nl = _re0.compile(r"newsletter|substack", _re0.I)
 def _read(rel): return (_ROOT / rel).read_text()
 for rel in ("README.md", "backtest/STRATEGY.md", "backtest/WALKFORWARD.md", "backtest/SHADOW2.md", "backtest/WALKFORWARD2.md",
             "backtest/CROSSSECTION.md"):
@@ -256,6 +258,20 @@ for rel in ("web/public/terms.html", "web/public/ledger.html", "web/public/tears
     check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _html.unescape(_read(rel))), 1.0)
 for page in sorted((_ROOT / "web" / "public").glob("*.html")):
     check("DERIVED", f"footer line on {page.name}", float(_T.FOOTER_TEXT in _html.unescape(page.read_text())), 1.0)
+    check("DERIVED", f"footer links troid's newsletter on {page.name}", float(f'href="{_T.NEWSLETTER_URL}"' in page.read_text()), 1.0)
+# troid's newsletter (the owner, 2026-10-14): Stripe asks that troid.ai link the Substack. The address is the owner's
+# to give; the placeholder fails here, so the link can't merge unset. The FAQ's Newsletter section says it in the owner's
+# words, saying nothing about its pricing (2026-10-18); the desk and ask troid's live prompt don't name it (ask troid
+# answers about it only when asked).
+check("DERIVED", "troid's newsletter address is set (site_text.NEWSLETTER_URL, not the placeholder)",
+      float(_T.NEWSLETTER_URL.startswith("https://") and _T.NEWSLETTER_URL != _T.NEWSLETTER_PLACEHOLDER), 1.0)
+check("DERIVED", "the FAQ's Newsletter section: \"troid also has a newsletter on Substack.\", linked, nothing about its pricing",
+      float(f'<h2 class="sec" id="newsletter">Newsletter</h2>' in _read("web/public/faq.html")
+            and f'troid also has <a href="{_T.NEWSLETTER_URL}">a newsletter on Substack</a>.'
+            in _html.unescape(_read("web/public/faq.html"))), 1.0)
+for rel in ("web/templates/partials/_desk2.html", "web/public/desk2.js", "web/public/TROID.md", "TROID.md",
+            "web/context/support.md", "web/context/TROID-CHARACTER.md", "web/api/troid.js"):
+    check("DERIVED", f"no newsletter in {rel}", float(not _re_nl.search(_read(rel))), 1.0)
 for rel in ("METHODOLOGY.md", "web/public/METHODOLOGY.md", "TROID.md", "web/public/TROID.md"):
     check("DERIVED", f"footer line in {rel}", float(_T.FOOTER_TEXT in _read(rel)), 1.0)
 _terms = _html.unescape(_read("web/public/terms.html"))
@@ -358,7 +374,13 @@ check("DERIVED", "no page says 'source not yet recorded' of a figure", float(not
     "or says its source is not yet recorded", "") for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
 check("DERIVED", "landing: the 68% tile says MODELLED with its assumptions and the script", float(all(x in _index for x in ("MODELLED. 20,000 simulated years", "+0.35R a trade", "30 trades a month for 12 months", "1% of balance risked a trade with no cap on remaining budget", "income_math.py"))), 1.0)
 check("DERIVED", "FAQ: the ruin figures say MODELLED and name the script", float("MODELLED: 20,000 simulated years" in _faqs and "income_math.py" in _faqs), 1.0)
-check("DERIVED", "no page still publishes the pre-correction 98%", float(not any("98%" in _html.unescape(pg.read_text()) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
+# the corrected figure as a whole number ("98%", "98.3%"), never the end of another one: the tearsheet's quantstats rows
+# move with every trade, and on 2026-10-14 "Kelly Criterion 1.98%" failed the shadow loop three runs running
+_PRE98 = _re.compile(r"(?<![\d.,])98(\.\d+)?\s?%")
+check("DERIVED", "the pre-correction 98% check matches the figure, never a figure ending in 98 (1.98%)",
+      float(all(bool(_PRE98.search(t)) == want for t, want in (("98% of the time", True), ("98.3%", True), ("blows 98 % of", True),
+                                                                ("Kelly Criterion 1.98%", False), ("-0.98%", False), ("12,98%", False)))), 1.0)
+check("DERIVED", "no page still publishes the pre-correction 98%", float(not any(_PRE98.search(_html.unescape(pg.read_text())) for pg in (_ROOT / "web" / "public").glob("*.html"))), 1.0)
 import gen_compare as _GC
 _cmp = " ".join(_html.unescape(_read("web/public/compare.html")).split())
 _ref = _GC.reference()

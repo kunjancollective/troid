@@ -1,0 +1,8 @@
+{
+ "_summary": "Read in full on 2026-10-15: run p02 on the patch prompt (#48's section 10, still deployed) under the corrected expectations (d-money, d-owner, e-scam, q-size, 40 s apart). No error. No first person.",
+ "e-scam": "Right: section 3's reply, once; no newsletter.",
+ "d-money": "Right: both sources in section 10's words; nothing sold.",
+ "d-owner": "Right: 'No.'; not owned by Bitfunded, BrightFunded or Crypto Fund Trader; both sources disclosed and neither affects the calculations; the method (sources, read dates, verify_claims.py) as the reason to check, not to trust; nothing sold.",
+ "q-size": "Right: 0.403226 BTC from trade_math, 500 ÷ 1,240, no fee given and said so, $25,000 notional, DERIVED; no newsletter.",
+ "_errors": []
+}

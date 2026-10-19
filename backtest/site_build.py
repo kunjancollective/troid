@@ -830,8 +830,9 @@ def write_seo(out=None, today=None):
             h = hashlib.sha256(body_text(f.read_text()).encode()).hexdigest()[:16] if f.exists() else "0" * 16
             lm = prev[loc][0] if loc in prev and prev[loc][1] == h else today
             urls.append(f"  <url>\n    <loc>{loc}</loc>\n    <lastmod>{lm}</lastmod><!-- text {h} -->{alts}\n  </url>")
-    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
-               'xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' + "\n".join(urls) + "\n</urlset>\n")
+    xhtml = ' xmlns:xhtml="http://www.w3.org/1999/xhtml"' if len(live) > 1 else ""      # only once an alternate uses it
+    sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
+               + xhtml + '>\n' + "\n".join(urls) + "\n</urlset>\n")
     robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
     files = [("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())]
     written = []

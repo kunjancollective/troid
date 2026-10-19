@@ -247,6 +247,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <h3>{{ t("faq.money.q") }}</h3>
 <p>{{ t("faq.money.p1") }}</p>
 <p>{{ t("faq.money.p2") }}</p>
+<p>{{ t("faq.money.newsletter") }}</p>
 <p>{{ t("faq.money.p3") }}</p>
 </div>
 
@@ -290,6 +291,12 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 <p>{{ t("faq.worth.p2") }}</p>
 </div>
 
+<h2 class="sec" id="newsletter">{{ t("faq.sec.newsletter") }}</h2>
+
+<div class="q">
+<p>{{ t("faq.newsletter.p", url=site_text.NEWSLETTER_URL) }}</p>
+</div>
+
 <h2 class="sec">{{ t("faq.sec.disclaimer") }}</h2>
 <div class="disc">
 <h3>{{ t("faq.disc.advice.h") }}</h3>
@@ -297,6 +304,7 @@ tr:last-child td{border-bottom:none}.num{text-align:end}
 
 <h3>{{ t("faq.disc.affiliate.h") }}</h3>
 <p>{{ t("faq.disc.affiliate.p") }}</p>
+{{ affiliate_notices }}
 <h3>{{ t("faq.disc.simulated.h") }}</h3>
 <p>{{ t("faq.disc.simulated.p", question=t("faq.challenge.q")) }}</p>
 

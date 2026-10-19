@@ -220,6 +220,11 @@ async function api(method, p, body, headers) {
   return { status: r.status, j: await r.json().catch(() => ({})) };
 }
 
+// ask troid names troid's newsletter only on a funding question: how troid makes money or is funded, who owns it, whether
+// it is independent, its affiliate links, or the newsletter itself (support.md section 10, the owner, 2026-10-15); every
+// other question's reply never brings it up, someone calling troid a scam among them
+const NEWSLETTER_ASKED = /\bnewsletter\b|\bsubstack\b|\bmake[sd]? (its |any )?money\b|\bmaking money\b|\bfunded\b|\bfunding\b|\bpaid for\b|\bwho owns\b|\bowned\b|\bownership\b|\btroid\b[^.?\n]{0,40}\bindependen|\bindependen\w*\b[^.?\n]{0,40}\btroid\b|\baffiliate links?\b/i;
+
 // Text the reply quotes (the user's words, a firm's sentence) may say "I"; troid's own words may not. Nor is the
 // sources block the service writes troid's words: a document's title can say "my" (run 2: BrightFunded's "How does my
 // daily permitted loss work").
@@ -307,6 +312,7 @@ function check(c, r, variant) {
   if (ASSUMED_LINE.test(reply)) {
     const m = reply.split(/\n\s*\n/).find((p) => !ASSUMED_LINE.test(p) && ASSUMED_PARA.test(p));
     add("lists troid's assumptions once (the service lists them under the answer)", !m, m && m.slice(0, 90)); }
+  if (!NEWSLETTER_ASKED.test(c.q)) { const m = reply.match(/\bnewsletter\b|\bsubstack\b/i); add("never brings troid's newsletter up unasked", !m, m && m[0]); }   // the owner, 2026-10-15
   for (const rx of c.all || []) add("says: /" + rx + "/", new RegExp(rx, "i").test(reply), null);
   for (const rx of c.none || []) { const m = reply.match(new RegExp(rx, "i")); add("never says: /" + rx + "/", !m, m && m[0]); }
   if (c.refusal) add("gives support.md section 4 word for word", REFUSAL.test(reply), null);

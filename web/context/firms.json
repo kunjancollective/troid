@@ -535,53 +535,126 @@
           "read_on": "2026-10-10",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page c976a08f30453775): 'In Bitfunded, it is possible to use leverage ranging from 1 to 5 times across all listed trading pairs.' and 'you can see leverage sizes from 1x to 5x'. No mention of a 20X account."
+        },
+        "home_1018": {
+          "doc": "Bitfunded home page: Challenge Plans",
+          "url": "https://www.bitfunded.com/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page ae2ba37b54017b9a): the plan selector's tabs are '2 Steps', '1 Step', 'Instant' and 'Day Trader' (no Express); the 1 Step tab lists 'Expert (Popular) $100,000' at '$999'; the Instant tab 'Base $5,000' at '$249'; a banner image 'LAPTOP-website-bg-bogo-3x1-Bogo-surprise-challenge' links to https://trader.bitfunded.com/client/challenge/; no 20X banner or text."
+        },
+        "bogo_1018": {
+          "doc": "Bitfunded home page: '3x1 BOGO + Surprise Challenge' banner (an image)",
+          "url": "https://www.bitfunded.com/wp-content/uploads/2026/10/LAPTOP-website-bg-bogo-3x1-Bogo-surprise-challenge-12-10-1-1024x748.png",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page ecb7d1ba796e35c6): the image reads '3x1', 'BOGO + SURPRISE CHALLENGE', 'BUY ONE CHALLENGE, GET TWO MORE FREE'; it states no price, account size, rule or end date, and its link is the dashboard behind a login, which troid has not read."
+        },
+        "tou_1018": {
+          "doc": "Bitfunded Terms of Use",
+          "url": "https://www.bitfunded.com/terms-of-use/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page d2ab519685bdf386): 9(a) 1 Step Challenges: '6) Expert Level: Account Balance: $100,000 Challenge Fee: $999'; Features 'Up To 1:5 Leverage', '80% Profit Split'; Objectives Step 1 'Max Daily Drawdown: 4% Max Drawdown: 6% Profit Target: 10% Minimum Trading Days: 5'; 9(a) 'full (100%) refund if the Trader successfully completes the challenge level and reaches their first profit split day'; 4(b) applicable laws, no country list. The page shows no revision date."
+        },
+        "faq_1018": {
+          "doc": "Bitfunded FAQ",
+          "url": "https://www.bitfunded.com/frequently-asked-questions/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page eeec6861a107f6b2): 'How is the Daily Loss Limit calculated? It's a fixed percentage of your starting balance and it resets every day.' 'When does the trading day reset? 00:00 UTC+8.' '1-Step: profit target 10% \u00b7 max daily loss 4% \u00b7 max loss 6% \u00b7 80% profit split' '1-Step Express: profit target 9% \u00b7 max daily loss 3% \u00b7 max loss 3% \u00b7 80% profit split' 'What leverage do I get? 1x to 5x.' '\u2026There's no waiting period and no minimum number of trading days\u2026' 'On a 2-Step Challenge, your entry fee comes back with your third successful payout in the Trader Stage\u2026 The 1-Step, Express and Instant Funding accounts\u2026 their entry fee isn't refundable.'"
+        },
+        "criteria_1018": {
+          "doc": "Bitfunded help centre: Criteria to be Success",
+          "url": "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page 2baa8b6a49510d16): 'Total Realized Loss of the Day + Total Floating Loss of Open Positions'; 'The Maximum Daily Loss resets each day at 00:00 (UTC+8)', 'the reset may become effective between 00:00 and 00:10 (UTC+8)'; the maximum loss measured from the account quota; 'fees are calculated as 0.04% of the total position size at both entry and exit'."
+        },
+        "rtp_1018": {
+          "doc": "Bitfunded help centre: Restricted Trading Practices",
+          "url": "https://bitfunded.gitbook.io/support/introduction/restricted-trading-practices.md",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page 31f940cb9324e1d1): s.1 holding 'Every 10 days' majors, 'Every 7 days' minor crypto, 'Every 5 days' traditional pairs; s.2 Risk Adjustment Framework (2-Step & 1-Step 65%\u201374% 50% \u2026 96%\u2013100% 70%; Instant 55%\u201364% 50% \u2026 96%\u2013100% 70%); s.3 'a maximum of 5 open positions simultaneously'."
+        },
+        "trader_stage_1018": {
+          "doc": "Bitfunded help centre: Challenge & Trader Stage",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage.md",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page 0daab90607eb3df1): One step Evaluation, Stage 1 and Trader Stage: Profit Share Ratio - / 80%, Leverage Ratio 1:5, Min. Trading Days -, Max. Daily Loss 4%, Max. Loss 6%, Profit Target 10%; One Step Express Evaluation (3%, 3%, 9%); Instant Funding (60%, 1:5, 3%, 6%); a refund on Two Steps Evaluations only, with the third withdrawal."
+        },
+        "challenge_type_1018": {
+          "doc": "Bitfunded help centre: Challenge Type",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-type.md",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page 87ac64e2d175c9d2): One Step Evaluation 'Expert 100,000 USDT $999'; One Step Express 'Base 5,000 USDT $39' \u2026 'Expert 100,000 USDT $399'; Instant Funding Challenge 'Base 5,000 USDT $299', 'Kickstart 2,500 USDT 149$'."
+        },
+        "adjusting_leverage_1018": {
+          "doc": "Bitfunded help centre: Adjusting Leverage",
+          "url": "https://bitfunded.gitbook.io/support/trading-module/adjusting-leverage.md",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page c976a08f30453775): 'it is possible to use leverage ranging from 1 to 5 times across all listed trading pairs'."
         }
       },
       "fields": {
         "daily_pct": {
           "src": [
             "trader_stage",
-            "tou_0923"
+            "tou_0923",
+            "trader_stage_1018",
+            "tou_1018"
           ],
           "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "max_pct": {
           "src": [
             "trader_stage",
-            "tou_0923"
+            "tou_0923",
+            "trader_stage_1018",
+            "tou_1018"
           ],
           "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "target_pct": {
           "src": [
             "trader_stage",
-            "tou_0923"
+            "tou_0923",
+            "trader_stage_1018",
+            "tou_1018"
           ],
           "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
         },
         "min_days": {
           "src": [
             "tou_0923",
-            "faq"
+            "faq",
+            "tou_1018"
           ],
           "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
         },
         "daily_basis": {
           "src": [
-            "faq"
+            "faq",
+            "faq_1018"
           ],
           "section": "Bitfunded FAQ"
         },
         "drawdown_type": {
           "src": [
-            "criteria"
+            "criteria",
+            "criteria_1018"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success (the mechanics: a static floor measured from the account quota)"
         },
         "reset_utc": {
           "src": [
             "criteria_0923",
-            "criteria_1004"
+            "criteria_1004",
+            "criteria_1018"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success: 00:00 UTC+8, effective between 00:00 and 00:10 UTC+8 (platform settlement); UTC is troid's conversion"
         },
@@ -589,57 +662,68 @@
           "src": [
             "criteria",
             "criteria_0923",
-            "criteria_1004"
+            "criteria_1004",
+            "criteria_1018"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success"
         },
         "max_leverage": {
           "src": [
             "trader_stage",
-            "tou_0923"
+            "tou_0923",
+            "trader_stage_1018",
+            "tou_1018"
           ],
           "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage)"
         },
         "hold_cap": {
           "src": [
-            "rtp"
+            "rtp",
+            "rtp_1018"
           ],
           "section": "Bitfunded help centre \u2014 Restricted Trading Practices s.1"
         },
         "max_open": {
           "src": [
-            "rtp"
+            "rtp",
+            "rtp_1018"
           ],
           "section": "Bitfunded help centre \u2014 Restricted Trading Practices s.3"
         },
         "drawdown": {
           "src": [
-            "criteria"
+            "criteria",
+            "criteria_1018"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success (the mechanics: a static floor measured from the account quota)"
         },
         "refund": {
           "src": [
             "tou_0923",
-            "trader_stage"
+            "trader_stage",
+            "tou_1018",
+            "trader_stage_1018"
           ],
           "section": "Bitfunded Terms of Use 9(a) and 9(b); help centre \u2014 Challenge & Trader Stage"
         },
         "availability": {
           "src": [
-            "tou_0923"
+            "tou_0923",
+            "tou_1018"
           ],
           "section": "Bitfunded Terms of Use 4(b) (no excluded-country list)"
         },
         "trader_stage_rule": {
           "src": [
-            "trader_stage"
+            "trader_stage",
+            "trader_stage_1018"
           ],
           "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
         },
         "floating_counts": {
           "src": [
-            "criteria_0924"
+            "criteria_0924",
+            "criteria_1018"
           ],
           "section": "Bitfunded help centre \u2014 Criteria to be Success, 1. Maximum Daily Loss and 2. Maximum Loss (floating losses are in both calculations; an open position that reaches either limit fails the account)"
         },
@@ -647,33 +731,42 @@
           "src": [
             "faq_0926",
             "trader_stage_0926",
-            "tou_0926"
+            "tou_0926",
+            "faq_1018",
+            "trader_stage_1018",
+            "tou_1018"
           ],
           "section": "Bitfunded FAQ (What's the profit split?); help centre \u2014 Challenge & Trader Stage, One Step Evaluation table; Terms of Use 18(a) (an initial 80:20; a Scaling Plan can raise it, no figure stated)"
         },
         "us_available": {
           "src": [
-            "tou_0926"
+            "tou_0926",
+            "tou_1018"
           ],
           "section": "Bitfunded Terms of Use \u2014 no excluded countries listed; 4(b), the trader declares their use complies with the laws of their jurisdiction"
         },
         "news_rule": {
           "src": [
             "tou_0926",
-            "rtp_0926"
+            "rtp_0926",
+            "tou_1018",
+            "rtp_1018"
           ],
           "section": "Bitfunded Terms of Use 14(d), prohibited strategies (i\u2013xiii), and help centre \u2014 Restricted Trading Practices: no news-trading rule stated"
         },
         "profit_cap": {
           "src": [
             "tou_0926",
-            "faq_0926"
+            "faq_0926",
+            "tou_1018",
+            "faq_1018"
           ],
           "section": "Bitfunded Terms of Use 18 (at most three payout requests every 30 days; no cap on profit stated) and FAQ"
         },
         "concentration_ladder": {
           "src": [
-            "rtp_1004"
+            "rtp_1004",
+            "rtp_1018"
           ],
           "section": "Bitfunded help centre \u2014 Restricted Trading Practices, Excessive Risk Concentration ('All In' Trading)"
         }
@@ -683,14 +776,18 @@
           "daily_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           },
           "max_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           },
@@ -698,35 +795,44 @@
             "src": [
               "criteria",
               "criteria_0923",
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success"
           },
           "max_leverage": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage)"
           },
           "price": {
             "src": [
               "tou_0923",
-              "challenge_type"
+              "challenge_type",
+              "tou_1018",
+              "challenge_type_1018",
+              "home_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a), 1 Step Challenges, Expert Level ($100,000 account, fee $999); help centre \u2014 Challenge Type, One Step Evaluation table"
           },
           "target_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives"
           },
           "min_days": {
             "src": [
               "tou_0923",
-              "faq"
+              "faq",
+              "tou_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           }
@@ -736,7 +842,8 @@
             "src": [
               "trader_stage",
               "blog",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
@@ -744,7 +851,8 @@
             "src": [
               "trader_stage",
               "blog",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant); Blog \u2014 How to choose the right prop trading challenge"
           },
@@ -757,19 +865,22 @@
           "max_leverage": {
             "src": [
               "trader_stage",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Instant)"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           },
           "price": {
             "src": [
-              "home_1010"
+              "home_1010",
+              "home_1018"
             ],
             "section": "Bitfunded home page \u2014 Challenge Plans, Instant tab, Base; the help centre's Challenge Type table lists $299 for the same account (troid's conflicts)"
           }
@@ -778,47 +889,58 @@
           "daily_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
           },
           "max_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
           },
           "price": {
             "src": [
-              "tou_0923"
+              "tou_0923",
+              "tou_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a), 2 Step Challenges, Expert Level (fee $799)"
           },
           "target_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 1); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 1)"
           },
           "max_leverage": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
           },
           "min_days": {
             "src": [
               "tou_0923",
-              "faq"
+              "faq",
+              "tou_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
@@ -827,41 +949,51 @@
           "daily_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
           },
           "max_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
           },
           "target_pct": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Stage 2); Terms of Use 9(a), 2 Steps Challenges, Objectives (Step 2)"
           },
           "max_leverage": {
             "src": [
               "trader_stage",
-              "tou_0923"
+              "tou_0923",
+              "trader_stage_1018",
+              "tou_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage, Two Steps Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 2 Steps Challenges (Up To 1:5 Leverage)"
           },
           "min_days": {
             "src": [
               "tou_0923",
-              "faq"
+              "faq",
+              "tou_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
@@ -870,46 +1002,53 @@
           "daily_pct": {
             "src": [
               "blog",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
           "max_pct": {
             "src": [
               "blog",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
           "target_pct": {
             "src": [
               "trader_stage",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage"
           },
           "min_days": {
             "src": [
               "tou_0923",
-              "faq"
+              "faq",
+              "tou_1018"
             ],
             "section": "Bitfunded Terms of Use 9(a) (Minimum Trading Days: 5); FAQ"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           },
           "max_leverage": {
             "src": [
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Express)"
           },
           "price": {
             "src": [
-              "challenge_type_1010"
+              "challenge_type_1010",
+              "challenge_type_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge Type, One Step Express table, Base"
           }
@@ -917,31 +1056,36 @@
         "trader_1step": {
           "daily_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
           },
           "max_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
           },
           "max_leverage": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
           },
           "split": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 1-Step)"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
@@ -950,33 +1094,38 @@
           "daily_pct": {
             "src": [
               "trader_stage",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "max_pct": {
             "src": [
               "trader_stage",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "max_leverage": {
             "src": [
               "trader_stage",
-              "trader_stage_1004"
+              "trader_stage_1004",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "split": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the Express)"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
@@ -984,31 +1133,36 @@
         "trader_2step": {
           "daily_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
           },
           "max_pct": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
           },
           "max_leverage": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
           },
           "split": {
             "src": [
-              "trader_stage"
+              "trader_stage",
+              "trader_stage_1018"
             ],
             "section": "Bitfunded help centre \u2014 Challenge & Trader Stage (Trader Stage after the 2-Step)"
           },
           "fee_per_side_pct": {
             "src": [
-              "criteria_1004"
+              "criteria_1004",
+              "criteria_1018"
             ],
             "section": "Bitfunded help centre \u2014 Criteria to be Success: '0.04% of the total position size at both entry and exit' (no product restriction)"
           }
@@ -1088,6 +1242,11 @@
             "src": "blog",
             "doc": "blog of 28 August 2026",
             "says": "none for the 2-Step"
+          },
+          {
+            "src": "faq_1018",
+            "doc": "FAQ",
+            "says": "none ('no minimum number of trading days')"
           }
         ],
         "troid": "5: the contract governs"
@@ -1132,6 +1291,11 @@
             "src": "trader_stage",
             "doc": "help centre, Challenge & Trader Stage",
             "says": "a refund on Two Steps evaluations only, paid with the third withdrawal, not on promotional purchases"
+          },
+          {
+            "src": "faq_1018",
+            "doc": "FAQ",
+            "says": "the 2-Step entry fee only, with the third successful payout; the 1-Step, Express and Instant fees aren't refundable"
           }
         ],
         "troid": "both, and picks neither"
@@ -1185,7 +1349,39 @@
             "says": "$299"
           }
         ],
-        "troid": "$249, the price the home page's plan selector shows; the help centre's $299 is printed beside it"
+        "troid": "$249, the price the home page's plan selector shows; the help centre's $299 is printed beside it",
+        "confirmed_on": "2026-10-18",
+        "confirmed_src": [
+          "home_1018",
+          "challenge_type_1018"
+        ]
+      },
+      {
+        "topic": "Is the 1-Step Express sold?",
+        "logged": "2026-10-18",
+        "sides": [
+          {
+            "src": "challenge_type_1018",
+            "doc": "help centre, Challenge Type, One Step Express table",
+            "says": "sold: Base $39 to Expert $399"
+          },
+          {
+            "src": "trader_stage_1018",
+            "doc": "help centre, Challenge & Trader Stage, One Step Express Evaluation table",
+            "says": "its rules: 3% daily, 3% maximum, 9% target"
+          },
+          {
+            "src": "faq_1018",
+            "doc": "FAQ",
+            "says": "listed: '1-Step Express: profit target 9% \u00b7 max daily loss 3% \u00b7 max loss 3%'"
+          },
+          {
+            "src": "home_1018",
+            "doc": "home page, Challenge Plans",
+            "says": "not offered: the plan selector shows 2 Steps, 1 Step, Instant and Day Trader"
+          }
+        ],
+        "troid": "the Express's help-centre figures, unchanged; the plan selector where challenges are bought doesn't offer it, and the owner decides whether troid keeps it"
       }
     ],
     "_conflicts_note": "Conflicts between Bitfunded's own documents, one entry per rule. A side's 'src' is a key in provenance.sources (its URL and read date); a side without one names a document that is not a provenance source, with the read date rule_changes records for it. troid's compare prints every entry, each side with its document and read date, and the count. A disagreement between Bitfunded and troid's own earlier configuration is not a conflict here: the daily-basis correction (FAQ: initial balance) is in rule_changes.",
@@ -1199,7 +1395,7 @@
     "offers_seen": [
       {
         "name": "Exclusive 20X Leverage Account",
-        "status": "may end",
+        "status": "not seen on 2026-10-18",
         "seen_on": "2026-10-10",
         "read_on": "2026-10-10",
         "src": "offer_20x_1010",
@@ -1219,7 +1415,32 @@
           "home page plan selector (read 2026-10-10): 2 Steps, 1 Step, Instant, Day Trader; no 20X plan",
           "blog posts updated in October 2026 (5, read 2026-10-10)"
         ],
-        "troid": "max_leverage stays 5 (1x to 5x, the FAQ and the help centre); the owner decides any change"
+        "troid": "max_leverage stays 5 (1x to 5x, the FAQ and the help centre); the owner decides any change",
+        "last_seen": "2026-10-10",
+        "checked_on": "2026-10-18",
+        "checked_src": "home_1018",
+        "check": "The home page of 2026-10-18 shows no 20X banner and no 20X text; the FAQ (faq_1018, '1x to 5x') and the help centre (adjusting_leverage_1018, 'from 1 to 5 times') still state 1x to 5x."
+      },
+      {
+        "name": "3x1 BOGO + Surprise Challenge",
+        "status": "may end",
+        "seen_on": "2026-10-18",
+        "read_on": "2026-10-18",
+        "src": "bogo_1018",
+        "says": "3x1; BOGO + SURPRISE CHALLENGE; BUY ONE CHALLENGE, GET TWO MORE FREE",
+        "links_to": "https://trader.bitfunded.com/client/challenge/ (the dashboard, behind a login; troid has not read it)",
+        "price": null,
+        "account_sizes": null,
+        "which_challenges": null,
+        "daily_pct": null,
+        "max_pct": null,
+        "ends": null,
+        "not_stated_in": [
+          "Terms of Use (tou_1018): no BOGO clause; 9(d) 'only one promotion can be applied at a time'",
+          "FAQ (faq_1018)",
+          "help centre: Challenge Type, Challenge & Trader Stage (read 2026-10-18)"
+        ],
+        "troid": "recorded as an offer that may end; no price or rule changes, since no public page states its terms"
       }
     ]
   },
@@ -1695,7 +1916,8 @@
           5
         ],
         "fee_usd_100k": 399,
-        "_note": "drawdown rules not separately stated; presumed 2-phase"
+        "_note": "drawdown rules not separately stated; presumed 2-phase",
+        "_sale_note": "Not on the home page's plan selector (read 2026-10-18); the Terms (5.6.3, 5.7) still list it."
       },
       "instant": {
         "daily_pct": 4,
@@ -1740,21 +1962,21 @@
     "affiliate_agreement": {
       "platform": "FirstPromoter",
       "terms_url": "https://cryptofundtrader.com/affiliate-terms/ (modified 2026-02-03)",
-      "read": "2026-09-21",
+      "read": "2026-10-18",
       "rate_tiers": {
         "platinum": "10%",
         "diamond": "12%",
         "champion": "15%"
       },
       "rate_current": "10% (Platinum - the platinum5 code)",
-      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4)",
+      "commission_scope": "first purchase only; top-ups, resets and repeats excluded (cl.4, as read 2026-09-21; the 2026-10-18 terms differ: cl.6, cl.7)",
       "cookie_days": 60,
-      "payout_currency": "USDT or BTC (cl.14)",
-      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18)",
-      "paid_advertising": "no PPC / keyword ads on the brand name (cl.8)",
-      "coupon_sites_extensions": "prohibited (cl.7, 11)",
-      "negative_marketing": "cl.6 prohibits 'negative words to get attention then promote our services'. troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.20), not indemnity.",
-      "required_disclaimer": "cl.10, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
+      "payout_currency": "USDT or BTC (cl.14, as read 2026-09-21; the 2026-10-18 terms differ: cl.16)",
+      "payout_schedule": "monthly at Platinum, on request by email to profits@cryptofundtrader.com (cl.17-18, as read 2026-09-21; the 2026-10-18 terms differ: cl.17, 19, 20)",
+      "paid_advertising": "no PPC / keyword ads on the brand name (cl.11)",
+      "coupon_sites_extensions": "prohibited (clauses 10 and 14)",
+      "negative_marketing": "cl.9 prohibits 'negative marketing', 'using negative, misleading, or disparaging statements to attract attention before promoting Crypto Fund Trader\u2019s services' (read 2026-10-18; on 2026-09-21, as cl.6, 'negative words to get attention then promote our services'). troid's sourced, non-promotional rule cells fall outside that definition as written. CFT's remedy is commission withholding (cl.22), not indemnity.",
+      "required_disclaimer": "cl.13, exact wording: 'Crypto Fund Trader does not own or operate this website and is not responsible for its content. This website is owned and operated by troid, an independent marketing affiliate.' MUST appear on the site before the link goes live.",
       "exclusivity": "none",
       "indemnity": "none",
       "non_disparagement": "none in the affiliate terms (the trader T&C 7.1ix clause does not appear here)",
@@ -1817,7 +2039,7 @@
       "max_open": "discretionary",
       "refund": "none if the evaluation is not completed",
       "split": "up to 90% with the 90% add-on; base not stated",
-      "us_available": "MT5 barred to US residents; Match-Trader access not yet sourced",
+      "us_available": "MT5 barred to US residents; Match-Trader: no country restrictions (T&C 7.3)",
       "consistency_rule": "none stated for 1-Phase (40% on Break Final Stage)",
       "news_rule": "none stated for 1-Phase (Ascend has one; may be added with notice)",
       "profit_cap": "$10k / day and / trade"
@@ -1845,12 +2067,20 @@
     "restricted_countries": "none listed; MT5 barred to US; Bybit route subject to Bybit's own restrictions",
     "payment_methods": null,
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
-    "rule_changes": [],
+    "rule_changes": [
+      {
+        "date": "2026-10-18",
+        "found": "troid's compare said Match-Trader access for US residents was not yet sourced; Terms 7.3 states 'Match-Trader: No country restrictions' beside the MT5 bar, so the compare now says so.",
+        "old": "MT5 barred to US residents; Match-Trader access not yet sourced",
+        "new": "MT5 barred to US residents; Match-Trader: no country restrictions (T&C 7.3)",
+        "src": "tc_1018"
+      }
+    ],
     "external_payout_evidence": "https://propfirmmatch.com/prop-firms/crypto-fund-trader/payouts",
     "link_live": true,
-    "_link_live_note": "true since 2026-09-22: affiliate terms read in full 2026-09-21 (affiliate_agreement), clause-10 wording in required_disclaimer with its source recorded.",
-    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its contents. It is owned by troid, an independent marketing affiliate.",
-    "_required_disclaimer_note": "Clause 10 of the affiliate terms requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it in the FAQ disclaimer and both footers for as long as this firm is listed, and drops it the day the firm rotates out.",
+    "_link_live_note": "true since 2026-09-22 (affiliate terms read in full 2026-09-21). Re-read 2026-10-18: the required sentence is now clause 13, in new words; required_disclaimer holds them verbatim, with its source recorded.",
+    "required_disclaimer": "Crypto Fund Trader does not own or operate this website and is not responsible for its content. This website is owned and operated by troid, an independent marketing affiliate.",
+    "_required_disclaimer_note": "Clause 13 of the affiliate terms (read 2026-10-18) requires their exact wording, naming them. Paste it here verbatim. gen_compare.py emits it beside this firm's link wherever troid shows one, in the FAQ's disclaimer and in /terms' affiliate notices, for as long as this firm is listed, and drops it the day the firm rotates out.",
     "panel_note": "Leverage up to 100\u00d7 on Advanced accounts ($50k+) and 5\u00d7 on Student and Instant accounts, per its Terms and Conditions \u2014 the breaker model takes that as an input.",
     "panel_note_src": [
       [
@@ -1862,7 +2092,7 @@
         "max_leverage_advanced"
       ]
     ],
-    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 10, bracket filled with the brand name as the clause instructs",
+    "required_disclaimer_source": "https://cryptofundtrader.com/affiliate-terms/ clause 13 (the 13th item of its numbered list), read 2026-10-18 (fetched from a sandbox, sha256 of the page 92de767bd5a9692c); its bracket '[your website name/your brand name]' filled with the brand name, troid, as the clause instructs",
     "calc": {
       "daily_basis": "day_start",
       "drawdown": "trailing",
@@ -1936,126 +2166,167 @@
           "read_on": "2026-10-10",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-10-10 (sha256 of the page 89a3836b91521656): 'What is the Break Activation Fee? The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage. If all applicable conditions and rules have been met, the option to pay the Activation Fee may become available through your personal dashboard. After the option becomes available, the trader will have 30 days to pay the Activation Fee. If the Activation Fee is not paid within this period, the option may expire and access to the Break Final Stage may no longer be available. The applicable Activation Fees are: $25,000 Break account: $138 $50,000 Break account: $198 $100,000 Break account: $328'"
+        },
+        "tc_1018": {
+          "doc": "Crypto Fund Trader Terms and Conditions",
+          "url": "https://cryptofundtrader.com/terms-and-conditions/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page ef2c894c8d965d84): 5.6.1 Two Phases '660 USD \u2026 100,000 USD'; 5.6.2 One Phase '619 USD \u2026 100,000 USD'; 5.6.3 Three Phases '399 USD \u2026 100,000 USD'; 5.6.4 Instant '475 USD \u2026 10,000 USD'; 5.6.5 'Ascend' '780 USD \u2026 100,000 USD'; 5.6.6 'Break' '200 USD \u2026 100,000 USD'; 5.6.7 '328 USD as the Activation Fee \u2026 100,000 USD'; 5.1 no refund if the phases are not completed; 5.8 'Crypto.- 0.0325% per side'; 5.9 '90% Bonus Performance' add-on; 7.1 xiii '$10,000 of demo profit per day and/or per trade'; 7.1 xvi MT5 restricted to US users; 7.1 xxi Ascend news window; 7.1 xxiv Break Final Stage 40% consistency; 7.3 'Match-Trader: No country restrictions. MetaTrader 5: Access to this platform is not available to users residing in the United States.'; 8.ii '1 Phase \u2026 4% of your balance at 12:05 AM UTC or 6% based on the maximum demo balance until you make a 6% demo profit, at which point your trailing drawdown will remain static at the account's opening balance'; 8.iv 10% target in the 1-phase evaluation; leverage 'ADVANCED ACCOUNTS \u2026 leverage limited to 1:100'."
+        },
+        "home_1018": {
+          "doc": "Crypto Fund Trader home page: plans",
+          "url": "https://cryptofundtrader.com/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page 3239b534dd6043f8): the plan selector (product data in the page): 1 Phase $100,000 '$619.00', 2 Phases $100,000 '$660.00', Instant $10,000 '$475.00', Ascend $100,000 '$899.00', Break $100,000 '$199.00' (no activation fee shown); no 3 Phases plan; no product carries an old fee (data-old-fee empty), so no promotion is shown."
+        },
+        "faq_1018": {
+          "doc": "Crypto Fund Trader FAQ",
+          "url": "https://cryptofundtrader.com/faq/",
+          "read_on": "2026-10-18",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page a882623a5d37e37c): 'What is the Break Activation Fee? The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage. If all applicable conditions and rules have been met, the option to pay the Activation Fee may become available through your personal dashboard. After the option becomes available, the trader will have 30 days to pay the Activation Fee\u2026' \u2014 unchanged from the read of 2026-10-10."
         }
       },
       "fields": {
         "daily_pct": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions"
         },
         "max_pct": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions"
         },
         "target_pct": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions"
         },
         "daily_basis": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 8.i\u20138.ii"
         },
         "reset_utc": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 8.i\u20138.ii"
         },
         "fee_per_side_pct": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 5.8, Match-Trader and MT5"
         },
         "max_leverage": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
         },
         "hold_cap": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions"
         },
         "max_open": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C s.6"
         },
         "refund": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 5.1, evaluation not completed"
         },
         "us_available": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 7.3 and 7.1(xvi), MT5 bar"
         },
         "profit_cap": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 7.1(xiii)"
         },
         "max_leverage_student": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Student up to $25k"
         },
         "max_leverage_advanced": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
         },
         "availability": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions \u2014 no restricted-country list (clause not recorded)"
         },
         "availability_platform": {
           "src": [
-            "tc"
+            "tc",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader T&C 7.3 and 7.1(xvi), MT5 bar"
         },
         "drawdown_type": {
           "src": [
-            "tc_0926"
+            "tc_0926",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases: 10% of the initial demo balance) and 8(ii) (1 Phase)"
         },
         "split": {
           "src": [
-            "tc_0926"
+            "tc_0926",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions 5.9, AddOns: 90% Bonus Performance (no base share stated)"
         },
         "consistency_rule": {
           "src": [
-            "tc_0926"
+            "tc_0926",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions 7.1 xxiv (Break Final Stage only)"
         },
         "news_rule": {
           "src": [
-            "tc_0926"
+            "tc_0926",
+            "tc_1018"
           ],
           "section": "Crypto Fund Trader Terms and Conditions 7.1 xxi (Ascend accounts only) and section 6 (news trading limits may be imposed with prior notice)"
         }
@@ -2064,43 +2335,51 @@
         "1phase": {
           "daily_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_leverage": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
           },
           "price": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018",
+              "home_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 1-Phase $100k price (clause not recorded)"
           },
           "drawdown": {
             "src": [
-              "tc_0926"
+              "tc_0926",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
           },
           "locks_at_initial_after_pct": {
             "src": [
-              "tc_0926"
+              "tc_0926",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
           },
           "hwm_basis": {
             "src": [
-              "tc_0926"
+              "tc_0926",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 8(ii) (1 Phase)"
           }
@@ -2108,31 +2387,37 @@
         "2phase": {
           "daily_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_leverage": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Advanced $50k+"
           },
           "drawdown": {
             "src": [
-              "tc_0926"
+              "tc_0926",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 8(i) (2 Phases)"
           },
           "price": {
             "src": [
-              "tc_1010"
+              "tc_1010",
+              "tc_1018",
+              "home_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.1, Two Phases, 100,000 USD"
           }
@@ -2140,25 +2425,30 @@
         "instant": {
           "daily_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_pct": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions"
           },
           "max_leverage": {
             "src": [
-              "tc"
+              "tc",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions \u2014 leverage by account class, Student up to $25k"
           },
           "price": {
             "src": [
-              "tc_1010"
+              "tc_1010",
+              "tc_1018",
+              "home_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.4, Zero Phases/Instant, 10,000 USD"
           }
@@ -2166,7 +2456,8 @@
         "3phase": {
           "price": {
             "src": [
-              "tc_1010"
+              "tc_1010",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.3, Three Phases, 100,000 USD"
           }
@@ -2174,19 +2465,22 @@
         "break": {
           "price": {
             "src": [
-              "tc_1010"
+              "tc_1010",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD"
           },
           "activation_fee_when": {
             "src": [
-              "faq_1010"
+              "faq_1010",
+              "faq_1018"
             ],
             "section": "Crypto Fund Trader FAQ \u2014 What is the Break Activation Fee?"
           },
           "activation_fee_window": {
             "src": [
-              "faq_1010"
+              "faq_1010",
+              "faq_1018"
             ],
             "section": "Crypto Fund Trader FAQ \u2014 What is the Break Activation Fee?"
           }
@@ -2194,7 +2488,8 @@
         "ascend": {
           "price": {
             "src": [
-              "tc_1010"
+              "tc_1010",
+              "tc_1018"
             ],
             "section": "Crypto Fund Trader Terms and Conditions 5.6.5, 'Ascend' Evaluation, 100,000 USD"
           }
@@ -2216,7 +2511,60 @@
       "time": "00:05",
       "tz": "UTC",
       "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc)."
-    }
+    },
+    "_conflicts_found": [
+      {
+        "topic": "Price of the $100,000 Ascend",
+        "logged": "2026-10-18",
+        "sides": [
+          {
+            "src": "tc_1018",
+            "doc": "Terms and Conditions 5.6.5",
+            "says": "$780"
+          },
+          {
+            "src": "home_1018",
+            "doc": "home page, plan selector",
+            "says": "$899"
+          }
+        ],
+        "troid": "$780, the Terms' figure (the owner, 2026-10-18); the home page's $899 is printed beside it"
+      },
+      {
+        "topic": "Price of the $100,000 Break",
+        "logged": "2026-10-18",
+        "sides": [
+          {
+            "src": "tc_1018",
+            "doc": "Terms and Conditions 5.6.6 and 5.6.7",
+            "says": "$200, plus a $328 activation fee"
+          },
+          {
+            "src": "home_1018",
+            "doc": "home page, plan selector",
+            "says": "$199, no activation fee shown"
+          }
+        ],
+        "troid": "$200 plus the $328 activation fee, the Terms' figures (the owner, 2026-10-18)"
+      },
+      {
+        "topic": "Is the 3-Phase sold?",
+        "logged": "2026-10-18",
+        "sides": [
+          {
+            "src": "tc_1018",
+            "doc": "Terms and Conditions 5.6.3 and 5.7",
+            "says": "listed: $399 at $100,000"
+          },
+          {
+            "src": "home_1018",
+            "doc": "home page, plan selector",
+            "says": "not offered: Instant, 1 Phase, 2 Phases, Ascend and Break only"
+          }
+        ],
+        "troid": "the Terms' 3-Phase figures, kept as history; the plan selector doesn't offer it"
+      }
+    ]
   },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",

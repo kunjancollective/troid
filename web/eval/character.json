@@ -5,13 +5,13 @@
  "refusal": "troid doesn['’]t recommend; it prices what you bring\\.",
  "kinds": {
   "beginner": 4,
-  "quantitative": 6,
+  "quantitative": 7,
   "emotional": 3,
   "prop-rule": 4,
   "out-of-scope": 3,
   "should-i": 2,
   "unread-firm": 2,
-  "desk": 3
+  "desk": 5
  },
  "cases": [
   {
@@ -441,7 +441,12 @@
    "all": [
     "Every rule-based number on troid shows the rule it came from and the date troid read it",
     "commission"
-   ]
+   ],
+   "none": [
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "_why_newsletter": "2026-10-15 (the owner): someone calling troid a scam gets section 3's reply, the commission, and never the newsletter."
   },
   {
    "id": "o-predict",
@@ -640,6 +645,59 @@
     "\\bonly troid(['’]s operator)? (can|will|could) (ever )?(read|see)\\b(?![^.\\n]{0,80}\\b(stored|kept)\\b)"
    ],
    "_why": "2026-09-26 (challenge-proof audit, D7): only troid's operator can read the stored conversations, but every message is sent to Anthropic to generate the answer, under Anthropic's API terms (support.md section 8, staged as a patch). It must say both, keep the 30 days, and never say no one else sees a message."
+  },
+  {
+   "id": "d-money",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "How does troid make money?",
+   "all": [
+    "\\bcommission\\b",
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "none": [
+    "\\b(subscribe|sign up|join)\\b",
+    "\\bpaid\\b",
+    "\\bposts?\\b"
+   ],
+   "_why": "2026-10-18 (the owner): asked how troid makes money (or how it is funded, who owns it, whether it is independent, or about its affiliate links), ask troid names the commission on purchases through troid's links and says troid also has a newsletter on Substack (support.md section 10, the sixth patch as restaged); it says nothing about paid posts, gives no post count, and never sells the newsletter. Was (2026-10-15): both sources, the newsletter described as partly paid."
+  },
+  {
+   "id": "d-owner",
+   "kind": "desk",
+   "no_refusal": true,
+   "q": "Is troid owned by one of the prop firms it compares?",
+   "all": [
+    "\\b(independent|not owned|isn['’]t owned|no firm owns|not run|not operated)\\b",
+    "\\bcommission\\b",
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "none": [
+    "\\b(subscribe|sign up|join)\\b",
+    "\\bpaid\\b",
+    "\\bposts?\\b"
+   ],
+   "_why": "2026-10-18 (the owner): who owns troid is a funding question (the owner, 2026-10-15, after run 1). Answered, ask troid says troid is independent, names the commission and says troid also has a newsletter on Substack (support.md section 10, the sixth patch as restaged); it says nothing about paid posts and sells nothing. Run 1 read the patch's correct disclosure as a failure under the narrower rule first given (only 'how does troid make money')."
+  },
+  {
+   "id": "q-size",
+   "kind": "quantitative",
+   "no_refusal": true,
+   "tools_any": [
+    "trade_math",
+    "size_trade"
+   ],
+   "q": "I'm risking $500 on a BTC long: entry 62,000, stop 60,760. How many BTC is that?",
+   "all": [
+    "\\bBTC\\b"
+   ],
+   "none": [
+    "\\bnewsletter\\b",
+    "\\bSubstack\\b"
+   ],
+   "_why": "2026-10-15 (the owner): a sizing question never mentions troid's newsletter (support.md section 10)."
   }
  ]
 }
