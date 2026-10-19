@@ -330,8 +330,11 @@ def main():
             s = FIRMS[fk]["provenance"]["sources"][sid]
             return s["url"], s["read_on"]
         bf, br, cft = (FIRMS[k]["name"] for k in ("bitfunded", "brightfunded", "crypto_fund_trader"))
+        def latest(fk, field):                          # the desk dates a rule by the latest read of its sources
+            ps = FIRMS[fk]["provenance"]
+            return max(ps["sources"][i]["read_on"] for i in ps["fields"][field]["src"])
         rtp_url, rtp_date = src("bitfunded", "rtp_0924")
-        hold_url, hold_date = src("bitfunded", "rtp")
+        hold_url, hold_date = src("bitfunded", "rtp")[0], latest("bitfunded", "hold_cap")
         pg.select_option("#firm", "bitfunded")
         hd = FIRMS["bitfunded"]["hold_cap_days"]
         for sym, parts in [("BTC", [f"{bf} lists BTC as “BTC (Major Crypto Assets)”", f"read {rtp_date}", f"Hold limit at {bf}: {hd['major']} days for BTC, one of its Major Crypto Assets", f"read {hold_date}"]),
@@ -351,7 +354,7 @@ def main():
         pg.select_option("#firm", "crypto_fund_trader")
         t = pg.inner_text("#assetnote")
         faq_url, faq_date = src("crypto_fund_trader", "faq_0924")
-        tc_url, tc_date = src("crypto_fund_trader", "tc")
+        tc_url, tc_date = src("crypto_fund_trader", "tc")[0], latest("crypto_fund_trader", "hold_cap")
         ok(f"{cft}: its symbols are named only inside its platform (its FAQ, read {faq_date}); no hold limit stated in its Terms (read {tc_date})",
            f"{cft} names its symbols only inside its platform" in t and f"read {faq_date}" in t and f"Listed by {bf} and {br}." in t
            and f"Hold limit at {cft}: none stated in its Terms and Conditions (read {tc_date})" in t, t)

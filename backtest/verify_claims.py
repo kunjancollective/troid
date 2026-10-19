@@ -259,14 +259,15 @@ for rel in ("web/public/terms.html", "web/public/ledger.html", "web/public/tears
 for page in sorted((_ROOT / "web" / "public").glob("*.html")):
     check("DERIVED", f"footer line on {page.name}", float(_T.FOOTER_TEXT in _html.unescape(page.read_text())), 1.0)
     check("DERIVED", f"footer links troid's newsletter on {page.name}", float(f'href="{_T.NEWSLETTER_URL}"' in page.read_text()), 1.0)
-# troid's newsletter (the owner, 2026-10-14): Stripe asks that troid.ai link the paid Substack. The address is the owner's
+# troid's newsletter (the owner, 2026-10-14): Stripe asks that troid.ai link the Substack. The address is the owner's
 # to give; the placeholder fails here, so the link can't merge unset. The FAQ's Newsletter section says it in the owner's
-# words; the desk and ask troid's live prompt don't name it (ask troid answers about it only when asked).
+# words, saying nothing about its pricing (2026-10-18); the desk and ask troid's live prompt don't name it (ask troid
+# answers about it only when asked).
 check("DERIVED", "troid's newsletter address is set (site_text.NEWSLETTER_URL, not the placeholder)",
       float(_T.NEWSLETTER_URL.startswith("https://") and _T.NEWSLETTER_URL != _T.NEWSLETTER_PLACEHOLDER), 1.0)
-check("DERIVED", "the FAQ's Newsletter section: \"troid's newsletter on Substack. Some posts are paid.\", linked",
+check("DERIVED", "the FAQ's Newsletter section: \"troid also has a newsletter on Substack.\", linked, nothing about its pricing",
       float(f'<h2 class="sec" id="newsletter">Newsletter</h2>' in _read("web/public/faq.html")
-            and f'<a href="{_T.NEWSLETTER_URL}">troid\'s newsletter on Substack</a>. Some posts are paid.'
+            and f'troid also has <a href="{_T.NEWSLETTER_URL}">a newsletter on Substack</a>.'
             in _html.unescape(_read("web/public/faq.html"))), 1.0)
 for rel in ("web/templates/partials/_desk2.html", "web/public/desk2.js", "web/public/TROID.md", "TROID.md",
             "web/context/support.md", "web/context/TROID-CHARACTER.md", "web/api/troid.js"):

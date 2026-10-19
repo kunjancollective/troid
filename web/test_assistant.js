@@ -74,14 +74,14 @@ ok("explain_rule unknown", /unknown topic/.test(T.explain_rule({ topic: "moon" }
 // --- section 4: provenance in tool output, leverage bands, reset text
 r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 77872 * 1.003 });
 ok("sources: every rule used is listed", r.sources.map((x) => x.rule).join("|") === "daily 4%|daily basis (initial)|max 6%|drawdown type (static)|fee 0.04% per side|leverage cap 5×|floating losses count toward the daily and maximum loss (Bitfunded)", r.sources);
-ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 2026-09-23, FAQ read 2026-09-21", r.sources[0].read_on.join() === "2026-09-23"
+ok("sources: the 1-Step daily from Challenge & Trader Stage and Terms 9(a) read 2026-09-23 and 2026-10-18, FAQ read 2026-09-21 and 2026-10-18", r.sources[0].read_on.join() === "2026-09-23,2026-10-18"
    && /Challenge & Trader Stage/.test(r.sources[0].document_section) && /9\(a\)/.test(r.sources[0].document_section) && !/Criteria/.test(r.sources[0].document_section) && /FAQ/.test(r.sources[1].document_section) && r.sources[1].read_on[0] === "2026-09-21", r.sources);
 ok("assumption named: MMR", /0\.5% maintenance margin/.test(r.assumptions[0]));
 r = T.size_trade({ firm: "bitfunded", product: "2step_s1", quota: 100000, equity: 100000, side: "long", entry: 77872, stop: 74814 });
-ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee cites Criteria to be Success, read 2026-10-04 (no product restriction)",
+ok("2-Step S1: limits and leverage cite Challenge & Trader Stage and Terms 9(a); the fee cites Criteria to be Success, read 2026-10-04 and 2026-10-18 (no product restriction)",
    ["daily 5%", "max 10%", "leverage cap 5×"].every((k) => { const s = r.sources.find((x) => x.rule === k).document_section || "";
      return /Two Steps Evaluation table/.test(s) && /Terms of Use 9\(a\), 2 Steps Challenges/.test(s) && !/clause not recorded/.test(s); })
-   && (() => { const x = r.sources.find((y) => y.rule === "fee 0.04% per side"); return /Criteria to be Success/.test(x.document_section) && /no product restriction/.test(x.document_section) && x.read_on.join() === "2026-10-04"; })(), r.sources);
+   && (() => { const x = r.sources.find((y) => y.rule === "fee 0.04% per side"); return /Criteria to be Success/.test(x.document_section) && /no product restriction/.test(x.document_section) && x.read_on.join() === "2026-10-04,2026-10-18"; })(), r.sources);
 r = T.size_trade({ firm: "bitfunded", product: "express", quota: 5000, equity: 5000, side: "long", entry: 77872, stop: 74814 });
 ok("Express: limits cite the blog", ["daily 3%", "max 3%"].every((k) => /Blog/.test(r.sources.find((x) => x.rule === k).document_section || "")), r.sources);
 for (const [pk, d, m] of [["trader_1step", 4, 6], ["trader_express", 3, 3], ["trader_2step", 5, 8]]) {
@@ -107,11 +107,11 @@ ok("size_trade: working carries every step with its value", ["intended risk", "c
 // --- each rule cited with its own read dates; troid's defaults named as assumptions; the crossover as a day-start threshold
 r = T.size_trade({ firm: "bitfunded", product: "1step", quota: 100000, equity: 96000, day_start: 96000, side: "short", entry: 77872, stop: 78105.6, risk_pct: 0.5 });
 const cite = (rule) => (r.sources.find((x) => x.rule === rule) || {}).cite;
-ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23"
-   && cite("max 6%") === "max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23"
-   && cite("drawdown type (static)") === "drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18"
-   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04"
-   && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21", r.sources);
+ok("sources: a cite line per rule, with only that rule's read dates", cite("daily 4%") === "daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23 and 2026-10-18"
+   && cite("max 6%") === "max 6% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23 and 2026-10-18" && cite("leverage cap 5×") === "leverage cap 5× — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Leverage Ratio 1:5); Terms of Use 9(a), 1 Step Challenges (Up To 1:5 Leverage), read 2026-09-23 and 2026-10-18"
+   && cite("drawdown type (static)") === "drawdown type (static) — Bitfunded help centre — Criteria to be Success (the mechanics: a static floor measured from the account quota), read 2026-09-18 and 2026-10-18"
+   && cite("fee 0.04% per side") === "fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23 and 2026-10-04 and 2026-10-18"
+   && cite("daily basis (initial)") === "daily basis (initial) — Bitfunded FAQ, read 2026-09-21 and 2026-10-18", r.sources);
 ok("size_trade: troid's defaults listed as assumptions, the inputs given not", r.assumptions.length === 5 && r.assumptions.some((x) => /^margin mode cross — troid's default.*no recorded source/.test(x))
    && r.assumptions.some((x) => /^leverage 5× — troid's default/.test(x)) && r.assumptions.some((x) => /^budget cap 35% /.test(x)) && r.assumptions.some((x) => /^target 2R /.test(x))
    && !r.assumptions.some((x) => /^risk /.test(x)) && /troid's assumption/.test(r.tier), r.assumptions);
@@ -401,8 +401,8 @@ ok("promoted 2026-10-08: the live prompt carries the seventeen guardrails staged
   ok("live: firm_assets, as the candidate (promoted 2026-10-08)", handler._toolsFor("live").some((t) => t.name === "firm_assets") && JSON.stringify(handler._runTool("firm_assets", { firm: "bitfunded" }, "live")) === JSON.stringify(fa));
   const fr = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), frl = handler._runTool("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "live");
   const mo = fr.sources.find((x) => /^open positions at once/.test(x.rule));
-  ok("candidate firm_rules: max open positions 5 from Restricted Trading Practices s.3, read 2026-09-21 (re-read 2026-09-24, 2026-09-26 and 2026-10-04), never 2026-09-23; live the same (promoted 2026-10-08)",
-     fr.rules.some((x) => /^open positions at once/.test(x.rule) && x.value === 5) && mo.read_on.join() === "2026-09-21" && /s\.3, read 2026-09-21 \(the same page re-read 2026-09-24 and 2026-09-26 and 2026-10-04\)/.test(mo.cite)
+  ok("candidate firm_rules: max open positions 5 from Restricted Trading Practices s.3, read 2026-09-21 and 2026-10-18 (the re-reads between them are not listed), never 2026-09-23; live the same (promoted 2026-10-08)",
+     fr.rules.some((x) => /^open positions at once/.test(x.rule) && x.value === 5) && mo.read_on.join() === "2026-09-21,2026-10-18" && /s\.3, read 2026-09-21 and 2026-10-18$/.test(mo.cite)
      && !/2026-09-23/.test(mo.cite) && JSON.stringify(frl) === JSON.stringify(fr), mo);
   ok("candidate firm_rules: the hold limit by tier (10, 7, 5 days)", ["Major Crypto Assets", "Minor Crypto Assets", "Traditional Trading Pairs"].map((t) => (fr.rules.find((x) => x.rule.includes(t)) || {}).value).join() === "10,7,5");
   const lad = fr.concentration_ladder, ins = handler._runTool("firm_rules", { firm: "bitfunded", product: "instant" }, "candidate").concentration_ladder;
@@ -412,8 +412,8 @@ ok("promoted 2026-10-08: the live prompt carries the seventeen guardrails staged
      && ins.steps.map((x) => x.exposure_from_pct + ":" + x.payout_penalty_pct).join() === "55:50,65:55,75:60,90:65,96:70" && !exl.steps.length && /no concentration ladder recorded/.test(exl.note)
      && /never call it a cut/.test(lad.reading) && /Excessive Risk Concentration \('All In' Trading\), read 2026-10-04/.test(lad.source), [lad, ins, exl]);
   const cc = (pk, m) => handler._runTool("check_compliance", { firm: "bitfunded", product: pk, margin_pct_of_capital: m }, "candidate").findings.filter((x) => /Concentration/.test(x.rule));
-  ok("candidate check_compliance: 60% on Instant is '50% payout penalty' (the Instant ladder, read 2026-10-04); 60% on the 1-Step is under its 65% start; 70% on Express has no ladder recorded",
-     /"50% payout penalty"/.test(cc("instant", 60)[0].detail) && cc("instant", 60)[0].sources[0].read_on === "2026-10-04" && !cc("1step", 60).length
+  ok("candidate check_compliance: 60% on Instant is '50% payout penalty' (the Instant ladder, read 2026-10-04 and 2026-10-18); 60% on the 1-Step is under its 65% start; 70% on Express has no ladder recorded",
+     /"50% payout penalty"/.test(cc("instant", 60)[0].detail) && cc("instant", 60)[0].sources[0].read_on === "2026-10-04 and 2026-10-18" && !cc("1step", 60).length
      && cc("express", 70)[0].severity === "info" && /No concentration ladder recorded/.test(cc("express", 70)[0].detail));
   const exr = handler._runTool("firm_rules", { firm: "bitfunded", product: "express" }, "candidate").sources;
   ok("firm_rules: Express's daily 3, max 3, leverage 1:5 and every product's 0.04% fee cite the help centre read 2026-10-04 (Criteria to be Success, Challenge & Trader Stage)",
@@ -468,7 +468,7 @@ ok("the note closes an answer with a figure, moved last when the model wrote som
 const RT = handler._runTool;
 const hl = RT("explain_rule", { topic: "hold_limit" }, "live");
 ok("explain_rule: the rule it states carries its document and read date, SOURCED",
-   hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21" && /^SOURCED/.test(hl.tier), hl);
+   hl.sources.length === 1 && /Restricted Trading Practices s\.1/.test(hl.sources[0].document_section) && hl.sources[0].read_on.join() === "2026-09-21,2026-10-18" && /^SOURCED/.test(hl.tier), hl);
 const rs = RT("explain_rule", { topic: "reset" }, "live");
 ok("explain_rule reset: 16:00 UTC all year, a local hour only for the date it was converted for, its example in UTC, no fixed New York hour, no 'separate daily budgets' rule; the three firms' resets sourced",
    /16:00 UTC all year/.test(rs.explanation) && /only for the date it was converted for/.test(rs.explanation)
@@ -509,8 +509,8 @@ ok("guardrails: say whose each thing is (a firm's rule the firm's; a tool, defau
 ok("a figure: list numbering (1. 2.) is not one", !HF("1. an input that differed\n2. a rule the firm changed") && HF("1. a loss of $500"));
 const fr = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
 ok("firm_rules: a product's rules, each with its document and read date, pending or not yet recorded where troid has none",
-   fr.rules.find((r) => r.rule === "maximum loss %").value === 8 && fr.sources.find((x) => /^maximum loss % 8/.test(x.rule)).read_on.join() === "2026-09-23"
-   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).read_on.join() === "2026-10-04" && /^SOURCED/.test(fr.tier)
+   fr.rules.find((r) => r.rule === "maximum loss %").value === 8 && fr.sources.find((x) => /^maximum loss % 8/.test(x.rule)).read_on.join() === "2026-09-23,2026-10-18"
+   && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).read_on.join() === "2026-10-04,2026-10-18" && /^SOURCED/.test(fr.tier)
    && /pending product/.test(RT("firm_rules", { firm: "brightfunded", product: "2step_bright" }, "candidate").error), fr);
 const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step" });
 ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
@@ -535,9 +535,9 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const fl = (o) => (o.sources || []).find((x) => /^floating losses count/.test(x.rule));
   const c1 = RT("firm_rules", { firm: "bitfunded", product: "1step" }, "candidate"), l1 = RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live");
   const cb = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "candidate");
-  ok("candidate firm_rules: Bitfunded's floating-loss rule with its source (Criteria to be Success, read 2026-09-24); a firm with none recorded says so; live the same (promoted 2026-10-08) (run 10, b-limits)",
+  ok("candidate firm_rules: Bitfunded's floating-loss rule with its source (Criteria to be Success, read 2026-09-24 and 2026-10-18); a firm with none recorded says so; live the same (promoted 2026-10-08) (run 10, b-limits)",
      c1.rules.some((x) => /^floating losses count/.test(x.rule) && x.value === "yes") && /Criteria to be Success, 1\. Maximum Daily Loss and 2\. Maximum Loss/.test(fl(c1).document_section)
-     && fl(c1).read_on.join() === "2026-09-24" && (cb.error || fl(cb).source === "not yet recorded") && JSON.stringify(l1) === JSON.stringify(c1), [fl(c1), cb.error || fl(cb)]);
+     && fl(c1).read_on.join() === "2026-09-24,2026-10-18" && (cb.error || fl(cb).source === "not yet recorded") && JSON.stringify(l1) === JSON.stringify(c1), [fl(c1), cb.error || fl(cb)]);
   const s1 = RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), s2 = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
   ok("candidate firm_rules: the 2-Step's targets added across its stages, 8% + 5% = 13% of the account size; a one-stage product has none; live the same (promoted 2026-10-08) (run 10, s-product)",
      [s1, s2].every((f) => f.profit_target_all_stages.value_pct === 13 && f.profit_target_all_stages.formula === "8% + 5%" && f.stage_targets.length === 2)
@@ -545,13 +545,13 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   const bc = RT("check_budget", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 }, "candidate"), bl = RT("check_budget", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000 }, "live");
   const sc = RT("size_trade", { firm: "bitfunded", product: "1step", quota: 100000, equity: 100000, side: "long", entry: 100000, stop: 98000 }, "candidate");
   ok("candidate check_budget and size_trade: the floating-loss rule under the answer with its read date; live the same (promoted 2026-10-08)",
-     fl(bc) && fl(bc).read_on.join() === "2026-09-24" && /floating losses count toward the daily and maximum loss \(Bitfunded\) — Bitfunded help centre — Criteria to be Success.*read 2026-09-24$/.test(fl(bc).cite)
+     fl(bc) && fl(bc).read_on.join() === "2026-09-24,2026-10-18" && /floating losses count toward the daily and maximum loss \(Bitfunded\) — Bitfunded help centre — Criteria to be Success.*read 2026-09-24 and 2026-10-18$/.test(fl(bc).cite)
      && fl(sc) && JSON.stringify(bl) === JSON.stringify(bc), [fl(bc), fl(sc)]);
   const P = (x, v) => RT("trade_math", Object.assign({ calc: "position_size", risk: 500, entry: 100000, stop: 98000 }, x), v);
   const over = P({ firm: "bitfunded", product: "1step", leverage: 10 }, "candidate"), atCap = P({ firm: "bitfunded", product: "1step", leverage: 5 }, "candidate");
   const cft = P({ firm: "crypto_fund_trader", product: "1phase", leverage: 10 }, "candidate"), cftBig = P({ firm: "crypto_fund_trader", product: "1phase", leverage: 10, balance: 100000 }, "candidate");
   ok("candidate trade_math: 10× on the Bitfunded 1-Step is refused with the 1:5 cap and its source; 5× and no firm are worked; Crypto Fund Trader's cap by account size; live the same (promoted 2026-10-08) (run 10, b-leverage)",
-     /caps leverage at 1:5, so 10× is not available/.test(over.error) && over.sources[0].read_on.join() === "2026-09-23" && Math.abs(atCap.result.margin - atCap.result.notional / 5) < 0.01
+     /caps leverage at 1:5, so 10× is not available/.test(over.error) && over.sources[0].read_on.join() === "2026-09-23,2026-10-18" && Math.abs(atCap.result.margin - atCap.result.notional / 5) < 0.01
      && P({ leverage: 10 }, "candidate").result.margin > 0 && /depends on the account size \(1:5 up to \$25,000, 1:100 from \$50,000\)/.test(cft.error) && cftBig.result.margin > 0
      && JSON.stringify(P({ firm: "bitfunded", product: "1step", leverage: 10 }, "live")) === JSON.stringify(over), [over, cft.error]);
   const ruinC = RT("explain_rule", { topic: "ruin" }, "candidate").explanation, ruinL = RT("explain_rule", { topic: "ruin" }, "live").explanation;
@@ -585,8 +585,8 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("candidate lints (runs 11 and 12): ex-r's undated 4%, b-limits' floating rule, e-blown's Crypto Fund Trader, o-predict's dashboard as the record, o-montecarlo's \"Answer, one line\", s-firm's misreported sources; in run 9 only ex-r's undated 4% (found after run 14)",
      hit11 === "ex-r,b-limits,e-blown,o-predict,o-montecarlo,s-firm" && hit9.join() === "ex-r" && r11.every((c) => JSON.stringify(handler._lintNotesFor(bodyOf(c), "live", toolsFrom(c), c.q)) === JSON.stringify(handler._lintNotesFor(bodyOf(c), "candidate", toolsFrom(c), c.q))), [hit11, hit9]);
   const xc = RT("explain_rule", { topic: "crossover" }, "candidate"), xl = RT("explain_rule", { topic: "crossover" }, "live"), dc = RT("explain_rule", { topic: "drawdown" }, "candidate");
-  ok("candidate explain_rule crossover and drawdown: state the floating-loss rule and list its source (read 2026-09-24); live the same (promoted 2026-10-08)",
-     /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24")
+  ok("candidate explain_rule crossover and drawdown: state the floating-loss rule and list its source (read 2026-09-24 and 2026-10-18); live the same (promoted 2026-10-08)",
+     /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24,2026-10-18")
      && dc.sources.some((x) => /^floating losses count/.test(x.rule)) && JSON.stringify(xl) === JSON.stringify(xc));
   const bfc = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "candidate"), bfl = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "live");
   ok("candidate firm_rules: BrightFunded's price at $100,000 in EUR (497, 347.9 on promotion) with its source; live the same (promoted 2026-10-08) (run 11, s-firm)",
@@ -833,34 +833,34 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   // it, troid picking none (s-firm: runs 25 and 26 critical, run 27 no fee under $500); firm_rules gives Crypto Fund
   // Trader's fees; the crossover guardrail quotes nothing, and the prompt's quoted words aren't written back
   const PB = handler._runTool("products_in_budget", { budget: 500 }, "candidate");
-  ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and its source and read date (all five recorded 2026-10-10, 'not yet recorded' before); BrightFunded's euros apart, not converted; troid's closing line; live the same (promoted 2026-10-08)",
+  ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and its source and read date (all five recorded 2026-10-10 and re-read 2026-10-18, 'not yet recorded' before); BrightFunded's euros apart, not converted; troid's closing line; live the same (promoted 2026-10-08)",
      PB.products.map((p) => p.firm + " " + p.product + " " + p.price + " " + p.account_size).join("; ") === "Bitfunded Express 39 5000; Crypto Fund Trader Break 200 100000; Bitfunded Instant 249 5000; Crypto Fund Trader 3-Phase 399 100000; Crypto Fund Trader Instant 475 10000"
-     && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => /, read 2026-10-10$/.test(p.source))
+     && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10 and 2026-10-18)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => /, read 2026-10-10 and 2026-10-18$/.test(p.source))
      && /Priced in euros, which troid doesn't convert: BrightFunded 1-Step: €497 at a \$100,000 account, or €347\.90 on the promotion running when troid read it \(BrightFunded 1-Step product page — 100k price, read 2026-09-21\)/.test(PB.note)
      && PB.close === handler.BUDGET_CLOSE && handler._toolsFor("live").some((t) => t.name === "products_in_budget") && JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "live")) === JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "candidate"))
      && handler._runTool("products_in_budget", { budget: 30 }, "candidate").products.length === 0 && handler._runTool("products_in_budget", { budget: 1000 }, "candidate").products.map((p) => p.price).join() === "39,200,249,399,475,619,660,780,799,999"
      && handler._runTool("products_in_budget", { budget: 400, currency: "EUR" }, "candidate").products.map((p) => p.price).join() === "", PB);
   const cft = (pk, v) => handler._runTool("firm_rules", { firm: "crypto_fund_trader", product: pk }, v);
   const feeOf = (o) => o.rules.filter((x) => /fee at a/.test(x.rule)).map((x) => x.value).join();
-  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the others from Terms 5.6 (read 2026-10-10: 5.6.1 to 5.6.6); live the same (promoted 2026-10-08)",
+  ok("candidate firm_rules: Crypto Fund Trader's six fees (and the Break's activation fee), the 1-Phase's with its source, the others from Terms 5.6 (read 2026-10-10 and 2026-10-18: 5.6.1 to 5.6.6); live the same (promoted 2026-10-08)",
      ["1phase", "2phase", "3phase", "instant", "ascend", "break"].map((pk) => feeOf(cft(pk, "candidate"))).join(";") === "619;660;399;475;780;200,328"
-     && cft("1phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 619/.test(x.rule) && x.read_on.join() === "2026-09-21")
-     && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && /^Crypto Fund Trader Terms and Conditions 5\.6\.3/.test(x.document_section) && x.read_on.join() === "2026-10-10")
-     && [["2phase", "5.6.1"], ["ascend", "5.6.5"]].every(([pk, cl]) => cft(pk, "candidate").sources.some((x) => /^challenge fee at/.test(x.rule) && x.document_section.startsWith("Crypto Fund Trader Terms and Conditions " + cl) && x.read_on.join() === "2026-10-10"))
+     && cft("1phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 619/.test(x.rule) && x.read_on.join() === "2026-09-21,2026-10-18")
+     && cft("3phase", "candidate").sources.some((x) => /challenge fee at a \$100,000 account, USD 399/.test(x.rule) && /^Crypto Fund Trader Terms and Conditions 5\.6\.3/.test(x.document_section) && x.read_on.join() === "2026-10-10,2026-10-18")
+     && [["2phase", "5.6.1"], ["ascend", "5.6.5"]].every(([pk, cl]) => cft(pk, "candidate").sources.some((x) => /^challenge fee at/.test(x.rule) && x.document_section.startsWith("Crypto Fund Trader Terms and Conditions " + cl) && x.read_on.join() === "2026-10-10,2026-10-18"))
      && ["1phase", "2phase", "3phase", "instant", "ascend", "break"].every((pk) => feeOf(cft(pk, "live")) === feeOf(cft(pk, "candidate"))));
   // the owner, 2026-10-10: the Break's activation-fee timing in Crypto Fund Trader's FAQ's exact words, with its read date;
   // the fee beside the Terms, the timing beside the FAQ, never one under the other's source
   { const WHEN = "The Break Activation Fee is paid after successfully completing the Break Evaluation in order to proceed to the Break Final Stage.";
     const br = cft("break", "live"), act = br.rules.find((x) => /^activation fee at a/.test(x.rule)), src = (re) => br.sources.find((x) => re.test(x.rule));
     const pbB = handler._runTool("products_in_budget", { budget: 500 }, "live"), line = pbB.lines.find((l) => /Break/.test(l)), srcs = pbB.sources.filter((x) => /Break/.test(x.rule));
-    ok("the Break's activation fee: when it is paid and the window to pay it, in the FAQ's exact words, each beside the FAQ (read 2026-10-10); the fee itself beside the Terms; no 'hasn't recorded' left",
+    ok("the Break's activation fee: when it is paid and the window to pay it, in the FAQ's exact words, each beside the FAQ (read 2026-10-10 and 2026-10-18); the fee itself beside the Terms; no 'hasn't recorded' left",
        act && act.rule === "activation fee at a $100,000 account, USD" && act.value === 328
        && br.rules.some((x) => x.rule === "when the activation fee is paid, in the firm's words" && x.value === WHEN)
        && br.rules.some((x) => x.rule === "the window to pay the activation fee, in the firm's words" && /the trader will have 30 days to pay the Activation Fee\./.test(x.value))
-       && /^Crypto Fund Trader FAQ — What is the Break Activation Fee\?$/.test(src(/^when the activation fee is paid/).document_section) && src(/^when the activation fee is paid/).read_on.join() === "2026-10-10"
+       && /^Crypto Fund Trader FAQ — What is the Break Activation Fee\?$/.test(src(/^when the activation fee is paid/).document_section) && src(/^when the activation fee is paid/).read_on.join() === "2026-10-10,2026-10-18"
        && src(/^when the activation fee is paid/).rule === "when the activation fee is paid, in the firm's words: \"" + WHEN + "\""
        && /^Crypto Fund Trader Terms and Conditions 5\.6\.6/.test(src(/^activation fee at a/).document_section)
-       && line === "Crypto Fund Trader Break: $200 at a $100,000 account, and a $328 activation fee (Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD, read 2026-10-10); the activation fee, in the firm's words: \"" + WHEN + "\" (Crypto Fund Trader FAQ — What is the Break Activation Fee?, read 2026-10-10)"
+       && line === "Crypto Fund Trader Break: $200 at a $100,000 account, and a $328 activation fee (Crypto Fund Trader Terms and Conditions 5.6.6, 'Break' Evaluation, and 5.6.7, its Activation Fee, 100,000 USD, read 2026-10-10 and 2026-10-18); the activation fee, in the firm's words: \"" + WHEN + "\" (Crypto Fund Trader FAQ — What is the Break Activation Fee?, read 2026-10-10 and 2026-10-18)"
        && srcs.length === 2 && !srcs[0].rule.includes(WHEN) && /Terms and Conditions/.test(srcs[0].document_section) && srcs[1].rule.includes(WHEN) && /FAQ/.test(srcs[1].document_section)
        && !JSON.stringify([br, pbB]).includes("hasn't recorded when it is charged") && !JSON.stringify([br, pbB]).includes("whose timing troid hasn't recorded")
        && JSON.stringify(br) === JSON.stringify(cft("break", "candidate")) && JSON.stringify(pbB) === JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "candidate")), [act, line, srcs]); }
@@ -1024,19 +1024,19 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      && !RT2("troid doesn't recommend; it prices what you bring.\n\nThe 2-Step costs $200 less."));
   ok("candidate: a sentence saying every rule or figure above was read or sourced is sent back when the tools gave sources (c01, c02); a dated rule in passing is not",
      !!SR(C01, true) && !!SR(C02b, true) && !SR(C02b, false) && !SR("The 1-Step's daily limit is 4% (read 2026-09-23); every rule here binds on the initial balance.", true)); }
-// the sixth patch (staged 2026-10-15, the owner): the footer's affiliate sentence also names the paid newsletter, in
-// TROID.md and METHODOLOGY.md as the site will have it, and support.md section 10 names both funding sources only when
-// asked how troid makes money. The patch's prompt is live's with exactly those changes; live names no newsletter
+// the sixth patch (staged 2026-10-15, the owner; restaged 2026-10-18 with no claim about paid posts): support.md section
+// 10 names the commission and says troid also has a newsletter on Substack, whenever someone asks how troid is funded,
+// owned or independent, or about its affiliate links. The footer is live's again (FOOTER_TEXT), so TROID.md and
+// METHODOLOGY.md are no longer staged. The patch's prompt is live's with that section only; live names no newsletter
 { (async () => {
     const pb = await handler._systemBlocks("en", "patch"), lb = await handler._systemBlocks("en", "live");
-    const OLD = "earns a commission on purchases through its links; this does not affect the calculations or comparisons.";
-    const NEW = "earns a commission on purchases through its links, and some posts of its newsletter on Substack are paid; neither affects the calculations or comparisons.";
     const S10 = fs0.readFileSync(path0.join(__dirname, "context", "patch", "support.md"), "utf8").slice(fs0.readFileSync(path0.join(__dirname, "context", "support.md"), "utf8").length);
-    const undo = (t) => t.split(NEW).join(OLD).replace(S10, "");
-    ok("sixth patch: the patch's prompt is live's with the footer sentence naming the paid newsletter (TROID.md, METHODOLOGY.md) and support.md section 10, nothing else",
-       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.map((b) => b.text.split(NEW).length - 1).join() === "1,0,0,0,1"
-       && /^\n## 10\. "How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, name both sources[^\n]*substack\.com\/@tradingdroid[^\n]*never mention the newsletter, and never pitch it beyond that sentence\.\n$/.test(S10),
-       [pb.length, lb.length, pb.map((b) => b.text.split(NEW).length - 1).join()]);
+    const undo = (t) => t.replace(S10, "");
+    ok("sixth patch: the patch's prompt is live's with support.md section 10 added, nothing else (the footer is live's)",
+       pb.length === lb.length && pb.every((b, i) => undo(b.text) === lb[i].text) && pb.filter((b) => b.text.includes(S10)).length === 1
+       && /^\n## 10\. "How does troid make money\?" \/ "Who owns troid\?"\n\nWhenever someone asks how troid makes money, how it is funded, who owns it, whether it is independent, or about its affiliate links, say, in these words or close to them: troid earns a commission from the firms it compares on purchases through its links; it doesn't change a calculation or a comparison\. troid also has a newsletter on Substack \(https:\/\/substack\.com\/@tradingdroid\)\. On every other topic [^\n]*never mention the newsletter, and never pitch it\.\n$/.test(S10),
+       [pb.length, lb.length, S10]);
+    ok("sixth patch: section 10 says nothing about paid posts ('paid', 'posts')", !/\bpaid\b|\bposts?\b/i.test(S10), S10);
     ok("sixth patch: live names no newsletter", !/newsletter|substack/i.test(JSON.stringify(lb))); })(); }
 // the owner's fixes of 2026-10-08, after runs 35 to 37: a final answer that opens at "Working:" or on an account's figures
 // keeps the answer and formula written before the tool call (run 37's b-stop and b-limits); lead-ins a sentence apart, an
@@ -1118,11 +1118,11 @@ ok("tier: a model-written tier at the end of a paragraph goes when the service w
 const f1 = RT("firm_rules", { firm: "bitfunded", product: "2step_s1" }, "candidate"), f2 = RT("firm_rules", { firm: "bitfunded", product: "2step_s2" }, "candidate");
 ok("firm_rules: the 2-Step's one fee on both stages, with its source, never a 'Stage 1 fee' (run 4, s-product)",
    [f1, f2].every((f) => { const r = f.rules.find((x) => /^challenge fee/.test(x.rule)); return r && r.value === 799 && /one fee for the whole 2-Step/.test(r.rule)
-     && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23"; })
+     && f.sources.find((x) => /^challenge fee/.test(x.rule)).read_on.join() === "2026-09-23,2026-10-18"; })
    && /^challenge fee at the \$100,000 account level, USD/.test(RT("firm_rules", { firm: "bitfunded", product: "1step" }, "live").rules.find((x) => /^challenge fee/.test(x.rule)).rule), [f1.rules, f2.rules]);   // live's label as the candidate's since 2026-10-08
 const fx = RT("firm_rules", { firm: "bitfunded", product: "express" }, "candidate");
-ok("firm_rules: the Express's fee at $5,000 with its own source (the help centre's Challenge Type, read 2026-10-10; not yet recorded before), so one product's fee never stands for the firm (run 7, s-firm)",
-   fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && /One Step Express table/.test(x.document_section) && x.read_on.join() === "2026-10-10")
+ok("firm_rules: the Express's fee at $5,000 with its own source (the help centre's Challenge Type, read 2026-10-10 and 2026-10-18; not yet recorded before), so one product's fee never stands for the firm (run 7, s-firm)",
+   fx.rules.some((x) => x.rule === "challenge fee at a $5,000 account, USD" && x.value === 39) && fx.sources.some((x) => /^challenge fee at a \$5,000 account, USD 39$/.test(x.rule) && /One Step Express table/.test(x.document_section) && x.read_on.join() === "2026-10-10,2026-10-18")
    && /one product's fee never stands for a firm/.test(liveSys[0].text), fx);
 ok("guardrails: a worked example always, through a tool; fees dated; no tool parameters and no outside services in a reply",
    /never leave it out/.test(liveSys[0].text) && /no leverage above its 1:5 cap/.test(liveSys[0].text) && /gets its fee, reset time/.test(liveSys[0].text) && /Never write a tool's parameters/.test(liveSys[0].text)
@@ -1247,7 +1247,7 @@ fake.listen(18765, async () => {
     ok("tool result carries sources, formula, working and the risk", toolResult.risk === 480 && toolResult.sources.length === 7 && /room = min/.test(toolResult.formula) && toolResult.working.length > 15, toolResult);
     ok("a failed tool is marked is_error, a good one is not", toolResults[1].is_error === true && !("is_error" in toolResults[0]), toolResults.map((x) => x.is_error));
     ok("tool turn: the service writes each rule's source with its own dates, the tier and troid's assumptions",
-       r.j.reply.startsWith("Risk $480.00 (DERIVED).\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23\n")
+       r.j.reply.startsWith("Risk $480.00 (DERIVED).\n\nSources, each with the date troid read it:\n- daily 4% — Bitfunded help centre — Challenge & Trader Stage, One Step Evaluation table (Stage 1); Terms of Use 9(a), 1 Step Challenges, Objectives, read 2026-09-23 and 2026-10-18\n")
        && r.j.reply.includes("- fee 0.04% per side — Bitfunded help centre — Criteria to be Success, read 2026-09-18 and 2026-09-23") && r.j.reply.includes(handler.EN["ask.tier.derived"])
        && /troid's assumptions, not the firm's rules: exchange liquidation uses a 0\.5% maintenance margin.*margin mode cross — troid's default/.test(r.j.reply), r.j.reply);
     script = (b) => {
