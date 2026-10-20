@@ -5,7 +5,7 @@
   "outcome": "running",
   "balance": 100038.76,
   "trades_total": 93,
-  "trades_new_this_run": 1,
+  "trades_new_this_run": 0,
   "trading_days": 82,
   "distance_to_floor": 6038.76,
   "daily_room": 4000.0,
