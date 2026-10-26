@@ -1,11 +1,11 @@
 {
- "date": "2026-10-12",
- "week": "2026-W41",
- "commit": "891570f2cd813fa7401ee04433f05d03f0fb8206",
+ "date": "2026-10-26",
+ "week": "2026-W43",
+ "commit": "238a59548187256090c55960df963c1820a6501b",
  "checks": 2342,
  "passed": 2342,
  "failed": 0,
- "report": "audit/reports/2026-W41.md",
+ "report": "audit/reports/2026-W43.md",
  "pages": [
   "/"
  ],
@@ -13,10 +13,10 @@
   "ar"
  ],
  "cases": 1153,
- "seed": "2026-W41",
+ "seed": "2026-W43",
  "rules_read": {
-  "from": "2026-09-18",
-  "to": "2026-10-04"
+  "from": "2026-09-21",
+  "to": "2026-10-18"
  },
  "stale_rules": [],
  "unsourced_rules": []
