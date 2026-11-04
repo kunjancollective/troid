@@ -545,6 +545,7 @@
  "firm.products.held": "held: source not yet recorded",
  "firm.more.h": "More of {firm}'s rules",
  "firm.more.trader_stage": "Funded stage",
+ "firm.more.prohibited": "Banned strategies",
  "firm.more.availability": "Countries",
  "firm.more.excluded": "excluded: {list}",
  "firm.changes.h": "What changed, as troid logged it",
