@@ -682,14 +682,15 @@ def product_rows(k, f, T):
 
 
 def more_rows(k, f, T):
-    """The funded stage's rule and the countries the firm serves, where troid recorded a source for them."""
+    """The funded stage's rule, the strategies the firm bans and the countries it serves, where troid recorded a source for them."""
     K_ = _Kit(T)
     d = {"name": f["name"], "label": T.data(f["compare_product"]["label"]), "p": {}, "prov": {}, "pt": {}}
     a = f.get("availability") or {}
     h = ""
-    for x, key in (("trader_stage_rule", "firm.more.trader_stage"), ("availability", "firm.more.availability")):
+    for x, key in (("trader_stage_rule", "firm.more.trader_stage"), ("prohibited_strategies", "firm.more.prohibited"),
+                   ("availability", "firm.more.availability")):
         c = cite(f, x)
-        if x == "trader_stage_rule":
+        if x in ("trader_stage_rule", "prohibited_strategies"):
             shown = K_.esc(T.data(f[x])) if f.get(x) else None
         else:
             shown = (K_.esc(T.data(a["note"])) if a.get("note")
