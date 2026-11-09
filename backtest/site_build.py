@@ -323,7 +323,8 @@ def jsonld(T, page, text=""):
     Organization, its sameAs the repo, X and Reddit accounts the footer links, and the WebSite; then the page's own
     entity: the desk a WebApplication, free; the FAQ a FAQPage, each question with its answer as the page shows it;
     the ledger a Dataset, described as simulated; the research page an Article; the sources a CollectionPage listing
-    each source. Every string is the page's own, in its language; a figure appears only as the page states it."""
+    each source; the compare a CollectionPage listing each compared firm's page, unordered (nothing ranked). Every
+    string is the page's own, in its language; a figure appears only as the page states it."""
     org_id, site_id = BASE_URL + "/#organization", BASE_URL + "/#website"
     url = BASE_URL + page_url(T.code, page)
     graph = [{"@type": "Organization", "@id": org_id, "name": "troid", "url": BASE_URL + "/",
@@ -369,6 +370,17 @@ def jsonld(T, page, text=""):
         graph.append({"@type": "CollectionPage", "@id": url + "#sources", "url": url, "name": title, "description": desc,
                       "isPartOf": {"@id": site_id}, "inLanguage": T.code,
                       "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": items}})
+    elif page == "compare":
+        # the firms the compare sets side by side, each by its own page; unordered and unnumbered, since the columns'
+        # order is no rank (the compare scores nothing and ranks nothing). Each name as its page reads it, from T itself:
+        # the compare's PageT would read the firm page's keys as the compare's
+        base = T._T if isinstance(T, PageT) else T
+        items = [{"@type": "WebPage", "url": BASE_URL + page_url(T.code, fp), "name": page_name(base, fp),
+                  "about": {"@type": "Organization", "name": FIRMS_JSON[FIRM_PAGES[fp]]["name"]}} for fp in FIRM_PAGES]
+        graph.append({"@type": "CollectionPage", "@id": url + "#compare", "url": url, "name": title, "description": desc,
+                      "isPartOf": {"@id": site_id}, "publisher": {"@id": org_id}, "inLanguage": T.code,
+                      "mainEntity": {"@type": "ItemList", "itemListOrder": "https://schema.org/ItemListUnordered",
+                                     "numberOfItems": len(items), "itemListElement": items}})
     body = json.dumps({"@context": "https://schema.org", "@graph": graph}, ensure_ascii=False, separators=(",", ":"))
     return '<script type="application/ld+json">' + body.replace("</", "<\\/") + "</script>"
 
@@ -780,17 +792,23 @@ def page_list(T):
     return out
 
 
+# a page whose shared description leans on its share title for what state it is in: llms.txt sets the description under
+# the page's bare name, so it reads the meta description, which says it. troid Pro's og:title is "in preparation" and
+# its og.description gives the price alone, which under "troid Pro" reads as on sale (the SEO audit of 2026-11-09).
+LLMS_META = {"pro"}
+
+
 def llms_txt():
     """/llms.txt (llmstxt.org): what troid is and where each page and file is, for a language model reading the site.
     English. Each page's line is its own description (en.json: its structured-data description where it has one, the
-    ledger's "Simulated: …", else the one it previews with when shared, else its meta description), the rest
-    site_text.LLMS and the footer's words, so the file changes when the pages do."""
+    ledger's "Simulated: …", else the one it previews with when shared, else its meta description; LLMS_META's pages
+    their meta description), the rest site_text.LLMS and the footer's words, so the file changes when the pages do."""
     T, L = i18n.Strings("en"), site_text.LLMS
 
     def line(page):
         P = page_T(T, page)
-        k = next(k for k in (f"{page}.ld.description", f"{page}.og.description", f"{page}.meta.description", "og.description")
-                 if k in P.en)
+        order = ("ld", "meta", "og") if page in LLMS_META else ("ld", "og", "meta")
+        k = next(k for k in (*(f"{page}.{x}.description" for x in order), "og.description") if k in P.en)
         return f"- [{page_name(T, page)}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
     repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
     ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]

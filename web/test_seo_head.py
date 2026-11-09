@@ -11,13 +11,15 @@ items 2 and 3), for the published English pages and every language rendered with
 - Every page: one JSON-LD block that parses, an @graph with troid as an Organization whose sameAs are exactly the
   footer's repo, X and Reddit links, and the WebSite; the page's own entity where it has one: the desk a free
   WebApplication, the FAQ a FAQPage, the ledger a Dataset described as simulated with the journal as CSV, the
-  research page an Article, the sources a CollectionPage listing every source in sources.json.
+  research page an Article, the sources a CollectionPage listing every source in sources.json, the compare a
+  CollectionPage listing each compared firm's page, unordered and unnumbered (its columns' order is no rank).
 - The FAQPage holds each question the page shows, in order, with the answer's text as the page shows it.
 - Nothing in the JSON-LD can close its script early, and no string in it carries a tag.
 
 And the rest of 5.1 (items 5 to 8):
 - /llms.txt: troid's summary, the footer's disclosure, a line for every page with its address and its own description
-  (the ledger's "Simulated: …"), the files for assistants; every troid.ai address in it is a file the site serves.
+  (the ledger's "Simulated: …"; troid Pro's says it is in preparation), the files for assistants; every troid.ai
+  address in it is a file the site serves.
 - The footer links /sources on every page; /research redirects to /dashboard, permanently (vercel.json).
 - sitemap.xml: every page with a lastmod, no later than today; a change to a page's text moves it to today, a change to
   its head or to nothing keeps it; the page for an address with no page is not in it.
@@ -55,6 +57,7 @@ def ok(name, cond, info=""):
 
 SOCIAL = [u for u, _ in site_text.LINKS if u.startswith("https://")]
 PAGE_TYPE = {"index": "WebApplication", "faq": "FAQPage", "ledger": "Dataset", "dashboard": "Article", "sources": "CollectionPage",
+             "compare": "CollectionPage",
              **{pg: "WebPage" for pg in site_build.FIRM_PAGES}}
 
 
@@ -116,7 +119,7 @@ def check(label, path, code, page):
        set(g) == {"Organization", "WebSite"} | ({want} if want else set()), sorted(g))
     ok(f"{label}: no string closes the script or carries a tag",
        "</" not in blocks[0] and not any(re.search(r"<[a-zA-Z/][^>]*>", x) for x in strings(d)))
-    e = g.get(want) if want else None
+    e = (g.get(want) or {}) if want else None          # a missing entity fails its checks, never the run
     if want == "WebApplication":
         ok(f"{label}: the desk is free (an offer at 0 USD) and needs only a browser",
            e.get("isAccessibleForFree") is True and e.get("offers", {}).get("price") == "0" and e.get("url") == url, e)
@@ -134,6 +137,16 @@ def check(label, path, code, page):
         ok(f"{label}: a firm's page is about the firm, by name, part of troid's site",
            e.get("about") == {"@type": "Organization", "name": firm} and e.get("url") == url and firm in e.get("name", "")
            and e.get("isPartOf", {}).get("@id") == site_build.BASE_URL + "/#website", e)
+    elif want == "CollectionPage" and page == "compare":
+        lst = e.get("mainEntity", {})
+        items = lst.get("itemListElement", [])
+        want_items = [(site_build.BASE_URL + site_build.page_url(code, fp), site_build.FIRMS_JSON[k]["name"])
+                      for fp, k in site_build.FIRM_PAGES.items()]
+        ok(f"{label}: the compare lists each compared firm's page, by the firm's name",
+           [(i.get("url"), i.get("about", {}).get("name")) for i in items] == want_items
+           and all(n in i.get("name", "") for i, (_, n) in zip(items, want_items)) and e.get("url") == url, items)
+        ok(f"{label}: the compare's list is unordered and unnumbered: its columns' order is no rank",
+           lst.get("itemListOrder") == "https://schema.org/ItemListUnordered" and not any("position" in i for i in items), lst)
     elif want == "CollectionPage":
         items = e.get("mainEntity", {}).get("itemListElement", [])
         ok(f"{label}: the sources page lists every source in sources.json, with its link",
@@ -187,6 +200,10 @@ def rest():
         ok(f"llms.txt: {page} listed at {url} with a line of its own", m is not None and len(m.group(1)) > 30)
     ok("llms.txt: the ledger's line says it is simulated",
        re.search(r"\(https://troid\.ai/ledger\): Simulated: ", L) is not None)
+    if site_build.published("pro"):
+        ok("llms.txt: troid Pro's line says it is in preparation, as the page does",
+           re.search(r"^- \[troid Pro\]\(https://troid\.ai/pro\): troid Pro is in preparation\b", L, re.M) is not None
+           and "troid Pro is in preparation" in site_build.PRIVATE["pro"].read_text())
     links = re.findall(r"\]\((https://troid\.ai[^)]*)\)", L)
     ok(f"llms.txt: every troid.ai address in it is served ({len(links)})", links and all(served(u) for u in links),
        [u for u in links if not served(u)])
