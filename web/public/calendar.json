@@ -1,37 +1,21 @@
 {
  "_note": "Scheduled US releases for troid's calendar strip, from the agencies' own schedules (backtest/fetch_calendar.py, weekly). Times in UTC. No forecasts.",
- "read": "2026-11-09",
+ "read": "2026-11-16",
  "reads": {
-  "bls:cpi": "2026-11-09",
-  "bls:ppi": "2026-11-09",
-  "bls:jobs": "2026-11-09",
-  "bls:jolts": "2026-11-09",
-  "bea": "2026-11-09",
-  "fed": "2026-11-09"
+  "bls:cpi": "2026-11-16",
+  "bls:ppi": "2026-11-16",
+  "bls:jobs": "2026-11-16",
+  "bls:jolts": "2026-11-16",
+  "bea": "2026-11-16",
+  "fed": "2026-11-16"
  },
  "events": [
-  {
-   "kind": "cpi",
-   "period": "2026-10",
-   "utc": "2026-11-10T13:30Z",
-   "source": "BLS",
-   "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-   "read": "2026-11-09"
-  },
-  {
-   "kind": "ppi",
-   "period": "2026-10",
-   "utc": "2026-11-13T13:30Z",
-   "source": "BLS",
-   "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
-   "read": "2026-11-09"
-  },
   {
    "kind": "minutes",
    "utc": "2026-11-18T19:00Z",
    "source": "Federal Reserve",
    "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "gdp",
@@ -40,7 +24,7 @@
    "utc": "2026-11-25T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "pce",
@@ -48,7 +32,7 @@
    "utc": "2026-11-25T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "jolts",
@@ -56,7 +40,7 @@
    "utc": "2026-12-01T15:00Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/jolts.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "jobs",
@@ -64,14 +48,14 @@
    "utc": "2026-12-04T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "fomc",
    "utc": "2026-12-09T19:00Z",
    "source": "Federal Reserve",
    "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "cpi",
@@ -79,7 +63,7 @@
    "utc": "2026-12-10T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "ppi",
@@ -87,7 +71,7 @@
    "utc": "2026-12-15T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "gdp",
@@ -96,7 +80,7 @@
    "utc": "2026-12-23T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "pce",
@@ -104,14 +88,22 @@
    "utc": "2026-12-23T13:30Z",
    "source": "BEA",
    "url": "https://www.bea.gov/news/schedule",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
   },
   {
    "kind": "minutes",
    "utc": "2026-12-30T19:00Z",
    "source": "Federal Reserve",
    "url": "https://www.federalreserve.gov/newsevents/calendar.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
+  },
+  {
+   "kind": "jolts",
+   "period": "2026-11",
+   "utc": "2027-01-05T15:00Z",
+   "source": "BLS",
+   "url": "https://www.bls.gov/schedule/news_release/jolts.htm",
+   "read": "2026-11-16"
   },
   {
    "kind": "jobs",
@@ -119,7 +111,23 @@
    "utc": "2027-01-08T13:30Z",
    "source": "BLS",
    "url": "https://www.bls.gov/schedule/news_release/empsit.htm",
-   "read": "2026-11-09"
+   "read": "2026-11-16"
+  },
+  {
+   "kind": "cpi",
+   "period": "2026-12",
+   "utc": "2027-01-13T13:30Z",
+   "source": "BLS",
+   "url": "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "read": "2026-11-16"
+  },
+  {
+   "kind": "ppi",
+   "period": "2026-12",
+   "utc": "2027-01-14T13:30Z",
+   "source": "BLS",
+   "url": "https://www.bls.gov/schedule/news_release/ppi.htm",
+   "read": "2026-11-16"
   }
  ]
 }
