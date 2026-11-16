@@ -798,11 +798,13 @@ def page_list(T):
 LLMS_META = {"pro"}
 
 
-def llms_txt():
+def llms_txt(base=None, today=None):
     """/llms.txt (llmstxt.org): what troid is and where each page and file is, for a language model reading the site.
     English. Each page's line is its own description (en.json: its structured-data description where it has one, the
     ledger's "Simulated: …", else the one it previews with when shared, else its meta description; LLMS_META's pages
-    their meta description), the rest site_text.LLMS and the footer's words, so the file changes when the pages do."""
+    their meta description), the rest site_text.LLMS and the footer's words, so the file changes when the pages do.
+    Dated under the summary with the day its text last changed, as the sitemap's lastmod is: the date already in
+    base/llms.txt while the rest of the file is the same, else today (UTC)."""
     T, L = i18n.Strings("en"), site_text.LLMS
 
     def line(page):
@@ -812,15 +814,24 @@ def llms_txt():
         return f"- [{page_name(T, page)}]({BASE_URL}{page_url('en', page)}): {_plain(P(k))}"
     repo = next(u for u in SAME_AS if u.startswith("https://github.com/"))
     ext = [(u, T(site_text.LINK_KEYS[u])) for u in SAME_AS]
-    out = ["# troid", "", "> " + _plain(T("index.meta.description")), "",
-           f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
-           f"## {L['pages']}", "", *[line(p) for p in published_pages()], "",
-           f"## {L['assist']}", "",
-           f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
-           f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
-           f"- [METHODOLOGY.md]({BASE_URL}/METHODOLOGY.md): {L['methodology']}", "",
-           f"## {L['optional']}", "", *[f"- [{name}]({u})" for u, name in ext], ""]
-    return "\n".join(out)
+    head = ["# troid", "", "> " + _plain(T("index.meta.description")), ""]
+    rest = ["", f"{L['about']} {site_text.NO_EDGE_SHORT}", "", site_text.FOOTER_TEXT, "",
+            f"## {L['pages']}", "", *[line(p) for p in published_pages()], "",
+            f"## {L['assist']}", "",
+            f"- [TROID.md]({BASE_URL}/TROID.md): {L['troid_md']}",
+            f"- [MCP server]({repo}/tree/main/mcp): {L['mcp']}",
+            f"- [METHODOLOGY.md]({BASE_URL}/METHODOLOGY.md): {L['methodology']}", "",
+            f"## {L['optional']}", "", *[f"- [{name}]({u})" for u, name in ext], ""]
+
+    def text(date):
+        return "\n".join([*head, L["updated"].format(date=date), *rest])
+    f = (Path(base) if base else PUB) / "llms.txt"
+    prev = f.read_text() if f.exists() else ""
+    dated = re.escape(L["updated"]).replace(re.escape("{date}"), r"(\d{4}-\d{2}-\d{2})")
+    m = re.search("^" + dated + "$", prev, re.M)
+    if m and text(m.group(1)) == prev:
+        return prev
+    return text(today or datetime.now(timezone.utc).date().isoformat())
 
 
 def write_seo(out=None, today=None):
@@ -852,7 +863,7 @@ def write_seo(out=None, today=None):
     sitemap = ('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'
                + xhtml + '>\n' + "\n".join(urls) + "\n</urlset>\n")
     robots = f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n"
-    files = [("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt())]
+    files = [("sitemap.xml", sitemap), ("robots.txt", robots), ("llms.txt", llms_txt(base, today))]
     written = []
     # Bing Webmaster's file check (/BingSiteAuth.xml), from the same public value as the home page's msvalidate.01 tag;
     # no file while site.json records none
