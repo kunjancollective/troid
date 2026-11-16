@@ -1584,7 +1584,58 @@
     "restricted_countries": "Cuba, Iran, North Korea, Syria, Vietnam (T&C) + Pakistan (propfirmmatch); MT5 additionally barred to US and UAE",
     "payment_methods": null,
     "trader_payout_methods": "bank transfer, crypto (propfirmmatch; verify)",
-    "rule_changes": [],
+    "rule_changes": [
+      {
+        "date": "2026-11-16",
+        "found": "BrightFunded replaced its plans on 16 Nov 2026. The 1-Step that troid's rules above describe is now 'BrightFunded 1-Step (OLD)', for accounts bought before that date, and its rules did not change (help centre article 14284743, renamed). brightfunded.com/1-step now opens 1-Step Daily: on $100K, \u20ac497, a 10% target, and by the help centre the same 3% daily loss and 6% max loss trailing equity in real time; but no minimum trading days, payouts any day from the first funded trading day with 1% of the account kept as a buffer, a split of 80% (90% with a paid add-on), and no new trade for 30 calendar days is a hard breach. The help centre's per-plan table, reward split and consistency articles are marked OLD as well. troid's compare and the rules above still show the OLD 1-Step; which plan they show next is not yet decided.",
+        "src": [
+          "help_1step_old_1116",
+          "product_1step_daily_1116",
+          "comparison_1116",
+          "help_1step_daily_1116",
+          "help_1step_daily_rules_1116",
+          "help_1step_daily_payouts_1116",
+          "help_1step_daily_addons_1116",
+          "help_daily_loss_1116",
+          "help_rules_1116",
+          "help_rules_old_1116",
+          "help_split_1116",
+          "help_split_old_1116",
+          "help_consistency_1116",
+          "help_consistency_old_1116",
+          "tc_1116"
+        ]
+      },
+      {
+        "date": "2026-11-16",
+        "found": "2-Step Classic is now an OLD plan only, for accounts bought before 16 Nov 2026 (help centre article 14284844, renamed); neither the product page nor the comparison table lists it. 2-Step Bright is sold under new rules from 16 Nov 2026: the same 8% and 5% targets, 4% daily loss and 8% static max loss, but each phase needs 3 profitable days, each closed with at least 0.5% net profit, where it needed 5 trading days, and the first payout comes 14 days after the first funded trade, where it came after 30. The 2-Step rows above still show the OLD plans' 5 trading days.",
+        "src": [
+          "help_2step_classic_old_1116",
+          "help_2step_bright_old_1116",
+          "help_2step_bright_1116",
+          "help_2step_bright_rules_1116",
+          "help_2step_bright_payouts_1116",
+          "help_2step_bright_addons_1116",
+          "help_rules_1116",
+          "help_rules_old_1116",
+          "comparison_1116"
+        ]
+      },
+      {
+        "date": "2026-11-16",
+        "found": "A new plan, Instant, sold from 16 Nov 2026: no evaluation, funded from the purchase; 3% daily loss; 5% max loss trailing the highest balance or equity and locking at the starting balance; open losses capped at 1% of the starting size; no positions over the weekend (closed at Friday's market close); payouts once five requirements hold together, a 15% consistency rule among them; a split of 90% (100% with a paid add-on). troid does not show it.",
+        "src": [
+          "help_instant_1116",
+          "help_instant_rules_1116",
+          "help_instant_payouts_1116",
+          "help_instant_addons_1116",
+          "comparison_1116",
+          "help_daily_loss_1116",
+          "help_consistency_1116",
+          "help_news_1116"
+        ]
+      }
+    ],
     "external_payout_evidence": "https://propfirmmatch.com/prop-firms/brightfunded/payouts",
     "link_live": true,
     "_link_live_note": "true since 2026-09-22: comparison permitted, confirmed with the firm on 2026-09-21 (record kept privately); promotion policy read (promotion_policy).",
@@ -1798,6 +1849,195 @@
           "read_on": "2026-11-04",
           "doc_dated": "2025-09-24",
           "read_via": "read on 2026-11-04 through a web reader (the page text, not a sandbox fetch with a hash)"
+        },
+        "product_1step_daily_1116": {
+          "doc": "BrightFunded 1-Step Daily product page",
+          "url": "https://brightfunded.com/cfds/1-step-daily",
+          "read_on": "2026-11-16",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 80f12170b6552644): https://brightfunded.com/1-step redirects here. The $100K plan: EUR 497 list price, 10% profit target, 3% max daily loss, 6% max total loss, 'No Minimum' trading days, 'Up to 90%' payout ratio, daily payouts; add-ons Swap-Free, 100% Account Fee Refund, 90% Payout Split. The page does not say whether the total loss trails, nor its daily basis or reset time."
+        },
+        "comparison_1116": {
+          "doc": "BrightFunded Challenge Comparison (CFD comparison table)",
+          "url": "https://brightfunded.com/cfds/comparison-table",
+          "read_on": "2026-11-16",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page da67b5ff9bfe4a8d): linked from the 1-Step Daily page as 'Comparison Table'. Three plans: 1-Step Daily, 2-Step Bright, Instant; no 1-Step and no 2-Step Classic. 1-Step Daily: 10% target, 3% max daily loss, 6% max total loss, max open risk '-', payout ratio 'Up to 90%' (its own heading says 'Up To 100% Payout Ratio'), profitable days '-', payouts daily, scaling plan 'Unlimited'. 2-Step Bright: 8% and 5%, 4%, 8%, profitable days '3 Days, 0.5%+ each', payouts '14 days, then biweekly'. Instant: 3%, 5%, max open risk 1%, consistency '15% Best day', scaling plan '-'. It does not say whether any total loss trails."
+        },
+        "tc_1116": {
+          "doc": "BrightFunded Terms and Conditions",
+          "url": "https://brightfunded.com/terms-and-conditions",
+          "read_on": "2026-11-16",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page e3a2906b9669985e): no date on the page and no plan named. The sections firms.json cites are where it says and say the same: s.2 (Cuba, Iran, North Korea, Syria, Vietnam; MT5 not for residents or citizens of the US or the UAE), 5.4(g) (now also naming account rolling), 5.6, 5.7, 5.8, 6.6(c) (maximum drawdown 'static ... or trailing ... depending on the Product'), 6.14 (USD 400,000), 7.7b (fee refund only with the add-on), 17.4-17.5 (UAE law, Dubai courts)."
+        },
+        "help_1step_old_1116": {
+          "doc": "BrightFunded help centre article 14284743, 'BrightFunded 1-Step (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page d8e7808019a31683); the page showed 'Updated today' and its dateModified is 2026-11-16T10:53:32Z: the URL troid cited (14284743-brightfunded-1-step) redirects here. 'Complete rules for 1-Step accounts bought before 16 Nov 2026 ... Your rules do not change. For accounts bought on or after that date, see the 1-Step Daily, 2-Step Bright and Instant articles in the Plans folder.' Its rules are the ones troid's column shows: 10% target, 5 minimum trading days, 3% daily on the higher of equity and balance at the start of the day, 6% trailing on equity in real time, locking at the initial balance once equity is 6% above it; first payout 30 days after the first funded trade, then every 14 days."
+        },
+        "help_1step_daily_1116": {
+          "doc": "BrightFunded help centre article 18450308, 'What is 1-Step Daily?'",
+          "url": "https://help.brightfunded.com/en/articles/18450308-what-is-1-step-daily",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 10c497c9f8fbccac); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:44Z: Plans folder. One phase, 10% target, no minimum trading days, no time limit, no consistency rule; 3% daily loss on the higher of balance and equity at the start of the day, reset at the 11:30-11:59 PM CET rollover; 6% max loss trailing equity in real time, locking at the starting balance ($100,000 account: $94,000, locks at $100,000 once equity reaches $106,000); split 80%, 90% with the add-on; payouts any day, 1% buffer."
+        },
+        "help_1step_daily_rules_1116": {
+          "doc": "BrightFunded help centre article 18450319, '1-Step Daily: evaluation rules'",
+          "url": "https://help.brightfunded.com/en/articles/18450319-1-step-daily-evaluation-rules",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page b47bcb09df94697c); the page showed 'Updated in the last 15 minutes' and its dateModified is 2026-11-16T16:46:11Z: Plans folder. The same limits as 'What is 1-Step Daily?', with the rollover table (balance $101,000 at rollover: equity cannot drop below $98,000 next day, a fixed $3,000 on $100,000) and the trailing table ($100,000 -> $94,000 ... $106,000 -> $100,000, locks). The funded account keeps 3% daily and 6% trailing. Inactivity (no new trade in 30 calendar days) is a hard breach; reactivation can be requested until 30 Nov 2026 only."
+        },
+        "help_1step_daily_payouts_1116": {
+          "doc": "BrightFunded help centre article 18450309, 'How do payouts work on 1-Step Daily?'",
+          "url": "https://help.brightfunded.com/en/articles/18450309-how-do-payouts-work-on-1-step-daily",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 5dee87fefaaab900); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:45Z: Plans folder. Payout any day from the first funded trading day; no minimum or maximum; a 1% profit buffer on the closed balance stays in the account; split 80%, 90% with the add-on; a new account after each payout, the trailing max loss restarting."
+        },
+        "help_1step_daily_addons_1116": {
+          "doc": "BrightFunded help centre article 18450310, '1-Step Daily add-ons'",
+          "url": "https://help.brightfunded.com/en/articles/18450310-1-step-daily-add-ons",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 49a52ade5a18c5c8); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:46Z: Plans folder. 90% Payout Split +20%, 100% Account Fee Refund +15%, Swap-Free +10%; no weekly or bi-weekly payouts and no 'No Min. Trading Days' add-on."
+        },
+        "help_2step_bright_1116": {
+          "doc": "BrightFunded help centre article 18450311, 'What is 2-Step Bright?'",
+          "url": "https://help.brightfunded.com/en/articles/18450311-what-is-2-step-bright",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 2da45541b09abbdf); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:47Z: Plans folder. Targets 8% and 5%; 3 profitable days per phase, a day closed with at least 0.5% net profit; 4% daily loss on the higher of balance and equity at the start of the day; 8% static max loss; first payout 14 calendar days after the first funded trade, then every 14 days; split 80%, 90% with the add-on."
+        },
+        "help_2step_bright_rules_1116": {
+          "doc": "BrightFunded help centre article 18450320, '2-Step Bright: evaluation rules'",
+          "url": "https://help.brightfunded.com/en/articles/18450320-2-step-bright-evaluation-rules",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 0cb80faff9ce4496); the page showed 'Updated in the last 15 minutes' and its dateModified is 2026-11-16T16:46:47Z: Plans folder. The same as 'What is 2-Step Bright?', with the rollover table (balance $101,000: equity cannot drop below $97,000, a fixed $4,000 on $100,000); the funded account keeps 4% daily and 8% static."
+        },
+        "help_2step_bright_payouts_1116": {
+          "doc": "BrightFunded help centre article 18450312, 'How do payouts work on 2-Step Bright?'",
+          "url": "https://help.brightfunded.com/en/articles/18450312-how-do-payouts-work-on-2-step-bright",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 72114e74a1c7ac0b); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:49Z: Plans folder. First payout 14 calendar days after the first funded trade, then every 14 days (7 with Weekly Payouts); no buffer, no minimum."
+        },
+        "help_2step_bright_addons_1116": {
+          "doc": "BrightFunded help centre article 18450313, '2-Step Bright add-ons'",
+          "url": "https://help.brightfunded.com/en/articles/18450313-2-step-bright-add-ons",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page b59eed6a3fe6317b); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:49Z: Plans folder. Weekly Payouts +25%, No Min. Trading Days +20%, 90% Payout Split +20%, 100% Account Fee Refund +15%, Swap-Free +10%."
+        },
+        "help_instant_1116": {
+          "doc": "BrightFunded help centre article 18450314, 'What is Instant?'",
+          "url": "https://help.brightfunded.com/en/articles/18450314-what-is-instant",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page f15a0b44514530d9); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:50Z: Plans folder. No evaluation; 3% daily loss on the higher of balance and equity at the start of the day; 5% max loss trailing the highest balance or equity, locking at the starting balance; max floating loss 1% of the starting size; no weekend holding; 15% consistency rule; split 90%, 100% with the add-on; payout when five requirements hold together."
+        },
+        "help_instant_rules_1116": {
+          "doc": "BrightFunded help centre article 18450321, 'Instant: account rules'",
+          "url": "https://help.brightfunded.com/en/articles/18450321-instant-account-rules",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 6ea279136acf63a0); the page showed 'Updated in the last 15 minutes' and its dateModified is 2026-11-16T16:47:24Z: Plans folder. The same as 'What is Instant?', with the trailing table ($100,000 -> $95,000 ... $105,000 -> $100,000, locks); trades still open on Friday are closed automatically at market close."
+        },
+        "help_instant_payouts_1116": {
+          "doc": "BrightFunded help centre article 18450315, 'How do payouts work on Instant?'",
+          "url": "https://help.brightfunded.com/en/articles/18450315-how-do-payouts-work-on-instant",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 14cde9cc184c4480); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:52Z: Plans folder. Profit buffer 3% of account size, minimum payout 1%, no day above 15% of the cycle's profit, 5 days of at least 0.5% profit, biggest loss no larger than biggest win; split 90%, 100% with the add-on."
+        },
+        "help_instant_addons_1116": {
+          "doc": "BrightFunded help centre article 18450316, 'Instant add-ons'",
+          "url": "https://help.brightfunded.com/en/articles/18450316-instant-add-ons",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 7d8ef01a1c016e81); the page showed 'Updated today' and its dateModified is 2026-11-16T10:00:52Z: Plans folder. 100% Payout Split +20%, 100% Account Fee Refund +15%, Swap-Free +10%."
+        },
+        "help_daily_loss_1116": {
+          "doc": "BrightFunded help centre article 12291765, 'How Does My Daily Permitted Loss Work?'",
+          "url": "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 06f71a979b4fab42); the page showed 'Updated today' and its dateModified is 2026-11-16T12:16:34Z: '1-Step Daily and Instant (available from November 16th, 2026) use the new method.' Per plan: 1-Step Daily 3%, 2-Step Bright 4%, Instant 3%, 2-Step Classic 5%, 1-Step (before November 16th, 2026) 3%; 'always calculated as a percentage of your original challenge size'; the floor is the higher of balance and equity at rollover minus that amount; rollover 11:30-11:59 PM CET."
+        },
+        "help_rules_1116": {
+          "doc": "BrightFunded help centre article 18457132, 'What are the current rules for the evaluation process?'",
+          "url": "https://help.brightfunded.com/en/articles/18457132-what-are-the-current-rules-for-the-evaluation-process",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 33c8bf3f523ea741); the page showed 'Updated in the last hour' and its dateModified is 2026-11-16T16:38:13Z: the new article the OLD one (9241611) points to. 1-Step Daily: 1 phase, 10%, no minimum days, 3% daily, 6% trailing in real time on equity. 2-Step Bright: 8% and 5%, 3 profitable days per phase, 4%, 8% static. Instant has no evaluation: weekend holding not allowed, 15% consistency rule. 'Accounts bought before 16 Nov 2026 keep the rules in the OLD plans folder.'"
+        },
+        "help_rules_old_1116": {
+          "doc": "BrightFunded help centre article 9241611, 'What are the current rules for the evaluation process? (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/9241611-what-are-the-current-rules-for-the-evaluation-process-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 5153a80436a02a33); the page showed 'Updated today' and its dateModified is 2026-11-16T11:02:48Z: the URL troid cited redirects here. 'This article applies to accounts bought before 16 Nov 2026.' Its per-plan table is the one troid read on 2026-11-04: 2-Step Bright 5 days per stage, 4%, 8% static, 8% and 5%; 2-Step Classic 5 days, 5%, 10% static, 10% and 5%; 1-Step 5 days, 3%, 6% trailing, 10%."
+        },
+        "help_2step_bright_old_1116": {
+          "doc": "BrightFunded help centre article 14284817, 'BrightFunded 2-Step \u2013 Bright (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284817-brightfunded-2-step-bright-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 0d2df6c9b55ca48f); the page showed 'Updated today' and its dateModified is 2026-11-16T10:54:39Z: accounts bought before 16 Nov 2026: 8% and 5%, 5 minimum trading days per phase, 4% daily, 8% static; first payout 30 days after the first funded trade."
+        },
+        "help_2step_classic_old_1116": {
+          "doc": "BrightFunded help centre article 14284844, 'BrightFunded 2-Step \u2013 Classic (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284844-brightfunded-2-step-classic-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 960ae6610f16e9c6); the page showed 'Updated today' and its dateModified is 2026-11-16T10:55:44Z: the URL troid cited redirects here. Accounts bought before 16 Nov 2026: 10% and 5%, 5 minimum trading days per phase, 5% daily, 10% static; first payout 30 days after the first funded trade. No new-plan article for 2-Step Classic is in the Plans folder."
+        },
+        "help_split_1116": {
+          "doc": "BrightFunded help centre article 18457137, 'How does my Reward Split work on my Funded Account?'",
+          "url": "https://help.brightfunded.com/en/articles/18457137-how-does-my-reward-split-work-on-my-funded-account",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page a46a65da0603806e); the page showed 'Updated today' and its dateModified is 2026-11-16T12:39:27Z: split by model: 1-Step Daily 80% (90% with the add-on), 2-Step Bright 80% (90%), Instant 90% (100%), OLD plans 80% (90%); 'The profit split can also be scaled up to 100/0 with our Scaling Plan.' First payout: 1-Step Daily any day; 2-Step Bright 14 days; Instant when its requirements are met; OLD plans 30 days."
+        },
+        "help_split_old_1116": {
+          "doc": "BrightFunded help centre article 9268736, 'How does my Reward Split work on my Funded Account? (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/9268736-how-does-my-reward-split-work-on-my-funded-account-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 99c2f9b29b3cecce); the page showed 'Updated today' and its dateModified is 2026-11-16T10:58:54Z: the URL troid cited redirects here; 'applies to accounts bought before 16 Nov 2026'. 80/20 by default, up to 100/0 with the Scaling Plan or 90% with the add-on."
+        },
+        "help_consistency_1116": {
+          "doc": "BrightFunded help centre article 18457247, 'Does BrightFunded have a consistency rule?'",
+          "url": "https://help.brightfunded.com/en/articles/18457247-does-brightfunded-have-a-consistency-rule",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 18cc98785768d294); the page showed 'Updated in the last hour' and its dateModified is 2026-11-16T16:25:15Z: 1-Step Daily no, 2-Step Bright no, Instant 15% (no day above 15% of the cycle's profit), OLD plans no."
+        },
+        "help_consistency_old_1116": {
+          "doc": "BrightFunded help centre article 12577176, 'Does BrightFunded have a consistency rule? (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/12577176-does-brightfunded-have-a-consistency-rule-old",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 9b8eb66bf711945e); the page showed 'Updated today' and carries no dateModified: the URL troid cited redirects here; 'applies to accounts bought before 16 Nov 2026'; no consistency rule."
+        },
+        "help_news_1116": {
+          "doc": "BrightFunded help centre article 9241694, 'Can I trade news?'",
+          "url": "https://help.brightfunded.com/en/articles/9241694-can-i-trade-news",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page b8e5414e14c82edb); the page showed 'Updated today' and its dateModified is 2026-11-16T12:33:45Z: unchanged for the evaluation and funded accounts (5 minutes either side of high-impact news, profit removed, a soft breach); adds 'Instant accounts: Instant has no evaluation, so this restriction applies from day one.'"
+        },
+        "help_leverage_1116": {
+          "doc": "BrightFunded help centre article 9268380, 'What is the Leverage in BrightFunded's Simulated Trading Environment?'",
+          "url": "https://help.brightfunded.com/en/articles/9268380-what-is-the-leverage-in-brightfunded-s-simulated-trading-environment",
+          "read_on": "2026-11-16",
+          "doc_dated": "2026-03-17",
+          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page c81a372fe36cbf08): unchanged since 2026-03-17 and names no plan: FX 1:100, gold and commodities 1:40, indices 1:20, crypto 1:5, the same in challenges and funded accounts."
         }
       },
       "fields": {
