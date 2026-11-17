@@ -98,8 +98,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `backtest/site_build.py` (the generators call it); never hand-edit `web/public/*.html`. A language publishes only
   when `web/i18n/{lang}.json` is `_status: live`, set by `i18n_import.py` from its native reviewer's sheet.
   `i18n_equiv.py` proves English unchanged (`--design`: a presentation change leaves every text and figure, the desk's
-  84 states among them); the desk is `partials/_desk2.html` + `web/public/desk2.js` (redesigned 2026-09-25, `/desk-preview`
-  now redirects to `/`; `web/test_desk.py` holds its 84 states to the desk the calculator audit checked (9c8d447, served
+  states among them); the desk is `partials/_desk2.html` + `web/public/desk2.js` (redesigned 2026-09-25, `/desk-preview`
+  now redirects to `/`; `web/test_desk.py` holds every desk state (firm × product × grid row) to the desk the calculator audit checked (9c8d447, served
   from git with today's rules), every figure masked and only the audit's named changes applied, and
   `web/test_desk_webkit.py` runs it as an iPhone lays it out on GitHub's WebKit, `.github/workflows/webkit.yml`);
   the price on the entry chip always belongs to the asset in the Asset field, and a price enters Entry only with its own

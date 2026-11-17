@@ -6,8 +6,9 @@ behaviours on WebKit, as an iPhone lays them out: web/test_desk_webkit.py.
 
   python web/test_desk.py
 
-- The 84 desk states against OLD, the revision the calculator audit checked (29 Sep 2026; its results are the old desk's
-  of 1eefe86 byte for byte), served from git with today's firms.json rules in its FIRMS, the desk's own additions (the ladder and the fee bar, marked d2x) set aside
+- Every desk state (one per firm × product × DESK_GRID row, plus each product's working opened; the count follows the
+  products the desk offers) against OLD, the revision the calculator audit checked (29 Sep 2026; its results are the old
+  desk's of 1eefe86 byte for byte), served from git with today's firms.json rules in its FIRMS, the desk's own additions (the ladder and the fee bar, marked d2x) set aside
   on both: the structure and wording byte for byte with every figure masked, where only the audit's named rewordings are
   mapped back and its rules applied (F3: a pending drawdown type with a known max is the static floor, labelled as the
   loosest reading, the type not counted as a rule used; F5: a long's liquidation at or past 100% is "none above zero";
@@ -58,7 +59,7 @@ EN = json.loads((ROOT / "web" / "i18n" / "en.json").read_text())
 FIRMS = json.loads((ROOT / "firms.json").read_text())
 UNI = FIRMS["_asset_universe"]
 DESK = "/"                      # the redesigned desk, troid's home page since 2026-09-25
-OLD = "9c8d447"                 # the revision the calculator audit checked: its 84 states are 1eefe86's (the old desk's)
+OLD = "9c8d447"                 # the revision the calculator audit checked: its desk states are 1eefe86's (the old desk's)
 fails, n = [], 0
 
 
@@ -223,7 +224,7 @@ def main():
             return out
         state = "()=>({cls:document.getElementById('gauge').className,line:document.querySelector('.gline').textContent,res:document.getElementById('result').innerText})"
 
-        # 1. the 84 states against the revision the calculator audit checked, the old desk's figures, as the audit changed them
+        # 1. every desk state against the revision the calculator audit checked, the old desk's figures, as the audit changed them
         ctx, old, _ = page("/", root=url0)
         old.evaluate(F3_OLD)
         levb = old.evaluate("()=>Object.fromEntries(Object.entries(FIRMS).flatMap(([f,x])=>Object.entries(x.products).map(([k,p])=>[f+'/'+k,p.levb])))")
@@ -231,10 +232,16 @@ def main():
         ctx.close()
         ctx, pg, errs = page()
         mine = states(pg, GRAB)
+        # one state per firm × product × DESK_GRID row, plus each product's working opened: the count follows the desk's products
+        nprod = 0
+        for f in pg.eval_on_selector_all("#firm option", "e=>e.map(x=>x.value)"):
+            pg.select_option("#firm", f)
+            nprod += pg.eval_on_selector_all("#profile option", "e=>e.length")
+        want = nprod * (len(DESK_GRID) + 1)
         diff = [a[:3] for a, c in zip(base, mine) if mask(a[3]["html"]) != as_old(c[3]["html"])]
         ok(f"the {len(base)} desk states: the old desk's structure and wording, byte for byte, every figure masked; only the audit's "
            "rewordings mapped back and its rules applied (F3's loosest reading, F5's \"none above zero\", the two new rows)",
-           len(base) == len(mine) == 84 and not diff, diff[:3])
+           nprod > 0 and len(base) == len(mine) == want and not diff, (len(base), len(mine), want, diff[:3]))
 
         def covers(b, q):
             return (b.get("max_quota") is None or q <= b["max_quota"]) and (b.get("min_quota") is None or q >= b["min_quota"])
@@ -269,7 +276,7 @@ def main():
         ok("\"none above zero\" exactly where a long's liquidation was at or past 100%, and a long's floor distances \"not reached above zero\" "
            "exactly where they were (the review, 2026-09-30); shorts and nearer ones as computed", not liq, liq[:4])
         ok("in every sized state, the loss at the stop is the risk to the cent", not loss, loss[:4])
-        ok("no page error across the 84 states", not errs, errs)
+        ok(f"no page error across the {len(mine)} states", not errs, errs)
         ctx.close()
 
         # 2. a first view with no example trade
