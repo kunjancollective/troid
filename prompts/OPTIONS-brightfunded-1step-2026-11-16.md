@@ -1,5 +1,13 @@
 # BrightFunded's 16 Nov 2026 plans: which 1-Step should troid's column show?
 
+**Decision (the owner, 2026-11-17): Option B, applied in the same pull request.** The key stays `1step`; the label is
+"1-Step Daily"; `min_days` is 0; `trader_stage_rule` is rewritten; every field is re-cited to the 2026-11-17 re-reads
+(`*_1117`). The 2-Step Bright rows show the new plan's 3 profitable days. The split reads "80%; 90% with the paid
+add-on; the product page lists an 'Unlimited Scaling Plan'", with the payout-ratio conflict in `_conflicts_found`. The
+live discount is recorded as a dated price fact in `offers_seen`, and no offer is marked ended (the owner's
+correction of this note's Option B table). 2-Step Classic is unchanged and still shows the OLD plan's rows: that one is
+still open. The rest of this note is as written on 2026-11-16, for the record.
+
 For the owner. Nothing below has been applied. `firms.json` gained the 2026-11-16 reads (`brightfunded.provenance.sources`
 `*_1116`, each with its sha256 prefix) and three `rule_changes` entries. `compare_product`, `products`, `calc` and every
 field's source list are unchanged, so /compare, /firms/brightfunded's rules, the desk and the calculator audit show what
@@ -7,8 +15,9 @@ they showed on 2026-11-04. Only these dates moved: /compare's "reviewed" date an
 
 ## What changed
 
-- **1-Step is now an OLD plan.** It covers accounts bought before 16 Nov 2026 only, and its rules don't change
-  (`help_1step_old_1116`). `/1-step` now redirects to `/cfds/1-step-daily` (`product_1step_daily_1116`). Neither the
+- **1-Step is now an OLD plan.** It covers accounts bought before 16 Nov 2026 only (`help_1step_old_1116`). Its rules
+  don't change except for inactivity, which is now a hard breach. The article added that exception at 17:11 UTC on
+  16 Nov, after this note's read (`help_1step_old_1117`). `/1-step` now redirects to `/cfds/1-step-daily` (`product_1step_daily_1116`). Neither the
   product page nor the comparison table (`comparison_1116`) lists the old 1-Step.
 - **1-Step Daily is sold from 16 Nov 2026.** Its sizing rules match the old plan's. The rest differs: no minimum days,
   payouts any day with a 1% buffer, a new account after each payout, and inactivity counts as a hard breach (see the
@@ -50,7 +59,7 @@ so they would follow a rename; the named cases would not.
 | `split` | text unchanged ("80% … 90% with a paid add-on … up to 100% through the scaling plan") | `help_split_1116`, `help_1step_daily_addons_1116`. **Log a conflict** (`_conflicts_found`): the comparison table's row says "Up to 90%" while its heading says "Up To 100% Payout Ratio"; the product page says "Up to 90%" |
 | `refund`, `consistency_rule`, `news_rule`, `hold_cap`, `profit_cap`, `us_available` | unchanged | `tc_1116`, `help_1step_daily_addons_1116`, `help_consistency_1116`, `help_news_1116`, `help_1step_daily_rules_1116`, `help_1step_daily_payouts_1116` |
 | `hold_cap` provenance section text | "Terms and Conditions and 1-Step pages" → "… 1-Step Daily pages". `web/test_desk.py:353` expects the old words, so update it with the field | — |
-| `products.1step.fee_eur_100k_promo`, `offers_seen` | both describe the OLD plan's discount; mark them ended. troid's pages carry no promotions | — |
+| `products.1step.fee_eur_100k_promo`, `offers_seen` | both describe the OLD plan's discount. *Corrected by the owner, 2026-11-17: don't mark offers ended; record the 1-Step Daily discount as a dated price fact.* troid's pages carry no promotions | — |
 | `_trailing_trap`, `verified_from`, `_daily_rollover_note` | re-cite to 18450319 and the 1-Step Daily URLs | the same keys |
 
 The desk's sizing inputs keep their values, so the desk's figures and the audit's derivations are unchanged. Its labels

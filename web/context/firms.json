@@ -1453,7 +1453,10 @@
       "https://brightfunded.com/terms-and-conditions (framework; delegates numbers to Product Specifications)",
       "https://brightfunded.com/1-step (product numbers, 2026-09-21)",
       "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work (2026-05-20)",
-      "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step (2026-05-20)"
+      "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step (2026-05-20)",
+      "https://brightfunded.com/cfds/1-step-daily (1-Step Daily, 2026-11-16 and 2026-11-17)",
+      "https://help.brightfunded.com/en/articles/18450319-1-step-daily-evaluation-rules (2026-11-16)",
+      "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work (2026-11-16)"
     ],
     "us_available": null,
     "_why_candidate": "#1 by verified-review volume on propfirmmatch (128 at 4.5). 1:5 leverage cap matches Bitfunded. 4h median payouts, 5 min days per phase, no consistency rule (third-party; unverified).",
@@ -1462,25 +1465,25 @@
         "daily_pct": 3,
         "max_pct": 6,
         "target_pct": 10,
-        "min_days": 5,
+        "min_days": 0,
         "fee_eur_100k": 497,
         "fee_eur_100k_promo": 347.9,
-        "split": "80% by default; 90% with a paid add-on; up to 100% through the scaling plan",
+        "split": "80%; 90% with the paid add-on; the product page lists an 'Unlimited Scaling Plan'",
         "news_rule": "evaluation: none \u00b7 funded: no trading 5 min either side of high-impact news (profit on those trades removed, no breach)",
         "eval_reward": "15% of evaluation profit added to the funded account after 10% growth"
       },
-      "_note": "2-Step plans read 2026-11-04: Classic from its own help article and the per-plan table; Bright from the per-plan table only. Prices for 2-Step not read.",
+      "_note": "2-Step Bright re-read 2026-11-17 from its own help articles (the plan sold from 16 Nov 2026: 3 profitable days per phase). 2-Step Classic is the OLD plan (accounts bought before 16 Nov 2026), as read 2026-11-04 from its own help article and the per-plan table. Prices for 2-Step not read.",
       "2step_bright_s1": {
         "daily_pct": 4,
         "max_pct": 8,
         "target_pct": 8,
-        "min_days": 5
+        "min_days": "3 profitable days, each closed with at least 0.5% net profit"
       },
       "2step_bright_s2": {
         "daily_pct": 4,
         "max_pct": 8,
         "target_pct": 5,
-        "min_days": 5
+        "min_days": "3 profitable days, each closed with at least 0.5% net profit"
       },
       "2step_classic_s1": {
         "daily_pct": 5,
@@ -1509,7 +1512,7 @@
     "mandatory_sl": null,
     "min_closed_trades_per_stage": null,
     "refund": "NOT standard. 100% fee refund is a paid add-on only (T&C 7.7b; product page add-ons list).",
-    "split": "80% by default; 90% with a paid add-on; up to 100% through the scaling plan",
+    "split": "80%; 90% with the paid add-on; the product page lists an 'Unlimited Scaling Plan'",
     "payouts_per_30d": null,
     "affiliate_url": "https://brightfunded.com/a/YQfyv0bgQtOZMHTXOSAoAA",
     "affiliate_code": "YQfyv0bgQtOZMHTXOSAoAA",
@@ -1541,11 +1544,11 @@
     ],
     "compare_product": {
       "key": "1step",
-      "label": "1-Step",
+      "label": "1-Step Daily",
       "daily_pct": 3,
       "max_pct": 6,
       "target_pct": 10,
-      "min_days": 5,
+      "min_days": 0,
       "price": "\u20ac497",
       "daily_basis": "fixed amount = 3% of ORIGINAL size; floor = max(balance, equity) at rollover \u2212 that amount",
       "drawdown_type": "trailing, REAL-TIME on equity high-water mark (floating counts), locks static at initial after +6%",
@@ -1555,7 +1558,7 @@
       "hold_cap": "none stated",
       "max_open": null,
       "refund": "paid add-on only",
-      "split": "80% by default; 90% with a paid add-on; up to 100% through the scaling plan",
+      "split": "80%; 90% with the paid add-on; the product page lists an 'Unlimited Scaling Plan'",
       "us_available": "MT5 barred to US and UAE residents; crypto platform for US unconfirmed",
       "consistency_rule": "none",
       "news_rule": "evaluation: none \u00b7 funded: no trading 5 min either side of high-impact news (profit on those trades removed, no breach)",
@@ -1587,8 +1590,9 @@
     "rule_changes": [
       {
         "date": "2026-11-16",
-        "found": "BrightFunded replaced its plans on 16 Nov 2026. The 1-Step that troid's rules above describe is now 'BrightFunded 1-Step (OLD)', for accounts bought before that date, and its rules did not change (help centre article 14284743, renamed). brightfunded.com/1-step now opens 1-Step Daily: on $100K, \u20ac497, a 10% target, and by the help centre the same 3% daily loss and 6% max loss trailing equity in real time; but no minimum trading days, payouts any day from the first funded trading day with 1% of the account kept as a buffer, a split of 80% (90% with a paid add-on), and no new trade for 30 calendar days is a hard breach. The help centre's per-plan table, reward split and consistency articles are marked OLD as well. troid's compare and the rules above still show the OLD 1-Step; which plan they show next is not yet decided.",
+        "found": "BrightFunded replaced its plans on 16 Nov 2026. The 1-Step is now 'BrightFunded 1-Step (OLD)', for accounts bought before that date; its help article (14284743, renamed) says: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' brightfunded.com/1-step now opens 1-Step Daily: on $100K, \u20ac497, a 10% target, and by the help centre the same 3% daily loss and 6% max loss trailing equity in real time; but no minimum trading days, payouts any day from the first funded trading day with 1% of the account kept as a buffer, and a split of 80% (90% with a paid add-on). The help centre's per-plan table, reward split and consistency articles are marked OLD as well. troid's compare and the rules above show 1-Step Daily from 2026-11-17.",
         "src": [
+          "help_1step_old_1117",
           "help_1step_old_1116",
           "product_1step_daily_1116",
           "comparison_1116",
@@ -1603,12 +1607,14 @@
           "help_split_old_1116",
           "help_consistency_1116",
           "help_consistency_old_1116",
-          "tc_1116"
+          "tc_1116",
+          "product_1step_daily_1117",
+          "help_1step_daily_rules_1117"
         ]
       },
       {
         "date": "2026-11-16",
-        "found": "2-Step Classic is now an OLD plan only, for accounts bought before 16 Nov 2026 (help centre article 14284844, renamed); neither the product page nor the comparison table lists it. 2-Step Bright is sold under new rules from 16 Nov 2026: the same 8% and 5% targets, 4% daily loss and 8% static max loss, but each phase needs 3 profitable days, each closed with at least 0.5% net profit, where it needed 5 trading days, and the first payout comes 14 days after the first funded trade, where it came after 30. The 2-Step rows above still show the OLD plans' 5 trading days.",
+        "found": "2-Step Classic is now an OLD plan only, for accounts bought before 16 Nov 2026 (help centre article 14284844, renamed); neither the product page nor the comparison table lists it. 2-Step Bright is sold under new rules from 16 Nov 2026: the same 8% and 5% targets, 4% daily loss and 8% static max loss, but each phase needs 3 profitable days, each closed with at least 0.5% net profit, where it needed 5 trading days, and the first payout comes 14 days after the first funded trade, where it came after 30. The OLD 2-Step Bright and 2-Step Classic articles (14284817, 14284844) carry the OLD 1-Step's sentence: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' So does 'BrightFunded Original Accounts (OLD)', for accounts bought before 13 Apr 2026. From 2026-11-17 the 2-Step Bright rows above show the new plan; the 2-Step Classic rows are the OLD plan's.",
         "src": [
           "help_2step_classic_old_1116",
           "help_2step_bright_old_1116",
@@ -1618,7 +1624,12 @@
           "help_2step_bright_addons_1116",
           "help_rules_1116",
           "help_rules_old_1116",
-          "comparison_1116"
+          "comparison_1116",
+          "help_2step_bright_old_1117",
+          "help_2step_classic_old_1117",
+          "help_original_old_1117",
+          "help_2step_bright_1117",
+          "help_2step_bright_rules_1117"
         ]
       },
       {
@@ -1655,7 +1666,65 @@
           "$100,000"
         ],
         "rechecked": "2026-11-04: the 1-Step page again shows \u20ac497 and \u20ac347.90 for $100,000 under a 30% 'Autumn Promo'; undated, so still not on troid's pages",
-        "troid": "Not on troid's pages since 2026-10-12: the compare and /firms/brightfunded show the list price, \u20ac497, alone. A discount runs for a time and troid had not re-read it since 2026-09-21. products.1step.fee_eur_100k_promo still holds it for ask troid, which says it was the promotion running when troid read the page."
+        "troid": "Not on troid's pages since 2026-10-12: the compare and /firms/brightfunded show the list price, \u20ac497, alone. A discount runs for a time and troid had not re-read it since 2026-09-21. products.1step.fee_eur_100k_promo still holds it for ask troid, which says it was the promotion running when troid read the page.",
+        "note_2026_11_17": "The 1-Step this entry describes is the OLD plan from 16 Nov 2026, not sold to new buyers. From 2026-11-17 products.1step is 1-Step Daily, and fee_eur_100k_promo (\u20ac347.90) is the 1-Step Daily discount read 2026-11-16 and 2026-11-17 (the next entry)."
+      },
+      {
+        "name": "1-Step Daily at 30% off ('Early Black Friday')",
+        "status": "may end",
+        "seen_on": "2026-11-16",
+        "read_on": "2026-11-17",
+        "src": "product_1step_daily_1117",
+        "also_read": [
+          "product_1step_daily_owner_1116",
+          "product_1step_daily_1116"
+        ],
+        "says": "Early Black Friday; 30% Off + Free Account Upon Payout",
+        "code": "a code is shown on the banner; troid records no discount code",
+        "price": 347.9,
+        "currency": "EUR",
+        "list_price": 497,
+        "account_sizes": [
+          "$100,000"
+        ],
+        "every_size": [
+          {
+            "account": "$5,000",
+            "list_price": 49,
+            "price": 34.3
+          },
+          {
+            "account": "$10,000",
+            "list_price": 97,
+            "price": 67.9
+          },
+          {
+            "account": "$25,000",
+            "list_price": 197,
+            "price": 137.9
+          },
+          {
+            "account": "$50,000",
+            "list_price": 297,
+            "price": 207.9
+          },
+          {
+            "account": "$100,000",
+            "list_price": 497,
+            "price": 347.9
+          },
+          {
+            "account": "$200,000",
+            "list_price": 997,
+            "price": 697.9
+          }
+        ],
+        "ends": null,
+        "not_stated_in": [
+          "1-Step Daily product page (product_1step_daily_1117): no end date",
+          "comparison table (comparison_1117): the same banner, no end date"
+        ],
+        "troid": "A dated price fact: troid's owner read it in a browser on 2026-11-16 and troid's sandbox read the page on 2026-11-16 and 2026-11-17: every size at 30% off, $100,000 at \u20ac347.90 against a \u20ac497 list price, and 'Free Account Upon Payout'. troid's compare and /firms/brightfunded show the list price, \u20ac497, alone. products.1step.fee_eur_100k_promo holds \u20ac347.90 for ask troid, which says it was the promotion running when troid read the page."
       }
     ],
     "promotion_policy": {
@@ -1669,8 +1738,8 @@
         "What's New in the BrightFunded Affiliate Program"
       ]
     },
-    "_trailing_trap": "Help centre, 'BrightFunded 1-Step' (article 14284743, updated 2026-05-20; re-read 2026-09-24), the table on a $100,000 account: highest balance/equity 100,000 -> limit 94,000; 102,000 -> 96,000; 104,000 -> 98,000; 106,000 -> 100,000, locks there. The floor is a fixed 6% of the INITIAL balance below the high, not 6% of the high: troid's engine used high x (1 - 6%) until 2026-09-24, which put the floor $240 lower than the firm's at a 104,000 high. The high is on equity, intraday (hwm_basis: equity): an open trade +4k raises the limit to 98k, and if it reverses and closes at -3.5k the balance of 96.5k is below 98k -- breached. An unrealised win can end the account.",
-    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. New accounts use the per-plan table (1-Step 3%, 2-Step Bright 4%, 2-Step Classic 5%).",
+    "_trailing_trap": "Help centre, '1-Step Daily: evaluation rules' (article 18450319, read 2026-11-16 and 2026-11-17; the OLD 1-Step's article 14284743 has the same table, read 2026-09-24), the table on a $100,000 account: highest balance/equity 100,000 -> limit 94,000; 102,000 -> 96,000; 104,000 -> 98,000; 106,000 -> 100,000, locks there. The floor is a fixed 6% of the INITIAL balance below the high, not 6% of the high: troid's engine used high x (1 - 6%) until 2026-09-24, which put the floor $240 lower than the firm's at a 104,000 high. The high is on equity, intraday (hwm_basis: equity): an open trade +4k raises the limit to 98k, and if it reverses and closes at -3.5k the balance of 96.5k is below 98k -- breached. An unrealised win can end the account.",
+    "_daily_rollover_note": "Two daily methods exist: accounts bought before 2025-09-22 11:00 CET use a flat 5% balance-based rule. Newer accounts use the per-plan table (1-Step Daily 3%, 2-Step Bright 4%, Instant 3%; the OLD plans: 1-Step 3%, 2-Step Classic 5%), help centre 'How Does My Daily Permitted Loss Work?', read 2026-11-17.",
     "calc": {
       "daily_basis": "max_balance_equity",
       "drawdown": "trailing",
@@ -1680,7 +1749,7 @@
       "max_leverage": null,
       "products": {
         "1step": {
-          "label": "1-Step"
+          "label": "1-Step Daily"
         },
         "2step_bright_s1": {
           "label": "2-Step Bright \u00b7 S1",
@@ -2038,176 +2107,310 @@
           "read_on": "2026-11-16",
           "doc_dated": "2026-03-17",
           "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page c81a372fe36cbf08): unchanged since 2026-03-17 and names no plan: FX 1:100, gold and commodities 1:40, indices 1:20, crypto 1:5, the same in challenges and funded accounts."
+        },
+        "product_1step_daily_1117": {
+          "doc": "BrightFunded 1-Step Daily product page",
+          "url": "https://brightfunded.com/cfds/1-step-daily",
+          "read_on": "2026-11-17",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page fd502002449aee72): https://brightfunded.com/1-step redirects here; text unchanged from the 2026-11-16 read. The $100K plan: EUR 497 list price, 10% profit target, 3% max daily loss, 6% max total loss, 'No Minimum' trading days, 'Up to 90%' payout ratio, daily payouts, 'No Consistency Rules', 'Unlimited Scaling Plan'; add-ons Swap-Free, 100% Account Fee Refund, 90% Payout Split. A banner, 'Early Black Friday \u00b7 30% Off + Free Account Upon Payout', and every size at 30% off (offers_seen). The page does not say whether the total loss trails, nor its daily basis or reset time."
+        },
+        "product_1step_daily_owner_1116": {
+          "doc": "BrightFunded 1-Step Daily product page",
+          "url": "https://brightfunded.com/cfds/1-step-daily",
+          "read_on": "2026-11-16",
+          "doc_dated": null,
+          "read_via": "read by troid's owner in a browser on 2026-11-16 (the page as displayed, not a sandbox fetch with a hash): -30% on every size, $100K at EUR 347.90 against EUR 497, 'Free Account Upon Payout'."
+        },
+        "comparison_1117": {
+          "doc": "BrightFunded Challenge Comparison (CFD comparison table)",
+          "url": "https://brightfunded.com/cfds/comparison-table",
+          "read_on": "2026-11-17",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page da722635add683ea): text unchanged from the 2026-11-16 read. 1-Step Daily: 10% target, 3% max daily loss, 6% max total loss, profitable days '-', payouts daily, scaling plan 'Unlimited', consistency 'No'; the Payout Ratio row 'Up to 90%' under a heading 'Up To 100% Payout Ratio' (_conflicts_found). 2-Step Bright: profitable days '3 Days, 0.5%+ each'. No 1-Step and no 2-Step Classic."
+        },
+        "tc_1117": {
+          "doc": "BrightFunded Terms and Conditions",
+          "url": "https://brightfunded.com/terms-and-conditions",
+          "read_on": "2026-11-17",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page fce35b42c62f9273): text unchanged from the 2026-11-16 read: s.2, 5.4(g), 5.6-5.8, 6.6(c), 6.14, 7.7b and 17.4-17.5 as firms.json cites them; no maximum holding time and no cap on profit stated."
+        },
+        "help_1step_old_1117": {
+          "doc": "BrightFunded help centre article 14284743, 'BrightFunded 1-Step (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step-old",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 4e682a40ddc39afd); its dateModified is 2026-11-16T17:11:04Z: edited after troid's 2026-11-16 read (about 16:56 UTC), which said only 'Your rules do not change.'. Now: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' The inactivity rows add: 'Inactivity is a hard breach. If the account is deactivated, you can request reactivation until November 30th, 2026. From December 1st, 2026 reactivation is no longer possible, even if the breach happened before that date.' Its other rules are unchanged."
+        },
+        "help_2step_bright_old_1117": {
+          "doc": "BrightFunded help centre article 14284817, 'BrightFunded 2-Step \u2013 Bright (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284817-brightfunded-2-step-bright-old",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 6efaf78fc06d6f77); its dateModified is 2026-11-16T17:10:27Z: edited after troid's 2026-11-16 read, as the OLD 1-Step's was: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' Its other rules are unchanged."
+        },
+        "help_2step_classic_old_1117": {
+          "doc": "BrightFunded help centre article 14284844, 'BrightFunded 2-Step \u2013 Classic (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14284844-brightfunded-2-step-classic-old",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 5c4ae31b1ca4b46f); its dateModified is 2026-11-16T17:09:53Z: edited after troid's 2026-11-16 read, as the OLD 1-Step's was: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' Its other rules are unchanged."
+        },
+        "help_original_old_1117": {
+          "doc": "BrightFunded help centre article 14285762, 'BrightFunded Original Accounts (OLD)'",
+          "url": "https://help.brightfunded.com/en/articles/14285762-brightfunded-original-accounts-old",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 1968895efe5d9a52); its dateModified is 2026-11-16T17:09:16Z: accounts bought before 13 Apr 2026; edited after troid's 2026-11-16 read, as the OLD 1-Step's was: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.'"
+        },
+        "help_1step_daily_1117": {
+          "doc": "BrightFunded help centre article 18450308, 'What is 1-Step Daily?'",
+          "url": "https://help.brightfunded.com/en/articles/18450308-what-is-1-step-daily",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page a4ee804b87e79fd3); its dateModified is 2026-11-16T10:00:44Z: rule text unchanged from the 2026-11-16 read; one phase, 10% target, no minimum trading days; 3% daily loss on the higher of balance and equity at the start of the day, reset at the 11:30-11:59 PM CET rollover; 6% max loss trailing equity in real time, locking at the starting balance ($100,000: $94,000, locks at $100,000 once equity reaches $106,000); split 80%, 90% with the add-on."
+        },
+        "help_1step_daily_rules_1117": {
+          "doc": "BrightFunded help centre article 18450319, '1-Step Daily: evaluation rules'",
+          "url": "https://help.brightfunded.com/en/articles/18450319-1-step-daily-evaluation-rules",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 1a4da34adb513b2c); its dateModified is 2026-11-16T17:01:06Z: rule text unchanged from the 2026-11-16 read; only its related-articles list changed. Minimum trading days none; the rollover table (balance $101,000: equity cannot drop below $98,000 next day, a fixed $3,000 on $100,000); the trailing table ($100,000 -> $94,000 ... $106,000 -> $100,000, locks); funded account: 3% daily and 6% trailing, payouts any day, a 1% buffer, no minimum or maximum, a new account after a payout; overnight and weekend holding allowed; inactivity (no new trade in 30 calendar days) a hard breach, reactivation until 30 Nov 2026 only."
+        },
+        "help_1step_daily_payouts_1117": {
+          "doc": "BrightFunded help centre article 18450309, 'How do payouts work on 1-Step Daily?'",
+          "url": "https://help.brightfunded.com/en/articles/18450309-how-do-payouts-work-on-1-step-daily",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page fb0dfb77d58eb9a1); its dateModified is 2026-11-16T10:00:45Z: rule text unchanged from the 2026-11-16 read; payout any day from the first funded trading day; no minimum, no maximum; a 1% profit buffer on the closed balance stays in the account; split 80%, 90% with the add-on; a new account after each payout, the trailing max loss restarting."
+        },
+        "help_1step_daily_addons_1117": {
+          "doc": "BrightFunded help centre article 18450310, '1-Step Daily add-ons'",
+          "url": "https://help.brightfunded.com/en/articles/18450310-1-step-daily-add-ons",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page d9e3c3b97b348f70); its dateModified is 2026-11-16T10:00:46Z: rule text unchanged from the 2026-11-16 read; 90% Payout Split +20%, 100% Account Fee Refund +15%, Swap-Free +10%."
+        },
+        "help_2step_bright_1117": {
+          "doc": "BrightFunded help centre article 18450311, 'What is 2-Step Bright?'",
+          "url": "https://help.brightfunded.com/en/articles/18450311-what-is-2-step-bright",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 01651b2dcf7a1d00); its dateModified is 2026-11-16T10:00:47Z: rule text unchanged from the 2026-11-16 read; targets 8% and 5%; 3 profitable days per phase, a day closed with at least 0.5% net profit; 4% daily loss on the higher of balance and equity at the start of the day; 8% static max loss."
+        },
+        "help_2step_bright_rules_1117": {
+          "doc": "BrightFunded help centre article 18450320, '2-Step Bright: evaluation rules'",
+          "url": "https://help.brightfunded.com/en/articles/18450320-2-step-bright-evaluation-rules",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 186b1e39f7ccfd5c); its dateModified is 2026-11-16T17:01:45Z: rule text unchanged from the 2026-11-16 read; Phase 1 and Phase 2: '3 profitable days' each ('A profitable day is a day you close with at least 0.5% net profit'), 4% daily, 8% static; the rollover table (balance $101,000: $97,000, a fixed $4,000 on $100,000)."
+        },
+        "help_daily_loss_1117": {
+          "doc": "BrightFunded help centre article 12291765, 'How Does My Daily Permitted Loss Work?'",
+          "url": "https://help.brightfunded.com/en/articles/12291765-how-does-my-daily-permitted-loss-work",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 72178ffe8007e4e3); its dateModified is 2026-11-16T12:16:34Z: rule text unchanged from the 2026-11-16 read; 1-Step Daily 3%, 2-Step Bright 4%, Instant 3%, 2-Step Classic 5%, 1-Step (before November 16th, 2026) 3%; 'always calculated as a percentage of your original challenge size'; the floor is the higher of balance and equity at rollover minus that amount; rollover 11:30-11:59 PM CET."
+        },
+        "help_rules_1117": {
+          "doc": "BrightFunded help centre article 18457132, 'What are the current rules for the evaluation process?'",
+          "url": "https://help.brightfunded.com/en/articles/18457132-what-are-the-current-rules-for-the-evaluation-process",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 2f7740968d39ec4d); its dateModified is 2026-11-16T16:38:13Z: rule text unchanged from the 2026-11-16 read; 1-Step Daily: 10%, no minimum days, 3% daily, 6% trailing in real time on equity. 2-Step Bright: 8% and 5%, 3 profitable days per phase (at least 0.5% net profit each), 4%, 8% static."
+        },
+        "help_split_1117": {
+          "doc": "BrightFunded help centre article 18457137, 'How does my Reward Split work on my Funded Account?'",
+          "url": "https://help.brightfunded.com/en/articles/18457137-how-does-my-reward-split-work-on-my-funded-account",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page cfc73c8fb402105b); its dateModified is 2026-11-16T12:39:27Z: rule text unchanged from the 2026-11-16 read; 1-Step Daily 80%, 90% with the add-on (+20%); 'The profit split can also be scaled up to 100/0 with our Scaling Plan.'"
+        },
+        "help_consistency_1117": {
+          "doc": "BrightFunded help centre article 18457247, 'Does BrightFunded have a consistency rule?'",
+          "url": "https://help.brightfunded.com/en/articles/18457247-does-brightfunded-have-a-consistency-rule",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 033b491daf95c942); its dateModified is 2026-11-16T16:25:15Z: rule text unchanged from the 2026-11-16 read; 1-Step Daily no, 2-Step Bright no, Instant 15%, OLD plans no."
+        },
+        "help_news_1117": {
+          "doc": "BrightFunded help centre article 9241694, 'Can I trade news?'",
+          "url": "https://help.brightfunded.com/en/articles/9241694-can-i-trade-news",
+          "read_on": "2026-11-17",
+          "doc_dated": "2026-11-16",
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page e3563097f951b85c); its dateModified is 2026-11-16T12:33:45Z: rule text unchanged from the 2026-11-16 read; evaluation unrestricted; funded accounts: no trading 5 minutes either side of high-impact news, the profit removed, a soft breach."
         }
       },
       "fields": {
         "daily_pct": {
           "src": [
-            "product_1step",
-            "help_daily_loss",
-            "help_1step",
-            "product_1step_1104",
-            "help_daily_loss_1104",
-            "help_1step_1104"
+            "product_1step_daily_1117",
+            "comparison_1117",
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_daily_loss_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded 1-Step product page and help centre per-plan table, accounts bought from 2025-09-22"
+          "section": "BrightFunded 1-Step Daily product page and help centre: '1-Step Daily: evaluation rules' and the per-plan table in 'How Does My Daily Permitted Loss Work?'"
         },
         "max_pct": {
           "src": [
-            "product_1step",
-            "product_1step_1104"
+            "product_1step_daily_1117",
+            "comparison_1117",
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded 1-Step product page"
+          "section": "BrightFunded 1-Step Daily product page and help centre: '1-Step Daily: evaluation rules'"
         },
         "target_pct": {
           "src": [
-            "product_1step",
-            "product_1step_1104"
+            "product_1step_daily_1117",
+            "comparison_1117",
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded 1-Step product page"
+          "section": "BrightFunded 1-Step Daily product page and help centre: '1-Step Daily: evaluation rules'"
         },
         "min_days": {
           "src": [
-            "product_1step",
-            "product_1step_1104"
+            "product_1step_daily_1117",
+            "comparison_1117",
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded 1-Step product page"
+          "section": "BrightFunded 1-Step Daily product page ('No Minimum') and help centre: '1-Step Daily: evaluation rules' (minimum trading days: none)"
         },
         "price": {
           "src": [
-            "product_1step",
-            "product_1step_1104"
+            "product_1step_daily_1117"
           ],
-          "section": "BrightFunded 1-Step product page \u2014 100k price"
+          "section": "BrightFunded 1-Step Daily product page \u2014 100k list price"
         },
         "daily_basis": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104"
+            "help_daily_loss_1117",
+            "help_1step_daily_rules_1117",
+            "help_1step_daily_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+          "section": "BrightFunded help centre \u2014 'How Does My Daily Permitted Loss Work?' and '1-Step Daily: evaluation rules'"
         },
         "drawdown_type": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104",
-            "help_rules_1104"
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', Scenario 3, equity high-water mark"
+          "section": "BrightFunded help centre \u2014 'What is 1-Step Daily?' and '1-Step Daily: evaluation rules': 6% trailing in real time on equity, locking at the starting balance"
         },
         "reset_utc": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104"
+            "help_daily_loss_1117",
+            "help_1step_daily_rules_1117",
+            "help_1step_daily_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', CET rollover; UTC is troid's conversion"
+          "section": "BrightFunded help centre \u2014 'How Does My Daily Permitted Loss Work?' and '1-Step Daily: evaluation rules', CET rollover; UTC is troid's conversion"
         },
         "refund": {
           "src": [
-            "tc",
-            "product_1step",
-            "tc_1104",
-            "product_1step_1104"
+            "tc_1117",
+            "help_1step_daily_addons_1117",
+            "product_1step_daily_1117"
           ],
-          "section": "BrightFunded T&C 7.7b and 1-Step product page add-ons list"
+          "section": "BrightFunded T&C 7.7b and the 1-Step Daily add-ons (help centre and product page)"
         },
         "split": {
           "src": [
-            "help_split_1104",
-            "product_1step_1104"
+            "help_split_1117",
+            "help_1step_daily_addons_1117",
+            "help_1step_daily_payouts_1117",
+            "product_1step_daily_1117"
           ],
-          "section": "BrightFunded help centre: 'How does my Reward Split work on my Funded Account?', and 1-Step product page add-ons ('90% Payout Ratio')"
+          "section": "BrightFunded help centre: 'How does my Reward Split work on my Funded Account?' and '1-Step Daily add-ons', and the 1-Step Daily product page ('Unlimited Scaling Plan')"
         },
         "us_available": {
           "src": [
-            "tc_1104"
+            "tc_1117"
           ],
           "section": "BrightFunded T&C s.2, MT5 clause only"
         },
         "consistency_rule": {
           "src": [
-            "product_1step",
-            "product_1step_1104",
-            "help_consistency_1104"
+            "product_1step_daily_1117",
+            "comparison_1117",
+            "help_consistency_1117"
           ],
-          "section": "BrightFunded 1-Step product page and help centre: 'Does BrightFunded have a consistency rule?'"
+          "section": "BrightFunded 1-Step Daily product page, comparison table and help centre: 'Does BrightFunded have a consistency rule?'"
         },
         "news_rule": {
           "src": [
-            "help_news_1104"
+            "help_news_1117",
+            "help_1step_daily_rules_1117"
           ],
-          "section": "BrightFunded help centre: 'Can I trade news?' (Phase 1 and 2 unrestricted; funded accounts only)"
+          "section": "BrightFunded help centre: 'Can I trade news?' and '1-Step Daily: evaluation rules' (evaluation unrestricted; funded accounts only)"
         },
         "drawdown": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104"
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step', the $100,000 table: the floor sits 6% of the initial balance below the high"
+          "section": "BrightFunded help centre \u2014 'What is 1-Step Daily?' and '1-Step Daily: evaluation rules', the $100,000 table: the floor sits 6% of the initial balance below the high"
         },
         "locks_at_initial_after_pct": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104",
-            "help_rules_1104"
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117",
+            "help_rules_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+          "section": "BrightFunded help centre \u2014 'What is 1-Step Daily?' and '1-Step Daily: evaluation rules'"
         },
         "hwm_basis": {
           "src": [
-            "help_daily_loss",
-            "help_1step",
-            "help_daily_loss_1104",
-            "help_1step_1104"
+            "help_1step_daily_1117",
+            "help_1step_daily_rules_1117"
           ],
-          "section": "BrightFunded help centre \u2014 'How does my daily permitted loss work' and 'BrightFunded 1-Step'"
+          "section": "BrightFunded help centre \u2014 'What is 1-Step Daily?' and '1-Step Daily: evaluation rules'"
         },
         "availability": {
           "src": [
-            "tc",
-            "tc_1104"
+            "tc_1117"
           ],
           "section": "BrightFunded Terms and Conditions s.2: restricted jurisdictions"
         },
         "availability_platform": {
           "src": [
-            "tc_1104"
+            "tc_1117"
           ],
           "section": "BrightFunded T&C s.2, MT5 clause ('United States, United Arab Emirates, and other restricted countries')"
         },
         "hold_cap": {
           "src": [
-            "tc_0926",
-            "help_1step_0926",
-            "product_1step_0926"
+            "tc_1117",
+            "help_1step_daily_rules_1117",
+            "product_1step_daily_1117"
           ],
-          "section": "BrightFunded Terms and Conditions and 1-Step pages"
+          "section": "BrightFunded Terms and Conditions and 1-Step Daily pages"
         },
         "profit_cap": {
           "src": [
-            "tc_0926",
-            "help_1step_0926",
-            "product_1step_0926"
+            "tc_1117",
+            "help_1step_daily_payouts_1117",
+            "product_1step_daily_1117"
           ],
-          "section": "BrightFunded Terms and Conditions and 1-Step pages: no cap on profit stated"
+          "section": "BrightFunded Terms and Conditions and 1-Step Daily pages: no cap on profit stated; payouts have no maximum amount"
         },
         "trader_stage_rule": {
           "src": [
-            "help_split_1104",
-            "help_news_1104",
-            "help_1step_1104"
+            "help_1step_daily_payouts_1117",
+            "help_1step_daily_rules_1117",
+            "help_news_1117",
+            "help_split_1117"
           ],
-          "section": "BrightFunded help centre: 'How does my Reward Split work on my Funded Account?', 'Can I trade news?' and 'BrightFunded 1-Step'"
+          "section": "BrightFunded help centre: 'How do payouts work on 1-Step Daily?', '1-Step Daily: evaluation rules', 'Can I trade news?' and 'How does my Reward Split work on my Funded Account?'"
         },
         "prohibited_strategies": {
           "src": [
@@ -2220,109 +2423,140 @@
         "1step": {
           "daily_pct": {
             "src": [
-              "product_1step",
-              "help_daily_loss",
-              "help_1step",
-              "product_1step_1104",
-              "help_daily_loss_1104",
-              "help_1step_1104"
+              "product_1step_daily_1117",
+              "comparison_1117",
+              "help_1step_daily_1117",
+              "help_1step_daily_rules_1117",
+              "help_daily_loss_1117",
+              "help_rules_1117"
             ],
-            "section": "BrightFunded 1-Step product page and help centre per-plan table, accounts bought from 2025-09-22"
+            "section": "BrightFunded 1-Step Daily product page and help centre: '1-Step Daily: evaluation rules' and the per-plan table in 'How Does My Daily Permitted Loss Work?'"
           },
           "max_pct": {
             "src": [
-              "product_1step",
-              "product_1step_1104"
+              "product_1step_daily_1117",
+              "comparison_1117",
+              "help_1step_daily_1117",
+              "help_1step_daily_rules_1117",
+              "help_rules_1117"
             ],
-            "section": "BrightFunded 1-Step product page"
+            "section": "BrightFunded 1-Step Daily product page and help centre: '1-Step Daily: evaluation rules'"
           }
         },
         "2step_bright_s1": {
           "daily_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "max_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "target_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "min_days": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table: 3 profitable days per phase, each closed with at least 0.5% net profit"
           },
           "drawdown": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "daily_basis": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table and 'How Does My Daily Permitted Loss Work?'"
           }
         },
         "2step_bright_s2": {
           "daily_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "max_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "target_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "min_days": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table: 3 profitable days per phase, each closed with at least 0.5% net profit"
           },
           "drawdown": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table"
           },
           "daily_basis": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104"
+              "help_2step_bright_1117",
+              "help_2step_bright_rules_1117",
+              "help_rules_1117",
+              "comparison_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'What is 2-Step Bright?', '2-Step Bright: evaluation rules' and the per-model table in 'What are the current rules for the evaluation process?'; the comparison table and 'How Does My Daily Permitted Loss Work?'"
           }
         },
         "2step_classic_s1": {
@@ -2451,8 +2685,37 @@
       "tz": "Europe/Berlin",
       "_note": "reset_utc in a form a page can compute with: the local time of the firm's daily reset and its IANA zone. Same source as reset_utc (provenance.fields.reset_utc). The CET rollover starts 23:30 Central European time, so 21:30 UTC in summer (CEST) and 22:30 UTC in winter."
     },
-    "trader_stage_rule": "Payouts: the first can be requested 30 days after the first trade on the funded account, then every 14 days (every 7 with a paid add-on), with no minimum amount. News: no trading from 5 minutes before to 5 minutes after high-impact news; profit on those trades is removed and the account is not breached. 1-Step: after a payout request the new account starts with its own max loss; the old high-water mark does not carry over.",
-    "prohibited_strategies": "hedging across accounts; exploiting platform errors or delays; external or delayed data feeds; coordinated multi-account trading; automated software, AI or high-speed tools; trading high-impact news on funded accounts; overleveraging, overexposure, one-sided bets and account rolling; grid trading, arbitrage, tick scalping and HFT"
+    "trader_stage_rule": "Payouts: any day from the first funded trading day, with no minimum or maximum amount; 1% of the account, measured on the closed balance, stays in it as a buffer. After each payout a new account is issued and the trailing max loss restarts. News: no trading from 5 minutes before to 5 minutes after high-impact news; profit on those trades is removed and the account is not breached. Inactivity: no new trade in 30 calendar days is a hard breach; reactivation can be requested until 30 Nov 2026 only.",
+    "prohibited_strategies": "hedging across accounts; exploiting platform errors or delays; external or delayed data feeds; coordinated multi-account trading; automated software, AI or high-speed tools; trading high-impact news on funded accounts; overleveraging, overexposure, one-sided bets and account rolling; grid trading, arbitrage, tick scalping and HFT",
+    "_conflicts_found": [
+      {
+        "topic": "Payout ratio",
+        "logged": "2026-11-17",
+        "sides": [
+          {
+            "src": "comparison_1117",
+            "doc": "comparison table, the Payout Ratio row (1-Step Daily)",
+            "says": "Up to 90%"
+          },
+          {
+            "src": "comparison_1117",
+            "doc": "comparison table, the 1-Step Daily heading",
+            "says": "Up To 100% Payout Ratio"
+          },
+          {
+            "src": "help_split_1117",
+            "doc": "help centre, 'How does my Reward Split work on my Funded Account?'",
+            "says": "80%, 90% with the add-on; 'The profit split can also be scaled up to 100/0 with our Scaling Plan.'"
+          },
+          {
+            "src": "product_1step_daily_1117",
+            "doc": "1-Step Daily product page",
+            "says": "'Up to 90%' payout ratio; 'Unlimited Scaling Plan'"
+          }
+        ],
+        "troid": "80%, 90% with the paid add-on, and the 'Unlimited Scaling Plan' the product page lists; no top split for the scaling plan"
+      }
+    ]
   },
   "_excluded": {
     "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
