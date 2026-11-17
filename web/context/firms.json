@@ -1676,7 +1676,7 @@
         "read_on": "2026-11-17",
         "src": "product_1step_daily_1117",
         "also_read": [
-          "product_1step_daily_owner_1116",
+          "product_1step_daily_browser_1116",
           "product_1step_daily_1116"
         ],
         "says": "Early Black Friday; 30% Off + Free Account Upon Payout",
@@ -1724,7 +1724,7 @@
           "1-Step Daily product page (product_1step_daily_1117): no end date",
           "comparison table (comparison_1117): the same banner, no end date"
         ],
-        "troid": "A dated price fact: troid's owner read it in a browser on 2026-11-16 and troid's sandbox read the page on 2026-11-16 and 2026-11-17: every size at 30% off, $100,000 at \u20ac347.90 against a \u20ac497 list price, and 'Free Account Upon Payout'. troid's compare and /firms/brightfunded show the list price, \u20ac497, alone. products.1step.fee_eur_100k_promo holds \u20ac347.90 for ask troid, which says it was the promotion running when troid read the page."
+        "troid": "A dated price fact: read on 2026-11-16 in a browser by Claude (Anthropic's assistant), working for troid's owner, from the page as displayed (no hash); troid's sandbox read the page on 2026-11-16 and 2026-11-17: every size at 30% off, $100,000 at \u20ac347.90 against a \u20ac497 list price, and 'Free Account Upon Payout'. troid's compare and /firms/brightfunded show the list price, \u20ac497, alone. products.1step.fee_eur_100k_promo holds \u20ac347.90 for ask troid, which says it was the promotion running when troid read the page."
       }
     ],
     "promotion_policy": {
@@ -2115,12 +2115,12 @@
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page fd502002449aee72): https://brightfunded.com/1-step redirects here; text unchanged from the 2026-11-16 read. The $100K plan: EUR 497 list price, 10% profit target, 3% max daily loss, 6% max total loss, 'No Minimum' trading days, 'Up to 90%' payout ratio, daily payouts, 'No Consistency Rules', 'Unlimited Scaling Plan'; add-ons Swap-Free, 100% Account Fee Refund, 90% Payout Split. A banner, 'Early Black Friday \u00b7 30% Off + Free Account Upon Payout', and every size at 30% off (offers_seen). The page does not say whether the total loss trails, nor its daily basis or reset time."
         },
-        "product_1step_daily_owner_1116": {
+        "product_1step_daily_browser_1116": {
           "doc": "BrightFunded 1-Step Daily product page",
           "url": "https://brightfunded.com/cfds/1-step-daily",
           "read_on": "2026-11-16",
           "doc_dated": null,
-          "read_via": "read by troid's owner in a browser on 2026-11-16 (the page as displayed, not a sandbox fetch with a hash): -30% on every size, $100K at EUR 347.90 against EUR 497, 'Free Account Upon Payout'."
+          "read_via": "read on 2026-11-16 in a browser by Claude (Anthropic's assistant), working for troid's owner, from the page as displayed (no hash): -30% on every size, $100K at EUR 347.90 against EUR 497, 'Free Account Upon Payout'."
         },
         "comparison_1117": {
           "doc": "BrightFunded Challenge Comparison (CFD comparison table)",
