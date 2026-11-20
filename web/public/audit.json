@@ -1,23 +1,30 @@
 {
- "date": "2026-11-02",
- "week": "2026-W44",
- "commit": "a1af3d952a2a66f2ff020c09c391266d50fcff90",
- "checks": 2342,
- "passed": 2342,
+ "date": "2026-11-16",
+ "week": "2026-W46",
+ "commit": "7e0472425cb50027e43f58cde3c28db2996b04ae",
+ "checks": 2402,
+ "passed": 2402,
  "failed": 0,
- "report": "audit/reports/2026-W44.md",
+ "report": "audit/reports/2026-W46.md",
  "pages": [
   "/"
  ],
  "previews": [
   "ar"
  ],
- "cases": 1153,
- "seed": "2026-W44",
+ "cases": 1177,
+ "seed": "2026-W46",
  "rules_read": {
   "from": "2026-09-21",
-  "to": "2026-10-18"
+  "to": "2026-11-04"
  },
- "stale_rules": [],
+ "stale_rules": [
+  {
+   "firm": "bitfunded",
+   "product": "instant",
+   "rule": "drawdown",
+   "read": "2026-09-21"
+  }
+ ],
  "unsourced_rules": []
 }
