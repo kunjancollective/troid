@@ -598,13 +598,6 @@
           "read_on": "2026-10-18",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page c976a08f30453775): 'it is possible to use leverage ranging from 1 to 5 times across all listed trading pairs'."
-        },
-        "blog_1116": {
-          "doc": "Bitfunded blog: How to choose the right prop trading challenge (2-Step vs 1-Step vs 1-Step Express vs Instant accounts)",
-          "url": "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
-          "read_on": "2026-11-16",
-          "doc_dated": "2026-08-28",
-          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page d149dcbb525790c3), still dated 2026-08-28: 'Bitfunded calculates drawdown on Instant accounts using a static method, so limits are set against the starting balance rather than a rising peak.' Its table: 'Instant | None | Unlimited | 3% | 6% | 60% | $249'."
         }
       },
       "fields": {
@@ -865,8 +858,7 @@
           },
           "drawdown": {
             "src": [
-              "blog",
-              "blog_1116"
+              "blog"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
@@ -1806,20 +1798,6 @@
           "read_on": "2026-11-04",
           "doc_dated": "2025-09-24",
           "read_via": "read on 2026-11-04 through a web reader (the page text, not a sandbox fetch with a hash)"
-        },
-        "tc_1116": {
-          "doc": "BrightFunded Terms and Conditions (sections 1 to 19 read in full)",
-          "url": "https://brightfunded.com/terms-and-conditions",
-          "read_on": "2026-11-16",
-          "doc_dated": null,
-          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page d5ebc3ec14abdf7d): no maximum holding time for a position ('6.4 The BrightFunded Challenge will last for unlimited days from the date of activation.') and no cap on profit or payouts; the only cap is 6.14's USD 400,000 total simulated capital per customer."
-        },
-        "help_1step_old_1116": {
-          "doc": "BrightFunded help centre article 14284743, now 'BrightFunded 1-Step (OLD)': 'Complete rules for 1-Step accounts bought before 16 Nov 2026.'",
-          "url": "https://help.brightfunded.com/en/articles/14284743-brightfunded-1-step-old",
-          "read_on": "2026-11-16",
-          "doc_dated": null,
-          "read_via": "fetched from a sandbox on 2026-11-16 (sha256 of the page 7a0f45500403a25a; the old address /14284743-brightfunded-1-step redirects here; the page says 'Updated today'): 'Holding positions overnight: Allowed', 'Holding positions over the weekend: Allowed', 'A new trade is needed every 30 calendar days'; payouts 'Minimum amount: None'; no maximum holding time and no cap on profit or payouts stated. The article says it applies to accounts bought before 16 Nov 2026 and sends later buyers to '1-Step Daily'; brightfunded.com/1-step now redirects to /cfds/1-step-daily, so no 1-Step product page was read."
         }
       },
       "fields": {
@@ -1971,21 +1949,17 @@
           "src": [
             "tc_0926",
             "help_1step_0926",
-            "product_1step_0926",
-            "tc_1116",
-            "help_1step_old_1116"
+            "product_1step_0926"
           ],
-          "section": "BrightFunded Terms and Conditions s.6.4 and help centre: 'BrightFunded 1-Step (OLD)'"
+          "section": "BrightFunded Terms and Conditions and 1-Step pages"
         },
         "profit_cap": {
           "src": [
             "tc_0926",
             "help_1step_0926",
-            "product_1step_0926",
-            "tc_1116",
-            "help_1step_old_1116"
+            "product_1step_0926"
           ],
-          "section": "BrightFunded Terms and Conditions and help centre: 'BrightFunded 1-Step (OLD)': no cap on profit stated"
+          "section": "BrightFunded Terms and Conditions and 1-Step pages: no cap on profit stated"
         },
         "trader_stage_rule": {
           "src": [
