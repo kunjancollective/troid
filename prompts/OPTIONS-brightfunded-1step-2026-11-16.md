@@ -5,8 +5,12 @@
 (`*_1117`). The 2-Step Bright rows show the new plan's 3 profitable days. The split reads "80%; 90% with the paid
 add-on; the product page lists an 'Unlimited Scaling Plan'", with the payout-ratio conflict in `_conflicts_found`. The
 live discount is recorded as a dated price fact in `offers_seen`, and no offer is marked ended (the owner's
-correction of this note's Option B table). 2-Step Classic is unchanged and still shows the OLD plan's rows: that one is
-still open. The rest of this note is as written on 2026-11-16, for the record.
+correction of this note's Option B table). The rest of this note is as written on 2026-11-16, for the record.
+
+**Decisions (the owner, 2026-11-20):** 2-Step Classic stays on the desk for people who already hold one, labelled
+"2-Step Classic (OLD) · S1/S2". Its rules are unchanged and are cited to its OLD help article as read 2026-11-17, "for
+accounts bought before 16 Nov 2026". Instant stays out for now: the desk can't model its 1% cap on open losses or its
+Friday close, so sizing it would understate the risk.
 
 For the owner. Nothing below has been applied. `firms.json` gained the 2026-11-16 reads (`brightfunded.provenance.sources`
 `*_1116`, each with its sha256 prefix) and three `rule_changes` entries. `compare_product`, `products`, `calc` and every

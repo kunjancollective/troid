@@ -1472,7 +1472,7 @@
         "news_rule": "evaluation: none \u00b7 funded: no trading 5 min either side of high-impact news (profit on those trades removed, no breach)",
         "eval_reward": "15% of evaluation profit added to the funded account after 10% growth"
       },
-      "_note": "2-Step Bright re-read 2026-11-17 from its own help articles (the plan sold from 16 Nov 2026: 3 profitable days per phase). 2-Step Classic is the OLD plan (accounts bought before 16 Nov 2026), as read 2026-11-04 from its own help article and the per-plan table. Prices for 2-Step not read.",
+      "_note": "2-Step Bright re-read 2026-11-17 from its own help articles (the plan sold from 16 Nov 2026: 3 profitable days per phase). 2-Step Classic is the OLD plan (accounts bought before 16 Nov 2026), labelled OLD from 2026-11-20 and cited to its OLD help article as read 2026-11-17. Prices for 2-Step not read.",
       "2step_bright_s1": {
         "daily_pct": 4,
         "max_pct": 8,
@@ -1614,7 +1614,7 @@
       },
       {
         "date": "2026-11-16",
-        "found": "2-Step Classic is now an OLD plan only, for accounts bought before 16 Nov 2026 (help centre article 14284844, renamed); neither the product page nor the comparison table lists it. 2-Step Bright is sold under new rules from 16 Nov 2026: the same 8% and 5% targets, 4% daily loss and 8% static max loss, but each phase needs 3 profitable days, each closed with at least 0.5% net profit, where it needed 5 trading days, and the first payout comes 14 days after the first funded trade, where it came after 30. The OLD 2-Step Bright and 2-Step Classic articles (14284817, 14284844) carry the OLD 1-Step's sentence: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' So does 'BrightFunded Original Accounts (OLD)', for accounts bought before 13 Apr 2026. From 2026-11-17 the 2-Step Bright rows above show the new plan; the 2-Step Classic rows are the OLD plan's.",
+        "found": "2-Step Classic is now an OLD plan only, for accounts bought before 16 Nov 2026 (help centre article 14284844, renamed); neither the product page nor the comparison table lists it. 2-Step Bright is sold under new rules from 16 Nov 2026: the same 8% and 5% targets, 4% daily loss and 8% static max loss, but each phase needs 3 profitable days, each closed with at least 0.5% net profit, where it needed 5 trading days, and the first payout comes 14 days after the first funded trade, where it came after 30. The OLD 2-Step Bright and 2-Step Classic articles (14284817, 14284844) carry the OLD 1-Step's sentence: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' So does 'BrightFunded Original Accounts (OLD)', for accounts bought before 13 Apr 2026. From 2026-11-17 the 2-Step Bright rows above show the new plan; the 2-Step Classic rows are the OLD plan's, labelled OLD from 2026-11-20.",
         "src": [
           "help_2step_classic_old_1116",
           "help_2step_bright_old_1116",
@@ -1764,13 +1764,13 @@
           "hwm_basis": null
         },
         "2step_classic_s1": {
-          "label": "2-Step Classic \u00b7 S1",
+          "label": "2-Step Classic (OLD) \u00b7 S1",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
         },
         "2step_classic_s2": {
-          "label": "2-Step Classic \u00b7 S2",
+          "label": "2-Step Classic (OLD) \u00b7 S2",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
@@ -2155,7 +2155,7 @@
           "url": "https://help.brightfunded.com/en/articles/14284844-brightfunded-2-step-classic-old",
           "read_on": "2026-11-17",
           "doc_dated": "2026-11-16",
-          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 5c4ae31b1ca4b46f); its dateModified is 2026-11-16T17:09:53Z: edited after troid's 2026-11-16 read, as the OLD 1-Step's was: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' Its other rules are unchanged."
+          "read_via": "fetched from a sandbox on 2026-11-17 at 00:40 UTC (sha256 of the page 5c4ae31b1ca4b46f); its dateModified is 2026-11-16T17:09:53Z: edited after troid's 2026-11-16 read, as the OLD 1-Step's was: 'Your rules do not change, except for inactivity: it is now a hard breach and reactivation can be requested until 30 Nov 2026 only.' Its other rules are unchanged: Phase 1 profit target 10%, Phase 2 5%, minimum trading days 5 per phase, daily drawdown 5% (higher of equity and balance), maximum drawdown 10% static."
         },
         "help_original_old_1117": {
           "doc": "BrightFunded help centre article 14285762, 'BrightFunded Original Accounts (OLD)'",
@@ -2562,101 +2562,81 @@
         "2step_classic_s1": {
           "daily_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026, and 'How Does My Daily Permitted Loss Work?'"
           },
           "max_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "target_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "min_days": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "drawdown": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "daily_basis": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026, and 'How Does My Daily Permitted Loss Work?'"
           }
         },
         "2step_classic_s2": {
           "daily_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026, and 'How Does My Daily Permitted Loss Work?'"
           },
           "max_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "target_pct": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "min_days": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "drawdown": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026"
           },
           "daily_basis": {
             "src": [
-              "help_rules_1104",
-              "help_daily_loss_1104",
-              "help_2step_classic_1104"
+              "help_2step_classic_old_1117",
+              "help_daily_loss_1117"
             ],
-            "section": "BrightFunded help centre: 'BrightFunded 2-Step' and the per-plan table in 'What are the current rules for the evaluation process?'"
+            "section": "BrightFunded help centre: 'BrightFunded 2-Step \u2013 Classic (OLD)', for accounts bought before 16 Nov 2026, and 'How Does My Daily Permitted Loss Work?'"
           }
         }
       }
