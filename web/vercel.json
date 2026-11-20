@@ -108,6 +108,11 @@
       "permanent": false
     },
     {
+      "source": "/newsletter",
+      "destination": "https://tradingdroid.substack.com",
+      "statusCode": 302
+    },
+    {
       "source": "/:lang(zh|hi|es|ar|fr|bn|pt|ru|id)",
       "destination": "/",
       "permanent": false
