@@ -69,7 +69,9 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   written from, separately; `.github/workflows/audit.yml` runs it on every pull request (passing at once when nothing
   the desk reads changed: its code, `firms.json`, the words it finds rows by, the generators, `audit/`) and on Sundays
   at 22:00 UTC, when it commits the result to `audit/<week>` and opens a pull request for the owner, never to main. The desk shows it in
-  `audit.js`'s line, with "Rules read" on its own line (`site.json` `calc_audit`).
+  `audit.js`'s line, with "Rules read" on its own line (`site.json` `calc_audit`). Only that pull request's merge moves
+  the line: `.github/workflows/audit-age.yml` reads main's `audit.json` daily and, past 8 days old, opens an issue naming
+  the audit pull requests still open, once per stuck week (W45 and W46 passed and waited unmerged, 2026-11-16).
 - `mcp/` — the troid MCP server. Tools must never place orders or generate signals.
 - troid Pro's waitlist (`web/templates/pro.html` → `web/pro/waitlist.html`, `web/api/pro/waitlist.js`), published since
   gate 0 cleared (Vercel Pro, 2026-09-28): served at /pro only with `TROID_WAITLIST=on` and its key in Vercel, and

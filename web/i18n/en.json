@@ -1034,7 +1034,7 @@
  "sources.l.caveat": "Caveat",
  "sources.l.says": "What it says, in its own words",
  "sources.l.derived": "What troid computes from it",
- "sources.ranking.h": "The review ranking that orders troid's compare",
+ "sources.ranking.h": "The review ranking that chooses which firm troid verifies next",
  "sources.ranking.read": "read {date}",
  "sources.ranking.row": "{firm}: {n} verified reviews at {rating}",
  "sources.ranking.p": "propfirmmatch is an external, public ranking. troid uses it to choose which firms it verifies next, never to rate them. Review counts change daily; these are the counts on the date troid read them.",

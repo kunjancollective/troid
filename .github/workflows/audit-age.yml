@@ -1,0 +1,105 @@
+name: audit age — the desk's audit line, past 8 days
+
+# The line under troid's desk ("Calculators audited <date> · N checks passed") is web/public/audit.json on main, and
+# only a merge of the Sunday run's pull request moves it (audit.yml commits each week to audit/<week> and opens one for
+# the owner). audit.yml opens an issue for a week with mismatches, or one that couldn't reach a pull request; nothing
+# said so when a week passed and its pull request simply waited. 2026-W45 and W46 both passed, both pull requests stayed
+# open, and the line sat on W44 for 14 days until the weekly SEO audit (2026-11-16) found it.
+#
+# Once a day this reads main's audit.json. Past 8 days old (Sunday's run is dated the Monday it finishes, so a week
+# merged that day is 7 days old the next Monday: 8 leaves one day to merge the next) it opens an issue naming the audit
+# pull requests still open, once for each week the line is stuck on, and closes it when a newer week is merged. It
+# reads and writes issues only: no branch, no merge, nothing on the page.
+
+on:
+  schedule:
+    - cron: "17 13 * * *"         # daily, 13:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: audit-age
+  cancel-in-progress: false
+
+jobs:
+  age:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LIMIT_DAYS: "8"
+      PREFIX: "audit line stale:"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main                 # the line visitors see is main's audit.json, whatever started the run
+
+      - name: How old is the desk's audit line?
+        id: age
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import datetime as dt, json, os, re
+          today = dt.date.fromisoformat(os.environ.get("TODAY") or dt.datetime.now(dt.timezone.utc).date().isoformat())
+          try:
+              d = json.load(open("web/public/audit.json"))
+              week, date = d["week"], dt.date.fromisoformat(d["date"])
+              assert re.fullmatch(r"\d{4}-W\d{2}", week)
+              print(f"week={week}"); print(f"date={date.isoformat()}"); print(f"age={(today - date).days}")
+          except Exception:          # missing or malformed: the desk hides the line, which is stale too
+              print("week=unreadable"); print("date="); print("age=999")
+          EOF
+          cat "$GITHUB_OUTPUT"
+
+      - name: Past the limit, an issue naming the audit pull requests still open, once per week
+        if: fromJSON(steps.age.outputs.age) > fromJSON(env.LIMIT_DAYS)
+        env:
+          WEEK: ${{ steps.age.outputs.week }}
+          DATE: ${{ steps.age.outputs.date }}
+          AGE: ${{ steps.age.outputs.age }}
+        run: |
+          title="$PREFIX still on $WEEK ($DATE)"
+          [ "$WEEK" != "unreadable" ] || title="$PREFIX main's audit.json can't be read"
+          # the listing, not search: search can lag behind a new issue or split the title on its punctuation
+          if gh issue list --state all --limit 500 --json title --jq '.[].title' | grep -Fxq "$title"; then
+            echo "already opened: $title"
+            exit 0
+          fi
+          prs="$(gh pr list --state open --base main --limit 50 --json number,headRefName,title,url \
+                 --jq '[.[] | select(.headRefName | startswith("audit/"))] | sort_by(.headRefName) | .[] | "- \(.title): \(.url)"')"
+          if [ "$WEEK" = "unreadable" ]; then
+            what="main's web/public/audit.json can't be read, so the line under troid's desk is hidden."
+          else
+            what="The line under troid's desk still shows the calculator audit for $WEEK, dated $DATE: $AGE days old, past the limit of $LIMIT_DAYS."
+          fi
+          if [ -n "$prs" ]; then
+            next="Audit pull requests waiting to be merged:
+
+          $prs
+
+          Merging the newest publishes its audit.json and moves the line. An older week's pull request can then be closed: its report stays on its branch."
+          else
+            next="No audit pull request is open, so the Sunday run didn't reach one: see the runs of .github/workflows/audit.yml (a run that failed, or one that never started)."
+          fi
+          body="$what Only a merge of the Sunday run's pull request (audit.yml) moves it.
+
+          $next
+
+          Opened by .github/workflows/audit-age.yml, once for this week; it closes this issue when a newer week is on main."
+          gh issue create --title "$title" --body "$body"
+
+      - name: Within the limit, close what an older week opened
+        if: fromJSON(steps.age.outputs.age) <= fromJSON(env.LIMIT_DAYS)
+        env:
+          WEEK: ${{ steps.age.outputs.week }}
+          DATE: ${{ steps.age.outputs.date }}
+        run: |
+          open="$(gh issue list --state open --limit 500 --json number,title \
+                  --jq ".[] | select(.title | startswith(\"$PREFIX\")) | .number")"
+          for n in $open; do
+            gh issue close "$n" --comment "The desk's audit line is on $WEEK ($DATE) now, within $LIMIT_DAYS days. Closed by .github/workflows/audit-age.yml."
+          done
+          [ -n "$open" ] || echo "the line is $WEEK ($DATE): nothing to close"

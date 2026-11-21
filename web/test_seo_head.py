@@ -36,6 +36,7 @@ import json
 import re
 import sys
 import tempfile
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -211,6 +212,12 @@ def rest():
        all(x in L for x in ("(https://troid.ai/TROID.md)", "/tree/main/mcp)", "(https://troid.ai/METHODOLOGY.md)")))
     ok("llms.txt: troid's accounts, as the footer links them", all(f"({u})" in L for u in SOCIAL))
     ok("llms.txt: written by the build (site_build.llms_txt), unedited", L == site_build.llms_txt())
+    dated = re.search(r"^Updated (\d{4}-\d{2}-\d{2})\.$", L, re.M)
+    ok("llms.txt: dated under the summary, the day its text last changed, never a future day",
+       dated is not None and L.split("\n")[4] == dated.group(0)
+       and dated.group(1) <= datetime.now(timezone.utc).date().isoformat(), L.split("\n")[:6])
+    ok("llms.txt: a build on a later day with the same text keeps the date",
+       site_build.llms_txt(today="2099-01-01") == L)
 
     # ---------------------------------------------------------------- footer and redirect
     for page in site_build.PAGES:

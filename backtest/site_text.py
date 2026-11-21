@@ -75,6 +75,7 @@ def required_sentences():
 # the lines for the files an assistant can use. Each page's line is the page's own description (en.json). The lines are
 # troid's own words from elsewhere: og.description, index.doesnt.tools, METHODOLOGY.md's opening.
 LLMS = {"about": "Free. Never places orders.", "pages": "Pages", "assist": "For assistants", "optional": "Optional",
+        "updated": "Updated {date}.",
         "troid_md": "troid's rules and arithmetic as one file — paste it into any assistant as a system prompt.",
         "mcp": "The same for Claude Desktop or Cursor, with exact arithmetic.",
         "methodology": "How numbers get onto a page, what tier each one carries, and every correction made since launch."}

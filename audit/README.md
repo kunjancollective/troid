@@ -80,3 +80,9 @@ it drove under `pages` and a draft driven as a preview (Arabic) by its language 
 claim, on its own line, written at build time from `firms.json`. `web/i18n/site.json` `calc_audit` takes both off the
 page. Tests: `python web/test_audit_line.py`; `backtest/verify_claims.py` holds `audit.json` to its report and the
 rules line to `firms.json`.
+
+The line moves only when a week's pull request is merged. `.github/workflows/audit-age.yml` reads main's `audit.json`
+once a day and, past 8 days old, opens an issue ("audit line stale: still on <week> (<date>)") naming the audit pull
+requests still open, or saying none is, once for each week the line is stuck on; it closes the issue when a newer week
+is on main. 2026-W45 and W46 both passed and opened their pull requests, neither was merged, and the line stayed on W44
+for 14 days with no issue, because the publish job opens one only for mismatches or a pull request it couldn't open.
