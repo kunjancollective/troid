@@ -20,7 +20,9 @@ And the rest of 5.1 (items 5 to 8):
 - /llms.txt: troid's summary, the footer's disclosure, a line for every page with its address and its own description
   (the ledger's "Simulated: …"; troid Pro's says it is in preparation), the files for assistants; every troid.ai
   address in it is a file the site serves.
-- The footer links /sources on every page; /research redirects to /dashboard, permanently (vercel.json).
+- The footer links /sources on every page; /research redirects to /dashboard, permanently (vercel.json). /newsletter
+  redirects to troid's Substack with a 302, never permanently, so the address it goes to can change; no file in
+  web/public answers at /newsletter in its place.
 - sitemap.xml: every page with a lastmod, no later than today; a change to a page's text moves it to today, a change to
   its head or to nothing keeps it; the page for an address with no page is not in it.
 - /404.html: noindex, no canonical, a link to every page troid publishes (the sitemap's, in its order), each one a page
@@ -226,6 +228,10 @@ def rest():
     V = json.loads((ROOT / "web" / "vercel.json").read_text())
     ok("vercel.json: /research redirects to /dashboard, permanently",
        {"source": "/research", "destination": "/dashboard", "permanent": True} in V.get("redirects", []))
+    nl = [r for r in V.get("redirects", []) if r.get("source") == "/newsletter"]
+    ok("vercel.json: /newsletter goes to troid's Substack with a 302, once, not permanently (the target can change)",
+       nl == [{"source": "/newsletter", "destination": "https://tradingdroid.substack.com", "statusCode": 302}], nl)
+    ok("/newsletter: no page or file in web/public answers in its place", not served(site_build.BASE_URL + "/newsletter"))
 
     # ---------------------------------------------------------------- sitemap lastmod
     X = (site_build.PUB / "sitemap.xml").read_text()
