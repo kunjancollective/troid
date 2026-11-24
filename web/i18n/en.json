@@ -537,7 +537,7 @@
  "firm.hero.govern": "The firm's documents govern: verify with the firm before trading.",
  "firm.hero.meta_verified": "last read {date} · verified {verified}: its terms read against its help centre",
  "firm.hero.meta_unverified": "last read {date} · not verified yet: troid hasn't read its terms against its help centre",
- "firm.disclosure": "troid is an affiliate of {firm} and earns a commission on purchases through its links, which are on <a href=\"{L}/compare\">troid's compare</a>. The rules and the arithmetic here don't change with it.",
+ "firm.disclosure": "troid is an affiliate of {firm} and earns a commission on purchases through its links. The rules and the arithmetic here don't change with it.",
  "firm.rules.h": "The rules",
  "firm.rules.p": "The rows <a href=\"{L}/compare\">troid's compare</a> shows for {firm}, each with its document and the date troid read it. A dollar amount beside a percentage is for the account size the compare opens at; <a href=\"{H}\">troid's desk</a> and the compare work them out for yours.",
  "firm.products.h": "The other products troid holds",

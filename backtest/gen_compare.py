@@ -702,12 +702,26 @@ def more_rows(k, f, T):
     return h
 
 
+def firm_aff_html(T, k, f):
+    """troid's link on a firm's page (the owner's brief, 2026-11-24: a reader bought elsewhere without seeing it): one
+    labelled link under the page's affiliate disclosure, only while the firm's link is live, in the desk's words and
+    markup (regions.desk_aff_html) so it reads the same for every firm and nowhere as a recommendation. No code. The
+    firm's required wording sits under it, word for word, and the whole block shows only where the visitor's country
+    allows the link (geo.json)."""
+    if not link_live(f):
+        return ""
+    bits = [T("desk2.aff.link", url=html.escape(f["affiliate_url"]), firm=html.escape(f["name"])), T("desk2.aff.funded")]
+    req = f'\n  <p class="req">{required_span(T, f)}</p>' if (f.get("required_disclaimer") or "").strip() else ""
+    inner = f'\n  <p class="aw">{T("desk2.aff.why")}</p>\n  <p class="al">{" · ".join(bits)}</p>{req}\n'
+    return f'<div class="affl" id="affl">\n{geo.wrap(T, k, inner, sep=chr(10))}\n</div>'
+
+
 def render_firm(T, live, page, preview=False):
     """A firm's page in T's language (site_build.FIRM_PAGES)."""
     FT = site_build.page_T(T, page)
     k = site_build.FIRM_PAGES[page]
     f = FIRMS[k]
-    rows, _foot = static_column(js_data(k, f, FT), FT)          # the column's foot holds the firm's link: not here
+    rows, _foot = static_column(js_data(k, f, FT), FT)          # the column's foot (link, code, open questions): not here
     # nor the column's sizing block: its "from your inputs" is the compare's inputs, and this page has none
     K_ = _Kit(FT)
     i, j = rows.index(K_.sec(K_.J["sec_sizing"])), rows.index(K_.sec(K_.J["sec_cost"]))
@@ -716,7 +730,7 @@ def render_firm(T, live, page, preview=False):
     meta = (FT(f"{page}.hero.meta_verified", date=read, verified=f.get("verified_on")) if f.get("verified") and f.get("verified_on")
             else FT(f"{page}.hero.meta_unverified", date=read))
     changes = [{"date": c.get("date", ""), "found": FT.data(c.get("found") or "")} for c in (f.get("rule_changes") or [])]
-    ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "rows": rows,
+    ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "aff": firm_aff_html(FT, k, f), "rows": rows,
            "products": product_rows(k, f, FT), "more": more_rows(k, f, FT), "conflicts": conflicts_html(FT, f, "h2"),
            "changes": changes}
     return site_build.render("firm.html", FT, page, live, preview, **ctx)
