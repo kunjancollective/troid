@@ -9,8 +9,6 @@ name: tests — every page and tool test, on every pull request
 # Every test runs even when one fails, and the last step fails the job with the list.
 #
 # Not run here, each with its reason:
-#   web/test_assistant.js      three expectations pin BrightFunded's data from before its 17 Nov 2026 re-read; add it to
-#                              JS below once they are fixed (the fix decides what a tool tells a visitor: the owner's).
 #   web/test_desk_webkit.py    webkit.yml runs it, in WebKit.
 #   web/eval_character.js, web/smoke_live.js   keyed or live: never in a pull request.
 
@@ -65,7 +63,7 @@ jobs:
               web/test_compare_static.py web/test_desk.py web/test_desk_aff.py web/test_desk_links.py
               web/test_firm_pages.py web/test_geo.py web/test_glossary_page.py web/test_lang_redirect.py
               web/test_pro_page.py web/test_retired_wording.py web/test_seo_head.py web/test_ticker_page.py"
-          JS="test_digest.js test_fee_parity.js test_key_expiry.js test_pro.js test_pro_waitlist.js test_ticker.js test_where.js"
+          JS="test_assistant.js test_digest.js test_fee_parity.js test_key_expiry.js test_pro.js test_pro_waitlist.js test_ticker.js test_where.js"
           PY="$(echo $PY)"                  # one line, single spaces: the not-listed guard below matches on " name "
           failed=""
           for t in $PY; do
@@ -80,7 +78,7 @@ jobs:
           done
           # a test file this list does not name is a test no one runs: say so
           for f in web/test_*.py web/test_*.js backtest/test_*.py; do
-            case " $PY $(printf 'web/%s ' $JS) web/test_assistant.js web/test_desk_webkit.py " in *" $f "*) ;; *) failed="$failed $f(not-listed-in-tests.yml)";; esac
+            case " $PY $(printf 'web/%s ' $JS) web/test_desk_webkit.py " in *" $f "*) ;; *) failed="$failed $f(not-listed-in-tests.yml)";; esac
           done
           if [ -n "$failed" ]; then
             echo "::error title=tests::failed:$failed"
