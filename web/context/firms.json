@@ -598,6 +598,13 @@
           "read_on": "2026-10-18",
           "doc_dated": null,
           "read_via": "fetched from a sandbox on 2026-10-18 (sha256 of the page c976a08f30453775): 'it is possible to use leverage ranging from 1 to 5 times across all listed trading pairs'."
+        },
+        "blog_1124": {
+          "doc": "Bitfunded blog: How to choose the right prop trading challenge (2-Step vs 1-Step vs 1-Step Express vs Instant accounts)",
+          "url": "https://www.bitfunded.com/how-to-choose-the-right-prop-trading-challenge-2-step-vs-1-step-vs-1-step-express-vs-instant-accounts/",
+          "read_on": "2026-11-24",
+          "doc_dated": "2026-08-28",
+          "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page f7f5728d4926861b); its dateModified is 2026-08-28T03:04:39+00:00, unchanged since publication: 'Bitfunded calculates drawdown on Instant accounts using a static method, so limits are set against the starting balance rather than a rising peak.' \u2026 'Instant accounts carry stricter static drawdown limits and a lower 60% profit share'. The Terms of Use, fetched the same day (sha256 5f6697d7b99186b4), do not mention Instant accounts."
         }
       },
       "fields": {
@@ -858,7 +865,8 @@
           },
           "drawdown": {
             "src": [
-              "blog"
+              "blog",
+              "blog_1124"
             ],
             "section": "Bitfunded Blog \u2014 How to choose the right prop trading challenge"
           },
