@@ -251,6 +251,7 @@ def js_data(k, f, T):
                 pt[x] = t
     qs = f.get("_open_questions") or []
     return {"key": k, "name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
+        "maxq": p.get("max_quota"),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
         "lock": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
@@ -383,6 +384,10 @@ def static_column(d, T, inputs=DEFAULTS):
 
     Q, rp, s, lev = (float(inputs["quota"]), float(inputs["risk"]) / 100, float(inputs["stop"]) / 100,
                      float(inputs["lev"]))
+    if f.get("maxq") is not None:
+        # a product whose largest account is under the quota is sized at that account, and its label says so
+        # (compare_product.max_quota; the owner, 2026-11-24: E8 Classic at "largest account $50,000")
+        Q = min(Q, float(f["maxq"]))
     dly = p["daily_pct"] / 100 if p.get("daily_pct") is not None else None
     m = p["max_pct"] / 100 if p.get("max_pct") is not None else None
     is_static = p.get("drawdown_type") is not None and S(p["drawdown_type"]).startswith("static")
@@ -598,9 +603,10 @@ function row(l,val,prov){{return '<div class="r"><div class="rt"><span class="l"
 function rr(f,l,x,fmt,formula){{var val=f.p[x];return row(l,v(x in f.pt?f.pt[x]:val,fmt),val===null||val===undefined?"":pv(f,[x],formula))}}
 function sec(t){{return '<div class="r sec">'+t+'</div>'}}
 function render(){{
-  var Q=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
+  var Q0=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
   ORDER.forEach(function(k){{
     var f=FIRMS[k],p=f.p,h="";
+    var Q=f.maxq!=null?Math.min(Q0,f.maxq):Q0;   /* a product whose largest account is under the quota is sized at that account */
     var d=p.daily_pct!=null?p.daily_pct/100:null,m=p.max_pct!=null?p.max_pct/100:null;
     var isStatic=p.drawdown_type!=null&&String(p.drawdown_type).indexOf("static")===0;
     var known=d!=null&&m!=null, derivable=known&&p.drawdown_type!=null&&p.daily_basis!=null;

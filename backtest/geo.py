@@ -26,7 +26,9 @@ TIMEOUT_MS = 3000          # how long geo.js waits for /api/where before it hide
 def check():
     """geo.json holds together: firm_terms is firms.json's availability.excluded, firm by firm (never a not_from_terms
     or platform entry); every code is two capital letters and named; the law list's entries are its countries."""
-    firms = {k: f for k, f in FIRMS.items() if not k.startswith("_") and isinstance(f, dict) and f.get("availability")}
+    # the firms troid has a link to: a listed firm with no affiliate link has nothing to hide (E8 Markets, 2026-11-24)
+    firms = {k: f for k, f in FIRMS.items() if not k.startswith("_") and isinstance(f, dict) and f.get("availability")
+             and f.get("affiliate_url")}
     ft = LISTS["firm_terms"]["firms"]
     assert set(ft) == set(firms), f"geo.json firm_terms names {sorted(ft)}, firms.json records {sorted(firms)}"
     for k, f in firms.items():

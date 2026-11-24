@@ -3452,6 +3452,209 @@
       }
     ]
   },
+  "e8_markets": {
+    "name": "E8 Markets",
+    "verified": false,
+    "verified_on": null,
+    "verified_from": [
+      "https://e8markets.com/perpetual-futures",
+      "https://e8markets.com/e8-markets-terms-and-conditions"
+    ],
+    "entity": {
+      "contracting": "E8 Funding LLC (Terms of Service 1.1)",
+      "note": "Terms 3.6: 'The owner of the Platform is based in the State of Texas in the United States.'"
+    },
+    "products": {
+      "classic_perps": {
+        "steps": 1,
+        "target_pct": 8,
+        "max_pct": 4,
+        "daily_pct": 2,
+        "drawdown_type": "static: the floor sits 4% below the start and never moves, even after a payout",
+        "daily_option": "a 'No Daily Limit' option is sold at extra cost (+$162 at $50K)",
+        "sizes": "$2K, $5K, $10K, $25K, $50K; no $100,000 account ('Hold up to $100K across Classic accounts, for example two $50K')",
+        "fee_usd_50k": 449,
+        "_price_note": "At $50K the page shows $449 and, with its own 10% code, $405. troid records the price without a code. The size grid shows $405 for $50K, the with-code figure, so its figures for the other sizes ($27, $54, $108, $207) read as with-code prices too; their prices without a code are not yet read.",
+        "consistency_rule": "none ('No Consistency Rule')",
+        "profit_cap": "none ('No Profit Caps')",
+        "min_payout_usd": 100,
+        "payouts": "daily, from $100 in profit"
+      }
+    },
+    "daily_basis": null,
+    "_daily_note": "The page shows the daily limit as a dollar amount ($1,000 at $50K, 2%); what balance it is taken from and when it resets are not on the page read.",
+    "reset_utc": null,
+    "fee_per_side_pct": null,
+    "max_leverage": null,
+    "split": null,
+    "min_days": null,
+    "venue": "Perpetuals 24/7 (Hyperliquid), in the page's words",
+    "refund": "none: 'All fees paid to E8 are non-refundable under any circumstance' (Terms 4.2)",
+    "governing_law": "State of Texas (Terms 15.1)",
+    "availability": {
+      "recorded": false,
+      "excluded": [],
+      "platform": {},
+      "not_from_terms": [],
+      "basis": "no country list in the Terms read; 3.6 says access from outside the United States is on the user's own initiative"
+    },
+    "affiliate_url": null,
+    "link_live": false,
+    "_link_note": "No affiliate agreement, and E8's affiliate terms are not yet read (e8markets.com/legal/affiliate answered a sandbox browser with HTTP 403). The link stays off until the owner has an agreement and its terms are read.",
+    "_conflicts_found": [],
+    "_not_read": [
+      "The Educational Simulation Participant Agreement (ESPA), which the Terms say governs over them: the product's rules are expected there.",
+      "e8markets.com/legal/affiliate and help.e8markets.com: both answered a sandbox browser with HTTP 403 on 2026-11-24. The Actions runner or an owner's browser read is needed.",
+      "Daily-limit basis and reset time, leverage, trading fees, profit share, minimum days, the instrument list, and prices without a code below $50K."
+    ],
+    "_comparability_note": "troid's compare sizes every firm at $100,000. This product stops at $50K, so listing it needs a decision first: a $50K column, or two $50K accounts shown as such.",
+    "provenance": {
+      "sources": {
+        "perps_1124": {
+          "doc": "E8 Markets: perpetual futures page",
+          "url": "https://e8markets.com/perpetual-futures",
+          "read_on": "2026-11-24",
+          "doc_dated": null,
+          "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 783ce71d09985be3): 'Perpetuals 24/7 (Hyperliquid)' \u2026 'E8 Classic from $27. Static drawdown that never trails, no consistency rule, paid daily.' \u2026 'Your loss floor sits 4% below your start and never moves, even after a payout.' \u2026 '10% off with code E8. You save $44.' \u2026 'Make 8% without dropping below your 4% floor. One step.' \u2026 'Hold up to $100K across Classic accounts, for example two $50K.' \u2026 'Any day from $100 in profit, no cap.'. With the market set to Perpetual and the $50K size, the card shows Profit Target $4,000, Max loss $2,000, Daily limit $1,000, 'No Daily Limit +$162', and the prices $449 and $405."
+        },
+        "terms_1124": {
+          "doc": "E8 Funding LLC Terms of Service",
+          "url": "https://e8markets.com/e8-markets-terms-and-conditions",
+          "read_on": "2026-11-24",
+          "doc_dated": null,
+          "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 925ca33530db2cf8): 'E8 FUNDING LLC TERMS OF SERVICE' \u2026 'Effective Date: 11/03/2025' \u2026 '4.2 No Refund Policy. All fees paid to E8 are non-refundable under any circumstance' \u2026 'The owner of the Platform is based in the State of Texas in the United States.' \u2026 'In the event of a conflict or inconsistency between the ESPA and these Terms, the provisions of the ESPA shall govern and control.' \u2026 'shall be governed by and construed in accordance with the laws of the State of Texas, United States'. The document's own date reads 11/03/2025; which of 3 November and 11 March it means is not stated, so doc_dated stays null."
+        }
+      },
+      "fields": {
+        "refund": {
+          "src": [
+            "terms_1124"
+          ],
+          "section": "E8 Funding LLC Terms of Service 4.2"
+        },
+        "entity": {
+          "src": [
+            "terms_1124"
+          ],
+          "section": "E8 Funding LLC Terms of Service 1.1 and 3.6"
+        },
+        "governing_law": {
+          "src": [
+            "terms_1124"
+          ],
+          "section": "E8 Funding LLC Terms of Service 15.1"
+        },
+        "venue": {
+          "src": [
+            "perps_1124"
+          ],
+          "section": "E8 Markets perpetual futures page: market selector"
+        }
+      },
+      "products": {
+        "classic_perps": {
+          "target_pct": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "max_pct": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "daily_pct": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "drawdown_type": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "price": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "daily_option": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "consistency_rule": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "profit_cap": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "payouts": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          },
+          "drawdown": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+          }
+        }
+      }
+    },
+    "_name_note": "Listed 2026-11-24 (the owner's decision 3): the firm is E8 Markets; the product troid lists is E8 Classic on perpetuals, sized at its largest account, $50,000.",
+    "compare_product": {
+      "key": "classic_perps",
+      "label": "E8 Classic, perpetuals \u00b7 largest account $50,000",
+      "max_quota": 50000,
+      "daily_pct": 2,
+      "max_pct": 4,
+      "target_pct": 8,
+      "min_days": null,
+      "price": "$449 at $50,000",
+      "daily_basis": null,
+      "drawdown_type": "static: the floor sits 4% below the start and never moves",
+      "reset_utc": null,
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "hold_cap": null,
+      "max_open": null,
+      "refund": "none: all fees non-refundable",
+      "split": null,
+      "us_available": null,
+      "consistency_rule": "none",
+      "news_rule": null,
+      "profit_cap": "none"
+    },
+    "calc": {
+      "daily_basis": null,
+      "drawdown": "static",
+      "locks_at_initial_after_pct": null,
+      "hwm_basis": null,
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "max_quota": 50000,
+      "products": {
+        "classic_perps": {
+          "label": "E8 Classic, perpetuals \u00b7 largest account $50,000"
+        }
+      }
+    }
+  },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT. 2026-11-24: Kraken's Global Terms (Annex Q) say Kraken Prop's evaluation is Breakout's service; Kraken Prop is read (_reading.kraken_prop). Breakout's own site answers a sandbox with a bot check, so its plans and Evaluation Terms wait for a browser read; see _reading.kraken_prop._breakout.",
     "tradeify_247": "US-based, <10 reviews, <1 year."
@@ -3707,165 +3910,6 @@
   "_panel_src_rule": "panel_summary_src and panel_note_src: the recorded fields ([product or null, field]) a panel summary or note states. The build cites each (regions.panel_cell) and stops when one has no recorded source; a summary or note with figures and no _src list stops it too (challenge-proof audit, E1, 2026-09-26).",
   "_reading": {
     "_rule": "Firms troid has read from their own pages and not yet listed. Each entry has a listed firm's shape (products, provenance, conflicts), so listing one is moving it to the top level and adding its compare_product. Until then it is under this key on purpose: nothing here reaches a page's figures, troid's desk or ask troid's prompt, which read top-level firms only. troid's compare names these firms under 'Reading next' (names only). Order: alphabetical.",
-    "e8_classic_perps": {
-      "name": "E8 Classic (perpetuals)",
-      "verified": false,
-      "verified_on": null,
-      "verified_from": [
-        "https://e8markets.com/perpetual-futures",
-        "https://e8markets.com/e8-markets-terms-and-conditions"
-      ],
-      "entity": {
-        "contracting": "E8 Funding LLC (Terms of Service 1.1)",
-        "note": "Terms 3.6: 'The owner of the Platform is based in the State of Texas in the United States.'"
-      },
-      "products": {
-        "classic_perps": {
-          "steps": 1,
-          "target_pct": 8,
-          "max_pct": 4,
-          "daily_pct": 2,
-          "drawdown_type": "static: the floor sits 4% below the start and never moves, even after a payout",
-          "daily_option": "a 'No Daily Limit' option is sold at extra cost (+$162 at $50K)",
-          "sizes": "$2K, $5K, $10K, $25K, $50K; no $100,000 account ('Hold up to $100K across Classic accounts, for example two $50K')",
-          "fee_usd_50k": 449,
-          "_price_note": "At $50K the page shows $449 and, with its own 10% code, $405. troid records the price without a code. The size grid shows $405 for $50K, the with-code figure, so its figures for the other sizes ($27, $54, $108, $207) read as with-code prices too; their prices without a code are not yet read.",
-          "consistency_rule": "none ('No Consistency Rule')",
-          "profit_cap": "none ('No Profit Caps')",
-          "min_payout_usd": 100,
-          "payouts": "daily, from $100 in profit"
-        }
-      },
-      "daily_basis": null,
-      "_daily_note": "The page shows the daily limit as a dollar amount ($1,000 at $50K, 2%); what balance it is taken from and when it resets are not on the page read.",
-      "reset_utc": null,
-      "fee_per_side_pct": null,
-      "max_leverage": null,
-      "split": null,
-      "min_days": null,
-      "venue": "Perpetuals 24/7 (Hyperliquid), in the page's words",
-      "refund": "none: 'All fees paid to E8 are non-refundable under any circumstance' (Terms 4.2)",
-      "governing_law": "State of Texas (Terms 15.1)",
-      "availability": {
-        "recorded": false,
-        "excluded": [],
-        "platform": {},
-        "not_from_terms": [],
-        "basis": "no country list in the Terms read; 3.6 says access from outside the United States is on the user's own initiative"
-      },
-      "affiliate_url": null,
-      "link_live": false,
-      "_link_note": "No affiliate agreement, and E8's affiliate terms are not yet read (e8markets.com/legal/affiliate answered a sandbox browser with HTTP 403). The link stays off until the owner has an agreement and its terms are read.",
-      "_conflicts_found": [],
-      "_not_read": [
-        "The Educational Simulation Participant Agreement (ESPA), which the Terms say governs over them: the product's rules are expected there.",
-        "e8markets.com/legal/affiliate and help.e8markets.com: both answered a sandbox browser with HTTP 403 on 2026-11-24. The Actions runner or an owner's browser read is needed.",
-        "Daily-limit basis and reset time, leverage, trading fees, profit share, minimum days, the instrument list, and prices without a code below $50K."
-      ],
-      "_comparability_note": "troid's compare sizes every firm at $100,000. This product stops at $50K, so listing it needs a decision first: a $50K column, or two $50K accounts shown as such.",
-      "provenance": {
-        "sources": {
-          "perps_1124": {
-            "doc": "E8 Markets: perpetual futures page",
-            "url": "https://e8markets.com/perpetual-futures",
-            "read_on": "2026-11-24",
-            "doc_dated": null,
-            "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 783ce71d09985be3): 'Perpetuals 24/7 (Hyperliquid)' \u2026 'E8 Classic from $27. Static drawdown that never trails, no consistency rule, paid daily.' \u2026 'Your loss floor sits 4% below your start and never moves, even after a payout.' \u2026 '10% off with code E8. You save $44.' \u2026 'Make 8% without dropping below your 4% floor. One step.' \u2026 'Hold up to $100K across Classic accounts, for example two $50K.' \u2026 'Any day from $100 in profit, no cap.'. With the market set to Perpetual and the $50K size, the card shows Profit Target $4,000, Max loss $2,000, Daily limit $1,000, 'No Daily Limit +$162', and the prices $449 and $405."
-          },
-          "terms_1124": {
-            "doc": "E8 Funding LLC Terms of Service",
-            "url": "https://e8markets.com/e8-markets-terms-and-conditions",
-            "read_on": "2026-11-24",
-            "doc_dated": null,
-            "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 925ca33530db2cf8): 'E8 FUNDING LLC TERMS OF SERVICE' \u2026 'Effective Date: 11/03/2025' \u2026 '4.2 No Refund Policy. All fees paid to E8 are non-refundable under any circumstance' \u2026 'The owner of the Platform is based in the State of Texas in the United States.' \u2026 'In the event of a conflict or inconsistency between the ESPA and these Terms, the provisions of the ESPA shall govern and control.' \u2026 'shall be governed by and construed in accordance with the laws of the State of Texas, United States'. The document's own date reads 11/03/2025; which of 3 November and 11 March it means is not stated, so doc_dated stays null."
-          }
-        },
-        "fields": {
-          "refund": {
-            "src": [
-              "terms_1124"
-            ],
-            "section": "E8 Funding LLC Terms of Service 4.2"
-          },
-          "entity": {
-            "src": [
-              "terms_1124"
-            ],
-            "section": "E8 Funding LLC Terms of Service 1.1 and 3.6"
-          },
-          "governing_law": {
-            "src": [
-              "terms_1124"
-            ],
-            "section": "E8 Funding LLC Terms of Service 15.1"
-          },
-          "venue": {
-            "src": [
-              "perps_1124"
-            ],
-            "section": "E8 Markets perpetual futures page: market selector"
-          }
-        },
-        "products": {
-          "classic_perps": {
-            "target_pct": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "max_pct": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "daily_pct": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "drawdown_type": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "price": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "daily_option": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "consistency_rule": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "profit_cap": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            },
-            "payouts": {
-              "src": [
-                "perps_1124"
-              ],
-              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
-            }
-          }
-        }
-      }
-    },
     "kraken_prop": {
       "name": "Kraken Prop",
       "verified": false,

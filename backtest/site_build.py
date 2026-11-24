@@ -113,13 +113,15 @@ class PageT:
     from firms.json, so no firm is named in en.json. A firm's page (FIRM_PAGES) reads the generic firm.* strings with
     {firm}; troid's compare fills {firms} ("A vs B vs C") and {firm_list} ("A, B and C") in its own. Everything else is
     T's, so the head, the share tags, the structured data and llms.txt work as on any page."""
-    def __init__(self, T, page, to, kw):
+    def __init__(self, T, page, to, kw, alias=None):
         self._T, self._p, self._kw = T, page + ".", kw
         self._to = to
+        self._alias = alias or {}
         self.en = _PageKeys(T.en, self._p, to)
         self.firm = kw.get("firm")
 
     def _k(self, key, kw):
+        key = self._alias.get(key, key)
         if key.startswith(self._p):
             return self._to + key[len(self._p):], {**self._kw, **kw}
         return key, kw
@@ -154,7 +156,10 @@ def page_T(T, page):
         for nm in names[1:-1]:
             acc = pair.replace("{a}", acc).replace("{b}", nm)
         firm_list = last.replace("{a}", acc).replace("{b}", names[-1]) if len(names) > 1 else acc
-        return PageT(T, page, "compare.", {"firms": " vs ".join(names), "firm_list": firm_list})
+        # past three firms the names no longer fit a search title or description: both give the count instead
+        many = {"compare.meta.title": "compare.meta.title_many", "compare.meta.description": "compare.meta.description_many"}
+        return PageT(T, page, "compare.", {"firms": " vs ".join(names), "firm_list": firm_list, "n": len(names)},
+                     many if len(names) > 3 else None)
     return T
 
 

@@ -428,6 +428,8 @@
  "index.js.shared_long": "The link was too long to read, so the desk shows its defaults.",
  "compare.meta.title": "{firms} rules",
  "compare.meta.description": "{firm_list} side by side: daily limit, max loss, target, price and fees, each with its document and troid's read date.",
+ "compare.meta.title_many": "Prop firm rules side by side: {n} firms",
+ "compare.meta.description_many": "{n} prop firms side by side: daily limit, max loss, target, price and fees, each with its document and troid's read date.",
  "compare.og.title": "troid's compare — prop-firm rules side by side, each with its source",
  "compare.og.description": "Daily limit, max loss, target, price and fees for each firm, with the document and the date troid read each rule. Nothing scored, nothing ranked.",
  "compare.hero.h1": "{n} firms, your numbers.",

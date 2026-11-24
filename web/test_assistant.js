@@ -1190,7 +1190,7 @@ fake.listen(18765, async () => {
     await handler({ method: "GET", headers: {} }, res);
     let j = JSON.parse(res.body);
     ok("GET: on, models, context incl. support.md, disclosure, max messages", j.enabled === true && j.models.lookup === "claude-haiku-4-5" && j.models.tools === "claude-sonnet-5"
-       && j.context.support_md > 500 && j.context.firms.length === 3 && j.disclosure === F.DISCLOSURE && j.max_messages === 20 && j.max_chars === 2000, j);
+       && j.context.support_md > 500 && j.context.firms.length === 4 && j.disclosure === F.DISCLOSURE && j.max_messages === 20 && j.max_chars === 2000, j);
 
     // 1. a lookup: Haiku answers; the service prepends the disclosure on the first message
     script = () => msg("end_turn", [{ type: "text", text: "troid's desk sizes against both ceilings (DERIVED)." }]);
@@ -1202,7 +1202,7 @@ fake.listen(18765, async () => {
        && /^# troid's character/.test(calls[0].system[1].text) && /support\.md/.test(calls[0].system[2].text)
        && calls[0].system[4].cache_control.type === "ephemeral" && calls[0].cache_control.type === "ephemeral" && calls[0].tools.length === 9 && calls[0].max_tokens === 4096 && !calls[0].output_config, calls[0].system.map((b) => b.text.slice(0, 40)));
     ok("guardrails carry the audit's additions", ["support.md section 2", "scam", "section 4, word for word", F.END_SESSION, "opening disclosure", "affiliate link"].every((k) => calls[0].system[0].text.includes(k)));
-    ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader\./.test(calls[0].system[0].text));
+    ok("the firm list is closed and named", /You may speak only about these firms: Bitfunded, BrightFunded, Crypto Fund Trader, E8 Markets\./.test(calls[0].system[0].text));
     const banned = ["_watch", "_external_ranking_snapshot", "_why_candidate", "affiliate_agreement", "affiliate_code", "affiliate_url", "affiliate_rate", "_to_verify", "comparison_approval", "prohibited_notable", "Verified firm rules"];
     ok("the prompt carries rule data only: no internal notes, rankings, affiliate terms or correspondence",
        banned.every((k) => !sys.includes(k)) && /"provenance"/.test(sys) && /"lev_bands"/.test(sys), banned.filter((k) => sys.includes(k)));
