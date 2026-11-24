@@ -4,7 +4,7 @@
 One element (#affl, regions.desk_aff_html), never inside the verdict, readout or working: on a phone directly under
 the result, above the "Calculators audited" line; from 1100 px under the Your risk card, in the left column beside the
 result; the same element moved by CSS. Only the selected firm's line shows, and only for a firm whose link is live:
-the sentence, "<firm> challenges ↗ · affiliate link", "· code X" where the firm has one, "· how troid is funded" (the
+the sentence, "<firm> challenges ↗ · affiliate link", no code printed (the owner, 2026-11-24: a code stays inside the link's address, never as text), "· how troid is funded" (the
 FAQ's answer). It reads the same in every state (empty, OK, REDUCE, BLOCK, pending) and changes only with the firm
 selector. rel="sponsored noopener", a new tab, nothing tracked. The link and its label are a size up from the desk's
 small text (13px since 2026-10-05, the owner: 11.5px read too close to the 11px around it), and the firms panel's
@@ -16,6 +16,7 @@ link (geo.json; web/test_geo.py) the line is the message instead; here /api/wher
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -46,7 +47,7 @@ def code_of(f):
 
 def want_line(k):
     f = FIRMS[k]
-    bits = [f"{f['name']} challenges ↗", "affiliate link"] + ([f"code {code_of(f)}"] if code_of(f) else []) + ["how troid is funded"]
+    bits = [f"{f['name']} challenges ↗", "affiliate link", "how troid is funded"]     # no code printed (the owner, 2026-11-24)
     return " · ".join(bits)
 
 
@@ -92,6 +93,10 @@ def main():
        seg.count('rel="sponsored noopener" target="_blank"') == len(live), seg[:400])
     ok("nothing tracked: no query string added to a firm's link, no ping, no onclick",
        all(f'href="{FIRMS[k]["affiliate_url"]}"' in seg for k in live) and " ping=" not in seg and "onclick" not in seg)
+    for pg in ("index.html", "compare.html"):
+        built = (ROOT / "web" / "public" / pg).read_text()
+        shown = [c for c in (code_of(FIRMS[k]) for k in ORDER) if c and re.search(r"code\s*(<b>)?\s*" + re.escape(c), built)]
+        ok(f"{pg}: no firm's code is printed as text", not shown, shown)
     ok("the sentence is the owner's, word for word", WHY == "troid is free. If the desk earned its place, a challenge "
        "bought through troid's link keeps it that way, and doesn't raise the price." and WHY in seg)
     for k in live:
