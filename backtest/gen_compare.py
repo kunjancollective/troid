@@ -520,7 +520,7 @@ def render_compare(T, live):
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("compare.meta.title")}</title>
 {_style(T)}
 <style>
-.cols{{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}}
+.cols{{display:grid;grid-template-columns:repeat({min(len(ORDER), 3)},1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}}
 @media(max-width:760px){{.cols{{grid-template-columns:1fr}}}}
 .col{{background:var(--surface);display:flex;flex-direction:column}}
 .colhead{{padding:16px 16px 12px;border-bottom:1px solid var(--line)}}
@@ -544,9 +544,9 @@ def render_compare(T, live):
 {header(T, live)}
 {site_build.ticker(T)}
 <p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.compare")}</p>
-<h1>{T("compare.hero.h1")}</h1>
+<h1>{T("compare.hero.h1", n=len(ORDER))}</h1>
 <p class="lede">{T("compare.hero.lede")}</p>
-<p class="meta">{T("compare.hero.meta", date=html.escape(last_read()))}</p>
+<p class="meta">{T("compare.hero.meta", n=len(ORDER), date=html.escape(last_read()))}</p>
 {gov + chr(10) if gov else ""}<div class="panel"><p class="eyebrow">{T("compare.sizing.h")}</p><div class="inputs">
   <div><label>{T("compare.sizing.quota")}</label><input id="quota" type="number" value="{jsnum.js_str(DEFAULTS["quota"])}"></div>
   <div><label>{T("compare.sizing.risk")}</label><input id="risk" type="number" step="any" value="{jsnum.js_str(DEFAULTS["risk"])}"></div>
