@@ -88,8 +88,9 @@ def link_live(f):
 
 
 def last_read():
-    """The most recent date troid read any firm document: every read_on in firms.json. troid's compare shows it as
-    'reviewed', so the date moves when a read is recorded and never by hand."""
+    """The most recent date troid read any listed firm's document: every read_on in firms.json outside _reading and
+    _excluded (firms read and not listed). troid's compare shows it as 'reviewed', so the date moves when a read is
+    recorded and never by hand."""
     dates = []
     def walk(x):
         if isinstance(x, dict):
@@ -101,7 +102,9 @@ def last_read():
         elif isinstance(x, list):
             for v in x:
                 walk(v)
-    walk(FIRMS)
+    for k, v in FIRMS.items():
+        if k not in ("_reading", "_excluded"):            # a read of a firm not yet listed is not a review of the columns
+            walk({k: v})
     return max(dates)
 
 
