@@ -241,7 +241,6 @@ def js_data(k, f, T):
     """One firm's column data for the page's script. p holds the rule values as firms.json has them (the script's
     logic reads them); pt holds the ones whose text differs in T's language, which the script shows instead."""
     p = f["compare_product"]
-    code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")   # public: it is in the link
     link_ok = link_live(f)
     c = f.get("calc") or {}; pc = (c.get("products") or {}).get(p.get("key")) or {}
     pt = {}
@@ -260,7 +259,6 @@ def js_data(k, f, T):
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
-        "code": code if link_ok else None,
         "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None,
         "geo": T("common.geo.hidden") if link_ok else None}
 
@@ -475,11 +473,10 @@ def static_column(d, T, inputs=DEFAULTS):
     h += rr(J["row_price"], "price") + rr(J["row_refund"], "refund") + rr(J["row_split"], "split")
     h += rr(J["row_us"], "us_available")
     if f["url"]:
-        # One line: the link, "affiliate link" and the code, as the index's firms panel has it. The link is disclosed,
-        # never sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026).
+        # One line: the link and "affiliate link", as the index's firms panel has it. The link is disclosed, never
+        # sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026), and no
+        # code is printed (the owner, 2026-11-24).
         foot = F(J["foot_link"], {"url": f["url"], "name": f["name"]})
-        if f["code"]:
-            foot += " · " + F(J["foot_code"], {"code": f["code"]})
         if f["req"]:
             foot += '<div class="req">' + f["req"] + '</div>'
         if features:
@@ -659,7 +656,6 @@ function render(){{
     h+=rr(f,T.row_us,"us_available");
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
-      if(f.code)foot+=' · '+F(T.foot_code,{{code:f.code}});
       if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}
       foot='<div data-geo="'+f.key+'">'+foot+'</div><div class="geono" data-geo-no="'+f.key+'">'+f.geo+'</div>';}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
