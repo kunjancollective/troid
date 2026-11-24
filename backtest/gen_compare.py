@@ -139,6 +139,39 @@ def conflicts_html(T, f, heading="p"):
             f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(items)}</ul></div>\n')
 
 
+def reading_next_html(T):
+    """'Reading next', under the columns (the owner's brief, 2026-11-24): the firms troid has read or is reading and
+    has not listed (firms.json _reading), names only, with no rule and no date promised, and the firms considered and
+    left out (_excluded), each with its reason and the date troid read the firm's own page. An older _excluded note with
+    no recorded read is named without its reason: troid shows a rule only from the firm's document, dated. Generated
+    here, never hand-written; alphabetical, as everywhere."""
+    K = _Kit(T)
+    named = lambda d: sorted((v for k, v in (d or {}).items() if not k.startswith("_") and isinstance(v, dict)),  # noqa: E731
+                             key=lambda v: v["name"].lower())
+    reading = [html.escape(v["name"]) for v in named(FIRMS.get("_reading"))]
+    out = []
+    for v in named(FIRMS.get("_excluded")):
+        name = html.escape(v["name"])
+        if v.get("reason") and v.get("read_on"):
+            src = v.get("src") or {}
+            doc = html.escape(src.get("doc") or "")
+            if src.get("url"):
+                doc = f'<a href="{html.escape(src["url"])}">{doc}</a>'
+            out.append("<li>" + T("compare.next.out.dated", firm=name, reason=html.escape(T.data(v["reason"])), doc=doc,
+                                  date=v["read_on"]) + "</li>")
+        else:
+            out.append("<li>" + T("compare.next.out.undated", firm=name) + "</li>")
+    if not reading and not out:
+        return ""
+    parts = [f'<p style="margin:0"><strong>{T("compare.next.h")}</strong></p>']
+    if reading:
+        parts.append(f'<p style="margin:4px 0 0">{T("compare.next.reading", firms=K.andj(reading))}</p>')
+    if out:
+        parts.append(f'<p style="margin:8px 0 0">{T("compare.next.out.h")}</p>\n'
+                     f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(out)}</ul>')
+    return '<div class="s" id="reading-next" style="margin:16px 0 0;line-height:1.7">' + "\n".join(parts) + "</div>\n"
+
+
 def required_sentences():
     """Every listed firm's required disclaimer, verbatim, while the firm is listed."""
     return [(FIRMS[k]["name"], FIRMS[k]["required_disclaimer"].strip())
@@ -526,7 +559,7 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="{jsnum.js_str(DEFAULTS["lev"])}"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
-<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
+{reading_next_html(T)}<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
 {conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_disclosure")}</p>

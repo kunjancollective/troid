@@ -2718,7 +2718,7 @@
     ]
   },
   "_excluded": {
-    "_rule": "Firms considered and left out. An entry with read_on and src was read from the firm's own page on that date and its reason shows on troid's compare; a bare string is an older note with no recorded read, and the compare names the firm without it.",
+    "_rule": "Firms considered and left out. An entry with reason, read_on and src was read from the firm's own page on that date, and troid's compare shows its reason under 'Reading next'; an entry with no read_on is an older note (_note) with no recorded read, and the compare names the firm without it.",
     "bem_funding": {
       "name": "BEM Funding",
       "reason": "Its own challenge page lists four challenges and names no crypto product.",
@@ -2732,7 +2732,11 @@
         "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 905e89931fe4d7a6): 'All challenges Find the BEM Model That Fits' \u2026 'BEM One Pass in 1 trade, Reward on Demand' \u2026 'BEM One Only Most affordable, lowest profit target' \u2026 'BEM Classic Standard 2-Step, static drawdown' \u2026 'BEM Classic Swing Swap-free, overnight & weekend holding'. 'Crypto' appears on the page only in the weekend-holding row ('Crypto only') and in general copy."
       }
     },
-    "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+    "hyrotrader": {
+      "name": "HyroTrader",
+      "read_on": null,
+      "_note": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+    }
   },
   "_reference_firm": "Bitfunded is the first firm troid verified from its own documents. It is where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so.",
   "_external_ranking_snapshot": {
