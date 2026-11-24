@@ -437,7 +437,6 @@
  "compare.next.reading": "troid has read or is reading {firms}. A firm is listed once its rules are read from its own documents and checked; no date is promised.",
  "compare.next.out.h": "Considered and left out:",
  "compare.next.out.dated": "{firm}. {reason} {doc}, read {date}.",
- "compare.next.out.undated": "{firm}. Left out on an earlier look; its reason has no dated read of the firm's own pages, so it is not shown.",
  "compare.conflicts.h": "Where {firm}'s own documents disagree · {n} logged",
  "compare.conflicts.read": "read {date}",
  "compare.conflicts.unread": "no read recorded",

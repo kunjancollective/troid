@@ -143,7 +143,7 @@ def reading_next_html(T):
     """'Reading next', under the columns (the owner's brief, 2026-11-24): the firms troid has read or is reading and
     has not listed (firms.json _reading), names only, with no rule and no date promised, and the firms considered and
     left out (_excluded), each with its reason and the date troid read the firm's own page. An older _excluded note with
-    no recorded read is named without its reason: troid shows a rule only from the firm's document, dated. Generated
+    no dated read is not named at all (the owner, 2026-11-24: no firm without a reason). Generated
     here, never hand-written; alphabetical, as everywhere."""
     K = _Kit(T)
     named = lambda d: sorted((v for k, v in (d or {}).items() if not k.startswith("_") and isinstance(v, dict)),  # noqa: E731
@@ -159,8 +159,6 @@ def reading_next_html(T):
                 doc = f'<a href="{html.escape(src["url"])}">{doc}</a>'
             out.append("<li>" + T("compare.next.out.dated", firm=name, reason=html.escape(T.data(v["reason"])), doc=doc,
                                   date=v["read_on"]) + "</li>")
-        else:
-            out.append("<li>" + T("compare.next.out.undated", firm=name) + "</li>")
     if not reading and not out:
         return ""
     parts = [f'<p style="margin:0"><strong>{T("compare.next.h")}</strong></p>']

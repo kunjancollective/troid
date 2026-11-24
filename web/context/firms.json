@@ -2718,7 +2718,7 @@
     ]
   },
   "_excluded": {
-    "_rule": "Firms considered and left out. An entry with reason, read_on and src was read from the firm's own page on that date, and troid's compare shows its reason under 'Reading next'; an entry with no read_on is an older note (_note) with no recorded read, and the compare names the firm without it.",
+    "_rule": "Firms considered and left out. An entry with reason, read_on and src was read from the firm's own page on that date, and troid's compare shows it under 'Reading next'. An entry with no read_on is an older note (_note) with no recorded read: the compare does not name it until its own pages are read and a dated reason recorded (the owner, 2026-11-24).",
     "bem_funding": {
       "name": "BEM Funding",
       "reason": "Its own challenge page lists four challenges and names no crypto product.",
