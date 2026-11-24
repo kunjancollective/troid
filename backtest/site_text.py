@@ -41,6 +41,25 @@ COPYRIGHT = "© 2026 Kunjan Patel"
 NEWSLETTER_PLACEHOLDER = "https://substack-url-needed.invalid/"
 NEWSLETTER_URL = "https://substack.com/@tradingdroid"
 
+# Why to subscribe (the owner's brief, 2026-11-24; a reader: "Why subscribe? The calculator is all I come for."): the
+# owner's sentence, verbatim, in place of the footer's bare "newsletter" on every page, beside each firm page's "What
+# changed" and under troid's compare's columns. It links troid.ai/newsletter (vercel.json sends it to the Substack), so
+# the address can move without a page changing. It never says "paid". The Substack's own address stays in LINKS for the
+# Organization's sameAs and llms.txt, and in the FAQ's Newsletter section, which links it directly.
+SUBSCRIBE_PATH = "/newsletter"
+SUBSCRIBE_TEXT = ("Rules change without notice. troid emails when a firm it covers changes a rule or a price, "
+                  "plus one worked example a week. Free.")
+SUBSCRIBE_LINKED = "troid emails"                       # the words that carry the link
+
+
+def subscribe_html(T=None):
+    """The subscribe sentence with its link, in the page's language (web/i18n common.subscribe; English is
+    SUBSCRIBE_TEXT, which verify_claims.py holds equal to en.json's)."""
+    if _english(T):
+        return html.escape(SUBSCRIBE_TEXT).replace(SUBSCRIBE_LINKED, f'<a href="{SUBSCRIBE_PATH}">{SUBSCRIBE_LINKED}</a>', 1)
+    return T("common.subscribe")
+
+
 LINKS = [("/", "troid's desk"), ("/compare", "troid's compare"), ("/ledger", "troid's ledger"),
          ("/dashboard", "troid's research"), ("/tearsheet", "tearsheet"), ("/chat", "ask troid"), ("/faq", "faq"), ("/sources", "sources"), ("/terms", "terms"),
          ("https://github.com/kunjancollective/troid", "source"), ("https://x.com/tradingdroid", "x"),
@@ -116,13 +135,14 @@ def footer_html(T=None):
     """Inline HTML (no block elements), so it fits both <footer><div> and <p class="foot"> containers.
     English is the owner's line verbatim; a translated page carries the line in its language. The footer names no
     firm: a firm's required sentence sits beside that firm's link and in the terms' affiliate notices
-    (regions.required_span; design handoff 2026-09-24, 2d)."""
+    (regions.required_span; design handoff 2026-09-24, 2d). Under the links, the subscribe sentence (subscribe_html) stands
+    where the bare "newsletter" link was."""
     if _english(T):
-        links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS)
-        return f"{links}<br><br>{html.escape(FOOTER_TEXT)}<br><br>{COPYRIGHT}"
+        links = " · ".join(f'<a href="{u}">{html.escape(t)}</a>' for u, t in LINKS if u != NEWSLETTER_URL)
+        return f"{links}<br><br>{subscribe_html(T)}<br><br>{html.escape(FOOTER_TEXT)}<br><br>{COPYRIGHT}"
     links = " · ".join(f'<a href="{(T.H if u == "/" else T.L + u) if u.startswith("/") else u}">{html.escape(T(LINK_KEYS[u]))}</a>'
-                       for u, _ in LINKS)
-    return f"{links}<br><br>{T('footer.text')}" + f'<br><br><span translate="no">{COPYRIGHT}</span>'
+                       for u, _ in LINKS if u != NEWSLETTER_URL)
+    return f"{links}<br><br>{subscribe_html(T)}<br><br>{T('footer.text')}" + f'<br><br><span translate="no">{COPYRIGHT}</span>'
 
 
 def no_edge_html(T=None):

@@ -258,11 +258,23 @@ for rel in ("web/public/terms.html", "web/public/ledger.html", "web/public/tears
     check("SOURCED", f"17 CFR 4.41(b)(1)(i) verbatim in {rel}", float(_T.HYPO in _html.unescape(_read(rel))), 1.0)
 for page in sorted((_ROOT / "web" / "public").glob("*.html")):
     check("DERIVED", f"footer line on {page.name}", float(_T.FOOTER_TEXT in _html.unescape(page.read_text())), 1.0)
-    check("DERIVED", f"footer links troid's newsletter on {page.name}", float(f'href="{_T.NEWSLETTER_URL}"' in page.read_text()), 1.0)
+    check("DERIVED", f"footer says why to subscribe, linking /newsletter, on {page.name}",
+          float(_T.subscribe_html() in page.read_text() and '>newsletter</a>' not in page.read_text()), 1.0)
 # troid's newsletter (the owner, 2026-10-14): Stripe asks that troid.ai link the Substack. The address is the owner's
 # to give; the placeholder fails here, so the link can't merge unset. The FAQ's Newsletter section says it in the owner's
 # words, saying nothing about its pricing (2026-10-18); the desk and ask troid's live prompt don't name it (ask troid
 # answers about it only when asked).
+# why to subscribe (the owner's brief, 2026-11-24): the owner's sentence verbatim wherever it shows, never "paid"
+import i18n as _i18n_sub
+check("DERIVED", "the subscribe sentence is the owner's, word for word, in en.json too, and never says paid",
+      float(_T.SUBSCRIBE_TEXT == "Rules change without notice. troid emails when a firm it covers changes a rule or a price, "
+            "plus one worked example a week. Free." and _i18n_sub.english()["common.subscribe"] == _T.subscribe_html()
+            and "paid" not in _T.SUBSCRIBE_TEXT.lower()), 1.0)
+check("DERIVED", "the subscribe sentence is on troid's compare under the columns and beside every firm page's 'What changed'",
+      float(f'<p class="s" id="subscribe" style="margin:16px 0 0;line-height:1.7">{_T.subscribe_html()}</p>' in _read("web/public/compare.html")
+            and all(f'<p class="s" id="subscribe">{_T.subscribe_html()}</p>' in _p.read_text()
+                    and _p.read_text().index('id="changes"') < _p.read_text().index('id="subscribe"') < _p.read_text().index('id="arithmetic"')
+                    for _p in sorted((_ROOT / "web" / "public" / "firms").glob("*.html")))), 1.0)
 check("DERIVED", "troid's newsletter address is set (site_text.NEWSLETTER_URL, not the placeholder)",
       float(_T.NEWSLETTER_URL.startswith("https://") and _T.NEWSLETTER_URL != _T.NEWSLETTER_PLACEHOLDER), 1.0)
 check("DERIVED", "the FAQ's Newsletter section: \"troid also has a newsletter on Substack.\", linked, nothing about its pricing",

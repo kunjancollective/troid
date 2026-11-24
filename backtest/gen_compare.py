@@ -523,6 +523,7 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="{jsnum.js_str(DEFAULTS["lev"])}"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
+<p class="s" id="subscribe" style="margin:16px 0 0;line-height:1.7">{site_text.subscribe_html(T)}</p>
 <p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
 {conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
@@ -718,7 +719,7 @@ def render_firm(T, live, page, preview=False):
     changes = [{"date": c.get("date", ""), "found": FT.data(c.get("found") or "")} for c in (f.get("rule_changes") or [])]
     ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "rows": rows,
            "products": product_rows(k, f, FT), "more": more_rows(k, f, FT), "conflicts": conflicts_html(FT, f, "h2"),
-           "changes": changes}
+           "changes": changes, "subscribe": site_text.subscribe_html(FT)}
     return site_build.render("firm.html", FT, page, live, preview, **ctx)
 
 
