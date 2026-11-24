@@ -1764,13 +1764,13 @@
           "hwm_basis": null
         },
         "2step_classic_s1": {
-          "label": "2-Step Classic \u00b7 S1",
+          "label": "2-Step Classic (OLD): accounts bought before 16 Nov 2026 \u00b7 S1",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
         },
         "2step_classic_s2": {
-          "label": "2-Step Classic \u00b7 S2",
+          "label": "2-Step Classic (OLD): accounts bought before 16 Nov 2026 \u00b7 S2",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
@@ -2718,7 +2718,25 @@
     ]
   },
   "_excluded": {
-    "hyrotrader": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+    "_rule": "Firms considered and left out. An entry with reason, read_on and src was read from the firm's own page on that date, and troid's compare shows it under 'Reading next'. An entry with no read_on is an older note (_note) with no recorded read: the compare does not name it until its own pages are read and a dated reason recorded (the owner, 2026-11-24).",
+    "bem_funding": {
+      "name": "BEM Funding",
+      "reason": "Its own challenge page lists four challenges and names no crypto product.",
+      "read_on": "2026-11-24",
+      "recheck": "when the lead list is next read",
+      "src": {
+        "doc": "BEM Funding: All Challenges",
+        "url": "https://bemfunding.com/challenges",
+        "read_on": "2026-11-24",
+        "doc_dated": null,
+        "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 905e89931fe4d7a6): 'All challenges Find the BEM Model That Fits' \u2026 'BEM One Pass in 1 trade, Reward on Demand' \u2026 'BEM One Only Most affordable, lowest profit target' \u2026 'BEM Classic Standard 2-Step, static drawdown' \u2026 'BEM Classic Swing Swap-free, overnight & weekend holding'. 'Crypto' appears on the page only in the weekend-holding row ('Crypto only') and in general copy."
+      }
+    },
+    "hyrotrader": {
+      "name": "HyroTrader",
+      "read_on": null,
+      "_note": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+    }
   },
   "_reference_firm": "Bitfunded is the first firm troid verified from its own documents. It is where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so.",
   "_external_ranking_snapshot": {
@@ -3427,9 +3445,7 @@
     ]
   },
   "_watch": {
-    "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT.",
-    "bem_funding": "5.0 rating, 30 reviews, Dubai, 2 years.",
-    "e8_perpetuals": "US-based, <10 reviews, 1 year. US-based is relevant to this audience.",
+    "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT. 2026-11-24: Kraken's Global Terms (Annex Q) say Kraken Prop's evaluation is Breakout's service; Kraken Prop is read (_reading.kraken_prop). Breakout's own site answers a sandbox with a bot check, so its plans and Evaluation Terms wait for a browser read; see _reading.kraken_prop._breakout.",
     "tradeify_247": "US-based, <10 reviews, <1 year."
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
@@ -3680,5 +3696,827 @@
       }
     ]
   },
-  "_panel_src_rule": "panel_summary_src and panel_note_src: the recorded fields ([product or null, field]) a panel summary or note states. The build cites each (regions.panel_cell) and stops when one has no recorded source; a summary or note with figures and no _src list stops it too (challenge-proof audit, E1, 2026-09-26)."
+  "_panel_src_rule": "panel_summary_src and panel_note_src: the recorded fields ([product or null, field]) a panel summary or note states. The build cites each (regions.panel_cell) and stops when one has no recorded source; a summary or note with figures and no _src list stops it too (challenge-proof audit, E1, 2026-09-26).",
+  "_reading": {
+    "_rule": "Firms troid has read from their own pages and not yet listed. Each entry has a listed firm's shape (products, provenance, conflicts), so listing one is moving it to the top level and adding its compare_product. Until then it is under this key on purpose: nothing here reaches a page's figures, troid's desk or ask troid's prompt, which read top-level firms only. troid's compare names these firms under 'Reading next' (names only). Order: alphabetical.",
+    "e8_classic_perps": {
+      "name": "E8 Classic (perpetuals)",
+      "verified": false,
+      "verified_on": null,
+      "verified_from": [
+        "https://e8markets.com/perpetual-futures",
+        "https://e8markets.com/e8-markets-terms-and-conditions"
+      ],
+      "entity": {
+        "contracting": "E8 Funding LLC (Terms of Service 1.1)",
+        "note": "Terms 3.6: 'The owner of the Platform is based in the State of Texas in the United States.'"
+      },
+      "products": {
+        "classic_perps": {
+          "steps": 1,
+          "target_pct": 8,
+          "max_pct": 4,
+          "daily_pct": 2,
+          "drawdown_type": "static: the floor sits 4% below the start and never moves, even after a payout",
+          "daily_option": "a 'No Daily Limit' option is sold at extra cost (+$162 at $50K)",
+          "sizes": "$2K, $5K, $10K, $25K, $50K; no $100,000 account ('Hold up to $100K across Classic accounts, for example two $50K')",
+          "fee_usd_50k": 449,
+          "_price_note": "At $50K the page shows $449 and, with its own 10% code, $405. troid records the price without a code. The size grid shows $405 for $50K, the with-code figure, so its figures for the other sizes ($27, $54, $108, $207) read as with-code prices too; their prices without a code are not yet read.",
+          "consistency_rule": "none ('No Consistency Rule')",
+          "profit_cap": "none ('No Profit Caps')",
+          "min_payout_usd": 100,
+          "payouts": "daily, from $100 in profit"
+        }
+      },
+      "daily_basis": null,
+      "_daily_note": "The page shows the daily limit as a dollar amount ($1,000 at $50K, 2%); what balance it is taken from and when it resets are not on the page read.",
+      "reset_utc": null,
+      "fee_per_side_pct": null,
+      "max_leverage": null,
+      "split": null,
+      "min_days": null,
+      "venue": "Perpetuals 24/7 (Hyperliquid), in the page's words",
+      "refund": "none: 'All fees paid to E8 are non-refundable under any circumstance' (Terms 4.2)",
+      "governing_law": "State of Texas (Terms 15.1)",
+      "availability": {
+        "recorded": false,
+        "excluded": [],
+        "platform": {},
+        "not_from_terms": [],
+        "basis": "no country list in the Terms read; 3.6 says access from outside the United States is on the user's own initiative"
+      },
+      "affiliate_url": null,
+      "link_live": false,
+      "_link_note": "No affiliate agreement, and E8's affiliate terms are not yet read (e8markets.com/legal/affiliate answered a sandbox browser with HTTP 403). The link stays off until the owner has an agreement and its terms are read.",
+      "_conflicts_found": [],
+      "_not_read": [
+        "The Educational Simulation Participant Agreement (ESPA), which the Terms say governs over them: the product's rules are expected there.",
+        "e8markets.com/legal/affiliate and help.e8markets.com: both answered a sandbox browser with HTTP 403 on 2026-11-24. The Actions runner or an owner's browser read is needed.",
+        "Daily-limit basis and reset time, leverage, trading fees, profit share, minimum days, the instrument list, and prices without a code below $50K."
+      ],
+      "_comparability_note": "troid's compare sizes every firm at $100,000. This product stops at $50K, so listing it needs a decision first: a $50K column, or two $50K accounts shown as such.",
+      "provenance": {
+        "sources": {
+          "perps_1124": {
+            "doc": "E8 Markets: perpetual futures page",
+            "url": "https://e8markets.com/perpetual-futures",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 783ce71d09985be3): 'Perpetuals 24/7 (Hyperliquid)' \u2026 'E8 Classic from $27. Static drawdown that never trails, no consistency rule, paid daily.' \u2026 'Your loss floor sits 4% below your start and never moves, even after a payout.' \u2026 '10% off with code E8. You save $44.' \u2026 'Make 8% without dropping below your 4% floor. One step.' \u2026 'Hold up to $100K across Classic accounts, for example two $50K.' \u2026 'Any day from $100 in profit, no cap.'. With the market set to Perpetual and the $50K size, the card shows Profit Target $4,000, Max loss $2,000, Daily limit $1,000, 'No Daily Limit +$162', and the prices $449 and $405."
+          },
+          "terms_1124": {
+            "doc": "E8 Funding LLC Terms of Service",
+            "url": "https://e8markets.com/e8-markets-terms-and-conditions",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "rendered in headless Chromium from a sandbox (the page is written by its script; the hash is of the rendered DOM) on 2026-11-24 (sha256 of the page 925ca33530db2cf8): 'E8 FUNDING LLC TERMS OF SERVICE' \u2026 'Effective Date: 11/03/2025' \u2026 '4.2 No Refund Policy. All fees paid to E8 are non-refundable under any circumstance' \u2026 'The owner of the Platform is based in the State of Texas in the United States.' \u2026 'In the event of a conflict or inconsistency between the ESPA and these Terms, the provisions of the ESPA shall govern and control.' \u2026 'shall be governed by and construed in accordance with the laws of the State of Texas, United States'. The document's own date reads 11/03/2025; which of 3 November and 11 March it means is not stated, so doc_dated stays null."
+          }
+        },
+        "fields": {
+          "refund": {
+            "src": [
+              "terms_1124"
+            ],
+            "section": "E8 Funding LLC Terms of Service 4.2"
+          },
+          "entity": {
+            "src": [
+              "terms_1124"
+            ],
+            "section": "E8 Funding LLC Terms of Service 1.1 and 3.6"
+          },
+          "governing_law": {
+            "src": [
+              "terms_1124"
+            ],
+            "section": "E8 Funding LLC Terms of Service 15.1"
+          },
+          "venue": {
+            "src": [
+              "perps_1124"
+            ],
+            "section": "E8 Markets perpetual futures page: market selector"
+          }
+        },
+        "products": {
+          "classic_perps": {
+            "target_pct": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "max_pct": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "daily_pct": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "drawdown_type": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "price": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "daily_option": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "consistency_rule": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "profit_cap": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            },
+            "payouts": {
+              "src": [
+                "perps_1124"
+              ],
+              "section": "E8 Markets perpetual futures page: E8 Classic card, Perpetual, $50K"
+            }
+          }
+        }
+      }
+    },
+    "kraken_prop": {
+      "name": "Kraken Prop",
+      "verified": false,
+      "verified_on": null,
+      "verified_from": [
+        "https://www.kraken.com/pro/prop",
+        "https://www.kraken.com/pro/prop/lite",
+        "https://www.kraken.com/legal/global-terms (Annex Q)"
+      ],
+      "entity": {
+        "evaluation": "Breakout Trading Group, LLC (Global Terms, Annex Q 1a)",
+        "funded": "Payward Oceanic Ltd., incorporated in the British Virgin Islands (Annex Q 1a; the product page's footer)",
+        "note": "Annex Q: 'Kraken acts solely as the platform interface.' The product page calls the service unregulated."
+      },
+      "products": {
+        "starter": {
+          "target_pct": 10,
+          "daily_pct": 3,
+          "max_pct": 6,
+          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "fee_usd_100k": 800,
+          "fee_usd_200k": null,
+          "sizes": "$5,000 to $100,000"
+        },
+        "intermediate": {
+          "target_pct": 12,
+          "daily_pct": 3,
+          "max_pct": 5,
+          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "fee_usd_100k": 545,
+          "fee_usd_200k": 1090,
+          "sizes": "$5,000 to $200,000"
+        },
+        "advanced": {
+          "target_pct": 9,
+          "daily_pct": 3,
+          "max_pct": 3,
+          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "fee_usd_100k": 330,
+          "fee_usd_200k": 660,
+          "sizes": "$5,000 to $200,000"
+        },
+        "lite_002": {
+          "size_usd": 50000,
+          "target_usd": 3000,
+          "max_usd": 1500,
+          "daily_pct": null,
+          "drawdown_type": "trailing: $1,500 below the highest equity reached, open profit included; the floor moves once a day at 00:30 UTC and never goes below $48,500",
+          "fee_usd_50k": 99,
+          "fee_usd_50k_90_split": 119,
+          "split": "up to 80%, or up to 90% at the $119 price",
+          "fee_per_side_pct_crypto": 0.04,
+          "limited_to": 500,
+          "_note": "Built for index and commodity markets (up to 40x and 20x); its own rules, leverage and fees."
+        }
+      },
+      "daily_basis": null,
+      "_daily_note": "Not stated on the pages read: the page defines the max daily loss as 'the maximum loss allowed in a single day', by percentage or USD value, and names no balance it is taken from.",
+      "reset_utc": null,
+      "_reset_note": "No reset time is stated for Starter, Intermediate or Advanced. Lite 002's floor moves at 00:30 UTC; that is Lite's rule, not the other plans' daily reset.",
+      "fee_per_side_pct": null,
+      "_fee_note": "No crypto fee is stated for Starter, Intermediate or Advanced. The Lite page states 4 bps per side for crypto on Lite 002, and '$400 on standard plans' for a $1M round trip on equity indices.",
+      "max_leverage": "Up to 5x (Starter, Intermediate, Advanced)",
+      "split": "80%\u201390%; the 90% share is sold as a higher evaluation fee",
+      "min_days": null,
+      "time_limit": "none",
+      "refund": "non-refundable; the page's footer says 'once trading begins'",
+      "api_trading": "not offered, evaluation or funded",
+      "max_capital_per_customer": "$200,000 across active evaluations and funded accounts (the Lite page)",
+      "availability": {
+        "recorded": false,
+        "excluded": [],
+        "platform": {},
+        "not_from_terms": [],
+        "basis": "no country list on the pages read; Annex Q 4 says Kraken Prop is available only where Kraken determines it is permissible"
+      },
+      "affiliate_url": null,
+      "link_live": false,
+      "_link_note": "No affiliate agreement. The public affiliate page says Kraken Prop pays 25% and that rates are negotiated per partner; nothing is agreed and no terms are read. The link stays off until the owner has an agreement and its terms are read.",
+      "_conflicts_found": [
+        {
+          "topic": "When the evaluation fee stops being refundable",
+          "logged": "2026-11-24",
+          "sides": [
+            {
+              "src": "prop_1124",
+              "doc": "product page, FAQ: What if I don't pass the evaluation?",
+              "says": "The evaluation fee is non-refundable."
+            },
+            {
+              "src": "prop_1124",
+              "doc": "product page, footer",
+              "says": "non-refundable for each attempt once trading begins"
+            }
+          ],
+          "troid": "both shown; neither is taken as settled (the governing Evaluation Terms are Breakout's and are not yet read)"
+        }
+      ],
+      "_not_read": [
+        "Breakout's Evaluation Terms of Service, which Annex Q says govern the evaluation process, fees and outcomes: breakoutprop.com answers a sandbox with a bot check (HTTP 403, 2026-11-24). An owner's browser read is needed before this entry is listed.",
+        "The Funded Trader Agreement with Payward Oceanic (shown only after passing).",
+        "Daily-loss basis, daily reset time, crypto fee and instrument list for Starter, Intermediate and Advanced.",
+        "Any country list."
+      ],
+      "_breakout": "Decision, provisional (2026-11-24): one entry, Kraken Prop, with Breakout as a note on it, not a second entry. Why: Kraken's own terms say the evaluation sold as Kraken Prop is Breakout's service under Breakout's Evaluation Terms, so the record so far describes one evaluation programme reached through two storefronts. Breakout's own site still has to be read (it was not reachable from a sandbox): if its 1-step and 2-step plans carry rules or prices that differ from Kraken Prop's, it becomes a second entry.",
+      "provenance": {
+        "sources": {
+          "prop_1124": {
+            "doc": "Kraken Prop product page",
+            "url": "https://www.kraken.com/pro/prop",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 0728df0993c37223): 'Kraken Prop plan comparison table for $100,000 wallet size Plans Advanced Intermediate Starter Profit target 9% 12% 10% Max daily loss 3% 3% 3% Max drawdown 3% 5% 6% Evaluation fee $330 $545 $800' \u2026 'Kraken Prop plan comparison table for $200,000 wallet size Plans Advanced Intermediate Profit target 9% 12% Max daily loss 3% 3% Max drawdown 3% 5% Evaluation fee $660 $1,090' \u2026 'Your profit share 80%\u201390%' \u2026 'Leverage Up to 5x' \u2026 'Max drawdown The maximum decline allowed from the starting balance over the lifetime of an evaluation or funded wallet, expressed as a USD value.' \u2026 'Max daily loss The maximum loss allowed in a single day from an evaluation or funded wallet, expressed as a percentage or USD value.' \u2026 'Daily loss limit The equity level at which an evaluation or funded wallet breaches the max daily loss rule.' \u2026 'There\u2019s no time limit, so you can trade at your own pace.' \u2026 'The evaluation fee is non-refundable.' \u2026 'Evaluation fees are non-refundable for each attempt once trading begins, regardless of outcome.' \u2026 'No, Kraken Prop does not currently offer API access.' \u2026 'before any proprietary capital is allocated by Payward Oceanic Ltd.'. kraken.com/prop redirects to this address."
+          },
+          "lite_1124": {
+            "doc": "Kraken Prop Lite page",
+            "url": "https://www.kraken.com/pro/prop/lite",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 997589c991d068cb): 'A $50,000 evaluation with a $3,000 profit target and a $1,500 drawdown limit.' \u2026 '$99, once. You can keep up to 80% of your gains. Or $119 to keep up to 90%.' \u2026 'Your drawdown limit (your floor) sits $1,500 below your high. Your high is the highest your equity has reached, including open profit.' \u2026 'The floor moves up once a day, at 00:30 UTC, to $1,500 below your high. It never goes below $48,500.' \u2026 'No daily loss, no consistency rule, no minimum days, no buffer, and no cap.' \u2026 'Crypto: 4 bps per side (8 bps round trip).' \u2026 '0.04 bps per side: $8 on a $1M round trip vs $400 on standard plans.' \u2026 'This release is limited to 500. You can buy more than one. Your total across all active evaluations and funded accounts must stay within the $200,000 funding cap.'"
+          },
+          "terms_q_1124": {
+            "doc": "Kraken Global Terms of Service, Annex Q: Kraken Prop Terms",
+            "url": "https://www.kraken.com/legal/global-terms",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-11-18",
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page b8123815a2debaad): 'Last updated: November 18, 2026' \u2026 'The evaluation service is provided by Breakout Trading Group, LLC (\"Breakout\") and the funded trading arrangement, if you pass the evaluation, is operated by Payward Oceanic Ltd., a company incorporated in the British Virgin Islands (\"Payward Oceanic\"). Kraken is not a party to either arrangement.' \u2026 'Before purchasing an evaluation, you must accept Breakout's Evaluation Terms of Service, which govern the evaluation process, fees, and outcomes.' \u2026 'Those agreements, not these terms, set out the full details of how the programme works, the risks involved, your profit entitlement, and the obligations of each party.' \u2026 'Kraken Prop is available only in jurisdictions where Kraken determines it is permissible to offer access to the programme. Availability may be restricted or withdrawn at any time without prior notice'"
+          },
+          "affiliate_1124": {
+            "doc": "Kraken Affiliate Program page",
+            "url": "https://www.kraken.com/affiliate",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page a24ddd8806d5b5d2): 'Kraken Prop pays 25% *' \u2026 'Final structures are negotiated per partner during onboarding.' \u2026 'Commission rates vary by product, region, and affiliate profile.'"
+          },
+          "breakout_faq_1124": {
+            "doc": "Kraken Support: Breakout x Kraken FAQ",
+            "url": "https://support.kraken.com/articles/breakout-x-kraken-faq",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page ddb709155a9eefd3): 'Kraken has acquired Breakout, a prop trading platform that lets you access up to $200,000 in live trading capital and keep over 80% of your profits.' \u2026 'Kraken clients can access Breakout\u2019s services, but please note that the accounts are not directly connected.'"
+          }
+        },
+        "fields": {
+          "max_leverage": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: plan table, Leverage"
+          },
+          "split": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: plan table, Your profit share"
+          },
+          "drawdown_type": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: FAQ, What are the risk limits?"
+          },
+          "refund": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: FAQ and footer"
+          },
+          "time_limit": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: FAQ, Is the evaluation time-limited?"
+          },
+          "api_trading": {
+            "src": [
+              "prop_1124"
+            ],
+            "section": "Kraken Prop product page: FAQ, Does Kraken Prop support API trading?"
+          },
+          "entity": {
+            "src": [
+              "terms_q_1124",
+              "prop_1124"
+            ],
+            "section": "Kraken Global Terms of Service, Annex Q 1a; product page footer"
+          },
+          "availability": {
+            "src": [
+              "terms_q_1124"
+            ],
+            "section": "Kraken Global Terms of Service, Annex Q 4"
+          },
+          "max_capital_per_customer": {
+            "src": [
+              "lite_1124"
+            ],
+            "section": "Kraken Prop Lite page: FAQ, How many Lite 002 evaluations are available?"
+          }
+        },
+        "products": {
+          "starter": {
+            "target_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "daily_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "max_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "price": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            }
+          },
+          "intermediate": {
+            "target_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "daily_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "max_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "price": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            }
+          },
+          "advanced": {
+            "target_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "daily_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "max_pct": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            },
+            "price": {
+              "src": [
+                "prop_1124"
+              ],
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+            }
+          },
+          "lite_002": {
+            "target_usd": {
+              "src": [
+                "lite_1124"
+              ],
+              "section": "Kraken Prop Lite page: FAQ"
+            },
+            "max_usd": {
+              "src": [
+                "lite_1124"
+              ],
+              "section": "Kraken Prop Lite page: FAQ"
+            },
+            "drawdown_type": {
+              "src": [
+                "lite_1124"
+              ],
+              "section": "Kraken Prop Lite page: FAQ"
+            },
+            "price": {
+              "src": [
+                "lite_1124"
+              ],
+              "section": "Kraken Prop Lite page: FAQ"
+            },
+            "fee_per_side_pct_crypto": {
+              "src": [
+                "lite_1124"
+              ],
+              "section": "Kraken Prop Lite page: FAQ"
+            }
+          }
+        }
+      }
+    },
+    "wencrypto": {
+      "name": "WenCrypto",
+      "verified": false,
+      "verified_on": null,
+      "verified_from": [
+        "https://wencrypto.com/pricing",
+        "https://wencrypto.com/terms-and-conditions (last amended 19/02/2026)",
+        "https://wencrypto.com/faqs"
+      ],
+      "entity": {
+        "contracting": "WEN LTD, registered in Saint Lucia, registration number 2025-00872, Ground Floor, The Sotheby Building, Rodney Bay, Gros-Islet, Saint Lucia (Terms and Conditions 1)",
+        "note": "The pricing page names no operating entity; the Terms and Conditions do."
+      },
+      "products": {
+        "single_pass": {
+          "steps": 1,
+          "target_pct": 9,
+          "daily_pct": 3,
+          "max_pct": 5,
+          "drawdown_type": "static, from the starting balance",
+          "min_winning_days": 3,
+          "fee_usd_100k": 949
+        },
+        "double_pass": {
+          "steps": 2,
+          "targets_pct": [
+            10,
+            6
+          ],
+          "daily_pct": 5,
+          "max_pct": 8,
+          "drawdown_type": "static, from the starting balance",
+          "min_winning_days": 3,
+          "fee_usd_100k": 759,
+          "funded": "daily 5%, max 8% static"
+        },
+        "buy_now_pay_later": {
+          "steps": 1,
+          "target_pct": 4,
+          "daily_pct": null,
+          "max_pct": 8,
+          "drawdown_type": "static, measured end of day, in the evaluation; 5% trailing, end of day, once funded",
+          "fee_usd_100k_now": 20,
+          "fee_usd_100k_later": 589,
+          "funded": "daily 3% end of day; max 5% trailing end of day; 20% consistency score before each withdrawal",
+          "_price_note": "The served page prints '*Price with coupon.' under PAY NOW; whether $20 and $589 are with-code or without is not settled by the page."
+        },
+        "genesis": {
+          "_note": "Shown as 'Coming Soon' on the pricing page; the Terms describe it as a ladder based on 1% profitable days. No figures."
+        }
+      },
+      "daily_basis": "the higher of balance or equity at 00:00 UTC",
+      "floating_counts": true,
+      "reset_utc": "00:00",
+      "reset_clock": {
+        "time": "00:00",
+        "tz": "UTC"
+      },
+      "fee_per_side_pct": 0.04,
+      "swap_pct_per_day": 0.033,
+      "max_leverage": "5:1 on BTC and ETH, 2:1 on altcoins",
+      "split": "80%",
+      "min_days": "3 winning days, each a gain of more than 1% (Single Pass, Double Pass)",
+      "payouts": "a withdrawal every 10 business days; on Single Pass and Double Pass the first is capped at 6% and the second at 8%",
+      "max_capital_per_customer": "$100,000 per account type; $300,000 in funding",
+      "instruments": "the top 100 cryptocurrencies listed on CoinMarketCap; stablecoins are not tradeable",
+      "platforms": {
+        "match_trader": "the one platform the pricing page offers"
+      },
+      "automated_trading": "prohibited (Terms 4)",
+      "copy_trading": "prohibited (Terms 4)",
+      "weekend_holding": "permitted (Terms 5)",
+      "news_trading": "allowed (FAQ)",
+      "refund": "Terms 6: final and non-refundable. FAQ: a full refund of the challenge after three withdrawals. See the conflict.",
+      "governing_law": "Saint Lucia; its courts, exclusive (Terms 12)",
+      "availability": {
+        "recorded": false,
+        "excluded": [],
+        "platform": {},
+        "not_from_terms": [],
+        "basis": "no country list in the Terms: 'offered globally but may be restricted in locations subject to international sanctions, economic embargos, or local statutory prohibitions'. From the sandbox that read it, the pricing page said each product was not available in its region; which regions is not stated."
+      },
+      "affiliate_url": null,
+      "link_live": false,
+      "_link_note": "No affiliate agreement. The affiliates page states no rate and links no terms. The link stays off until the owner has an agreement and its terms are read.",
+      "_conflicts_found": [
+        {
+          "topic": "Is the challenge fee refundable?",
+          "logged": "2026-11-24",
+          "sides": [
+            {
+              "src": "terms_1124",
+              "doc": "Terms and Conditions 6, Refund Policy",
+              "says": "All purchases are considered final and non-refundable."
+            },
+            {
+              "src": "faq_1124",
+              "doc": "FAQ, Single Pass and Double Pass: Who is this for?",
+              "says": "a full refund of the challenge once you have successfully achieved three withdrawals"
+            }
+          ],
+          "troid": "both shown; neither is taken as settled"
+        },
+        {
+          "topic": "How long an account may sit without a trade",
+          "logged": "2026-11-24",
+          "sides": [
+            {
+              "src": "terms_1124",
+              "doc": "Terms and Conditions 5, Account Activity",
+              "says": "not dormant for more than 30 calendar days"
+            },
+            {
+              "src": "faq_1124",
+              "doc": "FAQ: Is there a time limit?",
+              "says": "at least one trade every 28 days"
+            }
+          ],
+          "troid": "28 days, the stricter, with both shown"
+        }
+      ],
+      "_not_read": [
+        "Any affiliate terms (none are linked from the affiliates page).",
+        "Which regions the pricing page refuses.",
+        "Whether a browser in an eligible region shows the same prices."
+      ],
+      "_observations": [
+        "The affiliates page's testimonials name 'Maven' and 'Maven Trading' (three of five). Recorded as seen; nothing is inferred from it."
+      ],
+      "provenance": {
+        "sources": {
+          "pricing_1124": {
+            "doc": "WenCrypto pricing page",
+            "url": "https://wencrypto.com/pricing",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page e09c45099f0f3fd4): 'Choose your account size $5k $10k $20k $50k $100k' \u2026 'Single Pass $949' \u2026 'Profit target The % gain you must make on your account to pass to the next phase. 9% Max daily type The type of drawdown measured on a daily basis. Equity / Balance Max daily loss The maximum amount you can lose in a 24-hour period. 3% Max overall type The type of drawdown measured on your account overall. Static Max Drawdown The maximum amount you can lose in total on your account. 5% Minimum profitable days The minimum profitable days required. 3 Leverage BTC/ETH The amount of borrowed capital you can access for BTC/ETH. 5:1 BTC/ETH Leverage Alts The amount of borrowed capital you can access for alt coins. 2:1 Alt Coins Profit split Division of trading profits between the trader (you) and WenCrypto. 80%' \u2026 'Double Pass $759' \u2026 '10%/6% Max daily type The type of drawdown measured on a daily basis. Equity / Balance Max daily loss The maximum amount you can lose in a 24-hour period. 5% Max overall type The type of drawdown measured on your account overall. Static Max Drawdown The maximum amount you can lose in total on your account. 8%' \u2026 'PAY NOW: $20' \u2026 'PAY LATER: $589' \u2026 'Our payout frequency is every 10 business days!'. The prices are the page's 'data-original-price' figures, which a browser shows struck through beside a lower price for the page's own 25% code; troid records the price without a code. The served page labels them '*Price with coupon. REFUNDABLE' until its script runs. From this sandbox each card also read 'Sorry, this product is not available in your region.'"
+          },
+          "terms_1124": {
+            "doc": "WenCrypto Terms and Conditions",
+            "url": "https://wencrypto.com/terms-and-conditions",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-02-19",
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 463ddf63421a16f8): 'Last Amended: 19/02/2026' \u2026 'WEN LTD (\"Wen LTD,\" \"us,\" \"we,\" \"our\") is a legally registered entity in Saint Lucia.' \u2026 'Registration Number: 2025-00872' \u2026 'Wen Two Step: Phase One requires a 10% profit target; Phase Two requires a 6% profit target. It features an 8% maximum loss limit (static) and a 5% maximum daily loss limit.' \u2026 'Wen One Step: A single-phase program with a 9% profit target. It features a 5% maximum loss limit and a 3% maximum daily loss limit.' \u2026 'Profit Split: Successful evaluations qualify for an 80% profit split based on simulated performance.' \u2026 'Automated Trading: Using Expert Advisors (EAs), bots, or other automated systems is prohibited across all platforms under any circumstances.' \u2026 'Account Activity: Accounts must not be dormant for more than 30 calendar days.' \u2026 'Weekend holdings are permitted for all account types.' \u2026 'Refund Policy: All purchases are considered final and non-refundable.' \u2026 'Geographic Constraints: Services are offered globally but may be restricted in locations subject to international sanctions, economic embargos, or local statutory prohibitions.' \u2026 'Governing Law: This agreement is governed by the laws of Saint Lucia.'"
+          },
+          "faq_1124": {
+            "doc": "WenCrypto FAQ",
+            "url": "https://wencrypto.com/faqs",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page f517eb9222f23019): 'Daily Drawdown: 3% based on either balance/equity at reset time 00:00 UTC' \u2026 'Max daily drawdown: 5% based on balance or equity at reset time of 00:00 UTC' \u2026 'Your daily limit is based on your balance or equity (whichever is higher) at 00:00 UTC, and it applies until the next 00:00 UTC.' \u2026 'If your account is $102,000 at 00:00 UTC, your daily breach level is $96,900.' \u2026 'It's calculated from your starting balance, not trailing' \u2026 'A 'winning day' requires more than 1% gain' \u2026 'The trading fee to execute a buy or sell order is 0.04%' \u2026 'a daily swap fee of 0.033% per open position will be deducted from the balance of your demo account at 00:15 UTC' \u2026 'you must place at least one trade every 28 days to keep the account active' \u2026 'You get a full refund of the challenge once you have successfully achieved three withdrawals.' \u2026 'Each trader can hold a maximum combined allocation of $100,000 per account type.' \u2026 'The maximum a trader can achieve in funding is $300,000' \u2026 'You can trade the top 100 cryptocurrencies listed on CoinMarketCap.' \u2026 'For the single pass and double pass, the first withdrawal is capped at 6%. The second withdrawal is capped at 8%.' \u2026 'You can request a withdrawal every 10 business days' \u2026 'Maximum drawdown changes to 5% trailing (EOD), calculated from your funded balance' \u2026 '20% consistency score required before each withdrawal.'"
+          },
+          "affiliates_1124": {
+            "doc": "WenCrypto affiliates page",
+            "url": "https://wencrypto.com/affiliates",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page a8aad6cc03196a42): 'Be rewarded for each new and eligible referral you bring our way.' \u2026 'We don\u2019t tolerate hatred towards others including individuals and firms.'. No rate, cookie period or terms document is on the page. Three of the five testimonials on it name 'Maven' or 'Maven Trading'."
+          }
+        },
+        "fields": {
+          "daily_basis": {
+            "src": [
+              "faq_1124"
+            ],
+            "section": "WenCrypto FAQ: Double Pass, What are the drawdown rules?"
+          },
+          "reset_utc": {
+            "src": [
+              "faq_1124"
+            ],
+            "section": "WenCrypto FAQ: Single Pass and Double Pass rules"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "faq_1124"
+            ],
+            "section": "WenCrypto FAQ: What are the fees and commissions"
+          },
+          "max_leverage": {
+            "src": [
+              "pricing_1124",
+              "faq_1124"
+            ],
+            "section": "WenCrypto pricing page and FAQ: What leverage do you offer?"
+          },
+          "split": {
+            "src": [
+              "pricing_1124",
+              "terms_1124"
+            ],
+            "section": "WenCrypto pricing page; Terms and Conditions 3, Profit Split"
+          },
+          "min_days": {
+            "src": [
+              "pricing_1124",
+              "faq_1124"
+            ],
+            "section": "WenCrypto pricing page, Minimum profitable days; FAQ, Minimum Winning Days"
+          },
+          "refund": {
+            "src": [
+              "terms_1124",
+              "faq_1124"
+            ],
+            "section": "WenCrypto Terms and Conditions 6; FAQ, Who is this for?"
+          },
+          "entity": {
+            "src": [
+              "terms_1124"
+            ],
+            "section": "WenCrypto Terms and Conditions 1"
+          },
+          "payouts": {
+            "src": [
+              "faq_1124",
+              "pricing_1124"
+            ],
+            "section": "WenCrypto FAQ: When can I withdraw?; pricing page, Get paid"
+          },
+          "max_capital_per_customer": {
+            "src": [
+              "faq_1124"
+            ],
+            "section": "WenCrypto FAQ: What is the maximum allocation?"
+          },
+          "availability": {
+            "src": [
+              "terms_1124"
+            ],
+            "section": "WenCrypto Terms and Conditions 2, Geographic Constraints"
+          }
+        },
+        "products": {
+          "single_pass": {
+            "target_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Single Pass; Terms and Conditions 3, Wen One Step"
+            },
+            "daily_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Single Pass; Terms and Conditions 3, Wen One Step"
+            },
+            "max_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Single Pass; Terms and Conditions 3, Wen One Step"
+            },
+            "drawdown_type": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Max overall type; FAQ, static max drawdown"
+            },
+            "price": {
+              "src": [
+                "pricing_1124"
+              ],
+              "section": "WenCrypto pricing page, Single Pass, $100k"
+            }
+          },
+          "double_pass": {
+            "targets_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Double Pass; Terms and Conditions 3, Wen Two Step"
+            },
+            "daily_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Double Pass; Terms and Conditions 3, Wen Two Step"
+            },
+            "max_pct": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Double Pass; Terms and Conditions 3, Wen Two Step"
+            },
+            "drawdown_type": {
+              "src": [
+                "pricing_1124",
+                "terms_1124"
+              ],
+              "section": "WenCrypto pricing page, Double Pass; Terms and Conditions 3, Wen Two Step"
+            },
+            "price": {
+              "src": [
+                "pricing_1124"
+              ],
+              "section": "WenCrypto pricing page, Double Pass, $100k"
+            }
+          },
+          "buy_now_pay_later": {
+            "target_pct": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Buy Now Pay Later; FAQ, Buy Now, Pay Later Challenge"
+            },
+            "max_pct": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Buy Now Pay Later; FAQ, Buy Now, Pay Later Challenge"
+            },
+            "drawdown_type": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Buy Now Pay Later; FAQ, Buy Now, Pay Later Challenge"
+            },
+            "funded": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Buy Now Pay Later; FAQ, Buy Now, Pay Later Challenge"
+            },
+            "price": {
+              "src": [
+                "pricing_1124",
+                "faq_1124"
+              ],
+              "section": "WenCrypto pricing page, Buy Now Pay Later; FAQ, Buy Now, Pay Later Challenge"
+            }
+          }
+        }
+      }
+    }
+  }
 }
