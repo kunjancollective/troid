@@ -53,6 +53,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   `verify_claims.py`, fails on a public number with no tier and source, a claim word with no citation, or a page that
   disagrees with `figures.json` (challenge-proof audit, 2026-09-26; exceptions in `claim_allow.json`, each with why).
 - `.github/workflows/` — `shadow.yml` is the daily loop (16:20 UTC, commits the diff, only on `RESULT: 0 failed`);
+  `tests.yml` runs every page and tool test (`web/test_*`, `backtest/test_shadow2.py`, `phone_check.py`) on every pull
+  request and fails on a test file it does not list (`test_assistant.js` waits on three stale expectations, 2026-11-24);
   `verify.yml` runs `verify_claims.py` on every pull request and fails on any RESULT but `0 failed` (the script always
   exits 0: read the RESULT line, never the exit code); `data.yml` is the one-shot multi-year fetch; `calendar.yml`
   reads the BLS, BEA and Fed release schedules into `web/public/calendar.json` every Monday for the calendar strip
