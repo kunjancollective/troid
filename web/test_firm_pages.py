@@ -6,8 +6,10 @@
 - One page per firm on troid's compare (firms.json compare_product), at /firms/<key with - for _>, in the sitemap and
   llms.txt; /firms itself goes to troid's compare, not permanently (a list of firms may live there one day).
 - The rules section is troid's compare column for that firm, row for row, without its sizing block (whose "from your
-  inputs" would be untrue on a page with no inputs) and without its foot, which holds the firm's link: no affiliate link,
-  code or referral id anywhere on the page. A partner firm's page says troid is its affiliate, near the top.
+  inputs" would be untrue on a page with no inputs) and without its foot. A partner firm's page says troid is its affiliate, near the top, and
+  under that line carries troid's one link to the firm while the link is live (the owner's brief, 2026-11-24): the
+  desk's sentence, the same for every firm, "affiliate link" beside it, rel="sponsored", the firm's required wording
+  word for word, inside the country wrapper, and no discount code.
 - Each other product the desk sizes: a figure shows only beside a source recorded for that product (never the firm-wide
   one, which would credit one product's source to another), and equals firms.json; anything else is held, with no figure.
 - The funded stage and the countries, where a source is recorded; every conflict between the firm's own documents under
@@ -85,9 +87,27 @@ for page, k in site_build.FIRM_PAGES.items():
        f'<div class="rows">{rows[:i] + rows[j:]}</div>' in rules and K_.J["sec_sizing"] not in rules and "From your inputs" not in s)
     ok(f"{page}: every rule's value is the compare's, with its provenance line",
        all(m in rules for m in re.findall(r'<div class="r"><div class="rt">.*?</div>(?:<div class="pv">.*?</div>)?</div>', rows[:i])))
-    aff = [x for x in (f.get("affiliate_url"), f.get("affiliate_code"), (f.get("affiliate_agreement") or {}).get("customer_code"), "regid=") if x]
-    ok(f"{page}: no affiliate link, code or referral id (where a firm's link shows is the owner's call)",
-       not any(a in s for a in aff) and foot[:40] not in s, [a for a in aff if a in s])
+    # troid's link (the owner's brief, 2026-11-24): one, labelled, under the disclosure, only while the link is live
+    url = html.escape(f.get("affiliate_url") or "")
+    codes = [x for x in (f.get("affiliate_code"), (f.get("affiliate_agreement") or {}).get("customer_code")) if x]
+    shown = s.replace(url, "") if url else s                # a code that is part of the link's address is not a shown code
+    ok(f"{page}: no discount code shown, and not the compare column's foot", not any(c in shown for c in codes) and foot[:40] not in s,
+       [c for c in codes if c in shown])
+    if gen_compare.link_live(f):
+        m = re.search(r'<div class="affl" id="affl">\n<div data-geo="' + k + r'">(.*?)</div>\n<div class="geono" data-geo-no="' + k + '">', s, re.S)
+        block = m.group(1) if m else ""
+        ok(f"{page}: one link to the firm, labelled an affiliate link, sponsored, in its country wrapper",
+           bool(m) and s.count(url) == 1 and f'<a href="{url}" rel="sponsored noopener" target="_blank">' in block
+           and T("index.firms.affiliate") in block, s.count(url))
+        ok(f"{page}: the same sentence as the desk's and every firm's, naming no firm",
+           f'<p class="aw">{T("desk2.aff.why")}</p>' in block and f["name"] not in T("desk2.aff.why"))
+        req = (f.get("required_disclaimer") or "").strip()
+        ok(f"{page}: " + ("the firm's required wording under the link, word for word" if req else "no required wording: none recorded"),
+           (html.escape(req, quote=False) in block or req in block) if req else 'class="req"' not in block)
+        ok(f"{page}: the link sits under the disclosure and above the rules",
+           s.index(FT(f"{page}.disclosure")) < s.index('id="affl"') < s.index('id="rules"'))
+    else:
+        ok(f"{page}: no link: the firm's link is not live", 'id="affl"' not in s and (not url or url not in s))
     disc = FT(f"{page}.disclosure")
     ok(f"{page}: " + ("says troid is its affiliate, near the top" if f.get("affiliate_url") else "no affiliate line: not a partner"),
        (disc in s and s.index(disc) < s.index('id="rules"')) if f.get("affiliate_url") else disc not in s)
