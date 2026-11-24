@@ -46,6 +46,10 @@ jobs:
         run: |
           python -m pip install --quiet playwright "jinja2>=3.1"
           python -m playwright install --with-deps chromium
+          # twelve of the tests launch Chromium from the path it has in a Claude Code sandbox, /opt/pw-browsers/chromium
+          # (a finding of the same review: they should take Playwright's own); until they do, the path exists here too
+          sudo mkdir -p /opt/pw-browsers
+          sudo ln -sf "$(python -c 'from playwright.sync_api import sync_playwright as s; p = s().start(); print(p.chromium.executable_path); p.stop()')" /opt/pw-browsers/chromium
 
       - name: The web function's dependencies, and PGlite for test_pro.js
         working-directory: web
