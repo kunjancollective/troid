@@ -393,6 +393,15 @@
     "blog_1124"
    ],
    "evidence": "RE-READ 2026-11-24 (the weekly audit listed this rule as stale, last read 2026-09-21). The blog post was fetched again (sha256 of the page f7f5728d4926861b); it is unmodified since 2026-08-28 and still says: 'Bitfunded calculates drawdown on Instant accounts using a static method, so limits are set against the starting balance rather than a rising peak.' So 'static' stands, on the same single source. No help-centre page was read for it today: bitfunded.gitbook.io is not reachable from this environment."
+  },
+  {
+   "field": "drawdown",
+   "product": "instant",
+   "src": [
+    "trader_stage_1124",
+    "criteria_1124"
+   ],
+   "evidence": "HELP CENTRE CHECKED 2026-11-24, once bitfunded.gitbook.io was reachable: the Challenge & Trader Stage page's Instant table gives 60%, 1:5, 3% and 6% and states no drawdown type; Criteria to be Success measures the maximum loss against the account quota for the whole period, names no product and does not mention Instant. So the blog post remains the only document that says 'static' of the Instant by name. Neither page is added to the Instant's drawdown source: neither states it."
   }
  ],
  "bitfunded_unmapped": [
@@ -936,6 +945,18 @@
    "read_on": "2026-11-24",
    "doc_dated": "2026-08-28",
    "evidence": "RECORDED READ: firms.json provenance.sources.blog_1124.read_via, with the page's hash and the two sentences quoted, each checked to be in the page as fetched."
+  },
+  {
+   "id": "trader_stage_1124",
+   "read_on": "2026-11-24",
+   "doc_dated": null,
+   "evidence": "RECORDED READ: firms.json provenance.sources.trader_stage_1124.read_via, with the page's hash and quotations checked to be in the page as fetched."
+  },
+  {
+   "id": "criteria_1124",
+   "read_on": "2026-11-24",
+   "doc_dated": null,
+   "evidence": "RECORDED READ: firms.json provenance.sources.criteria_1124.read_via, with the page's hash and quotations checked to be in the page as fetched."
   }
  ],
  "brightfunded_sources": [

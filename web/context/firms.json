@@ -605,6 +605,20 @@
           "read_on": "2026-11-24",
           "doc_dated": "2026-08-28",
           "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page f7f5728d4926861b); its dateModified is 2026-08-28T03:04:39+00:00, unchanged since publication: 'Bitfunded calculates drawdown on Instant accounts using a static method, so limits are set against the starting balance rather than a rising peak.' \u2026 'Instant accounts carry stricter static drawdown limits and a lower 60% profit share'. The Terms of Use, fetched the same day (sha256 5f6697d7b99186b4), do not mention Instant accounts."
+        },
+        "trader_stage_1124": {
+          "doc": "Bitfunded help centre: Challenge & Trader Stage",
+          "url": "https://bitfunded.gitbook.io/support/introduction/challenge-and-trader-stage.md",
+          "read_on": "2026-11-24",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 01ade642e8949ff8): '**Instant Funding Challenge**' \u2026 '| Profit Share Ratio | 60% |' \u2026 '| Leverage Ratio | 1:5 |' \u2026 '| Max. Daily Loss | 3% |' \u2026 '| Max. Loss | 6% |'. The Instant table states no drawdown type: no 'static' or 'trailing' appears on the page. Recorded as a check of the Instant's drawdown type; not added to the Instant's limits as a fifth read date (they were last cited from this page on 2026-10-18, and the figures are unchanged)."
+        },
+        "criteria_1124": {
+          "doc": "Bitfunded help centre: Criteria to be Success",
+          "url": "https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success.md",
+          "read_on": "2026-11-24",
+          "doc_dated": null,
+          "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page e7a2235dcd7e466d): 'if the account quota is 100,000 USDT, the total of closed position losses and floating losses on the account must not exceed 10,000 USDT at any point during the trading period.' \u2026 'The Maximum Daily Loss resets each day at **00:00 (UTC+8)**'. It measures the maximum loss against the account quota for the whole period and names no product; it does not mention Instant."
         }
       },
       "fields": {
@@ -2742,8 +2756,18 @@
     },
     "hyrotrader": {
       "name": "HyroTrader",
-      "read_on": null,
-      "_note": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders."
+      "read_on": "2026-11-24",
+      "reason": null,
+      "src": {
+        "doc": "HyroTrader home page",
+        "url": "https://www.hyrotrader.com/",
+        "read_on": "2026-11-24",
+        "doc_dated": null,
+        "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page 475d219b039e0d41): 'HyroTrader is a crypto prop firm.' \u2026 'Hyro Core One-Step Two-Step Hyro Instant' \u2026 'Stop loss Not required Not required' \u2026 'Daily drawdown 4% 4% Maximum loss 8% 8%' \u2026 'Profit distribution 40% per day None' \u2026 'leverage up to 150x on BTC and ETH, lower on most pairs' \u2026 'HYRO TECHNOLOGIES FZ-LLC'. The One-Step tab was the one shown; the other programmes' full rules were not opened."
+      },
+      "read": "A crypto prop firm with four programmes (Hyro Core, One-Step, Two-Step, Hyro Instant), on its own platform or the trader's Bybit or BloFin demo account. On the One-Step: no stop loss required, 4% daily, 8% maximum loss, 10% target, a 40% per day profit-distribution rule in the challenge. Entity on the page: HYRO TECHNOLOGIES FZ-LLC.",
+      "_note": "100x leverage, mandatory SL within 5 min, 40% consistency rule. Sources name it for non-US traders.",
+      "_status": "Read 2026-11-24, and no reason to leave it out was found on its own page: the older note's 'mandatory SL within 5 min' is not what the page says today ('Stop loss: Not required' on the One-Step). With no reason recorded, troid's compare does not name it. The owner decides: a reason, or a move to _reading as a firm to read in full."
     }
   },
   "_reference_firm": "Bitfunded is the first firm troid verified from its own documents. It is where troid has found and logged {conflicts} conflicts between Bitfunded's own documents, each shown with both sources, and where troid's ledger runs. That verification is troid's product. Each rule's source and read date is shown beside it, and a rule with no recorded source says so.",
