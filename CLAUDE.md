@@ -123,7 +123,8 @@ Risk tooling and research for prop-firm traders (Bitfunded rule set).
   firm-specific on the site is generated from `firms.json` by `backtest/gen_compare.py`:
   the compare page, the firms panel and required disclaimers in the marked regions of
   `index.html` and `faq.html`, and each compared firm's page, `/firms/<slug>` (`firm.html`, `render_firm`): the compare
-  column's rows without its sizing block or link, each other product's figures only beside that product's own source,
+  column's rows without its sizing block or foot, troid's one labelled link under the page's disclosure while the firm's
+  link is live (the desk's sentence and markup, no code; the owner, 2026-11-24), each other product's figures only beside that product's own source,
   the conflicts and the rule changes (`web/test_firm_pages.py`). Their words are the generic `firm.*` strings, the name
   filled in (`site_build.page_T`, which also names the firms in `/compare`'s title and description). Generic text
   never names a firm. Edit `firms.json`, not the HTML.
