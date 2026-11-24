@@ -45,6 +45,18 @@
    "page": "index",
    "text": "Calculators audited",
    "why": "the weekly calculator audit's own count of its checks, linked to its report; the build writes it from web/public/audit.json since 2026-10-12 (audit.js alone did before, where claim_check never read it), and verify_claims.py holds it to that report's run date and totals"
+  },
+  {
+   "page": "*",
+   "text": "largest account $50,000",
+   "number": "$50,000",
+   "why": "the label the owner set for E8 Classic (2026-11-24): the product's account sizes stop at $50,000 on E8's own page (firms.json e8_markets provenance perps_1124, read 2026-11-24), so troid sizes its column there; a fact about the product's sizes, not a ranking"
+  },
+  {
+   "page": "*",
+   "text": "largest account $50,000",
+   "word": true,
+   "why": "the label the owner set for E8 Classic (2026-11-24): the product's account sizes stop at $50,000 on E8's own page (firms.json e8_markets provenance perps_1124, read 2026-11-24), so troid sizes its column there; a fact about the product's sizes, not a ranking"
   }
  ]
 }

@@ -170,7 +170,10 @@ def main():
     for k in gen_compare.ORDER:
         f = gen_compare.FIRMS[k]
         ok(f"served HTML, no script: {f['name']}'s column carries its rules, sizing and provenance",
-           "pending" not in cols[k][:12] and "Computed from " + f["name"] in cols[k] and "$500 (0.50%)" in cols[k], cols[k][:300])
+           "pending" not in cols[k][:12] and "Computed from " + f["name"] in cols[k]
+           # a product capped at its largest account is sized there (E8 Classic, $50,000: 0.5% is $250)
+           and ("$500 (0.50%)" if not f["compare_product"].get("max_quota") else
+                "${:,.0f} (0.50%)".format(min(gen_compare.DEFAULTS["quota"], f["compare_product"]["max_quota"]) * 0.005)) in cols[k], cols[k][:300])
     # "losses before max loss binds" is floor(room ÷ risk) with an epsilon (review 2026-09-30): at quota 12345 and 0.5%
     # the quotient comes out 3.9999999999999942, and floor() alone showed 3 where the crossover's tie-break keeps 4.
     T_en, d_bf = i18n.Strings("en"), gen_compare.js_data("bitfunded", gen_compare.FIRMS["bitfunded"], i18n.Strings("en"))

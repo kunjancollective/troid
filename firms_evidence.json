@@ -384,6 +384,24 @@
     "tou_0923"
    ],
    "evidence": "Owner decision, 24 Sep 2026: close the 2-Step limits with Terms 9(a). Checked by troid on 2026-09-24 from a Vercel sandbox (this build environment cannot open bitfunded.gitbook.io or bitfunded.com): Terms of Use 9(a), '2 Steps Challenges': Features 'Up To 1:5 Leverage'; Objectives 'Step 1: Max Daily Drawdown: 5%, Max Drawdown: 10%, Profit Target: 8%, Minimum Trading Days: 5' and 'Step 2: Max Daily Drawdown: 5%, Max Drawdown: 8%, Profit Target: 5%, Minimum Trading Days: 5'. The page's dateModified is 2026-03-24T12:44:15Z, the same version as tou_0923 (read 2026-09-23). Help centre Challenge & Trader Stage (the page's .md), 'Two steps Evaluation' table: Stage 1 Max. Daily Loss 5%, Max. Loss 10%, Profit Target 8%; Stage 2 5%, 8%, 5%; Leverage Ratio 1:5 in both; Min. Trading Days '-' (the minimum-days conflict is logged). Every value matches products.2step_s1 and 2step_s2. The cited read dates stay the 23 Sep reads; the 24 Sep check is corroboration. The earlier cite ('tou', read 2026-09-21, clause not recorded) is replaced."
+  },
+  {
+   "field": "drawdown",
+   "product": "instant",
+   "src": [
+    "blog",
+    "blog_1124"
+   ],
+   "evidence": "RE-READ 2026-11-24 (the weekly audit listed this rule as stale, last read 2026-09-21). The blog post was fetched again (sha256 of the page f7f5728d4926861b); it is unmodified since 2026-08-28 and still says: 'Bitfunded calculates drawdown on Instant accounts using a static method, so limits are set against the starting balance rather than a rising peak.' So 'static' stands, on the same single source. No help-centre page was read for it today: bitfunded.gitbook.io is not reachable from this environment."
+  },
+  {
+   "field": "drawdown",
+   "product": "instant",
+   "src": [
+    "trader_stage_1124",
+    "criteria_1124"
+   ],
+   "evidence": "HELP CENTRE CHECKED 2026-11-24, once bitfunded.gitbook.io was reachable: the Challenge & Trader Stage page's Instant table gives 60%, 1:5, 3% and 6% and states no drawdown type; Criteria to be Success measures the maximum loss against the account quota for the whole period, names no product and does not mention Instant. So the blog post remains the only document that says 'static' of the Instant by name. Neither page is added to the Instant's drawdown source: neither states it."
   }
  ],
  "bitfunded_unmapped": [
@@ -921,6 +939,24 @@
    "read_on": "2026-09-23",
    "doc_dated": null,
    "evidence": "HANDOFF-bitfunded-sources (troid's owner, 23 Sep 2026), read from the owner's research session because troid's build environment cannot open bitfunded.com or bitfunded.gitbook.io: 'D. Help centre — Criteria to be Success https://bitfunded.gitbook.io/support/introduction/criteria-to-be-success'. A second reading, kept as its own source so the 2026-09-18 reading keeps its date."
+  },
+  {
+   "id": "blog_1124",
+   "read_on": "2026-11-24",
+   "doc_dated": "2026-08-28",
+   "evidence": "RECORDED READ: firms.json provenance.sources.blog_1124.read_via, with the page's hash and the two sentences quoted, each checked to be in the page as fetched."
+  },
+  {
+   "id": "trader_stage_1124",
+   "read_on": "2026-11-24",
+   "doc_dated": null,
+   "evidence": "RECORDED READ: firms.json provenance.sources.trader_stage_1124.read_via, with the page's hash and quotations checked to be in the page as fetched."
+  },
+  {
+   "id": "criteria_1124",
+   "read_on": "2026-11-24",
+   "doc_dated": null,
+   "evidence": "RECORDED READ: firms.json provenance.sources.criteria_1124.read_via, with the page's hash and quotations checked to be in the page as fetched."
   }
  ],
  "brightfunded_sources": [
@@ -968,5 +1004,112 @@
    "doc_dated": null,
    "evidence": "RECORDED READ: firms.json provenance.sources.tc_0926.read_via, 'fetched from a sandbox on 2026-09-26 (sha256 of the page b7b66c6b5ec56041)', with the text of 8(i), 8(ii), 5.9, 7.1 xxiv, 7.1 xxi and section 6 quoted; added in eb936e7 (2026-09-26 02:11 UTC). The same URL as tc, kept as its own source so tc keeps its date. Not re-read from here: troid's egress proxy blocks cryptofundtrader.com (2026-09-29), so this maps the recorded text, not the live page."
   }
- ]
+ ],
+ "_reading_2026-11-24": {
+  "what": "The pages read on 2026-11-24 for firms.json _reading (Kraken Prop, E8 Classic perpetuals, WenCrypto) and _excluded.bem_funding. Each quotation in those entries' read_via was checked, by the script that wrote them, to be in the page as fetched (whitespace collapsed).",
+  "pages": [
+   {
+    "file": "bem.html",
+    "sha256_16": "905e89931fe4d7a6",
+    "bytes": 154238
+   },
+   {
+    "file": "e8_perps.rendered.html",
+    "sha256_16": "783ce71d09985be3",
+    "bytes": 568128
+   },
+   {
+    "file": "e8_terms.rendered.html",
+    "sha256_16": "925ca33530db2cf8",
+    "bytes": 548073
+   },
+   {
+    "file": "kraken_aff.html",
+    "sha256_16": "a24ddd8806d5b5d2",
+    "bytes": 1286838
+   },
+   {
+    "file": "kraken_bo_faq.html",
+    "sha256_16": "ddb709155a9eefd3",
+    "bytes": 1048998
+   },
+   {
+    "file": "kraken_global_terms.html",
+    "sha256_16": "b8123815a2debaad",
+    "bytes": 4041359
+   },
+   {
+    "file": "kraken_lite.html",
+    "sha256_16": "997589c991d068cb",
+    "bytes": 924747
+   },
+   {
+    "file": "kraken_prop_clean.html",
+    "sha256_16": "0728df0993c37223",
+    "bytes": 1984653
+   },
+   {
+    "file": "wen_aff.html",
+    "sha256_16": "a8aad6cc03196a42",
+    "bytes": 173040
+   },
+   {
+    "file": "wen_faqs.html",
+    "sha256_16": "f517eb9222f23019",
+    "bytes": 169970
+   },
+   {
+    "file": "wen_pricing.html",
+    "sha256_16": "e09c45099f0f3fd4",
+    "bytes": 581519
+   },
+   {
+    "file": "wen_terms.html",
+    "sha256_16": "463ddf63421a16f8",
+    "bytes": 82193
+   }
+  ],
+  "quotations_checked": 87,
+  "not_reachable": [
+   {
+    "url": "https://breakoutprop.com",
+    "result": "HTTP 403, a bot check that needs a third-party challenge script"
+   },
+   {
+    "url": "https://e8markets.com/legal/affiliate",
+    "result": "HTTP 403 in headless Chromium"
+   },
+   {
+    "url": "https://help.e8markets.com",
+    "result": "HTTP 403 in headless Chromium"
+   }
+  ],
+  "leads_not_copied": "The owner's brief of 2026-11-24 carried first-look figures for these firms. None was copied: every value above was read again from the page. Where the read differs from the lead: WenCrypto's Terms do name its entity (WEN LTD, Saint Lucia); E8's $50K price without a code is $449 ($405 is with its code); Kraken's page also sells Lite 002."
+ },
+ "_browser_reads_2026-11-24": {
+  "what": "Read by Claude (Anthropic's assistant), working for troid's owner, in the owner's Chrome on 2026-11-24, from the pages as displayed. No hash. Each is recorded in firms.json with read_via 'browser read by Claude for troid's owner, page as displayed, no hash', never as the owner's read. Non-ASCII characters came through the copy as spaces, so a quotation is matched against the page, not against the record.",
+  "why_a_browser": "help.e8markets.com, e8markets.com/legal/affiliate and breakoutprop.com answer a sandbox with HTTP 403 (a bot check).",
+  "e8_markets": [
+   "help_classic_1124",
+   "help_daily_1124",
+   "help_server_time_1124",
+   "help_static_1124"
+  ],
+  "still_unread": [
+   "E8's ESPA",
+   "E8's affiliate terms"
+  ]
+ },
+ "_browser_reads_2026-11-24_breakout": {
+  "what": "Breakout's pages as Claude (Anthropic's assistant) read them in the owner's Chrome on 2026-11-24, pages as displayed, no hash; recorded in firms.json _reading.kraken_prop with read_via 'browser read by Claude for troid's owner, page as displayed, no hash'. Never the owner's read.",
+  "sources": [
+   "breakout_home_1124",
+   "breakout_terms_1124",
+   "breakout_help_types_1124",
+   "breakout_help_daily_1124",
+   "breakout_help_dd_1124",
+   "breakout_help_limits_1124"
+  ],
+  "not_found": "a document named 'Evaluation Terms of Service' (Kraken's Annex Q's name for the evaluation's governing terms)"
+ }
 }

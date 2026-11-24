@@ -77,10 +77,10 @@ def panel_cell(k, f, T=None):
     note = f'\n      <div class="s">{" ".join(notes)}</div>' if notes else ""
     link = ""
     if link_live(f):
-        code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")
+        # the link, disclosed; no pitch and no code beside it (the owner, 2026-11-24: a code stays inside the link's
+        # address where the firm puts it there, and is never printed as text)
         bits = [f'<a href="{html.escape(f["affiliate_url"])}" rel="sponsored noopener">{T("index.firms.challenges", firm=name)}</a>',
                 T("index.firms.affiliate")]
-        if code: bits.append(T("index.firms.code", code=html.escape(code)))   # the link, disclosed; no pitch beside it
         hold = " data-avail-link" if site_build.features_on(T) else ""       # i18n.js hides it where the terms exclude
         inner = f'\n      <div class="s aff" style="margin-top:8px"{hold}>{" · ".join(bits)}</div>'
         if (f.get("required_disclaimer") or "").strip():                # the firm's own wording, beside its link (2d)
@@ -101,7 +101,8 @@ def desk_aff_html(T=None):
     places under the result on a phone and under the Your risk card from 1100 px, never inside the verdict, readout or
     working. It holds a line per firm whose link is live; the desk's script shows only the selected firm's (deskAff in
     index.html) and hides the whole element for a firm with none, so it reads the same in every state. The link and
-    "affiliate link" are 13px; the firm's required wording sits under its link. Each firm's sentence, link and wording
+    "affiliate link" are 13px; the firm's required wording sits under its link; no code is printed (the owner,
+    2026-11-24). Each firm's sentence, link and wording
     show only where the visitor's country allows the link (geo.json; plan 5.3), and the message in their place where
     it doesn't, or where the country can't be read."""
     T = _strings(T)
@@ -111,11 +112,7 @@ def desk_aff_html(T=None):
         f = FIRMS[k]
         if not link_live(f):
             continue
-        code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")
-        bits = [T("desk2.aff.link", url=html.escape(f["affiliate_url"]), firm=html.escape(f["name"]))]
-        if code:
-            bits.append(T("desk2.aff.code", code=html.escape(code)))
-        bits.append(T("desk2.aff.funded"))
+        bits = [T("desk2.aff.link", url=html.escape(f["affiliate_url"]), firm=html.escape(f["name"])), T("desk2.aff.funded")]
         req = (f'\n      <p class="req">{required_span(T, f)}</p>' if (f.get("required_disclaimer") or "").strip() else "")
         inner = f'\n      <p class="aw">{T("desk2.aff.why")}</p>\n      <p class="al">{" · ".join(bits)}</p>{req}\n    '
         rows.append(f'  <div data-aff="{k}"{"" if k == first else " hidden"}>\n    {geo.wrap(T, k, inner, sep=chr(10) + "    ")}\n  </div>')
@@ -145,6 +142,7 @@ def profiles_js(T=None):
                             "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
                             "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
                             "lev": pc.get("max_leverage", c.get("max_leverage")),
+                            **({"maxq": pc.get("max_quota", c.get("max_quota"))} if pc.get("max_quota", c.get("max_quota")) is not None else {}),
                             "levb": None if "max_leverage" in pc else [dict({k: v for k, v in b.items() if k != "cite"}, pv=cite(f, b["cite"]))
                                                                         for b in (c.get("lev_bands") or [])] or None,
                             "pv": {"d": cite(f, "daily_pct", pk, fallback=False), "m": cite(f, "max_pct", pk, fallback=False),

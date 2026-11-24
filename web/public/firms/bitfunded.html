@@ -205,6 +205,10 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .pend{color:var(--dim);font-style:italic}
 .chg{padding-inline-start:18px;margin:0 0 12px;font-size:13.5px;line-height:1.6}.chg li{margin:0 0 6px}
 .chg .d{font-family:var(--mono);font-size:12px;color:var(--dim)}
+/* troid's link for this firm, under the disclosure: the desk's affiliate line (_desk2.css .affl), the same sizes */
+.affl{min-width:0;margin:-10px 0 22px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
+.affl p{margin:0}.affl .al{margin-top:6px;font-size:13px}.affl .al a,.affl .geono a{display:inline-block;padding:4px 0}
+.affl .req{margin-top:4px;font-size:10.5px;line-height:1.6}
 </style>
 <meta name="description" content="Bitfunded's rules from its own documents: daily and max loss and how each is measured, reset, fees, leverage and hold limits, each with its read date.">
 <link rel="canonical" href="https://troid.ai/firms/bitfunded">
@@ -246,6 +250,9 @@ b.addEventListener("click",function(e){e.stopPropagation();set(b.getAttribute("a
 document.addEventListener("click",function(e){if(n.classList.contains("open")&&!n.contains(e.target))set(false)});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&n.classList.contains("open")){set(false);b.focus()}});
 var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("change",function(){set(false)}):0)});</script>
+<style>[data-geo],[data-geo-no]{display:none!important}[data-geo][hidden],[data-geo-no][hidden]{display:none!important}</style>
+<script>window.TROID_GEO={"hide":{"bitfunded":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY"],"brightfunded":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY","VN"],"crypto_fund_trader":["AE","BD","CN","CU","EG","FR","ID","IN","IR","KP","SY"]},"timeout":3000};</script>
+<script src="/geo.js" async></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://troid.ai/#organization","name":"troid","url":"https://troid.ai/","logo":"https://troid.ai/apple-touch-icon.png","email":"hello@troid.ai","sameAs":["https://github.com/kunjancollective/troid","https://x.com/tradingdroid","https://www.reddit.com/user/tradingdroid/","https://substack.com/@tradingdroid"]},{"@type":"WebSite","@id":"https://troid.ai/#website","name":"troid","url":"https://troid.ai/","inLanguage":"en","publisher":{"@id":"https://troid.ai/#organization"}},{"@type":"WebPage","@id":"https://troid.ai/firms/bitfunded#page","url":"https://troid.ai/firms/bitfunded","name":"Bitfunded's rules, each with its source","description":"Bitfunded's loss limits, reset, fees and leverage from its own documents, each with the date troid read it. Nothing scored, nothing ranked.","about":{"@type":"Organization","name":"Bitfunded"},"isPartOf":{"@id":"https://troid.ai/#website"},"publisher":{"@id":"https://troid.ai/#organization"},"inLanguage":"en"}]}</script>
 </head>
 <body>
@@ -268,9 +275,16 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
   <p class="eyebrow" style="text-transform:none">troid · a firm's rules</p>
   <h1>Bitfunded's rules</h1>
   <p class="lede">Every rule troid holds for Bitfunded, read from Bitfunded's own documents. Each shows the document and the date troid read it; a rule troid has no value for says <em>pending</em>. Where Bitfunded's documents disagree, both sides are below. The firm's documents govern: verify with the firm before trading.</p>
-  <p class="meta">last read 2026-10-18 · verified 2026-09-18: its terms read against its help centre</p>
+  <p class="meta">last read 2026-11-24 · verified 2026-09-18: its terms read against its help centre</p>
 </div>
-<p class="disc-line">troid is an affiliate of Bitfunded and earns a commission on purchases through its links, which are on <a href="/compare">troid's compare</a>. The rules and the arithmetic here don't change with it.</p>
+<p class="disc-line">troid is an affiliate of Bitfunded and earns a commission on purchases through its links. The rules and the arithmetic here don't change with it.</p>
+<div class="affl" id="affl">
+<div data-geo="bitfunded">
+  <p class="aw">troid is free. If the desk earned its place, a challenge bought through troid's link keeps it that way, and doesn't raise the price.</p>
+  <p class="al"><a href="https://www.bitfunded.com/client/register?regid=3022050068" rel="sponsored noopener" target="_blank">Bitfunded challenges ↗</a> · affiliate link · <a href="/faq#money">how troid is funded</a></p>
+</div>
+<div class="geono" data-geo-no="bitfunded">This firm's link isn't shown in your region. <a href="/faq#regions">Why</a></div>
+</div>
 
 <section class="fr" id="rules">
 <h2>The rules</h2>
@@ -309,6 +323,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 <li><span class="d">2026-09-23</span> Restricted countries. The Terms of Use (modified 2026-03-24) contain no country exclusion list; 4(b) requires the trader&#39;s use of the Services to comply with the laws of the trader&#39;s own jurisdiction. troid had recorded the list as not extracted.</li>
 <li><span class="d">2026-09-23</span> Free Trial. Terms of Use 5(b) still describes a Free Trial; troid&#39;s owner found none offered as of 23 September 2026. Recorded, not listed as a product.</li>
 </ul>
+<p class="s" id="subscribe">Rules change without notice. <a href="/newsletter">troid emails</a> when a firm it covers changes a rule or a price, plus one worked example a week. Free.</p>
 </section>
 
 <section class="fr" id="arithmetic">
@@ -320,7 +335,7 @@ var m=matchMedia("(min-width:641px)");(m.addEventListener?m.addEventListener("ch
 
 <footer><div class="wrap">
 <!-- footer:start -->
-<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a> · <a href="https://substack.com/@tradingdroid">newsletter</a><br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
+<a href="/">troid&#x27;s desk</a> · <a href="/compare">troid&#x27;s compare</a> · <a href="/ledger">troid&#x27;s ledger</a> · <a href="/dashboard">troid&#x27;s research</a> · <a href="/tearsheet">tearsheet</a> · <a href="/chat">ask troid</a> · <a href="/faq">faq</a> · <a href="/sources">sources</a> · <a href="/terms">terms</a> · <a href="https://github.com/kunjancollective/troid">source</a> · <a href="https://x.com/tradingdroid">x</a> · <a href="https://www.reddit.com/user/tradingdroid/">reddit</a><br><br>Rules change without notice. <a href="/newsletter">troid emails</a> when a firm it covers changes a rule or a price, plus one worked example a week. Free.<br><br>troid is a free informational tool, not financial or investment advice. troid does not place trades or publish trade signals. Its shadow account is a simulated strategy, shown only after trades close. Prop-firm rules change without notice — verify every number with the firm before trading. troid is an independent affiliate of the firms it compares and earns a commission on purchases through its links; this does not affect the calculations or comparisons.<br><br>© 2026 Kunjan Patel
 <!-- footer:end -->
 </div></footer>
 </body>

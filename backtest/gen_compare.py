@@ -88,8 +88,9 @@ def link_live(f):
 
 
 def last_read():
-    """The most recent date troid read any firm document: every read_on in firms.json. troid's compare shows it as
-    'reviewed', so the date moves when a read is recorded and never by hand."""
+    """The most recent date troid read any listed firm's document: every read_on in firms.json outside _reading and
+    _excluded (firms read and not listed). troid's compare shows it as 'reviewed', so the date moves when a read is
+    recorded and never by hand."""
     dates = []
     def walk(x):
         if isinstance(x, dict):
@@ -101,7 +102,9 @@ def last_read():
         elif isinstance(x, list):
             for v in x:
                 walk(v)
-    walk(FIRMS)
+    for k, v in FIRMS.items():
+        if k not in ("_reading", "_excluded"):            # a read of a firm not yet listed is not a review of the columns
+            walk({k: v})
     return max(dates)
 
 
@@ -134,6 +137,37 @@ def conflicts_html(T, f, heading="p"):
     head = f'<p style="margin:0">{title}</p>' if heading == "p" else f'<{heading}>{title}</{heading}>'
     return (f'<div class="s" style="margin:10px 0 0;line-height:1.7">{head}\n'
             f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(items)}</ul></div>\n')
+
+
+def reading_next_html(T):
+    """'Reading next', under the columns (the owner's brief, 2026-11-24): the firms troid has read or is reading and
+    has not listed (firms.json _reading), names only, with no rule and no date promised, and the firms considered and
+    left out (_excluded), each with its reason and the date troid read the firm's own page. An older _excluded note with
+    no dated read is not named at all (the owner, 2026-11-24: no firm without a reason). Generated
+    here, never hand-written; alphabetical, as everywhere."""
+    K = _Kit(T)
+    named = lambda d: sorted((v for k, v in (d or {}).items() if not k.startswith("_") and isinstance(v, dict)),  # noqa: E731
+                             key=lambda v: v["name"].lower())
+    reading = [html.escape(v["name"]) for v in named(FIRMS.get("_reading"))]
+    out = []
+    for v in named(FIRMS.get("_excluded")):
+        name = html.escape(v["name"])
+        if v.get("reason") and v.get("read_on"):
+            src = v.get("src") or {}
+            doc = html.escape(src.get("doc") or "")
+            if src.get("url"):
+                doc = f'<a href="{html.escape(src["url"])}">{doc}</a>'
+            out.append("<li>" + T("compare.next.out.dated", firm=name, reason=html.escape(T.data(v["reason"])), doc=doc,
+                                  date=v["read_on"]) + "</li>")
+    if not reading and not out:
+        return ""
+    parts = [f'<p style="margin:0"><strong>{T("compare.next.h")}</strong></p>']
+    if reading:
+        parts.append(f'<p style="margin:4px 0 0">{T("compare.next.reading", firms=K.andj(reading))}</p>')
+    if out:
+        parts.append(f'<p style="margin:8px 0 0">{T("compare.next.out.h")}</p>\n'
+                     f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(out)}</ul>')
+    return '<div class="s" id="reading-next" style="margin:16px 0 0;line-height:1.7">' + "\n".join(parts) + "</div>\n"
 
 
 def required_sentences():
@@ -207,7 +241,6 @@ def js_data(k, f, T):
     """One firm's column data for the page's script. p holds the rule values as firms.json has them (the script's
     logic reads them); pt holds the ones whose text differs in T's language, which the script shows instead."""
     p = f["compare_product"]
-    code = f.get("affiliate_code") or (f.get("affiliate_agreement") or {}).get("customer_code")   # public: it is in the link
     link_ok = link_live(f)
     c = f.get("calc") or {}; pc = (c.get("products") or {}).get(p.get("key")) or {}
     pt = {}
@@ -218,6 +251,7 @@ def js_data(k, f, T):
                 pt[x] = t
     qs = f.get("_open_questions") or []
     return {"key": k, "name": f["name"], "p": p, "pt": pt, "label": T.data(p["label"]),
+        "maxq": p.get("max_quota"),
         "basis": pc.get("daily_basis", c.get("daily_basis")),
         "lock": pc.get("locks_at_initial_after_pct", c.get("locks_at_initial_after_pct")),
         "prov": dict({x: cite(f, x, p.get("key")) for x in FIELDS if p.get(x) is not None},
@@ -226,7 +260,6 @@ def js_data(k, f, T):
         "verified_n": sum(1 for x in FIELDS if p.get(x) is not None), "total": len(FIELDS),
         "open_n": len(qs), "open1": T.data(qs[0]).split(".")[0] if qs else None,
         "url": f.get("affiliate_url") if link_ok else None,
-        "code": code if link_ok else None,
         "req": required_span(T, f) if link_ok and (f.get("required_disclaimer") or "").strip() else None,
         "geo": T("common.geo.hidden") if link_ok else None}
 
@@ -351,6 +384,10 @@ def static_column(d, T, inputs=DEFAULTS):
 
     Q, rp, s, lev = (float(inputs["quota"]), float(inputs["risk"]) / 100, float(inputs["stop"]) / 100,
                      float(inputs["lev"]))
+    if f.get("maxq") is not None:
+        # a product whose largest account is under the quota is sized at that account, and its label says so
+        # (compare_product.max_quota; the owner, 2026-11-24: E8 Classic at "largest account $50,000")
+        Q = min(Q, float(f["maxq"]))
     dly = p["daily_pct"] / 100 if p.get("daily_pct") is not None else None
     m = p["max_pct"] / 100 if p.get("max_pct") is not None else None
     is_static = p.get("drawdown_type") is not None and S(p["drawdown_type"]).startswith("static")
@@ -441,11 +478,10 @@ def static_column(d, T, inputs=DEFAULTS):
     h += rr(J["row_price"], "price") + rr(J["row_refund"], "refund") + rr(J["row_split"], "split")
     h += rr(J["row_us"], "us_available")
     if f["url"]:
-        # One line: the link, "affiliate link" and the code, as the index's firms panel has it. The link is disclosed,
-        # never sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026).
+        # One line: the link and "affiliate link", as the index's firms panel has it. The link is disclosed, never
+        # sold, so nothing beside it says the price is lower (the owner's independence stance, 29 Sep 2026), and no
+        # code is printed (the owner, 2026-11-24).
         foot = F(J["foot_link"], {"url": f["url"], "name": f["name"]})
-        if f["code"]:
-            foot += " · " + F(J["foot_code"], {"code": f["code"]})
         if f["req"]:
             foot += '<div class="req">' + f["req"] + '</div>'
         if features:
@@ -489,7 +525,7 @@ def render_compare(T, live):
 <meta name="viewport" content="width=device-width, initial-scale=1"><title>{T("compare.meta.title")}</title>
 {_style(T)}
 <style>
-.cols{{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}}
+.cols{{display:grid;grid-template-columns:repeat({min(len(ORDER), 3)},1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;margin-top:14px}}
 @media(max-width:760px){{.cols{{grid-template-columns:1fr}}}}
 .col{{background:var(--surface);display:flex;flex-direction:column}}
 .colhead{{padding:16px 16px 12px;border-bottom:1px solid var(--line)}}
@@ -513,9 +549,9 @@ def render_compare(T, live):
 {header(T, live)}
 {site_build.ticker(T)}
 <p class="eyebrow" style="margin-top:28px;text-transform:none">{T("product.compare")}</p>
-<h1>{T("compare.hero.h1")}</h1>
+<h1>{T("compare.hero.h1", n=len(ORDER))}</h1>
 <p class="lede">{T("compare.hero.lede")}</p>
-<p class="meta">{T("compare.hero.meta", date=html.escape(last_read()))}</p>
+<p class="meta">{T("compare.hero.meta", n=len(ORDER), date=html.escape(last_read()))}</p>
 {gov + chr(10) if gov else ""}<div class="panel"><p class="eyebrow">{T("compare.sizing.h")}</p><div class="inputs">
   <div><label>{T("compare.sizing.quota")}</label><input id="quota" type="number" value="{jsnum.js_str(DEFAULTS["quota"])}"></div>
   <div><label>{T("compare.sizing.risk")}</label><input id="risk" type="number" step="any" value="{jsnum.js_str(DEFAULTS["risk"])}"></div>
@@ -523,7 +559,8 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="{jsnum.js_str(DEFAULTS["lev"])}"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
-<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
+<p class="s" id="subscribe" style="margin:16px 0 0;line-height:1.7">{site_text.subscribe_html(T)}</p>
+{reading_next_html(T)}<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
 {conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_disclosure")}</p>
@@ -566,9 +603,10 @@ function row(l,val,prov){{return '<div class="r"><div class="rt"><span class="l"
 function rr(f,l,x,fmt,formula){{var val=f.p[x];return row(l,v(x in f.pt?f.pt[x]:val,fmt),val===null||val===undefined?"":pv(f,[x],formula))}}
 function sec(t){{return '<div class="r sec">'+t+'</div>'}}
 function render(){{
-  var Q=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
+  var Q0=n("quota"),rp=n("risk")/100,s=n("stop")/100,lev=n("lev");
   ORDER.forEach(function(k){{
     var f=FIRMS[k],p=f.p,h="";
+    var Q=f.maxq!=null?Math.min(Q0,f.maxq):Q0;   /* a product whose largest account is under the quota is sized at that account */
     var d=p.daily_pct!=null?p.daily_pct/100:null,m=p.max_pct!=null?p.max_pct/100:null;
     var isStatic=p.drawdown_type!=null&&String(p.drawdown_type).indexOf("static")===0;
     var known=d!=null&&m!=null, derivable=known&&p.drawdown_type!=null&&p.daily_basis!=null;
@@ -624,7 +662,6 @@ function render(){{
     h+=rr(f,T.row_us,"us_available");
     var foot="";
     if(f.url){{foot=F(T.foot_link,{{url:f.url,name:f.name}});
-      if(f.code)foot+=' · '+F(T.foot_code,{{code:f.code}});
       if(f.req)foot+='<div class="req">'+f.req+'</div>';{AVAIL_WRAP if site_build.features_on(T) else ""}
       foot='<div data-geo="'+f.key+'">'+foot+'</div><div class="geono" data-geo-no="'+f.key+'">'+f.geo+'</div>';}}
     else foot='<span class="pend">'+F(T.foot_held,{{name:f.name}})+'</span>';
@@ -702,12 +739,26 @@ def more_rows(k, f, T):
     return h
 
 
+def firm_aff_html(T, k, f):
+    """troid's link on a firm's page (the owner's brief, 2026-11-24: a reader bought elsewhere without seeing it): one
+    labelled link under the page's affiliate disclosure, only while the firm's link is live, in the desk's words and
+    markup (regions.desk_aff_html) so it reads the same for every firm and nowhere as a recommendation. No code. The
+    firm's required wording sits under it, word for word, and the whole block shows only where the visitor's country
+    allows the link (geo.json)."""
+    if not link_live(f):
+        return ""
+    bits = [T("desk2.aff.link", url=html.escape(f["affiliate_url"]), firm=html.escape(f["name"])), T("desk2.aff.funded")]
+    req = f'\n  <p class="req">{required_span(T, f)}</p>' if (f.get("required_disclaimer") or "").strip() else ""
+    inner = f'\n  <p class="aw">{T("desk2.aff.why")}</p>\n  <p class="al">{" · ".join(bits)}</p>{req}\n'
+    return f'<div class="affl" id="affl">\n{geo.wrap(T, k, inner, sep=chr(10))}\n</div>'
+
+
 def render_firm(T, live, page, preview=False):
     """A firm's page in T's language (site_build.FIRM_PAGES)."""
     FT = site_build.page_T(T, page)
     k = site_build.FIRM_PAGES[page]
     f = FIRMS[k]
-    rows, _foot = static_column(js_data(k, f, FT), FT)          # the column's foot holds the firm's link: not here
+    rows, _foot = static_column(js_data(k, f, FT), FT)          # the column's foot (link, code, open questions): not here
     # nor the column's sizing block: its "from your inputs" is the compare's inputs, and this page has none
     K_ = _Kit(FT)
     i, j = rows.index(K_.sec(K_.J["sec_sizing"])), rows.index(K_.sec(K_.J["sec_cost"]))
@@ -716,9 +767,9 @@ def render_firm(T, live, page, preview=False):
     meta = (FT(f"{page}.hero.meta_verified", date=read, verified=f.get("verified_on")) if f.get("verified") and f.get("verified_on")
             else FT(f"{page}.hero.meta_unverified", date=read))
     changes = [{"date": c.get("date", ""), "found": FT.data(c.get("found") or "")} for c in (f.get("rule_changes") or [])]
-    ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "rows": rows,
+    ctx = {"firm": f["name"], "meta": meta, "partner": bool(f.get("affiliate_url")), "aff": firm_aff_html(FT, k, f), "rows": rows,
            "products": product_rows(k, f, FT), "more": more_rows(k, f, FT), "conflicts": conflicts_html(FT, f, "h2"),
-           "changes": changes}
+           "changes": changes, "subscribe": site_text.subscribe_html(FT)}
     return site_build.render("firm.html", FT, page, live, preview, **ctx)
 
 
