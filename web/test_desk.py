@@ -156,6 +156,8 @@ def as_old(h):
         h = _tpl_back(h, k)
     h = h.replace(_key("index.js.n_isolated_none", EN), _key("index.js.n_isolated", EN0)).replace(EN["index.js.v_liq_none"], "#%").replace(EN["index.js.v_floor_none"], "#%")
     h = h.replace(_key("index.js.f_dd_loosest", EN), _key("index.js.f_dd_static", EN0))
+    # the largest-account note (the owner, 2026-11-24: E8 Classic is sold up to $50,000) is new: out, as the loosest reading's
+    h = re.sub("<div>" + "[^<]*?".join(re.escape(html.escape(mask(x), quote=False)) for x in re.split(r"\{\w+\}", EN["index.js.n_maxq"])) + "</div>", "", h)
     return h.replace("<div>" + _key("index.js.n_dd_loosest", EN) + "</div>", "").replace('<div class="notes"></div>', "")
 
 

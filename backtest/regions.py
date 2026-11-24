@@ -142,6 +142,7 @@ def profiles_js(T=None):
                             "hwm": pc.get("hwm_basis", c.get("hwm_basis")),
                             "fee": pc.get("fee_per_side_pct", c.get("fee_per_side_pct")),
                             "lev": pc.get("max_leverage", c.get("max_leverage")),
+                            **({"maxq": pc.get("max_quota", c.get("max_quota"))} if pc.get("max_quota", c.get("max_quota")) is not None else {}),
                             "levb": None if "max_leverage" in pc else [dict({k: v for k, v in b.items() if k != "cite"}, pv=cite(f, b["cite"]))
                                                                         for b in (c.get("lev_bands") or [])] or None,
                             "pv": {"d": cite(f, "daily_pct", pk, fallback=False), "m": cite(f, "max_pct", pk, fallback=False),

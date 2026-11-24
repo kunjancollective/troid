@@ -327,6 +327,7 @@
  "index.js.n_locked": "trailing floor locked at the initial balance ({quota}) after +{locks}%",
  "index.js.n_trailing": "trailing floor {floor} = high-water mark − quota × {m}%",
  "index.js.n_trailing_equity": "trailing floor {floor} = high-water mark − quota × {m}% — trails on equity intraday: an unrealised high raises the floor",
+ "index.js.n_maxq": "the largest account sold for this product is {max}; the quota entered, {quota}, is above it, so no account of this size is sold",
  "index.js.n_rollover": "daily floor = high at rollover − {d}% of the original size",
  "index.js.n_hwm_raised": "high-water mark raised from {typed} to {hwm}: it can't be below the quota",
  "index.js.n_hwm_raised_equity": "high-water mark raised from {typed} to {hwm}: this firm trails on equity, so it can't be below your equity",

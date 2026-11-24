@@ -467,6 +467,9 @@ function compute(rng){
   if(p.dd==="trailing")notes.push(locked?F(T.n_locked,{quota:$(quota),locks:p.locks}):
     F(p.hwm==="equity"?T.n_trailing_equity:T.n_trailing,{floor:$(ddFloor),m:p.m}));
   if(p.basis==="max_balance_equity")notes.push(F(T.n_rollover,{d:p.d}));
+  // a product sold up to a largest account (E8 Classic, $50,000; the owner, 2026-11-24): a quota above it is sized as
+  // typed, since the calculator audit holds every figure at any quota, and the note says no such account is sold
+  if(p.maxq!=null&&quota>p.maxq)notes.push(F(T.n_maxq,{max:$(p.maxq),quota:$(quota)}));
   // the gauge and the explainer get this result (desk2.js). No entry yet: the account only. An entry with no stop: "Set your
   // stop", never BLOCK (ticker v2 E); troid never fills a stop in. A tapped stock no firm lists: the account only, whatever
   // the entry and stop, and the readout says there are no firm rules to size it against

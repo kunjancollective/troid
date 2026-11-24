@@ -1064,5 +1064,19 @@
    }
   ],
   "leads_not_copied": "The owner's brief of 2026-11-24 carried first-look figures for these firms. None was copied: every value above was read again from the page. Where the read differs from the lead: WenCrypto's Terms do name its entity (WEN LTD, Saint Lucia); E8's $50K price without a code is $449 ($405 is with its code); Kraken's page also sells Lite 002."
+ },
+ "_browser_reads_2026-11-24": {
+  "what": "Read by Claude (Anthropic's assistant), working for troid's owner, in the owner's Chrome on 2026-11-24, from the pages as displayed. No hash. Each is recorded in firms.json with read_via 'browser read by Claude for troid's owner, page as displayed, no hash', never as the owner's read. Non-ASCII characters came through the copy as spaces, so a quotation is matched against the page, not against the record.",
+  "why_a_browser": "help.e8markets.com, e8markets.com/legal/affiliate and breakoutprop.com answer a sandbox with HTTP 403 (a bot check).",
+  "e8_markets": [
+   "help_classic_1124",
+   "help_daily_1124",
+   "help_server_time_1124",
+   "help_static_1124"
+  ],
+  "still_unread": [
+   "E8's ESPA",
+   "E8's affiliate terms"
+  ]
  }
 }
