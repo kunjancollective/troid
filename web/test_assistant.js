@@ -512,11 +512,15 @@ ok("firm_rules: a product's rules, each with its document and read date, pending
    fr.rules.find((r) => r.rule === "maximum loss %").value === 8 && fr.sources.find((x) => /^maximum loss % 8/.test(x.rule)).read_on.join() === "2026-09-23,2026-10-18"
    && fr.sources.find((x) => /^trading fee per side %/.test(x.rule)).read_on.join() === "2026-10-04,2026-10-18" && /^SOURCED/.test(fr.tier)
    && /pending product/.test(RT("firm_rules", { firm: "brightfunded", product: "2step_bright" }, "candidate").error), fr);
+// how many products firms.json records at a 10% maximum loss: the tool cites each, so the count is the file's, not a literal
+const AT10 = Object.entries(JSON.parse(require("fs").readFileSync(require("path").join(__dirname, "..", "firms.json"), "utf8")))
+  .filter(([k, f]) => !k.startsWith("_") && f && f.products).reduce((n, [, f]) => n + Object.entries(f.products)
+    .filter(([pk, p]) => p && p.max_pct === 10 && ((f.calc || {}).products || {})[pk]).length, 0);
 const rvAll = M({ calc: "recovery", drawdown_pct: 20, firm: "all" }), psF = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, firm: "bitfunded", product: "1step" });
-ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, two products), a product's fee",
-   rvAll.result.largest_max_loss_pct === 10 && rvAll.result.past_every_max_loss === true && rvAll.sources.length === 2 && rvAll.sources.every((x) => x.read_on.length)
+ok("trade_math takes a firm's rule with its source: the largest maximum loss troid has read (10%, on every product firms.json records at 10%: four since BrightFunded's 2-Step Classic, 2026-11-04), a product's fee",
+   rvAll.result.largest_max_loss_pct === 10 && rvAll.result.past_every_max_loss === true && rvAll.sources.length === AT10 && AT10 === 4 && rvAll.sources.every((x) => x.read_on.length)
    && psF.result.quantity === 0.369336 && /^fee 0\.04% per side/.test(psF.sources[0].rule) && /firm rules listed/.test(psF.tier)
-   && M({ calc: "recovery", drawdown_pct: 20 }).result.largest_max_loss_pct === 10 && M({ calc: "recovery", drawdown_pct: 20 }).sources.length === 2
+   && M({ calc: "recovery", drawdown_pct: 20 }).result.largest_max_loss_pct === 10 && M({ calc: "recovery", drawdown_pct: 20 }).sources.length === AT10
    && !M({ calc: "expectancy", win_rate_pct: 40, avg_win: 1.5, avg_loss: 1 }).sources, [rvAll, psF]);   // run 6: recovery sits beside the largest maximum loss by default
 const ps2 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 2 }), ps10 = M({ calc: "position_size", risk: 500, entry: 77872, stop: 76580, leverage: 10 });
 ok("trade_math position_size: leverage sets the margin, notional ÷ leverage, not the quantity", ps2.result.quantity === ps10.result.quantity
@@ -589,9 +593,9 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
      /count floating losses/.test(xc.explanation) && xc.sources.some((x) => /^floating losses count/.test(x.rule) && x.read_on.join() === "2026-09-24,2026-10-18")
      && dc.sources.some((x) => /^floating losses count/.test(x.rule)) && JSON.stringify(xl) === JSON.stringify(xc));
   const bfc = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "candidate"), bfl = RT("firm_rules", { firm: "brightfunded", product: "1step" }, "live");
-  ok("candidate firm_rules: BrightFunded's price at $100,000 in EUR (497, 347.9 on promotion) with its source; live the same (promoted 2026-10-08) (run 11, s-firm)",
+  ok("candidate firm_rules: BrightFunded's price at $100,000 in EUR (497, 347.9 on promotion) with its source, the 1-Step Daily page read 2026-11-17; live the same (promoted 2026-10-08) (run 11, s-firm)",
      bfc.rules.some((x) => /EUR$/.test(x.rule) && x.value === 497) && bfc.rules.some((x) => /promotion, EUR$/.test(x.rule) && x.value === 347.9)
-     && bfc.sources.filter((x) => /EUR/.test(x.rule)).every((x) => x.read_on.join() === "2026-09-21") && JSON.stringify(bfl) === JSON.stringify(bfc));
+     && bfc.sources.filter((x) => /EUR/.test(x.rule)).every((x) => x.read_on.join() === "2026-11-17" && /1-Step Daily product page/.test(x.document_section)) && JSON.stringify(bfl) === JSON.stringify(bfc));
   const md = (pk) => RT("firm_rules", { firm: "bitfunded", product: pk }, "live").sources.find((x) => /^minimum trading days/.test(x.rule));
   ok("firm_rules: the Instant's 0 minimum trading days no longer cite Terms 9(a)'s 'Minimum Trading Days: 5'; the challenges' 5 keep it (run 11, s-firm)",
      md("instant").source === "not yet recorded" && ["1step", "2step_s1", "2step_s2", "express"].every((pk) => /Minimum Trading Days: 5/.test(md(pk).document_section)), md("instant")); }
@@ -836,7 +840,7 @@ ok("support.md: section 4 keeps the refusal word for word, then teaches", /> tro
   ok("candidate products_in_budget ($500): every product troid has a price for at or under it, cheapest first, with its account size and its source and read date (all five recorded 2026-10-10 and re-read 2026-10-18, 'not yet recorded' before); BrightFunded's euros apart, not converted; troid's closing line; live the same (promoted 2026-10-08)",
      PB.products.map((p) => p.firm + " " + p.product + " " + p.price + " " + p.account_size).join("; ") === "Bitfunded Express 39 5000; Crypto Fund Trader Break 200 100000; Bitfunded Instant 249 5000; Crypto Fund Trader 3-Phase 399 100000; Crypto Fund Trader Instant 475 10000"
      && PB.lines[0] === "Bitfunded Express: $39 at a $5,000 account (Bitfunded help centre — Challenge Type, One Step Express table, Base, read 2026-10-10 and 2026-10-18)" && /\$328 activation fee/.test(PB.lines[1]) && PB.products.every((p) => /, read 2026-10-10 and 2026-10-18$/.test(p.source))
-     && /Priced in euros, which troid doesn't convert: BrightFunded 1-Step: €497 at a \$100,000 account, or €347\.90 on the promotion running when troid read it \(BrightFunded 1-Step product page — 100k price, read 2026-09-21\)/.test(PB.note)
+     && /Priced in euros, which troid doesn't convert: BrightFunded 1-Step Daily: €497 at a \$100,000 account, or €347\.90 on the promotion running when troid read it \(BrightFunded 1-Step Daily product page — 100k list price, read 2026-11-17\)/.test(PB.note)
      && PB.close === handler.BUDGET_CLOSE && handler._toolsFor("live").some((t) => t.name === "products_in_budget") && JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "live")) === JSON.stringify(handler._runTool("products_in_budget", { budget: 500 }, "candidate"))
      && handler._runTool("products_in_budget", { budget: 30 }, "candidate").products.length === 0 && handler._runTool("products_in_budget", { budget: 1000 }, "candidate").products.map((p) => p.price).join() === "39,200,249,399,475,619,660,780,799,999"
      && handler._runTool("products_in_budget", { budget: 400, currency: "EUR" }, "candidate").products.map((p) => p.price).join() === "", PB);
