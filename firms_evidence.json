@@ -1064,5 +1064,17 @@
    }
   ],
   "leads_not_copied": "The owner's brief of 2026-11-24 carried first-look figures for these firms. None was copied: every value above was read again from the page. Where the read differs from the lead: WenCrypto's Terms do name its entity (WEN LTD, Saint Lucia); E8's $50K price without a code is $449 ($405 is with its code); Kraken's page also sells Lite 002."
+ },
+ "_browser_reads_2026-11-24_breakout": {
+  "what": "Breakout's pages as Claude (Anthropic's assistant) read them in the owner's Chrome on 2026-11-24, pages as displayed, no hash; recorded in firms.json _reading.kraken_prop with read_via 'browser read by Claude for troid's owner, page as displayed, no hash'. Never the owner's read.",
+  "sources": [
+   "breakout_home_1124",
+   "breakout_terms_1124",
+   "breakout_help_types_1124",
+   "breakout_help_daily_1124",
+   "breakout_help_dd_1124",
+   "breakout_help_limits_1124"
+  ],
+  "not_found": "a document named 'Evaluation Terms of Service' (Kraken's Annex Q's name for the evaluation's governing terms)"
  }
 }
