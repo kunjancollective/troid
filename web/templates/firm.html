@@ -191,6 +191,10 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 .pend{color:var(--dim);font-style:italic}
 .chg{padding-inline-start:18px;margin:0 0 12px;font-size:13.5px;line-height:1.6}.chg li{margin:0 0 6px}
 .chg .d{font-family:var(--mono);font-size:12px;color:var(--dim)}
+/* troid's link for this firm, under the disclosure: the desk's affiliate line (_desk2.css .affl), the same sizes */
+.affl{min-width:0;margin:-10px 0 22px;font-family:var(--mono);font-size:11px;line-height:1.65;color:var(--dim);overflow-wrap:anywhere}
+.affl p{margin:0}.affl .al{margin-top:6px;font-size:13px}.affl .al a,.affl .geono a{display:inline-block;padding:4px 0}
+.affl .req{margin-top:4px;font-size:10.5px;line-height:1.6}
 </style>
 {{ head_extra }}</head>
 <body>
@@ -208,10 +212,13 @@ footer{border-top:1px solid var(--line);margin-top:40px;padding:22px 0 60px;
 {%- if partner %}
 <p class="disc-line">{{ t(page + ".disclosure") }}</p>
 {%- endif %}
+{%- if aff %}
+{{ aff }}
+{%- endif %}
 {{ governs_for("legal.summary.citations") }}
 
-{#- The compare column for this firm: the same rows and provenance lines as troid's compare, at its default sizing, and
-    no link (where a firm's link shows is the owner's call, launch handoff 5.3: troid's compare). #}
+{#- The compare column for this firm: the same rows and provenance lines as troid's compare, at its default sizing. The
+    firm's link is above, under the disclosure (gen_compare.firm_aff_html; the owner's brief, 2026-11-24), not here. #}
 <section class="fr" id="rules">
 <h2>{{ t(page + ".rules.h") }}</h2>
 <p class="s">{{ t(page + ".rules.p") }}</p>
