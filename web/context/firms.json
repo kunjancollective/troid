@@ -3777,7 +3777,7 @@
     "_reset_note": "The reset is 00:00 server time. E8's Server time article says UTC+2 from the beginning of November and UTC+3 from the end of March, so 22:00 UTC now and 21:00 UTC then. No reset_clock is recorded: the article names no time zone, and the change dates it gives are not a named zone's, so the calendar strip shows no 'before the reset' for E8."
   },
   "_watch": {
-    "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT. 2026-11-24: Kraken's Global Terms (Annex Q) say Kraken Prop's evaluation is Breakout's service; Kraken Prop is read (_reading.kraken_prop). Breakout's own site answers a sandbox with a bot check, so its plans and Evaluation Terms wait for a browser read; see _reading.kraken_prop._breakout.",
+    "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT. 2026-11-24: read as the evaluation behind Kraken Prop and kept as a note on it (_reading.kraken_prop._breakout); its help centre is the record of the evaluation's rules. Open: whether its 2-Step is still sold.",
     "tradeify_247": "US-based, <10 reviews, <1 year."
   },
   "_what_troid_compares": "What each firm's rules cost the reader at the reader's own sizing: room before the max loss binds, where the ceilings swap, losses survivable, fee drag, liquidation distance. Directory attributes - country, years, reviews, promos - are propfirmmatch's table, not troid's. The two are complementary: they compare firms; troid compares outcomes.",
@@ -4050,7 +4050,7 @@
           "target_pct": 10,
           "daily_pct": 3,
           "max_pct": 6,
-          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "drawdown_type": "static, from the initial account balance; a breach is equity reaching the limit",
           "fee_usd_100k": 800,
           "fee_usd_200k": null,
           "sizes": "$5,000 to $100,000"
@@ -4059,7 +4059,7 @@
           "target_pct": 12,
           "daily_pct": 3,
           "max_pct": 5,
-          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "drawdown_type": "static, from the initial account balance; a breach is equity reaching the limit",
           "fee_usd_100k": 545,
           "fee_usd_200k": 1090,
           "sizes": "$5,000 to $200,000"
@@ -4068,7 +4068,7 @@
           "target_pct": 9,
           "daily_pct": 3,
           "max_pct": 3,
-          "drawdown_type": "from the starting balance (the page's words); the limits are equity levels",
+          "drawdown_type": "static, from the initial account balance; a breach is equity reaching the limit",
           "fee_usd_100k": 330,
           "fee_usd_200k": 660,
           "sizes": "$5,000 to $200,000"
@@ -4087,10 +4087,8 @@
           "_note": "Built for index and commodity markets (up to 40x and 20x); its own rules, leverage and fees."
         }
       },
-      "daily_basis": null,
-      "_daily_note": "Not stated on the pages read: the page defines the max daily loss as 'the maximum loss allowed in a single day', by percentage or USD value, and names no balance it is taken from.",
-      "reset_utc": null,
-      "_reset_note": "No reset time is stated for Starter, Intermediate or Advanced. Lite 002's floor moves at 00:30 UTC; that is Lite's rule, not the other plans' daily reset.",
+      "daily_basis": "3% of the account balance at 00:30 UTC, open positions excluded, recalculated every day at that time (Breakout help centre)",
+      "reset_utc": "00:30",
       "fee_per_side_pct": null,
       "_fee_note": "No crypto fee is stated for Starter, Intermediate or Advanced. The Lite page states 4 bps per side for crypto on Lite 002, and '$400 on standard plans' for a $1M round trip on equity indices.",
       "max_leverage": "Up to 5x (Starter, Intermediate, Advanced)",
@@ -4130,12 +4128,13 @@
         }
       ],
       "_not_read": [
-        "Breakout's Evaluation Terms of Service, which Annex Q says govern the evaluation process, fees and outcomes: breakoutprop.com answers a sandbox with a bot check (HTTP 403, 2026-11-24). An owner's browser read is needed before this entry is listed.",
         "The Funded Trader Agreement with Payward Oceanic (shown only after passing).",
-        "Daily-loss basis, daily reset time, crypto fee and instrument list for Starter, Intermediate and Advanced.",
-        "Any country list."
+        "The crypto trading fee and the instrument list for Starter, Intermediate and Advanced.",
+        "Any country list.",
+        "Breakout's checkout, for whether a 2-Step is still sold (_breakout_2step).",
+        "Breakout's Spark accounts."
       ],
-      "_breakout": "Decision, provisional (2026-11-24): one entry, Kraken Prop, with Breakout as a note on it, not a second entry. Why: Kraken's own terms say the evaluation sold as Kraken Prop is Breakout's service under Breakout's Evaluation Terms, so the record so far describes one evaluation programme reached through two storefronts. Breakout's own site still has to be read (it was not reachable from a sandbox): if its 1-step and 2-step plans carry rules or prices that differ from Kraken Prop's, it becomes a second entry.",
+      "_breakout": "Decision (2026-11-24, confirmed after the browser reads): one entry, Kraken Prop, with Breakout as a note on it. Why: Kraken's own terms say the evaluation sold as Kraken Prop is Breakout's service, and Breakout's help centre gives the same three plans by their figures (6%, 5% and 3% maximum drawdown with 10%, 12% and 9% targets on $100,000) and the same 3% daily loss. One evaluation programme, two storefronts, two sets of plan names (plan_names). Breakout also sells Spark accounts with a trailing drawdown, which Kraken's page does not list; they are not recorded here.",
       "provenance": {
         "sources": {
           "prop_1124": {
@@ -4172,6 +4171,48 @@
             "read_on": "2026-11-24",
             "doc_dated": null,
             "read_via": "fetched from a sandbox on 2026-11-24 (sha256 of the page ddb709155a9eefd3): 'Kraken has acquired Breakout, a prop trading platform that lets you access up to $200,000 in live trading capital and keep over 80% of your profits.' \u2026 'Kraken clients can access Breakout\u2019s services, but please note that the accounts are not directly connected.'"
+          },
+          "breakout_home_1124": {
+            "doc": "Breakout home page",
+            "url": "https://breakoutprop.com/",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash: 'Max daily loss 3% across all products, resets daily' \u2026 'Max drawdown 3 to 6% static, set at account start' \u2026 'Profit target 9 to 12%, set by the product you choose' \u2026 'You keep 80%' \u2026 '90/10 split available as an upgrade at checkout.'. Prices: 'from $20', 'Pro from $33', 'Classic from $45'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_terms_1124": {
+            "doc": "Breakout Terms of Use",
+            "url": "https://breakoutprop.com/terms-of-use/",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash: 'Last revision: 06/10/2025'. General terms only: eligibility, purchases and refunds, prohibited uses, arbitration. It contains no trading rules. No document named 'Evaluation Terms of Service', the name Kraken's Annex Q uses, was found. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_help_types_1124": {
+            "doc": "Breakout help centre: What types of Breakout evaluations can I purchase?",
+            "url": "https://intercom.help/breakoutprop/en/articles/11643732-what-types-of-breakout-evaluations-can-i-purchase",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-11-19",
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19: 'three standard variants: 1-Step Classic, 1-Step Pro, or 1-Step Turbo.' \u2026 '6% maximum drawdown ($6,000), $10,000 upgrade target' \u2026 '5% maximum drawdown ($5,000), $12,000 upgrade target' \u2026 '3% maximum drawdown ($3,000), $9,000 upgrade target' \u2026 'Maximum daily loss is 3% across all three variants.'. The three figures are for a $100,000 evaluation: Classic, Pro and Turbo in that order. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_help_daily_1124": {
+            "doc": "Breakout help centre: What is the maximum daily loss limit in the Breakout evaluation?",
+            "url": "https://intercom.help/breakoutprop/en/articles/11644066-what-is-the-maximum-daily-loss-limit-in-the-breakout-evaluation",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-11-19",
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19: 'The maximum daily loss limit is 3% of your demo account balance at 00:30 UTC, recalculated every day at that time. Example: If your balance (excluding open positions) is $105,000 at 00:30 UTC, your daily loss floor for the next 24 hours is $101,850.'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_help_dd_1124": {
+            "doc": "Breakout help centre: What is the maximum drawdown limit in a 1-Step Classic Breakout evaluation?",
+            "url": "https://intercom.help/breakoutprop/en/articles/11644076-what-is-the-maximum-drawdown-limit-in-a-1-step-classic-breakout-evaluation",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-09-03",
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-09-03: '6% of your initial account balance. It's static: it doesn't change based on your demo account balance.' \u2026 'If your balance grows to $105,000, your drawdown floor is still $94,000'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_help_limits_1124": {
+            "doc": "Breakout help centre: How can I view my maximum daily loss and maximum drawdown limits?",
+            "url": "https://intercom.help/breakoutprop/en/articles/11644061-how-can-i-view-my-maximum-daily-loss-and-maximum-drawdown-limits",
+            "read_on": "2026-11-24",
+            "doc_dated": "2026-11-19",
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19: 'If your demo account equity reaches or exceeds either limit, you're in breach and fail the evaluation.'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
           }
         },
         "fields": {
@@ -4189,9 +4230,11 @@
           },
           "drawdown_type": {
             "src": [
-              "prop_1124"
+              "prop_1124",
+              "breakout_help_dd_1124",
+              "breakout_help_types_1124"
             ],
-            "section": "Kraken Prop product page: FAQ, What are the risk limits?"
+            "section": "Kraken Prop product page: FAQ, What are the risk limits?; Breakout help centre: maximum drawdown limit, 1-Step Classic"
           },
           "refund": {
             "src": [
@@ -4229,27 +4272,56 @@
               "lite_1124"
             ],
             "section": "Kraken Prop Lite page: FAQ, How many Lite 002 evaluations are available?"
+          },
+          "daily_basis": {
+            "src": [
+              "breakout_help_daily_1124"
+            ],
+            "section": "Breakout help centre: What is the maximum daily loss limit in the Breakout evaluation?"
+          },
+          "reset_utc": {
+            "src": [
+              "breakout_help_daily_1124"
+            ],
+            "section": "Breakout help centre: What is the maximum daily loss limit in the Breakout evaluation?"
+          },
+          "floating_counts": {
+            "src": [
+              "breakout_help_limits_1124"
+            ],
+            "section": "Breakout help centre: How can I view my maximum daily loss and maximum drawdown limits?"
+          },
+          "evaluation_source": {
+            "src": [
+              "terms_q_1124",
+              "breakout_terms_1124",
+              "breakout_help_types_1124"
+            ],
+            "section": "Kraken Global Terms of Service, Annex Q 2a; Breakout Terms of Use; Breakout help centre"
           }
         },
         "products": {
           "starter": {
             "target_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "daily_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "max_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "price": {
               "src": [
@@ -4261,21 +4333,24 @@
           "intermediate": {
             "target_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "daily_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "max_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "price": {
               "src": [
@@ -4287,21 +4362,24 @@
           "advanced": {
             "target_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "daily_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "max_pct": {
               "src": [
-                "prop_1124"
+                "prop_1124",
+                "breakout_help_types_1124"
               ],
-              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet"
+              "section": "Kraken Prop product page: plan comparison table, $100,000 wallet; Breakout help centre: What types of Breakout evaluations can I purchase?"
             },
             "price": {
               "src": [
@@ -4343,7 +4421,25 @@
             }
           }
         }
-      }
+      },
+      "evaluation_source": "Breakout's help centre (intercom.help/breakoutprop), as Claude read it in the owner's browser on 2026-11-24. Kraken's Annex Q says Breakout's 'Evaluation Terms of Service' govern the evaluation; no document by that name was found, and Breakout's Terms of Use contain no trading rules, so the help-centre articles are the record of the evaluation's rules.",
+      "plan_names": {
+        "starter": "Kraken: Starter \u00b7 Breakout: 1-Step Classic (6% max drawdown, 10% target)",
+        "intermediate": "Kraken: Intermediate \u00b7 Breakout: 1-Step Pro (5%, 12%)",
+        "advanced": "Kraken: Advanced \u00b7 Breakout: 1-Step Turbo (3%, 9%)",
+        "_note": "Matched by their figures: each pair has the same drawdown and target on $100,000, and both sites give a 3% daily loss. Neither site states the mapping in words."
+      },
+      "reset_clock": {
+        "time": "00:30",
+        "tz": "UTC"
+      },
+      "floating_counts": true,
+      "_calc_when_listed": {
+        "daily_basis": "day_start",
+        "drawdown": "static",
+        "_note": "For the day this entry is listed: the daily floor is the 00:30 UTC balance less 3% of it (the help centre's example: $105,000 gives $101,850), which is troid's day_start basis; a breach is equity reaching either limit."
+      },
+      "_breakout_2step": "Is Breakout's 2-Step still sold? Not confirmed either way. For 'no longer': the help-centre article on what can be purchased (dateModified 2026-11-19) names 'three standard variants: 1-Step Classic, 1-Step Pro, or 1-Step Turbo', and the home page read the same day prices only those three. For 'still': the help centre keeps a 2-Step article (dateModified 2026-09-03), older than the purchase article. Checked from a sandbox on 2026-11-24: breakoutprop.com answers HTTP 403 (a bot check) and intercom.help is not reachable, so the checkout itself was not seen. Settles with one look at Breakout's checkout in a browser."
     },
     "wencrypto": {
       "name": "WenCrypto",
