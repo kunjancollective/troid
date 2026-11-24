@@ -1764,13 +1764,13 @@
           "hwm_basis": null
         },
         "2step_classic_s1": {
-          "label": "2-Step Classic \u00b7 S1",
+          "label": "2-Step Classic (OLD): accounts bought before 16 Nov 2026 \u00b7 S1",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
         },
         "2step_classic_s2": {
-          "label": "2-Step Classic \u00b7 S2",
+          "label": "2-Step Classic (OLD): accounts bought before 16 Nov 2026 \u00b7 S2",
           "drawdown": "static",
           "locks_at_initial_after_pct": null,
           "hwm_basis": null
