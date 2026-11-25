@@ -4410,6 +4410,13 @@
             "read_on": "2026-11-24",
             "doc_dated": "2026-11-19",
             "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19: 'If your demo account equity reaches or exceeds either limit, you're in breach and fail the evaluation.'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+          },
+          "breakout_checkout_1124": {
+            "doc": "Breakout checkout: buy an evaluation",
+            "url": "https://portal.breakoutprop.com/buy-evaluation",
+            "read_on": "2026-11-24",
+            "doc_dated": null,
+            "read_via": "browser read by Claude for troid's owner, page as displayed, no hash: no 2-Step on the checkout. Sizes are $5K to $200K. It lists '1-Step Classic' ($400 at $50K) and '1-Step Pro' ($280 at $50K), 'One-time fee, keep 80-90% of profits'."
           }
         },
         "fields": {
@@ -4495,6 +4502,13 @@
               "breakout_help_types_1124"
             ],
             "section": "Kraken Global Terms of Service, Annex Q 2a; Breakout Terms of Use; Breakout help centre"
+          },
+          "breakout_2step": {
+            "src": [
+              "breakout_checkout_1124",
+              "breakout_help_types_1124"
+            ],
+            "section": "Breakout checkout: buy an evaluation; help centre: What types of Breakout evaluations can I purchase?"
           }
         },
         "products": {
@@ -4636,7 +4650,8 @@
         "drawdown": "static",
         "_note": "For the day this entry is listed: the daily floor is the 00:30 UTC balance less 3% of it (the help centre's example: $105,000 gives $101,850), which is troid's day_start basis; a breach is equity reaching either limit."
       },
-      "_breakout_2step": "Not sold. Breakout's checkout did not offer a 2-Step on 2026-11-24, as the owner's instructions to Code of 2026-11-25 report from the browser check; this agrees with the help-centre article on what can be purchased (dateModified 2026-11-19: 'three standard variants: 1-Step Classic, 1-Step Pro, or 1-Step Turbo') and the home page read the same day. The help centre's 2-Step article (dateModified 2026-09-03) is a leftover and is not a plan on sale. The checkout page itself is not held as a source here: no quotation or address of it has reached this file, and it is not reachable from a sandbox."
+      "_breakout_2step": "Not sold. Breakout's checkout (portal.breakoutprop.com/buy-evaluation), as Claude read it in the owner's browser on 2026-11-24, lists 1-Step Classic and 1-Step Pro and no 2-Step; the help-centre article on what can be purchased (dateModified 2026-11-19) names three 1-Step variants. The help centre's 2-Step article (dateModified 2026-09-03) is a leftover.",
+      "_breakout_prices": "At $50K Breakout's checkout shows 1-Step Classic $400 and 1-Step Pro $280; Kraken's page shows Starter $400 and Intermediate $280 at $50,000. The same prices under the two sets of names, which supports plan_names. 1-Step Turbo was not among the plans the checkout read lists."
     },
     "wencrypto": {
       "name": "WenCrypto",
