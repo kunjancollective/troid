@@ -3503,13 +3503,25 @@
           "10000": 129,
           "25000": 319,
           "50000": 629
-        }
+        },
+        "leverage_by_class": {
+          "bitcoin": 15,
+          "ethereum": 15,
+          "other_crypto": 3,
+          "stocks": 5,
+          "indices": 30,
+          "metals": 20,
+          "forex": 25,
+          "energy": 10
+        },
+        "max_notional": "each instrument has its own maximum notional volume, set by Hyperliquid; the figures are not read",
+        "min_days": "not stated"
       }
     },
     "daily_basis": "2% of the initial balance, below the higher of balance or equity at the day's start (help centre, E8 Classic v.2 and Daily Drawdown)",
     "reset_utc": "22:00 (00:00 server time, UTC+2); 21:00 from the end of March (UTC+3)",
-    "fee_per_side_pct": null,
-    "max_leverage": null,
+    "fee_per_side_pct": 0.03,
+    "max_leverage": "by instrument class on perpetuals: Bitcoin and Ethereum 1:15, other crypto 1:3, stocks 1:5, indices 1:30, metals 1:20, forex 1:25, energy 1:10 (the same on every stage)",
     "split": "80% or 90% (help centre)",
     "min_days": null,
     "venue": "Perpetuals 24/7 (Hyperliquid), in the page's words",
@@ -3564,7 +3576,9 @@
     "_not_read": [
       "The Educational Simulation Participant Agreement (ESPA), which the Terms say governs over them.",
       "E8's affiliate terms (e8markets.com/legal/affiliate).",
-      "Trading fees, leverage, the instrument list, minimum trading days (none is stated in the articles read), any hold or position cap, news rules and a country list for the perpetuals market."
+      "Each instrument's maximum notional, any cap on open positions, and the instrument list for the perpetuals market.",
+      "The end of the weekend-holding sentence in the holding article (cut off in the copy).",
+      "The payout providers' country lists (WorkMarket, Rise)."
     ],
     "_comparability_note": "troid's compare sizes every firm at $100,000. This product stops at $50K, so listing it needs a decision first: a $50K column, or two $50K accounts shown as such.",
     "provenance": {
@@ -3588,7 +3602,7 @@
           "url": "https://help.e8markets.com/en/articles/18310577-e8-classic-v-2",
           "read_on": "2026-11-24",
           "doc_dated": "2026-11-19",
-          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19T10:46:26Z: 'Available Markets:Classic Markets, Perpetual Futures. The market can be selected during checkout, and it affects the palette of available instruments and the structure of fees or functions of the trading platform. Other aspects, like drawdowns and overall trading rules, payout mechanism remain the same.' \u2026 '8% Profit Target - Closed profit in your simulated trading account.' \u2026 'There is no time limit but you need to place and close at least one trade each 60 days.' \u2026 '2% Daily Drawdown - Your account must not lose more than 2% of your initial balance in a single day. The limit you can not exceed is calculated from your starting balance or equity (depending on which is higher). No daily Drawdown option can be selected at checkout during your purchase' \u2026 '4% Static Drawdown A fixed loss limit based on your initial balance. It never trails or moves. Never.' \u2026 'eligible to receive 80% or 90% of their trading performance' \u2026 'Minimum profit is $100.' \u2026 'you can request as many times per day as you want'. Non-ASCII characters (curly quotes, dashes, signs) came through the copy as spaces; match a quotation against the page. Its price table (Starting balance / 2% Daily Drawdown / Without Daily Drawdown): $2,000 $29 $36; $5,000 $59 $69; $10,000 $119 $129; $25,000 $229 $319; $50,000 $449 $629."
+          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-19T10:46:26Z: 'Available Markets:Classic Markets, Perpetual Futures. The market can be selected during checkout, and it affects the palette of available instruments and the structure of fees or functions of the trading platform. Other aspects, like drawdowns and overall trading rules, payout mechanism remain the same.' \u2026 '8% Profit Target - Closed profit in your simulated trading account.' \u2026 'There is no time limit but you need to place and close at least one trade each 60 days.' \u2026 '2% Daily Drawdown - Your account must not lose more than 2% of your initial balance in a single day. The limit you can not exceed is calculated from your starting balance or equity (depending on which is higher). No daily Drawdown option can be selected at checkout during your purchase' \u2026 '4% Static Drawdown A fixed loss limit based on your initial balance. It never trails or moves. Never.' \u2026 'eligible to receive 80% or 90% of their trading performance' \u2026 'Minimum profit is $100.' \u2026 'you can request as many times per day as you want'. Non-ASCII characters (curly quotes, dashes, signs) came through the copy as spaces; match a quotation against the page. Its price table (Starting balance / 2% Daily Drawdown / Without Daily Drawdown): $2,000 $29 $36; $5,000 $59 $69; $10,000 $119 $129; $25,000 $229 $319; $50,000 $449 $629. Second pass the same day, on news: 'You can trade news on E8 Classic with no restrictions (This includes the SimFi challenge account (phase-1). For SimFI Performance Accounts, profits made during the news window are capped at 40% eligibility'. On minimum days the article states none: 'Unlimited Trading Days - There is no time limit but you need to place and close at least one trade each 60 days.'"
         },
         "help_daily_1124": {
           "doc": "E8 Markets help centre: Daily Drawdown",
@@ -3610,6 +3624,34 @@
           "read_on": "2026-11-24",
           "doc_dated": "2026-11-16",
           "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-16T15:54:04Z: 'Available for: E8 Pro , E8 Classic' \u2026 'It is a Fixed Floor: It does not move up, or trails, and It stays anchored to your starting point.' \u2026 'A permanent violation occurs if your account s Equity or Balance falls below this level at any point.'. Non-ASCII characters (curly quotes, dashes, signs) came through the copy as spaces; match a quotation against the page. Its table's 8% examples ($100,000 to $92,000) are E8 Pro's; E8 Classic's own article says 4%."
+        },
+        "help_leverage_1124": {
+          "doc": "E8 Markets help centre: How much leverage do you offer?",
+          "url": "https://help.e8markets.com/en/articles/5514982-how-much-leverage-do-you-offer",
+          "read_on": "2026-11-24",
+          "doc_dated": "2026-11-16",
+          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-16T15:52:47Z: 'Leverage for Perpetual futures: Challenge Type Bitcoin Ethereum Other Crypto instruments Stocks Indicies Metals Forex Energy ... E8 Classic 1:15 1:15 1:3 1:5 1:30 1:20 1:25 1:10' \u2026 'Leverage will differ between products, but not between stages.' \u2026 'each Perps instrument has its own maximum notional volume - a cap on how much size you can hold in that symbol. This comes down to Hyperliquid itself.'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+        },
+        "help_perps_1124": {
+          "doc": "E8 Markets help centre: What are perpetual futures?",
+          "url": "https://help.e8markets.com/en/articles/16769844-what-are-perpetual-futures",
+          "read_on": "2026-11-24",
+          "doc_dated": "2026-11-16",
+          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-16: 'Currently, all crypto instruments under Perpetual futures (Hyperliquid) are under a 0.03% structure for cryptocurrencies, 0.0025% for Forex, and 0.005% for Stocks, commodities, and indices. The fee is charged per side, once when you open the position and once when you close it.' \u2026 'It replaces the existing Crypto market'. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+        },
+        "help_holding_1124": {
+          "doc": "E8 Markets help centre: Can I hold positions overnight and trade over the weekend?",
+          "url": "https://help.e8markets.com/en/articles/5514966-can-i-hold-positions-overnight-and-trade-over-the-weekend",
+          "read_on": "2026-11-24",
+          "doc_dated": "2026-11-17",
+          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-11-17: 'E8 One, E8 Pro, E8 Classic: Overnight Trading or holding is allowed on all stages'. The next sentence begins 'Weekend Holding and Crypto trading are allowed on a' and was cut off in the copy; its end is to be read on the page. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
+        },
+        "help_countries_1124": {
+          "doc": "E8 Markets help centre: Accepted countries",
+          "url": "https://help.e8markets.com/en/articles/5514278-accepted-countries",
+          "read_on": "2026-11-24",
+          "doc_dated": "2026-10-01",
+          "read_via": "browser read by Claude for troid's owner, page as displayed, no hash; its dateModified is 2026-10-01: 'unsupported States or Territories in the USA'. Access depends on the payout providers' country lists (WorkMarket, Rise); the article gives no single yes or no for the United States. Non-ASCII characters came through the copy as spaces; match a quotation against the page."
         }
       },
       "fields": {
@@ -3740,6 +3782,42 @@
               "help_classic_1124"
             ],
             "section": "E8 Markets help centre: E8 Classic (v.2)"
+          },
+          "fee_per_side_pct": {
+            "src": [
+              "help_perps_1124"
+            ],
+            "section": "E8 Markets help centre: What are perpetual futures?, the fee on cryptocurrencies"
+          },
+          "hold_cap": {
+            "src": [
+              "help_holding_1124"
+            ],
+            "section": "E8 Markets help centre: Can I hold positions overnight and trade over the weekend?"
+          },
+          "news_rule": {
+            "src": [
+              "help_classic_1124"
+            ],
+            "section": "E8 Markets help centre: E8 Classic (v.2), news"
+          },
+          "min_days": {
+            "src": [
+              "help_classic_1124"
+            ],
+            "section": "E8 Markets help centre: E8 Classic (v.2), Unlimited Trading Days (no minimum stated)"
+          },
+          "us_available": {
+            "src": [
+              "help_countries_1124"
+            ],
+            "section": "E8 Markets help centre: Accepted countries"
+          },
+          "leverage_by_class": {
+            "src": [
+              "help_leverage_1124"
+            ],
+            "section": "E8 Markets help centre: How much leverage do you offer?, Leverage for Perpetual futures, E8 Classic"
           }
         }
       }
@@ -3752,20 +3830,20 @@
       "daily_pct": 2,
       "max_pct": 4,
       "target_pct": 8,
-      "min_days": null,
+      "min_days": "not stated",
       "price": "$449 at $50,000",
       "daily_basis": "2% of the initial balance, below the higher of balance or equity at the day's start",
       "drawdown_type": "static: the floor sits 4% below the start and never moves",
       "reset_utc": "22:00 (00:00 server time, UTC+2); 21:00 from the end of March (UTC+3)",
-      "fee_per_side_pct": null,
+      "fee_per_side_pct": 0.03,
       "max_leverage": null,
-      "hold_cap": null,
+      "hold_cap": "none stated; overnight holding allowed on all stages",
       "max_open": null,
       "refund": "none: all fees non-refundable",
       "split": "80% or 90%",
-      "us_available": null,
+      "us_available": "no single yes or no: it depends on the payout providers' country lists, which leave out some US states or territories",
       "consistency_rule": "none",
-      "news_rule": null,
+      "news_rule": "challenge: no restrictions \u00b7 funded: profits made in the news window capped at 40% eligibility",
       "profit_cap": "none"
     },
     "calc": {
@@ -3773,7 +3851,7 @@
       "drawdown": "static",
       "locks_at_initial_after_pct": null,
       "hwm_basis": null,
-      "fee_per_side_pct": null,
+      "fee_per_side_pct": 0.03,
       "max_leverage": null,
       "max_quota": 50000,
       "products": {
@@ -3783,7 +3861,10 @@
       }
     },
     "floating_counts": true,
-    "_reset_note": "The reset is 00:00 server time. E8's Server time article says UTC+2 from the beginning of November and UTC+3 from the end of March, so 22:00 UTC now and 21:00 UTC then. No reset_clock is recorded: the article names no time zone, and the change dates it gives are not a named zone's, so the calendar strip shows no 'before the reset' for E8."
+    "_reset_note": "The reset is 00:00 server time. E8's Server time article says UTC+2 from the beginning of November and UTC+3 from the end of March, so 22:00 UTC now and 21:00 UTC then. No reset_clock is recorded: the article names no time zone, and the change dates it gives are not a named zone's, so the calendar strip shows no 'before the reset' for E8.",
+    "_fee_note": "0.03% per side on cryptocurrencies under Perpetual futures (Hyperliquid); 0.0025% on forex and 0.005% on stocks, commodities and indices, which troid's desk does not price for this firm.",
+    "_lev_note": "Read 2026-11-24 (Claude's browser read). Not entered as the compare's or the desk's max_leverage, by the rule BrightFunded's entry already follows: that field is one cap per firm or product and drives the liquidation figures, and E8's cap differs by instrument class (15 on Bitcoin and Ethereum, 3 on other crypto). One number would be wrong for one or the other. The leverage-cap cell and the liquidation distance stay pending until the desk can take a cap by asset.",
+    "_pos_note": "No cap on the number of open positions was read. Each instrument has a maximum notional (Hyperliquid's), whose figures are not read, so the open-positions cell stays pending."
   },
   "_watch": {
     "breakout": "4.6 rating, 45 reviews, Kraken-owned, BVI. Next to verify after BrightFunded and CFT. 2026-11-24: read as the evaluation behind Kraken Prop and kept as a note on it (_reading.kraken_prop._breakout); its help centre is the record of the evaluation's rules. Its 2-Step is not sold (not on the checkout, 2026-11-24).",

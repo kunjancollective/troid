@@ -1093,12 +1093,17 @@
    "help_classic_1124",
    "help_daily_1124",
    "help_server_time_1124",
-   "help_static_1124"
+   "help_static_1124",
+   "help_leverage_1124",
+   "help_perps_1124",
+   "help_holding_1124",
+   "help_countries_1124"
   ],
   "still_unread": [
    "E8's ESPA",
    "E8's affiliate terms"
-  ]
+  ],
+  "second_pass": "The same evening, same method: leverage by class, the perpetuals fee, holding, news, minimum days (none stated) and accepted countries for E8; and Breakout's checkout (portal.breakoutprop.com/buy-evaluation), which lists no 2-Step."
  },
  "_browser_reads_2026-11-24_breakout": {
   "what": "Breakout's pages as Claude (Anthropic's assistant) read them in the owner's Chrome on 2026-11-24, pages as displayed, no hash; recorded in firms.json _reading.kraken_prop with read_via 'browser read by Claude for troid's owner, page as displayed, no hash'. Never the owner's read.",
