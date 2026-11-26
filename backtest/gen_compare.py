@@ -88,8 +88,9 @@ def link_live(f):
 
 
 def last_read():
-    """The most recent date troid read any firm document: every read_on in firms.json. troid's compare shows it as
-    'reviewed', so the date moves when a read is recorded and never by hand."""
+    """The most recent date troid read any listed firm's document: every read_on in firms.json outside _reading and
+    _excluded (firms read and not listed). troid's compare shows it as 'reviewed', so the date moves when a read is
+    recorded and never by hand."""
     dates = []
     def walk(x):
         if isinstance(x, dict):
@@ -101,7 +102,9 @@ def last_read():
         elif isinstance(x, list):
             for v in x:
                 walk(v)
-    walk(FIRMS)
+    for k, v in FIRMS.items():
+        if k not in ("_reading", "_excluded"):            # a read of a firm not yet listed is not a review of the columns
+            walk({k: v})
     return max(dates)
 
 
@@ -134,6 +137,37 @@ def conflicts_html(T, f, heading="p"):
     head = f'<p style="margin:0">{title}</p>' if heading == "p" else f'<{heading}>{title}</{heading}>'
     return (f'<div class="s" style="margin:10px 0 0;line-height:1.7">{head}\n'
             f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(items)}</ul></div>\n')
+
+
+def reading_next_html(T):
+    """'Reading next', under the columns (the owner's brief, 2026-11-24): the firms troid has read or is reading and
+    has not listed (firms.json _reading), names only, with no rule and no date promised, and the firms considered and
+    left out (_excluded), each with its reason and the date troid read the firm's own page. An older _excluded note with
+    no dated read is not named at all (the owner, 2026-11-24: no firm without a reason). Generated
+    here, never hand-written; alphabetical, as everywhere."""
+    K = _Kit(T)
+    named = lambda d: sorted((v for k, v in (d or {}).items() if not k.startswith("_") and isinstance(v, dict)),  # noqa: E731
+                             key=lambda v: v["name"].lower())
+    reading = [html.escape(v["name"]) for v in named(FIRMS.get("_reading"))]
+    out = []
+    for v in named(FIRMS.get("_excluded")):
+        name = html.escape(v["name"])
+        if v.get("reason") and v.get("read_on"):
+            src = v.get("src") or {}
+            doc = html.escape(src.get("doc") or "")
+            if src.get("url"):
+                doc = f'<a href="{html.escape(src["url"])}">{doc}</a>'
+            out.append("<li>" + T("compare.next.out.dated", firm=name, reason=html.escape(T.data(v["reason"])), doc=doc,
+                                  date=v["read_on"]) + "</li>")
+    if not reading and not out:
+        return ""
+    parts = [f'<p style="margin:0"><strong>{T("compare.next.h")}</strong></p>']
+    if reading:
+        parts.append(f'<p style="margin:4px 0 0">{T("compare.next.reading", firms=K.andj(reading))}</p>')
+    if out:
+        parts.append(f'<p style="margin:8px 0 0">{T("compare.next.out.h")}</p>\n'
+                     f'<ul style="margin:4px 0 0;padding-inline-start:18px">{"".join(out)}</ul>')
+    return '<div class="s" id="reading-next" style="margin:16px 0 0;line-height:1.7">' + "\n".join(parts) + "</div>\n"
 
 
 def required_sentences():
@@ -523,7 +557,7 @@ def render_compare(T, live):
   <div><label>{T("compare.sizing.lev")}</label><input id="lev" type="number" step="any" value="{jsnum.js_str(DEFAULTS["lev"])}"></div>
 </div></div>
 {site_build.country_box(T)}<div class="cols">{"".join(column(k, FIRMS[k], T) for k in ORDER)}</div>
-<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
+{reading_next_html(T)}<p class="s" id="chosen" style="margin:16px 0 0;line-height:1.7">{ref_text} {D("_bitfunded_directory_note")}</p>
 {conflicts_html(T, reference())}<p class="s" style="margin:10px 0 0;line-height:1.7">{D("_criterion")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_link_rule")}</p>
 <p class="s" style="margin:10px 0 0;line-height:1.7">{D("_disclosure")}</p>
