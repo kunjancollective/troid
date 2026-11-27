@@ -1,0 +1,87 @@
+name: tests — every page and tool test, on every pull request
+
+# The repo holds some 25 tests of the built pages, the desk, the generators and ask troid's tools. Until this workflow
+# no workflow ran them: verify.yml runs verify_claims.py, audit.yml the calculator audit, webkit.yml the iPhone layout.
+# So a test could fail on main and no one would see it (Code's review, 2026-11-24: test_assistant.js had three
+# stale expectations after BrightFunded's plans changed on 16 Nov 2026).
+#
+# Reads files and drives the built pages in a local Chromium. Spends nothing, calls no model, needs no key.
+# Every test runs even when one fails, and the last step fails the job with the list.
+#
+# Not run here, each with its reason:
+#   web/test_desk_webkit.py    webkit.yml runs it, in WebKit.
+#   web/eval_character.js, web/smoke_live.js   keyed or live: never in a pull request.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0                    # web/test_desk.py reads the audited desk from history (9c8d447)
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Playwright and its Chromium; jinja2 for the builds
+        run: |
+          python -m pip install --quiet playwright "jinja2>=3.1"
+          python -m playwright install --with-deps chromium
+          # twelve of the tests launch Chromium from the path it has in a Claude Code sandbox, /opt/pw-browsers/chromium
+          # (a finding of the same review: they should take Playwright's own); until they do, the path exists here too
+          sudo mkdir -p /opt/pw-browsers
+          sudo ln -sf "$(python -c 'from playwright.sync_api import sync_playwright as s; p = s().start(); print(p.chromium.executable_path); p.stop()')" /opt/pw-browsers/chromium
+
+      - name: The web function's dependencies, and PGlite for test_pro.js
+        working-directory: web
+        run: |
+          npm ci --silent
+          npm install --no-save --silent @electric-sql/pglite@0.5.8
+
+      - name: Every test
+        shell: bash
+        run: |
+          PY="backtest/test_shadow2.py backtest/phone_check.py
+              web/test_audit_line.py web/test_calendar_fetch.py web/test_calendar_page.py web/test_chat_page.py
+              web/test_compare_static.py web/test_desk.py web/test_desk_aff.py web/test_desk_links.py
+              web/test_firm_pages.py web/test_geo.py web/test_glossary_page.py web/test_lang_redirect.py
+              web/test_pro_page.py web/test_retired_wording.py web/test_seo_head.py web/test_ticker_page.py"
+          JS="test_assistant.js test_digest.js test_fee_parity.js test_key_expiry.js test_pro.js test_pro_waitlist.js test_ticker.js test_where.js"
+          PY="$(echo $PY)"                  # one line, single spaces: the not-listed guard below matches on " name "
+          failed=""
+          for t in $PY; do
+            echo "::group::$t"
+            if python "$t" > "$RUNNER_TEMP/out.txt" 2>&1; then tail -n 2 "$RUNNER_TEMP/out.txt"; else grep -vE '^ok ' "$RUNNER_TEMP/out.txt" | tail -n 60; failed="$failed $t"; fi
+            echo "::endgroup::"
+          done
+          for t in $JS; do
+            echo "::group::web/$t"
+            if (cd web && node "$t") > "$RUNNER_TEMP/out.txt" 2>&1; then tail -n 2 "$RUNNER_TEMP/out.txt"; else grep -vE '^ok ' "$RUNNER_TEMP/out.txt" | tail -n 60; failed="$failed web/$t"; fi
+            echo "::endgroup::"
+          done
+          # a test file this list does not name is a test no one runs: say so
+          for f in web/test_*.py web/test_*.js backtest/test_*.py; do
+            case " $PY $(printf 'web/%s ' $JS) web/test_desk_webkit.py " in *" $f "*) ;; *) failed="$failed $f(not-listed-in-tests.yml)";; esac
+          done
+          if [ -n "$failed" ]; then
+            echo "::error title=tests::failed:$failed"
+            exit 1
+          fi
+          echo "every listed test passed"
